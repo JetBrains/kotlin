@@ -138,19 +138,42 @@ internal abstract class CommonKlibBasedArgumentsImpl(
   }
 
   @Suppress("DEPRECATION")
-  protected fun applyCompilerArguments(arguments: CommonKlibBasedCompilerArguments) {
-    super.applyCompilerArguments(arguments)
-    try { this[X_KLIB_ABI_VERSION] = arguments.customKlibAbiVersion } catch (_: NoSuchMethodError) {  }
-    try { this[X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY] = arguments.duplicatedUniqueNameStrategy?.let { DuplicatedUniqueNameStrategy.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::duplicatedUniqueNameStrategy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xklib-duplicated-unique-name-strategy value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS] = arguments.enableSignatureClashChecks } catch (_: NoSuchMethodError) {  }
-    try { this[X_KLIB_IR_INLINER] = arguments.irInlinerBeforeKlibSerialization.let { KlibIrInlinerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irInlinerBeforeKlibSerialization, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xklib-ir-inliner value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_KLIB_NORMALIZE_ABSOLUTE_PATH] = arguments.getUsingReflection<Boolean>("normalizeAbsolutePath") } catch (_: NoSuchMethodError) {  }
-    try { this[X_KLIB_RELATIVE_PATH_BASE] = arguments.relativePathBases.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT] = arguments.klibZipFileAccessorCacheLimit.let { it.toInt() } } catch (_: NoSuchMethodError) {  }
-    try { this[X_PARTIAL_LINKAGE] = arguments.partialLinkageMode?.let { PartialLinkageMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::partialLinkageMode, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xpartial-linkage value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_PARTIAL_LINKAGE_LOGLEVEL] = arguments.partialLinkageLogLevel?.let { PartialLinkageLogLevel.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::partialLinkageLogLevel, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xpartial-linkage-loglevel value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS] = arguments.skipLibrarySpecialCompatibilityChecks } catch (_: NoSuchMethodError) {  }
-    internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
+  protected fun applyCompilerArguments(arguments: CommonKlibBasedCompilerArguments, onlyExplicit: Boolean = false) {
+    super.applyCompilerArguments(arguments, onlyExplicit)
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xklib-abi-version")) {
+          this[X_KLIB_ABI_VERSION] = arguments.customKlibAbiVersion}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xklib-duplicated-unique-name-strategy")) {
+          this[X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY] = arguments.duplicatedUniqueNameStrategy?.let { DuplicatedUniqueNameStrategy.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::duplicatedUniqueNameStrategy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xklib-duplicated-unique-name-strategy value: $it") }}
+         } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xklib-enable-signature-clash-checks")) {
+          this[X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS] = arguments.enableSignatureClashChecks}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xklib-ir-inliner")) {
+          this[X_KLIB_IR_INLINER] = arguments.irInlinerBeforeKlibSerialization.let { KlibIrInlinerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irInlinerBeforeKlibSerialization, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xklib-ir-inliner value: $it") }}
+         } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xklib-normalize-absolute-path")) {
+          this[X_KLIB_NORMALIZE_ABSOLUTE_PATH] = arguments.getUsingReflection<Boolean>("normalizeAbsolutePath")}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xklib-relative-path-base")) {
+          this[X_KLIB_RELATIVE_PATH_BASE] = arguments.relativePathBases.mapOrEmpty { Path(it) }}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xklib-zip-file-accessor-cache-limit")) {
+          this[X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT] = arguments.klibZipFileAccessorCacheLimit.let { it.toInt() }}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xpartial-linkage")) {
+          this[X_PARTIAL_LINKAGE] = arguments.partialLinkageMode?.let { PartialLinkageMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::partialLinkageMode, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xpartial-linkage value: $it") }}
+         } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xpartial-linkage-loglevel")) {
+          this[X_PARTIAL_LINKAGE_LOGLEVEL] = arguments.partialLinkageLogLevel?.let { PartialLinkageLogLevel.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::partialLinkageLogLevel, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xpartial-linkage-loglevel value: $it") }}
+         } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xskip-library-special-compatibility-checks")) {
+          this[X_SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS] = arguments.skipLibrarySpecialCompatibilityChecks}
+         } catch (_: NoSuchMethodError) {  }
+    if (!onlyExplicit || isExplicit(arguments, "-XXLanguage")) {
+      internalArguments.clear()
+      internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
+    }
   }
 
   @Suppress("DEPRECATION")

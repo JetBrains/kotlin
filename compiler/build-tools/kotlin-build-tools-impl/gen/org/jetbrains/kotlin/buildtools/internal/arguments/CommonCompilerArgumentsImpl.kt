@@ -313,118 +313,335 @@ internal abstract class CommonCompilerArgumentsImpl(
   }
 
   @Suppress("DEPRECATION")
-  protected fun applyCompilerArguments(arguments: CommonCompilerArguments) {
-    super.applyCompilerArguments(arguments)
-    try { this[P] = arguments.pluginOptions } catch (_: NoSuchMethodError) {  }
-    try { this[XX_LANGUAGE] = arguments.manuallyConfiguredFeatures } catch (_: NoSuchMethodError) {  }
-    try { this[XX_DEBUG_LEVEL_COMPILER_CHECKS] = arguments.debugLevelCompilerChecks } catch (_: NoSuchMethodError) {  }
-    try { this[XX_DUMP_MODEL] = arguments.dumpArgumentsDir } catch (_: NoSuchMethodError) {  }
-    try { this[XX_EXPLICIT_RETURN_TYPES] = arguments.explicitReturnTypes.let { ExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::explicitReturnTypes, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -XXexplicit-return-types value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[XX_LENIENT_MODE] = arguments.lenientMode } catch (_: NoSuchMethodError) {  }
-    try { this[X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS] = arguments.allowAnyScriptsInSourceRoots } catch (_: NoSuchMethodError) {  }
-    try { this[X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS] = arguments.allowConditionImpliesReturnsContracts } catch (_: NoSuchMethodError) {  }
-    try { this[X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS] = arguments.allowContractsOnMoreFunctions } catch (_: NoSuchMethodError) {  }
-    try { this[X_ALLOW_HOLDSIN_CONTRACT] = arguments.allowHoldsinContract } catch (_: NoSuchMethodError) {  }
-    try { this[X_ALLOW_KOTLIN_PACKAGE] = arguments.allowKotlinPackage } catch (_: NoSuchMethodError) {  }
-    try { this[X_ALLOW_REIFIED_TYPE_IN_CATCH] = arguments.allowReifiedTypeInCatch } catch (_: NoSuchMethodError) {  }
-    try { this[X_ALLOW_RETURNS_RESULT_OF] = arguments.allowReturnsResultOf } catch (_: NoSuchMethodError) {  }
-    try { this[X_ANNOTATION_DEFAULT_TARGET] = arguments.annotationDefaultTarget?.let { AnnotationDefaultTargetMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::annotationDefaultTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xannotation-default-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_ANNOTATION_TARGET_ALL] = arguments.annotationTargetAll } catch (_: NoSuchMethodError) {  }
-    try { this[X_CALLABLE_REFERENCES_TO_CONTEXTUAL] = arguments.callableReferencesToContextual } catch (_: NoSuchMethodError) {  }
-    try { this[X_CHECK_PHASE_CONDITIONS] = arguments.checkPhaseConditions } catch (_: NoSuchMethodError) {  }
-    try { this[X_COLLECTION_LITERALS] = arguments.collectionLiterals } catch (_: NoSuchMethodError) {  }
-    try { this[X_COMMON_SOURCES] = arguments.commonSources } catch (_: NoSuchMethodError) {  }
-    try { this[X_COMPANION_BLOCKS] = arguments.companionBlocks } catch (_: NoSuchMethodError) {  }
-    try { this[X_COMPANION_BLOCKS_AND_EXTENSIONS] = arguments.companionBlocksAndExtensions } catch (_: NoSuchMethodError) {  }
-    try { this[X_COMPILER_PLUGIN] = arguments.pluginConfigurations } catch (_: NoSuchMethodError) {  }
-    try { this[X_COMPILER_PLUGIN_ORDER] = arguments.pluginOrderConstraints } catch (_: NoSuchMethodError) {  }
-    try { this[X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY] = arguments.consistentDataClassCopyVisibility } catch (_: NoSuchMethodError) {  }
-    try { this[X_CONTEXT_PARAMETERS] = arguments.contextParameters } catch (_: NoSuchMethodError) {  }
-    try { this[X_CONTEXT_RECEIVERS] = arguments.getUsingReflection<Boolean>("contextReceivers") } catch (_: NoSuchMethodError) {  }
-    try { this[X_CONTEXT_SENSITIVE_RESOLUTION] = arguments.contextSensitiveResolution } catch (_: NoSuchMethodError) {  }
-    try { this[X_DATA_FLOW_BASED_EXHAUSTIVENESS] = arguments.dataFlowBasedExhaustiveness } catch (_: NoSuchMethodError) {  }
-    try { this[X_DETAILED_PERF] = arguments.detailedPerf } catch (_: NoSuchMethodError) {  }
-    try { this[X_DIRECT_JAVA_ACTUALIZATION] = arguments.directJavaActualization } catch (_: NoSuchMethodError) {  }
-    try { this[X_DISABLE_DEFAULT_SCRIPTING_PLUGIN] = arguments.disableDefaultScriptingPlugin } catch (_: NoSuchMethodError) {  }
-    try { this[X_DISABLE_IR_CHECKERS] = arguments.disableIrCheckers } catch (_: NoSuchMethodError) {  }
-    try { this[X_DISABLE_PHASES] = arguments.disablePhases.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_DONT_SORT_SOURCE_FILES] = arguments.dontSortSourceFiles } catch (_: NoSuchMethodError) {  }
-    try { this[X_DONT_WARN_ON_ERROR_SUPPRESSION] = arguments.dontWarnOnErrorSuppression } catch (_: NoSuchMethodError) {  }
-    try { this[X_DUMP_DIRECTORY] = arguments.dumpDirectory?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_DUMP_FQNAME] = arguments.dumpOnlyFqName } catch (_: NoSuchMethodError) {  }
-    try { this[X_DUMP_PERF] = arguments.dumpPerf?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_EAGER_LAMBDA_ANALYSIS] = arguments.eagerLambdaAnalysis } catch (_: NoSuchMethodError) {  }
-    try { this[X_ENABLE_ADDITIONAL_IR_CHECKERS] = arguments.enableAdditionalIrCheckers } catch (_: NoSuchMethodError) {  }
-    try { this[X_ENABLE_INCREMENTAL_COMPILATION] = arguments.incrementalCompilation } catch (_: NoSuchMethodError) {  }
-    try { this[X_ESCAPING_FUNCTIONS] = arguments.escapingFunctions.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_EXPECT_ACTUAL_CLASSES] = arguments.expectActualClasses } catch (_: NoSuchMethodError) {  }
-    try { this[X_EXPLICIT_API] = arguments.explicitApi.let { ExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::explicitApi, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xexplicit-api value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_EXPLICIT_BACKING_FIELDS] = arguments.explicitBackingFields } catch (_: NoSuchMethodError) {  }
-    try { this[X_EXPLICIT_CONTEXT_ARGUMENTS] = arguments.explicitContextArguments } catch (_: NoSuchMethodError) {  }
-    try { this[X_FIR_AGGRESSIVE_PRUNING] = arguments.firAggressivePruning } catch (_: NoSuchMethodError) {  }
-    try { this[X_FRAGMENT_DEPENDENCY] = arguments.fragmentDependencies } catch (_: NoSuchMethodError) {  }
-    try { this[X_FRAGMENT_FRIEND_DEPENDENCY] = arguments.fragmentFriendDependencies } catch (_: NoSuchMethodError) {  }
-    try { this[X_FRAGMENT_REFINES] = arguments.fragmentRefines } catch (_: NoSuchMethodError) {  }
-    try { this[X_FRAGMENT_SOURCES] = arguments.fragmentSources } catch (_: NoSuchMethodError) {  }
-    try { this[X_FRAGMENTS] = arguments.fragments } catch (_: NoSuchMethodError) {  }
-    try { this[X_HEADER_MODE] = arguments.headerMode } catch (_: NoSuchMethodError) {  }
-    try { this[X_HEADER_MODE_TYPE] = arguments.headerModeType.let { HeaderMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::headerModeType, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xheader-mode-type value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_IGNORE_CONST_OPTIMIZATION_ERRORS] = arguments.ignoreConstOptimizationErrors } catch (_: NoSuchMethodError) {  }
-    try { this[X_INLINE_CLASSES] = arguments.inlineClasses } catch (_: NoSuchMethodError) {  }
-    try { this[X_INTELLIJ_PLUGIN_ROOT] = arguments.intellijPluginRoot } catch (_: NoSuchMethodError) {  }
-    try { this[X_INTRINSIC_CONST_EVALUATION] = arguments.intrinsicConstEvaluation } catch (_: NoSuchMethodError) {  }
-    try { this[X_LIST_PHASES] = arguments.listPhases } catch (_: NoSuchMethodError) {  }
-    try { this[X_LOCAL_TYPE_ALIASES] = arguments.localTypeAliases } catch (_: NoSuchMethodError) {  }
-    try { this[X_METADATA_KLIB] = arguments.metadataKlib } catch (_: NoSuchMethodError) {  }
-    try { this[X_METADATA_VERSION] = arguments.metadataVersion } catch (_: NoSuchMethodError) {  }
-    try { this[X_MULTI_DOLLAR_INTERPOLATION] = arguments.multiDollarInterpolation } catch (_: NoSuchMethodError) {  }
-    try { this[X_MULTI_PLATFORM] = arguments.multiPlatform } catch (_: NoSuchMethodError) {  }
-    try { this[X_NAME_BASED_DESTRUCTURING] = arguments.nameBasedDestructuring?.let { NameBasedDestructuringMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::nameBasedDestructuring, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xname-based-destructuring value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_NESTED_TYPE_ALIASES] = arguments.nestedTypeAliases } catch (_: NoSuchMethodError) {  }
-    try { this[X_NEW_INFERENCE] = arguments.newInference } catch (_: NoSuchMethodError) {  }
-    try { this[X_NO_CHECK_ACTUAL] = arguments.noCheckActual } catch (_: NoSuchMethodError) {  }
-    try { this[X_NO_INLINE] = arguments.noInline } catch (_: NoSuchMethodError) {  }
-    try { this[X_NON_LOCAL_BREAK_CONTINUE] = arguments.nonLocalBreakContinue } catch (_: NoSuchMethodError) {  }
-    try { this[X_PHASES_TO_DUMP] = arguments.phasesToDump.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_PHASES_TO_DUMP_AFTER] = arguments.phasesToDumpAfter.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_PHASES_TO_DUMP_BEFORE] = arguments.phasesToDumpBefore.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_PHASES_TO_VALIDATE] = arguments.phasesToValidate.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_PHASES_TO_VALIDATE_AFTER] = arguments.phasesToValidateAfter.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_PHASES_TO_VALIDATE_BEFORE] = arguments.phasesToValidateBefore.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_PLUGIN] = arguments.pluginClasspaths } catch (_: NoSuchMethodError) {  }
-    try { this[X_PRINT_CONFIGURATION] = arguments.printConfiguration } catch (_: NoSuchMethodError) {  }
-    try { this[X_PROFILE_PHASES] = arguments.profilePhases } catch (_: NoSuchMethodError) {  }
-    try { this[X_RENDER_INTERNAL_DIAGNOSTIC_NAMES] = arguments.renderInternalDiagnosticNames } catch (_: NoSuchMethodError) {  }
-    try { this[X_REPL] = arguments.repl } catch (_: NoSuchMethodError) {  }
-    try { this[X_REPORT_ALL_WARNINGS] = arguments.reportAllWarnings } catch (_: NoSuchMethodError) {  }
-    try { this[X_REPORT_OUTPUT_FILES] = arguments.reportOutputFiles } catch (_: NoSuchMethodError) {  }
-    try { this[X_REPORT_PERF] = arguments.reportPerf } catch (_: NoSuchMethodError) {  }
-    try { this[X_RETURN_VALUE_CHECKER] = arguments.returnValueChecker.let { ReturnValueCheckerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::returnValueChecker, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xreturn-value-checker value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_SEPARATE_KMP_COMPILATION] = arguments.separateKmpCompilationScheme } catch (_: NoSuchMethodError) {  }
-    try { this[X_SKIP_METADATA_VERSION_CHECK] = arguments.skipMetadataVersionCheck } catch (_: NoSuchMethodError) {  }
-    try { this[X_SKIP_PRERELEASE_CHECK] = arguments.skipPrereleaseCheck } catch (_: NoSuchMethodError) {  }
-    try { this[X_STDLIB_COMPILATION] = arguments.stdlibCompilation } catch (_: NoSuchMethodError) {  }
-    try { this[X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR] = arguments.getUsingReflection<Boolean>("suppressApiVersionGreaterThanLanguageVersionError") } catch (_: NoSuchMethodError) {  }
-    try { this[X_SUPPRESS_VERSION_WARNINGS] = arguments.suppressVersionWarnings } catch (_: NoSuchMethodError) {  }
-    try { this[X_SUPPRESS_WARNING] = arguments.suppressedDiagnostics.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_UNRESTRICTED_BUILDER_INFERENCE] = arguments.unrestrictedBuilderInference } catch (_: NoSuchMethodError) {  }
-    try { this[X_USE_FIR_EXPERIMENTAL_CHECKERS] = arguments.useFirExperimentalCheckers } catch (_: NoSuchMethodError) {  }
-    try { this[X_USE_FIR_IC] = arguments.useFirIC } catch (_: NoSuchMethodError) {  }
-    try { this[X_USE_FIR_LT] = arguments.useFirLT } catch (_: NoSuchMethodError) {  }
-    try { this[X_VERBOSE_PHASES] = arguments.verbosePhases.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_VERIFY_IR] = arguments.verifyIr?.let { VerifyIrMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::verifyIr, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xverify-ir value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_VERIFY_IR_NESTED_OFFSETS] = arguments.getUsingReflection<Boolean>("verifyIrNestedOffsets") } catch (_: NoSuchMethodError) {  }
-    try { this[X_VERIFY_IR_VISIBILITY] = arguments.getUsingReflection<Boolean>("verifyIrVisibility") } catch (_: NoSuchMethodError) {  }
-    try { this[X_WHEN_GUARDS] = arguments.whenGuards } catch (_: NoSuchMethodError) {  }
-    try { this[API_VERSION] = arguments.apiVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::apiVersion, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -api-version value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[KOTLIN_HOME] = arguments.kotlinHome?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[LANGUAGE_VERSION] = arguments.languageVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::languageVersion, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -language-version value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[OPT_IN] = arguments.optIn.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[PROGRESSIVE] = arguments.progressiveMode } catch (_: NoSuchMethodError) {  }
-    try { this[SCRIPT] = arguments.script } catch (_: NoSuchMethodError) {  }
+  protected fun applyCompilerArguments(arguments: CommonCompilerArguments, onlyExplicit: Boolean = false) {
+    super.applyCompilerArguments(arguments, onlyExplicit)
+    try { if (!onlyExplicit || isExplicit(arguments, "-P")) {
+          this[P] = arguments.pluginOptions}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-XXLanguage")) {
+          this[XX_LANGUAGE] = arguments.manuallyConfiguredFeatures}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-XXdebug-level-compiler-checks")) {
+          this[XX_DEBUG_LEVEL_COMPILER_CHECKS] = arguments.debugLevelCompilerChecks}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-XXdump-model")) {
+          this[XX_DUMP_MODEL] = arguments.dumpArgumentsDir}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-XXexplicit-return-types")) {
+          this[XX_EXPLICIT_RETURN_TYPES] = arguments.explicitReturnTypes.let { ExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::explicitReturnTypes, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -XXexplicit-return-types value: $it") }}
+         } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-XXlenient-mode")) {
+          this[XX_LENIENT_MODE] = arguments.lenientMode}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xallow-any-scripts-in-source-roots")) {
+          this[X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS] = arguments.allowAnyScriptsInSourceRoots}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xallow-condition-implies-returns-contracts")) {
+          this[X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS] = arguments.allowConditionImpliesReturnsContracts}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xallow-contracts-on-more-functions")) {
+          this[X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS] = arguments.allowContractsOnMoreFunctions}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xallow-holdsin-contract")) {
+          this[X_ALLOW_HOLDSIN_CONTRACT] = arguments.allowHoldsinContract}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xallow-kotlin-package")) {
+          this[X_ALLOW_KOTLIN_PACKAGE] = arguments.allowKotlinPackage}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xallow-reified-type-in-catch")) {
+          this[X_ALLOW_REIFIED_TYPE_IN_CATCH] = arguments.allowReifiedTypeInCatch}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xallow-returns-result-of")) {
+          this[X_ALLOW_RETURNS_RESULT_OF] = arguments.allowReturnsResultOf}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xannotation-default-target")) {
+          this[X_ANNOTATION_DEFAULT_TARGET] = arguments.annotationDefaultTarget?.let { AnnotationDefaultTargetMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::annotationDefaultTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xannotation-default-target value: $it") }}
+         } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xannotation-target-all")) {
+          this[X_ANNOTATION_TARGET_ALL] = arguments.annotationTargetAll}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xcallable-references-to-contextual")) {
+          this[X_CALLABLE_REFERENCES_TO_CONTEXTUAL] = arguments.callableReferencesToContextual}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xcheck-phase-conditions")) {
+          this[X_CHECK_PHASE_CONDITIONS] = arguments.checkPhaseConditions}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xcollection-literals")) {
+          this[X_COLLECTION_LITERALS] = arguments.collectionLiterals}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xcommon-sources")) {
+          this[X_COMMON_SOURCES] = arguments.commonSources}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xcompanion-blocks")) {
+          this[X_COMPANION_BLOCKS] = arguments.companionBlocks}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xcompanion-blocks-and-extensions")) {
+          this[X_COMPANION_BLOCKS_AND_EXTENSIONS] = arguments.companionBlocksAndExtensions}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xcompiler-plugin")) {
+          this[X_COMPILER_PLUGIN] = arguments.pluginConfigurations}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xcompiler-plugin-order")) {
+          this[X_COMPILER_PLUGIN_ORDER] = arguments.pluginOrderConstraints}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xconsistent-data-class-copy-visibility")) {
+          this[X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY] = arguments.consistentDataClassCopyVisibility}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xcontext-parameters")) {
+          this[X_CONTEXT_PARAMETERS] = arguments.contextParameters}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xcontext-receivers")) {
+          this[X_CONTEXT_RECEIVERS] = arguments.getUsingReflection<Boolean>("contextReceivers")}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xcontext-sensitive-resolution")) {
+          this[X_CONTEXT_SENSITIVE_RESOLUTION] = arguments.contextSensitiveResolution}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xdata-flow-based-exhaustiveness")) {
+          this[X_DATA_FLOW_BASED_EXHAUSTIVENESS] = arguments.dataFlowBasedExhaustiveness}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xdetailed-perf")) {
+          this[X_DETAILED_PERF] = arguments.detailedPerf}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xdirect-java-actualization")) {
+          this[X_DIRECT_JAVA_ACTUALIZATION] = arguments.directJavaActualization}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xdisable-default-scripting-plugin")) {
+          this[X_DISABLE_DEFAULT_SCRIPTING_PLUGIN] = arguments.disableDefaultScriptingPlugin}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xdisable-ir-checkers")) {
+          this[X_DISABLE_IR_CHECKERS] = arguments.disableIrCheckers}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xdisable-phases")) {
+          this[X_DISABLE_PHASES] = arguments.disablePhases.toListOrEmpty()}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xdont-sort-source-files")) {
+          this[X_DONT_SORT_SOURCE_FILES] = arguments.dontSortSourceFiles}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xdont-warn-on-error-suppression")) {
+          this[X_DONT_WARN_ON_ERROR_SUPPRESSION] = arguments.dontWarnOnErrorSuppression}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xdump-directory")) {
+          this[X_DUMP_DIRECTORY] = arguments.dumpDirectory?.let { Path(it) }}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xdump-fqname")) {
+          this[X_DUMP_FQNAME] = arguments.dumpOnlyFqName}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xdump-perf")) {
+          this[X_DUMP_PERF] = arguments.dumpPerf?.let { Path(it) }}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xeager-lambda-analysis")) {
+          this[X_EAGER_LAMBDA_ANALYSIS] = arguments.eagerLambdaAnalysis}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xenable-additional-ir-checkers")) {
+          this[X_ENABLE_ADDITIONAL_IR_CHECKERS] = arguments.enableAdditionalIrCheckers}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xenable-incremental-compilation")) {
+          this[X_ENABLE_INCREMENTAL_COMPILATION] = arguments.incrementalCompilation}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xescaping-functions")) {
+          this[X_ESCAPING_FUNCTIONS] = arguments.escapingFunctions.toListOrEmpty()}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xexpect-actual-classes")) {
+          this[X_EXPECT_ACTUAL_CLASSES] = arguments.expectActualClasses}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xexplicit-api")) {
+          this[X_EXPLICIT_API] = arguments.explicitApi.let { ExplicitApiMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::explicitApi, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xexplicit-api value: $it") }}
+         } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xexplicit-backing-fields")) {
+          this[X_EXPLICIT_BACKING_FIELDS] = arguments.explicitBackingFields}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xexplicit-context-arguments")) {
+          this[X_EXPLICIT_CONTEXT_ARGUMENTS] = arguments.explicitContextArguments}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xfir-aggressive-pruning")) {
+          this[X_FIR_AGGRESSIVE_PRUNING] = arguments.firAggressivePruning}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xfragment-dependency")) {
+          this[X_FRAGMENT_DEPENDENCY] = arguments.fragmentDependencies}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xfragment-friend-dependency")) {
+          this[X_FRAGMENT_FRIEND_DEPENDENCY] = arguments.fragmentFriendDependencies}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xfragment-refines")) {
+          this[X_FRAGMENT_REFINES] = arguments.fragmentRefines}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xfragment-sources")) {
+          this[X_FRAGMENT_SOURCES] = arguments.fragmentSources}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xfragments")) {
+          this[X_FRAGMENTS] = arguments.fragments}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xheader-mode")) {
+          this[X_HEADER_MODE] = arguments.headerMode}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xheader-mode-type")) {
+          this[X_HEADER_MODE_TYPE] = arguments.headerModeType.let { HeaderMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::headerModeType, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xheader-mode-type value: $it") }}
+         } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xignore-const-optimization-errors")) {
+          this[X_IGNORE_CONST_OPTIMIZATION_ERRORS] = arguments.ignoreConstOptimizationErrors}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xinline-classes")) {
+          this[X_INLINE_CLASSES] = arguments.inlineClasses}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xintellij-plugin-root")) {
+          this[X_INTELLIJ_PLUGIN_ROOT] = arguments.intellijPluginRoot}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xintrinsic-const-evaluation")) {
+          this[X_INTRINSIC_CONST_EVALUATION] = arguments.intrinsicConstEvaluation}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xlist-phases")) {
+          this[X_LIST_PHASES] = arguments.listPhases}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xlocal-type-aliases")) {
+          this[X_LOCAL_TYPE_ALIASES] = arguments.localTypeAliases}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xmetadata-klib")) {
+          this[X_METADATA_KLIB] = arguments.metadataKlib}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xmetadata-version")) {
+          this[X_METADATA_VERSION] = arguments.metadataVersion}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xmulti-dollar-interpolation")) {
+          this[X_MULTI_DOLLAR_INTERPOLATION] = arguments.multiDollarInterpolation}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xmulti-platform")) {
+          this[X_MULTI_PLATFORM] = arguments.multiPlatform}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xname-based-destructuring")) {
+          this[X_NAME_BASED_DESTRUCTURING] = arguments.nameBasedDestructuring?.let { NameBasedDestructuringMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::nameBasedDestructuring, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xname-based-destructuring value: $it") }}
+         } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xnested-type-aliases")) {
+          this[X_NESTED_TYPE_ALIASES] = arguments.nestedTypeAliases}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xnew-inference")) {
+          this[X_NEW_INFERENCE] = arguments.newInference}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xno-check-actual")) {
+          this[X_NO_CHECK_ACTUAL] = arguments.noCheckActual}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xno-inline")) {
+          this[X_NO_INLINE] = arguments.noInline}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xnon-local-break-continue")) {
+          this[X_NON_LOCAL_BREAK_CONTINUE] = arguments.nonLocalBreakContinue}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xphases-to-dump")) {
+          this[X_PHASES_TO_DUMP] = arguments.phasesToDump.toListOrEmpty()}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xphases-to-dump-after")) {
+          this[X_PHASES_TO_DUMP_AFTER] = arguments.phasesToDumpAfter.toListOrEmpty()}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xphases-to-dump-before")) {
+          this[X_PHASES_TO_DUMP_BEFORE] = arguments.phasesToDumpBefore.toListOrEmpty()}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xphases-to-validate")) {
+          this[X_PHASES_TO_VALIDATE] = arguments.phasesToValidate.toListOrEmpty()}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xphases-to-validate-after")) {
+          this[X_PHASES_TO_VALIDATE_AFTER] = arguments.phasesToValidateAfter.toListOrEmpty()}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xphases-to-validate-before")) {
+          this[X_PHASES_TO_VALIDATE_BEFORE] = arguments.phasesToValidateBefore.toListOrEmpty()}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xplugin")) {
+          this[X_PLUGIN] = arguments.pluginClasspaths}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xprint-configuration")) {
+          this[X_PRINT_CONFIGURATION] = arguments.printConfiguration}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xprofile-phases")) {
+          this[X_PROFILE_PHASES] = arguments.profilePhases}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xrender-internal-diagnostic-names")) {
+          this[X_RENDER_INTERNAL_DIAGNOSTIC_NAMES] = arguments.renderInternalDiagnosticNames}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xrepl")) {
+          this[X_REPL] = arguments.repl}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xreport-all-warnings")) {
+          this[X_REPORT_ALL_WARNINGS] = arguments.reportAllWarnings}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xreport-output-files")) {
+          this[X_REPORT_OUTPUT_FILES] = arguments.reportOutputFiles}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xreport-perf")) {
+          this[X_REPORT_PERF] = arguments.reportPerf}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xreturn-value-checker")) {
+          this[X_RETURN_VALUE_CHECKER] = arguments.returnValueChecker.let { ReturnValueCheckerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::returnValueChecker, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xreturn-value-checker value: $it") }}
+         } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xseparate-kmp-compilation")) {
+          this[X_SEPARATE_KMP_COMPILATION] = arguments.separateKmpCompilationScheme}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xskip-metadata-version-check")) {
+          this[X_SKIP_METADATA_VERSION_CHECK] = arguments.skipMetadataVersionCheck}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xskip-prerelease-check")) {
+          this[X_SKIP_PRERELEASE_CHECK] = arguments.skipPrereleaseCheck}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xstdlib-compilation")) {
+          this[X_STDLIB_COMPILATION] = arguments.stdlibCompilation}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xsuppress-api-version-greater-than-language-version-error")) {
+          this[X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR] = arguments.getUsingReflection<Boolean>("suppressApiVersionGreaterThanLanguageVersionError")}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xsuppress-version-warnings")) {
+          this[X_SUPPRESS_VERSION_WARNINGS] = arguments.suppressVersionWarnings}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xsuppress-warning")) {
+          this[X_SUPPRESS_WARNING] = arguments.suppressedDiagnostics.toListOrEmpty()}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xunrestricted-builder-inference")) {
+          this[X_UNRESTRICTED_BUILDER_INFERENCE] = arguments.unrestrictedBuilderInference}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xuse-fir-experimental-checkers")) {
+          this[X_USE_FIR_EXPERIMENTAL_CHECKERS] = arguments.useFirExperimentalCheckers}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xuse-fir-ic")) {
+          this[X_USE_FIR_IC] = arguments.useFirIC}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xuse-fir-lt")) {
+          this[X_USE_FIR_LT] = arguments.useFirLT}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xverbose-phases")) {
+          this[X_VERBOSE_PHASES] = arguments.verbosePhases.toListOrEmpty()}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xverify-ir")) {
+          this[X_VERIFY_IR] = arguments.verifyIr?.let { VerifyIrMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::verifyIr, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xverify-ir value: $it") }}
+         } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xverify-ir-nested-offsets")) {
+          this[X_VERIFY_IR_NESTED_OFFSETS] = arguments.getUsingReflection<Boolean>("verifyIrNestedOffsets")}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xverify-ir-visibility")) {
+          this[X_VERIFY_IR_VISIBILITY] = arguments.getUsingReflection<Boolean>("verifyIrVisibility")}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwhen-guards")) {
+          this[X_WHEN_GUARDS] = arguments.whenGuards}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-api-version")) {
+          this[API_VERSION] = arguments.apiVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::apiVersion, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -api-version value: $it") }}
+         } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-kotlin-home")) {
+          this[KOTLIN_HOME] = arguments.kotlinHome?.let { Path(it) }}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-language-version")) {
+          this[LANGUAGE_VERSION] = arguments.languageVersion?.let { KotlinVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::languageVersion, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -language-version value: $it") }}
+         } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-opt-in")) {
+          this[OPT_IN] = arguments.optIn.toListOrEmpty()}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-progressive")) {
+          this[PROGRESSIVE] = arguments.progressiveMode}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-script")) {
+          this[SCRIPT] = arguments.script}
+         } catch (_: NoSuchMethodError) {  }
     try { this[COMPILER_PLUGINS] = applyCompilerPlugins(if(COMPILER_PLUGINS in this) this[COMPILER_PLUGINS] else emptyList<CompilerPlugin>(), arguments) } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_WARNING_LEVEL] = applyWarningLevels(if(X_WARNING_LEVEL in this) this[X_WARNING_LEVEL] else emptyList<WarningLevel>(), arguments) } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
+    if (!onlyExplicit || isExplicit(arguments, "-XXLanguage")) {
+      internalArguments.clear()
+      internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
+    }
   }
 
   @Suppress("DEPRECATION")

@@ -96,6 +96,7 @@ internal abstract class CommonToolArgumentsImpl(
     try { this[NOWARN] = arguments.suppressWarnings } catch (_: NoSuchMethodError) {  }
     try { this[VERBOSE] = arguments.verbose } catch (_: NoSuchMethodError) {  }
     try { this[VERSION] = arguments.version } catch (_: NoSuchMethodError) {  }
+    internalArguments.clear()
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 

@@ -94,11 +94,21 @@ internal class BtaImplOptionsGenerator(
                     ) {
                         initializer("%M()", MemberName("kotlin.collections", "mutableSetOf"))
                     }
+
+                    if (!generateCompatLayer) {
+                        function("isExplicit") {
+                            addModifiers(KModifier.PROTECTED)
+                            addParameter("arguments", ClassName("org.jetbrains.kotlin.cli.common.arguments", "CommonToolArguments"))
+                            addParameter("cliName", String::class)
+                            returns(BOOLEAN)
+                            addStatement("return %M(arguments.javaClass).cliArgNameToArguments[cliName] in arguments.explicitArguments", MemberName("org.jetbrains.kotlin.cli.common.arguments", "getArgumentsInfo"))
+                        }
+                    }
                 }
 
                 val toCompilerConverterFun = toCompilerConverterFunBuilder(level, parentClass)
                 val toCompilerArgumentsAffectingOutcomeFun = toCompilerArgumentsAffectingOutcomeFunBuilder(level, parentClass)
-                val applyCompilerArgumentsFun = applyCompilerArgumentsFunBuilder(level, parentClass)
+                val applyCompilerArgumentsFun = applyCompilerArgumentsFunBuilder(level, parentClass, generateCompatLayer)
                 val defaultsInitializer = CodeBlock.builder()
 
                 val argumentTypeNameString =
@@ -186,7 +196,14 @@ internal class BtaImplOptionsGenerator(
                 toCompilerConverterFun.addStatement("return arguments")
                 addFunction(toCompilerConverterFun.build())
 
+                if (!generateCompatLayer) {
+                    applyCompilerArgumentsFun.beginControlFlow("if (!onlyExplicit || isExplicit(arguments, %S))", "-XXLanguage")
+                }
+                applyCompilerArgumentsFun.addStatement("internalArguments.clear()")
                 applyCompilerArgumentsFun.addStatement("internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })")
+                if (!generateCompatLayer) {
+                    applyCompilerArgumentsFun.endControlFlow()
+                }
                 addFunction(applyCompilerArgumentsFun.build())
 
                 if (!generateCompatLayer) {
@@ -370,10 +387,17 @@ internal class BtaImplOptionsGenerator(
             }
         }
 
+        val applierCode = CodeBlock.builder().apply {
+//            if (!generateCompatLayer) {
+//                beginControlFlow("if (!onlyExplicit || isExplicit(arguments, %S))", "-${argument.name}")
+//            }
+            add("this[%M] = %M(if(%M in this) this[%M] else %L, arguments)", member, applier, member, member, argument.defaultValue)
+//            if (!generateCompatLayer) {
+//                endControlFlow()
+//            }
+        }.build()
         applyCompilerArgumentsFun.addSafeMethodAccessStatement(
-            CodeBlock.builder().apply {
-                add("this[%M] = %M(if(%M in this) this[%M] else %L, arguments)", member, applier, member, member, argument.defaultValue)
-            }.build(),
+            applierCode,
             catches =
                 buildList {
                     if (!generateCompatLayer) {
@@ -434,8 +458,17 @@ internal class BtaImplOptionsGenerator(
         val compilerToBtaStatement = buildCompilerToBtaValueTransform(
             member, type, argument, effectiveCompilerName, wasRemoved, argumentTypeParameter
         )
+        val wrappedCompilerToBtaStatement = CodeBlock.builder().apply {
+            if (!generateCompatLayer) {
+                beginControlFlow("if (!onlyExplicit || isExplicit(arguments, %S))", "-${argument.name}")
+            }
+            add(compilerToBtaStatement)
+            if (!generateCompatLayer) {
+                endControlFlow()
+            }
+        }.build()
         applyCompilerArgumentsFun.addSafeMethodAccessStatement(
-            compilerToBtaStatement,
+            wrappedCompilerToBtaStatement,
             catches = buildList {
                 if (!generateCompatLayer && (type.isGeneratedEnum || type.isGeneratedEnumList())) {
                     add(catchCompilerArgumentsParseException())
@@ -1043,19 +1076,50 @@ private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
                 MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
             )
         }
-        addStatement("applyCompilerArguments(compilerArgs)")
+        if (!generateCompatLayer) {
+            val apiClassName = ClassName("org.jetbrains.kotlin.buildtools.api", "KotlinToolchains")
+            val toolingVersionFunctionName = MemberName("org.jetbrains.kotlin.tooling.core", "KotlinToolingVersion")
+            addCode(
+                CodeBlock.builder()
+                    .add("val onlyExplicit = try { ")
+                    .add(
+                        "%M(%T.getVersion()) >= %M(%S)",
+                        toolingVersionFunctionName,
+                        apiClassName,
+                        toolingVersionFunctionName,
+                        "2.5.0-snapshot"
+                    )
+                    .add(" } catch (e: %T) { false }\n", NoSuchMethodError::class)
+                    .build()
+            )
+            addStatement("applyCompilerArguments(compilerArgs, onlyExplicit = onlyExplicit)")
+        } else {
+            addStatement("applyCompilerArguments(compilerArgs)")
+        }
     }
 }
 
 private fun applyCompilerArgumentsFunBuilder(
     level: KotlinCompilerArgumentsLevel,
     parentClass: TypeName?,
+    generateCompatLayer: Boolean,
 ): FunSpec.Builder = FunSpec.builder("applyCompilerArguments").apply {
     if (parentClass != null) {
-        addStatement("super.applyCompilerArguments(arguments)")
+        if (generateCompatLayer) {
+            addStatement("super.applyCompilerArguments(arguments)")
+        } else {
+            addStatement("super.applyCompilerArguments(arguments, onlyExplicit)")
+        }
     }
     val compilerArgumentsClass = level.getCompilerArgumentsClassName()
     addParameter("arguments", compilerArgumentsClass)
+    if (!generateCompatLayer) {
+        addParameter(
+            ParameterSpec.builder("onlyExplicit", BOOLEAN)
+                .defaultValue("false")
+                .build()
+        )
+    }
     annotation<Suppress> {
         addMember("%S", "DEPRECATION")
     }

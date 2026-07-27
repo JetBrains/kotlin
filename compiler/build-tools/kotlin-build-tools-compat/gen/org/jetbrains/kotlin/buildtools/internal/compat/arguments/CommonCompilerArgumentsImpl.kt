@@ -340,6 +340,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[PROGRESSIVE] = arguments.progressiveMode } catch (_: NoSuchMethodError) {  }
     try { this[SCRIPT] = arguments.script } catch (_: NoSuchMethodError) {  }
     try { this[X_WARNING_LEVEL] = applyWarningLevels(if(X_WARNING_LEVEL in this) this[X_WARNING_LEVEL] else emptyList<WarningLevel>(), arguments) } catch (_: NoSuchMethodError) {  }
+    internalArguments.clear()
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 

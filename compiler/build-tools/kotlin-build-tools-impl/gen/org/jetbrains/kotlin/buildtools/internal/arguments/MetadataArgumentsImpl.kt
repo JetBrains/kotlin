@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import java.io.File
 import java.lang.IllegalStateException
+import java.lang.NoSuchMethodError
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Int
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.MetadataArgumentsImp
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.MetadataArgumentsImpl.Companion.X_TARGET_PLATFORM
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.MetadataTargetPlatform
@@ -45,6 +47,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
@@ -111,17 +114,36 @@ internal class MetadataArgumentsImpl(
   }
 
   @Suppress("DEPRECATION")
-  protected fun applyCompilerArguments(arguments: K2MetadataCompilerArguments) {
-    super.applyCompilerArguments(arguments)
-    try { this[X_FRIEND_PATHS] = arguments.friendPaths.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT] = arguments.klibZipFileAccessorCacheLimit.let { it.toInt() } } catch (_: NoSuchMethodError) {  }
-    try { this[X_LEGACY_METADATA_JAR_K2] = arguments.legacyMetadataJar } catch (_: NoSuchMethodError) {  }
-    try { this[X_REFINES_PATHS] = arguments.refinesPaths.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_TARGET_PLATFORM] = arguments.targetPlatform.map { MetadataTargetPlatform.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xtarget-platform value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[CLASSPATH] = arguments.classpath?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[D] = arguments.destination } catch (_: NoSuchMethodError) {  }
-    try { this[MODULE_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }
-    internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
+  protected fun applyCompilerArguments(arguments: K2MetadataCompilerArguments, onlyExplicit: Boolean = false) {
+    super.applyCompilerArguments(arguments, onlyExplicit)
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xfriend-paths")) {
+          this[X_FRIEND_PATHS] = arguments.friendPaths.mapOrEmpty { Path(it) }}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xklib-zip-file-accessor-cache-limit")) {
+          this[X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT] = arguments.klibZipFileAccessorCacheLimit.let { it.toInt() }}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xlegacy-metadata-jar-k2")) {
+          this[X_LEGACY_METADATA_JAR_K2] = arguments.legacyMetadataJar}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xrefines-paths")) {
+          this[X_REFINES_PATHS] = arguments.refinesPaths.mapOrEmpty { Path(it) }}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xtarget-platform")) {
+          this[X_TARGET_PLATFORM] = arguments.targetPlatform.map { MetadataTargetPlatform.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xtarget-platform value: $it") }}
+         } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-classpath")) {
+          this[CLASSPATH] = arguments.classpath?.split(File.pathSeparator)?.map { Path(it) }}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-d")) {
+          this[D] = arguments.destination}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-module-name")) {
+          this[MODULE_NAME] = arguments.moduleName}
+         } catch (_: NoSuchMethodError) {  }
+    if (!onlyExplicit || isExplicit(arguments, "-XXLanguage")) {
+      internalArguments.clear()
+      internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
+    }
   }
 
   @Suppress("DEPRECATION")
@@ -142,7 +164,8 @@ internal class MetadataArgumentsImpl(
     val compilerArgs: K2MetadataCompilerArguments = parseCommandLineArguments(arguments)
     collectRestrictedArgViolations(compilerArgs, K2MetadataCompilerArguments())
     validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
-    applyCompilerArguments(compilerArgs)
+    val onlyExplicit = try { KotlinToolingVersion(KotlinToolchains.getVersion()) >= KotlinToolingVersion("2.5.0-snapshot") } catch (e: NoSuchMethodError) { false }
+    applyCompilerArguments(compilerArgs, onlyExplicit = onlyExplicit)
   }
 
   override fun toArgumentStrings(): List<String> {

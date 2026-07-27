@@ -34,8 +34,10 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsI
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.X
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments as ArgumentsCommonToolArguments
-import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments as CommonToolArguments
+import org.jetbrains.kotlin.cli.common.arguments.getArgumentsInfo
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments as ApiArgumentsCommonToolArguments
+import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments as ArgumentsCommonToolArguments
+import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments as CommonArgumentsCommonToolArguments
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
@@ -43,8 +45,8 @@ internal abstract class CommonToolArgumentsImpl(
   private val adapter: CommonToolArgumentValueAdapter? = null,
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : ArgumentsCommonToolArguments,
-    ArgumentsCommonToolArguments.Builder {
+) : ApiArgumentsCommonToolArguments,
+    ApiArgumentsCommonToolArguments.Builder {
   protected val internalArguments: MutableSet<String> = mutableSetOf()
 
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
@@ -61,6 +63,8 @@ internal abstract class CommonToolArgumentsImpl(
   internal val argumentValidationErrors: Set<String>
     get() = _argumentValidationErrors
 
+  protected fun isExplicit(arguments: CommonArgumentsCommonToolArguments, cliName: String): Boolean = getArgumentsInfo(arguments.javaClass).cliArgNameToArguments[cliName] in arguments.explicitArguments
+
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonToolArgument<V>): V = optionsMap[key.id] as V
 
@@ -72,13 +76,13 @@ internal abstract class CommonToolArgumentsImpl(
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>): V {
+  override operator fun <V> `get`(key: ApiArgumentsCommonToolArguments.CommonToolArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
     return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
   }
 
   @UseFromImplModuleRestricted
-  override operator fun <V> `set`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>, `value`: V) {
+  override operator fun <V> `set`(key: ApiArgumentsCommonToolArguments.CommonToolArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
@@ -89,12 +93,12 @@ internal abstract class CommonToolArgumentsImpl(
     message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
     level = DeprecationLevel.ERROR,
   )
-  override operator fun contains(key: ArgumentsCommonToolArguments.CommonToolArgument<*>): Boolean = key.id in optionsMap
+  override operator fun contains(key: ApiArgumentsCommonToolArguments.CommonToolArgument<*>): Boolean = key.id in optionsMap
 
   abstract override fun build(): CommonToolArgumentsImpl
 
   @Suppress("DEPRECATION")
-  public fun toCompilerArguments(arguments: CommonToolArguments): CommonToolArguments {
+  public fun toCompilerArguments(arguments: ArgumentsCommonToolArguments): ArgumentsCommonToolArguments {
     val unknownArgs = optionsMap.keys.filter { it !in knownArguments }
     if (unknownArgs.isNotEmpty()) {
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
@@ -110,25 +114,42 @@ internal abstract class CommonToolArgumentsImpl(
   }
 
   @Suppress("DEPRECATION")
-  protected fun applyCompilerArguments(arguments: CommonToolArguments) {
-    try { this[WERROR] = arguments.allWarningsAsErrors } catch (_: NoSuchMethodError) {  }
-    try { this[WEXTRA] = arguments.extraWarnings } catch (_: NoSuchMethodError) {  }
-    try { this[X] = arguments.extraHelp } catch (_: NoSuchMethodError) {  }
-    try { this[HELP] = arguments.help } catch (_: NoSuchMethodError) {  }
-    try { this[NOWARN] = arguments.suppressWarnings } catch (_: NoSuchMethodError) {  }
-    try { this[VERBOSE] = arguments.verbose } catch (_: NoSuchMethodError) {  }
-    try { this[VERSION] = arguments.version } catch (_: NoSuchMethodError) {  }
-    internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
+  protected fun applyCompilerArguments(arguments: ArgumentsCommonToolArguments, onlyExplicit: Boolean = false) {
+    try { if (!onlyExplicit || isExplicit(arguments, "-Werror")) {
+          this[WERROR] = arguments.allWarningsAsErrors}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Wextra")) {
+          this[WEXTRA] = arguments.extraWarnings}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-X")) {
+          this[X] = arguments.extraHelp}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-help")) {
+          this[HELP] = arguments.help}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-nowarn")) {
+          this[NOWARN] = arguments.suppressWarnings}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-verbose")) {
+          this[VERBOSE] = arguments.verbose}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-version")) {
+          this[VERSION] = arguments.version}
+         } catch (_: NoSuchMethodError) {  }
+    if (!onlyExplicit || isExplicit(arguments, "-XXLanguage")) {
+      internalArguments.clear()
+      internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
+    }
   }
 
   @Suppress("DEPRECATION")
-  public fun toCompilerArgumentsAffectingOutcome(arguments: CommonToolArguments): CommonToolArguments {
+  public fun toCompilerArgumentsAffectingOutcome(arguments: ArgumentsCommonToolArguments): ArgumentsCommonToolArguments {
     if (WERROR in this) { arguments.allWarningsAsErrors = get(WERROR)}
     if (WEXTRA in this) { arguments.extraWarnings = get(WEXTRA)}
     return arguments
   }
 
-  internal open fun collectRestrictedArgViolations(compilerArgs: CommonToolArguments, defaultArgs: CommonToolArguments) {
+  internal open fun collectRestrictedArgViolations(compilerArgs: ArgumentsCommonToolArguments, defaultArgs: ArgumentsCommonToolArguments) {
     _restrictedArgViolations.clear()
   }
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import java.lang.IllegalStateException
+import java.lang.NoSuchMethodError
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.OptIn
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Co
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerKlibArguments
@@ -54,6 +56,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.WasmTarget
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
@@ -168,31 +171,78 @@ internal class WasmArgumentsImpl(
   }
 
   @Suppress("DEPRECATION")
-  protected fun applyCompilerArguments(arguments: KotlinWasmCompilerArguments) {
-    super.applyCompilerArguments(arguments)
-    try { this[X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE] = arguments.irDceDumpReachabilityInfoToFile?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE] = arguments.irDceDumpDeclarationIrSizesToFile?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM] = arguments.wasm } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_IC_GENERATE_UNCHANGED_MODULES] = arguments.regenerateUnchangedModules } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_DEBUG_FRIENDLY] = arguments.forceDebugFriendlyCompilation } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_DEBUG_INFO] = arguments.wasmDebug } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_DEBUGGER_CUSTOM_FORMATTERS] = arguments.debuggerCustomFormatters } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION] = arguments.wasmDisableArrayRangeChecksSafeElimination } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_ENABLE_ARRAY_RANGE_CHECKS] = arguments.wasmEnableArrayRangeChecks } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_ENABLE_ASSERTS] = arguments.wasmEnableAsserts } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE] = arguments.wasmGenerateClosedWorldMultimodule } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_GENERATE_DWARF] = arguments.generateDwarf } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_GENERATE_WAT] = arguments.wasmGenerateWat } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_INCLUDED_MODULE_ONLY] = arguments.wasmIncludedModuleOnly } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX] = arguments.wasmInternalLocalVariablePrefix } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_KCLASS_FQN] = arguments.wasmKClassFqn } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_NO_JSTAG] = arguments.wasmNoJsTag } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES] = arguments.includeUnavailableSourcesIntoSourceMap } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_TARGET] = arguments.wasmTarget?.let { WasmTarget.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::wasmTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwasm-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_USE_NEW_EXCEPTION_PROPOSAL] = arguments.wasmUseNewExceptionProposal } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_USE_STACK_SWITCHING_PROPOSAL] = arguments.wasmUseStackSwitchingProposal } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS] = arguments.wasmUseTrapsInsteadOfExceptions } catch (_: NoSuchMethodError) {  }
-    internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
+  protected fun applyCompilerArguments(arguments: KotlinWasmCompilerArguments, onlyExplicit: Boolean = false) {
+    super.applyCompilerArguments(arguments, onlyExplicit)
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xir-dce-dump-reachability-info-to-file")) {
+          this[X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE] = arguments.irDceDumpReachabilityInfoToFile?.let { Path(it) }}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xir-dump-declaration-ir-sizes-to-file")) {
+          this[X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE] = arguments.irDceDumpDeclarationIrSizesToFile?.let { Path(it) }}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm")) {
+          this[X_WASM] = arguments.wasm}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-IC-generate-unchanged-modules")) {
+          this[X_WASM_IC_GENERATE_UNCHANGED_MODULES] = arguments.regenerateUnchangedModules}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-debug-friendly")) {
+          this[X_WASM_DEBUG_FRIENDLY] = arguments.forceDebugFriendlyCompilation}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-debug-info")) {
+          this[X_WASM_DEBUG_INFO] = arguments.wasmDebug}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-debugger-custom-formatters")) {
+          this[X_WASM_DEBUGGER_CUSTOM_FORMATTERS] = arguments.debuggerCustomFormatters}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-disable-array-range-checks-safe-elimination")) {
+          this[X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION] = arguments.wasmDisableArrayRangeChecksSafeElimination}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-enable-array-range-checks")) {
+          this[X_WASM_ENABLE_ARRAY_RANGE_CHECKS] = arguments.wasmEnableArrayRangeChecks}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-enable-asserts")) {
+          this[X_WASM_ENABLE_ASSERTS] = arguments.wasmEnableAsserts}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-generate-closed-world-multimodule")) {
+          this[X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE] = arguments.wasmGenerateClosedWorldMultimodule}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-generate-dwarf")) {
+          this[X_WASM_GENERATE_DWARF] = arguments.generateDwarf}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-generate-wat")) {
+          this[X_WASM_GENERATE_WAT] = arguments.wasmGenerateWat}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-included-module-only")) {
+          this[X_WASM_INCLUDED_MODULE_ONLY] = arguments.wasmIncludedModuleOnly}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-internal-local-variable-prefix")) {
+          this[X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX] = arguments.wasmInternalLocalVariablePrefix}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-kclass-fqn")) {
+          this[X_WASM_KCLASS_FQN] = arguments.wasmKClassFqn}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-no-jstag")) {
+          this[X_WASM_NO_JSTAG] = arguments.wasmNoJsTag}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-source-map-include-mappings-from-unavailable-sources")) {
+          this[X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES] = arguments.includeUnavailableSourcesIntoSourceMap}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-target")) {
+          this[X_WASM_TARGET] = arguments.wasmTarget?.let { WasmTarget.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::wasmTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwasm-target value: $it") }}
+         } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-use-new-exception-proposal")) {
+          this[X_WASM_USE_NEW_EXCEPTION_PROPOSAL] = arguments.wasmUseNewExceptionProposal}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-use-stack-switching-proposal")) {
+          this[X_WASM_USE_STACK_SWITCHING_PROPOSAL] = arguments.wasmUseStackSwitchingProposal}
+         } catch (_: NoSuchMethodError) {  }
+    try { if (!onlyExplicit || isExplicit(arguments, "-Xwasm-use-traps-instead-of-exceptions")) {
+          this[X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS] = arguments.wasmUseTrapsInsteadOfExceptions}
+         } catch (_: NoSuchMethodError) {  }
+    if (!onlyExplicit || isExplicit(arguments, "-XXLanguage")) {
+      internalArguments.clear()
+      internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
+    }
   }
 
   @Suppress("DEPRECATION")
@@ -227,7 +277,8 @@ internal class WasmArgumentsImpl(
     val compilerArgs: KotlinWasmCompilerArguments = parseCommandLineArguments(arguments)
     collectRestrictedArgViolations(compilerArgs, KotlinWasmCompilerArguments())
     validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
-    applyCompilerArguments(compilerArgs)
+    val onlyExplicit = try { KotlinToolingVersion(KotlinToolchains.getVersion()) >= KotlinToolingVersion("2.5.0-snapshot") } catch (e: NoSuchMethodError) { false }
+    applyCompilerArguments(compilerArgs, onlyExplicit = onlyExplicit)
   }
 
   override fun toArgumentStrings(): List<String> {

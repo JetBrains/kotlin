@@ -346,6 +346,7 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_PROFILE] = applyProfileCompilerCommand(if(X_PROFILE in this) this[X_PROFILE] else null, arguments) } catch (_: NoSuchMethodError) {  }
     try { this[X_NULLABILITY_ANNOTATIONS] = applyNullabilityAnnotations(if(X_NULLABILITY_ANNOTATIONS in this) this[X_NULLABILITY_ANNOTATIONS] else emptyList<NullabilityAnnotation>(), arguments) } catch (_: NoSuchMethodError) {  }
     try { this[X_JSR305] = applyJsr305(if(X_JSR305 in this) this[X_JSR305] else emptyList<Jsr305>(), arguments) } catch (_: NoSuchMethodError) {  }
+    internalArguments.clear()
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
