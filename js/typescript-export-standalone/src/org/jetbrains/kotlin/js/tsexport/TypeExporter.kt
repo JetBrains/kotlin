@@ -104,7 +104,7 @@ internal class TypeExporter(
             return Primitive.Any
         if (type.classId == KaStandardTypeClassIds.UNIT)
             return Primitive.Unit
-        if (type.isNothingType)
+        if (type.classId == KaStandardTypeClassIds.NOTHING)
             return Primitive.Nothing
         type.arrayElementType?.let {
             return if (type.classId == StandardClassIds.Array) {

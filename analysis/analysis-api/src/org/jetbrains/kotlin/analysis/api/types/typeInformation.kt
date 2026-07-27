@@ -355,12 +355,19 @@ public val KaType.isAnyType: Boolean
 /**
  * Whether the [KaType] is a [Nothing] type.
  */
+@Deprecated(
+    message = "This property is obsolete. Use 'classId` instead.",
+    replaceWith = ReplaceWith(
+        expression = "classId == KaStandardTypeClassIds.NOTHING",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.classId",
+            "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
+        ]
+    ),
+)
 context(session: KaSession)
 public val KaType.isNothingType: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.typeInformationProvider.isNothingType(this)
-    }
+    get() = classId == KaStandardTypeClassIds.NOTHING
 
 /**
  * Whether the [KaType] is a [UInt] type.
