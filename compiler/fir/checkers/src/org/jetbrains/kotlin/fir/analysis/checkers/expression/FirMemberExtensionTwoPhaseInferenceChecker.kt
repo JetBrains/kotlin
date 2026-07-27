@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible
+import org.jetbrains.kotlin.fir.types.variance
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
@@ -68,6 +69,7 @@ import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.typeConstructor
+import org.jetbrains.kotlin.types.typeUtil.getEffectiveVariance
 
 object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -75,10 +77,7 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
         val symbol = expression.calleeReference.toResolvedFunctionSymbol() ?: return
         val receiverParameterType = symbol.receiverParameterSymbol?.resolvedType ?: return
         val typeParameters = symbol.typeParameterSymbols
-        val receiverMentionsTypeParameter = receiverParameterType.contains {
-            it.lookupTagIfAny?.toTypeParameterSymbol() in typeParameters
-        }
-        if (!receiverMentionsTypeParameter) return
+        if (!receiverParameterType.containsTypeParameterWithEffectiveVariance(typeParameters.toSet())) return
 
         val normalInference = normalInference(expression, symbol)
         val twoPhaseInference = analyzeOrIgnore(expression, symbol)
@@ -148,6 +147,27 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
                     CallableStatistics(diagnostic.callableId, diagnostic.signature, source, context)
                 }
             statistics.record(diagnostic)
+        }
+    }
+
+    context(context: CheckerContext)
+    private fun ConeKotlinType.containsTypeParameterWithEffectiveVariance(
+        typeParameters: Set<FirTypeParameterSymbol>,
+        positionVariance: Variance = Variance.OUT_VARIANCE,
+    ): Boolean {
+        val expandedType = fullyExpandedType().lowerBoundIfFlexible()
+        if (expandedType.lookupTagIfAny?.toTypeParameterSymbol() in typeParameters) {
+            return positionVariance != Variance.INVARIANT
+        }
+
+        val typeClass = expandedType.classLikeLookupTagIfAny?.toRegularClassSymbol() ?: return false
+        return expandedType.typeArguments.zip(typeClass.typeParameterSymbols).any { [argument, parameter] ->
+            val argumentType = argument.type ?: return@any false
+            val argumentVariance = getEffectiveVariance(parameter.variance, argument.variance)
+            argumentType.containsTypeParameterWithEffectiveVariance(
+                typeParameters,
+                positionVariance.superpose(argumentVariance)
+            )
         }
     }
 
@@ -667,13 +687,13 @@ object FirMemberExtensionTwoPhaseInferenceChecker : FirFunctionCallChecker(MppCh
 
     private fun buildSignature(
         typeParameters: List<FirTypeParameterSymbol>,
-        receiverType: ConeKotlinType?,
+        receiverType: ConeKotlinType,
         valueParameterTypes: List<ConeKotlinType>,
     ): String {
         val typeParameterList = typeParameters.takeIf { it.isNotEmpty() }
             ?.joinToString(prefix = "<", postfix = "> ") { it.renderForSignature() }
             ?: ""
-        val receiver = receiverType?.renderReadable()?.let { "$it." } ?: ""
+        val receiver = receiverType.renderReadable().let { "$it." }
         val parameters = valueParameterTypes.joinToString(prefix = "(", postfix = ")") { it.renderReadable() }
         return "$typeParameterList$receiver$parameters"
     }
