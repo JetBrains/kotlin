@@ -12,9 +12,9 @@ val (() -> Unit).bar: String
 suspend fun suspendingString(): String = "OK"
 
 fun test() {
-    ({ "OK" }).bar
+    ({ "OK" }).<!NONE_APPLICABLE!>bar<!>
 
-    ({ <!ILLEGAL_SUSPEND_FUNCTION_CALL!>suspendingString<!>() }).bar
+    ({ <!ILLEGAL_SUSPEND_FUNCTION_CALL!>suspendingString<!>() }).<!NONE_APPLICABLE!>bar<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, getter, lambdaLiteral, propertyDeclaration,
