@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticIm
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FingerprintSyntheticPackage
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FingerprintXcodeBuild
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.noSyncIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SerializeSwiftPMDependenciesMetadataForLockFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
@@ -47,6 +48,12 @@ import kotlin.test.assertNotSame
 import kotlin.test.assertTrue
 
 class SwiftPMImportUnitTests {
+
+    @Test
+    fun `no synchronization identifier converts Gradle project paths to lower camel case`() {
+        assertEquals("noSyncRight", noSyncIdentifier(":right"))
+        assertEquals("noSyncFooBar", noSyncIdentifier(":foo:bar"))
+    }
 
     @BeforeTest
     fun runOnMacOSOnly() {

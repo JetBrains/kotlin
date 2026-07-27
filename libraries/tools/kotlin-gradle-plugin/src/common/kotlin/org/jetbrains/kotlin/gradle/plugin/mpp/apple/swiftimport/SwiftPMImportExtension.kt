@@ -408,7 +408,7 @@ abstract class SwiftPMImportExtension @Inject constructor(
     /** Disables cross-project lock-file synchronization and resolves this project's SwiftPM graph independently. */
     fun noSynchronization(): PackageResolvedSynchronization =
         PackageResolvedSynchronization(
-            noSyncIdentifier(project.name)
+            noSyncIdentifier(project.path)
         )
 
     // FIXME: KT-84695 Check and test if this is actually correct
@@ -425,7 +425,7 @@ abstract class SwiftPMImportExtension @Inject constructor(
 }
 
 internal fun noSyncIdentifier(projectName: String): String =
-    lowerCamelCaseName("noSync", projectName)
+    lowerCamelCaseName("noSync", *projectName.split(':').toTypedArray())
 
 /** Represents a SwiftPM dependency declared through [SwiftPMImportExtension]. */
 @kotlinx.serialization.Serializable
