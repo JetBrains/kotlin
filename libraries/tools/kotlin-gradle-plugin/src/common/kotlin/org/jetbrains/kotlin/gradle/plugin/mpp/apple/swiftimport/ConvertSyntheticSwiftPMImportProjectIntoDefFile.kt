@@ -9,19 +9,14 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkerExecutor
@@ -83,11 +78,8 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     @get:Input
     abstract val ideaSyncEnabled: Property<Boolean>
 
-
-    @get:InputFiles
-    @get:Optional
-    @get:PathSensitive(PathSensitivity.NONE)
-    abstract val xcodebuildFingerprint: RegularFileProperty
+    @get:Nested
+    abstract val xcodebuildFingerprint: SwiftImportFingerprintInput
 
     @get:Inject
     protected abstract val workerExecutor: WorkerExecutor
@@ -136,7 +128,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
             return
         }
 
-        val dumpedXcodeBuildArgsDir = if (xcodebuildFingerprint.isPresent) {
+        val dumpedXcodeBuildArgsDir = if (xcodebuildFingerprint.fingerprintFile.isPresent) {
             resolveDumpedXcodeBuildArgsDir()
         } else {
             syntheticDumpDir.get().asFile
@@ -190,11 +182,13 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     }
 
     class MoreThanOneLinkerCallDiscovered(
-        linkerCalls: List<File>
+        linkerCalls: List<File>,
     ) : MoreThanOneCallDiscovered(linkerCalls, "linker")
+
     class MoreThanOneClangCallDiscovered(
-        clangCalls: List<File>
+        clangCalls: List<File>,
     ) : MoreThanOneCallDiscovered(clangCalls, "clang")
+
     abstract class MoreThanOneCallDiscovered(
         calls: List<File>,
         name: String,
@@ -286,9 +280,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     }
 
     private fun resolveDumpedXcodeBuildArgsDir(): File {
-        val hash = xcodebuildFingerprint.get().asFile.readText().trim().split("\n")[1]
-
-        return fingerprintsXcodeDumpsDir.get().asFile.resolve("$hash/swiftImportClangDump/${xcodebuildSdk.get()}")
+        return fingerprintsXcodeDumpsDir.get().asFile.resolve("${xcodebuildFingerprint.readFingerprint().incrementalFingerprint}/swiftImportClangDump/${xcodebuildSdk.get()}")
     }
 
     fun defFilePath(architecture: AppleArchitecture): Provider<RegularFile> =

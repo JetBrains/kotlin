@@ -53,12 +53,14 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
             build(fingerprintXcodebuildIphoneSimulatorTask) {
                 assertTasksExecuted(fingerprintXcodebuildIphoneSimulatorTask)
             }
-            val originalFingerprint = readIphonesimulatorFingerprint()
+
+            val fingerprintFile = localIphonesimulatorDumpFingerprintFile()
+            val initialFingerprint = parseSwiftPMFingerprint(fingerprintFile)
 
             build(fingerprintXcodebuildIphoneSimulatorTask) {
                 assertTasksUpToDate(fingerprintXcodebuildIphoneSimulatorTask)
             }
-            assertEquals(originalFingerprint, readIphonesimulatorFingerprint())
+            assertEquals(initialFingerprint, parseSwiftPMFingerprint(fingerprintFile))
 
             packageDependency.writePackageDependencySource("2")
 
@@ -67,8 +69,8 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
             }
 
             assertEquals(
-                originalFingerprint,
-                readIphonesimulatorFingerprint(),
+                initialFingerprint,
+                parseSwiftPMFingerprint(fingerprintFile),
                 "Changing local Swift package source content should not invalidate the prepare fingerprint task"
             )
         }
@@ -85,7 +87,9 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
             build(fingerprintXcodebuildIphoneSimulatorTask) {
                 assertTasksExecuted(fingerprintXcodebuildIphoneSimulatorTask)
             }
-            val originalFingerprint = readIphonesimulatorFingerprint()
+
+            val fingerprintFile = localIphonesimulatorDumpFingerprintFile()
+            val initialFingerprint = parseSwiftPMFingerprint(fingerprintFile)
 
             packageDependency.resolve("Sources/PackageDependency/Extra.swift").writeText(
                 """
@@ -100,8 +104,8 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
             }
 
             assertEquals(
-                originalFingerprint,
-                readIphonesimulatorFingerprint(),
+                initialFingerprint,
+                parseSwiftPMFingerprint(fingerprintFile),
                 "Adding a local Swift package source file should not invalidate the prepare fingerprint task"
             )
         }
@@ -127,7 +131,9 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
             build(fingerprintXcodebuildIphoneSimulatorTask) {
                 assertTasksExecuted(fingerprintXcodebuildIphoneSimulatorTask)
             }
-            val originalFingerprint = readIphonesimulatorFingerprint()
+
+            val fingerprintFile = localIphonesimulatorDumpFingerprintFile()
+            val initialFingerprint = parseSwiftPMFingerprint(fingerprintFile)
 
             extraSource.deleteExisting()
 
@@ -136,8 +142,8 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
             }
 
             assertEquals(
-                originalFingerprint,
-                readIphonesimulatorFingerprint(),
+                initialFingerprint,
+                parseSwiftPMFingerprint(fingerprintFile),
                 "Deleting a local Swift package source file should not invalidate the prepare fingerprint task"
             )
         }
@@ -170,15 +176,17 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
             build(fingerprintXcodebuildIphoneSimulatorTask) {
                 assertTasksExecuted(fingerprintXcodebuildIphoneSimulatorTask)
             }
-            val originalFingerprint = readIphonesimulatorFingerprint()
+
+            val fingerprintFile = localIphonesimulatorDumpFingerprintFile()
+            val initialFingerprint = parseSwiftPMFingerprint(fingerprintFile)
 
             build(fingerprintXcodebuildIphoneSimulatorTask, "-P$useAlternateDeploymentTarget=true") {
                 assertTasksExecuted(fingerprintXcodebuildIphoneSimulatorTask)
             }
 
             assertNotEquals(
-                originalFingerprint,
-                readIphonesimulatorFingerprint(),
+                initialFingerprint,
+                parseSwiftPMFingerprint(fingerprintFile),
                 "Changing SwiftPM build settings should invalidate the prepare fingerprint task"
             )
         }
@@ -209,11 +217,14 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
                 build(":convertSyntheticImportProjectIntoDefFileIphonesimulator") {
                     assertTasksExecuted(fingerprintXcodebuildIphoneSimulatorTask)
                 }
-                val originalXcodeBuildFingerprint = readIphonesimulatorFingerprint()
-                val originalPackageFingerprint = localPackageFingerprint().readText()
+
+                val fingerprintFile = localIphonesimulatorDumpFingerprintFile()
+
+                val initialFingerprint = parseSwiftPMFingerprint(fingerprintFile)
+                val originalPackageFingerprint = parseSwiftPMFingerprint(localPackageFingerprintFile())
 
                 val lockFile =
-                    projectPath.resolve("build/kotlin/swiftSyntheticPackages/${originalPackageFingerprint.split("\n")[1]}/Package.resolved")
+                    projectPath.resolve("build/kotlin/swiftSyntheticPackages/${originalPackageFingerprint.incrementalFingerprint}/Package.resolved")
                 val originalLockFile = parsePackageResolved(lockFile.readText())
                 assertEquals(listOf("1.0.0"), originalLockFile.pins.map { it.state.version })
 
@@ -226,25 +237,28 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
                 val finalLockFile = parsePackageResolved(lockFile.readText())
                 assertEquals(listOf("1.0.1"), finalLockFile.pins.map { it.state.version })
 
+                val updatedXcodebuildFingerprint = parseSwiftPMFingerprint(fingerprintFile)
+                val updatedPackageFingerprint = parseSwiftPMFingerprint(localPackageFingerprintFile())
+
                 assertNotEquals(
-                    originalXcodeBuildFingerprint.split("\n")[0],
-                    readIphonesimulatorFingerprint().split("\n")[0],
+                    initialFingerprint.taskInvalidationFingerprint,
+                    updatedXcodebuildFingerprint.taskInvalidationFingerprint,
                     "Changing a remote SwiftPM dependency version should invalidate the xcodebuild fingerprint task"
                 )
                 assertNotEquals(
-                    originalPackageFingerprint.split("\n")[0],
-                    localPackageFingerprint().readText().split("\n")[0],
+                    originalPackageFingerprint.taskInvalidationFingerprint,
+                    updatedPackageFingerprint.taskInvalidationFingerprint,
                     "Changing a remote SwiftPM dependency version should invalidate the synthetic fingerprint task"
                 )
 
                 assertEquals(
-                    originalXcodeBuildFingerprint.split("\n")[1],
-                    readIphonesimulatorFingerprint().split("\n")[1],
+                    initialFingerprint.incrementalFingerprint,
+                    updatedXcodebuildFingerprint.incrementalFingerprint,
                     "Changing a remote SwiftPM dependency version shouldn't invalidate version invariant part of the fingerprint"
                 )
                 assertEquals(
-                    originalPackageFingerprint.split("\n")[1],
-                    localPackageFingerprint().readText().split("\n")[1],
+                    originalPackageFingerprint.incrementalFingerprint,
+                    updatedPackageFingerprint.incrementalFingerprint,
                     "Changing a remote SwiftPM dependency version shouldn't invalidate version invariant part of the fingerprint"
                 )
             }
@@ -311,7 +325,8 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
                 build(fingerprintXcodebuildIphoneSimulatorTask) {
                     assertTasksExecuted(fingerprintXcodebuildIphoneSimulatorTask)
                 }
-                val originalFingerprint = readIphonesimulatorFingerprint()
+                val fingerprintFile = localIphonesimulatorDumpFingerprintFile()
+                val originalFingerprint = parseSwiftPMFingerprint(fingerprintFile)
 
                 build(fingerprintXcodebuildIphoneSimulatorTask, "-P$useAlternateProduct=true") {
                     assertTasksExecuted(fingerprintXcodebuildIphoneSimulatorTask)
@@ -319,7 +334,7 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
 
                 assertNotEquals(
                     originalFingerprint,
-                    readIphonesimulatorFingerprint(),
+                    parseSwiftPMFingerprint(fingerprintFile),
                     "Changing selected SwiftPM product should invalidate the xcodebuild fingerprint task"
                 )
             }
@@ -352,7 +367,8 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
                 build(fingerprintXcodebuildIphoneSimulatorTask) {
                     assertTasksExecuted(fingerprintXcodebuildIphoneSimulatorTask)
                 }
-                val originalFingerprint = readIphonesimulatorFingerprint()
+                val fingerprintFile = localIphonesimulatorDumpFingerprintFile()
+                val originalFingerprint = parseSwiftPMFingerprint(fingerprintFile)
 
                 build(fingerprintXcodebuildIphoneSimulatorTask, "-P$useAlternateIdentifier=true") {
                     assertTasksExecuted(fingerprintXcodebuildIphoneSimulatorTask)
@@ -360,7 +376,7 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
 
                 assertNotEquals(
                     originalFingerprint,
-                    readIphonesimulatorFingerprint(),
+                    parseSwiftPMFingerprint(fingerprintFile),
                     "Changing Package.resolved synchronization identifier should invalidate the prepare fingerprint task"
                 )
             }
@@ -410,8 +426,8 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
                     "iphonesimulator"
                 )
 
-                val kmpMapsXcodebuildFingerprint = localXcodebuildFingerprint("kmpMapsProject", "iphonesimulator")
-                val rootXcodebuildFingerprint = localXcodebuildFingerprint(sdk = "iphonesimulator")
+                val kmpMapsXcodebuildFingerprint = localXcodebuildFingerprintFile("kmpMapsProject", "iphonesimulator")
+                val rootXcodebuildFingerprint = localXcodebuildFingerprintFile(sdk = "iphonesimulator")
 
                 build(
                     ":$prepareFingerPrintIphoneos",
@@ -419,8 +435,8 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
                 ) {
 
                     assertEquals(
-                        parseSwiftPMFingerprint(kmpMapsXcodebuildFingerprint),
-                        parseSwiftPMFingerprint(rootXcodebuildFingerprint),
+                        parseSwiftPMIncrementalFingerprint(kmpMapsXcodebuildFingerprint),
+                        parseSwiftPMIncrementalFingerprint(rootXcodebuildFingerprint),
                         "Projects with different dependencies and build settings should have different fingerprint"
 
                     )
@@ -432,8 +448,8 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
                 ) {
 
                     assertEquals(
-                        parseSwiftPMFingerprint(kmpMapsXcodebuildFingerprint),
-                        parseSwiftPMFingerprint(rootXcodebuildFingerprint),
+                        parseSwiftPMIncrementalFingerprint(kmpMapsXcodebuildFingerprint),
+                        parseSwiftPMIncrementalFingerprint(rootXcodebuildFingerprint),
                         "Projects with different dependencies and build settings should have different fingerprint"
                     )
                 }
@@ -489,8 +505,8 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
                     "iphonesimulator"
                 )
 
-                val kmpMapsXcodebuildFingerprint = localXcodebuildFingerprint("kmpMapsProject", "iphonesimulator")
-                val rootXcodebuildFingerprint = localXcodebuildFingerprint(sdk = "iphonesimulator")
+                val kmpMapsXcodebuildFingerprint = localXcodebuildFingerprintFile("kmpMapsProject", "iphonesimulator")
+                val rootXcodebuildFingerprint = localXcodebuildFingerprintFile(sdk = "iphonesimulator")
 
                 build(
                     ":$prepareFingerPrintIphoneos",
@@ -498,8 +514,8 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
                 ) {
 
                     assertNotEquals(
-                        parseSwiftPMFingerprint(kmpMapsXcodebuildFingerprint),
-                        parseSwiftPMFingerprint(rootXcodebuildFingerprint),
+                        parseSwiftPMIncrementalFingerprint(kmpMapsXcodebuildFingerprint),
+                        parseSwiftPMIncrementalFingerprint(rootXcodebuildFingerprint),
                         "Projects with different dependencies and build settings should have different fingerprint"
 
                     )
@@ -511,8 +527,8 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
                 ) {
 
                     assertEquals(
-                        parseSwiftPMFingerprint(kmpMapsXcodebuildFingerprint),
-                        parseSwiftPMFingerprint(rootXcodebuildFingerprint),
+                        parseSwiftPMIncrementalFingerprint(kmpMapsXcodebuildFingerprint),
+                        parseSwiftPMIncrementalFingerprint(rootXcodebuildFingerprint),
                         "Projects with same dependencies and build settings should have same fingerprint"
 
                     )
@@ -552,8 +568,4 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
             }
         }
     }
-
-    private fun TestProject.readIphonesimulatorFingerprint(): String =
-        localIphonesimulatorDumpFingerprintFile().toFile().readText().trim()
-
 }
