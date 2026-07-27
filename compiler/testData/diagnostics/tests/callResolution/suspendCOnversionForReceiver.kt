@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-46288
 
 fun (suspend () -> Unit).extensionFunc() {}
@@ -7,7 +7,7 @@ fun testFunc() {}
 
 fun main() {
     parameterFunc(::testFunc)
-    (::testFunc).extensionFunc()
+    (::testFunc).<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>extensionFunc<!>()
 }
 
 /* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionalType, suspend */

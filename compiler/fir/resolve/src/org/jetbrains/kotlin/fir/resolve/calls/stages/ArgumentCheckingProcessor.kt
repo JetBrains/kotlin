@@ -280,7 +280,7 @@ internal object ArgumentCheckingProcessor {
             // For latest LV it's equal to `return false`
             return LanguageFeature.DoNotRunSuspendConversionForLambdaReturnStatements.isDisabled()
         }
-        return true
+        return !isReceiver
     }
 
     private fun ArgumentContext.checkApplicabilityForArgumentType(
