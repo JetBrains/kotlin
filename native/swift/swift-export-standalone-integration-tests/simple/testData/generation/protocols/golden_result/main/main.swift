@@ -457,6 +457,12 @@ extension main.Bazzable where Self : main.__Bazzable {
 }
 extension main.Bazzable {
 }
+extension main.ContainerProtocol {
+    public func foo() -> Swift.Void {
+        let receiver = self
+        return main.foo(receiver)
+    }
+}
 @_documentation(visibility: internal)
 extension main.ContainerProtocol where Self : main.__ContainerProtocol {
 }
@@ -528,6 +534,12 @@ extension ExportedKotlinPackages.packagewithprotocols.SiblingProtocol where Self
 }
 extension ExportedKotlinPackages.packagewithprotocols.SiblingProtocol {
     public typealias NestedClass = main._ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass
+}
+extension main._ContainerProtocol_NestedProtocol {
+    public func foo() -> Swift.Void {
+        let receiver = self
+        return main.foo(receiver)
+    }
 }
 @_documentation(visibility: internal)
 extension main._ContainerProtocol_NestedProtocol where Self : main.___ContainerProtocol_NestedProtocol {
@@ -635,6 +647,18 @@ extension main._SealedFoeble_SealedBarable {
     @_disfavoredOverload
     public func sealedType() -> main.SealedFoeble_SealedType {
         .sealedBarable(sealedType())
+    }
+}
+extension main._SiblingProtocol_NestedClass {
+    public func foo() -> Swift.Void {
+        let receiver = self
+        return main.foo(receiver)
+    }
+}
+extension main.__ContainerProtocol_NestedProtocol_NestedClass {
+    public func foo() -> Swift.Void {
+        let receiver = self
+        return main.foo(receiver)
     }
 }
 extension ExportedKotlinPackages.packagewithprotocols {
