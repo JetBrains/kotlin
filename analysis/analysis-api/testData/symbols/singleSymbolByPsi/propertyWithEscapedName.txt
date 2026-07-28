@@ -69,7 +69,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: PropertyWithEscapedNameKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: getName with spaces
+    javaMethodName: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -207,7 +207,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: PropertyWithEscapedNameKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: setName with spaces
+    javaMethodName: null
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsElementImpl
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
@@ -36,9 +37,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModuleOrSel
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.analysis.api.types.symbol
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isLocalClass
@@ -444,7 +443,7 @@ internal class KaFirJavaInteroperabilityComponent(
     override fun javaMethodName(function: KaFunctionSymbol): String? = withValidityAssertion {
         context(analysisSession) {
             val defaultName = defaultJavaMethodName(function) ?: return null
-            computeJavaMethodName(function, defaultName)
+            computeJavaMethodName(function, defaultName).takeIf(StringUtil::isJavaIdentifier)
         }
     }
 
