@@ -2,6 +2,7 @@
 
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
+import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
 import org.gradle.api.publish.internal.PublicationInternal
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.withType
@@ -337,9 +338,6 @@ tasks {
                 }
                 testClassesDirs = testCompilation.output.classesDirs
 
-                smokeTestConfig = if (framework == JvmTestFramework.JUnit5) SmokeTestConfig.Default
-                else SmokeTestConfig.Disabled
-
                 when (framework) {
                     JvmTestFramework.JUnit -> useJUnit()
                     JvmTestFramework.JUnit5 -> useJUnitPlatform()
@@ -595,6 +593,10 @@ publishing {
     }
 }
 
+tasks.withType<Test>().configureEach {
+    smokeTestConfig = if (testFramework is JUnitPlatformTestFramework) SmokeTestConfig.Default
+    else SmokeTestConfig.Disabled
+}
 
 tasks.withType<GenerateModuleMetadata> {
     val publication = publication.get() as MavenPublication
