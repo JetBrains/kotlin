@@ -1657,6 +1657,44 @@ class ComposeCrossModuleTests : AbstractCodegenTest() {
         )
     }
 
+    /**
+     * This is a regression test against a bug that caused miscompilation of cross-module calls to
+     * getters and setters. For more details, see https://issuetracker.google.com/issues/537617330.
+     */
+    @Test
+    fun testComposableTypeRemappingOfExternalSetter() {
+        compile(
+            mapOf(
+                "Base" to mapOf(
+                    "base/Base.kt" to """
+                        import androidx.compose.runtime.Composable
+
+                        var fakePrompt: (@Composable (
+                            onSuccess: () -> Unit,
+                            onError: () -> Unit,
+                            onCancel: () -> Unit,
+                            onUsePin: () -> Unit,
+                        ) -> Unit)? = null
+                    """
+                ),
+                "Main" to mapOf(
+                    "Main.kt" to """
+                        fun main() {
+                            fakePrompt = { _, _, _, _ -> }
+                        }
+                    """
+                )
+            ),
+            validate = { bytecode ->
+                val matcher = Regex("setFakePrompt ?\\(Lkotlin\\/jvm\\/functions\\/Function\\d*;\\)V", RegexOption.MULTILINE)
+                val matches = matcher.findAll(bytecode)
+                matches.forEach {
+                    assertTrue(it.value.contains("Function6"))
+                }
+            }
+        )
+    }
+
     private fun compile(
         modules: Map<String, Map<String, String>>,
         dumpClasses: Boolean = false,
