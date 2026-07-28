@@ -1,2 +1,1 @@
-annotation.java:7:1:compiler.err.annotation.type.not.applicable
-
+annotation.java:8:1:compiler.err.annotation.type.not.applicable

@@ -1,3 +1,1 @@
-constructor.java:7:5:compiler.err.annotation.type.not.applicable
-
-
+constructor.java:8:5:compiler.err.annotation.type.not.applicable

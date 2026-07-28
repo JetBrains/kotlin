@@ -1,4 +1,3 @@
-empty.java:3:1:compiler.err.annotation.type.not.applicable
-empty.java:5:20:compiler.err.annotation.type.not.applicable
-empty.java:5:5:compiler.err.annotation.type.not.applicable
-
+empty.java:4:1:compiler.err.annotation.type.not.applicable
+empty.java:6:20:compiler.err.annotation.type.not.applicable
+empty.java:6:5:compiler.err.annotation.type.not.applicable
