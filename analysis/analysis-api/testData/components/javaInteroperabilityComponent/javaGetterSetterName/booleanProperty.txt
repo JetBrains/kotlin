@@ -1,2 +1,0 @@
-Getter name: isValid
-Setter name: setValid

@@ -1,2 +1,0 @@
-Getter name: getName with spaces
-Setter name: setName with spaces

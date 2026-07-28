@@ -393,6 +393,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleSingleSymbolByPsiTestGenerated 
   }
 
   @Test
+  @TestMetadata("propertyWithDotName.kt")
+  public void testPropertyWithDotName() {
+    run("propertyWithDotName.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithEscapedName.kt")
+  public void testPropertyWithEscapedName() {
+    run("propertyWithEscapedName.kt");
+  }
+
+  @Test
   @TestMetadata("propertyWithInlineGetterAndSetter.kt")
   public void testPropertyWithInlineGetterAndSetter() {
     run("propertyWithInlineGetterAndSetter.kt");
@@ -405,9 +417,27 @@ public class FirIdeNormalAnalysisSourceLikeModuleSingleSymbolByPsiTestGenerated 
   }
 
   @Test
+  @TestMetadata("propertyWithIsPrefixedName.kt")
+  public void testPropertyWithIsPrefixedName() {
+    run("propertyWithIsPrefixedName.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithJvmNameOnAccessors.kt")
+  public void testPropertyWithJvmNameOnAccessors() {
+    run("propertyWithJvmNameOnAccessors.kt");
+  }
+
+  @Test
   @TestMetadata("propertyWithReceiverAnnotation.kt")
   public void testPropertyWithReceiverAnnotation() {
     run("propertyWithReceiverAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithoutName.kt")
+  public void testPropertyWithoutName() {
+    run("propertyWithoutName.kt");
   }
 
   @Test
