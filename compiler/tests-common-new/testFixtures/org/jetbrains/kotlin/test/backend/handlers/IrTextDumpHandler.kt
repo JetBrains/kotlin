@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_EXTERNAL_
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
-import org.jetbrains.kotlin.test.directives.assertEqualsToDump
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.model.BackendKind
@@ -36,7 +35,6 @@ import org.jetbrains.kotlin.test.services.independentSourceDirectoryPathsTransit
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -170,22 +168,15 @@ class IrTextDumpHandler(
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val moduleStructure = testServices.moduleStructure
         val actualDump = baseDumper.generateResultingDump()
         val baseDumpExtension = getBaseDumpExtension()
-        val baseGoldenFile = moduleStructure.originalTestDataFiles.first()
-            .withExtension(baseDumpExtension)
 
-        val hasTargetSpecificDifferenceDirective = validateTargetSpecificDumpFile(
-            testServices, assertions, baseGoldenFile,
+        validateTargetSpecificDumpFile(
+            testServices, assertions,
             baseDumpExtension = baseDumpExtension,
             actualDump,
             isKotlinLikeDump = false,
         )
-
-        if (!hasTargetSpecificDifferenceDirective) {
-            assertEqualsToDump(baseDumpExtension, actualDump.ifEmpty { null })
-        }
     }
 
     private fun getBaseDumpExtension(): String {
