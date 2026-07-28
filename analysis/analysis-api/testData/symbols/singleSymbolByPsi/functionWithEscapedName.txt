@@ -1,0 +1,43 @@
+KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
+  annotations: []
+  callableId: /a b c
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: a b c
+  origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(functionWithEscapedName.kt)
+  getContainingJvmClassName: FunctionWithEscapedNameKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  returnValueStatus: Unspecified
+  javaMethodName: a b c
+  importableFqName: a b c
