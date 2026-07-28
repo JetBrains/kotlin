@@ -140,7 +140,17 @@ dokka {
     dokkaSourceSets.configureEach {
         includes.from(project.file("dokka/moduledoc.md").path)
 
-        sourceRoots.from(project(":kotlin-metadata").getSources())
+        val kotlinMetadataSources = configurations.embedded.get().incoming.artifactView {
+            attributes {
+                attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.DOCUMENTATION))
+                attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.objects.named(DocsType.SOURCES))
+            }
+            withVariantReselection()
+            componentFilter {
+                it is ProjectComponentIdentifier && it.displayName == ":kotlin-metadata"
+            }
+        }.files
+        sourceRoots.from(kotlinMetadataSources)
 
         skipDeprecated.set(true)
         reportUndocumented.set(true)
