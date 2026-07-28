@@ -353,6 +353,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
   }
 
   @Test
+  @TestMetadata("resultInSignature.kt")
+  public void testResultInSignature() {
+    run("resultInSignature.kt");
+  }
+
+  @Test
   @TestMetadata("simpleFunctions.kt")
   public void testSimpleFunctions() {
     run("simpleFunctions.kt");
@@ -1614,6 +1620,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     }
 
     @Test
+    @TestMetadata("result.kt")
+    public void testResult() {
+      run("result.kt");
+    }
+
+    @Test
     @TestMetadata("script.kts")
     public void testScript() {
       run("script.kts");
@@ -1828,6 +1840,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
       @TestMetadata("private.kt")
       public void testPrivate() {
         run("private.kt");
+      }
+
+      @Test
+      @TestMetadata("result.kt")
+      public void testResult() {
+        run("result.kt");
       }
 
       @Test
