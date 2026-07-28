@@ -36,11 +36,6 @@ fun FirClassLikeSymbol<*>.getClassAndItsOuterClassesWhenLocal(session: FirSessio
         if (it.isInner) it.getContainingClassLookupTag()?.toRegularClassSymbol(session) else null
     }.toSet()
 
-@LookupTagInternals
-fun ConeClassLikeLookupTagImpl.bindSymbolToLookupTag(session: FirSession, symbol: FirClassLikeSymbol<*>?) {
-    boundSymbol = WeakPair(session, symbol)
-}
-
 fun ConeKotlinType.withParameterNameAnnotation(parameter: FirFunctionTypeParameter): ConeKotlinType {
     val name = parameter.name ?: return this
     return withParameterNameAnnotation(name, parameter.source)

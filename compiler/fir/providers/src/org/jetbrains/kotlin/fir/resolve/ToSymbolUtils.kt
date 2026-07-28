@@ -84,7 +84,7 @@ fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): FirClassLikeSym
     if (this is ConeClassLikeLookupTagWithFixedSymbol) {
         return this.symbol
     }
-    (this as? ConeClassLikeLookupTagImpl)?.boundSymbol?.takeIf { it.first === useSiteSession }?.let { return it.second }
+    (this as? ConeClassLikeLookupTagImpl)?.withBoundSymbol(useSiteSession) { return it }
 
     return useSiteSession.symbolProvider.getClassLikeSymbolByClassId(classId).also {
         (this as? ConeClassLikeLookupTagImpl)?.bindSymbolToLookupTag(useSiteSession, it)
