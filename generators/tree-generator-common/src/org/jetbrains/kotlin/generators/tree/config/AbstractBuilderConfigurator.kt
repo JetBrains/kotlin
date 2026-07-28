@@ -364,5 +364,13 @@ abstract class AbstractBuilderConfigurator<Element, Implementation, ElementField
         fun withCopy() {
             builder.wantsCopy = true
         }
+
+        /**
+         * Makes the given list [field] a `var` instead of a `val` in this builder class,
+         * allowing a custom [MutableList] implementation to be supplied to the builder.
+         */
+        fun useVarForListField(field: String) {
+            builder.listFieldsWithVar += field
+        }
     }
 }

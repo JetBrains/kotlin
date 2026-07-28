@@ -464,6 +464,10 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             withCopy()
         }
 
+        builder(enumEntry) {
+            useVarForListField("annotations")
+        }
+
         // -----------------------------------------------------------------------
 
         findImplementationsWithElementInParents(annotationContainer).forEach {

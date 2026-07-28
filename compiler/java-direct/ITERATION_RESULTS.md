@@ -36,6 +36,27 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-28 — Replace `FirJavaEnumEntry` with `buildEnumEntry` + lazy `MutableList` annotations
+- **Change**: review follow-up on the 2026-07-21 KT-74097 fix — the hand-written `FirJavaEnumEntry`
+  duplicated `FirEnumEntryImpl` (~180 LoC) just to host a lazy annotation slot. The tree generator
+  gained a per-field opt-in (`LeafBuilder.listFieldsWithVar` + `useVarForListField` DSL in
+  `AbstractBuilderConfigurator`; configured only for `builder(enumEntry)` in the FIR
+  `BuilderConfigurator`), so default builder generation is unchanged and only
+  `FirEnumEntryBuilder.annotations` becomes `var`. The enum-entry arm of
+  `convertJavaFieldToFir` uses plain `buildEnumEntry` with a new
+  `FirLazyJavaAnnotationMutableList` — an `AbstractMutableList` composing a plain
+  `FirLazyJavaAnnotationList` (conversion reused via `toMutableList()` on first mutable access;
+  only the 5 abstract members are overridden; cheap `isEmpty` keeps `toMutableOrEmpty()` from
+  forcing conversion) — and `FirJavaLazyDeprecationsProvider`. `FirJavaEnumEntry` deleted.
+- **Files**: `generators/tree-generator-common/.../Builder.kt`, `AbstractBuilderPrinter.kt`,
+  `config/AbstractBuilderConfigurator.kt`, `fir/tree/tree-generator/.../BuilderConfigurator.kt`,
+  regenerated `fir/tree/gen/.../builder/FirEnumEntryBuilder.kt` (single-line `val`→`var`),
+  `fir-jvm/.../FirJavaFacade.kt`, `FirJavaAnnotationList.kt`, `javaAnnotationsMapping.kt`;
+  deleted `FirJavaEnumEntry.kt`.
+- **Tests**: box+phased green (0 FAILED); PSI gate + `CompileKotlinAgainstKotlin` gate green
+  (shared fir-jvm + fir-tree edits).
+- **Result**: green (behaviour-preserving simplification; laziness retained).
+
 ### 2026-07-28 — Comment-style cleanup of the binary/source-divide branch
 - **Change**: rewrote/deleted LLM-verbose comments added since the divide commit (added
   comment lines ~290 → ~125): dropped restatements of obvious code, caller inventories,

@@ -19,12 +19,14 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.builder.buildEnumEntry
 import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
+import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationMutableList
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -507,11 +509,14 @@ private fun convertJavaFieldToFir(
     val returnType = javaField.type
     val fakeSource = javaField.toSourceElement()?.fakeElement(KtFakeSourceElementKind.Enhancement)
     return when {
-        javaField.isEnumEntry -> buildJavaEnumEntry {
+        javaField.isEnumEntry -> buildEnumEntry {
             source = javaField.toSourceElement()
+            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             this.moduleData = moduleData
+            origin = javaOrigin(javaField.isFromSource)
             symbol = FirEnumEntrySymbol(fieldId)
             name = fieldName
+            isLocal = false
             status = FirResolvedDeclarationStatusImpl(
                 javaField.visibility,
                 javaField.modality,
@@ -521,8 +526,9 @@ private fun convertJavaFieldToFir(
             }
             returnTypeRef = returnType.toFirJavaTypeRef(session, fakeSource)
                 .resolveIfJavaType(session, javaTypeParameterStack, fakeSource, mode = FirJavaTypeConversionMode.ANNOTATION_MEMBER)
-            isFromSource = javaField.isFromSource
-            annotationList = FirLazyJavaAnnotationList(javaField, moduleData)
+            // Deferred to avoid re-entering the in-flight ClassId while FirJavaClass.declarations is materialized (KT-74097).
+            annotations = FirLazyJavaAnnotationMutableList(javaField, moduleData)
+            deprecationsProvider = FirJavaLazyDeprecationsProvider(annotations, session)
         }.apply {
             containingClassForStaticMemberAttr = classId.toLookupTag()
         }

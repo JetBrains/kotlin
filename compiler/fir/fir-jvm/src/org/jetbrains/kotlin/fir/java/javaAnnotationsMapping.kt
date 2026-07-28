@@ -11,9 +11,13 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.getDeprecationsProviderFromAnnotations
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -43,6 +47,22 @@ import java.util.*
 internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
     session: FirSession, source: KtSourceElement?,
 ): List<FirAnnotation> = map { it.toFirAnnotation(session, source) }
+
+/**
+ * Defers [getDeprecationsProviderFromAnnotations] until deprecations are queried,
+ * so lazy Java annotations are not forced eagerly (KT-74097).
+ */
+class FirJavaLazyDeprecationsProvider(
+    private val annotations: List<FirAnnotation>,
+    private val session: FirSession,
+) : DeprecationsProvider() {
+    private val delegate: DeprecationsProvider by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        annotations.getDeprecationsProviderFromAnnotations(session, fromJava = true)
+    }
+
+    override fun getDeprecationsInfo(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite? =
+        delegate.getDeprecationsInfo(languageVersionSettings)
+}
 
 internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
     session: FirSession,
