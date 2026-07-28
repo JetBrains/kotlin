@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
-import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.Directory
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.provider.Provider
@@ -31,7 +30,6 @@ import java.nio.file.Path
 import java.time.Duration
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFails
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
@@ -42,7 +40,7 @@ import kotlin.time.Duration.Companion.hours
 
 class KotlinPlaywrightTestFrameworkWiringTest {
 
-    @field:TempDir
+    @TempDir
     lateinit var tempDirectory: Path
 
     @Test
@@ -240,27 +238,6 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         assertEquals(mockLocation4, webkit2Runner.testsLocation.get())
     }
 
-    @Test
-    fun `non-existent custom browser executable is rejected`() {
-        val customChromeExecutable = tempDirectory.resolve("missing-chrome-executable").toFile()
-        val setup = buildBrowserTestProject {
-            chromium {
-                it.customBrowserExecutable.set(customChromeExecutable)
-            }
-        }
-
-        val framework = assertIs<KotlinPlaywrightJsTestFramework>(setup.jsBrowserTestTask.testFramework)
-        val chromeRunner = framework.frameworkTaskInputs.chromiumRunners.get().single()
-        val queryException = assertFails {
-            chromeRunner.customBrowserExecutable.get()
-        }
-        val validationException = assertIs<InvalidUserDataException>(queryException.cause)
-
-        assertEquals(
-            "Custom browser executable for runner 'chromium' does not exist: $customChromeExecutable",
-            validationException.message,
-        )
-    }
 }
 
 private class BrowserTestProject(

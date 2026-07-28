@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.gradle.api.InvalidUserDataException
+import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
@@ -71,19 +71,19 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
             inputs.chromiumRunners.set(
                 browserTestDsl.chromiumRunners.values.map { runner ->
                     KotlinPlaywrightJsTestFramework.createChromiumInputs(objects)
-                        .also { it.populateFrom(runner) }
+                        .also { it.populateFrom(project, runner) }
                 }
             )
             inputs.firefoxRunners.set(
                 browserTestDsl.firefoxRunners.values.map { runner ->
                     KotlinPlaywrightJsTestFramework.createFirefoxInputs(objects)
-                        .also { it.populateFrom(runner) }
+                        .also { it.populateFrom(project, runner) }
                 }
             )
             inputs.webkitRunners.set(
                 browserTestDsl.webkitRunners.values.map { runner ->
                     KotlinPlaywrightJsTestFramework.createWebkitInputs(objects)
-                        .also { it.populateFrom(runner) }
+                        .also { it.populateFrom(project, runner) }
                 }
             )
 
@@ -100,6 +100,7 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
 }
 
 private fun KotlinPlaywrightJsTestFramework.BrowserRunnerInput.populateFrom(
+    project: Project,
     runner: KotlinBrowserTestRunnerDsl,
 ) {
     name.convention(runner.name)
@@ -113,8 +114,11 @@ private fun KotlinPlaywrightJsTestFramework.BrowserRunnerInput.populateFrom(
     customBrowserExecutable.convention(
         runner.customBrowserExecutable.map { executable ->
             if (!executable.asFile.exists()) {
-                throw InvalidUserDataException(
-                    "Custom browser executable for runner '${runner.name}' does not exist: ${executable.asFile}"
+                project.reportDiagnostic(
+                    KotlinToolingDiagnostics.InvalidCustomBrowserExecutable(
+                        runnerName = runner.name,
+                        executable = executable.asFile,
+                    )
                 )
             }
             executable

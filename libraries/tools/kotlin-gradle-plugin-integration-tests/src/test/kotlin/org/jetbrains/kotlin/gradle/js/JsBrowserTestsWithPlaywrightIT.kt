@@ -21,6 +21,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
@@ -44,6 +45,29 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy().disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
+    @OptIn(DelicateKotlinGradlePluginApi::class)
+    @GradleTest
+    fun `non-existent custom browser executable reports a diagnostic`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions,
+        ) {
+            val customBrowserExecutable = projectPath.resolve("missing-chrome-executable").toFile()
+            jsProject {
+                chromium {
+                    it.customBrowserExecutable.set(customBrowserExecutable)
+                }
+            }
+
+            buildAndFail(":jsBrowserTest") {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.InvalidCustomBrowserExecutable,
+                    withSubstring = "Custom browser executable for runner 'chromium' does not exist: $customBrowserExecutable",
+                )
+            }
+        }
+    }
 
     @GradleTest
     fun `verify launchArgs configuration with browser api access`(gradleVersion: GradleVersion) {
