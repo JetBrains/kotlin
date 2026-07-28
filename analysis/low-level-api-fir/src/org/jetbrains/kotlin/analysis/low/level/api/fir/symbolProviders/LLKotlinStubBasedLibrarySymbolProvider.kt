@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.symbols.id.llSymbolIdFact
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCacheInternals
+import org.jetbrains.kotlin.fir.caches.FirCacheLimits
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
-import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.utils.isTopLevel
@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -95,6 +96,8 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
         },
     )
 
+    // TODO (marco): We currently have no support for a post-compute cache with defined limits/weak values. For the prototype, we can
+    //  probably ignore type aliases.
     private inline fun <K : Any> createTypeAliasCache(
         crossinline deserialize: (K, StubBasedFirDeserializationContext?) -> Pair<FirTypeAliasSymbol?, DeserializedTypeAliasPostProcessor?>,
     ): FirCache<K, FirTypeAliasSymbol?, StubBasedFirDeserializationContext?> =
@@ -110,15 +113,28 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
         )
 
     private val classCache = LLPsiAwareClassLikeSymbolCache(
-        session,
-        ::findAndDeserializeClass,
+        session = session,
+        cacheLimits = FirCacheLimits(
+            valueStrength = FirCacheLimits.ValueReferenceStrength.WEAK,
+        ),
+        computeSymbolByClassId = ::findAndDeserializeClass,
     ) { declaration: KtClassLikeDeclaration, context ->
         val classId = declaration.getClassId() ?: return@LLPsiAwareClassLikeSymbolCache null
         findAndDeserializeClass(classId, declaration, context)
     }
 
-    private val functionCache = session.firCachesFactory.createCache(::loadFunctionsByCallableId)
-    private val propertyCache = session.firCachesFactory.createCache(::loadPropertiesByCallableId)
+    // TODO (marco): Consider using a structure similar to `LLKotlinSourceCallableSymbolsCache` (especially for the documentation and
+    //  contracts around caching symbol IDs instead of the symbols).
+
+    private val functionCache = session.firCachesFactory.createCacheWithSuggestedLimits(
+        valueStrength = FirCacheLimits.ValueReferenceStrength.WEAK,
+        createValue = ::loadFunctionSymbolIdsByCallableId,
+    )
+
+    private val propertyCache = session.firCachesFactory.createCacheWithSuggestedLimits(
+        valueStrength = FirCacheLimits.ValueReferenceStrength.WEAK,
+        createValue = ::loadPropertySymbolIdsByCallableId,
+    )
 
     final override val packageProvider = session.project.createPackageProvider(scope)
 
@@ -229,13 +245,13 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
         }
     }
 
-    private fun loadFunctionsByCallableId(
+    private fun loadFunctionSymbolIdsByCallableId(
         callableId: CallableId,
         foundFunctions: Collection<KtNamedFunction>?,
-    ): List<FirNamedFunctionSymbol> {
+    ): List<FirSymbolId<FirNamedFunctionSymbol>> {
         val topLevelFunctions = foundFunctions ?: declarationProvider.getTopLevelFunctions(callableId)
 
-        return ArrayList<FirNamedFunctionSymbol>(topLevelFunctions.size).apply {
+        return ArrayList<FirSymbolId<FirNamedFunctionSymbol>>(topLevelFunctions.size).apply {
             for (function in topLevelFunctions) {
                 val symbol = loadFunction(
                     function = function,
@@ -244,15 +260,18 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
                     deserializedContainerSourceProvider = deserializedContainerSourceProvider,
                     session = session,
                 )
-                add(symbol)
+                add(symbol.symbolId)
             }
         }
     }
 
-    private fun loadPropertiesByCallableId(callableId: CallableId, foundProperties: Collection<KtProperty>?): List<FirPropertySymbol> {
+    private fun loadPropertySymbolIdsByCallableId(
+        callableId: CallableId,
+        foundProperties: Collection<KtProperty>?,
+    ): List<FirSymbolId<FirPropertySymbol>> {
         val topLevelProperties = foundProperties ?: declarationProvider.getTopLevelProperties(callableId)
 
-        return ArrayList<FirPropertySymbol>(topLevelProperties.size).apply {
+        return ArrayList<FirSymbolId<FirPropertySymbol>>(topLevelProperties.size).apply {
             for (property in topLevelProperties) {
                 val symbol = loadProperty(
                     property = property,
@@ -261,7 +280,7 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
                     deserializedContainerSourceProvider = deserializedContainerSourceProvider,
                     session = session,
                 )
-                add(symbol)
+                add(symbol.symbolId)
             }
         }
     }
@@ -297,11 +316,17 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
         destination += propertyCache.getCallablesWithoutContext(callableId)
     }
 
-    private fun <C : FirCallableSymbol<*>, CONTEXT> FirCache<CallableId, List<C>, CONTEXT?>.getCallablesWithoutContext(
+    private fun <C : FirCallableSymbol<*>, I : FirSymbolId<C>, CONTEXT> FirCache<CallableId, List<I>, CONTEXT?>.getCallables(
+        id: CallableId,
+        context: CONTEXT?,
+    ): List<C> =
+        getValue(id, context).map { it.symbol }
+
+    private fun <C : FirCallableSymbol<*>, I : FirSymbolId<C>, CONTEXT> FirCache<CallableId, List<I>, CONTEXT?>.getCallablesWithoutContext(
         id: CallableId,
     ): List<C> {
         if (!symbolNamesProvider.mayHaveTopLevelCallable(id.packageName, id.callableName)) return emptyList()
-        return getValue(id, null)
+        return getCallables(id, null)
     }
 
     @FirSymbolProviderInternals
@@ -311,11 +336,11 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
         callables: Collection<KtCallableDeclaration>,
     ) {
         callables.filterIsInstance<KtNamedFunction>().ifNotEmpty {
-            destination += functionCache.getValue(callableId, this)
+            destination += functionCache.getCallables(callableId, this)
         }
 
         callables.filterIsInstance<KtProperty>().ifNotEmpty {
-            destination += propertyCache.getValue(callableId, this)
+            destination += propertyCache.getCallables(callableId, this)
         }
     }
 
@@ -330,7 +355,7 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
         callableId: CallableId,
         functions: Collection<KtNamedFunction>,
     ) {
-        destination += functionCache.getValue(callableId, functions)
+        destination += functionCache.getCallables(callableId, functions)
     }
 
     @FirSymbolProviderInternals
@@ -344,7 +369,7 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
         callableId: CallableId,
         properties: Collection<KtProperty>,
     ) {
-        destination += propertyCache.getValue(callableId, properties)
+        destination += propertyCache.getCallables(callableId, properties)
     }
 
     override fun hasPackage(fqName: FqName): Boolean =
@@ -465,8 +490,8 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
         //names check is redundant though as we already have existing callable in scope
         val callableId = CallableId(packageFqName, shortName)
         val callableSymbols = when (callableDeclaration) {
-            is KtNamedFunction -> functionCache.getValue(callableId)
-            is KtProperty -> propertyCache.getValue(callableId)
+            is KtNamedFunction -> functionCache.getCallables(callableId, null)
+            is KtProperty -> propertyCache.getCallables(callableId, null)
             else -> null
         }
 
@@ -484,11 +509,11 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
         get() = buildList {
             typeAliasCache.cachedValues.forEach { addIfNotNull(it?.fir) }
             classCache.cachedValues.forEach { addIfNotNull(it?.fir) }
-            functionCache.cachedValues.forEach { functions ->
-                functions.forEach { add(it.fir) }
+            functionCache.cachedValues.forEach { symbolIds ->
+                symbolIds.forEach { addIfNotNull(it.symbolIfCached?.fir) }
             }
-            propertyCache.cachedValues.forEach { properties ->
-                properties.forEach { add(it.fir) }
+            propertyCache.cachedValues.forEach { symbolIds ->
+                symbolIds.forEach { addIfNotNull(it.symbolIfCached?.fir) }
             }
         }
 
