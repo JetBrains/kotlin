@@ -384,6 +384,8 @@ internal class SymbolLightAccessorMethod private constructor(
             val staticsFromCompanion: Boolean,
             private val hasValueClassInParameterType: Boolean,
             private val hasValueClassInReturnType: Boolean,
+            private val hasManglingValueClassInParameterType: Boolean,
+            private val hasManglingValueClassInPropertyType: Boolean,
             private val jvmExposeBoxedMode: JvmExposeBoxedMode,
         ) {
             fun jvmExposeBoxedMode(accessor: KaPropertyAccessorSymbol): JvmExposeBoxedMode =
@@ -395,6 +397,14 @@ internal class SymbolLightAccessorMethod private constructor(
                     hasValueClassInParameterType || hasValueClassInReturnType
                 } else {
                     hasValueClassInParameterType
+                }
+
+            fun hasManglingValueClassInParameterType(accessor: KaPropertyAccessorSymbol): Boolean =
+                if (accessor is KaPropertySetterSymbol) {
+                    // Setter uses the type of the property as a value parameter
+                    hasManglingValueClassInParameterType || hasManglingValueClassInPropertyType
+                } else {
+                    hasManglingValueClassInParameterType
                 }
 
             fun hasValueClassInReturnType(accessor: KaPropertyAccessorSymbol): Boolean =
@@ -414,6 +424,8 @@ internal class SymbolLightAccessorMethod private constructor(
                     isTopLevel: Boolean,
                     staticsFromCompanion: Boolean,
                 ): Context = with(session) {
+                    // The type of the property is inspected only if it is explicitly declared
+                    val hasValueClassInPropertyType = hasValueClassInReturnType(property)
                     Context(
                         property = property,
                         destinationLightClass = destinationLightClass,
@@ -421,7 +433,9 @@ internal class SymbolLightAccessorMethod private constructor(
                         isTopLevel = isTopLevel,
                         staticsFromCompanion = staticsFromCompanion,
                         hasValueClassInParameterType = hasValueClassInSignature(property, skipReturnTypeCheck = true),
-                        hasValueClassInReturnType = hasValueClassInReturnType(property),
+                        hasValueClassInReturnType = hasValueClassInPropertyType,
+                        hasManglingValueClassInParameterType = hasManglingValueClassInParameterPosition(property),
+                        hasManglingValueClassInPropertyType = hasValueClassInPropertyType && parameterTypeRequiresMangling(property.returnType),
                         jvmExposeBoxedMode = jvmExposeBoxedMode(property),
                     )
                 }
@@ -494,7 +508,8 @@ internal class SymbolLightAccessorMethod private constructor(
             val hasValueClassInReturnType = context.hasValueClassInReturnType(accessor)
 
             val hasMangledNameDueValueClassesInSignature = hasMangledNameDueValueClassesInSignature(
-                hasValueClassInParameterType = hasValueClassInParameterType,
+                // Not every value class in a parameter position mangles the name, so 'hasValueClassInParameterType' cannot be reused
+                hasManglingValueClassInParameterType = context.hasManglingValueClassInParameterType(accessor),
                 hasValueClassInReturnType = hasValueClassInReturnType,
                 isTopLevel = context.isTopLevel,
             )
