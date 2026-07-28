@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
@@ -65,6 +64,7 @@ import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.constructedClass
@@ -294,11 +294,14 @@ internal class CallSiteVisitor(
         }
     }
 
-    private fun IrCall.propertyAccessFromReceiver(): Pair<IrField, IrFieldAccessExpression>? {
+    private fun IrCall.propertyAccessFromReceiver(): Pair<IrPropertySymbol, IrCall>? {
         val receiver = (symbol.owner.parameters.find { it.kind == IrParameterKind.ExtensionReceiver }?.let(arguments::get)
-            ?: dispatchReceiver) as? IrFieldAccessExpression
+            ?: dispatchReceiver) as? IrCall
             ?: return null
-        return receiver.symbol.owner to receiver
+        // Consider only getters of initialized vals
+        return receiver.symbol.owner.takeIf(IrSimpleFunction::isGetter)
+            ?.correspondingPropertySymbol?.takeIf { !it.owner.isVar && it.owner.backingField != null }
+            ?.let { it to receiver }
     }
 
     override fun visitCall(expression: IrCall, data: CallSiteVisitContext): Unit =
@@ -306,82 +309,111 @@ internal class CallSiteVisitor(
             val symbol = expression.symbol
             visitArguments(symbol)
             if (symbol !in module) return@visit
-            if (symbol.isFunctionalTypeInvoke) {
-                expression.propertyAccessFromReceiver()?.let { [field, access] ->
-                    // Consider only property-based fields
-                    val property = field.correspondingPropertySymbol?.owner ?: return@let
-                    // Consider only vals and fields with functional return type
-                    if (property.isVar || property.getter?.returnType?.isFunctionOrKFunction() != true) return@let
-                    accessNode(
-                        symbol = property.symbol,
-                        dispatchReceiverSupplier = { access.receiver },
-                        superQualifierSupplier = { access.superQualifierSymbol },
-                        staticAccess = staticAccess@{ propertySymbol, receiverEntity ->
-                            val propertyNode = PropertyIndex(propertySymbol, receiverEntity)
-                            val closure = propertyNode.initializedClosure ?: return@staticAccess
-                            callNode(closure)
-                        },
-                        instanceAccess = instanceAccess@{ propertySymbol ->
-                            val propertyNode = PropertyIndex(propertySymbol)
-                            val closure = propertyNode.initializedClosure ?: return@instanceAccess
-                            // Here the property is directly accessed and it is immediately invoked, so no aliasing
-                            val constructedClass = propertySymbol.owner.parentClassOrNull?.symbol ?: return@instanceAccess
-                            constructedClass.postponeInitSubgraph()
-                            val endNode = constructedClass.endInitializationIndex
-                            endNode.buildNode()
-                            callNode(closure)
-                            endNode mayHappenBefore closure
-                        }
-                    )
-                    return@visit
+            when {
+                // Special case for initialized properties with a closure
+                symbol.isFunctionalTypeInvoke -> expression.propertyAccessFromReceiver()?.let { [property, access] ->
+                    context(access) {
+                        // Consider only (initialized) properties with functional type
+                        if (property.owner.getter?.returnType?.isFunctionOrKFunction()?.not() ?: false) return@let
+                        accessNode(
+                            symbol = property,
+                            dispatchReceiverSupplier = { it.dispatchReceiver },
+                            // Only initialized properties so no extension receivers
+                            superQualifierSupplier = { it.superQualifierSymbol },
+                            staticAccess = staticAccess@{ propertySymbol, receiverEntity ->
+                                val propertyNode = PropertyIndex(propertySymbol, receiverEntity)
+                                val closure = propertyNode.initializedClosure ?: return@staticAccess
+                                callNode(closure)
+                                if (!propertySymbol.inVisitedFiles) symbol.postponeFileEntity()
+                            },
+                            instanceAccess = instanceAccess@{ propertySymbol ->
+                                val propertyNode = PropertyIndex(propertySymbol)
+                                // Early return in case there's initialized closure
+                                val closure = propertyNode.initializedClosure ?: return@instanceAccess
+                                // Here the property is directly accessed and it is immediately invoked, so no aliasing
+                                val constructedClass = propertySymbol.owner.parentClassOrNull?.symbol ?: return@instanceAccess
+                                constructedClass.postponeInitSubgraph()
+                                val endNode = constructedClass.endInitializationIndex
+                                endNode.buildNode()
+                                callNode(closure)
+                                endNode mayHappenBefore closure
+                                if (!propertySymbol.inVisitedFiles) symbol.postponeFileEntity()
+                            }
+                        )
+                    }
+                    if (!property.inVisitedFiles) property.postponeFileEntity()
                 }
-            }
+                // General case of function calls and (val) property accesses
+                else -> {
+                    val defaultParameters = symbol.owner.parameters.zip(expression.arguments) { parameter, argument ->
+                        if (argument == null) parameter.symbol else null
+                    }.filterNotNull().toSet()
 
-            val defaultParameters = symbol.owner.parameters.zip(expression.arguments) { parameter, argument ->
-                if (argument == null) parameter.symbol else null
-            }.filterNotNull().toSet()
-            if (symbol.owner.correspondingPropertySymbol?.owner?.let { it.isVar || !symbol.owner.isGetter && defaultParameters.isNotEmpty() } == true) return@visit
-            accessNode(
-                symbol = symbol,
-                dispatchReceiverSupplier = { it.dispatchReceiver },
-                extensionReceiverSupplier = { access ->
-                    parameters.find { it.kind == IrParameterKind.ExtensionReceiver }?.indexInParameters?.let(access.arguments::get)
-                },
-                superQualifierSupplier = IrCall::superQualifierSymbol,
-                staticAccess = staticAccess@{ functionSymbol, receiverEntity ->
-                    functionSymbol.owner.correspondingPropertySymbol?.owner?.let { property ->
-                        val propertyNode = PropertyIndex(property.symbol, receiverEntity)
-                        when {
-                            functionSymbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR && propertyNode.hasInitializer ->
-                                referenceNode(propertyNode)
-                            else -> propertyNode.getter?.let { callNode(it) }
-                        }
-                    } ?: callNode(FunctionIndex.MemberFunction(functionSymbol, receiverEntity).defaultedOrSelf(defaultParameters))
-                },
-                instanceAccess = instanceAccess@{ functionSymbol ->
-                    val constructedClass = functionSymbol.owner.parentClassOrNull?.symbol ?: return@instanceAccess
-                    constructedClass.postponeInitSubgraph()
-                    val endNode = constructedClass.endInitializationIndex
-                    endNode.buildNode()
-                    functionSymbol.owner.correspondingPropertySymbol?.owner?.let { property ->
-                        val propertyNode = PropertyIndex(property.symbol)
-                        when {
-                            functionSymbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR && propertyNode.hasInitializer -> {
-                                referenceNode(propertyNode)
-                                endNode mayHappenBefore contextOf<CallSiteVisitContext>().accessingNode
+                    when (val property = symbol.owner.correspondingPropertySymbol) {
+                        // Calling an actual function
+                        null -> accessNode(
+                            symbol = symbol,
+                            dispatchReceiverSupplier = { it.dispatchReceiver },
+                            extensionReceiverSupplier = { access ->
+                                parameters.find { it.kind == IrParameterKind.ExtensionReceiver }?.indexInParameters?.let(access.arguments::get)
+                            },
+                            superQualifierSupplier = IrCall::superQualifierSymbol,
+                            staticAccess = staticAccess@{ functionSymbol, receiverEntity ->
+                                val node = FunctionIndex.MemberFunction(functionSymbol, receiverEntity).defaultedOrSelf(defaultParameters)
+                                callNode(node)
+                                if (!functionSymbol.inVisitedFiles) symbol.postponeFileEntity()
+                            },
+                            instanceAccess = instanceAccess@{ functionSymbol ->
+                                val constructedClass = symbol.owner.parentClassOrNull?.symbol ?: return@instanceAccess
+                                constructedClass.postponeInitSubgraph()
+                                val endNode = constructedClass.endInitializationIndex
+                                endNode.buildNode()
+                                val functionNode = FunctionIndex.MemberFunction(functionSymbol).defaultedOrSelf(defaultParameters)
+                                callNode(functionNode)
+                                endNode mayHappenBefore functionNode
+                                if (!functionSymbol.inVisitedFiles) symbol.postponeFileEntity()
                             }
-                            else -> propertyNode.getter?.let {
-                                callNode(it)
-                                endNode mayHappenBefore it
+                        )
+                        // Calling a property getter (default or otherwise), invariant: cannot have default parameters
+                        else if !property.owner.isVar && symbol.owner.isGetter && defaultParameters.isEmpty() -> accessNode(
+                            symbol = property,
+                            dispatchReceiverSupplier = { it.dispatchReceiver },
+                            // Only initialized properties so no extension receivers
+                            superQualifierSupplier = IrCall::superQualifierSymbol,
+                            staticAccess = staticAccess@{ propertySymbol, receiverEntity ->
+                                val propertyNode = PropertyIndex(propertySymbol, receiverEntity)
+                                when {
+                                    propertySymbol.owner.getter?.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR && propertyNode.hasInitializer ->
+                                        referenceNode(propertyNode)
+                                    else -> propertyNode.getter?.let { callNode(it) }
+                                }
+                                if (!propertySymbol.inVisitedFiles) symbol.postponeFileEntity()
+                            },
+                            instanceAccess = instanceAccess@{ propertySymbol ->
+                                val constructedClass = symbol.owner.parentClassOrNull?.symbol ?: return@instanceAccess
+                                constructedClass.postponeInitSubgraph()
+                                val endNode = constructedClass.endInitializationIndex
+                                endNode.buildNode()
+                                val propertyNode = PropertyIndex(propertySymbol)
+                                when {
+                                    propertySymbol.owner.getter?.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR && propertyNode.hasInitializer -> {
+                                        referenceNode(propertyNode)
+                                        endNode mayHappenBefore data.accessingNode
+                                    }
+                                    else -> propertyNode.getter?.let {
+                                        callNode(it)
+                                        endNode mayHappenBefore it
+                                    }
+                                }
+                                if (!propertySymbol.inVisitedFiles) symbol.postponeFileEntity()
                             }
-                        }
-                    } ?: run {
-                        val functionNode = FunctionIndex.MemberFunction(functionSymbol).defaultedOrSelf(defaultParameters)
-                        callNode(functionNode)
-                        endNode mayHappenBefore functionNode
+                        )
+                        else -> {}
                     }
                 }
-            )
+            }
+            // Just in case the symbol is a fake override and was not added during access resolution,
+            // we still want to explore the declarations of its containing file
             if (!symbol.inVisitedFiles) symbol.postponeFileEntity()
         }
 
