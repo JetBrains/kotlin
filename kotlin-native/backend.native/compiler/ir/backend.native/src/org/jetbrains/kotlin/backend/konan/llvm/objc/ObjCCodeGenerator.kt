@@ -76,7 +76,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
 
     // TODO: this doesn't support stret.
     fun msgSender(functionType: LlvmFunctionSignature): LlvmCallable =
-            LlvmFunction.Prototype(objcMsgSend.llvm, functionType)
+            LlvmFunction.Declaration(objcMsgSend.llvm, functionType)
 }
 
 internal const val OBJC_RETAIN_AUTORELEASED_RETURN_VALUE = "llvm.objc.retainAutoreleasedReturnValue"
