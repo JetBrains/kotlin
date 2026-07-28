@@ -22,13 +22,10 @@ import org.jetbrains.kotlin.serialization.ApproximatingStringTable
  * For example, it may be convenient to join fragments into a single one.
  */
 interface KlibModuleFragmentReadStrategy {
-    fun processModuleParts(parts: List<KmModuleFragment>): List<KmModuleFragment>
+    fun processModuleParts(parts: List<KmModuleFragment>): List<KmModuleFragment> = parts
 
     companion object {
-        val DEFAULT = object : KlibModuleFragmentReadStrategy {
-            override fun processModuleParts(parts: List<KmModuleFragment>) =
-                parts
-        }
+        val DEFAULT = object : KlibModuleFragmentReadStrategy {}
     }
 }
 
@@ -37,13 +34,10 @@ interface KlibModuleFragmentReadStrategy {
  * For example, splitting big fragments into several small one allows to improve IDE performance.
  */
 interface KlibModuleFragmentWriteStrategy {
-    fun processPackageParts(parts: List<KmModuleFragment>): List<KmModuleFragment>
+    fun processPackageParts(parts: List<KmModuleFragment>): List<KmModuleFragment> = parts
 
     companion object {
-        val DEFAULT = object : KlibModuleFragmentWriteStrategy {
-            override fun processPackageParts(parts: List<KmModuleFragment>): List<KmModuleFragment> =
-                parts
-        }
+        val DEFAULT = object : KlibModuleFragmentWriteStrategy {}
     }
 }
 
