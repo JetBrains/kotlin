@@ -107,6 +107,9 @@ public fun KaClassSymbol.asPsiClass(): PsiClass? {
  * - Scripts
  * - Files with no top-level callables
  *
+ * If the provided [KaFileSymbol] has a [kotlin.jvm.JvmMultifileClass] annotation, the constructed [PsiClass] is a facade for all
+ * other files with [kotlin.jvm.JvmMultifileClass] annotation and the same [kotlin.jvm.JvmName].
+ *
  * ### Example:
  * The following Kotlin file:
  * ```kotlin
@@ -126,6 +129,38 @@ public fun KaClassSymbol.asPsiClass(): PsiClass? {
  *     public static int getX();
  *
  *     public static void foo(int);
+ * }
+ * ```
+ *
+ * The following multifile class file `FirstFacadeClass`:
+ * ```kotlin
+ * // FirstFacadeClass.kt
+ * @file:JvmMultifileClass
+ * @file:JvmName("SomeFacade")
+ * package pkg
+ *
+ * fun foo() = 42
+ *
+ * val x = 24
+ *
+ * // SecondFacadeClass.kt
+ * @file:JvmMultifileClass
+ * @file:JvmName("SomeFacade")
+ * package pkg
+ *
+ * private fun privateFoo(): Int = 3
+ *
+ * const val myConst = 42
+ * ```
+ *
+ * Is seen as the following [PsiClass] from Java:
+ * ```java
+ * public final class SomeFacade {
+ *   public static final int myConst = 42;
+ *
+ *   public static final int foo();
+ *
+ *   public static final int getX();
  * }
  * ```
  *
