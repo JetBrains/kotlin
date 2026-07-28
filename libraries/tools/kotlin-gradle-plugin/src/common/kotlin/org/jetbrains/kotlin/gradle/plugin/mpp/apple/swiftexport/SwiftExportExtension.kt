@@ -42,9 +42,28 @@ interface SwiftExportedModuleMetadata {
     val moduleName: Property<String>
 
     /**
-     * Configure package collapsing rule.
+     * Specify module's root package to configure package collapsing rule.
      */
-    val flattenPackage: Property<String>
+    val rootPackage: Property<String>
+
+    /**
+     * Specify how transitive dependencies participate in Swift export. The default is PROJECTS_ONLY.
+     */
+    val transitiveExport: Property<TransitiveExport>
+}
+
+/**
+ * Describes how a module's transitive dependencies participate in Swift export.
+ */
+enum class TransitiveExport {
+    /** All transitive dependencies should be excluded from the export. */
+    NONE,
+
+    /** Only project dependencies should be included in the export. */
+    PROJECTS_ONLY,
+
+    /** All dependencies should be included in the export. */
+    ALL,
 }
 
 /**
@@ -106,7 +125,7 @@ abstract class SwiftExportExtension @Inject constructor(
     private val dependencyHandler: DependencyHandler,
     private val projectDependencyAccessor: Provider<ProjectDependencyAccessor.Factory>,
     private val projectByPath: ProjectByPath,
-) : SwiftExportedModuleMetadata {
+) : SwiftExportedModuleMetadata, SwiftExportAdvancedConfiguration {
     /**
      * Configure Link task.
      */
@@ -144,10 +163,10 @@ abstract class SwiftExportExtension @Inject constructor(
     }
 
     /**
-     * Configure Swift Export modules export.
+     * Explicitly add a module to Swift Export.
      */
     @ExperimentalSwiftExportDsl
-    fun export(dependency: Any, configure: SwiftExportedModuleMetadata.() -> Unit = {}) {
+    fun expose(dependency: Any, configure: SwiftExportedModuleMetadata.() -> Unit = {}) {
         when (dependency) {
             is Provider<*> -> {
                 addDependencyToExportConfiguration(dependency.map { dep ->
@@ -163,11 +182,32 @@ abstract class SwiftExportExtension @Inject constructor(
     }
 
     /**
-     * Configure Swift Export modules export.
+     * Explicitly add a module to Swift Export.
      */
     @ExperimentalSwiftExportDsl
-    fun export(dependency: Any, configure: Action<SwiftExportedModuleMetadata>) = export(dependency) {
+    fun expose(dependency: Any, configure: Action<SwiftExportedModuleMetadata>) = expose(dependency) {
         configure.execute(this)
+    }
+
+    /**
+     * Explicitly exclude a module from Swift Export.
+     */
+    @ExperimentalSwiftExportDsl
+    fun hide(dependency: Any, configure: SwiftExportedModuleMetadata.() -> Unit = {}) {
+    }
+
+    /**
+     * Explicitly exclude a module from Swift Export.
+     */
+    @ExperimentalSwiftExportDsl
+    fun hide(dependency: Any, configure: Action<SwiftExportedModuleMetadata>) = hide(dependency) {
+        configure.execute(this)
+    }
+
+    /**
+     * Configure the module metadata of a module already added to Swift export.
+     */
+    fun component(dependency: Any, configure: SwiftExportedModuleMetadata.() -> Unit = {}) {
     }
 
     /**

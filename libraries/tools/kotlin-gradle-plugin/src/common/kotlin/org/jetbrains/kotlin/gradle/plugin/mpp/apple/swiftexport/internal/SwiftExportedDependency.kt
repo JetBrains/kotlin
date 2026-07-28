@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportedModuleMetadata
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.TransitiveExport
 import org.jetbrains.kotlin.gradle.plugin.mpp.getCoordinatesFromGroupNameAndVersion
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 
@@ -23,7 +24,8 @@ import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 internal sealed class SwiftExportedDependency(objectFactory: ObjectFactory) : SwiftExportedModuleMetadata, Named {
 
     override var moduleName: Property<String> = objectFactory.property(String::class.java)
-    override var flattenPackage: Property<String> = objectFactory.property(String::class.java)
+    override var rootPackage: Property<String> = objectFactory.property(String::class.java)
+    override var transitiveExport: Property<TransitiveExport> = objectFactory.property(TransitiveExport::class.java)
 
     internal class External(
         objectFactory: ObjectFactory,

@@ -64,7 +64,7 @@ internal fun Project.registerSwiftExportTask(
             mainCompilation.internal.configurations.compileDependencyConfiguration
         ),
         mainCompilation = mainCompilation,
-        swiftApiFlattenPackage = swiftExportExtension.flattenPackage,
+        swiftApiFlattenPackage = swiftExportExtension.rootPackage,
         exportedModules = swiftExportExtension.exportedModules,
         customSetting = swiftExportExtension.advancedConfiguration.settings
     )

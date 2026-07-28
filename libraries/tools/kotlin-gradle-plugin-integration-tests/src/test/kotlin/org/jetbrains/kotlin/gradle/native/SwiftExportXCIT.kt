@@ -45,11 +45,11 @@ class SwiftExportXCIT : KGPBaseTest() {
                             iosArm64()
                             with(swiftExport) {
                                 moduleName.set("Shared")
-                                flattenPackage.set("com.github.jetbrains.example")
+                                rootPackage.set("com.github.jetbrains.example")
 
-                                export(dependencies.project(mapOf("path" to ":subproject"))) {
+                                expose(dependencies.project(mapOf("path" to ":subproject"))) {
                                     moduleName.set("Subproject")
-                                    flattenPackage.set("com.github.jetbrains.library")
+                                    rootPackage.set("com.github.jetbrains.library")
                                 }
                             }
 

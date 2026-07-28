@@ -144,7 +144,7 @@ private fun Project.findAndCreateSwiftExportedModules(
                     explicitModule.moduleName.orElse(
                         normalizedAndValidatedModuleName(explicitModule.inheritedName)
                     ).get(),
-                    explicitModule.flattenPackage.orNull,
+                    explicitModule.rootPackage.orNull,
                     matchingArtifact.artifact.file
                 )
             )

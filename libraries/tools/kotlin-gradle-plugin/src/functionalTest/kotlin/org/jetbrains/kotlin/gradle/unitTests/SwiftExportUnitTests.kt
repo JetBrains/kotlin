@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.support.uppercaseFirstChar
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
@@ -316,7 +315,7 @@ class SwiftExportUnitTests {
     @Test
     fun `test swift export exported modules`() {
         val projects = multiModuleSwiftExportProject {
-            export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+            expose("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
         }
 
         projects.forEach { it.evaluate() }
@@ -367,7 +366,7 @@ class SwiftExportUnitTests {
                 }
             },
             swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+                expose("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
             }
         )
 
@@ -399,7 +398,7 @@ class SwiftExportUnitTests {
     fun `test transitive dependencies of exported dependencies are not exported`() {
         val project = swiftExportProject(
             swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+                expose("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
             }
         )
 
@@ -432,7 +431,7 @@ class SwiftExportUnitTests {
                 }
             },
             swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                expose("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
             }
         )
 
@@ -472,7 +471,7 @@ class SwiftExportUnitTests {
                 }
             },
             swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+                expose("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
             }
         )
 
@@ -512,7 +511,7 @@ class SwiftExportUnitTests {
                 }
             },
             swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+                expose("org.jetbrains.kotlinx:kotlinx-coroutines-core")
             }
         )
 
@@ -544,7 +543,7 @@ class SwiftExportUnitTests {
     fun `test dependency export custom parameters`() {
         val project = swiftExportProject(
             swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2") {
+                expose("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2") {
                     moduleName.set("CustomDateTime")
                 }
             }
@@ -607,7 +606,7 @@ class SwiftExportUnitTests {
     @Test
     fun `test swift export invalid exported module name`() {
         val project = swiftExportProject {
-            export("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2") {
+            expose("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2") {
                 moduleName.set("Custom.DateTime")
             }
         }
@@ -726,7 +725,7 @@ class SwiftExportUnitTests {
                 withName("shared")
             },
             swiftExport = {
-                export("org.glassfish:jakarta.json:2.0.1")
+                expose("org.glassfish:jakarta.json:2.0.1")
             }
         )
 
@@ -746,7 +745,7 @@ class SwiftExportUnitTests {
             },
             swiftExport = {
                 // Invalid dependency that does not exist
-                export("org.jetbrains.kotlinx:kotlinx-dateetime:0.6.2")
+                expose("org.jetbrains.kotlinx:kotlinx-dateetime:0.6.2")
             }
         )
 
@@ -772,7 +771,7 @@ class SwiftExportUnitTests {
                 }
             },
             swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                expose("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
             }
         )
 
@@ -817,7 +816,7 @@ class SwiftExportUnitTests {
                 }
             },
             swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+                expose("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
             }
         )
 
@@ -941,7 +940,7 @@ class SwiftExportUnitTests {
                 }
             },
             swiftExport = {
-                export(projectDependency)
+                expose(projectDependency)
             }
         )
 
@@ -1005,7 +1004,7 @@ class SwiftExportUnitTests {
                     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
                 }
             }, swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                expose("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
             }
         )
 
@@ -1069,7 +1068,7 @@ class SwiftExportUnitTests {
                     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
                 }
             }, swiftExport = {
-                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
+                expose("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
             }
         )
 
@@ -1133,9 +1132,9 @@ class SwiftExportUnitTests {
                 iosSimulatorArm64()
             },
             swiftExport = {
-                export(projectDependency_1)
-                export(projectDependency_2)
-                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
+                expose(projectDependency_1)
+                expose(projectDependency_2)
+                expose("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
             }
         )
 
@@ -1198,8 +1197,8 @@ class SwiftExportUnitTests {
                 iosSimulatorArm64()
             },
             swiftExport = {
-                export("app.cash.sqldelight:runtime:2.1.0")
-                export("org.jetbrains.compose.runtime:runtime:1.8.2")
+                expose("app.cash.sqldelight:runtime:2.1.0")
+                expose("org.jetbrains.compose.runtime:runtime:1.8.2")
             }
         )
 
@@ -1262,7 +1261,7 @@ private fun multiModuleSwiftExportProject(
     )
     val projectDependencies = subprojects.map { project.subProject(it, multiplatform) }
     project.setupForSwiftExport(multiplatform = multiplatform) {
-        projectDependencies.forEach { export(it) }
+        projectDependencies.forEach { expose(it) }
         swiftExport()
     }
 

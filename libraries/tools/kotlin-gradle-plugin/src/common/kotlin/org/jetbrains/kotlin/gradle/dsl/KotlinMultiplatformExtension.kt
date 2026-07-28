@@ -26,7 +26,9 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBui
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.redundantDependsOnEdgesTracker
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.swiftPMImportIdeModelProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.js.jsexport.JsExportExtension
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl
@@ -282,6 +284,22 @@ internal constructor(
     // This getter is consumed during KMP import in KotlinMPPGradleModelBuilder
     internal val swiftPMImportIdeModel
         get() = if (!project.kotlinPropertiesProvider.disableSwiftPMImport) project.swiftPMImportIdeModelProvider().get() else null
+
+    fun swiftExport(configure: SwiftExportExtension.() -> Unit) {
+        // do nothing
+    }
+
+    fun swiftExport(moduleName: String, configure: SwiftExportExtension.() -> Unit) {
+        // do nothing
+    }
+
+    fun jsExport(configure: JsExportExtension.() -> Unit) {
+        // do nothing
+    }
+
+    fun jsExport(npmPackageName: String, configure: JsExportExtension.() -> Unit) {
+        // do nothing
+    }
 }
 
 private const val targetsExtensionDeprecationMessage =

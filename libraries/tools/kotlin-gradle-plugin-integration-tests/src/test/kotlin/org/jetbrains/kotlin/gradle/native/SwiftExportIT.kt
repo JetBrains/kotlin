@@ -716,7 +716,7 @@ class SwiftExportIT : KGPBaseTest() {
                     sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                     with(swiftExport) {
                         @OptIn(ExperimentalSwiftExportDsl::class)
-                        export(multiplatformLibraryV1.rootCoordinate)
+                        expose(multiplatformLibraryV1.rootCoordinate)
                     }
                     sourceSets.commonMain {
                         dependencies {
