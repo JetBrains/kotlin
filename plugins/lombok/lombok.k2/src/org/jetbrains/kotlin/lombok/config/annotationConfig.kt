@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ACCESS
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_CLASS_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_CLASS_NAME_CONFIG
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_FLAG_USAGE_CONFIG
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.SUPER_BUILDER_FLAG_USAGE_CONFIG
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.SINGULAR_AUTO_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_METHOD_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILD_METHOD_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.CHAIN
@@ -99,6 +102,9 @@ class GlobalConfig(
     val accessorsPrefix: List<String>,
     val getterNoIsPrefix: Boolean,
     val builderClassName: String,
+    val builderFlagUsage: FlagUsageValue?,
+    val superBuilderFlagUsage: FlagUsageValue?,
+    val singularAuto: Boolean,
     val logFieldName: String,
     val logFieldIsStatic: Boolean,
     val logFlagUsage: FlagUsageValue?,
@@ -128,6 +134,9 @@ class GlobalConfig(
                 accessorsPrefix = config.getMultiString(ACCESSORS_PREFIX_CONFIG) ?: emptyList(),
                 getterNoIsPrefix = config.getBoolean(GETTER_NO_IS_PREFIX_CONFIG) ?: false,
                 builderClassName = config.getString(BUILDER_CLASS_NAME_CONFIG) ?: "*Builder",
+                builderFlagUsage = parseFlagUsage(config, BUILDER_FLAG_USAGE_CONFIG),
+                superBuilderFlagUsage = parseFlagUsage(config, SUPER_BUILDER_FLAG_USAGE_CONFIG),
+                singularAuto = config.getBoolean(SINGULAR_AUTO_CONFIG) ?: true,
                 logFieldName = config.getString(LOG_FIELD_NAME_CONFIG) ?: "log",
                 logFieldIsStatic = config.getBoolean(LOG_FIELD_IS_STATIC_CONFIG) ?: true,
                 logFlagUsage = parseFlagUsage(config, LOG_FLAG_USAGE_CONFIG),
