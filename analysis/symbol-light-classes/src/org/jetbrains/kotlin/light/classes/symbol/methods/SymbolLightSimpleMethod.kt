@@ -12,6 +12,7 @@ import kotlinx.collections.immutable.mutate
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
+import org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName
 import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -53,7 +54,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
             if (isJvmExposedBoxed) {
                 computeJvmExposeBoxedMethodName(functionSymbol, defaultName)
             } else {
-                computeJvmMethodName(functionSymbol, defaultName)
+                functionSymbol.javaMethodName ?: defaultName
             }
         }
     }
