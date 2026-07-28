@@ -262,7 +262,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
-  javaMethodName: funWithValueClassContextParameter
+  javaMethodName: null
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -410,7 +410,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: RegularClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: getPropertyWithValueClassContextParameter
+    javaMethodName: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true

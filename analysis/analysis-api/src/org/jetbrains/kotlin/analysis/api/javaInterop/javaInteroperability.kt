@@ -115,8 +115,8 @@ public val KaCallableSymbol.containingJvmClassName: String?
  *   accessor method is generated in these cases
  * - The computed name is not a valid Java identifier, such as for an escaped Kotlin name like `a b c`, as such a method cannot be
  *   referenced from Java code
- *
- * **Note**: since it is only about visible methods, it doesn't support value classes mangling.
+ * - The name is mangled because of value classes: the suffix is either a hash of the signature, as in `classFunInParameter-5lyY9Q4`,
+ *   or `impl` for a member of a value class, as in `funWithoutParameters-impl`, and the endpoint computes neither
  */
 @KaExperimentalApi
 context(session: KaSession)

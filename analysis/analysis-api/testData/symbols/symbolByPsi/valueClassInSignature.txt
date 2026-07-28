@@ -317,7 +317,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: ValueClassInSignatureKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: setTopLevelProp
+    javaMethodName: null
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -430,7 +430,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: ValueClassInSignatureKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: getTopLevelPropInExtension
+    javaMethodName: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -630,7 +630,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: ValueClassInSignatureKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: setTopLevelPropInExtension
+    javaMethodName: null
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -765,7 +765,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
-  javaMethodName: topLevelFunInParameter
+  javaMethodName: null
   importableFqName: topLevelFunInParameter
 
 KaNamedFunctionSymbol:
@@ -840,7 +840,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
-  javaMethodName: topLevelFunInExtension
+  javaMethodName: null
   importableFqName: topLevelFunInExtension
 
 KaNamedFunctionSymbol:
@@ -1148,7 +1148,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
-  javaMethodName: funWithValueClassTypeParameter
+  javaMethodName: null
   importableFqName: funWithValueClassTypeParameter
 
 KaKotlinPropertySymbol:
@@ -1494,7 +1494,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: RegularClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: getClassProp
+    javaMethodName: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1636,7 +1636,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: RegularClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: setClassProp
+    javaMethodName: null
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -1757,7 +1757,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: RegularClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: getClassPropInExtension
+    javaMethodName: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -1957,7 +1957,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: RegularClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: setClassPropInExtension
+    javaMethodName: null
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -2061,7 +2061,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: RegularClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: getResultProp
+    javaMethodName: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -2278,7 +2278,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
-  javaMethodName: classFunInReturn
+  javaMethodName: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2365,7 +2365,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
-  javaMethodName: classFunInParameter
+  javaMethodName: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2444,7 +2444,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
-  javaMethodName: classFunInExtension
+  javaMethodName: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2621,7 +2621,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
-  javaMethodName: internalClassFunInParameter$main
+  javaMethodName: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -2674,7 +2674,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
-  javaMethodName: funWithResultInReturn
+  javaMethodName: null
   importableFqName: null
 
 KaKotlinPropertySymbol:
