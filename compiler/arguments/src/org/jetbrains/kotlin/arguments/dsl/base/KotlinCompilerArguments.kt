@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsKotlinRelease
 @Serializable
 data class KotlinCompilerArguments(
     // Also update schema changelog in the project Readme.md on schema version bump
-    val schemaVersion: Int = 5,
+    val schemaVersion: Int = 6,
     @Serializable(with = AllDetailsKotlinReleaseVersionSerializer::class)
     val releases: Set<KotlinReleaseVersion> = KotlinReleaseVersion.entries.toSet(),
     val types: AllKotlinArgumentTypes = AllKotlinArgumentTypes(),
