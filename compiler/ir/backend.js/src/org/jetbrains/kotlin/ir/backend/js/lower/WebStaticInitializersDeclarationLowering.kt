@@ -225,13 +225,40 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
             )
         }
 
+    // In the case of super interfaces, only ones having at least 1 non-abstract, non-static member
+    // trigger its initialization from the implementing class. The ordering follows the recursive
+    // enumeration over the superinterface hierarchy of each directly implemented interface. See
+    // section §3.3 of the KEEP and JVM spec section §5.5 step 7. Here, the behavior is aligned with
+    // what is done on the JVM.
     private val IrClass.dependencySuperTypes: List<IrClass>
-        get() = superTypes
-            .filter { !it.isAny() }
-            .mapNotNull { it.classOrNull?.owner }
-            // In the case of super interfaces, only ones having at least 1 non-abstract member trigger
-            // its initialization from the implementing class. See section §3.3 of the KEEP.
-            .filter { clazz -> !clazz.isInterface || clazz.declarations.any { it.isNonAbstractInstanceMember() } }
+        get() {
+            val result = mutableListOf<IrClass>()
+            val visited = mutableSetOf<IrClass>()
+            for (superType in superTypes) {
+                if (superType.isAny()) continue
+                val superClass = superType.classOrNull?.owner ?: continue
+                if (!superClass.isInterface) {
+                    if (visited.add(superClass)) result.add(superClass)
+                } else {
+                    collectInterfaceDependencies(superClass, result, visited)
+                }
+            }
+            return result
+        }
+
+    private fun collectInterfaceDependencies(iface: IrClass, result: MutableList<IrClass>, visited: MutableSet<IrClass>) {
+        if (!visited.add(iface)) return
+        for (superType in iface.superTypes) {
+            if (superType.isAny()) continue
+            val superClass = superType.classOrNull?.owner ?: continue
+            if (superClass.isInterface) {
+                collectInterfaceDependencies(superClass, result, visited)
+            }
+        }
+        if (iface.declarations.any { it.isNonAbstractInstanceMember() }) {
+            result.add(iface)
+        }
+    }
 
     private fun IrDeclaration.isNonAbstractInstanceMember(): Boolean = when (this) {
         is IrSimpleFunction if isReal && modality != Modality.ABSTRACT && dispatchReceiverParameter != null -> true
