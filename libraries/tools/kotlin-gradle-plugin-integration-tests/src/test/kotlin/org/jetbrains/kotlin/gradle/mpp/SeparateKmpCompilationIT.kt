@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
-import org.gradle.kotlin.dsl.creating
-import org.gradle.kotlin.dsl.getValue
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
@@ -26,6 +24,8 @@ import java.nio.file.Path
 import java.util.zip.ZipFile
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
+import kotlin.io.path.createDirectories
+import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -127,20 +127,77 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-82367 - native platform dependencies are added to test compilation fragment dependencies")
+    @GradleTest
+    fun `KT-82367 - nativePlatformDepsAreAddedToTestCompilationFragmentDependencies`(gradleVersion: GradleVersion) {
+        doTestFragmentDependenciesArg(
+            gradleVersion,
+            targetsToRun = listOf("linuxX64"),
+            compilationName = "test",
+            additionalProjectPostConfiguration = {
+                kotlinSourcesDir("nativeTest").createDirectories()
+                    .resolve("PosixTest.kt")
+                    .writeText(
+                        """
+                        import platform.posix.sched_yield
+                        fun yieldThread() { sched_yield() }
+                        """.trimIndent()
+                    )
+            },
+        ) { fragmentDependenciesPerFragment ->
+            val commonTestDeps = fragmentDependenciesPerFragment.getValue("commonTest")
+            assert(commonTestDeps.count { "stdlib" in it } == 1 && commonTestDeps.any { "/commonTest/.*kotlin-stdlib.*\\.klib".toRegex() in it }) {
+                "Exactly one stdlib dependency is expected in commonTest: $commonTestDeps"
+            }
+            assert(commonTestDeps.none { "commonized" in it }) {
+                "No commonized platform libraries are expected in commonTest because common is not native only: $commonTestDeps"
+            }
+
+            val nativeTestDeps = fragmentDependenciesPerFragment.getValue("nativeTest")
+            assert(nativeTestDeps.count { "stdlib" in it } == 1 && nativeTestDeps.any { "/klib/common/stdlib" in it }) {
+                "Exactly one K/N stdlib dependency is expected in nativeTest: $nativeTestDeps"
+            }
+            val nativeTestPlatformDeps = nativeTestDeps.filter { "stdlib" !in it }
+            assert(nativeTestPlatformDeps.isNotEmpty()) {
+                "nativeTest should have platform library dependencies: $nativeTestDeps"
+            }
+
+            assert(nativeTestPlatformDeps.all { "(linux_arm64, linux_x64, macos_arm64)" in it }) {
+                "nativeTest dependencies are expected contain only commonized platform libraries: $nativeTestPlatformDeps"
+            }
+
+            val linuxTestDeps = fragmentDependenciesPerFragment.getValue("linuxTest")
+            assert(linuxTestDeps.count { "stdlib" in it } == 0) {
+                "Not K/N stdlib dependency is expected in linuxTest: $linuxTestDeps"
+            }
+            val linuxTestPlatformDeps = linuxTestDeps.filter { "stdlib" !in it }
+            assert(linuxTestPlatformDeps.isNotEmpty()) {
+                "linuxTest should have platform library dependencies: $linuxTestPlatformDeps"
+            }
+            assert(linuxTestPlatformDeps.all { "(linux_arm64, linux_x64)" in it }) {
+                "Expected linuxTest to contain only commonized platform libraries: $linuxTestPlatformDeps"
+            }
+        }
+    }
+
     private fun doTestFragmentDependenciesArg(
         gradleVersion: GradleVersion,
         targetsToInclude: List<String> = ALL_TARGETS,
         targetsToRun: List<String> = listOf("linuxX64", "jvm", "js"),
+        compilationName: String = "main",
+        additionalProjectPostConfiguration: TestProject.() -> Unit = {},
         additionalProjectConfiguration: Project.() -> Unit = {},
         assertions: (Map<String, List<String>>) -> Unit,
     ) {
         defaultProject(gradleVersion, targetsToInclude, additionalProjectConfiguration) {
+            additionalProjectPostConfiguration()
+
             @Suppress("DEPRECATION")
             val compileArgs: List<Pair<String, CommonCompilerArguments>> = providerBuildScriptReturn {
                 val targets = targetsToRun.map { kotlinMultiplatform.targets.getByName(it) }
                 project.provider {
                     targets.map { target ->
-                        val task = target.compilations.getByName("main").compileTaskProvider.get()
+                        val task = target.compilations.getByName(compilationName).compileTaskProvider.get()
                         project.ignoreAccessViolations {
                             task as KotlinCompilerArgumentsProducer
                             target.name to task.createCompilerArguments() as CommonCompilerArguments
@@ -148,7 +205,10 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     }
                 }
             }.buildAndReturn(
-                *targetsToRun.map { ":compileKotlin${it.capitalize()}" }.toTypedArray(),
+                *targetsToRun.map { targetName ->
+                    if (compilationName == "main") ":compileKotlin${targetName.capitalize()}"
+                    else ":compile${compilationName.capitalize()}Kotlin${targetName.capitalize()}"
+                }.toTypedArray(),
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED, // otherwise we would access GMT task outputs before the task execution
             )
             for ([_, particularCompileArgs] in compileArgs) {

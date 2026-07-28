@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
+import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOrNull
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultImpl
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.retrieveExternalDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDependent
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizedOutputLibraries
+import org.jetbrains.kotlin.gradle.targets.native.internal.commonizerTarget
 import org.jetbrains.kotlin.gradle.targets.native.internal.from
 import org.jetbrains.kotlin.gradle.targets.native.internal.retrievePlatformDependenciesWithNativeDistribution
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformCompilationTask
@@ -142,8 +144,21 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
                         if (mostCommonNativeFragment == fragmentName) {
                             add(project.konanDistribution.stdlib)
                         }
-                        val metadataCompilation = internalSourceSet.compilations.filterIsInstance<KotlinSharedNativeCompilation>()
-                            .find { it.defaultSourceSet.name == sourceSet.name }
+
+                        // Shared test sources do not have a connected compilation instance, but we still need to include
+                        // commonized platform symbols in test compilations arguments. The logic here is getting
+                        // associated source sets (from the main scope) and finds the first one with the same commonizer targets
+                        // as the shared test source set. For sources sets from the 'main' tree 'visibleMainSourceSets' are always empty.
+                        val visibleMainSourceSets = getVisibleSourceSetsFromAssociateCompilations(sourceSet)
+                        val metadataSourceSet = if (visibleMainSourceSets.isNotEmpty()) {
+                            val cT = sourceSet.commonizerTarget.await()
+                            visibleMainSourceSets.firstOrNull() {
+                                it.commonizerTarget.await() == cT
+                            }?.internal ?: internalSourceSet
+                        } else internalSourceSet
+                        val metadataCompilation = metadataSourceSet.compilations.filterIsInstance<KotlinSharedNativeCompilation>()
+                            .find { it.defaultSourceSet.name == metadataSourceSet.name }
+
                         if (metadataCompilation != null) {
                             val nativePlatforms = internalSourceSet.awaitPlatformCompilations()
                                 .filterIsInstance<AbstractKotlinNativeCompilation>()
