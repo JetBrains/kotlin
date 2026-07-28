@@ -9,13 +9,16 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Performs a local PSI-based lookup.
+ * Performs local, PSI-only name lookups.
  *
- * @return `null` if the lookup failed, otherwise the found declaration.
+ * If not null, the returned declaration is what the compiler would resolve the name to.
  *
- * This is used to speed up find usages on the IDE side.
+ * @return `null` if the lookup failed / cannot be performed, otherwise the found local declaration.
+ *
+ * This is available as a local-only optimization. It makes use of the fact that local scopes always have the highest
+ * priority in resolution.
  */
-@KtImplementationDetail
+@KtExperimentalApi
 fun KtSimpleNameExpression.lookupLocally(): KtNamedDeclaration? {
     val contextKind = contextKind ?: return null
 

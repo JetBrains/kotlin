@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.resolution
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.internals.internals
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolution.KtResolvable
-import org.jetbrains.kotlin.psi.lookupLocally as lookupLocallyImpl
 
 /**
  * Attempts to resolve a symbol for the given [KtResolvable].
@@ -783,20 +781,4 @@ context(session: KaSession)
 public fun KtDelegatedSuperTypeEntry.resolveSymbol(): KaClassifierSymbol? {
     @OptIn(KaImplementationDetail::class)
     return internals.resolver.resolveSymbol(this)
-}
-
-/**
- * Performs local, PSI-only name lookups. This does not trigger any additional
- * resolution steps.
- *
- * This method guarantees that if it returns a result, it will be the PSI corresponding to
- * the same single symbol that [tryResolveSymbols] would return (ie. it is sound). It is, however,
- * not guaranteed to always return a result (ie. it is not complete).
- *
- * @see tryResolveSymbols
- */
-@KaIdeApi
-public fun KtSimpleNameExpression.lookupLocally(): KtNamedDeclaration? {
-    @OptIn(KtImplementationDetail::class)
-    return lookupLocallyImpl()
 }
