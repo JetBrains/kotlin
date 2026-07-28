@@ -36,6 +36,19 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-28 — Comment-style cleanup of the binary/source-divide branch
+- **Change**: rewrote/deleted LLM-verbose comments added since the divide commit (added
+  comment lines ~290 → ~125): dropped restatements of obvious code, caller inventories,
+  counterfactual "rather than" phrasing, per-`@param` chatter, `Stage`/`§`/`implDocs`
+  references in shared `fir-jvm` sources; kept short why-notes, API contracts, and
+  regression/testData guards. Codified the rules in `AGENT_INSTRUCTIONS.md` →
+  *Source Comment Conventions* ("default is no comment" gate, ~3% density baseline).
+- **Files**: comment-only edits across ~20 files in `cli-base`, `cli-jvm`, `fir-jvm`,
+  `frontend.common.jvm`, `core/compiler.common.jvm`, `java-direct/{src,test}`; docs:
+  `AGENT_INSTRUCTIONS.md` (conventions rewrite, reference-table refresh, stale status header).
+- **Tests**: not run — comment-only change, verified via `git diff` that no code line changed.
+- **Result**: green (no code changes).
+
 ### 2026-07-27 — Make Java-source package directory descent case-sensitive
 - **Change**: `JavaPackageIndexer`'s per-package directory descent used `File(dir, segment).isDirectory`
   (added 2026-07-21 when the source path moved from `VirtualFile` to `java.io.File`), which is

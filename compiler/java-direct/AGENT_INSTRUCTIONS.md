@@ -1,7 +1,7 @@
 # Java-Direct: Agent Instructions
 
-**Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%). No
-known won't-fix.
+**Current status**: full box + phased suite green, 2839/2839 (100%) — see
+`ITERATION_RESULTS.md` for the authoritative per-suite counts. No known won't-fix.
 The module is feature-complete on the `JavaUsingAst*` suite. Active work is
 optimization, **PSI-removal Phase 3** (source-only PSI/AST switch — see
 `implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`), and closing the IJ-FP
@@ -354,6 +354,10 @@ When profiling java-direct code paths:
 | `implDocs/IJ_FP_REGRESSION_ANALYSIS_2026_05_10.md` | IntelliJ-full-pipeline regression categorisation (Cat A-E). **The tracked next step** — but re-baseline first: its code references are stale (see the doc's status banner). |
 | `implDocs/ARCHITECTURE.md` | Callback patterns, key files, JLS implicit rules, common fixes. |
 | `implDocs/RESOLUTION_PIPELINE.md` | Before any resolution fix. |
+| `implDocs/RESOLUTION_SCHEMA.md` | Structural map of the `resolution/` package — entities and scenarios; companion to `RESOLUTION_PIPELINE.md`. |
+| `implDocs/BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22.md` | Review of the binary/source finder divide — open recommendations for the current branch. |
+| `implDocs/PERFORMANCE_REVIEW_2026_07_20.md` | Performance review — landed low-risk fixes and the riskier follow-up candidates. |
+| `implDocs/PARSING_IMPROVEMENTS.md` | Parsing-pipeline improvement backlog (analysis only, unimplemented). |
 | `implDocs/INVESTIGATION_TECHNIQUES.md` | Debugging, AST inspection, measurement recipes. |
 | `ITERATION_RESULTS.md` | Current iteration log — template + brevity rules; new entries on top. |
 | `implDocs/archive/` | Historical iterations and **landed** design docs: the interface-rollback inventory, the FIRSESSION-injection proposal, the JTC / TYPE_USE / `fir-jvm` cleanups, the resolution-pipeline collapse, the model-side outer-arg recovery, the `review.md` responses, and per-iteration logs. `ITERATION_RESULTS_2026_07_13.md` is the most recent log archive. |
@@ -362,27 +366,50 @@ When profiling java-direct code paths:
 
 ## Source Comment Conventions
 
-Comments in `compiler/java-direct/src/` are reviewed alongside the code. Write them
-for a future reader of the **merged** module, not as a development journal — this avoids
-a recurring cleanup pass before review. Apply these rules when adding or editing any
-comment or KDoc:
+These rules apply to **every** source comment or KDoc you add or edit — in
+`compiler/java-direct/src/` and, with extra strictness, in shared compiler modules.
+Comments are reviewed alongside the code; write them for a future reader of the
+**merged** module (an experienced compiler developer), not as a development journal.
 
+**The default is no comment.** Human-maintained compiler code averages ~3% comment lines;
+LLM-authored changes on this branch peaked near 25% and required a full cleanup pass.
+Before writing a comment, pass this gate — a comment is justified only when it:
+
+1. explains **why** a non-obvious decision was made, or how a genuinely difficult piece
+   works when words do it better or shorter than the code itself; or
+2. briefly states an **API contract** that saves the reader a detour into the
+   implementation; or
+3. records a **real trap** (a regression guard, a cycle hazard), ideally with a
+   KT-issue or testData reference.
+
+Everything else — delete. When in doubt, delete. Specific prohibitions:
+
+- **Don't comment the obvious.** If the code says it, or an experienced compiler developer
+  sees it at a glance, no comment. This includes restating a function's body in prose and
+  `@param` entries that paraphrase the parameter name/type (document only non-obvious
+  parameter contracts, or none).
+- **No counterfactuals.** Do not describe hypothetical alternatives, rejected designs, or
+  the previous implementation ("rather than X", "unlike the old Y", "the legacy path
+  returned…"). Exception: the alternative is a real trap a maintainer is likely to fall
+  into — then one terse sentence.
+- **No caller inventories.** Don't enumerate call sites, users, or anything a one-level
+  usages search reveals ("used by X, Y and Z", line numbers in other files).
+- **One fact, one place.** State a fact at the declaration site only; a use site gets at
+  most a short cross-reference, never a repeat of the explanation.
 - **No references to `implDocs/` docs.** They are transient and must never be mentioned
   in source comments — not by filename, not by section number (`§6.x`), not by stage/phase
-  label (`Stage 2`, `Phase 3`, `pre-§6.5`). Put the explanation itself in the comment.
-- **Describe the current state only.** The module is unmerged, so comments must not narrate
-  past or superseded attempts ("used to live behind…", "the old first-segment shortcut",
-  "before the … cleanup", "now deleted `BinaryJavaClassFinder`", dated history). Drop the
-  history; keep what is true today.
+  label (`Stage 2`, `Phase 3`, `pre-§6.5`). Put the (brief) explanation itself in the comment.
+- **Describe the current state only.** No narration of past or superseded attempts
+  ("used to live behind…", "before the … cleanup", "now deleted …", dated history).
 - **Avoid `javac-wrapper` / `TreeBased*` references** (the module is obsolete and being
-  removed). Keep only genuinely useful `javac` / PSI / JLS parity notes that aid understanding.
-- **Don't restate what a one-level usages search reveals** (callers, single call sites, line
-  numbers in other files) unless it is essential for understanding.
-- **Don't duplicate comments on declaration and use sites.** Prefer a declaration-site comment;
-  if the use site needs a note, keep it to a short cross-reference rather than repeating the
-  full explanation.
-- **Prefer bulleted lists over prose** for multi-point explanatory comments; omit trivial
-  information and introductory filler sentences.
+  removed). Keep only genuinely useful `javac` / PSI / JLS parity notes.
+- **Keep it short.** 1–3 lines is the norm. A multi-paragraph comment is acceptable only
+  for a genuinely tricky invariant that cannot be compressed — and even then, cut filler
+  ("Note that", "It is worth mentioning") and prefer bullets over prose.
+
+Self-check before finishing any change: reread the diff's comment lines alone. If a
+comment would survive neither the gate above nor a reviewer asking "what does this tell
+me that the code doesn't?", remove it.
 
 ---
 
@@ -405,7 +432,15 @@ Keep the working doc set small — these files are read into context every sessi
 
 ---
 
-*Last updated: 2026-07-13 (docs cleanup: archived the iteration log →
+*Last updated: 2026-07-28 (rewrote Source Comment Conventions after a branch-wide comment
+cleanup: added the "default is no comment" gate (why-decisions, API contracts, real traps
+only), the ~3% density baseline vs the ~25% this branch's LLM-authored comments reached,
+and explicit bans on counterfactual "rather than" phrasing, caller inventories, obvious
+`@param` restatements and multi-site duplication; extended the rules to shared compiler
+modules; added the missing living docs — `RESOLUTION_SCHEMA`, `BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22`,
+`PERFORMANCE_REVIEW_2026_07_20`, `PARSING_IMPROVEMENTS` — to the reference table.)*
+
+*Previously: 2026-07-13 (docs cleanup: archived the iteration log →
 `implDocs/archive/ITERATION_RESULTS_2026_07_13.md` and reset the live log to its template;
 moved the landed `COLLAPSE_RESOLUTION_PIPELINES_2026_07_06`, `MODEL_SIDE_OUTER_ARG_RECOVERY_2026_06_10`
 and `REVIEW_MD_RESPONSES_2026_07_08` docs (plus the raw `review.md` and the resolved `r*_3_*`
