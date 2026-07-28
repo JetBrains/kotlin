@@ -1,0 +1,22 @@
+FILE: A.kt
+    package p1.p2.p3
+
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|p1/p2/p3/A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+FILE: B.kt
+    package q
+
+    public final class B : R|p1/p2/p3/A| {
+        public constructor(): R|q/B| {
+            super<R|p1/p2/p3/A|>()
+        }
+
+        public open override operator fun equals([EqualityBoundType=ERROR CLASS: Cannot resolve argument of 'EqualityBound'] @R|kotlin/EqualityBound|(bound = <getClass>(Q|p1/p2/p3/A|) [evaluated = <getClass>(Q|p1/p2/p3/A|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals this@R|q/B|.super<R|p1/p2/p3/A|>.R|kotlin/Any.equals|(R|<local>/other|)
+        }
+
+    }
