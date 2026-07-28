@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 
 // FILE: p1/p2/p3/A.kt
 package p1.p2.p3
