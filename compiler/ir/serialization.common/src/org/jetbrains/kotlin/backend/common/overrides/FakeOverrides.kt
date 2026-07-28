@@ -184,10 +184,13 @@ private class IrLinkerFakeOverrideBuilderStrategy(
             return signature to symbol
         }
 
-        // In old KLIB signatures we don't distinguish between suspend and non-suspend, inline and non-inline functions. So we need to
-        // manually patch the signature of the fake override to avoid clash with the existing function with the different `isSuspend` flag
-        // state or the existing function with `isInline=true`.
+        // If there is already a function with the same signature as the fake override, we have to compute a different one to avoid clash.
         // This signature is not supposed to be ever serialized (as fake overrides are not serialized in KLIBs).
+        // There are two main (but very rare) cases where this could happen:
+        // 1. There is an abstract super member "shadowed" by a member in a subclass with the same signature, but which cannot override it
+        // (for example, because it is private). But because all abstract members require an override, F/O is still generated.
+        // 2. In old KLIB signatures we don't distinguish between suspend and non-suspend, inline and non-inline functions. So there can
+        // be a clash with the existing function with the different `isSuspend` flag state or the existing function with `isInline=true`.
         // In new KLIB signatures `isSuspend` and `isInline` flags will be taken into account as a part of signature.
         function.isFakeOverrideNeedingDisambiguatedSignature = true
 
