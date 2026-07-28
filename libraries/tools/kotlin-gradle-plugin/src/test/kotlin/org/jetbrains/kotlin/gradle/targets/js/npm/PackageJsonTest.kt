@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
@@ -29,5 +31,16 @@ class PackageJsonTest {
         }
 
         assertFalse(target.parentFile.exists(), "Expect parent directory was not created.")
+    }
+
+    @Test
+    fun `saveTo creates missing parent directories`(@TempDir tempDir: File) {
+        val target = tempDir.resolve("a/b/c/package.json")
+
+        PackageJson(name = "foo", version = "1.0.0").saveTo(target)
+
+        assertTrue(target.isFile, "Expected $target to be a file.")
+        val parsed = fromSrcPackageJson(target)
+        assertEquals("foo", parsed?.name)
     }
 }
