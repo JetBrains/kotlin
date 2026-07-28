@@ -408,11 +408,22 @@ internal class HairToBitcode(
                 codegen.typeInfoValue((node.type as HairClassImpl).irClass)
 
         // ---------------------------------------------------------------
-        // Static initializers — no codegen yet
+        // Static initializers
 
-        override fun visitGlobalInit(node: GlobalInit): LLVMValueRef? = null // TODO()
-        override fun visitThreadLocalInit(node: ThreadLocalInit): LLVMValueRef? = null // TODO()
-        override fun visitStandaloneThreadLocalInit(node: StandaloneThreadLocalInit): LLVMValueRef? = null // TODO()
+        override fun visitGlobalInit(node: GlobalInit): LLVMValueRef = emit {
+            // TODO proper exception handler
+            genFileGlobalInitializerCall((node.initRoutine as HairStaticInitializerImpl).irFunction, ExceptionHandler.Caller)
+        }
+
+        override fun visitThreadLocalInit(node: ThreadLocalInit): LLVMValueRef = emit {
+            // TODO proper exception handler
+            genFileThreadLocalInitializerCall((node.initRoutine as HairStaticInitializerImpl).irFunction, ExceptionHandler.Caller)
+        }
+
+        override fun visitStandaloneThreadLocalInit(node: StandaloneThreadLocalInit): LLVMValueRef = emit {
+            // TODO proper exception handler
+            genFileStandaloneThreadLocalInitializerCall((node.initRoutine as HairStaticInitializerImpl).irFunction, ExceptionHandler.Caller)
+        }
     }
 
     fun generateFunctionBody(

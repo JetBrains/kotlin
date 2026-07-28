@@ -12,11 +12,11 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitUnitValue(node: UnitValue): UnitValue = context(nodeBuilder, NoControlFlowBuilder) { UnitValue() }
 
-    override fun visitGlobalInit(node: GlobalInit): GlobalInit = context(nodeBuilder, NoControlFlowBuilder) { GlobalInit(null) } as GlobalInit
+    override fun visitGlobalInit(node: GlobalInit): GlobalInit = context(nodeBuilder, NoControlFlowBuilder) { GlobalInit(node.initRoutine)(null) } as GlobalInit
 
-    override fun visitThreadLocalInit(node: ThreadLocalInit): ThreadLocalInit = context(nodeBuilder, NoControlFlowBuilder) { ThreadLocalInit(null) } as ThreadLocalInit
+    override fun visitThreadLocalInit(node: ThreadLocalInit): ThreadLocalInit = context(nodeBuilder, NoControlFlowBuilder) { ThreadLocalInit(node.initRoutine)(null) } as ThreadLocalInit
 
-    override fun visitStandaloneThreadLocalInit(node: StandaloneThreadLocalInit): StandaloneThreadLocalInit = context(nodeBuilder, NoControlFlowBuilder) { StandaloneThreadLocalInit(null) } as StandaloneThreadLocalInit
+    override fun visitStandaloneThreadLocalInit(node: StandaloneThreadLocalInit): StandaloneThreadLocalInit = context(nodeBuilder, NoControlFlowBuilder) { StandaloneThreadLocalInit(node.initRoutine)(null) } as StandaloneThreadLocalInit
 
     override fun visitUnreachable(node: Unreachable): Unreachable = context(nodeBuilder, NoControlFlowBuilder) { Unreachable() }
 

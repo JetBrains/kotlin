@@ -49,6 +49,7 @@ class UnitValue internal constructor(form: Form, ) : NodeBase(form, listOf()), V
 
 
 sealed class StaticInit(form: Form, args: List<Node?>) : BlockBody(form, args) {
+    abstract val initRoutine: HairStaticInitializer
     
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitStaticInit(this)
@@ -56,6 +57,11 @@ sealed class StaticInit(form: Form, args: List<Node?>) : BlockBody(form, args) {
 
 
 class GlobalInit internal constructor(form: Form, control: Controlling?) : StaticInit(form, listOf(control)) {
+    class Form internal constructor(metaForm: MetaForm, val initRoutine: HairStaticInitializer) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
+        override val args = listOf<Any>(initRoutine)
+    }
+    
+    override val initRoutine: HairStaticInitializer by form::initRoutine
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -65,12 +71,17 @@ class GlobalInit internal constructor(form: Form, control: Controlling?) : Stati
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitGlobalInit(this)
     companion object {
-        internal fun form(session: Session) = SimpleControlFlowForm(session, "GlobalInit")
+        internal fun metaForm(session: Session) = MetaForm(session, "GlobalInit")
     }
 }
 
 
 class ThreadLocalInit internal constructor(form: Form, control: Controlling?) : StaticInit(form, listOf(control)) {
+    class Form internal constructor(metaForm: MetaForm, val initRoutine: HairStaticInitializer) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
+        override val args = listOf<Any>(initRoutine)
+    }
+    
+    override val initRoutine: HairStaticInitializer by form::initRoutine
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -80,12 +91,17 @@ class ThreadLocalInit internal constructor(form: Form, control: Controlling?) : 
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitThreadLocalInit(this)
     companion object {
-        internal fun form(session: Session) = SimpleControlFlowForm(session, "ThreadLocalInit")
+        internal fun metaForm(session: Session) = MetaForm(session, "ThreadLocalInit")
     }
 }
 
 
 class StandaloneThreadLocalInit internal constructor(form: Form, control: Controlling?) : StaticInit(form, listOf(control)) {
+    class Form internal constructor(metaForm: MetaForm, val initRoutine: HairStaticInitializer) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
+        override val args = listOf<Any>(initRoutine)
+    }
+    
+    override val initRoutine: HairStaticInitializer by form::initRoutine
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -95,7 +111,7 @@ class StandaloneThreadLocalInit internal constructor(form: Form, control: Contro
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitStandaloneThreadLocalInit(this)
     companion object {
-        internal fun form(session: Session) = SimpleControlFlowForm(session, "StandaloneThreadLocalInit")
+        internal fun metaForm(session: Session) = MetaForm(session, "StandaloneThreadLocalInit")
     }
 }
 
