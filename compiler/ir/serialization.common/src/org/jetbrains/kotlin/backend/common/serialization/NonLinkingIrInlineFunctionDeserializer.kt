@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.LineAndColumn
 import org.jetbrains.kotlin.ir.SourceRangeInfo
+import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -59,6 +60,9 @@ class NonLinkingIrInlineFunctionDeserializer(
         if (function.body != null) return null
 
         check(!function.isEffectivelyPrivate()) { "Deserialization of private inline functions is not supported: ${function.render()}" }
+
+        // We can deserialize only functions from other modules
+        if (function.getPackageFragment() !is IrExternalPackageFragment) return null
 
         val deserializedContainerSource = function.containerSource
         check(deserializedContainerSource is KlibDeserializedContainerSource) {
