@@ -520,7 +520,7 @@ class BackendJsSymbols(
 
     val constructCallableReferenceSymbol by CallableIds.constructCallableReference.functionSymbol()
 
-    val checkStaticInitializationState by CallableIds.checkStaticInitializationState.functionSymbol()
+    val staticInitializationFailureWithClassName by CallableIds.staticInitializationFailureWithClassName.functionSymbol()
 }
 
 private object ClassIds {
@@ -790,5 +790,5 @@ private object CallableIds {
     val test = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("test"))
     val suite = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("suite"))
     val EmptyContinuation = CallableId(FqName.fromSegments(listOf("kotlin", "coroutines", "js", "internal")), Name.identifier("EmptyContinuation"))
-    val checkStaticInitializationState = "checkStaticInitializationState".jsCallableId
+    val staticInitializationFailureWithClassName = "staticInitializationFailureWithClassName".jsCallableId
 }

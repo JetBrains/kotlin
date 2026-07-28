@@ -8,13 +8,7 @@ package kotlin.js
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.internal.staticInitializationFailure
 
-private const val INITIALIZATION_STATE_INITIALIZED: Int = 1
-private const val INITIALIZATION_STATE_ERROR: Int = 2
-
 @UsedFromCompilerGeneratedCode
-internal fun checkStaticInitializationState(state: Int, ctor: Ctor?): Boolean {
-    if (state == INITIALIZATION_STATE_ERROR) {
-        staticInitializationFailure(null, ctor?.`$metadata$`?.simpleName)
-    }
-    return state == INITIALIZATION_STATE_INITIALIZED
+internal fun staticInitializationFailureWithClassName(ctor: Ctor?) {
+    staticInitializationFailure(null, ctor?.`$metadata$`?.simpleName)
 }
