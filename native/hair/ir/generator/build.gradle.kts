@@ -3,7 +3,7 @@ plugins {
     id("common-configuration")
 }
 
-val main by sourceSets.getting {
+val main = sourceSets.getByName("main") {
     dependencies {
         api(kotlinStdlib())
         implementation(project(":native:hair:sym"))
@@ -11,7 +11,7 @@ val main by sourceSets.getting {
     }
 }
 
-val generate by tasks.registering(JavaExec::class) {
+val generate = tasks.register<JavaExec>("generate") {
     val generationRoot = projectDir.resolve("../src/commonMain/generated")
     doFirst {
         fun purgeDirectory(dir: File) {

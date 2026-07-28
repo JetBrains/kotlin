@@ -100,7 +100,7 @@ fun IrCall.getArrayOp(): ArrayOp? {
     }
 }
 
-internal class HairGenerator(val context: Context, val module: IrModuleFragment) : BodyLoweringPass {
+internal class HairGenerator(val context: NativeBackendContext, val module: IrModuleFragment) : BodyLoweringPass {
     val moduleCompilation = createHairCompilation(context, module)
 
     val funCompilations = mutableMapOf<IrFunction, FunctionCompilation>()
