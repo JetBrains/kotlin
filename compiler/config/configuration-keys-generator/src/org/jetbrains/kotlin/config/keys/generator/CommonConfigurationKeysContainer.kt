@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.config.keys.generator
 
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.components.ClassLoadersCache
 import org.jetbrains.kotlin.config.HmppCliModuleStructure
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -73,4 +74,6 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     )
 
     val TARGET_PLATFORM by key<TargetPlatform>()
+
+    val CLASSLOADERS_CACHE by key<ClassLoadersCache>("Cache for classloaders to be used by compiler plugins (e.g. Kapt)", throwOnNull = false)
 }

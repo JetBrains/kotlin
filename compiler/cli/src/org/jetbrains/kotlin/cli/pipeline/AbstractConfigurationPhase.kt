@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.cli.reportInfo
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.components.ClassLoadersCache
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.classloadersCache
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.ir.validation.IrValidationDiagnostics
@@ -84,6 +86,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         val paths = computeKotlinPaths(this, arguments)?.also {
             kotlinPaths = it
         }
+        classloadersCache = services[ClassLoadersCache::class.java]
         loadCompilerPlugins(paths, input, this, services[PluginsLoader::class.java])
     }
 
