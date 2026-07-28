@@ -13,13 +13,21 @@ Compiler:
     - "compiler/build-tools/**"
     - "compiler/incremental-compilation-*/**"
     - "compiler/daemon/**"
+    - "compiler/compiler-runner/**"
     - "compiler/compiler-runner-unshaded/**"
     - "compiler/plugin-api/**"
+    - "compiler/ir/backend.wasm/**"
+    - "compiler/ir/backend.js/**"
+    - "compiler/ir/serialization.js/**"
+    - "compiler/ir/backend.native/**"
+    - "compiler/ir/ir.objcinterop/**"
+    - "compiler/ir/serialization.native/**"
   fullyAffectedBy:
     - CoreLibs
 
 Wasm:
   include:
+    - "compiler/ir/backend.wasm/**"
     - "wasm/**"
     - "js/js.translator/testData/**"
   fullyAffectedBy:
@@ -28,6 +36,8 @@ Wasm:
 Js:
   include:
     - "js/**"
+    - "compiler/ir/backend.js/**"
+    - "compiler/ir/serialization.js/**"
     - "libraries/tools/analysis-api-based-klib-reader/**"
   fullyAffectedBy:
     - Compiler
@@ -35,6 +45,9 @@ Js:
 
 Native:
   include:
+    - "compiler/ir/backend.native/**"
+    - "compiler/ir/ir.objcinterop/**"
+    - "compiler/ir/serialization.native/**"
     - "native/**"
     - "kotlin-native/**"
   exclude:
@@ -73,6 +86,7 @@ BuildToolsApi:
     - "compiler/build-tools/**"
     - "compiler/incremental-compilation-*/**"
     - "compiler/daemon/**"
+    - "compiler/compiler-runner/**"
     - "compiler/compiler-runner-unshaded/**"
   fullyAffectedBy:
     - Compiler

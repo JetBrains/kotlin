@@ -12,7 +12,6 @@ Compiler:
  - compiler/backend.common.jvm
  - compiler/build.gradle.kts
  - compiler/cli
- - compiler/compiler-runner
  - compiler/compiler.version
  - compiler/config
  - compiler/config.jvm
@@ -23,7 +22,18 @@ Compiler:
  - compiler/frontend.common-psi
  - compiler/frontend.common.jvm
  - compiler/frontend.java
- - compiler/ir
+ - compiler/ir/ReadMe.md
+ - compiler/ir/backend.common
+ - compiler/ir/backend.jvm
+ - compiler/ir/code-rules.md
+ - compiler/ir/ir.actualization
+ - compiler/ir/ir.inline
+ - compiler/ir/ir.psi2ir
+ - compiler/ir/ir.tree
+ - compiler/ir/ir.validation
+ - compiler/ir/serialization.common
+ - compiler/ir/serialization.jklib
+ - compiler/ir/serialization.jvm
  - compiler/java-direct
  - compiler/jklib.tests
  - compiler/multiplatform-parsing
@@ -76,9 +86,12 @@ Compiler:
  - jps
 
 Wasm:
+ - compiler/ir/backend.wasm
  - wasm
 
 Js:
+ - compiler/ir/backend.js
+ - compiler/ir/serialization.js
  - js/ReadMe.md
  - js/js.ast
  - js/js.config
@@ -96,6 +109,9 @@ Js:
  - js/typescript-printer
 
 Native:
+ - compiler/ir/backend.native
+ - compiler/ir/ir.objcinterop
+ - compiler/ir/serialization.native
  - kotlin-native
  - native/analysis-api-based-export-common
  - native/analysis-api-based-test-utils
@@ -157,6 +173,7 @@ BuildToolsApi:
  - compiler/build-tools/kotlin-build-tools-jdk-utils
  - compiler/build-tools/kotlin-build-tools-version-coverage-check
  - compiler/build-tools/util-kotlinpoet
+ - compiler/compiler-runner
  - compiler/compiler-runner-unshaded
  - compiler/daemon
  - compiler/incremental-compilation-impl

@@ -305,6 +305,7 @@ tasks {
 
     testLifecycleTask("jsCompilerTest") {
         dependsOn(":js:js.tests:jsTest")
+        dependsOn(":compiler:ir.serialization.js:test")
     }
 
     testLifecycleTask("wasmCompilerTest") {
@@ -325,6 +326,7 @@ tasks {
     // - different GCs
     // ...
     testLifecycleTask("nativeCompilerTest") {
+        dependsOn(":compiler:ir.serialization.native:test")
         dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
         dependsOn(":plugins:plugin-sandbox:nativeTest")
         dependsOn(":libraries:tools:analysis-api-based-klib-reader:check")
@@ -439,8 +441,6 @@ tasks {
         dependsOn(":kotlin-util-klib-abi:test")
         dependsOn(":kotlinx-metadata-klib:test")
         dependsOn(":compiler:ir.validation:test")
-        dependsOn(":compiler:ir.serialization.js:test")
-        dependsOn(":compiler:ir.serialization.native:test")
         dependsOn(":generators:test")
         dependsOn(":kotlin-gradle-plugin-dsl-codegen:test")
     }
