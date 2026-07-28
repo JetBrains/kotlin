@@ -112,6 +112,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.SimpleKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getTestValue
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -147,8 +148,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.SimpleKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getTestValue
-  javaSetterName: null
   isInline: false
   importableFqName: test.testValue
 

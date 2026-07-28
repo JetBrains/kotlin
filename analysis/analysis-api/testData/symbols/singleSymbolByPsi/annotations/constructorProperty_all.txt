@@ -150,6 +150,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
+    javaMethodName: getProp
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -349,6 +350,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
+    javaMethodName: setProp
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -360,7 +362,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: MyClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
-  javaGetterName: getProp
-  javaSetterName: setProp
   isInline: false
   importableFqName: null

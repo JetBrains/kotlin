@@ -72,6 +72,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: A
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getZoo
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -275,6 +276,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: A
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setZoo
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -286,8 +288,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: A
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getZoo
-  javaSetterName: setZoo
   isInline: false
   importableFqName: null
 
@@ -381,6 +381,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: A
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getFoo
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -420,8 +421,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: A
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getFoo
-  javaSetterName: null
   isInline: false
   importableFqName: null
 
@@ -546,6 +545,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: A
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getBar
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -687,6 +687,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: A
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setBar
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -698,8 +699,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: A
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getBar
-  javaSetterName: setBar
   isInline: false
   importableFqName: null
 
@@ -777,6 +776,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: A
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getDoo
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -847,7 +847,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: A
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getDoo
-  javaSetterName: null
   isInline: false
   importableFqName: null

@@ -145,6 +145,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: ContextReceiversOnPropertyKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getY
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -180,7 +181,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: ContextReceiversOnPropertyKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getY
-  javaSetterName: null
   isInline: false
   importableFqName: y

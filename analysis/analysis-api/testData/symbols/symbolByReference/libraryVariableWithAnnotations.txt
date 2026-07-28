@@ -75,6 +75,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.LibKt
     getContainingModule: KaLibraryModule "Library lib"
     deprecation: null
+    javaMethodName: getTopLevelVariableWithAnnotations
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -221,6 +222,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.LibKt
     getContainingModule: KaLibraryModule "Library lib"
     deprecation: null
+    javaMethodName: setTopLevelVariableWithAnnotations
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -228,7 +230,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: one.LibKt
   getContainingModule: KaLibraryModule "Library lib"
   deprecation: null
-  javaGetterName: getTopLevelVariableWithAnnotations
-  javaSetterName: setTopLevelVariableWithAnnotations
   isInline: false
   importableFqName: one.topLevelVariableWithAnnotations

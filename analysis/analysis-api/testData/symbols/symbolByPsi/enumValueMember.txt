@@ -145,6 +145,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getExitAnimation
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -184,8 +185,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getExitAnimation
-  javaSetterName: null
   isInline: false
   importableFqName: null
 
@@ -301,6 +300,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Style
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getExitAnimation
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -340,8 +340,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Style
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getExitAnimation
-  javaSetterName: null
   isInline: false
   importableFqName: null
 

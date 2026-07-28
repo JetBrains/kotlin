@@ -417,6 +417,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: kotlin.Enum
     getContainingModule: KaLibraryModule "Library kotlin-stdlib"
     deprecation: null
+    javaMethodName: getName
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -460,8 +461,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: kotlin.Enum
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
-  javaGetterName: getName
-  javaSetterName: null
   isInline: false
   importableFqName: null
 
@@ -552,6 +551,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: kotlin.Enum
     getContainingModule: KaLibraryModule "Library kotlin-stdlib"
     deprecation: null
+    javaMethodName: getOrdinal
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -595,8 +595,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: kotlin.Enum
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
-  javaGetterName: getOrdinal
-  javaSetterName: null
   isInline: false
   importableFqName: null
 

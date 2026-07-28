@@ -83,6 +83,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.SimpleClass
     getContainingModule: KaLibraryModule "Library lib"
     deprecation: null
+    javaMethodName: getMemberVariableWithAnnotations
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -233,6 +234,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.SimpleClass
     getContainingModule: KaLibraryModule "Library lib"
     deprecation: null
+    javaMethodName: setMemberVariableWithAnnotations
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -244,7 +246,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: one.SimpleClass
   getContainingModule: KaLibraryModule "Library lib"
   deprecation: null
-  javaGetterName: getMemberVariableWithAnnotations
-  javaSetterName: setMemberVariableWithAnnotations
   isInline: false
   importableFqName: null

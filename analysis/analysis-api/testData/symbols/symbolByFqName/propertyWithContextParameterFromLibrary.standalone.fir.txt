@@ -145,6 +145,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.LibraryKt
     getContainingModule: KaLibraryModule "Library library"
     deprecation: null
+    javaMethodName: getFoo
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -180,7 +181,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: one.LibraryKt
   getContainingModule: KaLibraryModule "Library library"
   deprecation: null
-  javaGetterName: getFoo
-  javaSetterName: null
   isInline: false
   importableFqName: one.foo

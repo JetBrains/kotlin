@@ -37,6 +37,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script entryInScriptDestructuringDeclaration.kts"
     deprecation: null
+    javaMethodName: getC
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -72,8 +73,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script entryInScriptDestructuringDeclaration.kts"
   deprecation: null
-  javaGetterName: getC
-  javaSetterName: null
   isInline: false
   importableFqName: c
 
@@ -109,4 +108,5 @@ KaPropertyGetterSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script entryInScriptDestructuringDeclaration.kts"
   deprecation: null
+  javaMethodName: getC
   importableFqName: null
