@@ -155,4 +155,3 @@ class LifeWithMarkHelpersHideName : SkipWhenBaseOnly() {
         markHelpers.forEach { it.requestTermination().result }
     }
 }
-
