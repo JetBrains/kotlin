@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Assumptions.assumeTrue
 
-internal class CurrentXcodeTest {
+internal class InstalledXcodeTest {
     companion object {
         @BeforeAll
         @JvmStatic
@@ -21,19 +21,26 @@ internal class CurrentXcodeTest {
 
     @Test
     fun `Should be able to access Xcode bundle version`() {
-        val version = CurrentXcode().bundleVersion
+        val version = InstalledXcode().bundleVersion
         assertNotEquals("", version)
     }
 
     @Test
     fun `Should be able to access xcodebuild version`() {
-        val version = CurrentXcode().xcodebuildVersion
+        val version = InstalledXcode().xcodebuildVersion
         assertNotEquals("", version)
     }
 
     @Test
+    fun `Should be able to access Xcode product build version`() {
+        val build = InstalledXcode().productBuildVersion
+        // e.g. "17E192", "14B47b": <major><stage-letter><minor>[<patch-letter>].
+        assertTrue(build.matches(Regex("""\d+[A-Z]\d+[a-z]?""")), "Unexpected ProductBuildVersion: '$build'")
+    }
+
+    @Test
     fun `Xcode bundle version version should match xcodebuild version`() {
-        val xcode = CurrentXcode()
+        val xcode = InstalledXcode()
 
         val xcodebuildVersion = xcode.xcodebuildVersion
         val bundleVersion = xcode.bundleVersion
