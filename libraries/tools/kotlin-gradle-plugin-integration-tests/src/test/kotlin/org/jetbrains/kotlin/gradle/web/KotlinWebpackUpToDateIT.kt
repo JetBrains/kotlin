@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension
 import org.jetbrains.kotlin.gradle.targets.web.yarn.CommonYarnPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.setupCustomKgpNpmToolingDependenciesDir
-import org.jetbrains.kotlin.testFederation.AffectedByWasm
 import kotlin.io.path.*
 import kotlin.test.assertEquals
 
@@ -29,7 +28,6 @@ import kotlin.test.assertEquals
     // If these tests fail in older Gradle versions, it's probably a Gradle bug.
     minVersion = TestVersions.Gradle.MAX_SUPPORTED
 )
-@AffectedByWasm
 sealed class KotlinWebpackUpToDateIT(
     private val packageManager: String,
 ) : KGPBaseTest() {
