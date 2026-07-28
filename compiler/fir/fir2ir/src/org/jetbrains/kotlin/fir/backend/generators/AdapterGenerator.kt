@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.ir.util.isSuspendFunction
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
@@ -284,8 +283,9 @@ class AdapterGenerator(
                     UNDEFINED_OFFSET,
                     builtins.nothingType,
                     irAdapterFunction.symbol,
-                    irCall.applyIf(isSetter || adaptedType.arguments.last().typeOrNull?.isUnit() == true) {
-                        Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(this)
+                    when {
+                        isSetter || irAdapterFunction.returnType.isUnit() -> Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(irCall)
+                        else -> Fir2IrImplicitCastInserter.implicitCastOrExpression(irCall, irAdapterFunction.returnType)
                     })
             }
         }
@@ -462,6 +462,18 @@ class AdapterGenerator(
                 // Not sure if it's important that the origin is null for bound receivers.
                 // Let's preserve it to minimize changes.
                 origin = IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE.takeIf { hasBoundReceiver },
+            )
+
+            // If the dispatch receiver is bound, cast to the type of the receiver expression.
+            // If not, prefer the type argument as it could be a subtype of the dispatch receiver type.
+            // Finally, just take the dispatch receiver type.
+            val dispatchReceiverType = callableReferenceAccess.dispatchReceiver?.resolvedType?.toIrType()
+                ?: (adaptedType.arguments[0] as? IrTypeProjection)?.type
+                ?: firAdaptee.dispatchReceiverType!!.toIrType()
+
+            irCall.arguments[0] = Fir2IrImplicitCastInserter.implicitCastOrExpression(
+                irCall.arguments[0]!!,
+                dispatchReceiverType
             )
         }
 
