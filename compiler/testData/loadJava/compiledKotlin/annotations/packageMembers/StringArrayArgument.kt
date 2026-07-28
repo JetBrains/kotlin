@@ -3,9 +3,6 @@
 // NO_CHECK_SOURCE_VS_BINARY
 // LANGUAGE: +MultiPlatformProjects
 
-// SKIP_IN_RUNTIME_TEST
-// ^ java.lang.annotation.IncompleteAnnotationException: test.Anno5 missing element t
-
 // MODULE: common
 // FILE: common.kt
 package test
