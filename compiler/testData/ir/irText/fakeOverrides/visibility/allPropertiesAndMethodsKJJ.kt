@@ -1,5 +1,9 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JKLIB
+// ^^^ The differernce is that in regular JVM compilation, the Java sources are considered to be in the same module as Kotlin sources,
+//     but in JKlib backend, there is one module for Java and one for Kotlin. They have regular dependency, not a friend dependency,
+//     so the Kotlin `internal` method is not visible from Java class, hence it doesn't override it.
 
 // FILE: Java1.java
 public class Java1 {

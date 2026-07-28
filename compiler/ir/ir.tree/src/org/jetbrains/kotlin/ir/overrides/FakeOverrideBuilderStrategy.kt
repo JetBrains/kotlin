@@ -97,7 +97,7 @@ abstract class FakeOverrideBuilderStrategy {
     open fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember? {
         val createFakeOverride = when {
             createFakeOverridesForInvisibleMembers && member.modality == Modality.ABSTRACT -> true
-            else -> isVisibleForOverrideInClass(member, clazz)
+            else -> isVisibleForOverride(member, clazz)
         }
         return runIf(createFakeOverride) {
             buildFakeOverrideMember(superType, member, clazz)
@@ -122,26 +122,27 @@ abstract class FakeOverrideBuilderStrategy {
         }
     }
 
-    private fun isVisibleForOverrideInClass(original: IrOverridableMember, clazz: IrClass) : Boolean {
+    fun isVisibleForOverride(target: IrOverridableMember, visibleFrom: IrClass, checkFriendshipInOppositeDirection: Boolean = false) : Boolean {
         return when {
-            DescriptorVisibilities.isPrivate(original.visibility) -> false
-            original.visibility == DescriptorVisibilities.INVISIBLE_FAKE -> false
-            original.visibility == DescriptorVisibilities.INTERNAL -> {
-                val thisModule = clazz.getPackageFragment().module
-                val memberModule = original.getPackageFragment().module
+            DescriptorVisibilities.isPrivate(target.visibility) -> false
+            target.visibility == DescriptorVisibilities.INVISIBLE_FAKE -> false
+            target.visibility == DescriptorVisibilities.INTERNAL -> {
+                val visibleFromModule = visibleFrom.getPackageFragment().module
+                val targetModule = target.getPackageFragment().module
 
                 when {
-                    thisModule == memberModule -> true
-                    thisModule.canSeeInternalsOf(memberModule) -> true
+                    visibleFromModule == targetModule -> true
+                    !checkFriendshipInOppositeDirection && visibleFromModule.canSeeInternalsOf(targetModule) -> true
+                    checkFriendshipInOppositeDirection && targetModule.canSeeInternalsOf(visibleFromModule) -> true
                     !isOverrideOfPublishedApiFromOtherModuleDisallowed &&
-                            original.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
+                            target.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
                     else -> false
                 }
             }
             else -> {
-                original.visibility.visibleFromPackage(
-                    clazz.getPackageFragment().packageFqName,
-                    original.getPackageFragment().packageFqName
+                target.visibility.visibleFromPackage(
+                    visibleFrom.getPackageFragment().packageFqName,
+                    target.getPackageFragment().packageFqName
                 )
             }
         }
