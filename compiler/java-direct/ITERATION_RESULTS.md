@@ -36,6 +36,25 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-22 — Gate the binary seam on `useJavaDirect`; delete dead finder; dedup the ASM binary reader
+- **Change**: applied `implDocs/BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22.md` §4.1/§4.2/§4.7.
+  §4.1: the binary deserializer seam is now gated on `configuration.useJavaDirect` in
+  `prepareJvmSessions` — ON uses `JvmBinaryClassFinderInputsOverIndex`, OFF returns `null` so the
+  deserializer falls back to the PSI `FirJavaFacade` binary reader (both source and binary now share
+  one flag). §4.2: removed dead `CombinedJavaClassFinder.kt` (no references). §4.7: extracted the
+  shared `readBinaryJavaClass` core (caching + inner-class dispatch + `ClassifierResolutionContext`)
+  into `frontend.common.jvm`; both `JvmBinaryClassFinderInputsOverIndex` and the binary branch of
+  `KotlinCliJavaFileManagerImpl` delegate to it. Investigated §4.1's "turn off PSI finder creation":
+  not doable now — `KotlinCliJavaFileManagerImpl` still backs JPMS `module-info` resolution
+  (`ClasspathRootsResolver` → `JavaModuleInfo.read` → `findClass`) regardless of the flag, and its
+  PSI class-loading branch is already inert by default (`usePsiClassFilesReading=false`).
+- **Files**: `cli-jvm/.../JvmFrontendPipelinePhase.kt`, `cli-base/.../KotlinCliJavaFileManagerImpl.kt`,
+  `frontend.common.jvm/.../classFiles/BinaryJavaClassReader.kt` (new),
+  `JvmBinaryClassFinderInputsOverIndex.kt`; deleted `CombinedJavaClassFinder.kt`.
+- **Tests**: box+phased green (0 FAILED); PSI (`PhasedJvmDiagnosticLightTreeTestGenerated`) 0 fail,
+  `CompileKotlinAgainstKotlin` 0 fail (shared-pipeline + file-manager edits), `KotlinCliJavaFileManagerTest` 7/7.
+- **Result**: green (behaviour-preserving refactor + flag-gated seam).
+
 ### 2026-07-21 — Thread `java.io.File` through the Java-source indexing path (drop internal `VirtualFile`)
 - **Change**: the module no longer relies on `com.intellij.openapi.vfs.VirtualFile` for its own
   source-file representation/reading; source roots are consumed as `java.io.File` (the CLI's
