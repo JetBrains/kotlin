@@ -1,3 +1,16 @@
+// FILE: simpleCompanionObjectProperty.java
+package test;
+
+class Test {
+
+    public static void main(String[] args) {
+        A.getB();
+        A.getC(new A());
+    }
+
+}
+
+// FILE: simpleCompanionObjectProperty.kt
 package test
 
 class A {

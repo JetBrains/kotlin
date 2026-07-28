@@ -1,3 +1,13 @@
+// FILE: TypeParamInInner.java
+package test;
+
+class TypeParamInInner {
+    void check() {
+        TypeParamInInnerKt.outer("OK");
+    }
+}
+
+// FILE: TypeParamInInner.kt
 package test
 
 class outerClass<T>(val t: T) {
