@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent
 
-import org.jetbrains.kotlin.analysis.api.components.javaGetterName
-import org.jetbrains.kotlin.analysis.api.components.javaSetterName
+import org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -24,8 +23,8 @@ abstract class AbstractJavaGetterSetterNameTest : AbstractAnalysisApiBasedTest()
             val propertySymbol = property.symbol as KaPropertySymbol
 
             buildString {
-                appendLine("Getter name: " + propertySymbol.javaGetterName.asString())
-                appendLine("Setter name: " + propertySymbol.javaSetterName?.asString())
+                appendLine("Getter name: " + propertySymbol.getter?.javaMethodName)
+                appendLine("Setter name: " + propertySymbol.setter?.javaMethodName)
             }
         }
 

@@ -77,6 +77,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getProperty
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -116,8 +117,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: MyClass.Companion
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getProperty
-  javaSetterName: null
   isInline: false
   importableFqName: MyClass.Companion.property
 
@@ -200,6 +199,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getConstProperty
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -239,8 +239,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: MyClass.Companion
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getConstProperty
-  javaSetterName: null
   isInline: false
   importableFqName: MyClass.Companion.constProperty
 
@@ -326,6 +324,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getStaticProperty
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -365,8 +364,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: MyClass.Companion
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getStaticProperty
-  javaSetterName: null
   isInline: false
   importableFqName: MyClass.Companion.staticProperty
 
@@ -452,6 +449,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -491,8 +489,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: MyClass.Companion
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: fieldProperty
-  javaSetterName: null
   isInline: false
   importableFqName: MyClass.Companion.fieldProperty
 
@@ -575,6 +571,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getVariable
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -716,6 +713,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setVariable
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -727,8 +725,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: MyClass.Companion
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getVariable
-  javaSetterName: setVariable
   isInline: false
   importableFqName: MyClass.Companion.variable
 
@@ -814,6 +810,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getStaticVariable
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -955,6 +952,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setStaticVariable
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -966,8 +964,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: MyClass.Companion
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getStaticVariable
-  javaSetterName: setStaticVariable
   isInline: false
   importableFqName: MyClass.Companion.staticVariable
 
@@ -1053,6 +1049,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1194,6 +1191,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: null
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -1205,8 +1203,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: MyClass.Companion
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: fieldVariable
-  javaSetterName: fieldVariable
   isInline: false
   importableFqName: MyClass.Companion.fieldVariable
 

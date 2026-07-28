@@ -35,4 +35,5 @@ KaPropertyGetterSymbol:
   getContainingJvmClassName: GetterWithAnnotationsKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: getX
   importableFqName: null

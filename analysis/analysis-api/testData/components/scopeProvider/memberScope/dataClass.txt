@@ -77,6 +77,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getFirstProperty
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -153,8 +154,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Abc
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getFirstProperty
-  javaSetterName: null
   isInline: false
   importableFqName: null
 
@@ -237,6 +236,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getSecondProperty
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -313,8 +313,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Abc
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getSecondProperty
-  javaSetterName: null
   isInline: false
   importableFqName: null
 
@@ -397,6 +395,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getThirdProperty
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -473,8 +472,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Abc
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getThirdProperty
-  javaSetterName: null
   isInline: false
   importableFqName: null
 
@@ -631,6 +628,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getBodyProperty
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -701,8 +699,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Abc
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getBodyProperty
-  javaSetterName: null
   isInline: false
   importableFqName: null
 

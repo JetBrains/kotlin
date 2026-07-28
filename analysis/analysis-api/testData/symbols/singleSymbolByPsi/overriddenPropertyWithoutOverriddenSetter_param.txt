@@ -116,6 +116,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: pack.Impl
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getBar
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -294,6 +295,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: pack.Impl
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setBar
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -305,7 +307,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: pack.Impl
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getBar
-  javaSetterName: setBar
   isInline: false
   importableFqName: null

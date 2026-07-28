@@ -106,6 +106,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: PropertyWithReceiverAnnotationKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getProp
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -178,7 +179,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: PropertyWithReceiverAnnotationKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getProp
-  javaSetterName: null
   isInline: false
   importableFqName: prop

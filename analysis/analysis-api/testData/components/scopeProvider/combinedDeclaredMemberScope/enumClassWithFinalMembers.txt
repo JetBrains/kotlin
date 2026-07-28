@@ -143,6 +143,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.E
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getFoo
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -182,8 +183,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.E
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getFoo
-  javaSetterName: null
   isInline: false
   importableFqName: null
 
@@ -408,6 +407,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.E
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getEntries
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -448,8 +448,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.E
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getEntries
-  javaSetterName: null
   isInline: false
   importableFqName: test.E.entries
 

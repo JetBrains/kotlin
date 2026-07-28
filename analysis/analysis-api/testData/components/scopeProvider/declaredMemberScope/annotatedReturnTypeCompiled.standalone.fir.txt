@@ -184,6 +184,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.MyInterface
     getContainingModule: KaLibraryModule "Library lib"
     deprecation: null
+    javaMethodName: getProperty
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -226,7 +227,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: test.MyInterface
   getContainingModule: KaLibraryModule "Library lib"
   deprecation: null
-  javaGetterName: getProperty
-  javaSetterName: null
   isInline: false
   importableFqName: null

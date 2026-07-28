@@ -41,6 +41,7 @@ KaSyntheticJavaPropertySymbol:
     getContainingJvmClassName: JavaClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getCount
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -181,6 +182,7 @@ KaSyntheticJavaPropertySymbol:
     getContainingJvmClassName: JavaClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setCount
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -192,6 +194,4 @@ KaSyntheticJavaPropertySymbol:
   getContainingJvmClassName: JavaClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getCount
-  javaSetterName: setCount
   importableFqName: null

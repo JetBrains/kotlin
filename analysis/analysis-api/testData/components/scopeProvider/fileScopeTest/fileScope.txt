@@ -197,6 +197,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getTestVal
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -232,8 +233,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getTestVal
-  javaSetterName: null
   isInline: false
   importableFqName: testVal
 
@@ -308,6 +307,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getInitializedVariable
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -445,6 +445,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setInitializedVariable
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -452,8 +453,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getInitializedVariable
-  javaSetterName: setInitializedVariable
   isInline: false
   importableFqName: initializedVariable
 
@@ -528,6 +527,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getUnitializedVariable
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -665,6 +665,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setUnitializedVariable
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -672,8 +673,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getUnitializedVariable
-  javaSetterName: setUnitializedVariable
   isInline: false
   importableFqName: unitializedVariable
 
@@ -748,6 +747,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getLateinitVariable
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -885,6 +885,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setLateinitVariable
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -892,8 +893,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getLateinitVariable
-  javaSetterName: setLateinitVariable
   isInline: false
   importableFqName: lateinitVariable
 
@@ -968,6 +967,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getVariableWithBackingField
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1105,6 +1105,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setVariableWithBackingField
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -1112,8 +1113,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getVariableWithBackingField
-  javaSetterName: setVariableWithBackingField
   isInline: false
   importableFqName: variableWithBackingField
 
@@ -1188,6 +1187,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getPrivateSetter
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1328,6 +1328,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: customPrivateSetter
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -1335,8 +1336,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getPrivateSetter
-  javaSetterName: customPrivateSetter
   isInline: false
   importableFqName: privateSetter
 
@@ -1411,6 +1410,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getJvmNameOnSetter
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -1551,6 +1551,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: customPrivateSetter
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -1558,8 +1559,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getJvmNameOnSetter
-  javaSetterName: customPrivateSetter
   isInline: false
   importableFqName: jvmNameOnSetter
 
@@ -1637,6 +1636,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: myCustomGetter
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -1672,8 +1672,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: myCustomGetter
-  javaSetterName: null
   isInline: false
   importableFqName: customGetter
 
@@ -1751,6 +1749,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: myCustomGetter
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -1786,8 +1785,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: myCustomGetter
-  javaSetterName: null
   isInline: false
   importableFqName: jvmNameOnGetter
 
@@ -1893,6 +1890,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getPropertyWithReceiver
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -1959,8 +1957,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getPropertyWithReceiver
-  javaSetterName: null
   isInline: false
   importableFqName: propertyWithReceiver
 
@@ -2065,6 +2061,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getPropertyWithGenericReceiver
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -2151,8 +2148,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getPropertyWithGenericReceiver
-  javaSetterName: null
   isInline: false
   importableFqName: propertyWithGenericReceiver
 
@@ -2227,6 +2222,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getConstant
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -2262,8 +2258,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getConstant
-  javaSetterName: null
   isInline: false
   importableFqName: constant
 
@@ -2341,6 +2335,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -2478,6 +2473,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: null
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -2485,8 +2481,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: FileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: jvmField
-  javaSetterName: jvmField
   isInline: false
   importableFqName: jvmField
 

@@ -247,6 +247,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getI
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -286,8 +287,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getI
-  javaSetterName: null
   isInline: false
   importableFqName: null
 
@@ -702,6 +701,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyEnumClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getI
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -741,8 +741,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: MyEnumClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getI
-  javaSetterName: null
   isInline: false
   importableFqName: null
 

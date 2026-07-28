@@ -77,6 +77,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Check
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getProp
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -218,6 +219,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Check
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setProp
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -229,7 +231,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Check
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getProp
-  javaSetterName: setProp
   isInline: false
   importableFqName: null

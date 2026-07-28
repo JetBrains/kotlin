@@ -1335,6 +1335,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: kotlin.collections.MutableList
     getContainingModule: KaLibraryModule "Library kotlin-stdlib"
     deprecation: null
+    javaMethodName: getSize
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -1378,8 +1379,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: kotlin.collections.MutableList
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
-  javaGetterName: getSize
-  javaSetterName: null
   isInline: false
   importableFqName: null
 

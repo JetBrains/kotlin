@@ -86,9 +86,11 @@ internal class KaJavaInteroperabilityComponentBridge(
         jvmTypeMapper.mapType(coneType, mode, sw = null, unresolvedQualifierRemapper = null)
     }
 
+    @Deprecated("Use the 'javaMethodName' endpoint on the property getter instead.")
     override val KaPropertySymbol.javaGetterName: Name
         get() = proxy.javaGetterName(this)
 
+    @Deprecated("Use the 'javaMethodName' endpoint on the property setter instead.")
     override val KaPropertySymbol.javaSetterName: Name?
         get() = proxy.javaSetterName(this)
 }

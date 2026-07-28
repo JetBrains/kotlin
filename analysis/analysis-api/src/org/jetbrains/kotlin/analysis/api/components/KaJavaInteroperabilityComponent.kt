@@ -130,6 +130,10 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
      * The behavior is undefined for modules other than JVM and common (with a JVM implementation).
      */
     @KaExperimentalApi
+    @Deprecated(
+        message = "Use the 'javaMethodName' endpoint on the property getter instead.",
+        replaceWith = ReplaceWith("this.getter?.javaMethodName", "org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName"),
+    )
     public val KaPropertySymbol.javaGetterName: Name
 
     /**
@@ -137,6 +141,10 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
      * The behavior is undefined for modules other than JVM and common (with a JVM implementation).
      */
     @KaExperimentalApi
+    @Deprecated(
+        message = "Use the 'javaMethodName' endpoint on the property setter instead.",
+        replaceWith = ReplaceWith("this.setter?.javaMethodName", "org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName"),
+    )
     public val KaPropertySymbol.javaSetterName: Name?
 }
 
@@ -319,15 +327,29 @@ public val KaCallableSymbol.containingJvmClassName: String?
  * The behavior is undefined for modules other than JVM and common (with a JVM implementation).
  */
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'javaMethodName' endpoint on the property getter instead.",
+    replaceWith = ReplaceWith("this.getter?.javaMethodName", "org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName"),
+)
 context(session: KaSession)
 public val KaPropertySymbol.javaGetterName: Name
-    get() = with(session) { javaGetterName }
+    get() = with(session) {
+        @Suppress("DEPRECATION")
+        javaGetterName
+    }
 
 /**
  * The JVM setter method name for the given [KaPropertySymbol].
  * The behavior is undefined for modules other than JVM and common (with a JVM implementation).
  */
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'javaMethodName' endpoint on the property setter instead.",
+    replaceWith = ReplaceWith("this.setter?.javaMethodName", "org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName"),
+)
 context(session: KaSession)
 public val KaPropertySymbol.javaSetterName: Name?
-    get() = with(session) { javaSetterName }
+    get() = with(session) {
+        @Suppress("DEPRECATION")
+        javaSetterName
+    }

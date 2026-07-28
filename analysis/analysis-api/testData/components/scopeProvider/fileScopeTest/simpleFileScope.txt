@@ -112,6 +112,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: SimpleFileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getTestVal
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -147,8 +148,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: SimpleFileScopeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getTestVal
-  javaSetterName: null
   isInline: false
   importableFqName: testVal
 

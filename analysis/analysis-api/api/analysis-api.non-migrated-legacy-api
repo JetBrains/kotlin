@@ -10,8 +10,6 @@ KaExpressionInformationProvider: org.jetbrains.kotlin.analysis.api.components.Ka
 KaExpressionInformationProvider: org.jetbrains.kotlin.analysis.api.components.computeMissingCases()
 KaExpressionTypeProvider: org.jetbrains.kotlin.analysis.api.components.returnType
 KaJavaInteroperabilityComponent: org.jetbrains.kotlin.analysis.api.components.asPsiType(PsiElement, Boolean, KaTypeMappingMode, Boolean, Boolean?, Boolean, Boolean)
-KaJavaInteroperabilityComponent: org.jetbrains.kotlin.analysis.api.components.javaGetterName
-KaJavaInteroperabilityComponent: org.jetbrains.kotlin.analysis.api.components.javaSetterName
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.QualifierToShortenInfo
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.ShortenCommand
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.ShortenOptions
