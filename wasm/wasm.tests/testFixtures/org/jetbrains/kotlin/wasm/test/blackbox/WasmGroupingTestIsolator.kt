@@ -34,7 +34,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
         val isolationDirectives = listOf(
-            // some test failures can bring down an entire batch, so where those failures are expected, tests need to be run in isolated mode"
+            // some test failures can bring down an entire batch, so where those failures are expected, tests need to be run in isolated mode
             CodegenTestDirectives.IGNORE_BACKEND,
             CodegenTestDirectives.IGNORE_BACKEND_K2,
             CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE,
