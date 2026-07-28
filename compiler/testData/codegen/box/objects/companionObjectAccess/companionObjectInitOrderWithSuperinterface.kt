@@ -1,8 +1,6 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
 // ^ On Native `CompanionBlocksAndExtensions` language feature enables the JVM-like initialization.
 //   See nativeCompanionInitOrderLegacy for Native behavior without the language feature.
-// ISSUE: KT-87516 [K/JS, K/Wasm] Companion objects coming from super interfaces are not initialized
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM_JS, WASM_WASI
 
 var l = ""
 private fun log(t: String) {
@@ -67,6 +65,32 @@ class A2: B2(), L2, M2 {
     companion object { init { log("A2.Companion") } }
 }
 
+// interface without non-abstract members extending one with non-abstract members
+// The intermediate interface J3 should NOT be initialized when A3 is accessed, because it
+// has no non-abstract members. Only I3 (which declares foo()) should be initialized.
+interface I3 {
+    fun foo() {}
+    companion object { init { log("I3.Companion") } }
+}
+interface J3 : I3 {
+    companion object { init { log("J3.Companion") } }
+}
+class A3 : J3 {
+    companion object { init { log("A3.Companion") } }
+}
+
+// same as test3 but with explicit access to J3 after A3
+interface I4 {
+    fun foo() {}
+    companion object { init { log("I4.Companion") } }
+}
+interface J4 : I4 {
+    companion object { init { log("J4.Companion") } }
+}
+class A4 : J4 {
+    companion object { init { log("A4.Companion") } }
+}
+
 fun box(): String {
     l = ""
     A1
@@ -77,6 +101,20 @@ fun box(): String {
     A2()
     val r2 = l
     if (r2 != "J2.Companion\nI2.Companion\nK2.Companion\nB2.Companion\nL2.Companion\nA2.Companion\nB2.init\nA2.init\n") return "fail test2: '$r2'"
+
+    // J3 should NOT be initialized here, only I3 (declares foo()) and A3
+    l = ""
+    A3
+    val r3 = l
+    if (r3 != "I3.Companion\nA3.Companion\n") return "fail test3: '$r3'"
+
+    // J4 should be initialized only on direct access, not during A4 initialization
+    l = ""
+    A4
+    log("--")
+    J4
+    val r4 = l
+    if (r4 != "I4.Companion\nA4.Companion\n--\nJ4.Companion\n") return "fail test4: '$r4'"
 
     return "OK"
 }

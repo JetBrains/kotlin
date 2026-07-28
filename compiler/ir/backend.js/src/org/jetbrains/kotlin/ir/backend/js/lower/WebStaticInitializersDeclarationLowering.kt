@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
-import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -151,7 +150,11 @@ class WebStaticInitializersDeclarationLowering(private val context: JsCommonBack
             }
         }
 
-        if (!hasStaticFieldInitializer && !hasSuperClassWithStaticInitializer) return
+        // Companion object init blocks are part of the companion class constructor. On JVM, the companion
+        // singleton is created in <clinit>, so we need static_init to include companion initialization too.
+        val hasCompanionObject = container.declarations.any { it is IrClass && it.isCompanion }
+
+        if (!hasStaticFieldInitializer && !hasSuperClassWithStaticInitializer && !hasCompanionObject) return
 
         val initializers = buildList {
             for (declaration in container.declarations) {
@@ -268,13 +271,38 @@ class WebStaticInitializersDeclarationLowering(private val context: JsCommonBack
         }
     }
 
+    // Per JVM spec §5.5 step 8, ALL superinterfaces of C (direct and indirect) that declare at least
+    // one non-abstract, non-static method trigger class initialization. The ordering follows the recursive
+    // enumeration over the superinterface hierarchy of each directly implemented interface.
     private val IrClass.dependencySuperClasses: List<IrClass>
-        get() = superTypes
-            .filter { !it.isAny() }
-            .mapNotNull { it.classOrNull?.owner }
-            // In the case of super interfaces, only ones having at least 1 non-abstract member trigger
-            // its initialization from the implementing class. See section §3.3 of the KEEP.
-            .filter { clazz -> !clazz.isInterface || clazz.declarations.any { it.isNonAbstractInstanceMember() } }
+        get() {
+            val result = mutableListOf<IrClass>()
+            val visited = mutableSetOf<IrClass>()
+            for (superType in superTypes) {
+                if (superType.isAny()) continue
+                val superClass = superType.classOrNull?.owner ?: continue
+                if (!superClass.isInterface) {
+                    if (visited.add(superClass)) result.add(superClass)
+                } else {
+                    collectInterfaceDependencies(superClass, result, visited)
+                }
+            }
+            return result
+        }
+
+    private fun collectInterfaceDependencies(iface: IrClass, result: MutableList<IrClass>, visited: MutableSet<IrClass>) {
+        if (!visited.add(iface)) return
+        for (superType in iface.superTypes) {
+            if (superType.isAny()) continue
+            val superClass = superType.classOrNull?.owner ?: continue
+            if (superClass.isInterface) {
+                collectInterfaceDependencies(superClass, result, visited)
+            }
+        }
+        if (iface.declarations.any { it.isNonAbstractInstanceMember() }) {
+            result.add(iface)
+        }
+    }
 
     private fun IrDeclaration.isNonAbstractInstanceMember(): Boolean = when (this) {
         is IrSimpleFunction if isReal && modality != Modality.ABSTRACT && dispatchReceiverParameter != null -> true
