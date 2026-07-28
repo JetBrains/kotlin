@@ -1,2 +1,2 @@
-Getter name: getX
-Setter name: setX
+Getter name: acquireX
+Setter name: changeX
