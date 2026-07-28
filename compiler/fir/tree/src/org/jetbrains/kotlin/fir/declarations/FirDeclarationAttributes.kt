@@ -18,12 +18,17 @@ import kotlin.reflect.KProperty
 abstract class FirDeclarationDataKey
 
 /**
- * Please note that FirDeclarationAttributes itself is thread unsafe, so when you read
+ * Please note that FirDeclarationAttributes gives almost no thread-safety guarantees, so when you read
  *   or write some attribute, you need to ensure that this operation is safe and there
  *   won't be any race condition. You can achieve this by
  * - setting attribute to declaration before its publication (e.g., in scopes)
  * - setting/resetting attribute in one phase and reading it only in following ones (using [org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase] on a symbol)
  * - custom lock schema
+ *
+ * The only guarantee is that concurrent writes cannot corrupt the underlying [ArrayMap]: all writes are serialized on
+ *   this instance's monitor. This is a temporary bandaid against `Race condition happened, the size of ArrayMap is ...`
+ *   exceptions, and not a license to write attributes concurrently: a reader is still not guaranteed to observe a
+ *   concurrently written attribute, and two concurrent writers still race for which value wins.
  *
  * @see AttributeArrayOwner
  */
@@ -35,14 +40,17 @@ class FirDeclarationAttributes : AttributeArrayOwner<FirDeclarationDataKey, Any>
     private constructor(arrayMap: ArrayMap<Any>) : super(arrayMap)
 
     internal operator fun set(key: KClass<out FirDeclarationDataKey>, value: Any?) {
-        if (value == null) {
-            removeComponent(key)
-        } else {
-            registerComponent(key, value)
+        // The lock guards the `ArrayMap` implementation switch performed by `AttributeArrayOwner` on write.
+        synchronized(this) {
+            if (value == null) {
+                removeComponent(key)
+            } else {
+                registerComponent(key, value)
+            }
         }
     }
 
-    fun copy(): FirDeclarationAttributes = FirDeclarationAttributes(arrayMap.copy())
+    fun copy(): FirDeclarationAttributes = FirDeclarationAttributes(synchronized(this) { arrayMap.copy() })
 }
 
 /*

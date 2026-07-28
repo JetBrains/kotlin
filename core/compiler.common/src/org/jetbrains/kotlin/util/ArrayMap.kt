@@ -71,8 +71,17 @@ internal class OneElementArrayMap<T : Any>(val value: T, val index: Int) : Array
     }
 }
 
+/**
+ * Mutations ([set], [remove]) are guarded by this map's own monitor, and [data]/[size] are volatile, so that concurrent
+ *   mutations cannot corrupt the map and lock-free readers ([get], [iterator], [entries]) cannot observe a partially
+ *   updated state.
+ *
+ * Note that this only makes a single [ArrayMapImpl] instance safe to use concurrently. It does *not* make its owner
+ *   thread-safe: [AttributeArrayOwner] replaces the whole [ArrayMap] implementation as it grows, and that transition
+ *   still has to be synchronized by the owner (see [AttributeArrayOwner.registerComponent]).
+ */
 internal class ArrayMapImpl<T : Any> private constructor(
-    private var data: Array<Any?>,
+    data: Array<Any?>,
     initialSize: Int
 ) : ArrayMap<T>() {
     companion object {
@@ -82,25 +91,43 @@ internal class ArrayMapImpl<T : Any> private constructor(
 
     constructor() : this(arrayOfNulls<Any>(DEFAULT_SIZE), 0)
 
+    /**
+     * `volatile`, because [set] replaces the array to grow it, and because a write to it publishes the preceding writes
+     *   to its elements to lock-free readers.
+     */
+    @Volatile
+    private var data: Array<Any?> = data
+
+    @Volatile
     override var size: Int = initialSize
         private set
 
-
-    private fun ensureCapacity(index: Int) {
-        if (data.size > index) return
-        var newSize = data.size
+    /**
+     * Returns an array which is large enough to hold [index], growing a copy of [data] if needed.
+     *
+     * Must be called while holding this map's monitor.
+     */
+    private fun ensureCapacity(index: Int): Array<Any?> {
+        val array = data
+        if (array.size > index) return array
+        var newSize = array.size
         do {
             newSize *= INCREASE_K
         } while (newSize <= index)
-        data = data.copyOf(newSize)
+        return array.copyOf(newSize)
     }
 
     override operator fun set(index: Int, value: T) {
-        ensureCapacity(index)
-        if (data[index] == null) {
-            size++
+        synchronized(this) {
+            val array = ensureCapacity(index)
+            if (array[index] == null) {
+                size++
+            }
+            array[index] = value
+
+            // Publishes the element write above (and a possibly grown array) to lock-free readers.
+            data = array
         }
-        data[index] = value
     }
 
     override operator fun get(index: Int): T? {
@@ -108,31 +135,38 @@ internal class ArrayMapImpl<T : Any> private constructor(
         return data.getOrNull(index) as T?
     }
 
-    override fun copy(): ArrayMap<T> = ArrayMapImpl(data.copyOf(), size)
+    override fun copy(): ArrayMap<T> = synchronized(this) { ArrayMapImpl(data.copyOf(), size) }
 
     override fun iterator(): Iterator<T> {
+        val array = data
         return object : AbstractIterator<T>() {
             private var index = -1
 
             override fun computeNext() {
                 do {
                     index++
-                } while (index < data.size && data[index] == null)
-                if (index >= data.size) {
+                } while (index < array.size && array[index] == null)
+                if (index >= array.size) {
                     done()
                 } else {
                     @Suppress("UNCHECKED_CAST")
-                    setNext(data[index] as T)
+                    setNext(array[index] as T)
                 }
             }
         }
     }
 
     fun remove(index: Int) {
-        if (data[index] != null) {
-            size--
+        synchronized(this) {
+            val array = data
+            if (array[index] != null) {
+                size--
+            }
+            array[index] = null
+
+            // Publishes the element write above to lock-free readers.
+            data = array
         }
-        data[index] = null
     }
 
     fun entries(): List<Entry<T>> {

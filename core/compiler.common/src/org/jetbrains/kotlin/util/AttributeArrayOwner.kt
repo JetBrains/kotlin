@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.util
 import kotlin.reflect.KClass
 
 /**
- * Write access ([registerComponent]/[removeComponent]) is thread **unsafe**.
- * Read access is thread **safe** only if there is no concurrent [removeComponent].
+ * Write access ([registerComponent]/[removeComponent]) is thread **unsafe**: both switch the [ArrayMap] implementation
+ *   depending on the map's size, and interleaving two such transitions corrupts the owner. Subclasses which can be
+ *   written concurrently have to serialize their write access themselves (see `FirDeclarationAttributes`).
+ * Read access is thread **safe** only if there is no concurrent [removeComponent]. A concurrent reader is not guaranteed
+ *   to observe an attribute written by another thread, but it will never observe a partially updated map.
  *
  * [AttributeArrayOwner] based on different implementations of [ArrayMap] and switches them
  *   depending on array map fullness
@@ -22,6 +25,11 @@ import kotlin.reflect.KClass
 abstract class AttributeArrayOwner<K : Any, T : Any> protected constructor(
     arrayMap: ArrayMap<T>,
 ) : AbstractArrayMapOwner<K, T>() {
+    /**
+     * `volatile`, so that readers of a concurrently modified owner always see a safely published [ArrayMap] instance
+     *   instead of a partially initialized one.
+     */
+    @Volatile
     final override var arrayMap: ArrayMap<T> = arrayMap
         private set
 
