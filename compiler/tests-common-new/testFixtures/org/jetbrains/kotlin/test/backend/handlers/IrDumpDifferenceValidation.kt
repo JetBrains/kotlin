@@ -9,6 +9,7 @@ import com.github.difflib.DiffUtils
 import com.github.difflib.UnifiedDiffUtils
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.TestInfrastructureException
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.assertEqualsToDump
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.util.convertLineSeparators
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.test.utils.withExtension
@@ -157,17 +157,17 @@ private fun String.insertBackendBeforeTxtExtension(targetBackendName: String): S
 private fun applyPatch(baseText: String, patchText: String): String {
     val lines = patchText.lines().dropLastWhile { it.isEmpty() }
     checkTestInfrastructure(lines.size >= 3) {
-        "Unknown target-specific patch format: $patchText"
+        "Unknown target-specific patch format:\n$patchText"
     }
     checkTestInfrastructure(lines[0].startsWith("--- ") && lines[1].startsWith("+++ ")) {
-        "Unknown target-specific patch format: $patchText"
+        "Unknown target-specific patch format:\n$patchText"
     }
 
     val patchedLines = try {
         val patch = UnifiedDiffUtils.parseUnifiedDiff(lines)
         DiffUtils.patch(baseText.lines(), patch)
     } catch (e: Throwable) {
-        testInfraError("Unknown target-specific patch format in $patchText: $e")
+        throw TestInfrastructureException("Unknown target-specific patch format in:\n$patchText", e)
     }
 
     return patchedLines.joinToString(System.lineSeparator())
