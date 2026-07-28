@@ -2735,6 +2735,13 @@ private fun KaDiagnosticConverterBuilder.addConversions60() {
             token,
         )
     }
+    add(FirErrors.EQUALITY_BOUND_ARGUMENT_EXPANDS_TO_NON_STAR_PROJECTED) { firDiagnostic ->
+        EqualityBoundArgumentExpandsToNonStarProjectedImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.DATA_CLASS_OVERRIDE_CONFLICT) { firDiagnostic ->
         DataClassOverrideConflictImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),

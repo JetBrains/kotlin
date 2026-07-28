@@ -23,6 +23,18 @@ FILE: typealiasInArgument.kt
         }
 
     }
+    public final class StarGeneric2<K> : R|kotlin/Any| {
+        public constructor<K>(): R|StarGeneric2<K>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final typealias Self<K> = R|StarGeneric2<*>|
+
+        public open override operator fun equals([EqualityBoundType={StarGeneric2.Self<*>=} StarGeneric2<*>] @R|kotlin/EqualityBound|(bound = <getClass>(Q|StarGeneric2.Self|) [evaluated = <getClass>(Q|StarGeneric2.Self|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
     public final typealias Self<M> = R|NiceGeneric<M>|
     public final class NiceGeneric<L> : R|kotlin/Any| {
         public constructor<L>(): R|NiceGeneric<L>| {
@@ -42,6 +54,18 @@ FILE: typealiasInArgument.kt
         public final typealias Self = R|BadGeneric<kotlin/String>|
 
         public open override operator fun equals([EqualityBoundType={BadGeneric.Self=} BadGeneric<kotlin/String>] @R|kotlin/EqualityBound|(bound = <getClass>(Q|BadGeneric.Self|) [evaluated = <getClass>(Q|BadGeneric.Self|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+    }
+    public final class BadGeneric2<N> : R|kotlin/Any| {
+        public constructor<N>(): R|BadGeneric2<N>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final typealias Self = R|BadGeneric2<kotlin/String>|
+
+        public open override operator fun equals([EqualityBoundType={BadGeneric2.Self=} BadGeneric2<kotlin/String>] @R|kotlin/EqualityBound|(bound = <getClass>(Q|BadGeneric2.Self|) [evaluated = <getClass>(Q|BadGeneric2.Self|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
             ^equals Boolean(true)
         }
 

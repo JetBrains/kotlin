@@ -1125,15 +1125,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val actualTarget: String
     }
 
-    interface UnresolvedEqualityBoundArgument : KaFirDiagnostic<KtExpression> {
-        override val diagnosticClass get() = UnresolvedEqualityBoundArgument::class
-    }
-
-    interface AmbiguouslyResolvedEqualityBoundArgument : KaFirDiagnostic<KtExpression> {
-        override val diagnosticClass get() = AmbiguouslyResolvedEqualityBoundArgument::class
-        val candidates: List<KaType>
-    }
-
     interface JsModuleProhibitedOnNonNative : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = JsModuleProhibitedOnNonNative::class
     }
@@ -1249,6 +1240,20 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface NestedJsModuleProhibited : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = NestedJsModuleProhibited::class
+    }
+
+    interface UnresolvedEqualityBoundArgument : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = UnresolvedEqualityBoundArgument::class
+    }
+
+    interface AmbiguouslyResolvedEqualityBoundArgument : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = AmbiguouslyResolvedEqualityBoundArgument::class
+        val candidates: List<KaType>
+    }
+
+    interface EqualityBoundArgumentExpandsToNonStarProjected : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = EqualityBoundArgumentExpandsToNonStarProjected::class
+        val expandedType: KaType
     }
 
     interface OptInUsage : KaFirDiagnostic<PsiElement> {

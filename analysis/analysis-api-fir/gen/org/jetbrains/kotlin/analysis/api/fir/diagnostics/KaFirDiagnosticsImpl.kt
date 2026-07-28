@@ -1351,17 +1351,6 @@ internal class DslMarkerAppliedToWrongTargetImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.DslMarkerAppliedToWrongTarget
 
-internal class UnresolvedEqualityBoundArgumentImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.UnresolvedEqualityBoundArgument
-
-internal class AmbiguouslyResolvedEqualityBoundArgumentImpl(
-    override val candidates: List<KaType>,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.AmbiguouslyResolvedEqualityBoundArgument
-
 internal class JsModuleProhibitedOnNonNativeImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -1504,6 +1493,23 @@ internal class NestedJsModuleProhibitedImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NestedJsModuleProhibited
+
+internal class UnresolvedEqualityBoundArgumentImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.UnresolvedEqualityBoundArgument
+
+internal class AmbiguouslyResolvedEqualityBoundArgumentImpl(
+    override val candidates: List<KaType>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.AmbiguouslyResolvedEqualityBoundArgument
+
+internal class EqualityBoundArgumentExpandsToNonStarProjectedImpl(
+    override val expandedType: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.EqualityBoundArgumentExpandsToNonStarProjected
 
 internal class OptInUsageImpl(
     override val optInMarkerClassId: ClassId,
