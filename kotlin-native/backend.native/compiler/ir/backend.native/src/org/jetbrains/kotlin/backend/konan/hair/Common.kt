@@ -11,21 +11,18 @@ import hair.compilation.Compilation
 import hair.compilation.Config
 import hair.compilation.HairDumper
 import hair.sym.HairFunction
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.name.Name
+import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-internal fun createHairCompilation(context: Context, module: IrModuleFragment): Compilation {
+internal fun createHairCompilation(context: NativeBackendContext, module: IrModuleFragment): Compilation {
     val config = Config(
             hairDumper = createHairDumper(context, module)
     )
@@ -33,7 +30,7 @@ internal fun createHairCompilation(context: Context, module: IrModuleFragment): 
     return Compilation(config)
 }
 
-private fun createHairDumper(context: Context, module: IrModuleFragment): HairDumper? {
+private fun createHairDumper(context: NativeBackendContext, module: IrModuleFragment): HairDumper? {
     val baseDumpDir = context.config.dumpHairTo ?: return null
     val compilationDumpDir = baseDumpDir.resolve(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm-ss--SSS")))
     val moduleDumpDir = compilationDumpDir.resolve(module.name.toString())
