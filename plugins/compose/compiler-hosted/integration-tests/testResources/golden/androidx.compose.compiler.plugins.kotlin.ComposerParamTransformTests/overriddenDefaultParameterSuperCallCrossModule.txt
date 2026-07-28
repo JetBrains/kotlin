@@ -1,0 +1,42 @@
+//
+// Source
+// ------------------------------------------
+
+package main
+
+import androidx.compose.runtime.Composable
+import base.Typography
+
+object TypographyImpl : Typography {
+    @Composable
+    override fun foo(value: Int?): Int {
+        return super.foo(value)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+object TypographyImpl : Typography {
+  @Composable
+  @FunctionKeyMeta(key = -303149176, startOffset = 147, endOffset = 212)
+  override fun foo(value: Int?, %composer: Composer?, %changed: Int): Int {
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "C(foo)N(value)<foo(va...>:Test.kt#1zo3d")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val tmp0 = super<Typography>.foo(value, %composer, 0b1110 and %changed or 0b01110000 and %changed)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+    return tmp0
+  }
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
