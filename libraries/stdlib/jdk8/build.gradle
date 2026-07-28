@@ -83,6 +83,7 @@ check.dependsOn(tasks.register("moduleInfoTest", Test) {test ->
     test.testClassesDirs = sourceSets.moduleTest.output.classesDirs
     test.classpath = files(sourceSets.moduleTest.runtimeClasspath, tasks.jar)
     test.javaLauncher.set(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_11_0))
+    test.useJUnitPlatform()
     doFirst {
         test.systemProperty("stdlibJars", test.classpath.filter { it.name.contains('kotlin-stdlib') }.join(File.pathSeparator))
     }
