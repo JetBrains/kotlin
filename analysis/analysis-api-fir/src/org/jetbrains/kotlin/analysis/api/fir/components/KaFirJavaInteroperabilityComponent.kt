@@ -487,7 +487,12 @@ internal class KaFirJavaInteroperabilityComponent(
             return javaAccessor?.name?.asString()
         }
 
-        // A property with a `JvmField` backing field is materialized as a field, so it has no accessor methods
+        // A `const` property, as well as a property with a `JvmField` backing field, is materialized as a field,
+        // so it has no accessor methods
+        if (property is KaKotlinPropertySymbol && property.isConst) {
+            return null
+        }
+
         if (property.backingFieldSymbol?.annotations?.contains(JvmStandardClassIds.Annotations.JvmField) == true) {
             return null
         }

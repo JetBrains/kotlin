@@ -199,7 +199,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: getConstProperty
+    javaMethodName: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
