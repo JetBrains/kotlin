@@ -224,7 +224,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirValueParameterDefaultValueTypeMismatchChecker,
         FirMissingDependencyClassForParameterChecker,
         FirDestructuringParameterChecker,
-        FirEqualityBoundAnnotationApplicabilityChecker,
+        FirExplicitEqualityBoundAnnotationChecker,
     )
 
     override val enumEntryCheckers: Set<FirEnumEntryChecker> = setOf(

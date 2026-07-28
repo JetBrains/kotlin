@@ -1,0 +1,2 @@
+/phasesAmbiguity.kt:27:48: error: Type of '@EqualityBound' argument is ambiguous between following candidates: Outer.A.B, A.B.
+Try to specify its fully qualified name.

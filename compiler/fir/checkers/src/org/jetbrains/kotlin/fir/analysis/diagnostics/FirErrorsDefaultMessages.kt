@@ -91,6 +91,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPE_ALIAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_WITHOUT_EXPECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUSLY_RESOLVED_EQUALITY_BOUND_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_ALTERED_ASSIGN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_ANNOTATION_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_ANONYMOUS_TYPE_INFERRED
@@ -858,6 +859,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_LATEI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_NOT_NULL_ASSERTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_SAFE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNREACHABLE_CODE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_EQUALITY_BOUND_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_IMPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE
@@ -1542,6 +1544,17 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "See https://youtrack.jetbrains.com/issue/KT-81567 for further information.",
             DECLARATION_NAME,
             TO_STRING,
+        )
+        map.put(
+            UNRESOLVED_EQUALITY_BOUND_ARGUMENT,
+            "Type of '@EqualityBound' argument could not be resolved during type resolution. " +
+            "Try to specify its fully qualified name."
+        )
+        map.put(
+            AMBIGUOUSLY_RESOLVED_EQUALITY_BOUND_ARGUMENT,
+            "Type of ''@EqualityBound'' argument is ambiguous between following candidates: {0}.\n" +
+            "Try to specify its fully qualified name.",
+            RENDER_COLLECTION_OF_TYPES,
         )
 
         // OptIn

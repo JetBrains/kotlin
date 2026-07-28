@@ -1125,6 +1125,15 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val actualTarget: String
     }
 
+    interface UnresolvedEqualityBoundArgument : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = UnresolvedEqualityBoundArgument::class
+    }
+
+    interface AmbiguouslyResolvedEqualityBoundArgument : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = AmbiguouslyResolvedEqualityBoundArgument::class
+        val candidates: List<KaType>
+    }
+
     interface JsModuleProhibitedOnNonNative : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = JsModuleProhibitedOnNonNative::class
     }

@@ -381,6 +381,8 @@ object FirErrors : KtDiagnosticsContainer() {
     val IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED: KtDiagnosticFactory0 = KtDiagnosticFactory0("IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val DSL_MARKER_PROPAGATES_TO_MANY: KtDiagnosticFactory0 = KtDiagnosticFactory0("DSL_MARKER_PROPAGATES_TO_MANY", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val DSL_MARKER_APPLIED_TO_WRONG_TARGET: KtDiagnosticFactory2<FirRegularClassSymbol, String> = KtDiagnosticFactory2("DSL_MARKER_APPLIED_TO_WRONG_TARGET", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
+    val UNRESOLVED_EQUALITY_BOUND_ARGUMENT: KtDiagnosticFactory0 = KtDiagnosticFactory0("UNRESOLVED_EQUALITY_BOUND_ARGUMENT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
+    val AMBIGUOUSLY_RESOLVED_EQUALITY_BOUND_ARGUMENT: KtDiagnosticFactory1<List<ConeKotlinType>> = KtDiagnosticFactory1("AMBIGUOUSLY_RESOLVED_EQUALITY_BOUND_ARGUMENT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
 
     // OptIn
     val OPT_IN_USAGE: KtDiagnosticFactory2<ClassId, String> = KtDiagnosticFactory2("OPT_IN_USAGE", WARNING, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class, getRendererFactory())

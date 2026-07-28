@@ -533,6 +533,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirRegularClassSymbol>("dslMarkerSymbol")
             parameter<String>("actualTarget")
         }
+
+        val UNRESOLVED_EQUALITY_BOUND_ARGUMENT by error<KtExpression>()
+        val AMBIGUOUSLY_RESOLVED_EQUALITY_BOUND_ARGUMENT by error<KtExpression> {
+            parameter<List<ConeKotlinType>>("candidates")
+        }
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {
