@@ -314,12 +314,31 @@ abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readin
 
         return constraints.any { constraint ->
             when (constraint.kind) {
-                ConstraintKind.UPPER -> hasAlignedNestedSelfOccurrence(constraint.type, toSuper = true, ::isAligned)
-                ConstraintKind.LOWER -> hasAlignedNestedSelfOccurrence(constraint.type, toSuper = false, ::isAligned)
+                ConstraintKind.UPPER -> hasAlignedNestedSelfOccurrence(
+                    constraint.type,
+                    toSuper = true,
+                    ::isAligned,
+                    isInsideTypeArgument = false
+                )
+                ConstraintKind.LOWER -> hasAlignedNestedSelfOccurrence(
+                    constraint.type,
+                    toSuper = false,
+                    ::isAligned,
+                    isInsideTypeArgument = false
+                )
                 // For an EQUALITY constraint, both the toSuper and the toSub substitutions are generated
                 ConstraintKind.EQUALITY ->
-                    hasAlignedNestedSelfOccurrence(constraint.type, toSuper = true, ::isAligned) ||
-                            hasAlignedNestedSelfOccurrence(constraint.type, toSuper = false, ::isAligned)
+                    hasAlignedNestedSelfOccurrence(
+                        constraint.type,
+                        toSuper = true,
+                        ::isAligned,
+                        isInsideTypeArgument = false
+                    ) || hasAlignedNestedSelfOccurrence(
+                        constraint.type,
+                        toSuper = false,
+                        ::isAligned,
+                        isInsideTypeArgument = false
+                    )
             }
         }
     }
@@ -346,28 +365,34 @@ abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readin
         type: KotlinTypeMarker,
         toSuper: Boolean,
         isAligned: (TypeVariance) -> Boolean,
+        isInsideTypeArgument: Boolean,
     ): Boolean {
         if (type.isFlexible()) {
             val flexibleType = type.asFlexibleType()!!
-            return hasAlignedNestedSelfOccurrence(flexibleType.lowerBound(), toSuper, isAligned) ||
+            return hasAlignedNestedSelfOccurrence(flexibleType.lowerBound(), toSuper, isAligned, isInsideTypeArgument) ||
                     !c.isTriviallyFlexible(flexibleType) &&
-                    hasAlignedNestedSelfOccurrence(flexibleType.upperBound(), toSuper, isAligned)
+                    hasAlignedNestedSelfOccurrence(flexibleType.upperBound(), toSuper, isAligned, isInsideTypeArgument)
         }
 
         val unwrappedType = type.asRigidType()?.originalIfDefinitelyNotNullable() ?: return false
         val typeConstructor = unwrappedType.typeConstructor()
 
         if (typeConstructor.isIntersection()) {
-            return typeConstructor.supertypes().any { hasAlignedNestedSelfOccurrence(it, toSuper, isAligned) }
+            return typeConstructor.supertypes().any { hasAlignedNestedSelfOccurrence(it, toSuper, isAligned, isInsideTypeArgument) }
         }
 
         val capturedType = unwrappedType.asCapturedType()
         if (capturedType != null) {
-            // A pre-existing captured type behaves like an invariant position: its content can survive only projected,
-            // and only in the supertype direction
-            if (!toSuper) return false
-            val projectedType = capturedType.typeConstructorProjection().getType() ?: return false
-            return projectedType.containsTypeVariable(this) && isAligned(TypeVariance.INV)
+            return when {
+                !isInsideTypeArgument -> false
+                toSuper -> typeConstructor.supertypes().any {
+                    hasAlignedNestedSelfOccurrence(it, toSuper = true, isAligned, isInsideTypeArgument = true)
+                }
+                else -> when (val lowerType = capturedType.lowerType()) {
+                    null -> false
+                    else -> hasAlignedNestedSelfOccurrence(lowerType, toSuper = false, isAligned, isInsideTypeArgument = true)
+                }
+            }
         }
 
         for (index in 0 until unwrappedType.argumentsCount()) {
@@ -384,7 +409,7 @@ abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readin
                     if (!toSuper) continue
                     if (isSelfTypeVariable(argumentType)) {
                         if (isAligned(TypeVariance.INV)) return true
-                    } else if (hasAlignedNestedSelfOccurrence(argumentType, toSuper = true, isAligned)) {
+                    } else if (hasAlignedNestedSelfOccurrence(argumentType, toSuper = true, isAligned, isInsideTypeArgument = true)) {
                         return true
                     }
                 }
@@ -392,7 +417,7 @@ abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readin
                     val childToSuper = if (effectiveVariance == TypeVariance.OUT) toSuper else !toSuper
                     if (isSelfTypeVariable(argumentType)) {
                         if (isAligned(if (childToSuper) TypeVariance.OUT else TypeVariance.IN)) return true
-                    } else if (hasAlignedNestedSelfOccurrence(argumentType, childToSuper, isAligned)) {
+                    } else if (hasAlignedNestedSelfOccurrence(argumentType, childToSuper, isAligned, isInsideTypeArgument)) {
                         return true
                     }
                 }
