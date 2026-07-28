@@ -1,0 +1,15 @@
+KT element: KtClass
+KT element text:
+public final class Inherited public constructor() : Base {
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] class Inherited : R|Base| {
+    public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inherited] constructor(): R|Inherited|
+
+}
