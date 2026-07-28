@@ -77,6 +77,7 @@ internal class JvmClasspathSnapshottingOperationImpl private constructor(
 
         val PARSE_INLINED_LOCAL_CLASSES: Option<Boolean> = Option("PARSE_INLINED_LOCAL_CLASSES", true)
 
-        val EXPAND_TYPE_ALIASES: Option<Boolean> = Option("EXPAND_TYPE_ALIASES", false)
+
+        val EXPAND_TYPE_ALIASES: Option<Boolean> = Option("EXPAND_TYPE_ALIASES", true)
     }
 }
