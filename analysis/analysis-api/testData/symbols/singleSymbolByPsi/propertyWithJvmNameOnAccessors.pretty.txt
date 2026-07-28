@@ -1,0 +1,5 @@
+var x: kotlin.Int
+  @kotlin.jvm.JvmName(name = "acquireX")
+  get()
+  @kotlin.jvm.JvmName(name = "changeX")
+  set(value: kotlin.Int)

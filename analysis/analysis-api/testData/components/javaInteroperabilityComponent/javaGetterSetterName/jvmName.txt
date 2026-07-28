@@ -1,2 +1,0 @@
-Getter name: acquireX
-Setter name: changeX

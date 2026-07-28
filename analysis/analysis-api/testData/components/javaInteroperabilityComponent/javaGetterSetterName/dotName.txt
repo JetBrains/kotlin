@@ -1,2 +1,0 @@
-Getter name: null
-Setter name: null
