@@ -13,9 +13,5 @@ publish {
     artifactId = artifactId.replace(".", "-")
 }
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
-sourcesJarWithSourcesFromEmbedded(
-    project(":kotlin-lombok-compiler-plugin").tasks.named<Jar>("sourcesJar")
-)
-javadocJarWithJavadocFromEmbedded(
-    project(":kotlin-lombok-compiler-plugin").tasks.named<Jar>("javadocJar")
-)
+sourcesJarWithSourcesFromEmbedded()
+javadocJarWithJavadocFromEmbedded()
