@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.assertEqualsToDump
 import org.jetbrains.kotlin.test.directives.getClassifiedDumpFile
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.util.convertLineSeparators
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
-import org.jetbrains.kotlin.test.utils.withExtension
 import java.io.File
 
 /**
@@ -33,21 +33,24 @@ import java.io.File
  *   from the directive.
  *
  * @param testServices the test services instance
- * @param mainExpectedFile the main (non-target-specific) expected dump file
  * @param baseDumpExtension the base dump extension without target override (e.g., "ir.txt" or "kt.txt")
  * @param actualDump the actual dump
  */
 internal fun validateTargetSpecificDumpFile(
     testServices: TestServices,
     assertions: Assertions,
-    mainExpectedFile: File,
     baseDumpExtension: String,
     actualDump: String,
     isKotlinLikeDump: Boolean,
-): Boolean {
-    val targetBackend = testServices.defaultsProvider.targetBackend ?: return false
-    val targetBackendDirectiveName = targetBackend.name
+) {
     val moduleStructure = testServices.moduleStructure
+
+    fun default() = assertions.assertEqualsToDump(moduleStructure, baseDumpExtension, actualDump.ifEmpty { null })
+
+    // Classified patches are not collapsed, so for consistency, they're always against classified dumps.
+    val mainExpectedFile = moduleStructure.getClassifiedDumpFile(baseDumpExtension)
+    val targetBackend = testServices.defaultsProvider.targetBackend ?: return default()
+    val targetBackendDirectiveName = targetBackend.name
     val dumpDescription = if (isKotlinLikeDump) "Kotlin-like IR dump" else "IR dump"
 
     val matchedBackend = testServices.getMatchedBackendFromDirective(CodegenTestDirectives.DUMP_IR_DIFFERENCE)
@@ -61,7 +64,7 @@ internal fun validateTargetSpecificDumpFile(
             checkTestInfrastructure(!targetSpecificFile.exists()) {
                 "DUMP_IR_DIFFERENCE directive specifies $targetBackendDirectiveName but there is no actual dump"
             }
-            return true
+            return
         }
 
         checkTestInfrastructure(mainExpectedFile.exists()) {
@@ -84,36 +87,39 @@ internal fun validateTargetSpecificDumpFile(
             if (isKotlinLikeDump) {
                 // Kotlin-like dumps show symbol's simple names, while text IR dumps show fqnames.
                 // When a used symbol's package is changed -> `*ir.<backend>.patch` is not empty, while `*kt.<backend>.patch` may legitimately be empty.
-                return true
+                return
             }
             assertions.fail {
                 "There are no $dumpDescription differences. Please remove $targetBackendDirectiveName from DUMP_IR_DIFFERENCE directive"
             }
         }
 
-        assertions.assertEqualsToDump(moduleStructure, targetSpecificExtension, expectedPatch)
+        assertions.assertEqualsToFile(targetSpecificFile, expectedPatch)
         // Sanity check: patch application must result in the actual dump
         checkTestInfrastructure(applyPatch(mainDump, expectedPatch) == normalizedActualDump) {
             "Unable to reconstruct target-specific dump from patch: ${targetSpecificFile.absolutePath}"
         }
-        return true
+        return
     } else {
-        val baseTestFile = moduleStructure.originalTestDataFiles.first()
-
-        val existingTargetSpecificFile = findTargetSpecificPatchFile(targetBackend, baseTestFile, baseDumpExtension)
+        val existingTargetSpecificFile = moduleStructure.findTargetSpecificPatchFile(targetBackend, baseDumpExtension)
         checkTestInfrastructure(existingTargetSpecificFile == null) {
             "Target-specific $dumpDescription file detected but no DUMP_IR_DIFFERENCE directive specified for " +
                     "$targetBackendDirectiveName or its compatible target: $existingTargetSpecificFile"
         }
-        return false
+        if (moduleStructure.allDirectives[CodegenTestDirectives.DUMP_IR_DIFFERENCE].isEmpty()) {
+            default()
+        } else {
+            // Because DUMP_IR_DIFFERENCE is set, some other backend will force classified dump to be generated.
+            assertions.assertEqualsToFile(mainExpectedFile, actualDump)
+        }
     }
 }
 
-private fun findTargetSpecificPatchFile(targetBackend: TargetBackend, baseTestFile: File, baseDumpExtension: String): File? {
+private fun TestModuleStructure.findTargetSpecificPatchFile(targetBackend: TargetBackend, baseDumpExtension: String): File? {
     var current = targetBackend
     while (current != TargetBackend.ANY) {
         val ext = targetSpecificDumpExtension(baseDumpExtension, current)
-        val file = baseTestFile.withExtension(ext)
+        val file = getClassifiedDumpFile(ext)
         if (file.exists()) {
             return file
         }
