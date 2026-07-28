@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase
         runnerType = TestRunnerType.DEFAULT,
         freeCompilerArgs = [
             ENABLE_MPP, ENABLE_NAME_BASED_DESTRUCTURING, ENABLE_COLLECTION_LITERALS,
-            STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API,
+            STDLIB_IS_A_FRIEND, KOTLIN_TEST_LIBRARY, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API,
             ENABLE_X_FOREIGN_API, ENABLE_X_NATIVE_API, ENABLE_OBSOLETE_NATIVE_API, ENABLE_NATIVE_RUNTIME_API,
             ENABLE_OBSOLETE_WORKERS_API, ENABLE_INTERNAL_FOR_KOTLIN_NATIVE, ENABLE_X_UUID_API, ENABLE_X_TIME,
             "-Xcommon-sources=../../libraries/stdlib/common/test/jsCollectionFactories.kt",
@@ -71,6 +71,8 @@ private const val ENABLE_MPP = "-Xmulti-platform"
 private const val ENABLE_NAME_BASED_DESTRUCTURING = "-Xname-based-destructuring=complete"
 private const val ENABLE_COLLECTION_LITERALS = "-Xcollection-literals"
 internal const val STDLIB_IS_A_FRIEND = "-friend-modules=$KOTLIN_NATIVE_DISTRIBUTION/klib/common/stdlib"
+internal const val KOTLIN_TEST_LIBRARY = "-library=$KOTLIN_NATIVE_DISTRIBUTION/klib/common/kotlin-test"
+internal const val KOTLIN_TEST_IS_A_FRIEND = "-friend-modules=$KOTLIN_NATIVE_DISTRIBUTION/klib/common/kotlin-test"
 private const val ENABLE_X_STDLIB_API = "-opt-in=kotlin.ExperimentalStdlibApi"
 private const val ENABLE_X_ENCODING_API = "-opt-in=kotlin.io.encoding.ExperimentalEncodingApi"
 private const val ENABLE_X_UUID_API = "-opt-in=kotlin.uuid.ExperimentalUuidApi"

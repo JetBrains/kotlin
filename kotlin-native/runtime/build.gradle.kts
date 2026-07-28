@@ -786,8 +786,6 @@ val stdlibBuildTask = tasks.register("stdlibBuildTask", KonanCompileTask::class)
         srcDir(project(":kotlin-stdlib").projectDir.resolve("common/src/generated"))
         srcDir(project(":kotlin-stdlib").projectDir.resolve("unsigned/src"))
         srcDir(project.files(project(":kotlin-stdlib").projectDir.resolve("src")).builtBy(":prepare:build.version:writeStdlibVersion"))
-        srcDir(project(":kotlin-test").projectDir.resolve("annotations-common/src/main/kotlin"))
-        srcDir(project(":kotlin-test").projectDir.resolve("common/src/main/kotlin"))
     }
 
     val commonNonJvm = sourceSets.create("commonNonJvm") {

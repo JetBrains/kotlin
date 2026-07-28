@@ -1,17 +1,27 @@
+@file:OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 @file:Suppress("UNUSED_VARIABLE")
 
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import org.gradle.api.publish.internal.PublicationInternal
 import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.tasks
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCompileTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.library.KOTLINTEST_MODULE_NAME
+import org.jetbrains.kotlin.nativeDistribution.registerNativeBootstrapDistribution
+import org.jetbrains.kotlin.platformManager
+import org.jetbrains.kotlin.platformManagerProvider
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 import plugins.publishing.configureMultiModuleMavenPublishing
@@ -270,6 +280,12 @@ kotlin {
     }
 }
 
+val nativeBootstrapDistribution = registerNativeBootstrapDistribution()
+val nativePublicationTargets = project.objects.platformManagerProvider(project).platformManager.get().targetValues
+
+fun nativeKotlinTestKlibTaskName(targetName: String): String =
+    "native${targetName.replaceFirstChar { it.uppercaseChar() }}KotlinTestKlib"
+
 tasks {
     val allMetadataJar = named("allMetadataJar", Jar::class) {
         archiveClassifier = "all"
@@ -371,6 +387,63 @@ tasks {
             patchedFile.copyTo(resultFile, overwrite = true)
         }
     }
+
+    val nativeKotlinTestBuildTask = register("nativeKotlinTestBuildTask", KonanCompileTask::class) {
+        group = BasePlugin.BUILD_GROUP
+        description = "Build the Kotlin/Native kotlin-test library"
+
+        compilerDistributionRoot.set(nativeBootstrapDistribution.map { it.root })
+        outputDirectory.set(layout.buildDirectory.dir("nativeKotlinTestBuild/${HostManager.hostName}/$KOTLINTEST_MODULE_NAME"))
+
+        // See also kotlin-native's build configuration for more details on selected options
+        extraOpts.addAll(
+            "-no-default-libs",
+            "-Xallow-kotlin-package",
+            "-Xexplicit-api=strict",
+            "-Xexpect-actual-classes",
+            "-Xklib-ir-inliner=intra-module",
+            "-Xcontext-parameters",
+            "-Xname-based-destructuring=complete",
+            "-Xcollection-literals",
+            "-module-name", KOTLINTEST_MODULE_NAME,
+            "-opt-in=kotlin.RequiresOptIn",
+            "-opt-in=kotlin.contracts.ExperimentalContracts",
+            "-opt-in=kotlin.ExperimentalMultiplatform",
+            "-Xdont-warn-on-error-suppression",
+            "-Xklib-relative-path-base=${rootDir.canonicalPath}",
+            "-Xreturn-value-checker=full",
+            "-Xfragment-refines=nativeMain:common",
+            "-Xwarning-level=REDUNDANT_CLI_ARG:disabled",
+            "-Xmanifest-native-targets=${nativePublicationTargets.joinToString(separator = ",") { it.visibleName }}"
+        )
+        if (!kotlinBuildProperties.disableWerror) {
+            extraOpts.add("-Werror")
+        }
+
+        sourceSets.create("common") {
+            srcDir(projectDir.resolve("annotations-common/src/main/kotlin"))
+            srcDir(projectDir.resolve("common/src/main/kotlin"))
+        }
+        sourceSets.create("nativeMain") {
+            srcDir(projectDir.resolve("native/src/main/kotlin"))
+        }
+    }
+
+    register("nativeKotlinTest", Sync::class) {
+        from(nativeKotlinTestBuildTask)
+        into(layout.buildDirectory.dir("nativeKotlinTest"))
+    }
+
+    nativePublicationTargets.forEach { target ->
+        val targetName = target.presetName
+        register(nativeKotlinTestKlibTaskName(targetName), Zip::class) {
+            dependsOn(nativeKotlinTestBuildTask)
+            archiveBaseName = base.archivesName
+            archiveAppendix = targetName.lowercase()
+            archiveExtension = "klib"
+            from(nativeKotlinTestBuildTask.flatMap { it.outputDirectory })
+        }
+    }
 }
 
 configurations {
@@ -459,7 +532,28 @@ configurations {
 
     val jvmMainApi = getByName("jvmMainApi")
     val metadataCompilationApi = getByName("metadataCompilationApi")
-    val nativeApiElements = create("nativeApiElements")
+    val nativeTargetApiElements = nativePublicationTargets.associateWith { target ->
+        create("${target.presetName}ApiElements") {
+            isCanBeResolved = false
+            isCanBeConsumed = true
+            attributes {
+                attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+                attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, objects.named("non-jvm"))
+                attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+                attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+                attribute(KotlinNativeTarget.konanTargetAttribute, target.name)
+            }
+        }
+    }
+    create("nativeDistributionElements") {
+        isCanBeResolved = false
+        isCanBeConsumed = true
+    }
+    dependencies {
+        nativeTargetApiElements.values.forEach { apiElements ->
+            add(apiElements.name, kotlinStdlib())
+        }
+    }
     for (artifactName in listOf("kotlin-test-common", "kotlin-test-annotations-common")) {
         dependencies {
             constraints {
@@ -468,10 +562,24 @@ configurations {
                 // but use this constraint to align it if another library brings it transitively
                 jvmMainApi(artifactCoordinates)
                 metadataCompilationApi(artifactCoordinates)
-                nativeApiElements(artifactCoordinates)
+                nativeTargetApiElements.values.forEach { apiElements ->
+                    add(apiElements.name, artifactCoordinates)
+                }
             }
         }
     }
+}
+
+artifacts {
+    val nativeKotlinTest = tasks.named<Sync>("nativeKotlinTest")
+    val nativeTargetKotlinTestKlibs = nativePublicationTargets.associateWith { target ->
+        tasks.named<Zip>(nativeKotlinTestKlibTaskName(target.presetName))
+    }
+
+    nativeTargetKotlinTestKlibs.forEach { (target, klib) ->
+        add("${target.presetName}ApiElements", klib)
+    }
+    add("nativeDistributionElements", nativeKotlinTest)
 }
 
 
@@ -498,14 +606,6 @@ publishing {
                 configureVariantDetails { mapToMavenScope("runtime") }
             }
             variant("jvmSourcesElements")
-            variant("nativeApiElements") {
-                attributes {
-                    attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-                    attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, objects.named("non-jvm"))
-                    attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-                    attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-                }
-            }
         }
         val frameworkModules = jvmTestFrameworks.map { framework ->
             module("${framework.lowercase()}Module") {
@@ -551,6 +651,19 @@ publishing {
             variant("wasmWasiRuntimeElements")
             variant("wasmWasiSourcesElements")
         }
+        val nativeModules = nativePublicationTargets.map { target ->
+            val targetName = target.presetName
+            module("${targetName}Module") {
+                mavenPublication {
+                    // kotlin-test-macosarm64, kotlin-test-linuxx64, etc
+                    artifactId = "$artifactBaseName-${targetName.lowercase()}"
+                    configureKotlinPomAttributes(project, "Kotlin Test library for $targetName", packaging = "klib")
+                }
+                variant("${targetName}ApiElements") {
+                    name = "${targetName}ApiElements-published"
+                }
+            }
+        }
 
         module("testCommonModule") {
             mavenPublication {
@@ -570,7 +683,7 @@ publishing {
         }
 
         // Makes all variants from accompanying artifacts visible through `available-at`
-        rootModule.include(js, *frameworkModules.toTypedArray(), wasmJs, wasmWasi)
+        rootModule.include(js, *nativeModules.toTypedArray(), *frameworkModules.toTypedArray(), wasmJs, wasmWasi)
     }
 
     publications {

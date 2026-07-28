@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase
     TC(
         name = "default",
         runnerType = TestRunnerType.DEFAULT,
-        freeCompilerArgs = [STDLIB_IS_A_FRIEND],
+        freeCompilerArgs = [KOTLIN_TEST_LIBRARY, KOTLIN_TEST_IS_A_FRIEND],
         sourceLocations = ["libraries/kotlin.test/common/src/test/kotlin/**.kt"]
     )
 )

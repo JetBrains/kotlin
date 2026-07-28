@@ -162,6 +162,12 @@ class NativeDistribution(val root: Directory) {
         get() = root.dir("klib/common/stdlib")
 
     /**
+     * kotlin-test library klib.
+     */
+    val kotlinTest: Directory
+        get() = root.dir("klib/common/kotlin-test")
+
+    /**
      * Static compiler cache of standard library for a specific [target].
      */
     fun stdlibCache(target: String, withOptimizations: Boolean): Directory = cache("stdlib", target, perFile = true, withOptimizations)

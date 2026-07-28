@@ -594,22 +594,9 @@ kotlin {
         }
 
         if (kotlinBuildProperties.isInIdeaSync.get()) {
-            val nativeKotlinTestCommon = create("nativeKotlinTestCommon") {
-                dependsOn(commonMain.get())
-                val prepareKotlinTestCommonNativeSources = tasks.register("prepareKotlinTestCommonNativeSources", Sync::class) {
-                    from("../kotlin.test/common/src/main/kotlin")
-                    from("../kotlin.test/annotations-common/src/main/kotlin")
-                    into(layout.buildDirectory.dir("src/native-kotlin-test-common-sources"))
-                }
-
-                kotlin {
-                    srcDir(prepareKotlinTestCommonNativeSources.requiredForImport())
-                }
-            }
             val nativeMain = getByName("nativeMain") {
                 dependsOn(nativeWasmMain)
                 dependsOn(nativeWasmWasiMain)
-                dependsOn(nativeKotlinTestCommon)
                 kotlin {
                     srcDir("$rootDir/kotlin-native/runtime/src/main/kotlin")
                     srcDir("$rootDir/kotlin-native/Interop/Runtime/src/main/kotlin")

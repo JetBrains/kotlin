@@ -98,7 +98,6 @@ apply plugin: CompilationDatabasePlugin
 
 dependencies {
     commonSources project(path: ':kotlin-stdlib', configuration: 'metadataSourcesElements')
-    commonSources project(path: ':kotlin-test', configuration: 'metadataSourcesElements')
     compilationDatabase project(":kotlin-native:Interop:Runtime")
     compilationDatabase project(":kotlin-native:libclangext")
     compilationDatabase project(":kotlin-native:libllvmext")
@@ -229,6 +228,12 @@ tasks.register("distStdlib", Sync) {
     into(nativeDistribution.map { it.stdlib })
 }
 
+tasks.register("distKotlinTest", Sync) {
+    FileCollection nativeKotlinTestConf = configurations.detachedConfiguration(dependencies.project(path: ":kotlin-test", configuration: "nativeDistributionElements"))
+    from(nativeKotlinTestConf)
+    into(nativeDistribution.map { it.kotlinTest })
+}
+
 tasks.register("distNativeLibs", DeletingSync) {
     from(configurations.nativeLibs)
     into(nativeDistribution.map { it.nativeLibs })
@@ -339,6 +344,7 @@ targetList.each { target ->
 
     tasks.register("${target}CrossDistRuntime") {
         dependsOn ":kotlin-native:distStdlib"
+        dependsOn ":kotlin-native:distKotlinTest"
         dependsOn "${target}CrossDistBitcodeCopy"
         dependsOn "${target}CrossDistRuntimeFingerprint"
     }
@@ -394,6 +400,7 @@ tasks.register("dist") {
             "distRuntime",
             "distDef",
             "distStdlib",
+            "distKotlinTest",
             "distStdlibCache"
 }
 
@@ -402,6 +409,7 @@ tasks.register("crossDist") {
             "crossDistRuntime",
             "distDef",
             "distStdlib",
+            "distKotlinTest",
             "crossDistStdlibCache"
 }
 
