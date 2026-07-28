@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
+import org.jetbrains.kotlin.ir.backend.js.wasm.isWasmExportDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 
@@ -24,7 +25,7 @@ class JsIrFileSerializer(
     declarationTable: DeclarationTable.Default,
     private val jsIrFileMetadataFactory: JsIrFileMetadataFactory
 ) : IrFileSerializer(settings, declarationTable) {
-    override fun backendSpecificExplicitRoot(node: IrAnnotationContainer) = node.isJsExportDeclaration()
+    override fun backendSpecificExplicitRoot(node: IrAnnotationContainer) = node.isJsExportDeclaration() || node.isWasmExportDeclaration()
     override fun backendSpecificExplicitRootExclusion(node: IrAnnotationContainer) = node.isJsExportIgnoreDeclaration()
     override fun backendSpecificMetadata(irFile: IrFile) = jsIrFileMetadataFactory.createJsIrFileMetadata(irFile)
 }
