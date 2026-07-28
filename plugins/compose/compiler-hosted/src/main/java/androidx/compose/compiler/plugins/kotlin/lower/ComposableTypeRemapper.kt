@@ -70,11 +70,7 @@ internal class ComposableTypeTransformer(
     private val externalTransformedDecls = mutableSetOf<IrDeclaration>()
 
     private fun visitFunctionIfExternal(function: IrFunction): IrFunction {
-        if (
-            function.isExternalFunction() &&
-            function.needsComposableRemapping() &&
-            externalTransformedDecls.add(function)
-        ) {
+        if (function.isExternalFunction() && function.needsComposableRemapping()) {
             return function.transform(this, null) as IrFunction
         }
         return function
@@ -242,8 +238,13 @@ internal class ComposableTypeTransformer(
     }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
-        declaration.returnType = declaration.returnType.remapType()
-        return super.visitFunction(declaration)
+        val isExternalFunctionThatNeedsRemapping = declaration.isExternalFunction() && declaration.needsComposableRemapping()
+        if (!isExternalFunctionThatNeedsRemapping || externalTransformedDecls.add(declaration)) {
+            declaration.returnType = declaration.returnType.remapType()
+            return super.visitFunction(declaration)
+        } else {
+            return declaration
+        }
     }
 
     override fun visitField(declaration: IrField): IrStatement {
