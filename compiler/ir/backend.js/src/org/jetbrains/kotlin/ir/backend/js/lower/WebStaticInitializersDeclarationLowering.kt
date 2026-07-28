@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irCatch
+import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
@@ -249,57 +250,46 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
                         nameHint = "initState",
                         inventUniqueName = false,
                     )
-                    statements += initState
-                    statements += irWhen(
-                        context.irBuiltIns.unitType,
-                        listOf(
-                            // Already initialized successfully - early branch.
-                            irBranch(
-                                irEqeqeq(irGet(initState), irInt(InitializationState.INITIALIZED)),
-                                irReturnUnit()
-                            ),
-                            // Previously attempted initialization failed with error.
-                            irBranch(
-                                irEqeqeq(irGet(initState), irInt(InitializationState.ERROR)),
-                                generateStaticInitializationFailureCallWithClassName(container)
-                            ),
-                            // Initialization hasn't been performed yet - try to initialize.
-                            irElseBranch(
-                                irBlock {
-                                    +irSetField(null, initCalledVar, irInt(InitializationState.INITIALIZED))
-                                    val allInitializers = irComposite {
-                                        val [dependencySuperInterfaces, dependencySuperClasses] =
-                                            container.dependencySuperClasses.partition { it.isInterface }
-                                        for (superClass in dependencySuperClasses + dependencySuperInterfaces) {
-                                            superClass.staticInitFunction?.let {
-                                                +irCall(it.symbol)
-                                            }
-                                        }
-                                        for (initializer in initializers) {
-                                            initializer.setDeclarationsParent(initFunction)
-                                        }
-                                        +initializers
-                                    }
-                                    val catchParameter = scope.createTemporaryVariableDeclaration(
-                                        irType = catchParameterType,
-                                        nameHint = "reason",
-                                        origin = IrDeclarationOrigin.CATCH_PARAMETER,
-                                        startOffset = UNDEFINED_OFFSET,
-                                        endOffset = UNDEFINED_OFFSET,
-                                        inventUniqueName = false,
-                                    )
-                                    val catchResult = irComposite {
-                                        +irSetField(null, initCalledVar, irInt(InitializationState.ERROR))
-                                        +irCall(this@WebStaticInitializersDeclarationLowering.context.symbols.staticInitializationFailure).apply {
-                                            arguments[0] = irCastIfNeeded(irGet(catchParameter), context.irBuiltIns.throwableType)
-                                            arguments[1] = undefinedOrNull()
-                                        }
-                                    }
-                                    +irTry(context.irBuiltIns.unitType, allInitializers, listOf(irCatch(catchParameter, catchResult)), null)
-                                }
-                            )
-                        )
+                    statements += irIfThen(
+                        irEqeqeq(irGet(initState), irInt(InitializationState.INITIALIZED)),
+                        irReturnUnit()
                     )
+                    statements += irIfThen(
+                        irEqeqeq(irGet(initState), irInt(InitializationState.ERROR)),
+                        generateStaticInitializationFailureCallWithClassName(container)
+                    )
+                    statements += irBlock {
+                        +irSetField(null, initCalledVar, irInt(InitializationState.INITIALIZED))
+                        val allInitializers = irComposite {
+                            val [dependencySuperInterfaces, dependencySuperClasses] =
+                                container.dependencySuperClasses.partition { it.isInterface }
+                            for (superClass in dependencySuperClasses + dependencySuperInterfaces) {
+                                superClass.staticInitFunction?.let {
+                                    +irCall(it.symbol)
+                                }
+                            }
+                            for (initializer in initializers) {
+                                initializer.setDeclarationsParent(initFunction)
+                            }
+                            +initializers
+                        }
+                        val catchParameter = scope.createTemporaryVariableDeclaration(
+                            irType = catchParameterType,
+                            nameHint = "reason",
+                            origin = IrDeclarationOrigin.CATCH_PARAMETER,
+                            startOffset = UNDEFINED_OFFSET,
+                            endOffset = UNDEFINED_OFFSET,
+                            inventUniqueName = false,
+                        )
+                        val catchResult = irComposite {
+                            +irSetField(null, initCalledVar, irInt(InitializationState.ERROR))
+                            +irCall(this@WebStaticInitializersDeclarationLowering.context.symbols.staticInitializationFailure).apply {
+                                arguments[0] = irCastIfNeeded(irGet(catchParameter), context.irBuiltIns.throwableType)
+                                arguments[1] = undefinedOrNull()
+                            }
+                        }
+                        +irTry(context.irBuiltIns.unitType, allInitializers, listOf(irCatch(catchParameter, catchResult)), null)
+                    }
                 }
             }
         }
