@@ -23,6 +23,10 @@ internal class KlibMetadataExtensions : MetadataExtensions {
     private fun ReadContext.getSourceFile(index: Int) =
         strings.getString(index).let(::KlibSourceFile)
 
+    private fun ReadContext.processTypeAfterReading(type: KmType) {
+        contextExtensions.firstIsInstanceOrNull<KlibTypeReadExtension>()?.processType(type)
+    }
+
     private fun WriteContext.getIndexOf(file: KlibSourceFile) =
         strings.getStringIndex(file.name)
 
@@ -171,6 +175,7 @@ internal class KlibMetadataExtensions : MetadataExtensions {
 
     override fun readTypeExtensions(kmType: KmType, proto: ProtoBuf.Type, c: ReadContext) {
         readAnnotations(proto.annotationList, proto.getExtension(KlibMetadataProtoBuf.typeAnnotation), c, kmType.annotations)
+        c.processTypeAfterReading(kmType)
     }
 
     override fun readTypeAliasExtensions(kmTypeAlias: KmTypeAlias, proto: ProtoBuf.TypeAlias, c: ReadContext) {}

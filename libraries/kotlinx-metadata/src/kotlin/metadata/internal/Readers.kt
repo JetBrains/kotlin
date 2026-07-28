@@ -24,7 +24,7 @@ public class ReadContext(
     @get:IgnoreInApiDump internal val versionRequirements: VersionRequirementTable,
     internal val ignoreUnknownVersionRequirements: Boolean,
     private val parent: ReadContext? = null,
-    internal val contextExtensions: List<ReadContextExtension> = emptyList()
+    public val contextExtensions: List<ReadContextExtension> = emptyList()
 ) {
     private val typeParameterNameToId = mutableMapOf<Int, Int>()
 
