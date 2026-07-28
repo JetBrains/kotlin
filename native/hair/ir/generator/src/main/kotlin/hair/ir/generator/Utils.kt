@@ -1,6 +1,7 @@
 package hair.ir.generator
 
 import hair.ir.generator.toolbox.ModelDSL
+import hair.sym.HairStaticInitializer
 
 object Utils : ModelDSL() {
 
@@ -18,7 +19,9 @@ object Utils : ModelDSL() {
         interfaces(DataFlow.valueNode)
     }
 
-    val staticInit by abstractClass(ControlFlow.blockBody)
+    val staticInit by abstractClass(ControlFlow.blockBody) {
+        formParam("initRoutine", HairStaticInitializer::class)
+    }
     val globalInit by node(staticInit)
     val threadLocalInit by node(staticInit)
     val standaloneThreadLocalInit by node(staticInit)

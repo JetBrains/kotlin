@@ -1659,6 +1659,96 @@ internal abstract class FunctionGenerationContext(
                     listOf(slotsPhi!!, llvm.int32(vars.skipSlots), llvm.int32(slotCount)))
         }
     }
+
+    private val IrDeclarationContainer.initVariableSuffix get() = when (this) {
+        is IrFile -> "${packageFqName}\$${fileEntry.name}"
+        else -> fqNameForIrSerialization.asString()
+    }
+
+    private fun getGlobalInitStateFor(container: IrDeclarationContainer): LLVMValueRef =
+            llvm.initializersGenerationState.fileGlobalInitStates.getOrPut(container) {
+                codegen.addGlobal("state_global$${container.initVariableSuffix}", llvm.intptrType, false).also {
+                    LLVMSetInitializer(it, llvm.intptr(StaticInitState.FILE_NOT_INITIALIZED.value))
+                    LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
+                }
+            }
+
+    private fun getThreadLocalInitStateFor(container: IrDeclarationContainer): AddressAccess =
+            llvm.initializersGenerationState.fileThreadLocalInitStates.getOrPut(container) {
+                codegen.addKotlinThreadLocal("state_thread_local$${container.initVariableSuffix}", llvm.intptrType,
+                        LLVMPreferredAlignmentOfType(llvm.runtime.targetData, llvm.intptrType), false).also {
+                    LLVMSetInitializer(
+                            (it as GlobalAddressAccess).getAddress(null),
+                            llvm.intptr(StaticInitState.FILE_NOT_INITIALIZED.value)
+                    )
+                }
+            }
+
+    private val IrSimpleFunction.staticInitializerTypeInfo: LLVMValueRef
+        get() = (parent as? IrClass)?.let(codegen::typeInfoValue) ?: llvm.kNull
+
+    internal fun genFileGlobalInitializerCall(fileInitializer: IrSimpleFunction, exceptionHandler: ExceptionHandler): LLVMValueRef {
+        val statePtr = getGlobalInitStateFor(fileInitializer.parent as IrDeclarationContainer)
+        val initializerPtr = with(codegen) { fileInitializer.llvmFunction.asCallback() }
+
+        val bbInit = basicBlock("label_init", null)
+        val bbExit = basicBlock("label_continue", null)
+        moveBlockAfterEntry(bbExit)
+        moveBlockAfterEntry(bbInit)
+        val state = load(llvm.intptrType, statePtr, memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingAcquire)
+        condBr(icmpEq(state, llvm.intptr(StaticInitState.FILE_INITIALIZED.value)), bbExit, bbInit)
+        positionAtEnd(bbInit)
+        call(llvm.callInitGlobalPossiblyLock, listOf(statePtr, initializerPtr, fileInitializer.staticInitializerTypeInfo),
+                exceptionHandler = exceptionHandler)
+        br(bbExit)
+        positionAtEnd(bbExit)
+        return codegen.theUnitInstanceRef.llvm
+    }
+
+    internal fun genFileThreadLocalInitializerCall(fileInitializer: IrSimpleFunction, exceptionHandler: ExceptionHandler): LLVMValueRef {
+        val globalStatePtr = getGlobalInitStateFor(fileInitializer.parent as IrDeclarationContainer)
+        val localState = getThreadLocalInitStateFor(fileInitializer.parent as IrDeclarationContainer)
+        val localStatePtr = localState.getAddress(this)
+        val initializerPtr = with(codegen) { fileInitializer.llvmFunction.asCallback() }
+
+        val bbInit = basicBlock("label_init", null)
+        val bbCheckLocalState = basicBlock("label_check_local", null)
+        val bbExit = basicBlock("label_continue", null)
+        moveBlockAfterEntry(bbExit)
+        moveBlockAfterEntry(bbCheckLocalState)
+        moveBlockAfterEntry(bbInit)
+        val globalState = load(llvm.intptrType, globalStatePtr)
+        LLVMSetVolatile(globalState, 1)
+        // Make sure we're not in the middle of global initializer invocation -
+        // thread locals can be initialized only after all shared globals have been initialized.
+        condBr(icmpNe(globalState, llvm.intptr(StaticInitState.FILE_INITIALIZED.value)), bbExit, bbCheckLocalState)
+        positionAtEnd(bbCheckLocalState)
+        condBr(icmpNe(load(llvm.intptrType, localStatePtr), llvm.intptr(StaticInitState.FILE_INITIALIZED.value)), bbInit, bbExit)
+        positionAtEnd(bbInit)
+        call(llvm.callInitThreadLocal, listOf(globalStatePtr, localStatePtr, initializerPtr, fileInitializer.staticInitializerTypeInfo),
+                exceptionHandler = exceptionHandler)
+        br(bbExit)
+        positionAtEnd(bbExit)
+        return codegen.theUnitInstanceRef.llvm
+    }
+
+    internal fun genFileStandaloneThreadLocalInitializerCall(fileInitializer: IrSimpleFunction, exceptionHandler: ExceptionHandler): LLVMValueRef {
+        val state = getThreadLocalInitStateFor(fileInitializer.parent as IrDeclarationContainer)
+        val statePtr = state.getAddress(this)
+        val initializerPtr = with(codegen) { fileInitializer.llvmFunction.asCallback() }
+
+        val bbInit = basicBlock("label_init", null)
+        val bbExit = basicBlock("label_continue", null)
+        moveBlockAfterEntry(bbExit)
+        moveBlockAfterEntry(bbInit)
+        condBr(icmpEq(load(llvm.intptrType, statePtr), llvm.intptr(StaticInitState.FILE_INITIALIZED.value)), bbExit, bbInit)
+        positionAtEnd(bbInit)
+        call(llvm.callInitThreadLocal, listOf(llvm.kNull, statePtr, initializerPtr, fileInitializer.staticInitializerTypeInfo),
+                exceptionHandler = exceptionHandler)
+        br(bbExit)
+        positionAtEnd(bbExit)
+        return codegen.theUnitInstanceRef.llvm
+    }
 }
 
 internal class DefaultFunctionGenerationContext(
