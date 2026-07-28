@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.fir.pipeline
 import org.jetbrains.kotlin.backend.common.BackendException
 import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
 import org.jetbrains.kotlin.backend.common.actualizer.*
-import org.jetbrains.kotlin.backend.common.dependencies.checker.StaticInitializationChecker
-import org.jetbrains.kotlin.backend.common.dependencies.logic.DefaultFunctionParametersCollector
-import org.jetbrains.kotlin.backend.common.dependencies.logic.OverridingCallablesCollector
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -30,6 +27,9 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.initialization.plugin.checker.StaticInitializationChecker
+import org.jetbrains.kotlin.initialization.plugin.logic.DefaultFunctionParametersCollector
+import org.jetbrains.kotlin.initialization.plugin.logic.OverridingCallablesCollector
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -109,13 +109,7 @@ fun AllModulesFrontendOutput.convertToIrAndActualize(
         outputs,
         fir2IrExtensions,
         fir2IrConfiguration,
-        irGeneratorExtensions.let {
-            val extensions = it.toMutableList()
-            extensions += OverridingCallablesCollector
-            extensions += DefaultFunctionParametersCollector
-            extensions += StaticInitializationChecker
-            extensions
-        },
+        irGeneratorExtensions,
         irMangler,
         visibilityConverter,
         kotlinBuiltIns,
@@ -287,7 +281,12 @@ private class Fir2IrPipeline(
         removeGeneratedBuiltinsDeclarationsIfNeeded()
 
         hasIrValidationErrorFromFrontend = pluginContext.runMandatoryIrValidation(extension = null, mainIrFragment)
-        pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions)
+        pluginContext.applyIrGenerationExtensions(
+            mainIrFragment,
+            irGeneratorExtensions + listOf(
+                OverridingCallablesCollector, DefaultFunctionParametersCollector, StaticInitializationChecker
+            )
+        )
 
         return Fir2IrActualizedResult(mainIrFragment, componentsStorage, pluginContext, actualizationResult, irBuiltIns, symbolTable)
     }
