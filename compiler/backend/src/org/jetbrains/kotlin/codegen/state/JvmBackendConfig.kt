@@ -97,6 +97,8 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
 
     val enhancedCoroutinesDebugging = configuration.getBoolean(JVMConfigurationKeys.ENHANCED_COROUTINES_DEBUGGING)
 
+    val useFir = languageVersionSettings.languageVersion.usesK2 || configuration.useFir
+
     val emitJvmTypeAnnotations: Boolean = configuration.getBoolean(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS)
 
     // Fixed coroutines debugging uses stdlib function to null out spilled locals.
