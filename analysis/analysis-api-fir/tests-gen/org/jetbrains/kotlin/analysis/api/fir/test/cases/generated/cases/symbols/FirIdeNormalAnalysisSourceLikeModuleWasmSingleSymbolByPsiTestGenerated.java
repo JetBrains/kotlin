@@ -147,6 +147,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleWasmSingleSymbolByPsiTestGenera
   }
 
   @Test
+  @TestMetadata("functionWithEscapedJvmName.kt")
+  public void testFunctionWithEscapedJvmName() {
+    run("functionWithEscapedJvmName.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithEscapedName.kt")
+  public void testFunctionWithEscapedName() {
+    run("functionWithEscapedName.kt");
+  }
+
+  @Test
   @TestMetadata("functionWithNestedDefinitelyNotNullType.kt")
   public void testFunctionWithNestedDefinitelyNotNullType() {
     run("functionWithNestedDefinitelyNotNullType.kt");
@@ -216,6 +228,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleWasmSingleSymbolByPsiTestGenera
   @TestMetadata("innerTypeAlias.kt")
   public void testInnerTypeAlias() {
     run("innerTypeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("internalFunctionWithEscapedName.kt")
+  public void testInternalFunctionWithEscapedName() {
+    run("internalFunctionWithEscapedName.kt");
   }
 
   @Test
