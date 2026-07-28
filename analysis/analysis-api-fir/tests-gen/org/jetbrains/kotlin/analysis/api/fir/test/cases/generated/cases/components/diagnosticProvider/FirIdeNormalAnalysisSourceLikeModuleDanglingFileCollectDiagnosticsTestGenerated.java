@@ -195,6 +195,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleDanglingFileCollectDiagnosticsT
   }
 
   @Test
+  @TestMetadata("equalityBoundFromLibrary.kt")
+  public void testEqualityBoundFromLibrary() {
+    run("equalityBoundFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("errorsInFunctionalInterfacesInstances.kt")
   public void testErrorsInFunctionalInterfacesInstances() {
     run("errorsInFunctionalInterfacesInstances.kt");

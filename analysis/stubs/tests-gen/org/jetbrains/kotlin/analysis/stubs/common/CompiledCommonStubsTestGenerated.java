@@ -581,6 +581,12 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
   }
 
   @Test
+  @TestMetadata("equalityBound.kt")
+  public void testEqualityBound() {
+    run("equalityBound.kt");
+  }
+
+  @Test
   @TestMetadata("escapedNames.kt")
   public void testEscapedNames() {
     run("escapedNames.kt");
