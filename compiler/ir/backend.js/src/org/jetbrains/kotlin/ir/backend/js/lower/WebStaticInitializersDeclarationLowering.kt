@@ -223,15 +223,49 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
                 value = initializer,
                 origin = STATIC_FIELD_INITIALIZER
             )
+    }
+
+    private inline fun IrClass.traverseSuperTypes(f: (IrClass) -> Unit) {
+        for (superType in superTypes) {
+            if (superType.isAny()) continue
+            val superClass = superType.classOrNull?.owner ?: continue
+            f(superClass)
+        }
+    }
+
+    // In the case of super interfaces, only ones having at least 1 non-abstract, non-static member
+    // trigger its initialization from the implementing class. The ordering follows the recursive
+    // enumeration over the superinterface hierarchy of each directly implemented interface. See
+    // section §3.3 of the KEEP and JVM spec section §5.5 step 7. Here, the behavior is aligned with
+    // what is done on the JVM.
+    private val IrClass.dependencySuperTypes: List<IrClass>
+        get() = collectSuperDependencies(this)
+
+    private fun collectSuperDependencies(clazz: IrClass): List<IrClass> {
+        val result = mutableListOf<IrClass>()
+        val visited = mutableSetOf<IrClass>()
+        clazz.traverseSuperTypes {
+            when {
+                it.isInterface -> collectInterfaceDependencies(it, result, visited)
+                visited.add(it) -> result.add(it)
+            }
+        }
+        return result
+    }
+
+    private fun collectInterfaceDependencies(iface: IrClass, result: MutableList<IrClass>, visited: MutableSet<IrClass>) {
+        if (!visited.add(iface)) return
+
+        iface.traverseSuperTypes {
+            if (it.isInterface) {
+                collectInterfaceDependencies(it, result, visited)
+            }
         }
 
-    private val IrClass.dependencySuperTypes: List<IrClass>
-        get() = superTypes
-            .filter { !it.isAny() }
-            .mapNotNull { it.classOrNull?.owner }
-            // In the case of super interfaces, only ones having at least 1 non-abstract member trigger
-            // its initialization from the implementing class. See section §3.3 of the KEEP.
-            .filter { clazz -> !clazz.isInterface || clazz.declarations.any { it.isNonAbstractInstanceMember() } }
+        if (iface.declarations.any { it.isNonAbstractInstanceMember() }) {
+            result.add(iface)
+        }
+    }
 
     private fun IrDeclaration.isNonAbstractInstanceMember(): Boolean = when (this) {
         is IrSimpleFunction if isReal && modality != Modality.ABSTRACT && dispatchReceiverParameter != null -> true
