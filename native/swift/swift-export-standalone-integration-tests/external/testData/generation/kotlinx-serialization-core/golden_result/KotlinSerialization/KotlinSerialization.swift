@@ -4,8 +4,8 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 @_implementationOnly import KotlinBridges_KotlinSerialization
 
-public typealias `internal` = ExportedKotlinPackages.kotlinx.serialization.`internal`
 public typealias modules = ExportedKotlinPackages.kotlinx.serialization.modules
+public typealias `internal` = ExportedKotlinPackages.kotlinx.serialization.`internal`
 public typealias descriptors = ExportedKotlinPackages.kotlinx.serialization.descriptors
 public typealias builtins = ExportedKotlinPackages.kotlinx.serialization.builtins
 public typealias encoding = ExportedKotlinPackages.kotlinx.serialization.encoding
@@ -76,31 +76,8 @@ public func serializer(
 ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
     fatalError()
 }
-@_spi(kotlinx$serialization$ExperimentalSerializationApi) @available(*, unavailable, message: "Declaration uses unsupported types")
-public func serializer(
-    _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
-    kClass: Swift.Never,
-    typeArgumentsSerializers: [any ExportedKotlinPackages.kotlinx.serialization.KSerializer],
-    isNullable: Swift.Bool
-) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
-    fatalError()
-}
-@available(*, unavailable, message: "Declaration uses unsupported types")
-public func serializer(
-    _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
-    type: Swift.Never
-) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
-    fatalError()
-}
 @available(*, unavailable, message: "Declaration uses unsupported types")
 public func serializerOrNull(
-    type: Swift.Never
-) -> (any ExportedKotlinPackages.kotlinx.serialization.KSerializer)? {
-    fatalError()
-}
-@available(*, unavailable, message: "Declaration uses unsupported types")
-public func serializerOrNull(
-    _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
     type: Swift.Never
 ) -> (any ExportedKotlinPackages.kotlinx.serialization.KSerializer)? {
     fatalError()
@@ -410,6 +387,113 @@ extension ExportedKotlinPackages.kotlinx.serialization {
         type: Swift.Never
     ) -> (any ExportedKotlinPackages.kotlinx.serialization.KSerializer)? {
         fatalError()
+    }
+}
+extension ExportedKotlinPackages.kotlinx.serialization.modules {
+    public enum SerializersModule_SealedType: KotlinRuntimeSupport.SealedType {
+        case unknown(ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule_SealedType.Unknown)
+        public struct Unknown: KotlinRuntimeSupport.SealedType {
+            public let value: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule
+            init(
+                _ value: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule
+            ) {
+                self.value = value
+            }
+        }
+        public var value: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
+            get {
+                switch self {
+                case let .unknown(type): type.value
+                }
+            }
+        }
+    }
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+    public protocol SerializersModuleCollector: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.modules._SerializersModuleCollector {
+    }
+    @objc(_SerializersModuleCollector)
+    public protocol _SerializersModuleCollector {
+    }
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+    public protocol __SerializersModuleCollector: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    public final class PolymorphicModuleBuilder: KotlinRuntime.KotlinBase {
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
+    open class SerializersModule: KotlinRuntime.KotlinBase {
+        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+        open func dumpTo(
+            collector: any ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleCollector
+        ) -> Swift.Void {
+            if Self.self == ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.self {
+                return { kotlinx_serialization_modules_SerializersModule_dumpTo__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModuleCollector__(self.__externalRCRef(), collector.__externalRCRef()); return () }()
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.dumpTo': a Swift subclass must override it and must not call super.")
+            }
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+        open func sealedType() -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule_SealedType {
+            .unknown(.init(self))
+        }
+    }
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+    public final class SerializersModuleBuilder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleCollector, ExportedKotlinPackages.kotlinx.serialization.modules.__SerializersModuleCollector {
+        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+        public func include(
+            module: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule
+        ) -> Swift.Void {
+            return { kotlinx_serialization_modules_SerializersModuleBuilder_include__TypesOfArguments__ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModule__(self.__externalRCRef(), module.__externalRCRef()); return () }()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
+    @available(*, deprecated, message: "Deprecated in the favour of 'EmptySerializersModule()'. Replacement: EmptySerializersModule()")
+    public static var EmptySerializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
+        get {
+            return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_modules_EmptySerializersModule_get())
+        }
+    }
+    public static func EmptySerializersModule() -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
+        return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_modules_EmptySerializersModule())
+    }
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+    public static func serializersModule(
+        builderAction: @escaping (ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleBuilder) -> Swift.Void
+    ) -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
+        return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_modules_SerializersModule__TypesOfArguments__U28ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModuleBuilderU29202D_U20Swift_Void__({
+            let originalBlock: (ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleBuilder) -> Swift.Void = builderAction
+            return { (arg0: Swift.UnsafeMutableRawPointer) in
+                let _arg0: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleBuilder = ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleBuilder.__createClassWrapper(externalRCRef: arg0)
+                let _result = originalBlock(_arg0)
+                return { _result; return true }()
+            }
+        }()))
+    }
+    public static func overwriteWith(
+        _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
+        other: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule
+    ) -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
+        return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_modules_overwriteWith__TypesOfArgumentsE__ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModule_ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModule__(receiver.__externalRCRef(), other.__externalRCRef()))
+    }
+    public static func plus(
+        _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
+        other: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule
+    ) -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
+        return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_modules_plus__TypesOfArgumentsE__ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModule_ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModule__(receiver.__externalRCRef(), other.__externalRCRef()))
     }
 }
 extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
@@ -1081,113 +1165,6 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
         _ receiver: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
     ) -> Swift.Set<Swift.String> {
         return kotlinx_serialization_internal_jsonCachedSerialNames__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(receiver.__externalRCRef()) as! Swift.Set<Swift.String>
-    }
-}
-extension ExportedKotlinPackages.kotlinx.serialization.modules {
-    public enum SerializersModule_SealedType: KotlinRuntimeSupport.SealedType {
-        case unknown(ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule_SealedType.Unknown)
-        public struct Unknown: KotlinRuntimeSupport.SealedType {
-            public let value: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule
-            init(
-                _ value: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule
-            ) {
-                self.value = value
-            }
-        }
-        public var value: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
-            get {
-                switch self {
-                case let .unknown(type): type.value
-                }
-            }
-        }
-    }
-    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-    public protocol SerializersModuleCollector: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.modules._SerializersModuleCollector {
-    }
-    @objc(_SerializersModuleCollector)
-    public protocol _SerializersModuleCollector {
-    }
-    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-    public protocol __SerializersModuleCollector: KotlinRuntimeSupport._KotlinBridgeable {
-    }
-    public final class PolymorphicModuleBuilder: KotlinRuntime.KotlinBase {
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-        }
-    }
-    open class SerializersModule: KotlinRuntime.KotlinBase {
-        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-        open func dumpTo(
-            collector: any ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleCollector
-        ) -> Swift.Void {
-            if Self.self == ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.self {
-                return { kotlinx_serialization_modules_SerializersModule_dumpTo__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModuleCollector__(self.__externalRCRef(), collector.__externalRCRef()); return () }()
-            } else {
-                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.dumpTo': a Swift subclass must override it and must not call super.")
-            }
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-        }
-        open func sealedType() -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule_SealedType {
-            .unknown(.init(self))
-        }
-    }
-    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-    public final class SerializersModuleBuilder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleCollector, ExportedKotlinPackages.kotlinx.serialization.modules.__SerializersModuleCollector {
-        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-        public func include(
-            module: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule
-        ) -> Swift.Void {
-            return { kotlinx_serialization_modules_SerializersModuleBuilder_include__TypesOfArguments__ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModule__(self.__externalRCRef(), module.__externalRCRef()); return () }()
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-        }
-    }
-    @available(*, deprecated, message: "Deprecated in the favour of 'EmptySerializersModule()'. Replacement: EmptySerializersModule()")
-    public static var EmptySerializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
-        get {
-            return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_modules_EmptySerializersModule_get())
-        }
-    }
-    public static func EmptySerializersModule() -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
-        return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_modules_EmptySerializersModule())
-    }
-    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-    public static func serializersModule(
-        builderAction: @escaping (ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleBuilder) -> Swift.Void
-    ) -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
-        return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_modules_SerializersModule__TypesOfArguments__U28ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModuleBuilderU29202D_U20Swift_Void__({
-            let originalBlock: (ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleBuilder) -> Swift.Void = builderAction
-            return { (arg0: Swift.UnsafeMutableRawPointer) in
-                let _arg0: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleBuilder = ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleBuilder.__createClassWrapper(externalRCRef: arg0)
-                let _result = originalBlock(_arg0)
-                return { _result; return true }()
-            }
-        }()))
-    }
-    public static func overwriteWith(
-        _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
-        other: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule
-    ) -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
-        return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_modules_overwriteWith__TypesOfArgumentsE__ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModule_ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModule__(receiver.__externalRCRef(), other.__externalRCRef()))
-    }
-    public static func plus(
-        _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
-        other: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule
-    ) -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
-        return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_modules_plus__TypesOfArgumentsE__ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModule_ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModule__(receiver.__externalRCRef(), other.__externalRCRef()))
     }
 }
 extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
@@ -3020,6 +2997,32 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
                 return { _result; return true }()
             }
         }()); return () }()
+    }
+}
+extension ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi) @available(*, unavailable, message: "Declaration uses unsupported types")
+    public func serializer(
+        kClass: Swift.Never,
+        typeArgumentsSerializers: [any ExportedKotlinPackages.kotlinx.serialization.KSerializer],
+        isNullable: Swift.Bool
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
+        fatalError()
+    }
+}
+extension ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
+    @available(*, unavailable, message: "Declaration uses unsupported types")
+    public func serializer(
+        type: Swift.Never
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
+        fatalError()
+    }
+}
+extension ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
+    @available(*, unavailable, message: "Declaration uses unsupported types")
+    public func serializerOrNull(
+        type: Swift.Never
+    ) -> (any ExportedKotlinPackages.kotlinx.serialization.KSerializer)? {
+        fatalError()
     }
 }
 @_documentation(visibility: internal)

@@ -5,7 +5,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 public func testSuspendFunction() async throws -> Swift.Int32 {
-    try await ExportedKotlinPackages.flattened.testSuspendFunction()
+    return try await ExportedKotlinPackages.flattened.testSuspendFunction()
 }
 extension ExportedKotlinPackages.flattened {
     public static func testSuspendFunction() async throws -> Swift.Int32 {
