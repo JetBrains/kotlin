@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 
 fun loadScriptingPlugin(configuration: CompilerConfiguration, parentDisposable: Disposable) {
     val pluginClasspath = ForTestCompileRuntime.scriptingPluginFilesForTests()
-    PluginCliParser.loadPluginsSafe(pluginClasspath.map { it.path }, emptyList(), emptyList(), emptyList(), configuration, parentDisposable)
+    PluginCliParser.loadPluginsSafe(pluginClasspath.map { it.path }, emptyList(), emptyList(), emptyList(), configuration, parentDisposable, pluginsLoader = null)
 }
 
 fun loadScriptingPlugin(configuration: CompilerConfiguration, parentDisposable: Disposable, pluginClasspath: Collection<String>) {
-    PluginCliParser.loadPluginsSafe(pluginClasspath, emptyList(), emptyList(), emptyList(), configuration, parentDisposable)
+    PluginCliParser.loadPluginsSafe(pluginClasspath, emptyList(), emptyList(), emptyList(), configuration, parentDisposable, pluginsLoader = null)
 }
 
