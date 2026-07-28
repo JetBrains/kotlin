@@ -46,6 +46,12 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("composableTypeRemappingOfExternalAccessors.kt")
+  public void testComposableTypeRemappingOfExternalAccessors() {
+    run("composableTypeRemappingOfExternalAccessors.kt");
+  }
+
+  @Test
   @TestMetadata("composeNavigationWithDataClass.kt")
   public void testComposeNavigationWithDataClass() {
     run("composeNavigationWithDataClass.kt");
