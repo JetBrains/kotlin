@@ -567,6 +567,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleSingleSymbolByPsiTestGenerated 
   }
 
   @Test
+  @TestMetadata("valueClassUnderlyingProperty.kt")
+  public void testValueClassUnderlyingProperty() {
+    run("valueClassUnderlyingProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassUnderlyingPropertyWithValueClassType.kt")
+  public void testValueClassUnderlyingPropertyWithValueClassType() {
+    run("valueClassUnderlyingPropertyWithValueClassType.kt");
+  }
+
+  @Test
   @TestMetadata("variableFromScriptStatement.kts")
   public void testVariableFromScriptStatement() {
     run("variableFromScriptStatement.kts");
