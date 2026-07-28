@@ -104,14 +104,17 @@ public val KaCallableSymbol.containingJvmClassName: String?
  * - Mangling due to [KaSymbolVisibility.INTERNAL][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility.INTERNAL] modifier
  * - [JvmName]
  *
- * The name is `null` when the symbol has no method visible from Java:
+ * The name is `null` when the symbol has no method that can be referenced from Java:
  * - [KaConstructorSymbol][org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol]: constructors are neither renamed by [JvmName]
  *   nor mangled, so there is no name to compute
  * - [KaSamConstructorSymbol][org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol] and
  *   [KaAnonymousFunctionSymbol][org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousFunctionSymbol]: there is no addressable JVM method
  * - [KaSymbolLocation.LOCAL][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation.LOCAL] declarations: their JVM names are invented
  *   during lowering and cannot be reconstructed from a symbol
- * - Property accessors of a property without a name or with a [JvmField] backing field, as no accessor method is generated in this case
+ * - Property accessors of a property without a name, of a `const` property, or of a property with a [JvmField] backing field, as no
+ *   accessor method is generated in these cases
+ * - The computed name is not a valid Java identifier, such as for an escaped Kotlin name like `a b c`, as such a method cannot be
+ *   referenced from Java code
  *
  * **Note**: since it is only about visible methods, it doesn't support value classes mangling.
  */

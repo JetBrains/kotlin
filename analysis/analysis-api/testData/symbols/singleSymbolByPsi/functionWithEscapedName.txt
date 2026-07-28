@@ -39,5 +39,5 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
-  javaMethodName: a b c
+  javaMethodName: null
   importableFqName: a b c
