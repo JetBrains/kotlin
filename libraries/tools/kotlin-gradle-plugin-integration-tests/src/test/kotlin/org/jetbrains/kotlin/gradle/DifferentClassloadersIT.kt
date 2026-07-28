@@ -85,6 +85,41 @@ class DifferentClassloadersIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Different classloader detection is disabled when project isolation is enabled")
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_5) // First version that supports project isolation.
+    fun detectionDisabledWithProjectIsolation(gradleVersion: GradleVersion) {
+        project(
+            "differentClassloaders",
+            gradleVersion,
+        ) {
+            setupDifferentClassloadersProject()
+
+            // after enabling isolated projects support by default we should not fail the build
+            buildAndFail("publish", "-PmppProjectDependency=true") {
+                assertNoDiagnostic(PluginLoadedInMultipleProjectsError)
+            }
+        }
+    }
+
+    // Included builds have their own classpaths, completely independent of the main build,
+    // so multiple plugin detection between main build and included builds is not possible.
+    @DisplayName("Different classloader detection does not reach into included builds")
+    @GradleTest
+    fun noDetectionInIncludedBuilds(gradleVersion: GradleVersion) {
+        project(
+            "differentClassloaders",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
+            setupIncludedBuild()
+
+            build("publish", "-PmppProjectDependency=true") {
+                assertNoDiagnostic(PluginLoadedInMultipleProjectsError)
+            }
+        }
+    }
+
     private fun TestProject.setupDifferentClassloadersProject() {
         // Specify the plugin versions in the subprojects with different plugin sets –
         // this will make Gradle use separate class loaders
@@ -103,9 +138,17 @@ class DifferentClassloadersIT : KGPBaseTest() {
                 "id \"org.jetbrains.kotlin.jvm\" version \"${TestVersions.Kotlin.CURRENT}\""
             )
         }
+    }
 
-        // Also include another project via a composite build:
-        includeOtherProjectAsIncludedBuild("allopenPluginsDsl", "pluginsDsl")
+    private fun TestProject.setupIncludedBuild() {
+        includeOtherProjectAsIncludedBuild("allopenPluginsDsl", "pluginsDsl") {
+            buildGradle.modify {
+                it.checkedReplace(
+                    "id 'org.jetbrains.kotlin.jvm'",
+                    "id 'org.jetbrains.kotlin.jvm' version \"${TestVersions.Kotlin.CURRENT}\""
+                )
+            }
+        }
         buildGradle.appendText(
             "\ntasks.create(\"publish\").dependsOn(gradle.includedBuild(\"allopenPluginsDsl\").task(\":assemble\"))"
         )

@@ -629,6 +629,7 @@ class TestProject(
         otherProjectName: String,
         pathPrefix: String,
         newProjectName: String = otherProjectName,
+        configure: GradleProject.() -> Unit = {},
     ) {
         val otherProjectPath = "$pathPrefix/$otherProjectName".testProjectPath
         otherProjectPath.copyRecursively(projectPath.resolve(newProjectName))
@@ -650,6 +651,7 @@ class TestProject(
                 """.trimIndent()
             )
         }
+        subProject(newProjectName).configure()
     }
 
     /**
