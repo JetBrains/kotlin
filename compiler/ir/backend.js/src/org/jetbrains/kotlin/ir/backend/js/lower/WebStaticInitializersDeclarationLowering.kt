@@ -89,6 +89,7 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
         val STATIC_CLASS_INITIALIZER by IrDeclarationOriginImpl.Synthetic
 
         const val STATIC_INIT_FUNCTION_NAME = "static_init"
+        const val STATIC_INIT_SLOW_FUNCTION_NAME = "static_init_slow"
         const val STATIC_INIT_CALLED_PROPERTY_NAME = "static_init_called"
     }
 
@@ -171,20 +172,27 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
 
         // It is important to define stable signature via restrictTo to be able to reference static_init of super class
         // defined in a separate module.
-        val [staticInitCalledField, staticInitFunction] = context.irFactory.stageController.restrictTo(container) {
-            val initCalledField = createStaticInitCalledField(container)
-            val initFunction = createStaticInitFunction(
-                container = container,
-                origin = STATIC_CLASS_INITIALIZER,
-                initCalledVar = initCalledField,
-                initializers = initializers
-            )
-            initCalledField to initFunction
-        }
+        val [staticInitCalledField, staticInitSlowFunction, staticInitFunction] =
+            context.irFactory.stageController.restrictTo(container) {
+                val initCalledField = createStaticInitCalledField(container)
+                val initSlowFunction = createStaticInitSlowFunction(
+                    container = container,
+                    origin = STATIC_CLASS_INITIALIZER,
+                    initCalledVar = initCalledField,
+                    initializers = initializers
+                )
+                val initFunction = createStaticInitFunction(
+                    container = container,
+                    origin = STATIC_CLASS_INITIALIZER,
+                    initCalledVar = initCalledField,
+                    slowFunction = initSlowFunction
+                )
+                Triple(initCalledField, initSlowFunction, initFunction)
+            }
 
         // Adding static_init declaration after adding its usages to make sure we don't insert usages inside static_init itself
         container.staticInitFunction = staticInitFunction
-        container.declarations.addAll(0, listOf(staticInitCalledField, staticInitFunction))
+        container.declarations.addAll(0, listOf(staticInitCalledField, staticInitSlowFunction, staticInitFunction))
     }
 
     private fun IrClass.createInitializer(declaration: IrDeclaration, field: IrField, initializer: IrExpression): IrSetField =
@@ -225,11 +233,16 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
     protected open val catchParameterType: IrType
         get() = context.irBuiltIns.throwableType
 
+    /**
+     * Builds the `static_init` entry point. It is called from every static member of [container], so its body is kept
+     * down to a single comparison to stay small enough for an engine to inline. Everything that would get in the way
+     * of that -- in particular the `try`/`catch` -- lives in `static_init_slow` instead.
+     */
     private fun createStaticInitFunction(
         container: IrClass,
         origin: IrDeclarationOrigin,
         initCalledVar: IrField,
-        initializers: List<IrStatement>
+        slowFunction: IrSimpleFunction,
     ): IrSimpleFunction {
         val initFunction = context.irFactory.buildFun {
             startOffset = UNDEFINED_OFFSET
@@ -244,52 +257,76 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
             parent = container
             body = context.irFactory.createBlockBody(startOffset, endOffset) {
                 with(builder) {
-                    // Need a temporary variable for Wasm to transform if/then branches with br_table
-                    val initState = scope.createTemporaryVariable(
-                        irGetField(null, initCalledVar),
-                        nameHint = "initState",
-                        inventUniqueName = false,
-                    )
                     statements += irIfThen(
-                        irEqeqeq(irGet(initState), irInt(InitializationState.INITIALIZED)),
+                        irEqeqeq(irGetField(null, initCalledVar), irInt(InitializationState.INITIALIZED)),
                         irReturnUnit()
                     )
+                    statements += irCall(slowFunction.symbol)
+                }
+            }
+        }
+    }
+
+    /**
+     * Builds `static_init_slow`, holding everything except the already-initialized fast path: replaying an earlier
+     * failure, and running the super classes' initializers followed by [initializers] under a `try`/`catch`.
+     * Only reachable through `static_init`, hence private.
+     */
+    private fun createStaticInitSlowFunction(
+        container: IrClass,
+        origin: IrDeclarationOrigin,
+        initCalledVar: IrField,
+        initializers: List<IrStatement>,
+    ): IrSimpleFunction {
+        val initSlowFunction = context.irFactory.buildFun {
+            startOffset = UNDEFINED_OFFSET
+            endOffset = UNDEFINED_OFFSET
+            this.origin = origin
+            name = Name.identifier(STATIC_INIT_SLOW_FUNCTION_NAME)
+            visibility = DescriptorVisibilities.PRIVATE
+            returnType = context.irBuiltIns.unitType
+        }
+        return initSlowFunction.apply {
+            val builder = context.createIrBuilder(symbol, SYNTHETIC_OFFSET)
+            parent = container
+            body = context.irFactory.createBlockBody(startOffset, endOffset) {
+                with(builder) {
                     statements += irIfThen(
-                        irEqeqeq(irGet(initState), irInt(InitializationState.ERROR)),
+                        irEqeqeq(irGetField(null, initCalledVar), irInt(InitializationState.ERROR)),
                         generateStaticInitializationFailureCallWithClassName(container)
                     )
-                    statements += irBlock {
-                        +irSetField(null, initCalledVar, irInt(InitializationState.INITIALIZED))
-                        val allInitializers = irComposite {
-                            val [dependencySuperInterfaces, dependencySuperClasses] =
-                                container.dependencySuperClasses.partition { it.isInterface }
-                            for (superClass in dependencySuperClasses + dependencySuperInterfaces) {
-                                superClass.staticInitFunction?.let {
-                                    +irCall(it.symbol)
-                                }
-                            }
-                            for (initializer in initializers) {
-                                initializer.setDeclarationsParent(initFunction)
-                            }
-                            +initializers
-                        }
-                        val catchParameter = scope.createTemporaryVariableDeclaration(
-                            irType = catchParameterType,
-                            nameHint = "reason",
-                            origin = IrDeclarationOrigin.CATCH_PARAMETER,
-                            startOffset = UNDEFINED_OFFSET,
-                            endOffset = UNDEFINED_OFFSET,
-                            inventUniqueName = false,
-                        )
-                        val catchResult = irComposite {
-                            +irSetField(null, initCalledVar, irInt(InitializationState.ERROR))
-                            +irCall(this@WebStaticInitializersDeclarationLowering.context.symbols.staticInitializationFailure).apply {
-                                arguments[0] = irCastIfNeeded(irGet(catchParameter), context.irBuiltIns.throwableType)
-                                arguments[1] = undefinedOrNull()
+                    // Marked as initialized before the initializers run, so that a re-entrant call returns from the
+                    // fast path in static_init and observes partially initialized statics, like JVM's <clinit> does.
+                    statements += irSetField(null, initCalledVar, irInt(InitializationState.INITIALIZED))
+                    val allInitializers = irComposite {
+                        val [dependencySuperInterfaces, dependencySuperClasses] =
+                            container.dependencySuperClasses.partition { it.isInterface }
+                        for (superClass in dependencySuperClasses + dependencySuperInterfaces) {
+                            superClass.staticInitFunction?.let {
+                                +irCall(it.symbol)
                             }
                         }
-                        +irTry(context.irBuiltIns.unitType, allInitializers, listOf(irCatch(catchParameter, catchResult)), null)
+                        for (initializer in initializers) {
+                            initializer.setDeclarationsParent(initSlowFunction)
+                        }
+                        +initializers
                     }
+                    val catchParameter = scope.createTemporaryVariableDeclaration(
+                        irType = catchParameterType,
+                        nameHint = "reason",
+                        origin = IrDeclarationOrigin.CATCH_PARAMETER,
+                        startOffset = UNDEFINED_OFFSET,
+                        endOffset = UNDEFINED_OFFSET,
+                        inventUniqueName = false,
+                    )
+                    val catchResult = irComposite {
+                        +irSetField(null, initCalledVar, irInt(InitializationState.ERROR))
+                        +irCall(this@WebStaticInitializersDeclarationLowering.context.symbols.staticInitializationFailure).apply {
+                            arguments[0] = irCastIfNeeded(irGet(catchParameter), context.irBuiltIns.throwableType)
+                            arguments[1] = undefinedOrNull()
+                        }
+                    }
+                    statements += irTry(context.irBuiltIns.unitType, allInitializers, listOf(irCatch(catchParameter, catchResult)), null)
                 }
             }
         }

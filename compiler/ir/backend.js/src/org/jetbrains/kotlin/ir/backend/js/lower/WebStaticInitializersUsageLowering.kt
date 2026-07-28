@@ -116,8 +116,8 @@ abstract class WebStaticInitializersUsageLowering(
                         builder.insertCall(getInstance, staticInitFunction)
                     }
                 }
-                // Do not insert call to a static_init into static_init itself
-                is IrSimpleFunction if declaration == staticInitFunction -> continue
+                // Do not insert a call to static_init into static_init or static_init_slow (the former calls the latter)
+                is IrSimpleFunction if declaration.origin == WebStaticInitializersDeclarationLowering.STATIC_CLASS_INITIALIZER -> continue
                 // Do not insert a call to a static_init into an enum constructor, since it would be only accessible from static_init.
                 // Redundant re-entrance into static_init pollutes stepping.
                 is IrConstructor if (container.isEnumClass || container.isEnumEntry) -> continue
