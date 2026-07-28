@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.util.collectAndFilterRealOverrides
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.isClass
 import org.jetbrains.kotlin.ir.util.isFakeOverride
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
@@ -216,17 +217,27 @@ class IrFakeOverrideBuilder(
                 checkIsInlineFlag = true,
             )
             if (overridability.overridable) {
-                overridden += fromSupertype
-                bound += fromSupertype
+                when {
+                    // Because of binary incompatible changes, it's possible to have private member with the same shape as one of the
+                    // super methods. In that case it should not override, but rather "shadow" it. So we have to check visibility first.
+                    !DescriptorVisibilities.isPrivate(fromCurrent.visibility) -> {
+                        overridden += fromSupertype
+                        bound += fromSupertype
+                    }
+                    strategy.createFakeOverridesForInvisibleAbstractMembers && fromSupertype.original.modality == Modality.ABSTRACT -> {
+                        // If the member shadows some abstract method, ensure the fake override is still created. So neither mark
+                        // the super as bound nor overridden. The F/O created may have the same signature and therefore clash with
+                        // this member, but Klib-based backends are able to handle that.
+                    }
+                    else -> {
+                        // Normally, don't generate fake override, but also don't mark the shadowing member as overridden.
+                        bound += fromSupertype
+                    }
+                }
             }
         }
 
-        // because of binary incompatible changes, it's possible to have private member colliding with fake override
-        // In that case we shouldn't generate fake override, but also shouldn't mark them as overridden
-        if (!DescriptorVisibilities.isPrivate(fromCurrent.visibility)) {
-            fromCurrent.overriddenSymbols = overridden.memoryOptimizedMap { it.original.symbol }
-        }
-
+        fromCurrent.overriddenSymbols = overridden.memoryOptimizedMap { it.original.symbol }
         return bound
     }
 
