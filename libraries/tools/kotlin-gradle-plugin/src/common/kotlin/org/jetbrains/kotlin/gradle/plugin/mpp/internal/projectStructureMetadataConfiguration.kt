@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KarLayout
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttributeMetadataCompilationOutputs
@@ -58,7 +59,7 @@ internal fun Project.setupProjectStructureMetadataOutgoingArtifacts() {
 internal fun InternalKotlinSourceSet.projectStructureMetadataResolvedConfiguration(): LazyResolvedConfigurationWithArtifacts {
     return LazyResolvedConfigurationWithArtifacts(resolvableMetadataConfiguration) { attributes ->
         attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
-        attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KotlinUsages.KOTLIN_PSM_METADATA)
+        attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.PSM_EXTRACTED)
     }
 }
 

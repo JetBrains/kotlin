@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
@@ -19,7 +20,12 @@ import javax.inject.Inject
 abstract class KotlinMetadataTarget @Inject constructor(
     project: Project,
 ) : KotlinOnlyTarget<KotlinCompilation<Any>>(project, KotlinPlatformType.common),
-    HasConfigurableKotlinCompilerOptions<KotlinCommonCompilerOptions> {
+    HasConfigurableKotlinCompilerOptions<KotlinCommonCompilerOptions>,
+    KotlinTargetWithKotlinArchiveSupport {
+
+    override val isStoredInKotlinArchive: Boolean = true
+    override val requiresPlatformComponent: Boolean = false
+    override val requiresPlatformComponentCompatibilityCapability: Boolean = false
 
     override val artifactsTaskName: String
         // The IDE import looks at this task name to determine the artifact and register the path to the artifact;

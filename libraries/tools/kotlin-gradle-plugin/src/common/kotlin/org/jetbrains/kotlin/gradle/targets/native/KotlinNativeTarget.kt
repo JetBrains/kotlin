@@ -12,6 +12,7 @@ import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKlibsInKotlinArchiveSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -28,10 +29,19 @@ abstract class KotlinNativeTarget @Inject constructor(
     project: Project,
     val konanTarget: KonanTarget,
 ) : HasConfigurableKotlinCompilerOptions<KotlinNativeCompilerOptions>,
-    KotlinTargetWithBinaries<KotlinNativeCompilation, KotlinNativeBinaryContainer>(
+    KotlinTargetWithKlibsInKotlinArchiveSupport,
+    KotlinTargetWithBinaries<KotlinNativeCompilation,
+            KotlinNativeBinaryContainer>(
         project,
         KotlinPlatformType.native
     ) {
+
+    override val isStoredInKotlinArchive: Boolean = true
+    override val requiresPlatformComponent: Boolean = !isStoredInKotlinArchive
+    override val requiresPlatformComponentCompatibilityCapability: Boolean = isStoredInKotlinArchive
+
+    override val pathInKotlinArchive: String
+        get() = targetName
 
     init {
         attributes.attribute(konanTargetAttribute, konanTarget.name)
@@ -151,22 +161,21 @@ private val targetsEnabledOnAllHosts by lazy { hostManager.enabledByHost.values.
 internal fun isHostSpecificKonanTargetsSet(konanTargets: Iterable<KonanTarget>): Boolean =
     konanTargets.none { target -> target in targetsEnabledOnAllHosts }
 
-private suspend fun <T> getHostSpecificElements(
-    fragments: Iterable<T>,
-    isNativeShared: suspend (T) -> Boolean,
-    getKonanTargets: suspend (T) -> Set<KonanTarget>,
-): Set<T> = fragments.filterTo(mutableSetOf()) { isNativeShared(it) && isHostSpecificKonanTargetsSet(getKonanTargets(it)) }
-
 internal suspend fun getHostSpecificSourceSets(project: Project): Set<KotlinSourceSet> {
-    return getHostSpecificElements(
-        project.kotlinExtension.awaitSourceSets(),
-        isNativeShared = { sourceSet -> sourceSet.isNativeSourceSet.await() },
-        getKonanTargets = { sourceSet ->
-            sourceSet.internal.awaitPlatformCompilations()
-                .filterIsInstance<KotlinNativeCompilation>()
-                .mapTo(mutableSetOf()) { it.konanTarget }
+    return project.kotlinExtension.awaitSourceSets().filterTo(mutableSetOf()) {
+        if (!it.isNativeSourceSet.await()) {
+            return@filterTo false
         }
-    )
+
+        val nativeCompilations = it.internal.awaitPlatformCompilations()
+            .filterIsInstance<KotlinNativeCompilation>()
+
+        if (nativeCompilations.any { compilation -> compilation.target.isStoredInKotlinArchive }) {
+            return@filterTo false
+        }
+
+        isHostSpecificKonanTargetsSet(nativeCompilations.map { it.konanTarget }.toSet())
+    }
 }
 
 /**
