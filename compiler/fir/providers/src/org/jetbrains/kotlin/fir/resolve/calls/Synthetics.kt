@@ -192,6 +192,8 @@ class FirSyntheticPropertiesScope private constructor(
             moduleData = session.moduleData
             name = propertyName
             // TODO (marco): Are unique symbols OK here? Same question as with the other scopes.
+            //  Note: Yes, found duplicate symbols with back references / weak caches in `testPlusAssignWithArrayGetConvention_op`. See
+            //  symbol ID to-do notes.
             symbol = FirSimpleSyntheticPropertySymbol(
                 getterId = getter.symbol.callableId,
                 propertyId = CallableId(packageName, className, propertyName)
