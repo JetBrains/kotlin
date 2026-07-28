@@ -1,0 +1,10 @@
+STEP 0:
+    dependencies: stdlib
+STEP 1:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.1 -> l1.kt
+STEP 2:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.2 -> l1.kt
