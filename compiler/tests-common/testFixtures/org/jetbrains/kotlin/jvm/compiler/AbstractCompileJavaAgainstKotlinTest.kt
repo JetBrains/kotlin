@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -101,15 +102,17 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
     companion object {
         // Do not render parameter names because there are test cases where classes inherit from JDK collections,
         // and some versions of JDK have debug information in the class files (including parameter names), and some don't
-        private val CONFIGURATION = AbstractLoadJavaTest.COMPARATOR_CONFIGURATION.withRenderer(
-            DescriptorRenderer.withOptions {
-                withDefinedIn = false
-                parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
-                verbose = true
-                annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
-                excludedAnnotationClasses = setOf(FqName(Retention::class.java.name))
-                modifiers = DescriptorRendererModifier.ALL
-            }
-        )
+        private val CONFIGURATION = RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
+            .renderDeclarationsFromOtherModules(true)
+            .withRenderer(
+                DescriptorRenderer.withOptions {
+                    withDefinedIn = false
+                    parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
+                    verbose = true
+                    annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
+                    excludedAnnotationClasses = setOf(FqName(Retention::class.java.name))
+                    modifiers = DescriptorRendererModifier.ALL
+                }
+            )
     }
 }
