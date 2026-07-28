@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
  */
 internal class ExternalPackageParentPatcherLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        if (context.config.languageVersionSettings.languageVersion.usesK2) {
+        if (context.config.useFir) {
             irFile.acceptVoid(Visitor())
         }
     }
