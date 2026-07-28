@@ -1091,6 +1091,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: memberFunctionWithReceiver
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1214,6 +1215,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: memberFunctionWithReceiverWithNullableReceiver
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -2682,4 +2684,5 @@ KaConstructorSymbol:
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: Foo

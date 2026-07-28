@@ -149,6 +149,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: doFoo
   importableFqName: test.doFoo
 
 KaKotlinPropertySymbol:
@@ -302,6 +303,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: internalDoFoo
   importableFqName: test.internalDoFoo
 
 KaKotlinPropertySymbol:
@@ -455,6 +457,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: privateDoFoo
   importableFqName: test.privateDoFoo
 
 KaKotlinPropertySymbol:
@@ -608,6 +611,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: doBar
   importableFqName: test.doBar
 
 KaKotlinPropertySymbol:
@@ -761,6 +765,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: internalDoBar
   importableFqName: test.internalDoBar
 
 KaKotlinPropertySymbol:
@@ -914,6 +919,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: privateDoBar
   importableFqName: test.privateDoBar
 
 KaNamedFunctionSymbol:
@@ -988,6 +994,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: companionBar
   importableFqName: test.companionBar
 
 KaKotlinPropertySymbol:
@@ -1234,6 +1241,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: companionInternalBar
   importableFqName: test.companionInternalBar
 
 KaKotlinPropertySymbol:
@@ -1480,6 +1488,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: companionPrivateBar
   importableFqName: test.companionPrivateBar
 
 KaKotlinPropertySymbol:

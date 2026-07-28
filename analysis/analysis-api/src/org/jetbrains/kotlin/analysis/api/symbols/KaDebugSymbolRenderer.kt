@@ -97,7 +97,7 @@ public class KaDebugRenderer(
                     renderComputedValue("returnValueStatus", printer, currentSymbolStack) { symbol.returnValueStatus }
                 }
 
-                if (symbol is KaPropertyAccessorSymbol) {
+                if (symbol is KaFunctionSymbol) {
                     renderComputedValue("javaMethodName", printer, currentSymbolStack) { symbol.javaMethodName }
                 }
 

@@ -78,6 +78,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: primitive
   importableFqName: primitive
 
 KaNamedFunctionSymbol:
@@ -160,6 +161,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: nullablePrimitive
   importableFqName: nullablePrimitive
 
 KaNamedFunctionSymbol:
@@ -242,6 +244,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: nonPrimitive
   importableFqName: nonPrimitive
 
 KaNamedFunctionSymbol:
@@ -323,4 +326,5 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: error
   importableFqName: error

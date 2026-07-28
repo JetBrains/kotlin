@@ -306,6 +306,7 @@ CONSTRUCTOR:
   getContainingJvmClassName: SamClassWithTypeArgumentsKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: Predicate
 
 FUNCTIONAL INTERFACE:

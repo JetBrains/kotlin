@@ -405,6 +405,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: fooDefault
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -452,6 +453,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: fooWithOpen
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -499,6 +501,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: fooWithOpenAndBody
   importableFqName: null
 
 KaNamedClassSymbol:

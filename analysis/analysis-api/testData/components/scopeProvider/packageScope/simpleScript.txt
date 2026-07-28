@@ -39,6 +39,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaScriptModule "Script simpleScript.kts"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: testFunction
   importableFqName: test.testFunction
 
 KaKotlinPropertySymbol:

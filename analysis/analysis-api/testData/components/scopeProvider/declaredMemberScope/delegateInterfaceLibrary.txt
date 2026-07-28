@@ -585,6 +585,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -1114,6 +1115,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: smth
   importableFqName: null
 
 KaConstructorSymbol:
@@ -1186,4 +1188,5 @@ KaConstructorSymbol:
   getContainingJvmClassName: I
   getContainingModule: KaLibraryModule "Library main"
   deprecation: null
+  javaMethodName: null
   importableFqName: I

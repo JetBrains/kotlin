@@ -717,6 +717,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
   returnValueStatus: Unspecified
+  javaMethodName: f
   importableFqName: f
 
 KaNamedClassSymbol:
@@ -929,6 +930,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
   returnValueStatus: Unspecified
+  javaMethodName: f2
   importableFqName: null
 
 KaNamedClassSymbol:

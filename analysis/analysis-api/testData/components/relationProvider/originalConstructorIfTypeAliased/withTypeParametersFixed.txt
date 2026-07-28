@@ -74,6 +74,7 @@ Resolved constructor:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: null
     importableFqName: test.MyTypeAlias
 
 Original constructor if type aliased:
@@ -171,4 +172,5 @@ Original constructor if type aliased:
     getContainingJvmClassName: test.MyClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: null
     importableFqName: test.MyClass

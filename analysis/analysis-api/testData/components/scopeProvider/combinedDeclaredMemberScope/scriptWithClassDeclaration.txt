@@ -83,6 +83,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaScriptModule "Script scriptWithClassDeclaration.kts"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: foo
 
 KaKotlinPropertySymbol:

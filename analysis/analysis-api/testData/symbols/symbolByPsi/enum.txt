@@ -76,6 +76,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: function2
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -359,6 +360,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: privateFunction2
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -406,6 +408,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: internalFunction2$main
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -992,6 +995,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: function
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1039,6 +1043,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: privateFunction
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -1086,6 +1091,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: internalFunction$main
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -2137,6 +2143,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: WithConstructor
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: WithConstructor
 
 KaEnumEntrySymbol:
