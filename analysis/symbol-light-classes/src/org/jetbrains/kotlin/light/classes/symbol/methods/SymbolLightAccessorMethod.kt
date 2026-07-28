@@ -12,6 +12,7 @@ import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.psi.impl.light.LightReferenceListBuilder
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
+import org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName
 import org.jetbrains.kotlin.analysis.api.session.useSiteModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -103,7 +104,7 @@ internal class SymbolLightAccessorMethod private constructor(
             if (isJvmExposedBoxed) {
                 computeJvmExposeBoxedMethodName(accessorSymbol, defaultName)
             } else {
-                computeJvmMethodName(accessorSymbol, defaultName)
+                accessorSymbol.javaMethodName ?: defaultName
             }
         }
     }

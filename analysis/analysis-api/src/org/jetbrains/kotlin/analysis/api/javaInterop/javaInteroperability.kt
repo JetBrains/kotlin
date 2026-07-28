@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.internals.internals
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 
@@ -93,4 +94,31 @@ public val KaCallableSymbol.containingJvmClassName: String?
     get() {
         @OptIn(KaImplementationDetail::class)
         return internals.javaInteroperabilityComponent.containingJvmClassName(this)
+    }
+
+/**
+ * The visible Java method name for the given [KaFunctionSymbol].
+ * The behavior is unspecified for modules other than the JVM.
+ *
+ * The endpoint supports:
+ * - Mangling due to [KaSymbolVisibility.INTERNAL][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility.INTERNAL] modifier
+ * - [JvmName]
+ *
+ * The name is `null` when the symbol has no method visible from Java:
+ * - [KaConstructorSymbol][org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol]: constructors are neither renamed by [JvmName]
+ *   nor mangled, so there is no name to compute
+ * - [KaSamConstructorSymbol][org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol] and
+ *   [KaAnonymousFunctionSymbol][org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousFunctionSymbol]: there is no addressable JVM method
+ * - [KaSymbolLocation.LOCAL][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation.LOCAL] declarations: their JVM names are invented
+ *   during lowering and cannot be reconstructed from a symbol
+ * - Property accessors of a property without a name or with a [JvmField] backing field, as no accessor method is generated in this case
+ *
+ * **Note**: since it is only about visible methods, it doesn't support value classes mangling.
+ */
+@KaExperimentalApi
+context(session: KaSession)
+public val KaFunctionSymbol.javaMethodName: String?
+    get() {
+        @OptIn(KaImplementationDetail::class)
+        return internals.javaInteroperabilityComponent.javaMethodName(this)
     }

@@ -69,8 +69,6 @@ internal fun isHiddenOrSynthetic(symbol: KaAnnotatedSymbol): Boolean {
 
 internal fun KaAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmField in annotations
 
-internal fun KaAnnotatedSymbol.hasPublishedApiAnnotation(): Boolean = StandardClassIds.Annotations.PublishedApi in annotations
-
 internal fun KaAnnotatedSymbol.hasDeprecatedAnnotation(): Boolean = StandardClassIds.Annotations.Deprecated in annotations
 
 internal fun KaAnnotatedSymbol.hasIntroducedAtAnnotation(): Boolean = StandardClassIds.Annotations.IntroducedAt in annotations
