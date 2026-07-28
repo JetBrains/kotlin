@@ -113,6 +113,7 @@ sourceSets {
 projectTests {
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/compileJavaAgainstKotlin")
     testData(project(":compiler").isolated, "testData/debug")
     testData(project(":compiler").isolated, "testData/ir")
     testData(project(":compiler").isolated, "testData/klib")

@@ -220,7 +220,6 @@
 /compiler/testData/writeSignature/ "Kotlin JVM"
 /compiler/tests/ "Kotlin Compiler"
 /compiler/testResources/ "Kotlin Compiler"
-/compiler/testFixtures/ "Kotlin Compiler"
 /compiler/tests-common/ "Kotlin Compiler"
 /compiler/tests-common-new/ "Kotlin Frontend"
 /compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/klib/ "Kotlin Common Backend"
@@ -241,7 +240,6 @@
 # UNKNOWN: /compiler/tests-integration/testData/multiplatform/
 
 /compiler/tests-different-jdk/ "Kotlin JVM"
-/compiler/tests-gen/ "Kotlin Compiler"
 /compiler/tests-java8/ "Kotlin JVM"
 /compiler/tests-mutes/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 /compiler/tests-spec/ "Kotlin Frontend"

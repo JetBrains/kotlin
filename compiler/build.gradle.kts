@@ -66,11 +66,8 @@ projectTests {
         include("**/FastJarFSLongTest*")
     }
 
-    testGenerator("org.jetbrains.kotlin.generators.tests.TestGeneratorForCompilerTestsKt")
-
     testData(isolated, "testData/checkLocalVariablesTable")
     testData(isolated, "testData/codegen")
-    testData(isolated, "testData/compileJavaAgainstKotlin")
     testData(isolated, "testData/kotlinClassFinder")
     testData(isolated, "testData/moduleProtoBuf")
     testData(isolated, "testData/modules.xml")
