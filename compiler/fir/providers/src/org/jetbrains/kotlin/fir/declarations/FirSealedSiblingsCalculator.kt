@@ -24,34 +24,59 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.name.StandardClassIds
 
-@ThreadSafeMutableState
-class FirSealedSiblingsCalculator(private val session: FirSession) : FirSessionComponent {
-    private val singleValueCachedSubclass = emptySet<FirClassSymbol<*>>()
-    private typealias CachedSubclasses = Set<FirClassSymbol<*>>
+/**
+ * When you implement a cache, and the same trivial value appears frequently, it's often best
+ * to allocate a dedicated marker instance for it to avoid unnecessary allocations.
+ * Furthermore, it's best if the value is of the same type so that no unchecked casts
+ * happen at runtime as they come with a performance penalty.
+ *
+ * [ValueWrapper] abstracts away the type of the special value, hiding it from the cache
+ * itself so that it doesn't accidentally modify it inappropriately.
+ */
+abstract class ValueWrapper<T, Value> {
+    abstract val specialValue: Value
 
-    private inline fun <T> FirClassSymbol<*>.mapCachedSubclasses(
-        visited: LinkedHashSet<FirClassSymbol<*>>?,
-        onSingle: (FirClassSymbol<*>) -> T,
-        onMultiple: (Set<FirClassSymbol<*>>) -> T,
-    ): T {
-        val cached = allSubclassesCache.getValue(this, visited)
-
-        return when {
-            cached === singleValueCachedSubclass -> onSingle(this)
-            else -> onMultiple(cached)
-        }
+    inline fun <K> map(value: Value, onSpecial: () -> K, onRegular: (T) -> K): K = when {
+        value === specialValue -> onSpecial()
+        else -> onRegular(@OptIn(DangerousUnwrapping::class) unwrap(value))
     }
 
-    private inline fun FirClassSymbol<*>.forEachCachedSubclass(
+    abstract fun wrap(it: T): Value
+
+    @DangerousUnwrapping
+    abstract fun unwrap(value: Value): T
+
+    @RequiresOptIn("Make sure `unwrap()` is never called over the special value.")
+    annotation class DangerousUnwrapping
+
+    class Refl<T>(override val specialValue: T) : ValueWrapper<T, T>() {
+        override fun wrap(it: T): T = it
+
+        @OptIn(DangerousUnwrapping::class)
+        override fun unwrap(value: T): T = value
+    }
+}
+
+inline fun <T, K> ValueWrapper<out Iterable<T>, K>.forEach(value: K, action: (T) -> Unit): Unit =
+    map(value = value, onSpecial = {}, onRegular = { it.forEach(action) })
+
+private class AllSubclassesCache<Value>(
+    private val session: FirSession,
+    private val wrapper: ValueWrapper<Set<FirClassSymbol<*>>, Value>,
+) {
+    inline fun <K> Value.map(onSingle: () -> K, onMultiple: (Set<FirClassSymbol<*>>) -> K): K =
+        wrapper.map(value = this, onSpecial = onSingle, onRegular = onMultiple)
+
+    inline fun FirClassSymbol<*>.forEachCachedSubclass(
         visited: LinkedHashSet<FirClassSymbol<*>>?,
         action: (FirClassSymbol<*>) -> Unit,
-    ) = mapCachedSubclasses(visited, onSingle = action, onMultiple = { it.forEach(action) })
+    ): Unit = wrapper.forEach(value = cache.getValue(this, visited), action = action)
 
-    private val allSubclassesCache: FirCache<FirClassSymbol<*>, CachedSubclasses, LinkedHashSet<FirClassSymbol<*>>?> =
+    val cache: FirCache<FirClassSymbol<*>, Value, LinkedHashSet<FirClassSymbol<*>>?> =
         session.firCachesFactory.createCache { symbol, visited ->
             when {
-                visited != null && !visited.add(symbol) -> singleValueCachedSubclass
-                symbol !is FirRegularClassSymbol -> singleValueCachedSubclass
+                visited != null && !visited.add(symbol) -> wrapper.specialValue
+                symbol !is FirRegularClassSymbol -> wrapper.specialValue
                 symbol.fir.modality == Modality.SEALED -> buildSet {
                     if (symbol.fir.isJavaNonAbstractSealed == true) {
                         add(symbol)
@@ -61,112 +86,123 @@ class FirSealedSiblingsCalculator(private val session: FirSession) : FirSessionC
                         val inheritor = session.symbolProvider.getClassLikeSymbolByClassId(it) as? FirRegularClassSymbol ?: return@forEach
                         inheritor.forEachCachedSubclass(visited ?: linkedSetOf(symbol), ::add)
                     }
-                }
-                else -> singleValueCachedSubclass
+                }.let(wrapper::wrap)
+                else -> wrapper.specialValue
             }
         }
+}
 
-    fun collectAllSubclassesOfSealed(symbol: FirClassSymbol<*>): Set<FirClassSymbol<*>> =
-        symbol.mapCachedSubclasses(visited = null, onSingle = ::setOf, onMultiple = { it })
-
-    private fun FirClassSymbol<*>.isSubclassOf(other: FirClassSymbol<*>): Boolean =
+/**
+ * Maps the given [FirRegularClassSymbol] to the set of [FirClassSymbol]s that coexist
+ * in the same `sealed` hierarchy as its superclasses but are not these superclasses themselves.
+ *
+ * Consider the following examples.
+ * ```
+ * sealed interface A {          // f(A) = emptySet()
+ *     sealed interface B : A    // f(B) = setOf(C)
+ *     sealed interface C : A
+ * }
+ * ```
+ * ```
+ * sealed interface A {
+ *     interface B : A {
+ *         interface C : B       // f(C) = setOf(F)
+ *     }
+ *
+ *     sealed interface E : A {
+ *         interface F : E       // f(F) = setOf(B)
+ *     }
+ * }
+ * ```
+ * ```
+ * sealed interface A {
+ *     sealed interface E : A
+ *
+ *     interface G : A {
+ *         interface H : G {     // f(H) = setOf(I)
+ *             interface I : H, E
+ *         }
+ *     }
+ * }
+ * ```
+ * ```
+ * sealed interface A
+ * sealed interface B : A        // f(B) = emptySet()
+ * ```
+ * ```
+ * sealed interface I            // f(I) = emptySet()
+ *
+ * sealed class A                // f(A) = emptySet()
+ * class B : A                   // f(B) = setOf(C)
+ * class C : A, I                // f(C) = setOf(B, D)
+ *
+ * class D : I                   // f(D) = setOf(C)
+ * ```
+ */
+private class RelevantSealedUniverseCache<Value>(
+    private val session: FirSession,
+    private val wrapper: ValueWrapper<LinkedHashSet<FirClassSymbol<*>>, Value>,
+    private val allSubclassesCache: AllSubclassesCache<*>,
+) {
+    fun FirClassSymbol<*>.isSubclassOf(other: FirClassSymbol<*>): Boolean =
         isSubclassOf(other.toLookupTag(), session, isStrict = false, lookupInterfaces = true)
 
-    private fun FirRegularClassSymbol.getImmediateSuperTypes(session: FirSession): List<ConeClassLikeType> =
+    private fun FirRegularClassSymbol.getImmediateSuperTypes(): List<ConeClassLikeType> =
         getSuperTypes(session, recursive = false)
 
-    private val emptyCachedSealedUniverse = linkedSetOf<FirClassSymbol<*>>()
-    private typealias CachedSealedUniverse = LinkedHashSet<FirClassSymbol<*>>
+    inline fun Value.filter(predicate: (FirClassSymbol<*>) -> Boolean): Set<FirClassSymbol<*>> =
+        wrapper.map(value = this, onSpecial = ::emptySet, onRegular = { it.filterTo(mutableSetOf(), predicate) })
 
-    private inline fun <T> CachedSealedUniverse.mapCachedUniverse(
-        onEmpty: () -> T,
-        onNonEmpty: (LinkedHashSet<FirClassSymbol<*>>) -> T,
-    ): T = when {
-        this !== emptyCachedSealedUniverse -> onNonEmpty(this)
-        else -> onEmpty()
-    }
+    private inline fun Value.forEach(action: (FirClassSymbol<*>) -> Unit): Unit =
+        wrapper.forEach(value = this, action = action)
 
-    private inline fun CachedSealedUniverse.filterCachedUniverse(
-        predicate: (FirClassSymbol<*>) -> Boolean,
-    ): Set<FirClassSymbol<*>> = mapCachedUniverse(
-        onEmpty = { emptyCachedSealedUniverse },
-        onNonEmpty = { it.filterTo(mutableSetOf(), predicate) },
-    )
+    private fun Value.withAdded(symbol: FirClassSymbol<*>): Value =
+        wrapper.map(value = this, onSpecial = ::linkedSetOf, onRegular = { it })
+            .also { it.add(symbol) }
+            .let(wrapper::wrap)
 
-    private inline fun CachedSealedUniverse.forEachInCachedUniverse(action: (FirClassSymbol<*>) -> Unit) =
-        mapCachedUniverse(onEmpty = {}, onNonEmpty = { it.forEach(action) })
-
-    private fun CachedSealedUniverse.cachedUniverseToMutableSet(): CachedSealedUniverse =
-        mapCachedUniverse(onEmpty = ::linkedSetOf, onNonEmpty = { it })
-
-    /**
-     * Maps the given [FirRegularClassSymbol] to the set of [FirClassSymbol]s that coexist
-     * in the same `sealed` hierarchy as its superclasses but are not these superclasses themselves.
-     *
-     * Consider the following examples.
-     * ```
-     * sealed interface A {          // f(A) = emptySet()
-     *     sealed interface B : A    // f(B) = setOf(C)
-     *     sealed interface C : A
-     * }
-     * ```
-     * ```
-     * sealed interface A {
-     *     interface B : A {
-     *         interface C : B       // f(C) = setOf(F)
-     *     }
-     *
-     *     sealed interface E : A {
-     *         interface F : E       // f(F) = setOf(B)
-     *     }
-     * }
-     * ```
-     * ```
-     * sealed interface A {
-     *     sealed interface E : A
-     *
-     *     interface G : A {
-     *         interface H : G {     // f(H) = setOf(I)
-     *             interface I : H, E
-     *         }
-     *     }
-     * }
-     * ```
-     * ```
-     * sealed interface A
-     * sealed interface B : A        // f(B) = emptySet()
-     * ```
-     * ```
-     * sealed interface I            // f(I) = emptySet()
-     *
-     * sealed class A                // f(A) = emptySet()
-     * class B : A                   // f(B) = setOf(C)
-     * class C : A, I                // f(C) = setOf(B, D)
-     *
-     * class D : I                   // f(D) = setOf(C)
-     * ```
-     */
-    private val relevantSealedUniverseCache: FirCache<FirRegularClassSymbol, CachedSealedUniverse, Nothing?> =
+    val cache: FirCache<FirRegularClassSymbol, Value, Nothing?> =
         session.firCachesFactory.createCache { symbol, _ ->
-            var result: CachedSealedUniverse = emptyCachedSealedUniverse
+            var result: Value = wrapper.specialValue
 
             fun addIfNonSuper(other: FirClassSymbol<*>) = when {
-                !symbol.isSubclassOf(other) -> result = result.cachedUniverseToMutableSet().apply { add(other) }
+                !symbol.isSubclassOf(other) -> result = result.withAdded(other)
                 else -> {}
             }
 
-            for (it in symbol.getImmediateSuperTypes(session)) {
+            for (it in symbol.getImmediateSuperTypes()) {
                 val symbol = it.toRegularClassSymbol(session)?.takeIf { it.classId != StandardClassIds.Any } ?: continue
-                relevantSealedUniverseCache.getValue(symbol, null).forEachInCachedUniverse(::addIfNonSuper)
-                symbol.forEachCachedSubclass(null, ::addIfNonSuper)
+                cache.getValue(symbol, null).forEach(::addIfNonSuper)
+                with(allSubclassesCache) { symbol.forEachCachedSubclass(null, ::addIfNonSuper) }
             }
 
             result
         }
+}
+
+@ThreadSafeMutableState
+class FirSealedSiblingsCalculator(private val session: FirSession) : FirSessionComponent {
+    private val allSubclassesCache: AllSubclassesCache<*> = AllSubclassesCache(
+        session = session,
+        wrapper = ValueWrapper.Refl(emptySet()),
+    )
+
+    fun collectAllSubclassesOfSealed(symbol: FirClassSymbol<*>): Set<FirClassSymbol<*>> =
+        with(allSubclassesCache) {
+            cache.getValue(symbol, context = null).map(onSingle = ::setOf, onMultiple = { it })
+        }
+
+    private val relevantSealedUniverseCache: RelevantSealedUniverseCache<*> = RelevantSealedUniverseCache(
+        session = session,
+        wrapper = ValueWrapper.Refl(linkedSetOf()),
+        allSubclassesCache = allSubclassesCache,
+    )
 
     fun collectSealedSiblingsFor(symbol: FirRegularClassSymbol): Set<FirClassSymbol<*>> =
-        relevantSealedUniverseCache.getValue(symbol, null).filterCachedUniverse {
-            (symbol.isFinal || it.isFinal || symbol.isClass && it.isClass) && !it.isSubclassOf(symbol)
+        with(relevantSealedUniverseCache) {
+            cache.getValue(symbol, null).filter {
+                (symbol.isFinal || it.isFinal || symbol.isClass && it.isClass) && !it.isSubclassOf(symbol)
+            }
         }
 }
 
