@@ -250,6 +250,7 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
                         nameHint = "initState",
                         inventUniqueName = false,
                     )
+                    statements += initState
                     statements += irIfThen(
                         irEqeqeq(irGet(initState), irInt(InitializationState.INITIALIZED)),
                         irReturnUnit()
