@@ -10,6 +10,7 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.fir.FirImplementationDetail
+import org.jetbrains.kotlin.fir.caches.FirCacheInternals
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
@@ -90,6 +91,10 @@ internal class LLRealPsiSymbolId<S : FirBasedSymbol<*>>(
             else -> notSupportedError(psi)
         }
     }
+
+    @FirCacheInternals
+    override val symbolIfCached: S?
+        get() = symbolReference?.get()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakePsiSourceElement
 import org.jetbrains.kotlin.SuspiciousFakeSourceCheck
 import org.jetbrains.kotlin.fir.FirImplementationDetail
+import org.jetbrains.kotlin.fir.caches.FirCacheInternals
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
 import org.jetbrains.kotlin.psi.KtElement
@@ -25,6 +26,10 @@ internal class LLNonRestorableRealPsiSymbolId<S : FirBasedSymbol<*>>(private val
     override fun bind(symbol: S) {
         _symbol = symbol
     }
+
+    @FirCacheInternals
+    override val symbolIfCached: S
+        get() = symbol
 
     override fun equals(other: Any?): Boolean =
         this === other ||

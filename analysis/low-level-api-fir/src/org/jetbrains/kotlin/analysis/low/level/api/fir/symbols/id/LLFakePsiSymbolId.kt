@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.symbols.id
 import org.jetbrains.kotlin.KtFakePsiSourceElement
 import org.jetbrains.kotlin.SuspiciousFakeSourceCheck
 import org.jetbrains.kotlin.fir.FirImplementationDetail
+import org.jetbrains.kotlin.fir.caches.FirCacheInternals
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
 
@@ -51,6 +52,10 @@ internal class LLFakePsiSymbolId<S : FirBasedSymbol<*>>(
     override fun bind(symbol: S) {
         _symbol = symbol
     }
+
+    @FirCacheInternals
+    override val symbolIfCached: S
+        get() = _symbol
 
     // TODO (marco): The equality/hash code implementation of `KtFakePsiSourceElement` might not be bulletproof, so we should double-check
     //  them. This is the same as with `LLRealPsiSymbolId`.

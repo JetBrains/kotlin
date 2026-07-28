@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.symbols.id
 
 import org.jetbrains.kotlin.fir.FirImplementationDetail
+import org.jetbrains.kotlin.fir.caches.FirCacheInternals
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 /**
@@ -37,6 +38,9 @@ abstract class FirSymbolId<out S : FirBasedSymbol<*>> {
      */
     @FirImplementationDetail
     abstract fun bind(symbol: @UnsafeVariance S)
+
+    @FirCacheInternals
+    abstract val symbolIfCached: S?
 
     abstract override fun equals(other: Any?): Boolean
 
