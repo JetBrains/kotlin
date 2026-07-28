@@ -706,6 +706,37 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
         validator = noZombieLocalClassSymbols(),
     )
 
+    // Regression test for KT-88028
+    @Test
+    fun overriddenDefaultParameterSuperCallCrossModule() =
+        verifyGoldenCrossModuleComposeIrTransform(
+            dependencySource = """
+            package base
+
+            import androidx.compose.runtime.Composable
+
+            interface Typography {
+                @Composable
+                fun foo(value: Int? = null): Int {
+                    return 0
+                }
+            }
+        """.trimIndent(),
+            source = """
+            package main
+
+            import androidx.compose.runtime.Composable
+            import base.Typography
+
+            object TypographyImpl : Typography {
+                @Composable
+                override fun foo(value: Int?): Int {
+                    return super.foo(value)
+                }
+            }
+        """.trimIndent()
+        )
+
     // Regression test for CMP-9325
     @Test
     fun testAnonymousObjectWithTypeParamInInlineComposable() = verifyGoldenComposeIrTransform(
