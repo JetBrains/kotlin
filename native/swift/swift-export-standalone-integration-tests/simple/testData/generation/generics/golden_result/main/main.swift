@@ -457,6 +457,14 @@ extension main.AFactory where Self : main.__AFactory {
 }
 extension main.AFactory {
 }
+extension [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
+    public func customFilter(
+        predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) -> Swift.Bool
+    ) -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
+        let receiver = self
+        return main.customFilter(receiver, predicate: predicate)
+    }
+}
 @_documentation(visibility: internal)
 extension main.B where Self : main.__B {
     public var foo: (any KotlinRuntimeSupport._KotlinBridgeable)? {

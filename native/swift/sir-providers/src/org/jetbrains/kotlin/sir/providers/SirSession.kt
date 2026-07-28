@@ -224,7 +224,10 @@ public sealed interface SirTranslationResult {
 
     }
 
-    public data class ExtensionProperty(public val getter: SirFunction, public val setter: SirFunction?) : SirTranslationResult {
+    public data class ExtensionProperty(
+        public val getter: SirGetterFunction,
+        public val setter: SirSetterFunction?,
+    ) : SirTranslationResult {
         override val allDeclarations: List<SirDeclaration> = listOfNotNull(getter, setter)
         override val primaryDeclaration: SirDeclaration get() = getter
     }

@@ -114,3 +114,11 @@ public func withDefault(
 ) -> Swift.Void {
     return { __root___withDefault__TypesOfArguments__Swift_Array_Swift_String__Vararg__Swift_Int32__(a, b); return () }()
 }
+extension main.Accessor {
+    public func `extension`(
+        d: Swift.Double...
+    ) -> Swift.Void {
+        let receiver = self
+        return { __root___extension__TypesOfArgumentsE__main_Accessor_Swift_Array_Swift_Double__Vararg___(receiver.__externalRCRef(), d.map { it in NSNumber(value: it) }); return () }()
+    }
+}
