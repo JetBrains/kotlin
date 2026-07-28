@@ -72,7 +72,7 @@ sealed class LlvmFunction(
     /**
      * Function prototypes (or [declaration in LLVM terms](https://llvm.org/docs/LangRef.html#functions)) do not belong to a specific module.
      */
-    class Prototype(
+    class Declaration(
             functionType: LLVMTypeRef,
             returnsObjectType: Boolean,
             llvmValue: LLVMValueRef,

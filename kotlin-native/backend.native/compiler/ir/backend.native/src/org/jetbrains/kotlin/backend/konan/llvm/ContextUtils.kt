@@ -328,7 +328,7 @@ internal open class BasicLlvmHelpers(bitcodeContext: BitcodePostProcessingContex
 internal class CodegenLlvmHelpers(private val generationState: NativeGenerationState, module: LLVMModuleRef) : BasicLlvmHelpers(generationState, module), RuntimeAware {
     private val context = generationState.context
 
-    private fun importFunction(name: String, otherModule: LLVMModuleRef, returnsObjectType: Boolean): LlvmCallable {
+    private fun importFunction(name: String, otherModule: LLVMModuleRef, returnsObjectType: Boolean): LlvmFunction {
         if (LLVMGetNamedFunction(module, name) != null) {
             throw IllegalArgumentException("function $name already exists")
         }
@@ -342,7 +342,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
         attributesCopier.addFunctionAttributes(function)
 
-        return LlvmFunction.Prototype(functionType, returnsObjectType, function, attributesCopier)
+        return LlvmFunction.Declaration(functionType, returnsObjectType, function, attributesCopier)
     }
 
     private fun importMemset(): LlvmCallable {
@@ -353,13 +353,13 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
                 functionType)
     }
 
-    private fun llvmIntrinsic(name: String, type: LLVMTypeRef, vararg attributes: String): LlvmFunction.Prototype {
+    private fun llvmIntrinsic(name: String, type: LLVMTypeRef, vararg attributes: String): LlvmFunction.Declaration {
         val result = LLVMAddFunction(module, name, type)!!
         attributes.forEach {
             val kindId = getLlvmAttributeKindId(it)
             addLlvmFunctionEnumAttribute(result, kindId)
         }
-        return LlvmFunction.Prototype(type, false, result, LlvmFunctionAttributeProvider.copyFromExternal(result))
+        return LlvmFunction.Declaration(type, false, result, LlvmFunctionAttributeProvider.copyFromExternal(result))
     }
 
     internal fun externalFunction(llvmFunctionProto: LlvmFunctionProto): LlvmFunction {
@@ -373,7 +373,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
                         "found: ${getGlobalFunctionType(found).toTypeString()}"
             }
             require(LLVMGetLinkage(found) == llvmFunctionProto.linkage)
-            return LlvmFunction.Prototype(found, llvmFunctionProto.signature)
+            return LlvmFunction.Declaration(found, llvmFunctionProto.signature)
         } else {
             return llvmFunctionProto.createLlvmFunction(context, module)
         }
