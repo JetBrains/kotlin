@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -196,7 +195,7 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
             )
         }
 
-    private object InitializationState {
+    protected object InitializationState {
         const val UNINITIALIZED: Int = 0
         const val INITIALIZED: Int = 1
         const val ERROR: Int = 2
@@ -217,101 +216,63 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
         )
     }
 
-    protected abstract fun IrBuilderWithScope.generateStaticInitializationFailureCallWithClassName(container: IrClass): IrCall
-
     protected open fun IrBuilderWithScope.undefinedOrNull(): IrExpression = irNull()
 
     protected open val catchParameterType: IrType
         get() = context.irBuiltIns.throwableType
 
-    private fun createStaticInitFunction(
+    protected abstract fun createStaticInitFunction(
         container: IrClass,
         origin: IrDeclarationOrigin,
         initCalledVar: IrField,
         initializers: List<IrStatement>
-    ): IrSimpleFunction {
-        val initFunction = context.irFactory.buildFun {
-            startOffset = UNDEFINED_OFFSET
-            endOffset = UNDEFINED_OFFSET
-            this.origin = origin
-            name = Name.identifier(STATIC_INIT_FUNCTION_NAME)
-            visibility = DescriptorVisibilities.PUBLIC
-            returnType = context.irBuiltIns.unitType
-        }
-        return initFunction.apply {
-            val builder = context.createIrBuilder(symbol, SYNTHETIC_OFFSET)
-            parent = container
-            body = context.irFactory.createBlockBody(startOffset, endOffset) {
-                with(builder) {
-                    // Need a temporary variable for Wasm to transform if/then branches with br_table
-                    val initState = scope.createTemporaryVariable(
-                        irGetField(null, initCalledVar),
-                        nameHint = "initState",
-                        inventUniqueName = false,
-                    )
-                    statements += initState
-                    statements += irWhen(
-                        context.irBuiltIns.unitType,
-                        listOf(
-                            // Already initialized successfully - early branch.
-                            irBranch(
-                                irEqeqeq(irGet(initState), irInt(InitializationState.INITIALIZED)),
-                                irReturnUnit()
-                            ),
-                            // Previously attempted initialization failed with error.
-                            irBranch(
-                                irEqeqeq(irGet(initState), irInt(InitializationState.ERROR)),
-                                generateStaticInitializationFailureCallWithClassName(container)
-                            ),
-                            // Initialization hasn't been performed yet - try to initialize.
-                            irElseBranch(
-                                irBlock {
-                                    +irSetField(null, initCalledVar, irInt(InitializationState.INITIALIZED))
-                                    val allInitializers = irComposite {
-                                        val [dependencySuperInterfaces, dependencySuperClasses] =
-                                            container.dependencySuperClasses.partition { it.isInterface }
-                                        for (superClass in dependencySuperClasses + dependencySuperInterfaces) {
-                                            superClass.staticInitFunction?.let {
-                                                +irCall(it.symbol)
-                                            }
-                                        }
-                                        for (initializer in initializers) {
-                                            initializer.setDeclarationsParent(initFunction)
-                                        }
-                                        +initializers
-                                    }
-                                    val catchParameter = scope.createTemporaryVariableDeclaration(
-                                        irType = catchParameterType,
-                                        nameHint = "reason",
-                                        origin = IrDeclarationOrigin.CATCH_PARAMETER,
-                                        startOffset = UNDEFINED_OFFSET,
-                                        endOffset = UNDEFINED_OFFSET,
-                                        inventUniqueName = false,
-                                    )
-                                    val catchResult = irComposite {
-                                        +irSetField(null, initCalledVar, irInt(InitializationState.ERROR))
-                                        +irCall(this@WebStaticInitializersDeclarationLowering.context.symbols.staticInitializationFailure).apply {
-                                            arguments[0] = irCastIfNeeded(irGet(catchParameter), context.irBuiltIns.throwableType)
-                                            arguments[1] = undefinedOrNull()
-                                        }
-                                    }
-                                    +irTry(context.irBuiltIns.unitType, allInitializers, listOf(irCatch(catchParameter, catchResult)), null)
-                                }
-                            )
-                        )
-                    )
-                }
-            }
-        }
-    }
+    ): IrSimpleFunction
 
-    private val IrClass.dependencySuperClasses: List<IrClass>
+    protected val IrClass.dependencySuperClasses: List<IrClass>
         get() = superTypes
             .filter { !it.isAny() }
             .mapNotNull { it.classOrNull?.owner }
             // In the case of super interfaces, only ones having at least 1 non-abstract member trigger
             // its initialization from the implementing class. See section §3.3 of the KEEP.
             .filter { clazz -> !clazz.isInterface || clazz.declarations.any { it.isNonAbstractInstanceMember() } }
+
+    protected fun IrBuilderWithScope.initializationBody(
+        initFunction: IrSimpleFunction,
+        container: IrClass,
+        initCalledVar: IrField,
+        initializers: List<IrStatement>
+    ) = irBlock {
+        +irSetField(null, initCalledVar, irInt(InitializationState.INITIALIZED))
+        val allInitializers = irComposite {
+            val [dependencySuperInterfaces, dependencySuperClasses] =
+                container.dependencySuperClasses.partition { it.isInterface }
+            for (superClass in dependencySuperClasses + dependencySuperInterfaces) {
+                superClass.staticInitFunction?.let {
+                    +irCall(it.symbol)
+                }
+            }
+            for (initializer in initializers) {
+                initializer.setDeclarationsParent(initFunction)
+            }
+            +initializers
+        }
+        val catchParameter = scope.createTemporaryVariableDeclaration(
+            irType = catchParameterType,
+            nameHint = "reason",
+            origin = IrDeclarationOrigin.CATCH_PARAMETER,
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            inventUniqueName = false,
+        )
+        val catchResult = irComposite {
+            +irSetField(null, initCalledVar, irInt(InitializationState.ERROR))
+            +irCall(this@WebStaticInitializersDeclarationLowering.context.symbols.staticInitializationFailure).apply {
+                arguments[0] = irCastIfNeeded(irGet(catchParameter), context.irBuiltIns.throwableType)
+                arguments[1] = undefinedOrNull()
+            }
+        }
+        +irTry(context.irBuiltIns.unitType, allInitializers, listOf(irCatch(catchParameter, catchResult)), null)
+    }
 
     private fun IrDeclaration.isNonAbstractInstanceMember(): Boolean = when (this) {
         is IrSimpleFunction if isReal && modality != Modality.ABSTRACT && dispatchReceiverParameter != null -> true
