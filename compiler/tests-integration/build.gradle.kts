@@ -51,6 +51,8 @@ dependencies {
     testFixturesCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
 
+    testImplementation(commonDependency("com.google.code.gson:gson"))
+
     antLauncherJar(commonDependency("org.apache.ant", "ant"))
     antLauncherJar(toolsJar())
 }
