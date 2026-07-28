@@ -175,8 +175,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         val symbol = linker.tryReferencingSimpleFunctionByLocalSignature(file, signature)
             ?: symbolTable.referenceSimpleFunction(signature)
 
-        if (!partialLinkageSupport.isEnabled
-            || !symbol.isBound
+        if (!symbol.isBound
             || symbol.owner.let { boundFunction ->
                 boundFunction.isSuspend == function.isSuspend && !boundFunction.isInline && !function.isInline
             }
@@ -210,8 +209,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         val symbol = linker.tryReferencingPropertyByLocalSignature(file, signature)
             ?: symbolTable.referenceProperty(signature)
 
-        if (!partialLinkageSupport.isEnabled
-            || !symbol.isBound
+        if (!symbol.isBound
             || symbol.owner.let { boundProperty ->
                 boundProperty.getter?.isInline != true && boundProperty.setter?.isInline != true
                         && property.getter?.isInline != true && property.setter?.isInline != true
