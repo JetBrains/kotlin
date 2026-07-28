@@ -39,6 +39,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: foo
 
 KaNamedFunctionSymbol:
@@ -113,6 +114,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: foo
 
 KaKotlinPropertySymbol:

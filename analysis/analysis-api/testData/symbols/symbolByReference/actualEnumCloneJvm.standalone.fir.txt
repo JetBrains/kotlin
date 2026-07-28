@@ -47,4 +47,5 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: clone
   importableFqName: null

@@ -94,6 +94,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library lib"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: function
   importableFqName: null
 
 KaKotlinPropertySymbol:

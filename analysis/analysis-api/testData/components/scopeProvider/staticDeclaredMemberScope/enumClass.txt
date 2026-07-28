@@ -110,6 +110,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: values
   importableFqName: test.E.values
 
 KaNamedFunctionSymbol:
@@ -192,6 +193,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: valueOf
   importableFqName: test.E.valueOf
 
 KaKotlinPropertySymbol:

@@ -43,6 +43,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: test.WithGeneratedCompanion.Companion.foo
 
 KaNamedFunctionSymbol:
@@ -129,6 +130,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: equals
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -176,6 +178,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: hashCode
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -223,6 +226,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: toString
   importableFqName: null
 
 KaConstructorSymbol:
@@ -256,4 +260,5 @@ KaConstructorSymbol:
   getContainingJvmClassName: test.WithGeneratedCompanion.Companion
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: test.WithGeneratedCompanion.Companion

@@ -82,6 +82,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: equals
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -129,6 +130,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: hashCode
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -176,6 +178,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: toString
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -345,4 +348,5 @@ KaConstructorSymbol:
   getContainingJvmClassName: test.B
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: test.B

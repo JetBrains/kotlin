@@ -58,6 +58,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: null
 
 KaAnonymousFunctionSymbol:
@@ -120,6 +121,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -539,6 +541,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: Status.Error
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: Status.Error
 
 KaNamedClassSymbol:
@@ -669,6 +672,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -903,6 +907,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: null
 
 KaKotlinPropertySymbol:

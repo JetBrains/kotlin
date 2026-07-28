@@ -85,4 +85,5 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: get
   importableFqName: null

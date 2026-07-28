@@ -68,6 +68,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: ClassC
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: ClassC
 
 KaConstructorSymbol:
@@ -101,6 +102,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: ClassC
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: ClassC
 
 KaClassInitializerSymbol:
@@ -268,6 +270,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: null
 
 KaTypeParameterSymbol:
@@ -340,6 +343,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: bar
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -1024,6 +1028,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: NotExternalC
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: NotExternalC
 
 KaConstructorSymbol:
@@ -1057,6 +1062,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: NotExternalC
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: NotExternalC
 
 KaNamedClassSymbol:
@@ -1138,6 +1144,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: fooI
   importableFqName: null
 
 KaNamedClassSymbol:

@@ -76,4 +76,5 @@ KaSamConstructorSymbol:
   getContainingJvmClassName: test.SamConstructorKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: test.A

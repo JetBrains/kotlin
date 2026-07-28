@@ -52,4 +52,5 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: booleanConstReferenceInImplies
   importableFqName: booleanConstReferenceInImplies

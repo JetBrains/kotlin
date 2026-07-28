@@ -80,6 +80,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library lib"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: memberFunctionWithReceiver
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -203,6 +204,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library lib"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: memberFunctionWithReceiverWithNullableReceiver
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -2555,4 +2557,5 @@ KaConstructorSymbol:
   getContainingJvmClassName: Foo
   getContainingModule: KaLibraryModule "Library lib"
   deprecation: null
+  javaMethodName: null
   importableFqName: Foo

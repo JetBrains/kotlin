@@ -144,6 +144,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: MyColor
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: MyColor
 
 KaNamedClassSymbol:
@@ -209,6 +210,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -358,6 +360,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: null
 
 KaKotlinPropertySymbol:

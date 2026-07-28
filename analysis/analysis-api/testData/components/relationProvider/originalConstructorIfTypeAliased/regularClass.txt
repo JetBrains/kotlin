@@ -30,6 +30,7 @@ Resolved constructor:
     getContainingJvmClassName: test.MyClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: null
     importableFqName: test.MyClass
 
 Original constructor if type aliased:

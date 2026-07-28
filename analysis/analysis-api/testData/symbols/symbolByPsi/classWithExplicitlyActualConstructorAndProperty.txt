@@ -68,6 +68,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: A
   getContainingModule: KaSourceModule "Sources of jvm"
   deprecation: null
+  javaMethodName: null
   importableFqName: A
 
 KaNamedClassSymbol:
@@ -174,6 +175,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: B
   getContainingModule: KaSourceModule "Sources of jvm"
   deprecation: null
+  javaMethodName: null
   importableFqName: B
 
 KaNamedClassSymbol:
@@ -280,6 +282,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: C
   getContainingModule: KaSourceModule "Sources of jvm"
   deprecation: null
+  javaMethodName: null
   importableFqName: C
 
 KaNamedClassSymbol:

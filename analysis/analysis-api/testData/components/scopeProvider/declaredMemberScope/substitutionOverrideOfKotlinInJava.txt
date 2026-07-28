@@ -45,6 +45,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: func
   importableFqName: null
 
 KaSyntheticJavaPropertySymbol:
@@ -201,4 +202,5 @@ KaConstructorSymbol:
   getContainingJvmClassName: JavaC
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: JavaC

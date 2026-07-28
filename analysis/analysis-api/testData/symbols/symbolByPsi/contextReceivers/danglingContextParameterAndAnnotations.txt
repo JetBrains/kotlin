@@ -68,6 +68,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: Anno
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: Anno
 
 KaNamedClassSymbol:
@@ -368,6 +369,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: foo
 
 KaContextParameterSymbol:

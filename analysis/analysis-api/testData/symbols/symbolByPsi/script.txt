@@ -39,6 +39,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaScriptModule "Script script.kts"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: foo
 
 KaKotlinPropertySymbol:
@@ -196,6 +197,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaScriptModule "Script script.kts"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: member
   importableFqName: null
 
 KaKotlinPropertySymbol:

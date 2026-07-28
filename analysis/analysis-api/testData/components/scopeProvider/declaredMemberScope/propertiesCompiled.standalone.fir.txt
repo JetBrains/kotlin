@@ -2525,4 +2525,5 @@ KaConstructorSymbol:
   getContainingJvmClassName: one.Foo
   getContainingModule: KaLibraryModule "Library lib"
   deprecation: null
+  javaMethodName: null
   importableFqName: one.Foo

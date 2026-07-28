@@ -67,6 +67,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: Foo
 
 KaNamedClassSymbol:

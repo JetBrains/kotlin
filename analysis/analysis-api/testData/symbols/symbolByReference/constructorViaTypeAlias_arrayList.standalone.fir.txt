@@ -92,4 +92,5 @@ KaConstructorSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
+  javaMethodName: null
   importableFqName: kotlin.collections.ArrayList
