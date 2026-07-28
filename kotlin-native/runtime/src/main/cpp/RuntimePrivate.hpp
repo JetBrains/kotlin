@@ -8,6 +8,7 @@
 namespace kotlin {
 namespace internal {
 
+// Must be synchronized with StaticInitState.kt
 inline constexpr uintptr_t FILE_NOT_INITIALIZED = 0;
 inline constexpr uintptr_t FILE_BEING_INITIALIZED = 1;
 inline constexpr uintptr_t FILE_INITIALIZED = 2;

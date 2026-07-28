@@ -5,14 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.hair
 
-import hair.sym.Field
-import hair.sym.Global
-import hair.sym.HairClass
-import hair.sym.HairFunction
-import hair.sym.HairType
-import org.jetbrains.kotlin.backend.konan.BinaryType
+import hair.sym.*
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
-import org.jetbrains.kotlin.backend.konan.computeBinaryType
 import org.jetbrains.kotlin.backend.konan.computePrimitiveBinaryTypeOrNull
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -56,6 +50,6 @@ internal data class HairGlobalImpl(val irField: IrField) : Global {
     override val type: HairType = irField.type.asHairType()
 }
 
-internal data class HairClassImpl(val irClass: IrClass) : HairClass {
+internal data class HairClassImpl(val irClass: IrClass) : HairClass
 
-}
+internal data class HairStaticInitializerImpl(val irFunction: IrSimpleFunction) : HairStaticInitializer

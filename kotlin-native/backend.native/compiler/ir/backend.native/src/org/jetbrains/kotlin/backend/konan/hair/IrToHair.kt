@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.backend.konan.lower.StaticInitializersOrigins
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.hasAnnotation
@@ -200,9 +199,12 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                         return when {
                             function.isTypedIntrinsic -> generateIntrinsic(expression, resultType, args)
                             function.isBuiltInOperator -> generateBuiltinOperator(expression, resultType, args)
-                            function.origin == StaticInitializersOrigins.STATIC_GLOBAL_INITIALIZER -> GlobalInit()
-                            function.origin == StaticInitializersOrigins.STATIC_THREAD_LOCAL_INITIALIZER -> ThreadLocalInit()
-                            function.origin == StaticInitializersOrigins.STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER -> StandaloneThreadLocalInit()
+                            function.origin == StaticInitializersOrigins.STATIC_GLOBAL_INITIALIZER ->
+                                GlobalInit(HairStaticInitializerImpl(function))
+                            function.origin == StaticInitializersOrigins.STATIC_THREAD_LOCAL_INITIALIZER ->
+                                ThreadLocalInit(HairStaticInitializerImpl(function))
+                            function.origin == StaticInitializersOrigins.STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER ->
+                                StandaloneThreadLocalInit(HairStaticInitializerImpl(function))
                             !function.isReal -> notImplemented(HairTODO.FAKE_OVERRIDE_CALL)
                             expression.isVirtual() -> notImplemented(HairTODO.VIRTUAL_CALLS)
                             else -> {

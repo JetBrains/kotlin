@@ -18,22 +18,49 @@ context(nodeBuilder: NodeBuilder)
 fun UnitValue(): UnitValue = nodeBuilder.onNodeBuilt(UnitValue(nodeBuilder.session.unitValueForm)) as UnitValue
 
 context(nodeBuilder: NodeBuilder)
-fun GlobalInit(control: Controlling?): Controlling = nodeBuilder.onNodeBuilt(GlobalInit(nodeBuilder.session.globalInitForm, control)) as Controlling
+private fun GlobalInitForm(initRoutine: HairStaticInitializer): GlobalInit.Form = GlobalInit.Form(nodeBuilder.session.globalInitMetaForm, initRoutine).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
+fun GlobalInit(initRoutine: HairStaticInitializer): GlobalInit.Form = GlobalInitForm(initRoutine)
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun GlobalInit(): Controlling = controlBuilder.appendControlled { ctrl -> GlobalInit(ctrl) }
+fun GlobalInit(initRoutine: HairStaticInitializer): Controlling = GlobalInitForm(initRoutine)()
 
 context(nodeBuilder: NodeBuilder)
-fun ThreadLocalInit(control: Controlling?): Controlling = nodeBuilder.onNodeBuilt(ThreadLocalInit(nodeBuilder.session.threadLocalInitForm, control)) as Controlling
+operator fun GlobalInit.Form.invoke(control: Controlling?): Controlling = nodeBuilder.onNodeBuilt(GlobalInit(this@invoke, control)) as Controlling
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun ThreadLocalInit(): Controlling = controlBuilder.appendControlled { ctrl -> ThreadLocalInit(ctrl) }
+operator fun GlobalInit.Form.invoke(): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
-fun StandaloneThreadLocalInit(control: Controlling?): Controlling = nodeBuilder.onNodeBuilt(StandaloneThreadLocalInit(nodeBuilder.session.standaloneThreadLocalInitForm, control)) as Controlling
+private fun ThreadLocalInitForm(initRoutine: HairStaticInitializer): ThreadLocalInit.Form = ThreadLocalInit.Form(nodeBuilder.session.threadLocalInitMetaForm, initRoutine).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
+fun ThreadLocalInit(initRoutine: HairStaticInitializer): ThreadLocalInit.Form = ThreadLocalInitForm(initRoutine)
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun StandaloneThreadLocalInit(): Controlling = controlBuilder.appendControlled { ctrl -> StandaloneThreadLocalInit(ctrl) }
+fun ThreadLocalInit(initRoutine: HairStaticInitializer): Controlling = ThreadLocalInitForm(initRoutine)()
+
+context(nodeBuilder: NodeBuilder)
+operator fun ThreadLocalInit.Form.invoke(control: Controlling?): Controlling = nodeBuilder.onNodeBuilt(ThreadLocalInit(this@invoke, control)) as Controlling
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+operator fun ThreadLocalInit.Form.invoke(): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
+
+context(nodeBuilder: NodeBuilder)
+private fun StandaloneThreadLocalInitForm(initRoutine: HairStaticInitializer): StandaloneThreadLocalInit.Form = StandaloneThreadLocalInit.Form(nodeBuilder.session.standaloneThreadLocalInitMetaForm, initRoutine).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
+fun StandaloneThreadLocalInit(initRoutine: HairStaticInitializer): StandaloneThreadLocalInit.Form = StandaloneThreadLocalInitForm(initRoutine)
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+fun StandaloneThreadLocalInit(initRoutine: HairStaticInitializer): Controlling = StandaloneThreadLocalInitForm(initRoutine)()
+
+context(nodeBuilder: NodeBuilder)
+operator fun StandaloneThreadLocalInit.Form.invoke(control: Controlling?): Controlling = nodeBuilder.onNodeBuilt(StandaloneThreadLocalInit(this@invoke, control)) as Controlling
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+operator fun StandaloneThreadLocalInit.Form.invoke(): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
 fun UnreachableNoCtrl(): Unreachable = nodeBuilder.onNodeBuilt(Unreachable(nodeBuilder.session.unreachableForm)) as Unreachable

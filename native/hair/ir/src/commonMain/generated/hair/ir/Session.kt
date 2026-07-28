@@ -12,12 +12,6 @@ class Session: SessionBase() {
 
     internal val unitValueForm = UnitValue.form(this).also { register(it) }
 
-    internal val globalInitForm = GlobalInit.form(this).also { register(it) }
-
-    internal val threadLocalInitForm = ThreadLocalInit.form(this).also { register(it) }
-
-    internal val standaloneThreadLocalInitForm = StandaloneThreadLocalInit.form(this).also { register(it) }
-
     internal val unreachableForm = Unreachable.form(this).also { register(it) }
 
     internal val blockEntryForm = BlockEntry.form(this).also { register(it) }
@@ -63,6 +57,12 @@ class Session: SessionBase() {
     
 
     // Meta forms
+
+    internal val globalInitMetaForm = GlobalInit.metaForm(this)
+
+    internal val threadLocalInitMetaForm = ThreadLocalInit.metaForm(this)
+
+    internal val standaloneThreadLocalInitMetaForm = StandaloneThreadLocalInit.metaForm(this)
 
     internal val readVarMetaForm = ReadVar.metaForm(this)
 
