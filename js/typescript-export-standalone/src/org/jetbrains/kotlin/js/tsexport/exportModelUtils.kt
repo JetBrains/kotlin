@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExportIgnore
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsImplicitExport
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsNoRuntime
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsStatic
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ExposedCopyVisibility
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ConsistentCopyVisibility
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ExposedCopyVisibility
 import org.jetbrains.kotlin.psi.KtNonPublicApi
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
@@ -334,7 +334,8 @@ private fun KaNamedClassSymbol.shouldContainNotImplementableProperty(
 ): Boolean =
     hasNonExportedAbstractMembers ||
             classId?.packageFqName == StandardNames.COLLECTIONS_PACKAGE_FQ_NAME ||
-            (!config.implementableInterfaces && classKind == KaClassKind.INTERFACE && !isExternal && !isJsNoRuntime())
+            (!config.implementableInterfaces && classKind == KaClassKind.INTERFACE && !isExternal && !isJsNoRuntime()) ||
+            (classKind == KaClassKind.INTERFACE && modality == KaSymbolModality.SEALED)
 
 @OptIn(KaExperimentalApi::class)
 context(_: KaSession)
@@ -549,10 +550,11 @@ private fun KaNamedClassSymbol.collectAllImplementableAndNotImplementableInterfa
             continue
         }
 
-        if (processedClass.classKind == KaClassKind.INTERFACE && !processedClass.isJsNoRuntime()) {
+        val isSealed = processedClass.modality == KaSymbolModality.SEALED
+        if (processedClass.classKind == KaClassKind.INTERFACE && (!processedClass.isJsNoRuntime() || isSealed)) {
             if (config.implementableInterfaces) {
                 if (classKind == KaClassKind.INTERFACE) continue
-                result[processedClass] = true
+                result[processedClass] = !isSealed
             } else {
                 result[processedClass] = false
             }

@@ -261,10 +261,9 @@ declare namespace JS_TESTS {
         }
         interface Sealed extends foo.SuperOfSealed1, foo.SuperOfSealed2 {
             readonly value: string;
-            readonly [foo.Sealed.Symbol]: true;
-        }
-        namespace Sealed {
-            const Symbol: unique symbol;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.Sealed": unique symbol;
+            };
         }
         interface SealedB extends foo.Sealed, foo.FunIFace {
             readonly [foo.SealedB.Symbol]: true;
@@ -287,9 +286,9 @@ declare namespace JS_TESTS {
             get value(): string;
             readonly [foo.SealedB.Symbol]: true;
             readonly [foo.FunIFace.Symbol]: true;
-            readonly [foo.Sealed.Symbol]: true;
             readonly [foo.SuperOfSealed2.Symbol]: true;
             readonly [foo.SuperOfSealed1.Symbol]: true;
+            readonly __doNotUseOrImplementIt: foo.Sealed["__doNotUseOrImplementIt"];
         }
         namespace ClassInheritingFromSealed {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -299,10 +298,9 @@ declare namespace JS_TESTS {
         }
         interface SealedNonExportedImplementor {
             readonly value: string;
-            readonly [foo.SealedNonExportedImplementor.Symbol]: true;
-        }
-        namespace SealedNonExportedImplementor {
-            const Symbol: unique symbol;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.SealedNonExportedImplementor": unique symbol;
+            };
         }
         class SealedNonExportedImplementorA implements foo.SealedNonExportedImplementor {
             constructor(value: string);
@@ -311,7 +309,7 @@ declare namespace JS_TESTS {
             hashCode(): number;
             toString(): string;
             get value(): string;
-            readonly [foo.SealedNonExportedImplementor.Symbol]: true;
+            readonly __doNotUseOrImplementIt: foo.SealedNonExportedImplementor["__doNotUseOrImplementIt"];
         }
         namespace SealedNonExportedImplementorA {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -321,6 +319,9 @@ declare namespace JS_TESTS {
         }
         interface SealedNoRuntime {
             readonly value: string;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.SealedNoRuntime": unique symbol;
+            };
         }
         class SealedNoRuntimeA implements foo.SealedNoRuntime {
             constructor(value: string);
@@ -329,6 +330,7 @@ declare namespace JS_TESTS {
             hashCode(): number;
             toString(): string;
             get value(): string;
+            readonly __doNotUseOrImplementIt: foo.SealedNoRuntime["__doNotUseOrImplementIt"];
         }
         namespace SealedNoRuntimeA {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -353,6 +355,7 @@ declare namespace JS_TESTS {
             constructor();
             get value(): string;
             readonly [foo.SealedNoRuntimeB.Symbol]: true;
+            readonly __doNotUseOrImplementIt: foo.SealedNoRuntime["__doNotUseOrImplementIt"];
         }
         namespace ClassInheritingFromSealedNoRuntime {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -362,6 +365,9 @@ declare namespace JS_TESTS {
         }
         interface SealedNoRuntimeWithNonExportedImplementor {
             readonly value: string;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.SealedNoRuntimeWithNonExportedImplementor": unique symbol;
+            };
         }
         class SealedNoRuntimeWithNonExportedImplementorA implements foo.SealedNoRuntimeWithNonExportedImplementor {
             constructor(value: string);
@@ -370,6 +376,7 @@ declare namespace JS_TESTS {
             hashCode(): number;
             toString(): string;
             get value(): string;
+            readonly __doNotUseOrImplementIt: foo.SealedNoRuntimeWithNonExportedImplementor["__doNotUseOrImplementIt"];
         }
         namespace SealedNoRuntimeWithNonExportedImplementorA {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

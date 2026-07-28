@@ -996,5 +996,10 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
     )
 
     private fun KaNamedClassSymbol.shouldContainImplementableSymbolProperty(hasNotExportedAbstractMember: Boolean): Boolean =
-        !hasNotExportedAbstractMember && config.implementableInterfaces && classKind == KaClassKind.INTERFACE && !isExternal && !isJsNoRuntime()
+        !hasNotExportedAbstractMember &&
+                config.implementableInterfaces &&
+                classKind == KaClassKind.INTERFACE &&
+                !isExternal &&
+                !isJsNoRuntime() &&
+                modality != KaSymbolModality.SEALED
 }
