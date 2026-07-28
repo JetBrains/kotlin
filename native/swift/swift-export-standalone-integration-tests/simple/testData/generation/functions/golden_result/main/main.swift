@@ -93,22 +93,22 @@ public func getBar(
 ) -> Swift.String {
     return __root___bar_get__TypesOfArgumentsE__Swift_Optional_main_Foo___(receiver.map { it in it.__externalRCRef() } ?? nil)
 }
-public func getFoo(
+public func getFooProp(
     _ receiver: Swift.Int32
 ) -> Swift.String {
     return __root___foo_get__TypesOfArgumentsE__Swift_Int32__(receiver)
 }
-public func getFoo(
+public func getFooProp(
     _ receiver: Swift.Int32?
 ) -> Swift.String {
     return __root___foo_get__TypesOfArgumentsE__Swift_Optional_Swift_Int32___(receiver.map { it in NSNumber(value: it) } ?? nil)
 }
-public func getFoo(
+public func getFooProp(
     _ receiver: main.Foo
 ) -> Swift.String {
     return __root___foo_get__TypesOfArgumentsE__main_Foo__(receiver.__externalRCRef())
 }
-public func getFoo(
+public func getFooProp(
     _ receiver: main.Foo?
 ) -> Swift.String {
     return __root___foo_get__TypesOfArgumentsE__Swift_Optional_main_Foo___(receiver.map { it in it.__externalRCRef() } ?? nil)
@@ -116,29 +116,141 @@ public func getFoo(
 public func return_any_should_append_runtime_import() -> any KotlinRuntimeSupport._KotlinBridgeable {
     return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: __root___return_any_should_append_runtime_import())
 }
-public func setFoo(
+public func setFooProp(
     _ receiver: Swift.Int32,
     v: Swift.String
 ) -> Swift.Void {
     return { __root___foo_set__TypesOfArgumentsE__Swift_Int32_Swift_String__(receiver, v); return () }()
 }
-public func setFoo(
+public func setFooProp(
     _ receiver: Swift.Int32?,
     v: Swift.String
 ) -> Swift.Void {
     return { __root___foo_set__TypesOfArgumentsE__Swift_Optional_Swift_Int32__Swift_String__(receiver.map { it in NSNumber(value: it) } ?? nil, v); return () }()
 }
-public func setFoo(
+public func setFooProp(
     _ receiver: main.Foo,
     v: Swift.String
 ) -> Swift.Void {
     return { __root___foo_set__TypesOfArgumentsE__main_Foo_Swift_String__(receiver.__externalRCRef(), v); return () }()
 }
-public func setFoo(
+public func setFooProp(
     _ receiver: main.Foo?,
     v: Swift.String
 ) -> Swift.Void {
     return { __root___foo_set__TypesOfArgumentsE__Swift_Optional_main_Foo__Swift_String__(receiver.map { it in it.__externalRCRef() } ?? nil, v); return () }()
+}
+extension main.Foo {
+    public var fooProp: Swift.String {
+        get {
+            let receiver = self
+            return main.getFooProp(receiver)
+        }
+        set(v) {
+            let receiver = self
+            return main.setFooProp(receiver, v: v)
+        }
+    }
+}
+extension main.Foo {
+    public var bar: Swift.String {
+        get {
+            let receiver = self
+            return main.getBar(receiver)
+        }
+    }
+}
+extension main.Foo {
+    public func foo() -> Swift.Void {
+        let receiver = self
+        return main.foo(receiver)
+    }
+}
+extension main.Foo {
+    public func combine(
+        foo: main.Foo
+    ) -> main.Foo {
+        let receiver = self
+        return main.combine(receiver, foo: foo)
+    }
+}
+extension Swift.Int32 {
+    public var fooProp: Swift.String {
+        get {
+            let receiver = self
+            return main.getFooProp(receiver)
+        }
+        set(v) {
+            let receiver = self
+            return main.setFooProp(receiver, v: v)
+        }
+    }
+}
+extension Swift.Int32 {
+    public var bar: Swift.String {
+        get {
+            let receiver = self
+            return main.getBar(receiver)
+        }
+    }
+}
+extension Swift.Int32 {
+    public func foo() -> Swift.Void {
+        let receiver = self
+        return main.foo(receiver)
+    }
+}
+extension Swift.Int32? {
+    public var fooProp: Swift.String {
+        get {
+            let receiver = self
+            return main.getFooProp(receiver)
+        }
+        set(v) {
+            let receiver = self
+            return main.setFooProp(receiver, v: v)
+        }
+    }
+}
+extension main.Foo? {
+    public var fooProp: Swift.String {
+        get {
+            let receiver = self
+            return main.getFooProp(receiver)
+        }
+        set(v) {
+            let receiver = self
+            return main.setFooProp(receiver, v: v)
+        }
+    }
+}
+extension Swift.Int32? {
+    public var bar: Swift.String {
+        get {
+            let receiver = self
+            return main.getBar(receiver)
+        }
+    }
+}
+extension main.Foo? {
+    public var bar: Swift.String {
+        get {
+            let receiver = self
+            return main.getBar(receiver)
+        }
+    }
+}
+extension Swift.Int32? {
+    public func foo() -> Swift.Void {
+        let receiver = self
+        return main.foo(receiver)
+    }
+}
+extension main.Foo? {
+    public func foo() -> Swift.Void {
+        let receiver = self
+        return main.foo(receiver)
+    }
 }
 extension ExportedKotlinPackages.inline {
     public final class Bar: KotlinRuntime.KotlinBase {

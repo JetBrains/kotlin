@@ -242,6 +242,23 @@ extension lib.InterfaceTwo where Self : lib.__InterfaceTwo {
 }
 extension lib.InterfaceTwo {
 }
+extension lib.InternalLibInterface {
+    @_spi(InternalLibApi)
+    public var genericProperty: Swift.String {
+        @_spi(InternalLibApi)
+        get {
+            let receiver = self
+            return lib.getGenericProperty(receiver)
+        }
+    }
+}
+extension lib.InternalLibInterface {
+    @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+    public func fooB() -> lib.ExperimentalLibClass {
+        let receiver = self
+        return lib.fooB(receiver)
+    }
+}
 @_documentation(visibility: internal)
 extension lib.InternalLibInterface where Self : lib.__InternalLibInterface {
     @_spi(ExperimentalLibApi) @_spi(InternalLibApi)

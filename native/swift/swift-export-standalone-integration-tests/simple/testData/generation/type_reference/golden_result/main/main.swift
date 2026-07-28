@@ -495,6 +495,42 @@ extension main.INTERFACE where Self : main.__INTERFACE {
 }
 extension main.INTERFACE {
 }
+extension Swift.Int32? {
+    public var extensionVarOnNullablePrimitive: Swift.String {
+        get {
+            let receiver = self
+            return main.getExtensionVarOnNullablePrimitive(receiver)
+        }
+        set(v) {
+            let receiver = self
+            return main.setExtensionVarOnNullablePrimitive(receiver, v: v)
+        }
+    }
+}
+extension main.Class_without_package? {
+    public var extensionVarOnNullableRef: Swift.String {
+        get {
+            let receiver = self
+            return main.getExtensionVarOnNullableRef(receiver)
+        }
+        set(v) {
+            let receiver = self
+            return main.setExtensionVarOnNullableRef(receiver, v: v)
+        }
+    }
+}
+extension Swift.Int32? {
+    public func extensionOnNullablePrimitive() -> Swift.Void {
+        let receiver = self
+        return main.extensionOnNullablePrimitive(receiver)
+    }
+}
+extension main.Class_without_package? {
+    public func extensionOnNullabeRef() -> Swift.Void {
+        let receiver = self
+        return main.extensionOnNullabeRef(receiver)
+    }
+}
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.INTERFACE, main.__INTERFACE where Wrapped : main._INTERFACE {
 }
