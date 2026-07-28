@@ -76,7 +76,7 @@ abstract class FakeOverrideBuilderStrategy {
     open fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember? {
         val createFakeOverride = when {
             createFakeOverridesForInvisibleAbstractMembers && member.modality == Modality.ABSTRACT -> true
-            else -> isVisibleForOverrideInClass(member, clazz)
+            else -> isVisibleForOverride(member, clazz)
         }
         return runIf(createFakeOverride) {
             buildFakeOverrideMember(superType, member, clazz)
@@ -103,26 +103,27 @@ abstract class FakeOverrideBuilderStrategy {
 
     protected abstract fun shouldSeeInternals(thisModule: ModuleDescriptor, memberModule: ModuleDescriptor): Boolean
 
-    private fun isVisibleForOverrideInClass(original: IrOverridableMember, clazz: IrClass) : Boolean {
+    fun isVisibleForOverride(target: IrOverridableMember, visibleFrom: IrClass, allowBothDirectionsOfFriendship: Boolean = false) : Boolean {
         return when {
-            DescriptorVisibilities.isPrivate(original.visibility) -> false
-            original.visibility == DescriptorVisibilities.INVISIBLE_FAKE -> false
-            original.visibility == DescriptorVisibilities.INTERNAL -> {
-                val thisModule = clazz.getPackageFragment().moduleDescriptor
-                val memberModule = original.getPackageFragment().moduleDescriptor
+            DescriptorVisibilities.isPrivate(target.visibility) -> false
+            target.visibility == DescriptorVisibilities.INVISIBLE_FAKE -> false
+            target.visibility == DescriptorVisibilities.INTERNAL -> {
+                val visibleFromModule = visibleFrom.getPackageFragment().moduleDescriptor
+                val targetModule = target.getPackageFragment().moduleDescriptor
 
                 when {
-                    thisModule == memberModule -> true
-                    shouldSeeInternals(thisModule, memberModule) -> true
+                    visibleFromModule == targetModule -> true
+                    shouldSeeInternals(visibleFromModule, targetModule) -> true
+                    allowBothDirectionsOfFriendship && shouldSeeInternals(targetModule, visibleFromModule) -> true
                     !isOverrideOfPublishedApiFromOtherModuleDisallowed &&
-                            original.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
+                            target.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
                     else -> false
                 }
             }
             else -> {
-                original.visibility.visibleFromPackage(
-                    clazz.getPackageFragment().packageFqName,
-                    original.getPackageFragment().packageFqName
+                target.visibility.visibleFromPackage(
+                    visibleFrom.getPackageFragment().packageFqName,
+                    target.getPackageFragment().packageFqName
                 )
             }
         }
