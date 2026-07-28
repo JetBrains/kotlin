@@ -53,11 +53,19 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
     )
 
     private fun IrClass.shouldContainImplementableSymbolProperty(hasNotExportedAbstractMember: Boolean): Boolean =
-        !hasNotExportedAbstractMember && allowImplementingInterfaces && isInterface && !isExternal && !isJsImplicitExport() && !isJsNoRuntime()
+        !hasNotExportedAbstractMember &&
+                allowImplementingInterfaces &&
+                isInterface &&
+                !isExternal &&
+                !isJsImplicitExport() &&
+                !isJsNoRuntime() &&
+                modality != Modality.SEALED
 
     private fun IrClass.shouldContainNotImplementableProperty(hasNotExportedAbstractMember: Boolean): Boolean =
-        hasNotExportedAbstractMember || isJsImplicitExport() ||
-                (!allowImplementingInterfaces && isInterface && !isExternal && !isJsNoRuntime())
+        hasNotExportedAbstractMember ||
+                isJsImplicitExport() ||
+                (!allowImplementingInterfaces && isInterface && !isExternal && !isJsNoRuntime()) ||
+                (isInterface && modality == Modality.SEALED)
 
     fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
         val namespaceFqName = file.packageFqName
@@ -1238,10 +1246,16 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                 continue
             }
 
-            if (processedClass.isInterface && !processedClass.isJsNoRuntime()) {
+            val isSealed = processedClass.modality == Modality.SEALED
+
+            if (processedClass.isInterface && (!processedClass.isJsNoRuntime() || isSealed)) {
                 if (allowImplementingInterfaces) {
                     if (!shouldCopySymbolsOfTransitiveParents) continue
-                    result[processedClass] = InterfaceSuperType.ImplementableInterface(processedClass)
+                    result[processedClass] = if (isSealed) {
+                        InterfaceSuperType.NotImplementableInterface(processedClass)
+                    } else {
+                        InterfaceSuperType.ImplementableInterface(processedClass)
+                    }
                 } else {
                     result[processedClass] = InterfaceSuperType.NotImplementableInterface(processedClass)
                     continue
