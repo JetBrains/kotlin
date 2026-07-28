@@ -77,5 +77,11 @@ internal class ModuleFileCacheImpl(override val moduleComponents: LLFirModuleRes
     }
 
     @FirCacheInternals
-    override fun getAllCachedFirFiles(): Collection<FirFile> = firFileCache.asMap().values
+    override fun getAllCachedFirFiles(): List<FirFile> {
+        // Due to KT-22934, it is not safe to call `toList` on `firFileCache.asMap().values`. While `asMap()` produces a thread-safe,
+        // iterable map, `toList` and other *Kotlin* collection functions such as `addAll` rely on the iterable's size instead of checking
+        // `Iterator.hasNext`. Unfortunately, the size of the concurrent map is a best-effort estimate, so overestimating the size and
+        // calling `Iterator.next` blindly can lead to `NoSuchElementException`s.
+        return firFileCache.asMap().values.mapTo(mutableListOf()) { it }
+    }
 }
