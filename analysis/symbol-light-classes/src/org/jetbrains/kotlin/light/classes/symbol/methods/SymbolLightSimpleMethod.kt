@@ -267,7 +267,11 @@ internal open class SymbolLightSimpleMethod protected constructor(
                 methodIndexBase = methodIndex,
             ) { methodIndex, valueParameterPickMask, hasValueClassInParameterType ->
                 val hasMangledNameDueValueClassesInSignature = hasMangledNameDueValueClassesInSignature(
-                    hasValueClassInParameterType = hasValueClassInParameterType,
+                    // Not every value class in a parameter position mangles the name, so the check cannot be reused from above
+                    hasManglingValueClassInParameterType = hasManglingValueClassInParameterPosition(
+                        callableSymbol = functionSymbol,
+                        valueParameterPickMask = valueParameterPickMask,
+                    ),
                     hasValueClassInReturnType = hasValueClassInReturnType,
                     isTopLevel = isTopLevel,
                 )

@@ -1,5 +1,5 @@
 public final class ClassWithResultConstructor /* ClassWithResultConstructor*/ {
-  private  ClassWithResultConstructor(@org.jetbrains.annotations.NotNull() java.lang.Object);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.Object)
+  public  ClassWithResultConstructor(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.Object)
 }
 
 public final class ClassWithValueClassConstructor /* ClassWithValueClassConstructor*/ {
@@ -18,9 +18,26 @@ public final class RegularClass /* RegularClass*/ {
   public final @org.jetbrains.annotations.NotNull() java.lang.Object resultInReturnWithJvmName();//  resultInReturnWithJvmName()
 
   public  RegularClass();//  .ctor()
+
+  public final int getClassPropInResultExtension(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  getClassPropInResultExtension(@org.jetbrains.annotations.NotNull() java.lang.Object)
+
+  public final void classResultInContext(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  classResultInContext(@org.jetbrains.annotations.NotNull() java.lang.Object)
+
+  public final void classResultInExtension(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  classResultInExtension(@org.jetbrains.annotations.NotNull() java.lang.Object)
+
+  public final void classResultInParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  classResultInParameter(@org.jetbrains.annotations.NotNull() java.lang.Object)
+
+  public final void setClassNullableResultProp(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  setClassNullableResultProp(@org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  public final void setClassPropInResultExtension(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object, int);//  setClassPropInResultExtension(@org.jetbrains.annotations.NotNull() java.lang.Object, int)
+
+  public final void setClassResultProp(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  setClassResultProp(@org.jetbrains.annotations.NotNull() java.lang.Object)
 }
 
 public abstract interface RegularInterface /* RegularInterface*/ {
+  public abstract void interfaceResultInParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  interfaceResultInParameter(@org.jetbrains.annotations.NotNull() java.lang.Object)
+
+  public abstract void setInterfaceResultProp(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  setInterfaceResultProp(@org.jetbrains.annotations.NotNull() java.lang.Object)
 }
 
 public final class ResultInSignatureKt /* ResultInSignatureKt*/ {
@@ -32,6 +49,14 @@ public final class ResultInSignatureKt /* ResultInSignatureKt*/ {
 
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() java.lang.Object topLevelResultInReturn();//  topLevelResultInReturn()
+
+  public static final void setTopLevelResultProp(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  setTopLevelResultProp(@org.jetbrains.annotations.NotNull() java.lang.Object)
+
+  public static final void topLevelResultInContext(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  topLevelResultInContext(@org.jetbrains.annotations.NotNull() java.lang.Object)
+
+  public static final void topLevelResultInExtension(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  topLevelResultInExtension(@org.jetbrains.annotations.NotNull() java.lang.Object)
+
+  public static final void topLevelResultInParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  topLevelResultInParameter(@org.jetbrains.annotations.NotNull() java.lang.Object)
 }
 
 @kotlin.jvm.JvmInline()

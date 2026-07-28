@@ -105,46 +105,40 @@ internal fun methodGeneration(
     isOverridable: Boolean,
     isEffectivelyPrivate: Boolean,
 ): MethodGenerationResult {
-    var isBoxedAccessorRequired = false
-    var isRegularAccessorRequired = false
-
     // Explicit mode -> a boxed method is requested (even if it is a JVM name clash)
-    if (exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT &&
-        !isEffectivelyPrivate &&
-        (hasValueClassInParameterType || hasValueClassInReturnType || isAffectedByValueClass)
-    ) {
-        isBoxedAccessorRequired = true
-    }
+    val isBoxedAccessorRequestedExplicitly = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT &&
+            !isEffectivelyPrivate &&
+            (hasValueClassInParameterType || hasValueClassInReturnType || isAffectedByValueClass)
 
-    if (isAffectedByValueClass) {
+    val isRegularAccessorRequired = if (isAffectedByValueClass) {
         // JvmName -> unmangled method can be generated
-        isRegularAccessorRequired = hasJvmNameAnnotation
-
-        isBoxedAccessorRequired = when {
-            // The check already performed by the explicit mode
-            isBoxedAccessorRequired -> true
-
-            // Private declarations are inaccessible from Java -> no boxed methods can be auto-generated
-            isEffectivelyPrivate -> false
-
-            // No implicit feature -> no boxed methods can be auto-generated
-            exposeBoxedMode != JvmExposeBoxedMode.IMPLICIT -> false
-
-            // Suspend function -> no boxed methods can be auto-generated
-            isSuspend -> false
-
-            // In interface or in open class -> no boxed methods can be auto-generated. @JvmName problem
-            isOverridable -> false
-
-            // No JvmName -> the default method has a mangled name, so the boxed method can be generated
-            !hasJvmNameAnnotation -> true
-
-            // At least one parameter has a value class -> the boxed method won't lead to a JVM name clash
-            else -> hasValueClassInParameterType
-        }
+        hasJvmNameAnnotation
     } else {
         // Unmangled name -> regular method is needed
-        isRegularAccessorRequired = true
+        true
+    }
+
+    val isBoxedAccessorRequired = when {
+        // The check already performed by the explicit mode
+        isBoxedAccessorRequestedExplicitly -> true
+
+        // Private declarations are inaccessible from Java -> no boxed methods can be auto-generated
+        isEffectivelyPrivate -> false
+
+        // No implicit feature -> no boxed methods can be auto-generated
+        exposeBoxedMode != JvmExposeBoxedMode.IMPLICIT -> false
+
+        // Suspend function -> no boxed methods can be auto-generated
+        isSuspend -> false
+
+        // In interface or in open class -> no boxed methods can be auto-generated. @JvmName problem
+        isOverridable -> false
+
+        // No JvmName -> the default method has a mangled name, so the boxed method can be generated
+        isAffectedByValueClass && !hasJvmNameAnnotation -> true
+
+        // At least one parameter has a value class -> the boxed method won't lead to a JVM name clash
+        else -> hasValueClassInParameterType
     }
 
     return MethodGenerationResult(

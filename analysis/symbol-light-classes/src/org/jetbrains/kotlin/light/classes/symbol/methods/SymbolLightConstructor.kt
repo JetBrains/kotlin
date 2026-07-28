@@ -86,7 +86,10 @@ internal class SymbolLightConstructor private constructor(
             GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PRIVATE)
 
         else -> withFunctionSymbol { symbol ->
-            val visibility = if (!isJvmExposedBoxed && hasValueClassInSignature(symbol, valueParameterPickMask = valueParameterPickMask)) {
+            // A constructor cannot be renamed, so the JVM backend makes it private instead of mangling its name
+            val visibility = if (!isJvmExposedBoxed &&
+                hasManglingValueClassInParameterPosition(symbol, valueParameterPickMask = valueParameterPickMask)
+            ) {
                 PsiModifier.PRIVATE
             } else {
                 symbol.toPsiVisibilityForMember()

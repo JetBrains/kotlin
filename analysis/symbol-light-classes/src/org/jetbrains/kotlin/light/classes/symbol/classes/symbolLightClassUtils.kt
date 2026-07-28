@@ -754,11 +754,41 @@ internal fun hasValueClassInSignature(
         return true
     }
 
-    if (callableSymbol.receiverType?.let { typeForValueClass(it) } == true) return true
-    if (callableSymbol.contextParameters.any { typeForValueClass(it.returnType) }) return true
+    return hasValueClassInParameterPosition(
+        callableSymbol = callableSymbol,
+        skipValueParametersCheck = skipValueParametersCheck,
+        valueParameterPickMask = valueParameterPickMask,
+    ) { typeForValueClass(it) }
+}
+
+/**
+ * Whether the name of the [callableSymbol] is mangled because of a value class in a parameter position: a value parameter,
+ * an extension receiver, or a context parameter.
+ *
+ * @param valueParameterPickMask a bit mask specifying which value parameters of the callable symbol should be picked during the check
+ */
+context(_: KaSession)
+internal fun hasManglingValueClassInParameterPosition(
+    callableSymbol: KaCallableSymbol,
+    valueParameterPickMask: BitSet? = null,
+): Boolean = hasValueClassInParameterPosition(
+    callableSymbol = callableSymbol,
+    skipValueParametersCheck = false,
+    valueParameterPickMask = valueParameterPickMask,
+) { parameterTypeRequiresMangling(it) }
+
+context(_: KaSession)
+private inline fun hasValueClassInParameterPosition(
+    callableSymbol: KaCallableSymbol,
+    skipValueParametersCheck: Boolean,
+    valueParameterPickMask: BitSet?,
+    predicate: (KaType) -> Boolean,
+): Boolean {
+    if (callableSymbol.receiverType?.let { predicate(it) } == true) return true
+    if (callableSymbol.contextParameters.any { predicate(it.returnType) }) return true
     if (!skipValueParametersCheck && callableSymbol is KaFunctionSymbol) {
         return callableSymbol.valueParameters.withIndex().any { [index, valueParameter] ->
-            valueParameterPickMask?.get(index) != false && typeForValueClass(valueParameter.returnType)
+            valueParameterPickMask?.get(index) != false && predicate(valueParameter.returnType)
         }
     }
 
@@ -775,14 +805,17 @@ internal fun hasValueClassInReturnType(callableSymbol: KaCallableSymbol): Boolea
 
 /**
  * Whether a declaration would have a mangled name due to value classes in its signature
+ *
+ * @param hasManglingValueClassInParameterType whether there is a value class in a parameter position that mangles the name
+ * @see hasManglingValueClassInParameterPosition
  */
 internal fun hasMangledNameDueValueClassesInSignature(
-    hasValueClassInParameterType: Boolean,
+    hasManglingValueClassInParameterType: Boolean,
     hasValueClassInReturnType: Boolean,
     isTopLevel: Boolean,
 ): Boolean = when {
     // Non-return type is a value class -> mangled name
-    hasValueClassInParameterType -> true
+    hasManglingValueClassInParameterType -> true
 
     // No value class in signature at all -> no mangling
     !hasValueClassInReturnType -> false
@@ -796,6 +829,16 @@ internal fun typeForValueClass(type: KaType): Boolean {
     val symbol = type.expandedSymbol as? KaNamedClassSymbol ?: return false
     return symbol.isInline
 }
+
+/**
+ * Whether the [type] in a parameter position mangles the name of a declaration.
+ *
+ * Unlike a return type, such a position doesn't mangle a name because of `kotlin.Result`, as the JVM backend excludes it there.
+ * The same check is performed by `org.jetbrains.kotlin.backend.jvm.getRequiresMangling`.
+ */
+context(_: KaSession)
+internal fun parameterTypeRequiresMangling(type: KaType): Boolean =
+    typeForValueClass(type) && type.expandedSymbol?.classId != StandardClassIds.Result
 
 internal inline fun <reified T : KaClassSymbol> KtClassOrObject.createSymbolPointer(
     module: KaModule,
