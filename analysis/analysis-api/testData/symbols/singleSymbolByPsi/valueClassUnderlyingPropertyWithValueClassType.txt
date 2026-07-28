@@ -116,7 +116,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Outer
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: getInner
+    javaMethodName: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true

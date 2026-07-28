@@ -150,7 +150,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
-  javaMethodName: funWithoutParameters
+  javaMethodName: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -237,7 +237,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
-  javaMethodName: funWithSelfParameter
+  javaMethodName: null
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -315,7 +315,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: ValueClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: getProperty
+    javaMethodName: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -433,7 +433,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: ValueClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: getPropertyWithValueClassType
+    javaMethodName: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -725,7 +725,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: ValueClass.Companion
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: getCompanionPropertyWithValueClassType
+    javaMethodName: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -861,7 +861,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
-  javaMethodName: companionFunctionWithValueClassType
+  javaMethodName: null
   importableFqName: ValueClass.Companion.companionFunctionWithValueClassType
 
 KaNamedClassSymbol:
