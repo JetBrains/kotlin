@@ -2224,7 +2224,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: FileScopeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
-    javaMethodName: getConstant
+    javaMethodName: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
