@@ -554,6 +554,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleCommonSingleSymbolByPsiTestGene
     run("valueClass.kt");
   }
 
+  @Test
+  @TestMetadata("valueClassUnderlyingProperty.kt")
+  public void testValueClassUnderlyingProperty() {
+    run("valueClassUnderlyingProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassUnderlyingPropertyWithValueClassType.kt")
+  public void testValueClassUnderlyingPropertyWithValueClassType() {
+    run("valueClassUnderlyingPropertyWithValueClassType.kt");
+  }
+
   @Nested
   @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/annotations")
   @TestDataPath("$PROJECT_ROOT")
