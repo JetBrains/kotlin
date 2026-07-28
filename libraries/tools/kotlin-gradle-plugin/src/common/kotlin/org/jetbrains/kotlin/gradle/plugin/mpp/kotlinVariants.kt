@@ -13,6 +13,7 @@ import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.ModuleCoordinates
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -70,7 +71,6 @@ open class KotlinVariant(
     var componentName: String? = null
 
     var artifactTargetName: String = target.targetName
-
 
     override fun getUsages(): Set<DefaultKotlinUsageContext> = usages.publishableUsages()
 

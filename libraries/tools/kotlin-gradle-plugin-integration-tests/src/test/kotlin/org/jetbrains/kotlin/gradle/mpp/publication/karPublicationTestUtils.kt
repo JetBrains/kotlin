@@ -18,6 +18,7 @@ import kotlin.io.path.listDirectoryEntries
 import kotlin.test.assertTrue
 
 internal const val KOTLIN_2_4_0 = "2.4.0"
+internal const val ENABLE_KAR_PUBLICATION = "-Pkotlin.publication.multiplatform.useLegacyPublicationLayout=false"
 
 // TODO: Change this to 2.4.20 when Kotlin 2.4.20 is released.
 internal const val KOTLIN_2_4_20_BETA1 = "2.4.20-Beta1"
@@ -42,6 +43,7 @@ internal fun KGPBaseTest.publishKarOnce(
                 buildOptions = defaultBuildOptions.copy(
                     configurationCache = ConfigurationCacheValue.DISABLED,
                     isolatedProjects = IsolatedProjectsMode.DISABLED,
+                    freeArgs = defaultBuildOptions.freeArgs + ENABLE_KAR_PUBLICATION,
                 ),
             ) {
                 build("publishAllPublicationsToMavenRepository") {

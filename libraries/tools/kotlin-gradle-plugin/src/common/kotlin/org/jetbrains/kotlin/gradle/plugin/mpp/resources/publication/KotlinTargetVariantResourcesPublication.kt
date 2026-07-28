@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication
 
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.bundling.Zip
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl.Companion.RESOURCES_CLASSIFIER
@@ -23,25 +22,27 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.assembleHierarchicalReso
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 
-// Use KotlinMultiplatformExtension to make sure this usage context is only creatable in MPP
-@Suppress("UnusedReceiverParameter")
 internal fun AbstractKotlinTarget.setUpResourcesVariant(
     compilation: KotlinCompilation<*>,
 ): DefaultKotlinUsageContext? {
     if (project.multiplatformExtensionOrNull == null || !project.kotlinPropertiesProvider.mppResourcesPublication) return null
 
     var targetRegistersResourcesForPublication = false
-    val resourcesVariant = DefaultKotlinUsageContext(
+    val resourcesVariant = DefaultKotlinUsageContextMaybeReplacedWithKar(
         compilation = compilation,
+        mavenScope = null,
         dependencyConfigurationName = resourcesElementsConfigurationName,
         includeIntoProjectStructureMetadata = false,
         publishOnlyIf = {
             targetRegistersResourcesForPublication
-        }
+        },
     )
 
     project.multiplatformExtension.resourcesPublicationExtension?.subscribeOnPublishResources(this) { resources ->
         targetRegistersResourcesForPublication = true
+        if (this is KotlinTargetWithKotlinArchiveSupport && isStoredInKotlinArchive.get()) {
+            return@subscribeOnPublishResources
+        }
         val copyTask = compilation.assembleHierarchicalResources(
             targetName,
             resources,

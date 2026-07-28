@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.COMPILE
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.RUNTIME
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.karConfiguration
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.MutableExtras
@@ -90,7 +92,12 @@ abstract class AbstractKotlinTarget(
      * Returns, potentially not configured (e.g. without some usages), Gradle SoftwareComponent's for this target
      */
     override val components: Set<KotlinTargetSoftwareComponent> by lazy {
-        kotlinComponents.map { kotlinComponent -> KotlinTargetSoftwareComponent(this, kotlinComponent) }.toSet()
+        // TODO: Defer this read until after the DSL is finalised when this provider becomes user-configurable.
+        if (this is KotlinTargetWithKotlinArchiveSupport && !requiresPlatformComponent.get()) {
+            emptySet()
+        } else {
+            kotlinComponents.map { kotlinComponent -> KotlinTargetSoftwareComponent(this, kotlinComponent) }.toSet()
+        }
     }
 
     protected open fun createKotlinVariant(
@@ -113,6 +120,47 @@ abstract class AbstractKotlinTarget(
         return result
     }
 
+    internal fun DefaultKotlinUsageContextMaybeReplacedWithKar(
+        compilation: KotlinCompilation<*>,
+        mavenScope: KotlinUsageContext.MavenScope?,
+        dependencyConfigurationName: String,
+        includeIntoProjectStructureMetadata: Boolean = true,
+        publishOnlyIf: DefaultKotlinUsageContext.PublishOnlyIf = DefaultKotlinUsageContext.PublishOnlyIf { true },
+    ): DefaultKotlinUsageContext {
+        // TODO: Defer this read until after the DSL is finalised when this provider becomes user-configurable.
+        return if (this is KotlinTargetWithKotlinArchiveSupport && isStoredInKotlinArchive.get()) {
+            val publishedConfigurationName = publishedConfigurationName(dependencyConfigurationName)
+            val karConfiguration = project.karConfiguration
+            val delegateConfiguration = project.configurations.maybeCreateConsumable(dependencyConfigurationName)
+            val publishedConfiguration = project.configurations.createDependencyScope(publishedConfigurationName) {
+                extendsFrom(karConfiguration)
+                extendsFrom(delegateConfiguration)
+            }
+            project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
+                publishedConfiguration.configure { configuration ->
+                    configuration.outgoing.artifacts(project.provider { karConfiguration.outgoing.artifacts })
+                    karConfiguration.copyAttributesTo(project.providers, configuration)
+                    delegateConfiguration.copyAttributesTo(project.providers, configuration)
+                }
+            }
+            DefaultKotlinUsageContext(
+                compilation = compilation,
+                mavenScope = mavenScope,
+                dependencyConfigurationName = publishedConfigurationName,
+                includeIntoProjectStructureMetadata = includeIntoProjectStructureMetadata,
+                publishOnlyIf = publishOnlyIf,
+            )
+        } else {
+            DefaultKotlinUsageContext(
+                compilation = compilation,
+                mavenScope = mavenScope,
+                dependencyConfigurationName = dependencyConfigurationName,
+                includeIntoProjectStructureMetadata = includeIntoProjectStructureMetadata,
+                publishOnlyIf = publishOnlyIf,
+            )
+        }
+    }
+
     internal open fun createUsageContexts(
         producingCompilation: KotlinCompilation<*>
     ): Set<DefaultKotlinUsageContext> {
@@ -123,7 +171,7 @@ abstract class AbstractKotlinTarget(
                 producingCompilation is KotlinCompilationToRunnableFiles
             }
         ).mapTo(mutableSetOf()) { (mavenScope, dependenciesConfigurationName) ->
-            DefaultKotlinUsageContext(
+            DefaultKotlinUsageContextMaybeReplacedWithKar(
                 producingCompilation,
                 mavenScope,
                 dependenciesConfigurationName
@@ -143,7 +191,10 @@ abstract class AbstractKotlinTarget(
         // We want to create task anyway, even if sources are not going to be published by KGP
         // So users or other plugins can still use it
         val sourcesJarTask = sourcesJarTask(producingCompilation, componentName, artifactNameAppendix)
-        if (!isSourcesPublishable) return null
+        // TODO: Defer this read until after the DSL is finalised when this provider becomes user-configurable.
+        if (!isSourcesPublishable || (this is KotlinTargetWithKotlinArchiveSupport && !requiresPlatformComponent.get())) {
+            return null
+        }
 
         // If sourcesElements configuration not found, don't create artifact.
         // This can happen in pure JVM plugin where source publication is delegated to Java Gradle Plugin.
@@ -182,4 +233,3 @@ abstract class AbstractKotlinTarget(
 
 internal fun KotlinTarget.disambiguateName(simpleName: String) =
     lowerCamelCaseName(targetName, simpleName)
-

@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PARSE_INLINED_LOCAL_CLASSES
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLICATION_MULTIPLATFORM_USE_LEGACY_PUBLICATION_LAYOUT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_JDK_VARIANTS_VERSION_ALIGNMENT
@@ -465,6 +466,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val createArchiveTasksForCustomCompilations: Boolean
         get() = booleanProperty(KOTLIN_CREATE_ARCHIVE_TASKS_FOR_CUSTOM_COMPILATIONS) ?: false
 
+    val useLegacyMultiplatformPublicationLayout: Provider<Boolean>
+        get() = booleanProvider(KOTLIN_PUBLICATION_MULTIPLATFORM_USE_LEGACY_PUBLICATION_LAYOUT).orElse(true)
+
     @Suppress("DEPRECATION")
     @Deprecated("KT-85433: non-BTA JVM compiler invocation is deprecated")
     val runKotlinCompilerViaBuildToolsApi: Provider<Boolean>
@@ -822,6 +826,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_MPP_ALLOW_LEGACY_DEPENDENCIES = property("kotlin.mpp.allow.legacy.dependencies")
         val KOTLIN_DEPRECATED_TEST_PROPERTY = property("${KOTLIN_INTERNAL_NAMESPACE}.deprecatedTestProperty")
         val KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE = property("kotlin.publishJvmEnvironmentAttribute")
+        val KOTLIN_PUBLICATION_MULTIPLATFORM_USE_LEGACY_PUBLICATION_LAYOUT =
+            property("kotlin.publication.multiplatform.useLegacyPublicationLayout")
         val KOTLIN_EXPERIMENTAL_TRY_NEXT = property("kotlin.experimental.tryNext")
         val KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS = property(KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY)
         val KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS = property("kotlin.native.ignoreDisabledTargets")

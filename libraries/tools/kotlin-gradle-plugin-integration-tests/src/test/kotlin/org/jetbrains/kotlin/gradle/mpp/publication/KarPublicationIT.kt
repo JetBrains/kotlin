@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.mpp.publication
 
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
@@ -18,6 +22,7 @@ import org.jetbrains.kotlin.gradle.testbase.JdkVersions
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
+import org.jetbrains.kotlin.gradle.testbase.assertTasksAreNotInTaskGraph
 import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.assertTasksFailed
 import org.jetbrains.kotlin.gradle.testbase.build
@@ -26,8 +31,11 @@ import org.jetbrains.kotlin.gradle.testbase.project
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
+import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 @DisplayName("KAR publication")
 class KarPublicationIT : KGPBaseTest() {
@@ -42,10 +50,32 @@ class KarPublicationIT : KGPBaseTest() {
     /**
      * We can't use project isolation and configuration cache, as they are incompatible with JS publications
      */
-    private fun BuildOptions.disableConfigurationCacheAndProjectIsolation() = copy(
+    private fun BuildOptions.disableConfigurationCacheAndProjectIsolation(
+        enableKarPublication: Boolean = true,
+    ) = copy(
         configurationCache = ConfigurationCacheValue.DISABLED,
         isolatedProjects = IsolatedProjectsMode.DISABLED,
+        freeArgs = freeArgs + if (enableKarPublication) listOf(ENABLE_KAR_PUBLICATION) else emptyList(),
     )
+
+    @GradleTest
+    @MppGradlePluginTests
+    fun testLegacyPublicationLayoutIsUsedByDefault(gradleVersion: GradleVersion) {
+        val repository = publicationRoot.resolve("legacy-${gradleVersion.version}")
+        project(
+            projectName = "karPublication/producer",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableConfigurationCacheAndProjectIsolation(enableKarPublication = false),
+            localRepoDir = repository,
+        ) {
+            build("publishAllPublicationsToMavenRepository") {
+                assertTasksAreNotInTaskGraph(":packKotlinArchive")
+            }
+        }
+
+        val publicationDirectory = repository.resolve("org/jetbrains/kotlin/kar/test")
+        assertFalse(publicationDirectory.resolve("sample/1.0/sample-1.0.kar.xz").exists())
+    }
 
     @GradleTest
     @MppGradlePluginTests
@@ -85,6 +115,17 @@ class KarPublicationIT : KGPBaseTest() {
                 assertTasksExecuted(":packKotlinArchive")
             }
         }
+
+        val sampleModule = repository.resolve(
+            "org/jetbrains/kotlin/kar/test/sample/2.0/sample-2.0.module"
+        )
+        val linuxX64Capabilities = Json.parseToJsonElement(sampleModule.readText())
+            .jsonObject.getValue("variants").jsonArray
+            .single { variant -> variant.jsonObject.getValue("name").jsonPrimitive.content == "linuxX64ApiElements-published" }
+            .jsonObject.getValue("capabilities").jsonArray
+            .map { capability -> capability.jsonObject.getValue("name").jsonPrimitive.content }
+            .toSet()
+        assertEquals(setOf("sample", "sample-linuxx64"), linuxX64Capabilities)
 
         project(
             projectName = "karPublication/compatibility/intermediate",

@@ -9,9 +9,9 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.HasProject
 
 internal interface KotlinTargetWithKotlinArchiveSupport : HasProject {
-    val isStoredInKotlinArchive: Boolean
-    val requiresPlatformComponent: Boolean
-    val requiresPlatformComponentCompatibilityCapability: Boolean
+    val isStoredInKotlinArchive: Provider<Boolean>
+    val requiresPlatformComponent: Provider<Boolean>
+    val requiresPlatformComponentCompatibilityCapability: Provider<Boolean>
 }
 
 internal interface KotlinTargetWithKlibsInKotlinArchiveSupport : KotlinTargetWithKotlinArchiveSupport {

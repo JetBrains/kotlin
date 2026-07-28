@@ -18,21 +18,13 @@ import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.metadataTarget
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseCompilations
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
-import org.jetbrains.kotlin.gradle.plugin.await
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.kotlinMultiplatformRootPublication
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
-import org.jetbrains.kotlin.gradle.plugin.sources.defaultImpl
-import org.jetbrains.kotlin.gradle.targets.metadata.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
@@ -45,24 +37,19 @@ abstract class KotlinSoftwareComponent(
 
     override fun getName(): String = name
 
-    private val metadataTarget get() = project.multiplatformExtension.metadataTarget
+    abstract fun getCoordinates(): ModuleVersionIdentifier
 
     internal val uklibUsages: CompletableFuture<List<DefaultKotlinUsageContext>> = CompletableFuture()
-
-    private suspend fun subcomponentTargetsWithAvailableAtPointers(): List<KotlinTarget> {
-        AfterFinaliseCompilations.await()
-        return kotlinTargets
-            .filter { target ->
-                if (target is KotlinMetadataTarget) return@filter false
-                true
-            }
-    }
 
     /**
      * These are variants pointing to subcomponent variants via available-at pointers
      */
-    private val _variants = project.future {
-        subcomponentTargetsWithAvailableAtPointers()
+    private val _variants: Future<Set<SoftwareComponent>> = project.future {
+        AfterFinaliseCompilations.await()
+
+        kotlinTargets
+            // Safe to query because this future starts by awaiting AfterFinaliseCompilations.
+            .filterNot { target -> target is KotlinTargetWithKotlinArchiveSupport && !target.requiresPlatformComponent.get() }
             .flatMap { target ->
                 val targetPublishableComponentNames = target.internal.kotlinComponents
                     .filter { component -> component.publishable }
@@ -75,73 +62,54 @@ abstract class KotlinSoftwareComponent(
 
     override fun getVariants(): Set<SoftwareComponent> = _variants.getOrThrow()
 
+    private inner class CapabilityImpl(
+        private val suffix: String? = null,
+    ) : Capability {
+        override fun getGroup(): String = getCoordinates().group
+        override fun getName(): String = if (suffix == null) getCoordinates().name else "${getCoordinates().name}-$suffix"
+        override fun getVersion(): String = getCoordinates().version
+    }
+
     /**
      * These are variants exposed directly through the root component
      */
     private val _usages: Future<Set<DefaultKotlinUsageContext>> = project.future {
-        metadataTarget.awaitMetadataCompilationsCreated()
+        AfterFinaliseCompilations.await()
 
-        // FIXME: Remove this, for now we definitely want to continue publishing existing KMP publication together with Uklib variants
-        // if (onlyPublishUklib) return
-
-        mutableSetOf<DefaultKotlinUsageContext>().apply {
-            this += DefaultKotlinUsageContext(
-                compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
-                mavenScope = KotlinUsageContext.MavenScope.COMPILE,
-                dependencyConfigurationName = metadataTarget.apiElementsConfigurationName
-            )
-
-            val sourcesElements = metadataTarget.sourcesElementsConfigurationName
-            if (metadataTarget.isSourcesPublishable) {
-                addSourcesJarArtifactToConfiguration(
-                    sourcesElements,
-                    classifierPrefix = when (project.kotlinPropertiesProvider.kmpPublicationStrategy) {
-                        KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> "metadata"
-                        KmpPublicationStrategy.StandardKMPPublication -> null
-                    },
-                )
-                this += DefaultKotlinUsageContext(
-                    compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
-                    dependencyConfigurationName = sourcesElements,
-                    includeIntoProjectStructureMetadata = false,
-                    publishOnlyIf = { metadataTarget.isSourcesPublishable }
-                )
+        kotlinTargets
+            .asSequence()
+            // Safe to query because this future starts by awaiting AfterFinaliseCompilations.
+            .filter { target -> target is KotlinTargetWithKotlinArchiveSupport && !target.requiresPlatformComponent.get() }
+            .flatMap { target -> target.internal.kotlinComponents }
+            .filter { component -> component.publishable }
+            .filterIsInstance<KotlinVariant>()
+            .flatMap { variant ->
+                variant.usages.also { usages ->
+                    if (variant.target is KotlinTargetWithKotlinArchiveSupport && variant.target.requiresPlatformComponentCompatibilityCapability.get()) {
+                        val capabilities = setOf(
+                            CapabilityImpl(),
+                            CapabilityImpl(
+                                suffix = dashSeparatedName(
+                                    variant.artifactTargetName.toLowerCaseAsciiOnly(),
+                                    variant.defaultArtifactIdSuffix,
+                                )
+                            ),
+                        )
+                        usages.forEach { usageContext ->
+                            usageContext.additionalCapabilities.addAll(capabilities)
+                            publicationDelegate?.suppressPomMetadataWarningsFor(usageContext.name)
+                        }
+                    }
+                }
             }
-        }
+            .toSet()
     }
 
 
     override fun getUsages(): Set<UsageContext> {
-        return _usages.getOrThrow().publishableUsages() + includeExtraUsagesFrom.usages + uklibUsages.getOrThrow().toSet()
-    }
-
-    private suspend fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +
-            getHostSpecificMainSharedSourceSets(project)
-
-    /**
-     * Registration (during object init) of [sourcesJarTask] is required for cases when
-     * user build scripts want to have access to sourcesJar task to configure it
-     */
-    private val sourcesJarTask: TaskProvider<Jar> = sourcesJarTaskNamed(
-        "sourcesJar",
-        name,
-        project,
-        project.future { allPublishableCommonSourceSets().associate { it.name to it.defaultImpl.allKotlin } },
-        name.toLowerCaseAsciiOnly()
-    )
-
-    private fun addSourcesJarArtifactToConfiguration(
-        configurationName: String,
-        classifierPrefix: String?,
-    ): PublishArtifact {
-        return project.artifacts.add(configurationName, sourcesJarTask) { sourcesJarArtifact ->
-            sourcesJarArtifact.classifier = dashSeparatedName(
-                listOfNotNull(
-                    classifierPrefix,
-                    "sources",
-                )
-            )
-        }
+        return _usages.getOrThrow().publishableUsages() +
+                includeExtraUsagesFrom.usages +
+                uklibUsages.getOrThrow().toSet()
     }
 
     val publicationDelegate: MavenPublication? get() = project.kotlinMultiplatformRootPublication.lenient.getOrNull()
@@ -188,6 +156,8 @@ class DefaultKotlinUsageContext(
     private val kotlinTarget: KotlinTarget get() = compilation.target
     private val project: Project get() = kotlinTarget.project
 
+    internal val additionalCapabilities: MutableSet<Capability> = mutableSetOf()
+
     override fun getName(): String = dependencyConfigurationName
 
     private val configuration: Configuration
@@ -224,7 +194,7 @@ class DefaultKotlinUsageContext(
         return result
     }
 
-    override fun getCapabilities(): Set<Capability> = emptySet()
+    override fun getCapabilities(): Set<Capability> = additionalCapabilities
 
     override fun getGlobalExcludes(): Set<ExcludeRule> = emptySet()
 

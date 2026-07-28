@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -36,9 +37,11 @@ abstract class KotlinNativeTarget @Inject constructor(
         KotlinPlatformType.native
     ) {
 
-    override val isStoredInKotlinArchive: Boolean = true
-    override val requiresPlatformComponent: Boolean = !isStoredInKotlinArchive
-    override val requiresPlatformComponentCompatibilityCapability: Boolean = isStoredInKotlinArchive
+    override val isStoredInKotlinArchive: Provider<Boolean> = project.kotlinPropertiesProvider
+        .useLegacyMultiplatformPublicationLayout
+        .map { useLegacyPublicationLayout -> !useLegacyPublicationLayout }
+    override val requiresPlatformComponent: Provider<Boolean> = isStoredInKotlinArchive.map { isStored -> !isStored }
+    override val requiresPlatformComponentCompatibilityCapability: Provider<Boolean> = isStoredInKotlinArchive
 
     override val pathInKotlinArchive: String
         get() = targetName
@@ -170,7 +173,8 @@ internal suspend fun getHostSpecificSourceSets(project: Project): Set<KotlinSour
         val nativeCompilations = it.internal.awaitPlatformCompilations()
             .filterIsInstance<KotlinNativeCompilation>()
 
-        if (nativeCompilations.any { compilation -> compilation.target.isStoredInKotlinArchive }) {
+        // Safe to query because awaitPlatformCompilations waits until AfterFinaliseRefinesEdges.
+        if (nativeCompilations.any { compilation -> compilation.target.isStoredInKotlinArchive.get() }) {
             return@filterTo false
         }
 

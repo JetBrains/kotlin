@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -122,26 +123,27 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
             }
         }
         .all { kotlinTarget ->
-            /** Publication for [KotlinMetadataTarget] is created in [createRootPublication] */
-            if (kotlinTarget is KotlinMetadataTarget) return@all
             when (kotlinTarget) {
                 // Android targets have their variants created in afterEvaluate; TODO handle this better?
                 is KotlinAndroidTarget -> project.whenEvaluated {
                     kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
                 }
-                is KotlinNativeTarget -> {
-                    project.launch {
+                // we need to finalize dsl to read correct value of requiresPlatformComponent
+                else -> project.launchInRequiredStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
+                    if (kotlinTarget is KotlinNativeTarget) {
                         val crossCompilationSupported = kotlinTarget.crossCompilationOnCurrentHostSupported.await()
-                        if (!crossCompilationSupported) return@launch
-                        kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
+                        if (!crossCompilationSupported) return@launchInRequiredStage
                     }
+                    kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
                 }
-                else -> kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
             }
         }
 }
 
 private fun InternalKotlinTarget.createTargetSpecificMavenPublications(publications: PublicationContainer) {
+    if (this is KotlinTargetWithKotlinArchiveSupport && !requiresPlatformComponent.get()) {
+        return
+    }
     kotlinComponents
         .filter { kotlinComponent -> kotlinComponent.publishableOnCurrentHost }
         .forEach { kotlinComponent ->

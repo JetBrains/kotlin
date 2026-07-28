@@ -9,11 +9,13 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKlibsInKotlinArchiveSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
@@ -62,9 +64,11 @@ internal constructor(
     KotlinWasmSubTargetContainerDsl,
     KotlinTargetWithKlibsInKotlinArchiveSupport {
 
-    override val isStoredInKotlinArchive: Boolean = true
-    override val requiresPlatformComponent: Boolean = !isStoredInKotlinArchive
-    override val requiresPlatformComponentCompatibilityCapability: Boolean = isStoredInKotlinArchive
+    override val isStoredInKotlinArchive: Provider<Boolean> = project.kotlinPropertiesProvider
+        .useLegacyMultiplatformPublicationLayout
+        .map { useLegacyPublicationLayout -> !useLegacyPublicationLayout }
+    override val requiresPlatformComponent: Provider<Boolean> = isStoredInKotlinArchive.map { isStored -> !isStored }
+    override val requiresPlatformComponentCompatibilityCapability: Provider<Boolean> = isStoredInKotlinArchive
 
     override val pathInKotlinArchive: String
         get() = targetName

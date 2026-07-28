@@ -41,7 +41,8 @@ internal fun TaskProvider<PackKotlinArchiveTask>.putKlib(pathProvider: Provider<
 
 internal fun TaskProvider<PackKotlinArchiveTask>.fillKotlinArchiveTargetContent(target: KotlinTarget) {
     if (target !is KotlinTargetWithKlibsInKotlinArchiveSupport) return
-    if (!target.isStoredInKotlinArchive) return
+    // Safe to query because SetupKarArtifactAction invokes this only after AfterFinaliseCompilations.
+    if (!target.isStoredInKotlinArchive.get()) return
     val artifactsTasks = when (target) {
         is KotlinNativeTarget -> {
             val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
