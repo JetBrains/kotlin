@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 sealed interface InitializationCycleAccessResult {
     val poisonsInitializers: Boolean get() = false
@@ -129,7 +130,9 @@ data class PropertyIndex(
     }
 
     val name: FqName
-        get() = symbol.owner.callableId.classId?.relativeClassName?.child(symbol.owner.name) ?: FqName.topLevel(symbol.owner.name)
+        get() = symbol.owner.parentClassOrNull?.let {
+            (it.classId?.relativeClassName ?: FqName.topLevel(Name.special("<anonymous>"))).child(symbol.owner.name)
+        } ?: FqName.topLevel(symbol.owner.name)
 
     override fun toString(): String =
         "${symbol.owner.callableId.classId?.relativeClassName?.asString() ?: ""}.${symbol.owner.name.asString()}"
