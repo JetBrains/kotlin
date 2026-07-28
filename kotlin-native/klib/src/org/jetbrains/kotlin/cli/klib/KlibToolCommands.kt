@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.klib
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.DumpIrReferenceRenderingAsSignatureStrategy
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
@@ -16,11 +15,12 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.cli.klib.KlibToolArgumentsParserResult.ParsedArguments
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
+import org.jetbrains.kotlin.ir.types.defaultTypeWithoutArguments
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.library.components.bitcode
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -30,13 +30,10 @@ import org.jetbrains.kotlin.library.components.inlinableFunctionsIr
 import org.jetbrains.kotlin.library.components.ir
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
-import org.jetbrains.kotlin.library.hasAbi
-import org.jetbrains.kotlin.library.loadSizeInfo
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
-import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.error.ErrorModuleDescriptor
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -156,7 +153,6 @@ internal class Info(output: KlibToolOutput, args: ParsedArguments) : KlibToolCom
 }
 
 internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolCommand(output, args) {
-    @OptIn(ObsoleteDescriptorBasedAPI::class, K1Deprecation::class)
     override fun execute() {
         if (!checkLibraryHasIr(args.library)) return
 
@@ -188,7 +184,6 @@ internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolC
 }
 
 internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: ParsedArguments) : KlibToolCommand(output, args) {
-    @OptIn(ObsoleteDescriptorBasedAPI::class, K1Deprecation::class)
     override fun execute() {
         if (!checkLibraryHasIr(args.library)) return
 
@@ -203,20 +198,17 @@ internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: ParsedArgu
             output.logWarning("using a non-default signature version in \"dump-ir-inlinable-functions\" is not supported yet")
         }
 
-        val module = ModuleDescriptorLoader(output).load(args.library) ?: return
-
         val idSignaturer = KonanIdSignaturer(KonanManglerDesc)
         val symbolTable = SymbolTable(idSignaturer, IrFactoryImpl)
-        val typeTranslator = TypeTranslatorImpl(symbolTable, ModuleDescriptorLoader.languageVersionSettings, module)
-
-        // TODO(KT-87732): Do not use `IrBuiltInsOverDescriptors` here.
-        val irBuiltIns = IrBuiltInsOverDescriptors(module.builtIns, typeTranslator, symbolTable)
 
         val moduleDeserializer = NonLinkingIrInlineFunctionDeserializer.ModuleDeserializer(
                 inlinableFunctionsIr = inlinableFunctionsIr,
                 detachedSymbolTable = symbolTable,
                 irInterner = IrInterningService(),
-                irBuiltIns = irBuiltIns,
+                irFactory = symbolTable.irFactory,
+                anyNType = symbolTable.referenceClass(StandardClassIds.Any.toIdSignature()).defaultTypeWithoutArguments.makeNullable(),
+                unitType = symbolTable.referenceClass(StandardClassIds.Unit.toIdSignature()).defaultTypeWithoutArguments,
+                nothingType = symbolTable.referenceClass(StandardClassIds.Nothing.toIdSignature()).defaultTypeWithoutArguments,
         )
 
         val dummyIrFile = IrFileImpl(
