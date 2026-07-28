@@ -701,7 +701,11 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             else -> return
         }
 
-        val nameInSingularForm = (singular.singularName ?: Singulars.autoSingularize(item.name.identifier))?.let(Name::identifier) ?: return
+        // Early return and report `CANNOT_SINGULARIZE_NAME` if explicit name isn't specified and singularization fails
+        val nameInSingularForm = (singular.singularName
+            ?: runIf(session.lombokService.config.singularAuto) { Singulars.autoSingularize(item.name.identifier) })
+            ?.let(Name::identifier)
+            ?: return
 
         val valueParameters: List<ConeLombokValueParameter>
         val collectionType: SingularAddAllParameterType
@@ -748,10 +752,12 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 typeArgumentRefs = listOf(rowKeyTypeRef, columnKeyTypeRef, valueType)
             }
 
-            else -> return
+            else -> return // Early return and report `UNSUPPORTED_SINGULAR_TYPE`
         }
 
         val builderType = getBuilderType(builderSymbol)?.toFirResolvedTypeRef() ?: return
+
+        // Early return in case of `AccessLevel.NONE` is used (it means not generating anything at all)
         val visibility = builder.builderFunctionsVisibility ?: return
 
         addIfNonClashing(nameInSingularForm.toMethodName(builder), existingFunctionNames) {

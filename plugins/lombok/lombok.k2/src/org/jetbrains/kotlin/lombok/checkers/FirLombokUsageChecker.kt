@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
+import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.FlagUsageValue
 import org.jetbrains.kotlin.lombok.config.lombokService
@@ -50,6 +52,17 @@ object FirLombokUsageChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
             lombokService.config.equalsAndHashCodeFlagUsage?.let { equalsAndHashCodeFlagUsage ->
                 lombokService.getEqualsAndHashCode(declaration.symbol)?.let { equalsAndHashCode ->
                     add(equalsAndHashCode to equalsAndHashCodeFlagUsage)
+                }
+            }
+            lombokService.config.builderFlagUsage?.let { builderFlagUsage ->
+                lombokService.getBuilder(declaration.symbol)?.let { builder ->
+                    add(builder to builderFlagUsage)
+                }
+            }
+            lombokService.config.superBuilderFlagUsage?.let { superBuilderFlagUsage ->
+                declaration.annotations.getAnnotationByClassId(LombokNames.SUPER_BUILDER_ID, context.session)?.let { rawAnnotation ->
+                    val superBuilder = ConeLombokAnnotations.SuperBuilder.extract(rawAnnotation, context.session)
+                    add(superBuilder to superBuilderFlagUsage)
                 }
             }
         }
