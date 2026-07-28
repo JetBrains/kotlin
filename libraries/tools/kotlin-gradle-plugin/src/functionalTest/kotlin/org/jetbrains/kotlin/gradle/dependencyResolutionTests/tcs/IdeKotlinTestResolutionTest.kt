@@ -24,7 +24,6 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.test.*
 
-@Suppress("FunctionName")
 class IdeKotlinTestResolutionTest {
     private fun expectedKotlinTestDependenciesInTestSourceSets(kgpVersion: String) = mapOf(
         "commonTest" to listOf(

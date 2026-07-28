@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import kotlin.test.Test
 
-@Suppress("FunctionName")
 class PublishAllAndroidLibraryVariantsDeprecatedTest {
 
     private val project = buildProjectWithMPP {
