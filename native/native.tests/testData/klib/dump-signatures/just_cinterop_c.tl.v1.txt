@@ -7,4 +7,13 @@ just_cinterop_c/do_signed_char|-3061129409597428672[100]
 just_cinterop_c/do_void_ptr|6411325604211317372[100]
 just_cinterop_c/my_struct|null[100]
 
-// Imported signatures: 0
+// Imported signatures: 9
+kotlin.native.internal/NativePtr|null[0]
+kotlin/Byte|null[0]
+kotlin/Int|null[0]
+kotlin/Short|null[0]
+kotlinx.cinterop/CPointed|null[0]
+kotlinx.cinterop/CPointer|null[0]
+kotlinx.cinterop/CStructVar|null[0]
+kotlinx.cinterop/CValuesRef|null[0]
+kotlinx.cinterop/CValue|null[0]

@@ -18,4 +18,14 @@ just_cinterop_c/my_struct.s.<set-s>|2278768972836500772[100]
 just_cinterop_c/my_struct.s|7217541905509134881[100]
 just_cinterop_c/my_struct|null[100]
 
-// Imported signatures: 0
+// Imported signatures: 10
+kotlin.native.internal/NativePtr|null[0]
+kotlin/Byte|null[0]
+kotlin/Int|null[0]
+kotlin/Short|null[0]
+kotlinx.cinterop/CPointed|null[0]
+kotlinx.cinterop/CPointer|null[0]
+kotlinx.cinterop/CStructVar.Type|null[0]
+kotlinx.cinterop/CStructVar|null[0]
+kotlinx.cinterop/CValuesRef|null[0]
+kotlinx.cinterop/CValue|null[0]
