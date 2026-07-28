@@ -1,3 +1,17 @@
+// FILE: simpleObject.java
+package test;
+
+class Test {
+
+    public static void main(String[] args) {
+        A.test1();
+        A.test2();
+        A.test4("");
+    }
+
+}
+
+// FILE: simpleObject.kt
 package test
 
 object A {
