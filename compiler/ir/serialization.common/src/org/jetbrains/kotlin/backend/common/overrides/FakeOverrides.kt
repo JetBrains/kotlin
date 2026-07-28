@@ -194,11 +194,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         val signature = composeSignature(function, manglerCompatibleMode)
         val symbol = getFunctionFakeOverrideSymbol(file, signature)
 
-        if (!symbol.isBound
-            || symbol.owner.let { boundFunction ->
-                boundFunction.isSuspend == function.isSuspend && !boundFunction.isInline && !function.isInline
-            }
-        ) {
+        if (!symbol.isBound) {
             return signature to symbol
         }
 
@@ -226,12 +222,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         val signature = composeSignature(property, manglerCompatibleMode)
         val symbol = getPropertyFakeOverrideSymbol(file, signature)
 
-        if (!symbol.isBound
-            || symbol.owner.let { boundProperty ->
-                boundProperty.getter?.isInline != true && boundProperty.setter?.isInline != true
-                        && property.getter?.isInline != true && property.setter?.isInline != true
-            }
-        ) {
+        if (!symbol.isBound) {
             return signature to symbol
         }
 
