@@ -211,17 +211,25 @@ class IrFakeOverrideBuilder(
                 checkIsInlineFlag = true,
             )
             if (overridability.overridable) {
-                overridden += fromSupertype
-                bound += fromSupertype
+                if (!DescriptorVisibilities.isPrivate(fromCurrent.visibility)) {
+                    overridden += fromSupertype
+                    bound += fromSupertype
+                } else {
+                    // Because of binary incompatible changes, it's possible to have private member with the same shape as one of the
+                    // super methods. In that case it should not override, but rather "shadow" it instead.
+                    if (strategy.createFakeOverridesForInvisibleMembers) {
+                        // Do nothing, treat [fromCurrent] as not eligible for overriding.
+                        // Note that if no proper candidate for overriding is found, a fake override may be created, which is likely
+                        // have the same signature as [fromCurrent]. Klib-based backends are able to handle such a clash.
+                    } else {
+                        // Don't mark as overridden but mark as bound, to prevent creation of a fake override.
+                        bound += fromSupertype
+                    }
+                }
             }
         }
 
-        // because of binary incompatible changes, it's possible to have private member colliding with fake override
-        // In that case we shouldn't generate fake override, but also shouldn't mark them as overridden
-        if (!DescriptorVisibilities.isPrivate(fromCurrent.visibility)) {
-            fromCurrent.overriddenSymbols = overridden.memoryOptimizedMap { it.original.symbol }
-        }
-
+        fromCurrent.overriddenSymbols = overridden.memoryOptimizedMap { it.original.symbol }
         return bound
     }
 
