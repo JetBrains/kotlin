@@ -11,6 +11,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExte
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.enableMppResourcesPublication
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.util.propertiesExtension
 import kotlin.test.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -101,6 +103,43 @@ class KotlinTargetVariantResourcesPublicationTests {
             project.configurations.findByName(
                 project.multiplatformExtension.linuxX64().resourcesElementsConfigurationName
             )?.outgoing?.artifacts?.map { it.file },
+        )
+    }
+
+    @Test
+    fun `test resources configuration - outputs only kar - when target is stored in kotlin archive`() {
+        val project = buildProjectWithMPP(
+            preApplyCode = {
+                enableMppResourcesPublication(true)
+                propertiesExtension.set(
+                    PropertiesProvider.PropertyNames.KOTLIN_PUBLICATION_MULTIPLATFORM_USE_LEGACY_PUBLICATION_LAYOUT,
+                    "false",
+                )
+            }
+        ) {
+            kotlin {
+                linuxX64()
+            }
+        }.evaluate()
+        val target = project.multiplatformExtension.linuxX64()
+
+        project.publishFakeResources(target)
+
+        val publishedResourcesConfigurationName = target.resourcesElementsConfigurationName + "-published"
+        assertEquals(
+            publishedResourcesConfigurationName,
+            target.internal.kotlinComponents
+                .flatMap { component -> component.internal.usages }
+                .single { usage -> usage.dependencyConfigurationName.contains("resourcesElements", ignoreCase = true) }
+                .dependencyConfigurationName,
+        )
+        assertEquals(
+            listOf("kar.xz"),
+            project.configurations.getByName(publishedResourcesConfigurationName).outgoing.artifacts.map { it.extension },
+        )
+        assertEquals(
+            emptyList(),
+            project.configurations.getByName(target.resourcesElementsConfigurationName).outgoing.artifacts.toList(),
         )
     }
 

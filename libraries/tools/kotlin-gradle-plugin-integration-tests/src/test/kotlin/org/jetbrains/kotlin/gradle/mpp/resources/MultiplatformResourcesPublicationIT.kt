@@ -1,12 +1,26 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
 package org.jetbrains.kotlin.gradle.mpp.resources
 
+import org.apache.commons.compress.compressors.xz.XZCompressorInputStream
+import org.gradle.api.tasks.Copy
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.mpp.publication.ENABLE_KAR_PUBLICATION
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectoriesIgnoringDotFiles
 import org.junit.jupiter.api.DisplayName
+import java.io.File
 import java.nio.file.Path
+import java.util.zip.ZipFile
 import kotlin.io.path.name
+import kotlin.io.path.outputStream
 import kotlin.io.path.writeText
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @MppGradlePluginTests
 @DisplayName("Test multiplatform resources publication")
@@ -53,6 +67,80 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
             publishedArchive = "repo/test/publication-jvm/1.0/publication-jvm-1.0.jar",
             referenceName = "jvm",
         )
+    }
+
+    @DisplayName("Multiplatform resources are stored unpacked in Kotlin Archive")
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_14)
+    fun testResourcesInKotlinArchive(
+        gradleVersion: GradleVersion,
+    ) {
+        val producer = resourcesProducerProject(
+            gradleVersion = gradleVersion,
+            enableKarPublication = true,
+        )
+
+        producer.build(":publishAllPublicationsToMavenRepository")
+
+        val compressedKar = producer.projectPath.resolve("repo/test/publication/1.0/publication-1.0.kar.xz")
+        val kar = producer.projectPath.resolve("publication-1.0.kar")
+        compressedKar.toFile().inputStream().buffered().use { fileInput ->
+            XZCompressorInputStream(fileInput).use { xzInput ->
+                kar.outputStream().buffered().use { output -> xzInput.copyTo(output) }
+            }
+        }
+
+        ZipFile(kar.toFile()).use { archive ->
+            val entries = archive.entries().asSequence().map { it.name }.toSet()
+            assertTrue("resources/linuxX64/embed/publication/onlyInLinuxX64" in entries)
+            assertTrue("resources/js/embed/publication/onlyInJs" in entries)
+            assertTrue("resources/wasmJs/embed/publication/onlyInWasmJs" in entries)
+            assertTrue("resources/wasmWasi/embed/publication/onlyInWasmWasi" in entries)
+            assertFalse(entries.any { it.startsWith("resources/") && it.endsWith(".zip") })
+        }
+
+        val repositoryPath = producer.projectPath.resolve("repo").toString()
+        project(
+            projectName = "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                freeArgs = defaultBuildOptions.freeArgs + ENABLE_KAR_PUBLICATION,
+            ),
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            transferDependencyResolutionRepositoriesIntoProjectRepositories()
+            settingsBuildScriptInjection {
+                settings.dependencyResolutionManagement.repositories.maven { repository ->
+                    repository.url = File(repositoryPath).toURI()
+                }
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    val publication = project.extraProperties.get(
+                        KotlinTargetResourcesPublication.EXTENSION_NAME
+                    ) as KotlinTargetResourcesPublication
+                    sourceSets.getByName("commonMain").dependencies {
+                        implementation("test:publication:1.0")
+                    }
+                    listOf(linuxX64(), js(), wasmJs(), wasmWasi()).forEach { target ->
+                        val resolvedResources = publication.resolveResources(target)
+                        project.tasks.register("${target.name}ResolveResources", Copy::class.java) { copy ->
+                            copy.from(resolvedResources)
+                            copy.into(project.layout.buildDirectory.dir("${target.name}ResolvedResources"))
+                        }
+                    }
+                }
+            }
+
+            listOf("linuxX64", "js", "wasmJs", "wasmWasi").forEach { targetName ->
+                build(":${targetName}ResolveResources")
+                assertEqualDirectoriesIgnoringDotFiles(
+                    producer.projectPath.resolve("reference/$targetName").toFile(),
+                    projectPath.resolve("build/${targetName}ResolvedResources").toFile(),
+                    forgiveOtherExtraFiles = false,
+                )
+            }
+        }
     }
 
     @DisplayName("Multiplatform resources publication for Native target")

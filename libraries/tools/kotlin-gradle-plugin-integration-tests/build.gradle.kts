@@ -92,6 +92,7 @@ dependencies {
     testImplementation(project(":compiler:build-tools:kotlin-build-tools-api"))
     testRuntimeOnly(project(":compiler:build-tools:kotlin-build-tools-impl"))
     testImplementation(project(":kotlin-compiler-embeddable"))
+    testRuntimeOnly(libs.org.tukaani.xz)
     testImplementation(intellijJDom())
     testImplementation(intellijPlatformUtil())
     testImplementation(project(":compiler:cli-base"))
