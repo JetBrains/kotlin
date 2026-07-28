@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.kotlinp.jvm.test.CompareMetadataHandler
 import org.jetbrains.kotlin.plugin.sandbox.PluginSandboxDirectives.DONT_LOAD_IN_SYNTHETIC_MODULES
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.test.configuration.setupJvmPipelineSteps
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_FIR_DUMP_HANDLER
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
@@ -53,9 +55,9 @@ open class AbstractFirJvmLightTreePluginBlackBoxCodegenWithSeparateKmpCompilatio
     }
 }
 
-open class AbstractJsLightTreePluginBlackBoxCodegenTest : AbstractJsTest(
+open class AbstractJsLightTreePluginBlackBoxCodegenTest(testGroupOutputDirPrefix: String = "pluginSandboxBox/") : AbstractJsTest(
     pathToTestDir = "plugins/plugin-sandbox/testData/box",
-    testGroupOutputDirPrefix = "pluginSandboxBox/",
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix,
     parser = FirParser.LightTree
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -63,7 +65,18 @@ open class AbstractJsLightTreePluginBlackBoxCodegenTest : AbstractJsTest(
         builder.commonFirWithPluginFrontendConfiguration(dumpFir = false)
         builder.defaultDirectives {
             +DISABLE_FIR_DUMP_HANDLER
+            +JsEnvironmentConfigurationDirectives.NO_COMMON_FILES
         }
+        builder.configureIrHandlersStep { useHandlers(::IrTextDumpHandler) }
+    }
+}
+
+open class AbstractJsLightTreePluginBlackBoxCodegenTestWithoutPlugins : AbstractJsLightTreePluginBlackBoxCodegenTest(
+    testGroupOutputDirPrefix = "pluginSandboxBoxWithoutPlugins/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.commonWithoutPluginConfiguration()
     }
 }
 
