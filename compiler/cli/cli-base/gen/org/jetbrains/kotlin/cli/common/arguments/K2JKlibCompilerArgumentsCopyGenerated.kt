@@ -21,6 +21,7 @@ fun copyK2JKlibCompilerArguments(from: K2JKlibCompilerArguments, to: K2JKlibComp
     to.jspecifyAnnotations = from.jspecifyAnnotations
     to.jsr305 = from.jsr305?.copyOf()
     to.jvmDefault = from.jvmDefault
+    to.jvmTarget = from.jvmTarget
     to.klibLibraries = from.klibLibraries
     to.klibZipFileAccessorCacheLimit = from.klibZipFileAccessorCacheLimit
     to.moduleName = from.moduleName

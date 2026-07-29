@@ -166,6 +166,20 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
                     )
                 }
             }
+
+            arguments.jvmTarget?.let { jvmTargetValue ->
+                val jvmTarget = JvmTarget.fromString(jvmTargetValue)
+                if (jvmTarget != null) {
+                    put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
+                } else {
+                    val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                    messageCollector.report(
+                        ERROR,
+                        "Unknown JVM target version: $jvmTargetValue\n" +
+                                "Supported versions: ${JvmTarget.supportedValues().joinToString { it.description }}"
+                    )
+                }
+            }
         }
 
         val moduleName = arguments.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
