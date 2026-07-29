@@ -11,9 +11,12 @@ package org.jetbrains.kotlin.test.grouping
  */
 abstract class GroupedTestsExportedEntryPointGenerator {
     /**
-     * Emits the target-specific exported entry point that having target's export annotation, to be invoked by the executor.
-     * It must call [runAllFunctionName] (the generated function that runs and reports every test).
-     * Please append the output of `generateExportedEntryPointSource()` (as the driver's entry point) to the generated launcher source.
+     * Emits the target-specific exported entry point, carrying that target's export annotation — `@JsExport` on
+     * wasm-js, `@kotlin.wasm.WasmExport` on wasm-wasi — so that the executor can invoke it.
+     *
+     * The emitted function must call [runAllFunctionName], the generated function that runs and reports every test.
+     * Its source is appended to the generated launcher by
+     * [GroupedTestsResultProtocol.generateResultCollectingRunnerSource], which supplies [runAllFunctionName].
      */
     abstract fun generateExportedEntryPointSource(runAllFunctionName: String): String
 }

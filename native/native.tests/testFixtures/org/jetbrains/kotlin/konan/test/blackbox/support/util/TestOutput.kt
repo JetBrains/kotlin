@@ -63,6 +63,8 @@ private class TCTestMessageParserCallback : ServiceMessageParserCallback {
     private var afterMessage = false
     private var state: State = State.Begin
 
+    // Sets, since the shared TestReport holds `Set`s: a test name that the TC output reports twice collapses into
+    // one entry. That is invisible to the consumers, which only filter/any/isEmpty over these, never count them.
     val passedTests = mutableSetOf<TestName>()
     val failedTests = mutableSetOf<TestName>()
     val ignoredTests = mutableSetOf<TestName>()

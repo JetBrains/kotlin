@@ -11,12 +11,10 @@ import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunnerBase
 
 /**
  * wasm-js flavor of [GroupedTestsExportedEntryPointGenerator]: the batch driver is reached through a `@JsExport`ed
- * `runGroupedTests()` function (the JS glue in `WasmBoxRunnerBase` calls `jsModule.runGroupedTests()`).
+ * `runGroupedTests()` function, which the `test.mjs` glue written by [WasmBoxRunnerBase.saveAdditionalFilesAndRun]
+ * calls as `jsModule.runGroupedTests()`.
  */
 object WasmJsGroupedTestsExportedEntryPointGenerator : GroupedTestsExportedEntryPointGenerator() {
-    /**
-     * Generates exported `runGroupedTests()` to be invoked by [WasmBoxRunnerBase.saveAdditionalFilesAndRun]
-     */
     override fun generateExportedEntryPointSource(runAllFunctionName: String): String =
         """
         @JsExport
@@ -28,13 +26,11 @@ object WasmJsGroupedTestsExportedEntryPointGenerator : GroupedTestsExportedEntry
 
 /**
  * wasm-wasi flavor of [GroupedTestsExportedEntryPointGenerator]: the batch driver is reached through a
- * `@kotlin.wasm.WasmExport`ed `startTest()` function, which the standalone WASI VMs (WasmEdge/Wasmtime) invoke
- * directly and the Node.js WASI launcher calls via `jsModule.startTest()`.
+ * `@kotlin.wasm.WasmExport`ed `startTest()` function. The standalone WASI VMs (WasmEdge/Wasmtime) invoke that
+ * export directly, while under Node.js the `test.mjs` written by [WasmWasiFolderGroupingStageBoxRunner] calls
+ * `jsModule.startTest()`.
  */
 object WasmWasiGroupedTestsExportedEntryPointGenerator : GroupedTestsExportedEntryPointGenerator() {
-    /**
-     * Generates exported `startTest()` to be invoked with `startUnitTestsWasiScript()` in [WasmWasiFolderGroupingStageBoxRunner]
-     */
     override fun generateExportedEntryPointSource(runAllFunctionName: String): String =
         """
         @kotlin.wasm.WasmExport
