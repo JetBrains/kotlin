@@ -1,0 +1,50 @@
+FILE fqName:<root> fileName:/dataClassDeclaration.kt
+  CLASS CLASS name:User modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.User
+    PROPERTY name:name visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name> visibility:public modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.User
+        correspondingProperty: PROPERTY name:name visibility:public modality:FINAL [val]
+        BLOCK_BODY
+    PROPERTY name:age visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:age type:kotlin.Int visibility:private
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-age> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.User
+        correspondingProperty: PROPERTY name:age visibility:public modality:FINAL [var]
+        BLOCK_BODY
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-age> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.User
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY name:age visibility:public modality:FINAL [var]
+        BLOCK_BODY
+    CONSTRUCTOR visibility:public returnType:<root>.User [primary]
+      VALUE_PARAMETER kind:Regular name:name index:0 type:kotlin.String
+      VALUE_PARAMETER kind:Regular name:age index:1 type:kotlin.Int
+    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.User
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN returnType:kotlin.Int
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.User
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.User
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:component1 visibility:public modality:FINAL returnType:kotlin.String [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.User
+    FUN name:component2 visibility:public modality:FINAL returnType:kotlin.Int [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.User
+    FUN name:copy visibility:public modality:FINAL returnType:<root>.User
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.User
+      VALUE_PARAMETER kind:Regular name:name index:1 type:kotlin.String
+        EXPRESSION_BODY
+          CALL 'public final fun <get-name> (): kotlin.String declared in <root>.User' type=kotlin.String origin=GET_PROPERTY
+            ARG <this>: GET_VAR '<this>: <root>.User declared in <root>.User.copy' type=<root>.User origin=IMPLICIT_ARGUMENT
+      VALUE_PARAMETER kind:Regular name:age index:2 type:kotlin.Int
+        EXPRESSION_BODY
+          CALL 'public final fun <get-age> (): kotlin.Int declared in <root>.User' type=kotlin.Int origin=GET_PROPERTY
+            ARG <this>: GET_VAR '<this>: <root>.User declared in <root>.User.copy' type=<root>.User origin=IMPLICIT_ARGUMENT
