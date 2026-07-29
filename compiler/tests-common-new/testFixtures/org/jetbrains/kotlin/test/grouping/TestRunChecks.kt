@@ -30,7 +30,7 @@ object TestRunChecks {
     sealed interface Result {
         data object Passed : Result
 
-        data class Failed(val reason: String, val cause: Throwable? = null) : Result {
+        data class Failed(val reason: String) : Result {
             override fun toString(): String = reason
         }
     }
