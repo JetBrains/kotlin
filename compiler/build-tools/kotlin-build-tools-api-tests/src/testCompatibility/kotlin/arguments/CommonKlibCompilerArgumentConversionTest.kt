@@ -79,7 +79,7 @@ internal class CommonKlibCompilerArgumentConversionTest : BaseCompilationTest() 
         assumeArgumentSupported()
         for (value in argumentRawValues) {
             val arguments = buildArguments {
-                applyArgumentStrings(expectedArgumentStringsFor(value))
+                applyCommandLineArguments(expectedArgumentStringsFor(value))
             }
 
             assertEquals(value, getValueString(getArgument(arguments)))
@@ -91,7 +91,7 @@ internal class CommonKlibCompilerArgumentConversionTest : BaseCompilationTest() 
     fun <T> CommonKlibArgumentConfiguration<T>.testNoRawArgumentStrings() {
         assumeArgumentSupported()
         val arguments = buildArguments {
-            applyArgumentStrings(listOf())
+            applyCommandLineArguments(listOf())
         }
 
         assertEquals(
@@ -123,7 +123,7 @@ internal class CommonKlibCompilerArgumentConversionTest : BaseCompilationTest() 
                 val module = module("js-ic-basic-lib")
                 for (invalidValue in argumentConfig.invalidRawValues) {
                     module.compile(compilationConfigAction = {
-                        it.compilerArguments.applyArgumentStrings(argumentConfig.expectedArgumentStringsFor(invalidValue))
+                        it.compilerArguments.applyCommandLineArguments(argumentConfig.expectedArgumentStringsFor(invalidValue))
                     }) {
                         expectFail()
                         assertLogContainsPatterns(LogLevel.ERROR, Regex(".*${Regex.escape(invalidValue)}.*"))
@@ -135,7 +135,7 @@ internal class CommonKlibCompilerArgumentConversionTest : BaseCompilationTest() 
                 module.compile()
                 for (invalidValue in argumentConfig.invalidRawValues) {
                     module.link(compilationConfigAction = {
-                        it.compilerArguments.applyArgumentStrings(argumentConfig.expectedArgumentStringsFor(invalidValue))
+                        it.compilerArguments.applyCommandLineArguments(argumentConfig.expectedArgumentStringsFor(invalidValue))
                     }) {
                         expectFail()
                         assertLogContainsPatterns(LogLevel.ERROR, Regex(".*${Regex.escape(invalidValue)}.*"))
@@ -146,7 +146,7 @@ internal class CommonKlibCompilerArgumentConversionTest : BaseCompilationTest() 
                 val module = module("js-ic-basic-lib")
                 for (invalidValue in argumentConfig.invalidRawValues) {
                     module.compile(compilationConfigAction = {
-                        it.compilerArguments.applyArgumentStrings(argumentConfig.expectedArgumentStringsFor(invalidValue))
+                        it.compilerArguments.applyCommandLineArguments(argumentConfig.expectedArgumentStringsFor(invalidValue))
                     }) {
                         expectFail()
                         assertLogContainsPatterns(LogLevel.ERROR, Regex(".*${Regex.escape(invalidValue)}.*"))
@@ -158,7 +158,7 @@ internal class CommonKlibCompilerArgumentConversionTest : BaseCompilationTest() 
                 module.compile()
                 for (invalidValue in argumentConfig.invalidRawValues) {
                     module.link(compilationConfigAction = {
-                        it.compilerArguments.applyArgumentStrings(argumentConfig.expectedArgumentStringsFor(invalidValue))
+                        it.compilerArguments.applyCommandLineArguments(argumentConfig.expectedArgumentStringsFor(invalidValue))
                     }) {
                         expectFail()
                         assertLogContainsPatterns(LogLevel.ERROR, Regex(".*${Regex.escape(invalidValue)}.*"))

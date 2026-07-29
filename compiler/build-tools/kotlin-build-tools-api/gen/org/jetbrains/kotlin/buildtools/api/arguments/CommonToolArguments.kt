@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.buildtools.api.arguments
 import kotlin.Boolean
 import kotlin.Deprecated
 import kotlin.DeprecationLevel
+import kotlin.ReplaceWith
 import kotlin.String
 import kotlin.collections.List
 import kotlin.jvm.JvmField
@@ -92,6 +93,10 @@ public interface CommonToolArguments {
     public fun build(): CommonToolArguments
 
     /**
+     * Deprecated. Use applyCommandLineArguments instead.
+     *
+     * This method is unsafe to use - it wipes all options previously set on this instance to defaults before applying the passed [arguments].
+     *
      * Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
      *
      * When compiling with Kotlin compiler 2.4.20 and above, parsing errors are collected on this instance and reported as compilation errors when the compilation is executed.
@@ -99,7 +104,21 @@ public interface CommonToolArguments {
      *
      * @param arguments a list of arguments for the Kotlin CLI compiler
      */
+    @Deprecated(
+      "This method is deprecated. Use applyCommandLineArguments instead.",
+      ReplaceWith("applyCommandLineArguments(arguments)"),
+    )
     public fun applyArgumentStrings(arguments: List<String>)
+
+    /**
+     * Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
+     *
+     * When compiling with Kotlin compiler 2.4.20 and above, parsing errors are collected on this instance and reported as compilation errors when the compilation is executed.
+     * @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when compiling with Kotlin compiler below 2.4.20 and the `arguments` contain errors and cannot be parsed
+     *
+     * @param arguments a list of arguments for the Kotlin CLI compiler
+     */
+    public fun applyCommandLineArguments(arguments: List<String>)
   }
 
   public companion object {
