@@ -223,6 +223,9 @@ internal class PartiallyLinkedIrTreePatcher(
                 }
 
                 declaration.superTypes = declaration.superTypes.filter { /* filter unusable */ it.explore() == null }
+                if (declaration.superTypes.isEmpty() && !(declaration.symbol == irBuiltIns.anyClass || declaration.symbol == irBuiltIns.nothingClass)) {
+                    declaration.superTypes = listOf(irBuiltIns.anyType)
+                }
 
                 /**
                  * Remove the class in the following cases:
