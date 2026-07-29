@@ -248,7 +248,6 @@
 /compiler/tests-gen/ "Kotlin Compiler"
 /compiler/tests-java8/ "Kotlin JVM"
 /compiler/tests-mutes/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
-/compiler/test-security-manager/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 /compiler/tests-spec/ "Kotlin Frontend"
 /compiler/util/ "Kotlin Frontend"
 /compiler/util-io/ "Kotlin Common Backend"
@@ -494,7 +493,6 @@
 
 # Singular files
 /.gitattributes "Kotlin Build Infrastructure"
-/tests-permissions.template.policy "Kotlin Build Infrastructure"
 /ChangeLog.md "Kotlin Release"
 /CODE_OF_CONDUCT.md "Kotlin Build Infrastructure"
 /intellij.yaml "Kotlin Build Infrastructure"

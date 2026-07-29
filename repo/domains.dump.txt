@@ -38,7 +38,6 @@ Compiler:
  - compiler/test-infrastructure
  - compiler/test-infrastructure-utils
  - compiler/test-infrastructure-utils.common
- - compiler/test-security-manager
  - compiler/testData
  - compiler/testFixtures
  - compiler/testResources
@@ -320,7 +319,6 @@ Unknown:
  - spec-docs
  - test-instrumenter
  - tests
- - tests-permissions.template.policy
  - third-party
 
 BuildToolsApi, Compiler, Gradle:
