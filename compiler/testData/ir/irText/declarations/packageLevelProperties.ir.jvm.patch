@@ -1,5 +1,5 @@
 --- a/packageLevelProperties.ir.txt
-+++ b/packageLevelProperties.ir.jvm_ir.txt
++++ b/packageLevelProperties.ir.jvm.txt
 @@ -82,9 +82,9 @@
              ARG thisRef: CONST Null type=kotlin.Nothing? value=null
              ARG property: PROPERTY_REFERENCE 'public final test7: kotlin.Int declared in <root>' field=null getter='public final fun <get-test7> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE

@@ -1,0 +1,23 @@
+--- a/inlineableFunctionMultiModules.fir.txt
++++ b/inlineableFunctionMultiModules.withoutPlugin.fir.txt
+@@ -2,9 +2,9 @@
+ FILE: foo.kt
+     package p3
+
+-    @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() public final fun Foo(text: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|): R|kotlin/Unit| {
++    @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() public final fun Foo(text: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  () -> kotlin/Unit|): R|kotlin/Unit| {
+     }
+-    @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() public final fun FooReturn(): R|some/MyInlineableFunction0<kotlin/Unit>| {
++    @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() public final fun FooReturn(): R|() -> kotlin/Unit| {
+         ^FooReturn @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+             ^ Unit
+         }
+@@ -17,7 +17,7 @@
+             ^@Foo Unit
+         }
+         )
+-        R|p3/FooReturn|().R|SubstitutionOverride<some/MyInlineableFunction0.invoke: R|kotlin/Unit|>|()
++        R|p3/FooReturn|().R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+     }
+     public final fun box(): R|kotlin/String| {
+         ^box String(OK)

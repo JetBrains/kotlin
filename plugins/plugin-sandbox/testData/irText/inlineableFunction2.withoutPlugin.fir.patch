@@ -1,0 +1,24 @@
+--- a/inlineableFunction2.fir.txt
++++ b/inlineableFunction2.withoutPlugin.fir.txt
+@@ -1,10 +1,10 @@
+ FILE: inlineableFunction2.kt
+-    public final fun runInlineable(block: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|): R|kotlin/Unit| {
+-        R|<local>/block|.R|SubstitutionOverride<some/MyInlineableFunction0.invoke: R|kotlin/Unit|>|()
++    public final fun runInlineable(block: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  () -> kotlin/Unit|): R|kotlin/Unit| {
++        R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+     }
+     public final fun test(): R|kotlin/Int| {
+         lvar x: R|kotlin/Int| = Int(0)
+-        lval l: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>| = fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
++        lval l: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  () -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+              {
+                 lval <unary>: R|kotlin/Int| = R|<local>/x|
+                 R|<local>/x| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+@@ -13,7 +13,7 @@
+
+         }
+
+-        lval l2: R|some/MyInlineableFunction0<kotlin/Unit>| = @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
++        lval l2: R|() -> kotlin/Unit| = @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+             R|kotlin/io/println|(R|<local>/x|)
+         }

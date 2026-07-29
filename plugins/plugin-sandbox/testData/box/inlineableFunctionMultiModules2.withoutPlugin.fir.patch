@@ -1,0 +1,13 @@
+--- a/inlineableFunctionMultiModules2.fir.txt
++++ b/inlineableFunctionMultiModules2.withoutPlugin.fir.txt
+@@ -2,8 +2,8 @@
+ FILE: foo.kt
+     package p3
+
+-    public final fun setContent(content: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|): R|kotlin/Int| {
+-        R|<local>/content|.R|SubstitutionOverride<some/MyInlineableFunction0.invoke: R|kotlin/Unit|>|()
++    public final fun setContent(content: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  () -> kotlin/Unit|): R|kotlin/Int| {
++        R|<local>/content|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+         ^setContent Int(3)
+     }
+ Module: main

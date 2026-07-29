@@ -1,0 +1,18 @@
+--- a/nestedClassesWithSupertypesDependantOnAnnotationArgument.fir.txt
++++ b/nestedClassesWithSupertypesDependantOnAnnotationArgument.ll.fir.txt
+@@ -6,7 +6,7 @@
+
+     }
+     @R|org/jetbrains/kotlin/plugin/sandbox/AddNestedClassesBasedOnArgument|(kClass = <getClass>(Q|A|) [evaluated = <getClass>(Q|A|)]) public abstract interface Some : R|kotlin/Any| {
+-        public abstract interface Generated : R|A| {
++        public abstract interface Generated : R|kotlin/Any| {
+         }
+
+     }
+@@ -18,6 +18,6 @@
+
+         }
+
+-        ^box R|<local>/x|.R|/A.test|()
++        ^box R|<local>/x|.<Unresolved name: test>#()
+     }

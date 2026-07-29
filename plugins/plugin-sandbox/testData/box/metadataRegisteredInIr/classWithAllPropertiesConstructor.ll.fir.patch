@@ -1,0 +1,23 @@
+--- a/classWithAllPropertiesConstructor.fir.txt
++++ b/classWithAllPropertiesConstructor.ll.fir.txt
+@@ -66,15 +66,15 @@
+         }
+         ).R|kotlin/reflect/jvm/javaConstructor|<R|Derived|>!!
+         lval derived: R|Derived!| = R|<local>/constructor|.R|SubstitutionOverride<java/lang/reflect/Constructor.newInstance: R|Derived!|>|(vararg(R|/A.A|(String(a)), R|/B.B|(String(b)), R|/C.C|(String(c))))
+-        R|kotlin/with|<R|Derived!|, R|kotlin/Unit|>(R|<local>/derived|, <L> = with@fun R|Derived!|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+-            R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+-                (this@R|special/anonymous|, this@R|special/anonymous|).R|/Base.hasExtension|()
+-                context(this@R|special/anonymous|) this@R|special/anonymous|.R|/Base.hasContext|()
++        R|kotlin/with<CS errors: kotlin/with>#|<R|Derived!|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(R|<local>/derived|, <L> = with@fun R|Derived!|.<anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Inline, kind=EXACTLY_ONCE>  {
++            ^ R|kotlin/with<Inapplicable(INAPPLICABLE): kotlin/with>#|<R|kotlin/String|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): <ERROR TYPE REF: Unresolved name: hasContext> <inline=Inline, kind=EXACTLY_ONCE>  {
++                <Unresolved name: hasExtension>#()
++                ^ <Unresolved name: hasContext>#()
+             }
+             )
+         }
+         )
+-        lval outerRef: R|kotlin/reflect/KProperty1<Container<kotlin/String>, kotlin/String>| = Q|Container|<R|kotlin/String|>::R|SubstitutionOverride</Container.outerTypeProp: R|kotlin/String|>|
++        lval outerRef: R|kotlin/reflect/KProperty1<Container<kotlin/String>, kotlin/String>| = Q|Container|<R|kotlin/String|>::<Unresolved reference: outerTypeProp>#
+         when () {
+             !=(R|<local>/outerRef|.R|SubstitutionOverride<kotlin/reflect/KProperty1.name: R|kotlin/String|>|, String(outerTypeProp)) ->  {
+                 ^box String(FAIL outerTypeProp)

@@ -1,0 +1,316 @@
+--- a/classGeneratedAtIrLevel.fir.txt
++++ b/classGeneratedAtIrLevel.ll.fir.txt
+@@ -59,70 +59,70 @@
+ Module: b
+ FILE: main.kt
+     public final fun box(): R|kotlin/String| {
+-        lval plain: R|Plain| = R|/Plain.Plain|()
++        lval plain: <ERROR TYPE REF: Unresolved name: Plain> = <Unresolved name: Plain>#()
+         when () {
+-            !=(R|<local>/plain|.R|/Plain.x|, Int(42)) ->  {
+-                ^box <strcat>(String(FAIL plain.x: ), R|<local>/plain|.R|/Plain.x|)
++            !=(R|<local>/plain|.<Unresolved name: x>#, Int(42)) ->  {
++                ^box <strcat>(String(FAIL plain.x: ), R|<local>/plain|.<Unresolved name: x>#)
+             }
+         }
+
+         when () {
+-            !=(R|<local>/plain|.R|/Plain.foo|(), String(ok)) ->  {
+-                ^box <strcat>(String(FAIL plain.foo: ), R|<local>/plain|.R|/Plain.foo|())
++            !=(R|<local>/plain|.<Unresolved name: foo>#(), String(ok)) ->  {
++                ^box <strcat>(String(FAIL plain.foo: ), R|<local>/plain|.<Unresolved name: foo>#())
+             }
+         }
+
+-        lval generic: R|WithGeneric<kotlin/String>| = R|/WithGeneric.WithGeneric|<R|kotlin/String|>()
++        lval generic: <ERROR TYPE REF: Unresolved name: WithGeneric> = <Unresolved name: WithGeneric>#<R|kotlin/String|>()
+         when () {
+-            !=(R|<local>/generic|.R|SubstitutionOverride</WithGeneric.x: R|kotlin/Int|>|, Int(42)) ->  {
+-                ^box <strcat>(String(FAIL generic.x: ), R|<local>/generic|.R|SubstitutionOverride</WithGeneric.x: R|kotlin/Int|>|)
++            !=(R|<local>/generic|.<Unresolved name: x>#, Int(42)) ->  {
++                ^box <strcat>(String(FAIL generic.x: ), R|<local>/generic|.<Unresolved name: x>#)
+             }
+         }
+
+         when () {
+-            !=(R|<local>/generic|.R|SubstitutionOverride</WithGeneric.foo: R|kotlin/String|>|(), String(ok)) ->  {
+-                ^box <strcat>(String(FAIL generic.foo: ), R|<local>/generic|.R|SubstitutionOverride</WithGeneric.foo: R|kotlin/String|>|())
++            !=(R|<local>/generic|.<Unresolved name: foo>#(), String(ok)) ->  {
++                ^box <strcat>(String(FAIL generic.foo: ), R|<local>/generic|.<Unresolved name: foo>#())
+             }
+         }
+
+-        lval es: R|ExtendsSource| = R|/ExtendsSource.ExtendsSource|()
++        lval es: <ERROR TYPE REF: Unresolved name: ExtendsSource> = <Unresolved name: ExtendsSource>#()
+         when () {
+-            !=(R|<local>/es|.R|/ExtendsSource.x|, Int(42)) ->  {
+-                ^box <strcat>(String(FAIL es.x: ), R|<local>/es|.R|/ExtendsSource.x|)
++            !=(R|<local>/es|.<Unresolved name: x>#, Int(42)) ->  {
++                ^box <strcat>(String(FAIL es.x: ), R|<local>/es|.<Unresolved name: x>#)
+             }
+         }
+
+         when () {
+-            !=(R|<local>/es|.R|/ExtendsSource.foo|(), String(ok)) ->  {
+-                ^box <strcat>(String(FAIL es.foo: ), R|<local>/es|.R|/ExtendsSource.foo|())
++            !=(R|<local>/es|.<Unresolved name: foo>#(), String(ok)) ->  {
++                ^box <strcat>(String(FAIL es.foo: ), R|<local>/es|.<Unresolved name: foo>#())
+             }
+         }
+
+         when () {
+-            !=(R|<local>/es|.R|/SourceBase.srcField|, String(src)) ->  {
+-                ^box <strcat>(String(FAIL es.srcField (inherited from source): ), R|<local>/es|.R|/SourceBase.srcField|)
++            !=(R|<local>/es|.<Unresolved name: srcField>#, String(src)) ->  {
++                ^box <strcat>(String(FAIL es.srcField (inherited from source): ), R|<local>/es|.<Unresolved name: srcField>#)
+             }
+         }
+
+-        lval ep: R|ExtendsPlain| = R|/ExtendsPlain.ExtendsPlain|()
++        lval ep: <ERROR TYPE REF: Unresolved name: ExtendsPlain> = <Unresolved name: ExtendsPlain>#()
+         when () {
+-            !=(R|<local>/ep|.R|/Plain.x|, Int(42)) ->  {
+-                ^box <strcat>(String(FAIL ep.x (inherited from Plain): ), R|<local>/ep|.R|/Plain.x|)
++            !=(R|<local>/ep|.<Unresolved name: x>#, Int(42)) ->  {
++                ^box <strcat>(String(FAIL ep.x (inherited from Plain): ), R|<local>/ep|.<Unresolved name: x>#)
+             }
+         }
+
+         when () {
+-            !=(R|<local>/ep|.R|/Plain.foo|(), String(ok)) ->  {
+-                ^box <strcat>(String(FAIL ep.foo (inherited from Plain): ), R|<local>/ep|.R|/Plain.foo|())
++            !=(R|<local>/ep|.<Unresolved name: foo>#(), String(ok)) ->  {
++                ^box <strcat>(String(FAIL ep.foo (inherited from Plain): ), R|<local>/ep|.<Unresolved name: foo>#())
+             }
+         }
+
+-        lval s: R|MySealed| = R|/SubA.SubA|()
+-        lval tag: R|kotlin/String| = when (lval <when-subject>: R|MySealed| = R|<local>/s|) {
+-            ($subj$ is R|SubA|) ->  {
++        lval s: <ERROR TYPE REF: Symbol not found for MySealed> = <Unresolved name: SubA>#()
++        lval tag: R|kotlin/String| = when (lval <when-subject>: <ERROR TYPE REF: Symbol not found for MySealed> = R|<local>/s|) {
++            ($subj$ is <ERROR TYPE REF: Symbol not found for SubA>) ->  {
+                 String(a)
+             }
+-            ($subj$ is R|SubB|) ->  {
++            ($subj$ is <ERROR TYPE REF: Symbol not found for SubB>) ->  {
+                 String(b)
+             }
+         }
+@@ -134,162 +134,162 @@
+         }
+
+         when () {
+-            !=(R|<local>/s|.R|/MySealed.x|, Int(42)) ->  {
+-                ^box <strcat>(String(FAIL sealed inherited x: ), R|<local>/s|.R|/MySealed.x|)
++            !=(R|<local>/s|.<Unresolved name: x>#, Int(42)) ->  {
++                ^box <strcat>(String(FAIL sealed inherited x: ), R|<local>/s|.<Unresolved name: x>#)
+             }
+         }
+
+-        lval nested: R|SourceWithNested.Nested| = Q|SourceWithNested|.R|/SourceWithNested.Nested.Nested|()
++        lval nested: <ERROR TYPE REF: Unresolved name: Nested> = Q|SourceWithNested|.<Unresolved name: Nested>#()
+         when () {
+-            !=(R|<local>/nested|.R|/SourceWithNested.Nested.x|, Int(42)) ->  {
+-                ^box <strcat>(String(FAIL nested.x: ), R|<local>/nested|.R|/SourceWithNested.Nested.x|)
++            !=(R|<local>/nested|.<Unresolved name: x>#, Int(42)) ->  {
++                ^box <strcat>(String(FAIL nested.x: ), R|<local>/nested|.<Unresolved name: x>#)
+             }
+         }
+
+         when () {
+-            !=(R|<local>/nested|.R|/SourceWithNested.Nested.foo|(), String(ok)) ->  {
+-                ^box <strcat>(String(FAIL nested.foo: ), R|<local>/nested|.R|/SourceWithNested.Nested.foo|())
++            !=(R|<local>/nested|.<Unresolved name: foo>#(), String(ok)) ->  {
++                ^box <strcat>(String(FAIL nested.foo: ), R|<local>/nested|.<Unresolved name: foo>#())
+             }
+         }
+
+         when () {
+-            !=(Q|SourceWithCompanion|.R|/SourceWithCompanion.Companion.x|, Int(42)) ->  {
+-                ^box <strcat>(String(FAIL companion.x: ), Q|SourceWithCompanion|.R|/SourceWithCompanion.Companion.x|)
++            !=(Q|SourceWithCompanion|.<Unresolved name: x>#, Int(42)) ->  {
++                ^box <strcat>(String(FAIL companion.x: ), Q|SourceWithCompanion|.<Unresolved name: x>#)
+             }
+         }
+
+-        lval inner: R|WithNestedFamily.Inner| = Q|WithNestedFamily|.R|/WithNestedFamily.Inner.Inner|()
++        lval inner: <ERROR TYPE REF: Unresolved name: Inner> = <Unresolved name: WithNestedFamily>#.<Unresolved name: Inner>#()
+         when () {
+-            !=(R|<local>/inner|.R|/WithNestedFamily.Inner.x|, Int(42)) ->  {
+-                ^box <strcat>(String(FAIL inner.x: ), R|<local>/inner|.R|/WithNestedFamily.Inner.x|)
++            !=(R|<local>/inner|.<Unresolved name: x>#, Int(42)) ->  {
++                ^box <strcat>(String(FAIL inner.x: ), R|<local>/inner|.<Unresolved name: x>#)
+             }
+         }
+
+         when () {
+-            !=(Q|WithNestedFamily|.R|/WithNestedFamily.Companion.fromCompanion|(), String(from-companion)) ->  {
++            !=(<Unresolved name: WithNestedFamily>#.<Unresolved name: fromCompanion>#(), String(from-companion)) ->  {
+                 ^box String(FAIL companion fn)
+             }
+         }
+
+-        lval innerA: R|SourceOuterPlain.InnerPlain| = R|/SourceOuterPlain.SourceOuterPlain|().R|/SourceOuterPlain.InnerPlain.InnerPlain|()
++        lval innerA: <ERROR TYPE REF: Unresolved name: InnerPlain> = R|/SourceOuterPlain.SourceOuterPlain|().<Unresolved name: InnerPlain>#()
+         when () {
+-            !=(R|<local>/innerA|.R|/SourceOuterPlain.InnerPlain.x|, Int(42)) ->  {
+-                ^box <strcat>(String(FAIL innerA.x: ), R|<local>/innerA|.R|/SourceOuterPlain.InnerPlain.x|)
++            !=(R|<local>/innerA|.<Unresolved name: x>#, Int(42)) ->  {
++                ^box <strcat>(String(FAIL innerA.x: ), R|<local>/innerA|.<Unresolved name: x>#)
+             }
+         }
+
+         when () {
+-            !=(R|<local>/innerA|.R|/SourceOuterPlain.InnerPlain.foo|(), String(ok)) ->  {
+-                ^box <strcat>(String(FAIL innerA.foo: ), R|<local>/innerA|.R|/SourceOuterPlain.InnerPlain.foo|())
++            !=(R|<local>/innerA|.<Unresolved name: foo>#(), String(ok)) ->  {
++                ^box <strcat>(String(FAIL innerA.foo: ), R|<local>/innerA|.<Unresolved name: foo>#())
+             }
+         }
+
+-        lval innerB: R|SourceOuterGeneric.InnerPlain<kotlin/String>| = R|/SourceOuterGeneric.SourceOuterGeneric|<R|kotlin/String|>().R|SubstitutionOverride</SourceOuterGeneric.InnerPlain.InnerPlain>|()
++        lval innerB: <ERROR TYPE REF: Unresolved name: InnerPlain> = R|/SourceOuterGeneric.SourceOuterGeneric|<R|kotlin/String|>().<Unresolved name: InnerPlain>#()
+         when () {
+-            !=(R|<local>/innerB|.R|SubstitutionOverride</SourceOuterGeneric.InnerPlain.x: R|kotlin/Int|>|, Int(42)) ->  {
+-                ^box <strcat>(String(FAIL innerB.x: ), R|<local>/innerB|.R|SubstitutionOverride</SourceOuterGeneric.InnerPlain.x: R|kotlin/Int|>|)
++            !=(R|<local>/innerB|.<Unresolved name: x>#, Int(42)) ->  {
++                ^box <strcat>(String(FAIL innerB.x: ), R|<local>/innerB|.<Unresolved name: x>#)
+             }
+         }
+
+         when () {
+-            !=(R|<local>/innerB|.R|SubstitutionOverride</SourceOuterGeneric.InnerPlain.foo: R|kotlin/String|>|(), String(ok)) ->  {
+-                ^box <strcat>(String(FAIL innerB.foo: ), R|<local>/innerB|.R|SubstitutionOverride</SourceOuterGeneric.InnerPlain.foo: R|kotlin/String|>|())
++            !=(R|<local>/innerB|.<Unresolved name: foo>#(), String(ok)) ->  {
++                ^box <strcat>(String(FAIL innerB.foo: ), R|<local>/innerB|.<Unresolved name: foo>#())
+             }
+         }
+
+-        lval innerC: R|SourceOuterPlain2.InnerGeneric<kotlin/String>| = R|/SourceOuterPlain2.SourceOuterPlain2|().R|/SourceOuterPlain2.InnerGeneric.InnerGeneric|<R|kotlin/String|>()
++        lval innerC: <ERROR TYPE REF: Unresolved name: InnerGeneric> = R|/SourceOuterPlain2.SourceOuterPlain2|().<Unresolved name: InnerGeneric>#<R|kotlin/String|>()
+         when () {
+-            !=(R|<local>/innerC|.R|SubstitutionOverride</SourceOuterPlain2.InnerGeneric.x: R|kotlin/Int|>|, Int(42)) ->  {
+-                ^box <strcat>(String(FAIL innerC.x: ), R|<local>/innerC|.R|SubstitutionOverride</SourceOuterPlain2.InnerGeneric.x: R|kotlin/Int|>|)
++            !=(R|<local>/innerC|.<Unresolved name: x>#, Int(42)) ->  {
++                ^box <strcat>(String(FAIL innerC.x: ), R|<local>/innerC|.<Unresolved name: x>#)
+             }
+         }
+
+         when () {
+-            !=(R|<local>/innerC|.R|SubstitutionOverride</SourceOuterPlain2.InnerGeneric.foo: R|kotlin/String|>|(), String(ok)) ->  {
+-                ^box <strcat>(String(FAIL innerC.foo: ), R|<local>/innerC|.R|SubstitutionOverride</SourceOuterPlain2.InnerGeneric.foo: R|kotlin/String|>|())
++            !=(R|<local>/innerC|.<Unresolved name: foo>#(), String(ok)) ->  {
++                ^box <strcat>(String(FAIL innerC.foo: ), R|<local>/innerC|.<Unresolved name: foo>#())
+             }
+         }
+
+-        lval innerD: R|SourceOuterGenericPaired.InnerGeneric<kotlin/String, kotlin/Int>| = R|/SourceOuterGenericPaired.SourceOuterGenericPaired|<R|kotlin/Int|>().R|SubstitutionOverride</SourceOuterGenericPaired.InnerGeneric.InnerGeneric>|<R|kotlin/String|>()
++        lval innerD: <ERROR TYPE REF: Unresolved name: InnerGeneric> = R|/SourceOuterGenericPaired.SourceOuterGenericPaired|<R|kotlin/Int|>().<Unresolved name: InnerGeneric>#<R|kotlin/String|>()
+         when () {
+-            !=(R|<local>/innerD|.R|SubstitutionOverride</SourceOuterGenericPaired.InnerGeneric.x: R|kotlin/Int|>|, Int(42)) ->  {
+-                ^box <strcat>(String(FAIL innerD.x: ), R|<local>/innerD|.R|SubstitutionOverride</SourceOuterGenericPaired.InnerGeneric.x: R|kotlin/Int|>|)
++            !=(R|<local>/innerD|.<Unresolved name: x>#, Int(42)) ->  {
++                ^box <strcat>(String(FAIL innerD.x: ), R|<local>/innerD|.<Unresolved name: x>#)
+             }
+         }
+
+         when () {
+-            !=(R|<local>/innerD|.R|SubstitutionOverride</SourceOuterGenericPaired.InnerGeneric.foo: R|kotlin/String|>|(), String(ok)) ->  {
+-                ^box <strcat>(String(FAIL innerD.foo: ), R|<local>/innerD|.R|SubstitutionOverride</SourceOuterGenericPaired.InnerGeneric.foo: R|kotlin/String|>|())
++            !=(R|<local>/innerD|.<Unresolved name: foo>#(), String(ok)) ->  {
++                ^box <strcat>(String(FAIL innerD.foo: ), R|<local>/innerD|.<Unresolved name: foo>#())
+             }
+         }
+
+-        lval withInner: R|WithInnerFamily<kotlin/Int>| = R|/WithInnerFamily.WithInnerFamily|<R|kotlin/Int|>()
+-        lval innerE: R|WithInnerFamily.Inner<kotlin/String, kotlin/Int>| = R|<local>/withInner|.R|SubstitutionOverride</WithInnerFamily.Inner.Inner>|<R|kotlin/String|>()
++        lval withInner: <ERROR TYPE REF: Unresolved name: WithInnerFamily> = <Unresolved name: WithInnerFamily>#<R|kotlin/Int|>()
++        lval innerE: <ERROR TYPE REF: Unresolved name: Inner> = R|<local>/withInner|.<Unresolved name: Inner>#<R|kotlin/String|>()
+         when () {
+-            !=(R|<local>/innerE|.R|SubstitutionOverride</WithInnerFamily.Inner.x: R|kotlin/Int|>|, Int(42)) ->  {
+-                ^box <strcat>(String(FAIL innerE.x: ), R|<local>/innerE|.R|SubstitutionOverride</WithInnerFamily.Inner.x: R|kotlin/Int|>|)
++            !=(R|<local>/innerE|.<Unresolved name: x>#, Int(42)) ->  {
++                ^box <strcat>(String(FAIL innerE.x: ), R|<local>/innerE|.<Unresolved name: x>#)
+             }
+         }
+
+         when () {
+-            !=(R|<local>/innerE|.R|SubstitutionOverride</WithInnerFamily.Inner.foo: R|kotlin/String|>|(), String(ok)) ->  {
+-                ^box <strcat>(String(FAIL innerE.foo: ), R|<local>/innerE|.R|SubstitutionOverride</WithInnerFamily.Inner.foo: R|kotlin/String|>|())
++            !=(R|<local>/innerE|.<Unresolved name: foo>#(), String(ok)) ->  {
++                ^box <strcat>(String(FAIL innerE.foo: ), R|<local>/innerE|.<Unresolved name: foo>#())
+             }
+         }
+
+-        lval deep: R|WithDeepInnerFamily.Inner.DeeplyInner<kotlin/Double, kotlin/String, kotlin/Int>| = R|/WithDeepInnerFamily.WithDeepInnerFamily|<R|kotlin/Int|>().R|SubstitutionOverride</WithDeepInnerFamily.Inner.Inner>|<R|kotlin/String|>().R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.DeeplyInner>|<R|kotlin/Double|>()
++        lval deep: <ERROR TYPE REF: Unresolved name: DeeplyInner> = <Unresolved name: WithDeepInnerFamily>#<R|kotlin/Int|>().<Unresolved name: Inner>#<R|kotlin/String|>().<Unresolved name: DeeplyInner>#<R|kotlin/Double|>()
+         when () {
+-            !=(R|<local>/deep|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.x: R|kotlin/Int|>|, Int(42)) ->  {
+-                ^box <strcat>(String(FAIL deep.x: ), R|<local>/deep|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.x: R|kotlin/Int|>|)
++            !=(R|<local>/deep|.<Unresolved name: x>#, Int(42)) ->  {
++                ^box <strcat>(String(FAIL deep.x: ), R|<local>/deep|.<Unresolved name: x>#)
+             }
+         }
+
+         when () {
+-            !=(R|<local>/deep|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.foo: R|kotlin/String|>|(), String(ok)) ->  {
+-                ^box <strcat>(String(FAIL deep.foo: ), R|<local>/deep|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.foo: R|kotlin/String|>|())
++            !=(R|<local>/deep|.<Unresolved name: foo>#(), String(ok)) ->  {
++                ^box <strcat>(String(FAIL deep.foo: ), R|<local>/deep|.<Unresolved name: foo>#())
+             }
+         }
+
+-        lval deepSelf: R|WithDeepInnerFamily.Inner.DeeplyInner<kotlin/Double, kotlin/String, kotlin/Int>| = R|<local>/deep|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.self: R|WithDeepInnerFamily.Inner.DeeplyInner<kotlin/Double, kotlin/String, kotlin/Int>|>|()
++        lval deepSelf: <ERROR TYPE REF: Symbol not found for WithDeepInnerFamily> = R|<local>/deep|.<Unresolved name: self>#()
+         when () {
+-            !=(R|<local>/deepSelf|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.x: R|kotlin/Int|>|, Int(42)) ->  {
+-                ^box <strcat>(String(FAIL deepSelf.x: ), R|<local>/deepSelf|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.x: R|kotlin/Int|>|)
++            !=(R|<local>/deepSelf|.<Unresolved name: x>#, Int(42)) ->  {
++                ^box <strcat>(String(FAIL deepSelf.x: ), R|<local>/deepSelf|.<Unresolved name: x>#)
+             }
+         }
+
+-        lval c: R|kotlin/Double| = R|<local>/deep|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.idC: R|kotlin/Double|>|(Double(3.14))
++        lval c: R|kotlin/Double| = R|<local>/deep|.<Unresolved name: idC>#(Double(3.14))
+         when () {
+             !=(R|<local>/c|, Double(3.14)) ->  {
+                 ^box <strcat>(String(FAIL deep.idC: ), R|<local>/c|)
+             }
+         }
+
+-        lval b: R|kotlin/String| = R|<local>/deep|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.idB: R|kotlin/String|>|(String(hi))
++        lval b: R|kotlin/String| = R|<local>/deep|.<Unresolved name: idB>#(String(hi))
+         when () {
+             !=(R|<local>/b|, String(hi)) ->  {
+                 ^box <strcat>(String(FAIL deep.idB: ), R|<local>/b|)
+             }
+         }
+
+-        lval a: R|kotlin/Int| = R|<local>/deep|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.idA: R|kotlin/Int|>|(Int(7))
++        lval a: R|kotlin/Int| = R|<local>/deep|.<Unresolved name: idA>#(Int(7))
+         when () {
+             !=(R|<local>/a|, Int(7)) ->  {
+                 ^box <strcat>(String(FAIL deep.idA: ), R|<local>/a|)
+             }
+         }
+
+-        lval outerBox: R|Outer<kotlin/String>| = R|/Outer.Outer|<R|kotlin/String|>()
+-        lval ib: R|Box<kotlin/String>| = R|<local>/outerBox|.R|SubstitutionOverride</Outer.InnerBox.InnerBox>|(String(boxed))
++        lval outerBox: <ERROR TYPE REF: Unresolved name: Outer> = <Unresolved name: Outer>#<R|kotlin/String|>()
++        lval ib: R|Box<kotlin/String>| = R|<local>/outerBox|.<Unresolved name: InnerBox>#(String(boxed))
+         when () {
+             !=(R|<local>/ib|.R|SubstitutionOverride</Box.value: R|kotlin/String|>|, String(boxed)) ->  {
+                 ^box <strcat>(String(FAIL ib.value: ), R|<local>/ib|.R|SubstitutionOverride</Box.value: R|kotlin/String|>|)
+             }
+         }
+
+-        lval ib2: R|Outer.InnerBox<kotlin/String>| = R|<local>/outerBox|.R|SubstitutionOverride</Outer.InnerBox.InnerBox>|(String(direct))
++        lval ib2: <ERROR TYPE REF: Unresolved name: InnerBox> = R|<local>/outerBox|.<Unresolved name: InnerBox>#(String(direct))
+         when () {
+-            !=(R|<local>/ib2|.R|SubstitutionOverride</Outer.InnerBox.value: R|kotlin/String|>|, String(direct)) ->  {
+-                ^box <strcat>(String(FAIL ib2.value: ), R|<local>/ib2|.R|SubstitutionOverride</Outer.InnerBox.value: R|kotlin/String|>|)
++            !=(R|<local>/ib2|.<Unresolved name: value>#, String(direct)) ->  {
++                ^box <strcat>(String(FAIL ib2.value: ), R|<local>/ib2|.<Unresolved name: value>#)
+             }
+         }

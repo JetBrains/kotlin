@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.test.directives
 
+import com.github.difflib.DiffUtils
+import com.github.difflib.UnifiedDiffUtils
 import org.jetbrains.kotlin.test.Assertions
+import org.jetbrains.kotlin.test.TestInfrastructureException
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.AnalysisHandlerBase
@@ -26,6 +30,10 @@ object TestDumpDirectives : SimpleDirectivesContainer() {
      */
     val DUMP_CLASSIFIER by stringDirective(
         description = "The test runner classifier for dump files."
+    )
+
+    val DUMP_AS_DIFF by directive(
+        description = "Whether to produce a diff between the expected and actual dump files."
     )
 }
 
@@ -82,24 +90,47 @@ fun Assertions.assertEqualsToDump(
     moduleStructure: TestModuleStructure,
     extension: String,
     actualDump: String?,
+    extraClassifier: String = "",
     sanitizer: (String) -> String = { it },
 ) {
-    val classifiedDumpFile = moduleStructure.getClassifiedDumpFile(extension)
+    val produceDiff: Boolean = TestDumpDirectives.DUMP_AS_DIFF in moduleStructure.allDirectives
+
+    val fullExtension = if (extraClassifier.isEmpty()) extension else
+        (if (extension.endsWith(".txt")) "${extension.removeSuffix(".txt")}.$extraClassifier.txt" else "$extension.$extraClassifier")
+    val dumpOrPatchExtension = if (produceDiff) fullExtension.removeSuffix(".txt") + ".patch" else fullExtension
+    val classifiedDumpFile =
+        moduleStructure.getClassifiedDumpFile(dumpOrPatchExtension)
     if (actualDump == null) {
         assertFileDoesntExist(classifiedDumpFile) { "Dump file detected but nothing to dump: ${classifiedDumpFile.name}" }
         return
     }
-
-    fun String.sanitize() = sanitizer.invoke(trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF())
-
+    fun String.sanitize() = sanitizer.invoke(normalizeDump())
     val defaultDumpFile = moduleStructure.getDefaultDumpFile(extension)
-    if (defaultDumpFile.path != classifiedDumpFile.path &&
-        defaultDumpFile.exists() &&
-        defaultDumpFile.readText().sanitize() == actualDump.sanitize()
-    ) {
+    if (defaultDumpFile.path == classifiedDumpFile.path.removeSuffix(dumpOrPatchExtension) + fullExtension) {
+        return assertEqualsToFile(defaultDumpFile, actualDump, sanitizer)
+    }
+    val defaultDump = defaultDumpFile.takeIf { it.exists() }?.readText()?.sanitize().orEmpty()
+    val actualDumpOrPatch = if (produceDiff) buildPatch(
+        baseText = defaultDump,
+        targetText = actualDump.sanitize(),
+        baseFileName = defaultDumpFile.name,
+        targetFileName = classifiedDumpFile.name.removeSuffix(".patch") + ".txt",
+    ) else actualDump
+    val isFileIdentical = if (produceDiff) {
+        actualDumpOrPatch.isEmpty()
+    } else {
+        defaultDump == actualDumpOrPatch.sanitize()
+    }
+
+    if (isFileIdentical) {
         assertFileDoesntExist(classifiedDumpFile) { "No need for a separate dump file: ${classifiedDumpFile.name}" }
     } else {
-        assertEqualsToFile(classifiedDumpFile, actualDump, sanitizer)
+        assertEqualsToFile(classifiedDumpFile, actualDumpOrPatch, sanitizer)
+
+        // Sanity check: patch application must result in the actual dump
+        if (produceDiff) checkTestInfrastructure(applyPatch(defaultDump, actualDumpOrPatch) == actualDump.sanitize()) {
+            "Unable to reconstruct classified dump from patch: ${classifiedDumpFile.absolutePath}"
+        }
     }
 }
 
@@ -115,5 +146,48 @@ fun assertEqualsToDump(
     actualDump: String?,
     sanitizer: (String) -> String = { it },
 ) {
-    base.testServices.assertions.assertEqualsToDump(base.testServices.moduleStructure, extension, actualDump, sanitizer)
+    base.testServices.assertions.assertEqualsToDump(base.testServices.moduleStructure, extension, actualDump, sanitizer = sanitizer)
 }
+
+private const val UNIFIED_CONTEXT_LINES = 3
+private const val ORIGINAL_FILE_LABEL_PREFIX = "a/"
+private const val UPDATED_FILE_LABEL_PREFIX = "b/"
+
+internal fun buildPatch(baseText: String, targetText: String, baseFileName: String, targetFileName: String): String {
+    val baseLines = baseText.lines()
+    val targetLines = targetText.lines()
+    if (baseLines == targetLines) return ""
+
+    val patch = DiffUtils.diff(baseLines, targetLines)
+    val unifiedDiff = UnifiedDiffUtils.generateUnifiedDiff(
+        "$ORIGINAL_FILE_LABEL_PREFIX$baseFileName",
+        "$UPDATED_FILE_LABEL_PREFIX$targetFileName",
+        baseLines,
+        patch,
+        UNIFIED_CONTEXT_LINES,
+    )
+    return unifiedDiff.joinToString(System.lineSeparator()).normalizeDump()
+}
+
+internal fun applyPatch(baseText: String, patchText: String): String {
+    val lines = patchText.lines().dropLastWhile { it.isEmpty() }
+    checkTestInfrastructure(lines.size >= 3) {
+        "Unknown target-specific patch format:\n$patchText"
+    }
+    checkTestInfrastructure(lines[0].startsWith("--- ") && lines[1].startsWith("+++ ")) {
+        "Unknown target-specific patch format:\n$patchText"
+    }
+
+    val patchedLines = try {
+        val patch = UnifiedDiffUtils.parseUnifiedDiff(lines)
+        DiffUtils.patch(baseText.lines(), patch)
+    } catch (e: Throwable) {
+        throw TestInfrastructureException("Unknown target-specific patch format in:\n$patchText", e)
+    }
+
+    return patchedLines.joinToString(System.lineSeparator())
+        .normalizeDump()
+}
+
+private fun String.normalizeDump(): String =
+    trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()

@@ -1,0 +1,15 @@
+--- a/mppDependencyWithActualTypealiasAnnotation.fir.txt
++++ b/mppDependencyWithActualTypealiasAnnotation.ll.fir.txt
+@@ -19,7 +19,11 @@
+ FILE: module_main_mppDependencyWithActualTypealiasAnnotation.kt
+     package foo
+
+-    @R|{foo/MyAnnotation=} foo/RealState|() public final object CommonBenchmark : R|kotlin/Any| {
++    @<ERROR TYPE REF:
++            Annotation type resolved differently on compiler annotation and types stages:
++              - compiler annotations: foo/MyAnnotation
++              - types stage: {foo/MyAnnotation=} foo/RealState
++        >() public final object CommonBenchmark : R|kotlin/Any| {
+         private constructor(): R|foo/CommonBenchmark| {
+             super<R|kotlin/Any|>()
+         }

@@ -1,0 +1,36 @@
+--- a/propertiesGeneratedInIr.fir.txt
++++ b/propertiesGeneratedInIr.ll.fir.txt
+@@ -44,20 +44,20 @@
+     public final fun box(): R|kotlin/String| {
+         lval base: R|Base| = R|/Base.Base|()
+         when () {
+-            !=(R|<local>/base|.R|/Base.propertiesCount|, Int(2)) ->  {
+-                ^box <strcat>(String(FAIL propertiesCount: ), R|<local>/base|.R|/Base.propertiesCount|)
++            !=(R|<local>/base|.<Unresolved name: propertiesCount>#, Int(2)) ->  {
++                ^box <strcat>(String(FAIL propertiesCount: ), R|<local>/base|.<Unresolved name: propertiesCount>#)
+             }
+         }
+
+         R|kotlin/with|<R|Base|, R|kotlin/Unit|>(R|<local>/base|, <L> = with@fun R|Base|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+             when () {
+-                !=((this@R|special/anonymous|, String(x)).R|/Base.extensionProp|, String(ext)) ->  {
++                !=(String(x).<Unresolved name: extensionProp>#, String(ext)) ->  {
+                     ^box String(FAIL extensionProp)
+                 }
+             }
+
+             when () {
+-                !=((this@R|special/anonymous|, String(y)).R|/Base.genericExtensionProp|<R|kotlin/String|>, String(y)) ->  {
++                !=(String(y).<Unresolved name: genericExtensionProp>#, String(y)) ->  {
+                     ^box String(FAIL genericExtensionProp)
+                 }
+             }
+@@ -66,7 +66,7 @@
+         )
+         R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(String(ctx), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+             when () {
+-                !=(context(this@R|special/anonymous|) R|<local>/base|.R|/Base.contextProp|, String(ctx)) ->  {
++                !=(R|<local>/base|.<Unresolved name: contextProp>#, String(ctx)) ->  {
+                     ^box String(FAIL contextProp)
+                 }
+             }
