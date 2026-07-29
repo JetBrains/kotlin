@@ -50,6 +50,7 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
 }
+sourcesJar()
 
 projectTests {
     testCodebaseTask(dumpDirs = listOf("api", "api-unstable"))
