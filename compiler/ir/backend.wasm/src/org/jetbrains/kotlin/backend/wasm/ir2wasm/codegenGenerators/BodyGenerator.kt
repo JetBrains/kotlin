@@ -594,8 +594,9 @@ class BodyGenerator(
         val receiver = expression.receiver
         val expressionValue = expression.value
 
-        // Skip redundant field initializers that set fields to their default values, as we already
-        // default-initializer fields at object creation time.
+        // Skip redundant field initializers that set fields to type-default values, since we
+        // already initialize fields to type-default values in the code that initializes the objects
+        // at creation time.
         if (functionContext.irFunction is IrConstructor &&
             expression.origin == IrStatementOrigin.INITIALIZE_FIELD &&
             expressionValue is IrConst &&
