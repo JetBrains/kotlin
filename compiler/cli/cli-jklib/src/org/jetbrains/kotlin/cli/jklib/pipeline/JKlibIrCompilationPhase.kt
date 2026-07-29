@@ -129,11 +129,14 @@ object JKlibIrCompilationPhase :
         // so that we don't rely on linker side effects for proper deserialization.
         lateinit var mainModuleFragment: IrModuleFragment
         for ([dep, descriptor] in dependencyDescriptorsByKlib) {
-            when {
-                descriptor == mainModule -> {
-                    mainModuleFragment = linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })
-                }
-                else -> linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })
+            val strategy = if (descriptor == mainModule || dep.isJklibStdlib) {
+                DeserializationStrategy.ALL
+            } else {
+                DeserializationStrategy.WITH_INLINE_BODIES
+            }
+            val moduleFragment = linker.deserializeIrModuleHeader(descriptor, dep, { strategy })
+            if (descriptor == mainModule) {
+                mainModuleFragment = moduleFragment
             }
         }
 
