@@ -78,17 +78,21 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         pb.environment().putAll(environment)
         pb.directory(workDirectory)
         val process = pb.start()
-        val stdout =
-            AbstractCliTest.getNormalizedCompilerOutput(
-                StringUtil.convertLineSeparators(process.inputStream.bufferedReader().use { it.readText() }),
-                null, testDataDirectory, tmpdir.absolutePath
-            )
+        /*
+         * If the compiler invocation throws an exception, then the stderr could be bigger than pipe buffer (64 kb).
+         * If it happens, trying to read from stdout first could clog the buffer and cause a deadlock. So the stderr should be read first.
+         */
         val stderr =
             AbstractCliTest.getNormalizedCompilerOutput(
                 StringUtil.convertLineSeparators(process.errorStream.bufferedReader().use { it.readText() }),
                 null, testDataDirectory, tmpdir.absolutePath
             ).replace("Picked up [_A-Z]+:.*\n".toRegex(), "")
                 .replace("The system cannot find the file specified", "No such file or directory") // win -> unix
+        val stdout =
+            AbstractCliTest.getNormalizedCompilerOutput(
+                StringUtil.convertLineSeparators(process.inputStream.bufferedReader().use { it.readText() }),
+                null, testDataDirectory, tmpdir.absolutePath
+            )
         process.waitFor(10, TimeUnit.SECONDS)
         val exitCode = process.exitValue()
         try {
@@ -758,8 +762,8 @@ Caused by: java.lang.AssertionError: assert
             expectedExitCode = 2,
             checkStdout = { stdOut -> assertTrue(stdOut.isBlank()) },
             checkStderr = { stdErr ->
-                assertTrue(stdErr.contains("java.lang.NoClassDefFoundError"))
-                assertFalse(stdErr.contains("java.lang.StackOverflowError"))
+                assertFalse(stdErr.contains("java.lang.NoClassDefFoundError"))
+                assertTrue(stdErr.contains("java.lang.StackOverflowError"))
             },
         )
     }
