@@ -342,7 +342,8 @@ class KotlinPlaywrightTestFrameworkWiringTest {
             writeText("")
         }
         framework.npmToolingEnvDir.set(npmToolingEnv)
-        framework.debugPort.set(32123)
+        framework.prepareDebugSession(setup.jsBrowserTestTask)
+        framework.configureRemoteDebuggingPort(32123)
 
         val spec = framework.createTestExecutionSpec(
             task = setup.jsBrowserTestTask,
@@ -357,6 +358,7 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         assertEquals(emptyList(), runner.launchArgs)
         assertEquals(emptyMap(), runner.launchEnvironmentVariables)
         assertEquals(32123, runner.debugOptions?.remoteDebuggingPort)
+        runner.debugOptions?.debuggerReadySocket?.close()
     }
 }
 
