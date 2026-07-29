@@ -49,11 +49,13 @@ fun eliminateDeadDeclarations(
         }
     }
 
-    val setFieldRemover = SetFieldRemover(usefulDeclarations)
+    if (!context.incrementalCacheEnabled) {
+        val setFieldRemover = SetFieldRemover(usefulDeclarations)
 
-    modules.forEach { module ->
-        module.files.forEach {
-            it.transform(setFieldRemover, null)
+        modules.forEach { module ->
+            module.files.forEach {
+                it.transform(setFieldRemover, null)
+            }
         }
     }
 }

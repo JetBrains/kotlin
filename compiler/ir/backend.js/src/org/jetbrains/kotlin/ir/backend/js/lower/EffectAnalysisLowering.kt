@@ -45,6 +45,7 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
     }
 
     override fun lower(irFile: IrFile) {
+        if (context is JsIrBackendContext && context.incrementalCacheEnabled) return
         context.effectAnalysisFinished = false
         super.lower(irFile)
         context.effectAnalysisFinished = true
