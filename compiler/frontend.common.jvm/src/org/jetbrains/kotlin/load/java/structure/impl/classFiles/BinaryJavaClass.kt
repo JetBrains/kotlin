@@ -67,6 +67,9 @@ class BinaryJavaClass(
 
     override val isRecord get() = isSet(Opcodes.ACC_RECORD)
 
+    override val isValue: Boolean
+        get() = !isInterface && !isAnnotationType && !isEnum && !isSet(Opcodes.ACC_MODULE) && !isSet(Opcodes.ACC_SUPER)
+
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
     private val permittedTypesList: ArrayList<JavaClassifierType> = arrayListOf()

@@ -123,6 +123,10 @@ class TreeBasedClass(
     override val isRecord: Boolean
         get() = false
 
+    // TODO: Support
+    override val isValue: Boolean
+        get() = false
+
     // TODO
     override val isSealed: Boolean
         get() = false

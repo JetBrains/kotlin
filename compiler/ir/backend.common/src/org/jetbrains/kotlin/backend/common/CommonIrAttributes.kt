@@ -15,6 +15,14 @@ var IrFunction.defaultArgumentsDispatchFunction: IrFunction? by irAttribute(copy
 
 var IrClass.capturedFields: Collection<IrField>? by irAttribute(copyByDefault = false)
 
+/**
+ * True if this class originates from a Java class declared with the `value` modifier (a JEP 401 value class), loaded from source
+ * or a binary dependency.
+ *
+ * Used by the JVM backend to include such field types in `LoadableDescriptors`.
+ */
+var IrClass.isJavaValueClass: Boolean by irFlag(copyByDefault = false)
+
 var IrClass.functionReferenceReflectedName: String? by irAttribute(copyByDefault = false)
 
 /**

@@ -174,6 +174,8 @@ internal class FirBackedJavaClassAdapter(
         get() = false
     override val isRecord: Boolean
         get() = false
+    override val isValue: Boolean
+        get() = false
     override val isSealed: Boolean
         get() = false
     override val permittedTypes: Sequence<JavaClassifierType>

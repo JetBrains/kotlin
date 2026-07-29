@@ -73,6 +73,8 @@ class DummyJavaClass(name: String, override val fqName: FqName, numberOfTypePara
         get() = shouldNotBeCalled()
     override val isRecord: Boolean
         get() = shouldNotBeCalled()
+    override val isValue: Boolean
+        get() = shouldNotBeCalled()
     override val isSealed: Boolean
         get() = shouldNotBeCalled()
     override val permittedTypes: Sequence<JavaClassifierType>
