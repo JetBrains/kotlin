@@ -14,7 +14,6 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.mapProperty
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -133,9 +132,13 @@ internal class KotlinPlaywrightJsTestFramework(
             include = task.includePatterns,
             exclude = task.excludePatterns,
         ).toList()
-        val runner = firstRunnerInput()
+        val runner = getDebugRunner()
         return runner.buildRunnerUrl(runner.testsLocation.get().url.get(), cliArgs)
     }
+
+    @Suppress("unused")
+    fun getDebugRunner(): ChromiumRunnerInput =
+        frameworkTaskInputs.chromiumRunners.get().firstOrNull() ?: createDefaultDebugRunner()
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
@@ -170,21 +173,18 @@ internal class KotlinPlaywrightJsTestFramework(
         }
 
         val pwRunners = buildList {
-            val chromiumRunners = frameworkTaskInputs.chromiumRunners.get()
             if (debugOptions?.remoteDebuggingPort != null) {
-                // IntelliJ attaches to Playwright through Chromium CDP, so debug runs use one Chromium runner.
-                val runner = chromiumRunners.firstOrNull() ?: firstRunnerInput()
+                val runner = getDebugRunner()
                 add(
                     runner.createPwRunnerSpec(
                         PwBrowserKind.CHROMIUM,
                         browsersDirectory,
                         cliArgs,
                         debugOptions,
-                        useRunnerBrowserLaunchSettings = runner in chromiumRunners,
                     )
                 )
             } else {
-                chromiumRunners.forEach {
+                frameworkTaskInputs.chromiumRunners.get().forEach {
                     add(it.createPwRunnerSpec(PwBrowserKind.CHROMIUM, browsersDirectory, cliArgs, debugOptions))
                 }
                 frameworkTaskInputs.firefoxRunners.get().forEach {
@@ -212,7 +212,6 @@ internal class KotlinPlaywrightJsTestFramework(
         browsersDirectory: Path,
         cliArgs: List<String>,
         debugOptions: PwDebugOptions?,
-        useRunnerBrowserLaunchSettings: Boolean = true,
     ): PwRunnerSpec = PwRunnerSpec(
         name = name.get(),
         browserKind = kind,
@@ -222,10 +221,9 @@ internal class KotlinPlaywrightJsTestFramework(
         timeout = timeout.get().toKotlinDuration(),
         finishMarker = finishMarker.get(),
         headless = headless.get(),
-        // Firefox/WebKit fallback reuses the test URL/config, but must not reuse browser-specific launch settings for Chromium.
-        launchArgs = if (useRunnerBrowserLaunchSettings) launchArgs.get() else emptyList(),
-        launchEnvironmentVariables = if (useRunnerBrowserLaunchSettings) launchEnvironmentVariables.get() else emptyMap(),
-        customBrowserExecutable = if (useRunnerBrowserLaunchSettings) customBrowserExecutable.asPathOrNull else null,
+        launchArgs = launchArgs.get(),
+        launchEnvironmentVariables = launchEnvironmentVariables.get(),
+        customBrowserExecutable = customBrowserExecutable.asPathOrNull,
         debugOptions = debugOptions,
     )
 
@@ -236,6 +234,19 @@ internal class KotlinPlaywrightJsTestFramework(
             kotlinTestCliArguments = cliArgs
         )
         return runnerConfig.buildUrlWithConfigState(baseUrl)
+    }
+
+    private fun createDefaultDebugRunner(): ChromiumRunnerInput {
+        val configuredRunner = firstRunnerInput()
+        return createChromiumInputs(objects).apply {
+            name.convention("chromium")
+            testsLocation.convention(configuredRunner.testsLocation)
+            timeout.convention(configuredRunner.timeout)
+            headless.convention(true)
+            launchArgs.convention(emptyList())
+            launchEnvironmentVariables.convention(emptyMap())
+            finishMarker.convention(configuredRunner.finishMarker)
+        }
     }
 
     private fun firstRunnerInput(): BrowserRunnerInput =
