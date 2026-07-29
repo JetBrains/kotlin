@@ -6,7 +6,6 @@
 package test.time
 
 import kotlin.math.sign
-import kotlin.test.ExperimentalKotlinTestApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -15,7 +14,7 @@ import kotlin.time.DurationUnit
 import kotlin.time.DurationUnit.*
 import kotlin.time.ExperimentalTime
 import kotlin.time.convert
-import kotlin.time.convertInWhole
+import kotlin.time.convertToWhole
 
 class DurationUnitTest {
     @Test
@@ -79,11 +78,11 @@ class DurationUnitTest {
     fun longValueConversion() {
         fun test(sourceValue: Long, sourceUnit: DurationUnit, targetValue: Long, targetUnit: DurationUnit) {
             assertEquals(
-                targetValue, DurationUnit.convertInWhole(sourceValue, sourceUnit, targetUnit),
+                targetValue, DurationUnit.convertToWhole(sourceValue, sourceUnit, targetUnit),
                 "Expected $sourceValue $sourceUnit to be $targetValue $targetUnit"
             )
             assertEquals(
-                -targetValue, DurationUnit.convertInWhole(-sourceValue, sourceUnit, targetUnit),
+                -targetValue, DurationUnit.convertToWhole(-sourceValue, sourceUnit, targetUnit),
                 "Expected ${-sourceValue} $sourceUnit to be ${-targetValue} $targetUnit"
             )
         }
@@ -103,9 +102,9 @@ class DurationUnitTest {
         test(50L, NANOSECONDS, 0L, MICROSECONDS)
         test(1_500_000L, MICROSECONDS, 1L, SECONDS)
 
-        assertEquals(Long.MAX_VALUE, DurationUnit.convertInWhole(110_000L, DAYS, NANOSECONDS))
-        assertEquals(Long.MIN_VALUE, DurationUnit.convertInWhole(-110_000L, DAYS, NANOSECONDS))
-        assertEquals(106_751L, DurationUnit.convertInWhole(Long.MAX_VALUE, NANOSECONDS, DAYS))
+        assertEquals(Long.MAX_VALUE, DurationUnit.convertToWhole(110_000L, DAYS, NANOSECONDS))
+        assertEquals(Long.MIN_VALUE, DurationUnit.convertToWhole(-110_000L, DAYS, NANOSECONDS))
+        assertEquals(106_751L, DurationUnit.convertToWhole(Long.MAX_VALUE, NANOSECONDS, DAYS))
 
         for (unit in DurationUnit.entries) {
             test(0L, unit, 0L, unit)
@@ -123,7 +122,7 @@ class DurationUnitTest {
     fun intValueConversion() {
         fun test(sourceValue: Int, sourceUnit: DurationUnit, targetValue: Long, targetUnit: DurationUnit) {
             assertEquals(
-                targetValue, DurationUnit.convertInWhole(sourceValue, sourceUnit, targetUnit),
+                targetValue, DurationUnit.convertToWhole(sourceValue, sourceUnit, targetUnit),
                 "Expected $sourceValue $sourceUnit to be $targetValue $targetUnit"
             )
             assertNotEquals(
@@ -132,7 +131,7 @@ class DurationUnitTest {
                 "The test function can't handle Int.MIN_VALUE, implement checks on your own"
             )
             assertEquals(
-                -targetValue, DurationUnit.convertInWhole(-sourceValue, sourceUnit, targetUnit),
+                -targetValue, DurationUnit.convertToWhole(-sourceValue, sourceUnit, targetUnit),
                 "Expected ${-sourceValue} $sourceUnit to be ${-targetValue} $targetUnit"
             )
         }
@@ -150,20 +149,20 @@ class DurationUnitTest {
         test(50, NANOSECONDS, 0, MICROSECONDS)
         test(1_500_000, MICROSECONDS, 1, SECONDS)
 
-        assertEquals(86400000000000L, DurationUnit.convertInWhole(1, DAYS, NANOSECONDS))
-        assertEquals(-86400000000000L, DurationUnit.convertInWhole(-1, DAYS, NANOSECONDS))
-        assertEquals(Long.MAX_VALUE, DurationUnit.convertInWhole(1000000, DAYS, NANOSECONDS))
-        assertEquals(Long.MIN_VALUE, DurationUnit.convertInWhole(-1000000, DAYS, NANOSECONDS))
-        assertEquals(0, DurationUnit.convertInWhole(Int.MAX_VALUE, NANOSECONDS, DAYS))
-        assertEquals(0, DurationUnit.convertInWhole(Int.MIN_VALUE, NANOSECONDS, DAYS))
-        assertEquals(2, DurationUnit.convertInWhole(Int.MAX_VALUE, NANOSECONDS, SECONDS))
-        assertEquals(-2, DurationUnit.convertInWhole(Int.MIN_VALUE, NANOSECONDS, SECONDS))
+        assertEquals(86400000000000L, DurationUnit.convertToWhole(1, DAYS, NANOSECONDS))
+        assertEquals(-86400000000000L, DurationUnit.convertToWhole(-1, DAYS, NANOSECONDS))
+        assertEquals(Long.MAX_VALUE, DurationUnit.convertToWhole(1000000, DAYS, NANOSECONDS))
+        assertEquals(Long.MIN_VALUE, DurationUnit.convertToWhole(-1000000, DAYS, NANOSECONDS))
+        assertEquals(0, DurationUnit.convertToWhole(Int.MAX_VALUE, NANOSECONDS, DAYS))
+        assertEquals(0, DurationUnit.convertToWhole(Int.MIN_VALUE, NANOSECONDS, DAYS))
+        assertEquals(2, DurationUnit.convertToWhole(Int.MAX_VALUE, NANOSECONDS, SECONDS))
+        assertEquals(-2, DurationUnit.convertToWhole(Int.MIN_VALUE, NANOSECONDS, SECONDS))
 
         for (unit in DurationUnit.entries) {
             test(0, unit, 0, unit)
             test(1, unit, 1, unit)
             test(Int.MAX_VALUE, unit, Int.MAX_VALUE.toLong(), unit)
-            assertEquals(Int.MIN_VALUE.toLong(), DurationUnit.convertInWhole(Int.MIN_VALUE, unit, unit))
+            assertEquals(Int.MIN_VALUE.toLong(), DurationUnit.convertToWhole(Int.MIN_VALUE, unit, unit))
 
             for (otherUnit in DurationUnit.entries) {
                 test(1, unit, unitConversionTable.getValue(unit).getValue(otherUnit), otherUnit)

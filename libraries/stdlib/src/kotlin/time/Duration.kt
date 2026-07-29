@@ -71,7 +71,7 @@ internal constructor(private val rawValue: Long) :
         /**
          * Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit].
          *
-         * @see DurationUnit.convertInWhole
+         * @see DurationUnit.convertToWhole
          * @see DurationUnit.convert
          */
         @ExperimentalTime

@@ -314,42 +314,42 @@ class Durations {
 
     @Sample
     fun convertUnitLong() {
-        assertPrints(DurationUnit.convertInWhole(1L, DurationUnit.DAYS, DurationUnit.HOURS), "24")
-        assertPrints(DurationUnit.convertInWhole(-1L, DurationUnit.HOURS, DurationUnit.MINUTES), "-60")
-        assertPrints(DurationUnit.convertInWhole(1000L, DurationUnit.MILLISECONDS, DurationUnit.SECONDS), "1")
+        assertPrints(DurationUnit.convertToWhole(1L, DurationUnit.DAYS, DurationUnit.HOURS), "24")
+        assertPrints(DurationUnit.convertToWhole(-1L, DurationUnit.HOURS, DurationUnit.MINUTES), "-60")
+        assertPrints(DurationUnit.convertToWhole(1000L, DurationUnit.MILLISECONDS, DurationUnit.SECONDS), "1")
 
         // The value is always truncated to the target unit's value closest to zero
-        assertPrints(DurationUnit.convertInWhole(1999L, DurationUnit.MILLISECONDS, DurationUnit.SECONDS), "1")
-        assertPrints(DurationUnit.convertInWhole(-1999L, DurationUnit.MILLISECONDS, DurationUnit.SECONDS), "-1")
+        assertPrints(DurationUnit.convertToWhole(1999L, DurationUnit.MILLISECONDS, DurationUnit.SECONDS), "1")
+        assertPrints(DurationUnit.convertToWhole(-1999L, DurationUnit.MILLISECONDS, DurationUnit.SECONDS), "-1")
 
         // When converting from a larger unit to a smaller unit, the resulting value may not fit
         // into the Long's range of values and Long.MIN_VALUE, or Long.MAX_VALUE is returned instead.
         val tooManyDays = 110_000L
-        assertTrue(DurationUnit.convertInWhole(tooManyDays, DurationUnit.DAYS, DurationUnit.NANOSECONDS) == Long.MAX_VALUE)
-        assertTrue(DurationUnit.convertInWhole(-tooManyDays, DurationUnit.DAYS, DurationUnit.NANOSECONDS) == Long.MIN_VALUE)
+        assertTrue(DurationUnit.convertToWhole(tooManyDays, DurationUnit.DAYS, DurationUnit.NANOSECONDS) == Long.MAX_VALUE)
+        assertTrue(DurationUnit.convertToWhole(-tooManyDays, DurationUnit.DAYS, DurationUnit.NANOSECONDS) == Long.MIN_VALUE)
     }
 
     @Sample
     fun convertUnitInt() {
-        assertPrints(DurationUnit.convertInWhole(1, DurationUnit.DAYS, DurationUnit.HOURS), "24")
-        assertPrints(DurationUnit.convertInWhole(-1, DurationUnit.HOURS, DurationUnit.MINUTES), "-60")
-        assertPrints(DurationUnit.convertInWhole(1000, DurationUnit.MILLISECONDS, DurationUnit.SECONDS), "1")
+        assertPrints(DurationUnit.convertToWhole(1, DurationUnit.DAYS, DurationUnit.HOURS), "24")
+        assertPrints(DurationUnit.convertToWhole(-1, DurationUnit.HOURS, DurationUnit.MINUTES), "-60")
+        assertPrints(DurationUnit.convertToWhole(1000, DurationUnit.MILLISECONDS, DurationUnit.SECONDS), "1")
 
         // The value is always truncated to the target unit's value closest to zero
-        assertPrints(DurationUnit.convertInWhole(1999, DurationUnit.MILLISECONDS, DurationUnit.SECONDS), "1")
-        assertPrints(DurationUnit.convertInWhole(-1999, DurationUnit.MILLISECONDS, DurationUnit.SECONDS), "-1")
+        assertPrints(DurationUnit.convertToWhole(1999, DurationUnit.MILLISECONDS, DurationUnit.SECONDS), "1")
+        assertPrints(DurationUnit.convertToWhole(-1999, DurationUnit.MILLISECONDS, DurationUnit.SECONDS), "-1")
 
         // When converting from a larger unit to a smaller unit, the resulting value may not fit
         // into the Long's range of values and Long.MIN_VALUE, or Long.MAX_VALUE is returned instead.
         val tooManyDays = 200000
-        assertTrue(DurationUnit.convertInWhole(tooManyDays, DurationUnit.DAYS, DurationUnit.NANOSECONDS) == Long.MAX_VALUE)
-        assertTrue(DurationUnit.convertInWhole(-tooManyDays, DurationUnit.DAYS, DurationUnit.NANOSECONDS) == Long.MIN_VALUE)
+        assertTrue(DurationUnit.convertToWhole(tooManyDays, DurationUnit.DAYS, DurationUnit.NANOSECONDS) == Long.MAX_VALUE)
+        assertTrue(DurationUnit.convertToWhole(-tooManyDays, DurationUnit.DAYS, DurationUnit.NANOSECONDS) == Long.MIN_VALUE)
     }
 
     @Sample
     fun convertIntValueAndCastBackToInt() {
         // If the resulting value needs to be converted back to Int, consider using coerceIn
-        val fiveSecondsInNanos: Long = DurationUnit.convertInWhole(5, DurationUnit.SECONDS, DurationUnit.NANOSECONDS)
+        val fiveSecondsInNanos: Long = DurationUnit.convertToWhole(5, DurationUnit.SECONDS, DurationUnit.NANOSECONDS)
         // This value is too large to be represented as Int
         assertPrints(fiveSecondsInNanos, "5000000000")
         // It can be coerced to Int MAX or MIN value in this case

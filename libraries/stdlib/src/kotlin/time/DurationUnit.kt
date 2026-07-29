@@ -63,7 +63,7 @@ public expect enum class DurationUnit {
  */
 @SinceKotlin("2.5")
 @ExperimentalTime
-public fun DurationUnit.Companion.convertInWhole(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long =
+public fun DurationUnit.Companion.convertToWhole(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long =
     convertDurationUnit(value, sourceUnit, targetUnit)
 
 /**
@@ -89,8 +89,8 @@ public fun DurationUnit.Companion.convertInWhole(value: Long, sourceUnit: Durati
  */
 @SinceKotlin("2.5")
 @ExperimentalTime
-public fun DurationUnit.Companion.convertInWhole(value: Int, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long =
-    convertInWhole(value.toLong(), sourceUnit, targetUnit)
+public fun DurationUnit.Companion.convertToWhole(value: Int, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long =
+    convertToWhole(value.toLong(), sourceUnit, targetUnit)
 
 /**
  * Converts the given time duration [value] expressed in the [sourceUnit] duration unit into the specified [targetUnit].
