@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.config.konanHome
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -81,7 +82,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             return
         }
 
-        val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput) {
+        val backendContext = createBackendContext(config, frontendOutput.moduleDescriptor, linkKlibsOutput) {
             it.objCExportedInterface = objCExportedInterface
             it.objCExportCodeSpec = objCCodeSpec
         }
@@ -104,7 +105,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
                 }
             }
         }
-        val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput) {
+        val backendContext = createBackendContext(config, frontendOutput.moduleDescriptor, linkKlibsOutput) {
             it.cAdapterExportedElements = cAdapterElements
         }
         engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
@@ -118,7 +119,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
                 ?: return
 
         val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) { engine.linkKlibs(frontendOutput) }
-        val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput)
+        val backendContext = createBackendContext(config, frontendOutput.moduleDescriptor, linkKlibsOutput)
         engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
     }
 
@@ -154,22 +155,22 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
 
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) }
                 ?: return
-        performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) { engine.runPhase(CreateTestBundlePhase, frontendOutput) }
+        performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) { engine.runPhase(CreateTestBundlePhase, frontendOutput.moduleDescriptor) }
         val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) { engine.linkKlibs(frontendOutput) }
-        val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput)
+        val backendContext = createBackendContext(config, frontendOutput.moduleDescriptor, linkKlibsOutput)
         engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
     }
 
     @OptIn(K1Deprecation::class)
     private fun createBackendContext(
             config: NativeSecondStageCompilationConfig,
-            frontendOutput: FrontendPhaseOutput.Full,
+            moduleDescriptor: ModuleDescriptor,
             linkKlibsOutput: LinkKlibsOutput,
             additionalDataSetter: (NativeBackendContext) -> Unit = {}
     ) = NativeBackendContext(
             config,
-            frontendOutput.moduleDescriptor.getIncludedLibraryDescriptors(config).toSet() + frontendOutput.moduleDescriptor,
-            frontendOutput.moduleDescriptor.builtIns as KonanBuiltIns,
+            moduleDescriptor.getIncludedLibraryDescriptors(config).toSet() + moduleDescriptor,
+            moduleDescriptor.builtIns as KonanBuiltIns,
             linkKlibsOutput.irBuiltIns,
             linkKlibsOutput.irModules,
             linkKlibsOutput.irLinker,
