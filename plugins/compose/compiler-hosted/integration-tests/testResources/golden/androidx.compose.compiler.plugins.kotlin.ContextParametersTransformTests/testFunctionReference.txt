@@ -25,7 +25,7 @@ fun Test(foo: Foo) {
 @FunctionKeyMeta(key = 526939746, startOffset = 57, endOffset = 288)
 fun Test(foo: Foo, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)N(foo)*<refA(4...>,<Foo::E...>,<Caller...>,<refB(4...>:Test.kt")
+  sourceInformation(%composer, "C(Test)N(foo)*<refA(4...>,<Caller...>,<refB(4...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
@@ -56,14 +56,21 @@ fun Test(foo: Foo, %composer: Composer?, %changed: Int) {
         }
       }
       refA(42, %composer, 6)
-      Caller(foo, <block>{
-        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-        val tmp0_group = %composer.cache(false) {
-          ::ExtA
+      Caller(foo, ::ExtA {
+        @Composable
+        @FunctionKeyMeta(key = -1318450765, startOffset = 181, endOffset = 190)
+        fun ExtA(p0: Foo, p1: @[ParameterName(name = 'a')] Int, %composer: Composer?, %changed: Int) {
+          sourceInformationMarkerStart(%composer, <>, "C(ExtA)N(p0,p1)<Foo::E...>:Test.kt")
+          if (isTraceInProgress()) {
+            traceEventStart(<>, %changed, -1, <>)
+          }
+          p0.ExtA(p1, %composer, Foo.%stable or 0b1110 and %changed or 0b01110000 and %changed)
+          if (isTraceInProgress()) {
+            traceEventEnd()
+          }
+          sourceInformationMarkerEnd(%composer)
         }
-        sourceInformationMarkerEnd(%composer)
-        tmp0_group
-      }, %composer, 0b00110000 or Foo.%stable or 0b1110 and %dirty)
+      }, %composer, Foo.%stable or 0b1110 and %dirty)
       val refB = ::B {
         @Composable
         @FunctionKeyMeta(key = -357558262, startOffset = 246, endOffset = 255)

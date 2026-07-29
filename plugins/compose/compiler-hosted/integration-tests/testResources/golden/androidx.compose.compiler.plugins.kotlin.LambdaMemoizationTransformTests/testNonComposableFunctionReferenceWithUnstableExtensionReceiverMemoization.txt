@@ -21,7 +21,7 @@ fun Example() {
 @Composable
 @FunctionKeyMeta(key = 1292064820, startOffset = 253, endOffset = 376)
 fun Example(%composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "C(Example)<rememb...>,<x::foo>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Example)<rememb...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -33,14 +33,10 @@ fun Example(%composer: Composer?, %changed: Int) {
     sourceInformationMarkerEnd(%composer)
     tmp0_group
   }
-  val shouldNotMemoize = <block>{
-    val tmp0 = x
-    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-    val tmp1_group = %composer.cache(%composer.changedInstance(tmp0)) {
-      tmp0::foo
+  val shouldNotMemoize = ::foo {
+    fun foo(receiver: Unstable): Function0<Unit> {
+      return receiver.foo()
     }
-    sourceInformationMarkerEnd(%composer)
-    tmp1_group
   }
   if (isTraceInProgress()) {
     traceEventEnd()

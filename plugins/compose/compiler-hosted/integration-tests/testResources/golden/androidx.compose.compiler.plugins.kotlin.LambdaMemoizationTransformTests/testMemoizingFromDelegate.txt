@@ -30,7 +30,7 @@ fun StrongSkippingIssue(
 @FunctionKeyMeta(key = -786846595, startOffset = 84, endOffset = 517)
 fun StrongSkippingIssue(data: ClassWithData, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(StrongSkippingIssue)N(data)<rememb...>,<{>:Test.kt")
+  sourceInformation(%composer, "C(StrongSkippingIssue)N(data)<rememb...>,<{>,<{>,<{>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
@@ -56,35 +56,59 @@ fun StrongSkippingIssue(data: ClassWithData, %composer: Composer?, %changed: Int
         tmp0_group
       }
       get() {
-        return state%delegate.getValue(null, ::state%delegate)
+        return state%delegate.getValue(null, ::state {
+          fun state(): String }
+        )
       }
     }
     val action by {
-      val action%delegate = data::action
+      val action%delegate = ::action {
+        fun action(receiver: ClassWithData): Int {
+          return receiver.action
+        }
+      }
       get() {
-        return action%delegate.getValue(null, ::action%delegate)
+        return action%delegate.getValue(null, ::action {
+          fun action(): Int }
+        )
       }
     }
     val action1 by {
-      val action1%delegate = getData()::action
+      val action1%delegate = ::action {
+        fun action(receiver: ClassWithData): Int {
+          return receiver.action
+        }
+      }
       get() {
-        return action1%delegate.getValue(null, ::action1%delegate)
+        return action1%delegate.getValue(null, ::action1 {
+          fun action1(): Int }
+        )
       }
     }
-    {
-      <get-action>()
-    }
-    {
-      <get-action1>()
-    }
     sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-    val tmp1_group = %composer.cache(false) {
+    val tmp1_group = %composer.cache(%composer.changedInstance(action%delegate)) {
+      {
+        <get-action>()
+      }
+    }
+    sourceInformationMarkerEnd(%composer)
+    tmp1_group
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+    val tmp2_group = %composer.cache(%composer.changedInstance(action1%delegate)) {
+      {
+        <get-action1>()
+      }
+    }
+    sourceInformationMarkerEnd(%composer)
+    tmp2_group
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+    val tmp3_group = %composer.cache(false) {
       {
         <get-state>()
       }
     }
     sourceInformationMarkerEnd(%composer)
-    tmp1_group
+    tmp3_group
     if (isTraceInProgress()) {
       traceEventEnd()
     }

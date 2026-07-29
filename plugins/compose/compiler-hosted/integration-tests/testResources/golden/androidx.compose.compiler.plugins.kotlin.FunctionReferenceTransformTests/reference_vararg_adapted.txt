@@ -17,24 +17,18 @@ fun Ref(content: @Composable () -> Unit) {
 @FunctionKeyMeta(key = -176876488, startOffset = 84, endOffset = 166)
 fun Ref(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Ref)N(content)<::Fn>,<::Fn>,<Ref(::...>:Test.kt")
+  sourceInformation(%composer, "C(Ref)N(content)<::Fn>,<Ref(::...>:Test.kt")
   if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
-    Ref(<block>{
-      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-      val tmp0_group = %composer.cache(false) {
-        @Composable
-        @FunctionKeyMeta(key = -397115175, startOffset = 147, endOffset = 151)
-        fun Fn(%composer: Composer?, %changed: Int) {
-          Fn(null, %composer, 0, 0b0001)
-        }
-        ::Fn
+    Ref(::Fn {
+      @Composable
+      @FunctionKeyMeta(key = -397115175, startOffset = 147, endOffset = 151)
+      fun Fn(%composer: Composer?, %changed: Int) {
+        Fn(null, %composer, 0, 0b0001)
       }
-      sourceInformationMarkerEnd(%composer)
-      tmp0_group
-    }, %composer, 0b0110)
+    }, %composer, 0)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

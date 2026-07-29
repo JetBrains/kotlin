@@ -17,19 +17,15 @@ fun Something() {
 @FunctionKeyMeta(key = 2053756612, startOffset = 93, endOffset = 165)
 fun Something(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Something)<unstab...>:Test.kt")
+  sourceInformation(%composer, "C(Something):Test.kt")
   if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
-    val x = <block>{
-      val tmp0 = unstable
-      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-      val tmp0_group = %composer.cache(%composer.changedInstance(tmp0)) {
-        tmp0::method
+    val x = ::method {
+      fun method(receiver: Unstable, p0: @[ParameterName(name = 'arg1')] Int) {
+        return receiver.method(p0)
       }
-      sourceInformationMarkerEnd(%composer)
-      tmp0_group
     }
     if (isTraceInProgress()) {
       traceEventEnd()
