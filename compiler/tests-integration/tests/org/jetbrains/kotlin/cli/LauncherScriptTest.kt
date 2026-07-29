@@ -44,6 +44,26 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         workDirectory: File? = null,
         environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
     ) {
+        runProcess(
+            executableName,
+            *args,
+            checkStdout = { stdout -> assertEquals(expectedStdout.trim(), stdout.trim()) },
+            checkStderr = { stderr -> assertEquals(expectedStderr.trim(), stderr.trim()) },
+            expectedExitCode = expectedExitCode,
+            workDirectory = workDirectory,
+            environment = environment
+        )
+    }
+
+    private fun runProcess(
+        executableName: String,
+        vararg args: String,
+        checkStdout: (String) -> Unit,
+        checkStderr: (String) -> Unit,
+        expectedExitCode: Int,
+        workDirectory: File? = null,
+        environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
+    ) {
         val executableFileName = if (SystemInfo.isWindows) "$executableName.bat" else executableName
         val launcherFile = File(PathUtil.kotlinPathsForDistDirectory.homePath, "bin/$executableFileName")
         assertTrue(launcherFile.exists()) { "Launcher script not found, run dist task: ${launcherFile.absolutePath}" }
@@ -72,8 +92,9 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         process.waitFor(10, TimeUnit.SECONDS)
         val exitCode = process.exitValue()
         try {
-            assertEquals(expectedStdout.trim(), stdout.trim())
-            assertEquals(expectedStderr.trim(), stderr.trim())
+            checkStdout(stdout.trim())
+            checkStderr(stderr.trim())
+
             assertEquals(expectedExitCode, exitCode)
         } catch (e: Throwable) {
             System.err.println("exit code $exitCode")
@@ -722,4 +743,24 @@ Caused by: java.lang.AssertionError: assert
         runProcess("kapt", "-version", expectedStderr = info)
     }
 
+    @Test
+    fun testStackOverflowWithBigLimit() {
+        val code = buildString {
+            appendLine("class Foo() {")
+            append("    val i = ")
+            val pluses = (1..700).joinToString(separator = " + ") { "1" }
+            appendLine(pluses)
+            appendLine("}")
+        }
+        val file = tmpdir.resolve("test.kt").also { it.writeText(code) }
+        runProcess(
+            "kotlinc", file.absolutePath,
+            expectedExitCode = 2,
+            checkStdout = { stdOut -> assertTrue(stdOut.isBlank()) },
+            checkStderr = { stdErr ->
+                assertTrue(stdErr.contains("java.lang.NoClassDefFoundError"))
+                assertFalse(stdErr.contains("java.lang.StackOverflowError"))
+            },
+        )
+    }
 }
