@@ -52,7 +52,13 @@ abstract class AbstractDiagnosticCollector(
         fun getDiagnosticsSuppressedForContainer(annotationContainer: FirAnnotationContainer): List<String>? {
             var result: MutableList<String>? = null
 
-            for (annotation in annotationContainer.annotations) {
+            val annotations = if (annotationContainer is FirDeclaration) {
+                annotationContainer.symbol.resolvedAnnotationsWithArguments
+            } else {
+                annotationContainer.annotations
+            }
+
+            for (annotation in annotations) {
                 val type = annotation.annotationTypeRef.coneType as? ConeClassLikeType ?: continue
                 if (type.lookupTag.classId != StandardClassIds.Annotations.Suppress) continue
                 val argumentValues =
