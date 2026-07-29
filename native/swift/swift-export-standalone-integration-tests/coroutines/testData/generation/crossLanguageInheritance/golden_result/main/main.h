@@ -63,6 +63,8 @@ _Bool AsyncGreeter_greet__TypesOfArguments__Swift_String__(void * self, NSString
 
 _Bool AsyncGreeter_salutation(void * self, _Bool (^continuation)(NSString *), _Bool (^exception)(void * _Nullable ), void * cancellation);
 
+_Bool __root___AsyncAbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * __root___AsyncBase_init_allocate();
 
 _Bool __root___AsyncBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);

@@ -1172,6 +1172,36 @@ public fun Parent_value_get(self: kotlin.native.internal.NativePtr): kotlin.nati
     return _result.objcPtr()
 }
 
+@ExportedBridge("__root___AbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
+public fun __root___AbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, AbstractBase()) }
+    return run { _result; true }
+}
+
+@ExportedBridge("__root___AbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__", nonVirtualTargetMethod = "<init>")
+public fun __root___AbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, x: Int): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val __x = x
+    val _result = run { kotlin.native.internal.initInstance(____kt, AbstractBase(__x)) }
+    return run { _result; true }
+}
+
+@ExportedBridge("__root___AbstractDerived2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
+public fun __root___AbstractDerived2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, AbstractDerived2()) }
+    return run { _result; true }
+}
+
+@ExportedBridge("__root___AbstractDerived2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__", nonVirtualTargetMethod = "<init>")
+public fun __root___AbstractDerived2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, x: Int): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val __x = x
+    val _result = run { kotlin.native.internal.initInstance(____kt, AbstractDerived2(__x)) }
+    return run { _result; true }
+}
+
 @ExportedBridge("__root___Child_init_allocate")
 public fun __root___Child_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<Child>() }

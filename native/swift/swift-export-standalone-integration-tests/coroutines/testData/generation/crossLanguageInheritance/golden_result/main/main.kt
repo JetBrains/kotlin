@@ -616,6 +616,13 @@ public fun AsyncGreeter_salutation(self: kotlin.native.internal.NativePtr, conti
     }
 }
 
+@ExportedBridge("__root___AsyncAbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
+public fun __root___AsyncAbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, AsyncAbstractBase()) }
+    return run { _result; true }
+}
+
 @ExportedBridge("__root___AsyncBase_init_allocate")
 public fun __root___AsyncBase_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<AsyncBase>() }

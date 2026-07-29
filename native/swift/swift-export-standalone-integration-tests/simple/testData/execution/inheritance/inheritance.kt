@@ -108,3 +108,29 @@ interface Labeled {
 
 fun readDisplay(l: Labeled): String = l.display
 fun readBase(l: Labeled): String = l.base
+
+// --- Abstract classes ---
+
+// A Swift class inheriting an abstract Kotlin class must be able to call `super.init`, which runs the
+// abstract class's constructor to initialize its state (`prefix`), and override its abstract members.
+// The inherited concrete `decorated()` combines the ctor-initialized state with a virtual self-call to
+// the abstract `greeting()`, which must reach the Swift override. Direct instantiation of the abstract
+// class is forbidden at runtime by a precondition in the generated initializer.
+abstract class AbstractGreeter {
+    val prefix: String = "kotlin-prefix"
+    abstract fun greeting(): String
+    open fun decorated(): String = prefix + ":" + greeting()
+}
+
+fun callGreeting(g: AbstractGreeter): String = g.greeting()
+fun callDecorated(g: AbstractGreeter): String = g.decorated()
+
+// Abstract class with a constructor parameter: a Swift subclass must pass it through `super.init`, and
+// the inherited concrete `total()` must combine the ctor-initialized `start` with the Swift override of
+// the abstract `step()`.
+abstract class AbstractCounter(val start: Int) {
+    abstract fun step(): Int
+    open fun total(): Int = start + step()
+}
+
+fun callTotal(c: AbstractCounter): Int = c.total()
