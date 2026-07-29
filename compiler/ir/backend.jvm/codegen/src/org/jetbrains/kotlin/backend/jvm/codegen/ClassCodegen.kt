@@ -63,7 +63,6 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
-import org.jetbrains.org.objectweb.asm.util.TextifierSupport
 import java.io.File
 
 class ClassCodegen private constructor(
@@ -659,29 +658,6 @@ private val JDK_VALUE_BASED_FIELD_DESCRIPTORS = setOf(
     // jdk.incubator.vector
     "Ljdk/incubator/vector/Float16;",
 )
-
-/**
- * The `LoadableDescriptors` class-file attribute (JEP 401), listing field descriptors of value-class field types so the JVM may
- * eagerly load them and flatten their storage. Layout: `u2 number_of_descriptors; u2 descriptors[number_of_descriptors]`, where
- * each entry is a constant-pool index of a `CONSTANT_Utf8` holding a field descriptor.
- *
- * Implements [TextifierSupport] so the descriptors are rendered in the textified bytecode used by `// CHECK_BYTECODE_TEXT` tests.
- */
-private class LoadableDescriptorsAttribute(private val descriptors: List<String>) :
-    Attribute("LoadableDescriptors"), TextifierSupport {
-    override fun write(
-        classWriter: ClassWriter, code: ByteArray?, codeLength: Int, maxStack: Int, maxLocals: Int
-    ): ByteVector = ByteVector().apply {
-        putShort(descriptors.size)
-        for (descriptor in descriptors) {
-            putShort(classWriter.newUTF8(descriptor))
-        }
-    }
-
-    override fun textify(stringBuilder: StringBuilder, labelNames: MutableMap<Label, String>?) {
-        stringBuilder.append(descriptors.joinToString(prefix = " : ", postfix = "\n"))
-    }
-}
 
 private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): Int =
     origin.flags or

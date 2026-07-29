@@ -95,6 +95,11 @@ class JvmAbiOutputExtension(
                             private val keptMethods = mutableListOf<MethodNode>()
                             private val innerClassInfos = mutableMapOf<String, InnerClassInfo>()
 
+                            override fun visitAttribute(attribute: Attribute) {
+                                if (attribute.type == LOADABLE_DESCRIPTORS_ATTRIBUTE_NAME) return
+                                super.visitAttribute(attribute)
+                            }
+
                             override fun visitSource(source: String?, debug: String?) {
                                 sourceFile = source
                                 sourceMap = debug.takeIf { !prune }?.let(SMAPParser::parseOrNull)
