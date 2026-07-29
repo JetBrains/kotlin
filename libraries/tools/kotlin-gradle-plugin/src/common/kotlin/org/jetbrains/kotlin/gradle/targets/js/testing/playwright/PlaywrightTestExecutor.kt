@@ -278,7 +278,7 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
         val readySocket = debugOptions?.debuggerReadySocket ?: return
         try {
             readySocket.use { serverSocket ->
-                serverSocket.accept().use { }
+                serverSocket.accept().close()
             }
         } catch (e: SocketTimeoutException) {
             throw IllegalStateException("Timed out waiting for IntelliJ debugger to attach to '$name'", e)
