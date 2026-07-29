@@ -56,6 +56,10 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     @UseFromImplModuleRestricted
     override fun <V> get(key: BaseCompilationOperation.Option<V>): V = options[key]
 
+    // In-process compilation and linking run a CLICompiler, which creates and uses the shared application environment.
+    override val usesApplicationEnvironment: Boolean
+        get() = true
+
     @UseFromImplModuleRestricted
     override fun <V> set(key: BaseCompilationOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)

@@ -25,6 +25,9 @@ internal class CriLookupDataDeserializationOperationImpl(
         initializeOptions(this::class, options)
     }
 
+    override val usesApplicationEnvironment: Boolean
+        get() = false
+
     override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
