@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationTarget
 import org.jetbrains.kotlin.analysis.api.internals.internals
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 
@@ -68,6 +69,47 @@ public val KaNamedFunctionSymbol.canBeOperator: Boolean
     get() {
         @OptIn(KaImplementationDetail::class)
         return internals.symbolInformationProvider.canBeOperator(this)
+    }
+
+/**
+ * The equality bound of the given `equals` [operator function](https://kotlinlang.org/docs/operator-overloading.html), or `null` if the
+ * function has no equality bound.
+ *
+ * An equality bound narrows the contract of `equals`: it can only return `true` if its argument is a subtype of the bound. It is declared
+ * with the `kotlin.EqualityBound` annotation, but it can also be inherited from an overridden `equals` or generated for a data-like class,
+ * so there is not necessarily an annotation to inspect. Type arguments play no role in strict equality, so the bound is always a
+ * star-projected type.
+ *
+ * The result is always `null` when the `StrictEquals` language feature is disabled, and for functions which are not an `equals` operator.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * open class Base {
+ *     // equalityBound = Base, declared explicitly.
+ *     override fun equals(@EqualityBound(Base::class) other: Any?): Boolean = true
+ * }
+ *
+ * class Derived : Base() {
+ *     // equalityBound = Base, inherited from 'Base.equals'.
+ *     override fun equals(other: Any?): Boolean = true
+ * }
+ *
+ * class Unbounded {
+ *     // equalityBound = null, as neither this function nor any overridden one declares a bound.
+ *     override fun equals(other: Any?): Boolean = true
+ * }
+ *
+ * // equalityBound = Data, generated together with the 'equals' of the data class.
+ * data class Data(val value: Int)
+ * ```
+ */
+@KaExperimentalApi
+context(session: KaSession)
+public val KaNamedFunctionSymbol.equalityBound: KaType?
+    get() {
+        @OptIn(KaImplementationDetail::class)
+        return internals.symbolInformationProvider.equalityBound(this)
     }
 
 /**
