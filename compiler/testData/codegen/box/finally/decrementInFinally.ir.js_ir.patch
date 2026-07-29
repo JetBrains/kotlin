@@ -1,0 +1,13 @@
+--- a/decrementInFinally.ir.txt
++++ b/decrementInFinally.ir.js_ir.txt
+@@ -18,8 +18,8 @@
+                   CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+                     ARG <this>: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+                 GET_VAR 'val tmp_0: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+-        CATCH parameter=val e: java.lang.NullPointerException declared in <root>.box
+-          VAR CATCH_PARAMETER name:e type:java.lang.NullPointerException [val]
++        CATCH parameter=val e: kotlin.NullPointerException declared in <root>.box
++          VAR CATCH_PARAMETER name:e type:kotlin.NullPointerException [val]
+           BLOCK type=kotlin.Nothing origin=null
+             RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+               WHEN type=kotlin.String origin=IF

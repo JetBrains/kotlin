@@ -1,4 +1,4 @@
-FILE fqName:<root> fileName:/crossinlineLambdaAllocation.kt
+FILE fqName:<root> fileName:/lib.kt
   PROPERTY name:globalCounter visibility:public modality:FINAL [var]
     FIELD PROPERTY_BACKING_FIELD name:globalCounter type:kotlin.Int visibility:private [static]
       EXPRESSION_BODY
@@ -146,6 +146,18 @@ FILE fqName:<root> fileName:/crossinlineLambdaAllocation.kt
           ARG other: CALL 'public final fun foo (): kotlin.Int declared in <root>.bar.<anonymous>.<no name provided>' type=kotlin.Int origin=null
             ARG <this>: CALL 'public final fun <get-second> (): T of <root>.Pair declared in <root>.Pair' type=<root>.bar.<anonymous>.<no name provided> origin=GET_PROPERTY
               ARG <this>: GET_VAR 'val x: <root>.Pair<<root>.bar.<anonymous>.<no name provided>> declared in <root>.bar' type=<root>.Pair<<root>.bar.<anonymous>.<no name provided>> origin=null
+  FUN name:runTwice visibility:public modality:FINAL returnType:<root>.Pair<T of <root>.runTwice> [inline]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER kind:Regular name:f index:0 type:kotlin.Function0<T of <root>.runTwice>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun runTwice <T> (f: kotlin.Function0<T of <root>.runTwice>): <root>.Pair<T of <root>.runTwice> declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> (first: T of <root>.Pair, second: T of <root>.Pair) declared in <root>.Pair' type=<root>.Pair<T of <root>.runTwice> origin=null
+          TYPE_ARG (of class) T: T of <root>.runTwice
+          ARG first: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.runTwice origin=INVOKE
+            ARG <this>: GET_VAR 'f: kotlin.Function0<T of <root>.runTwice> declared in <root>.runTwice' type=kotlin.Function0<T of <root>.runTwice> origin=VARIABLE_AS_FUNCTION
+          ARG second: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.runTwice origin=INVOKE
+            ARG <this>: GET_VAR 'f: kotlin.Function0<T of <root>.runTwice> declared in <root>.runTwice' type=kotlin.Function0<T of <root>.runTwice> origin=VARIABLE_AS_FUNCTION
+FILE fqName:<root> fileName:/main.kt
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       VAR name:result type:kotlin.Int [val]
@@ -179,14 +191,3 @@ FILE fqName:<root> fileName:/crossinlineLambdaAllocation.kt
               CALL 'public final fun <get-globalCounter> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"
-  FUN name:runTwice visibility:public modality:FINAL returnType:<root>.Pair<T of <root>.runTwice> [inline]
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER kind:Regular name:f index:0 type:kotlin.Function0<T of <root>.runTwice>
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun runTwice <T> (f: kotlin.Function0<T of <root>.runTwice>): <root>.Pair<T of <root>.runTwice> declared in <root>'
-        CONSTRUCTOR_CALL 'public constructor <init> (first: T of <root>.Pair, second: T of <root>.Pair) declared in <root>.Pair' type=<root>.Pair<T of <root>.runTwice> origin=null
-          TYPE_ARG (of class) T: T of <root>.runTwice
-          ARG first: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.runTwice origin=INVOKE
-            ARG <this>: GET_VAR 'f: kotlin.Function0<T of <root>.runTwice> declared in <root>.runTwice' type=kotlin.Function0<T of <root>.runTwice> origin=VARIABLE_AS_FUNCTION
-          ARG second: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.runTwice origin=INVOKE
-            ARG <this>: GET_VAR 'f: kotlin.Function0<T of <root>.runTwice> declared in <root>.runTwice' type=kotlin.Function0<T of <root>.runTwice> origin=VARIABLE_AS_FUNCTION
