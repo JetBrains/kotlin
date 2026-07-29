@@ -45,14 +45,6 @@ object BuiltinMethodsWithSpecialGenericSignature : SpecialGenericSignatures() {
         return functionDescriptor.firstOverridden { it.hasErasedValueParametersInJava } as FunctionDescriptor?
     }
 
-    @JvmStatic
-    fun getDefaultValueForOverriddenBuiltinFunction(functionDescriptor: FunctionDescriptor): TypeSafeBarrierDescription? {
-        if (functionDescriptor.name !in ERASED_VALUE_PARAMETERS_SHORT_NAMES) return null
-        return functionDescriptor.firstOverridden {
-            it.computeJvmSignature() in SIGNATURE_TO_DEFAULT_VALUES_MAP.keys
-        }?.let { SIGNATURE_TO_DEFAULT_VALUES_MAP[it.computeJvmSignature()] }
-    }
-
     val Name.sameAsBuiltinMethodWithErasedValueParameters: Boolean
         get() = this in ERASED_VALUE_PARAMETERS_SHORT_NAMES
 
