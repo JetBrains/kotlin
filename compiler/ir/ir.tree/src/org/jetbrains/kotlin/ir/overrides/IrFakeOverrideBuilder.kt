@@ -221,7 +221,14 @@ class IrFakeOverrideBuilder(
                     // Because of binary incompatible changes, it's possible to have private, or otherwise invisible member with the same
                     // shape as one of the super methods. In that case it should not override, but rather "shadow" it. So we have to check
                     // visibility first.
-                    strategy.isVisibleForOverride(fromCurrent, fromSupertype.original.parentAsClass, allowBothDirectionsOfFriendship = true) -> {
+                    strategy.isVisibleForOverride(
+                        fromCurrent,
+                        fromSupertype.original.parentAsClass,
+                        // At this point, we're checking if overridden class sees the overriding member. But there is one special case:
+                        // we allow the overridden class to not actually see the overriding `internal` member, if the _overriding_ class's
+                        // module has a friend dependency on _overridden_. So, in the opposite direction to a regular visibility check.
+                        checkFriendshipInOppositeDirection = true
+                    ) -> {
                         overridden += fromSupertype
                         bound += fromSupertype
                     }

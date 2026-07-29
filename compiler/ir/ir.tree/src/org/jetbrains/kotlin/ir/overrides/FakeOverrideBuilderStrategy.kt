@@ -103,7 +103,7 @@ abstract class FakeOverrideBuilderStrategy {
 
     protected abstract fun shouldSeeInternals(thisModule: ModuleDescriptor, memberModule: ModuleDescriptor): Boolean
 
-    fun isVisibleForOverride(target: IrOverridableMember, visibleFrom: IrClass, allowBothDirectionsOfFriendship: Boolean = false) : Boolean {
+    fun isVisibleForOverride(target: IrOverridableMember, visibleFrom: IrClass, checkFriendshipInOppositeDirection: Boolean = false) : Boolean {
         return when {
             DescriptorVisibilities.isPrivate(target.visibility) -> false
             target.visibility == DescriptorVisibilities.INVISIBLE_FAKE -> false
@@ -113,8 +113,8 @@ abstract class FakeOverrideBuilderStrategy {
 
                 when {
                     visibleFromModule == targetModule -> true
-                    shouldSeeInternals(visibleFromModule, targetModule) -> true
-                    allowBothDirectionsOfFriendship && shouldSeeInternals(targetModule, visibleFromModule) -> true
+                    !checkFriendshipInOppositeDirection && shouldSeeInternals(visibleFromModule, targetModule) -> true
+                    checkFriendshipInOppositeDirection && shouldSeeInternals(targetModule, visibleFromModule) -> true
                     !isOverrideOfPublishedApiFromOtherModuleDisallowed &&
                             target.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
                     else -> false
