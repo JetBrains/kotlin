@@ -184,6 +184,12 @@ public class SerializationJsBoxWithInlinedFunInKlibTestGenerated extends Abstrac
   }
 
   @Test
+  @TestMetadata("genericsExtended.kt")
+  public void testGenericsExtended() {
+    run("genericsExtended.kt");
+  }
+
+  @Test
   @TestMetadata("inlineClasses.kt")
   public void testInlineClasses() {
     run("inlineClasses.kt");

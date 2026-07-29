@@ -187,6 +187,12 @@ public class LLReversedSerializationBlackBoxTestGenerated extends AbstractLLReve
     }
 
     @Test
+    @TestMetadata("genericsExtended.kt")
+    public void testGenericsExtended() {
+      run("genericsExtended.kt");
+    }
+
+    @Test
     @TestMetadata("inlineClasses.kt")
     public void testInlineClasses() {
       run("inlineClasses.kt");

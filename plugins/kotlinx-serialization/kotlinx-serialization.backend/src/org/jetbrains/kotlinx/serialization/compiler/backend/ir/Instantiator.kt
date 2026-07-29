@@ -34,7 +34,17 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.
 internal class Instantiator(
     val generator: BaseIrGenerator,
     val compilerContext: SerializationPluginContext,
+    // class for which the serializer is generated
     val rootSerializableClass: IrClass? = null,
+    /**
+     * Function to get expression for getting serializer by the index in the current generic context.
+     *
+     * Serialization context depends on where a serializer will be instantiated:
+     * - Implementation of the serializer() function. Values - parameters of the serializer function. The indexes correspond to the indexes of the type parameters in the serializable class
+     * - Implementation of the write$Self function. Values - parameters of the write$Self function. The indexes correspond to the indexes of the type parameters in the serializable class
+     * - Implementation of serialize(), deserialize(), childSerializers() functions. Values - fields of the `$serializer` class. The indexes correspond to the indexes of the type parameters in the serializable class
+     * - Serializer cache, called in the initializer of a property in the companion object. Values are serializers for direct type arguments of the property type.
+     */
     val genericGetter: ((Int, IrType) -> IrExpression)? = null,
 ) {
     val nullableSerClass = compilerContext.finderForBuiltins().findProperties(SerialEntityNames.wrapIntoNullableCallableId).single()
@@ -280,32 +290,35 @@ internal class Instantiator(
 
     context(irBuilder: IrBuilderWithScope) private fun instantiateSealedSerializer(
         serializerClass: IrClassSymbol,
-        kType: IrSimpleType,
+        sealedType: IrSimpleType,
     ): IrExpression {
         val needToCopyAnnotations = true
-        val typeArgs = listOf(kType)
+        // for sealed serializer the parent sealed serializable type is always the first type argument
+        val typeArgs = listOf(sealedType)
 
         // If can call from companion:
-        if (serializerClass == kType.classOrUpperBound()?.owner.classSerializer(compilerContext) && generator !is SerializableCompanionIrGenerator) {
-            val args = kType.arguments.map { typeArg ->
-                val type = typeArg.typeOrNull
+        if (serializerClass == sealedType.classOrUpperBound()?.owner.classSerializer(compilerContext) && generator !is SerializableCompanionIrGenerator) {
+            val args = sealedType.arguments.map { typeArgOfSealedClass ->
+                val irTypeArgOfSealedClass = typeArgOfSealedClass.typeOrNull
                 when {
-                    type?.isTypeParameter() == true && rootSerializableClass != null -> {
-                        // try to use type argument from root serializable class
-                        val indexInRootClass = typeArg.indexInClass(rootSerializableClass)
+                    irTypeArgOfSealedClass?.isTypeParameter() == true && rootSerializableClass != null -> {
+                        /*
+                         * Since we don't use the serializers cache here, we can use genericIndex property, and it matches the current generic context
+                         */
+                        val genericIndex = irTypeArgOfSealedClass.genericIndex
                         serializerInstance(
                             null,
-                            type,
-                            indexInRootClass,
+                            irTypeArgOfSealedClass,
+                            genericIndex,
                         ) ?: irBuilder.irGetObject(compilerContext.unitSerializerClass!!)
                     }
 
-                    type != null && !type.isTypeParameter() -> {
+                    irTypeArgOfSealedClass != null && !irTypeArgOfSealedClass.isTypeParameter() -> {
                         // create serializer for class type argument
-                        val serializer = generator.findTypeSerializerOrContext(type)
+                        val serializer = generator.findTypeSerializerOrContext(irTypeArgOfSealedClass)
                         serializerInstance(
                             serializer,
-                            type,
+                            irTypeArgOfSealedClass,
                             null,
                         ) ?: irBuilder.irGetObject(compilerContext.unitSerializerClass!!)
                     }
@@ -317,20 +330,20 @@ internal class Instantiator(
                     }
                 }
             }
-            generator.callSerializerFromCompanion(kType, typeArgs, args, sealedSerializerId)?.let { return it }
+            generator.callSerializerFromCompanion(sealedType, typeArgs, args, sealedSerializerId)?.let { return it }
         }
 
 
         val args = mutableListOf<IrExpression>().apply {
-            add(irBuilder.irString(kType.serialName()))
-            add(classReferenceOf(kType))
+            add(irBuilder.irString(sealedType.serialName()))
+            add(classReferenceOf(sealedType))
             val [subclasses, subSerializers] = generator.allSealedSerializableSubclassesFor(
-                kType.classOrUpperBound()!!.owner,
+                sealedType.classOrUpperBound()!!.owner,
                 compilerContext
             )
             val projectedOutCurrentKClass =
                 compilerContext.irBuiltIns.kClassClass.typeWithArguments(
-                    listOf(makeTypeProjection(kType, Variance.OUT_VARIANCE))
+                    listOf(makeTypeProjection(sealedType, Variance.OUT_VARIANCE))
                 )
             add(
                 generator.createArrayOfExpression(
@@ -340,57 +353,102 @@ internal class Instantiator(
             )
             add(
                 generator.createArrayOfExpression(
-                    generator.wrapIrTypeIntoKSerializerIrType(kType, variance = Variance.OUT_VARIANCE),
-                    subSerializers.mapIndexed { i, serializer ->
-                        val type = subclasses[i]
+                    generator.wrapIrTypeIntoKSerializerIrType(sealedType, variance = Variance.OUT_VARIANCE),
+                    subSerializers.mapIndexed { i, subclassSerializer ->
+                        val subclassType = subclasses[i]
 
-                        val path = if (kType.arguments.isNotEmpty()) findPath(type, kType) else null
+                        val supertypePath = if (sealedType.arguments.isNotEmpty()) findSupertypePath(subclassType, sealedType) else emptyList()
 
                         val expr = instantiateWithNewGetter(
-                            serializer,
-                            type,
-                            type.genericIndex,
-                        ) { index, genericType ->
-                            val indexInParent = path?.let { mapTypeParameterIndex(index, it) }
-
-                            when {
-                                genericGetter != null && indexInParent != null -> {
-                                    genericGetter.invoke(indexInParent, genericType)
-                                }
-                                !genericType.isTypeParameter() -> {
-                                    val serializer = generator.findTypeSerializerOrContext(type)
-                                    serializerInstance(
-                                        serializer,
-                                        type,
-                                        null,
-                                    )!!
-                                }
-                                else -> {
-                                    serializerInstance(
-                                        compilerContext.finderForBuiltins().findClass(polymorphicSerializerId),
-                                        (genericType.classifierOrNull as IrTypeParameterSymbol).owner.representativeUpperBound
-                                    )!!
-                                }
-                            }
+                            subclassSerializer,
+                            subclassType,
+                            subclassType.genericIndex,
+                        ) { indexInSubtype, genericType ->
+                            getGenericGetterForSubclassOfSealed(sealedType, subclassType, supertypePath, indexInSubtype, genericType)
                         }!!
-                        expr.type = expr.getSubstitutedType(type, kType, path ?: emptyList())
+                        val substitutedTypeArgumentsOfSubclass = getSubstitutedTypeArguments(subclassType, sealedType, supertypePath)
+                        expr.type = expr.type.substitute(subclassType.getClass()!!.typeParameters, substitutedTypeArgumentsOfSubclass)
+
+                        // if the expression is a function call, then we should substitute type arguments for this invoke (like call of `serializer<A, B, ...>()`)
+                        if (expr is IrFunctionAccessExpression && expr.typeArguments.size == substitutedTypeArgumentsOfSubclass.size) {
+                            expr.typeArguments.indices.forEach { expr.typeArguments[it] = substitutedTypeArgumentsOfSubclass[it] }
+                        }
                         generator.wrapWithNullableSerializerIfNeeded(expr.type, expr, nullableSerClass)
                     }
                 )
             )
         }
-        val newArgs = addAnnotationsToArgs(kType, args)
+        val newArgs = addAnnotationsToArgs(sealedType, args)
 
         val ctor = findConstructorWithoutTypeParameters(serializerClass, needToCopyAnnotations).owner
         return callConstructor(ctor, typeArgs, newArgs)
     }
 
-    private fun IrExpression.getSubstitutedType(subclassType: IrSimpleType, kType: IrSimpleType, path: List<IrSimpleType>): IrType {
-        val subclass = subclassType.getClass() ?: return type
-        val substitutions = kType.argumentTypesOrUpperBounds()
-        return type.substitute(subclass.typeParameters, subclass.typeParameters.map {
-            mapTypeParameterIndex(it.index, path)?.let(substitutions::getOrNull) ?: it.representativeUpperBound
-        })
+    /**
+     * Returns a serializer expression for a type parameter of a sealed subclass.
+     *
+     * Maps [indexInSubtype] to the corresponding argument of [sealedType] through
+     * [supertypePath]. If that argument belongs to the current generic context,
+     * delegates to [genericGetter]; if it is concrete, creates its serializer directly.
+     * Parameters not propagated to the sealed supertype fall back to a polymorphic
+     * serializer for their representative upper bound.
+     */
+    context(irBuilder: IrBuilderWithScope)
+    private fun getGenericGetterForSubclassOfSealed(
+        sealedType: IrSimpleType,
+        subclassType: IrSimpleType,
+        supertypePath: List<IrSimpleType>,
+        indexInSubtype: Int,
+        genericType: IrType,
+    ): IrExpression {
+        // get actual type argument index in sealed class and take its index in the context of current genericGetter
+        val indexInSealedClass = findIndexInParent(indexInSubtype, supertypePath)
+        val typeArgInSealedClass = indexInSealedClass?.let { sealedType.arguments.getOrNull(it)?.typeOrNull }
+        val genericIndex = typeArgInSealedClass?.genericIndex
+
+        return when {
+            typeArgInSealedClass != null && !typeArgInSealedClass.isTypeParameter() -> {
+                // serializer for type argument of sealed class if it is not type parameter itself
+                val serializer = generator.findTypeSerializerOrContext(typeArgInSealedClass)
+                serializerInstance(serializer, typeArgInSealedClass, null)!!
+            }
+            genericGetter != null && genericIndex != null -> {
+                // Generic type argument of sealed class
+                // Copy the expression because the same IR node must not be reused under multiple parents
+                genericGetter.invoke(genericIndex, genericType).deepCopyWithSymbols()
+            }
+            !genericType.isTypeParameter() -> {
+                // non-generic type argument of subclass
+                val serializer = generator.findTypeSerializerOrContext(subclassType)
+                serializerInstance(
+                    serializer,
+                    subclassType,
+                    null,
+                )!!
+            }
+            else -> {
+                serializerInstance(
+                    compilerContext.finderForBuiltins().findClass(polymorphicSerializerId),
+                    (genericType.classifierOrNull as IrTypeParameterSymbol).owner.representativeUpperBound
+                )!!
+            }
+        }
+    }
+
+    /**
+     * Returns type arguments of [subclassType] expressed in the [sealedType] context.
+     * Parameters not propagated to the sealed supertype are replaced with their representative upper bounds.
+     */
+    private fun getSubstitutedTypeArguments(
+        subclassType: IrSimpleType,
+        sealedType: IrSimpleType,
+        supertypePath: List<IrSimpleType>,
+    ): List<IrType> {
+        val subclass = subclassType.getClass() ?: return emptyList()
+        val substitutions = sealedType.argumentTypesOrUpperBounds()
+        return subclass.typeParameters.map {
+            findIndexInParent(it.index, supertypePath)?.let(substitutions::getOrNull) ?: it.representativeUpperBound
+        }
     }
 
     context(irBuilder: IrBuilderWithScope)
