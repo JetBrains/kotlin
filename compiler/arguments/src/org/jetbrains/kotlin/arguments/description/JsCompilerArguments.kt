@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.arguments.description
 import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerPhase
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
@@ -23,7 +24,10 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         name = "target"
         description = "Generate JS files for the specified ECMA version.".asReleaseDependent()
         valueType = StringType.defaultNull
-        valueDescription = "{ es5, es2015 }".asReleaseDependent()
+        valueDescription = ReleaseDependent(
+            "{ es5, es2015, es2020 }",
+            KotlinReleaseVersion.v1_0_0..KotlinReleaseVersion.v2_4_20 to "{ es5, es2015 }",
+        )
         argumentType = JsEcmaVersionType()
 
         lifecycle(

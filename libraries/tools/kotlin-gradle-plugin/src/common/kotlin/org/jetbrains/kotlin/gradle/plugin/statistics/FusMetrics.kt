@@ -14,7 +14,6 @@ import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.ES_2015
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.MODULE_ES
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.isKonanIncrementalCompilationEnabled

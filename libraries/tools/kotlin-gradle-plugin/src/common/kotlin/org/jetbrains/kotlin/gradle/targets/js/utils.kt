@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.js
 
 import com.google.gson.GsonBuilder
+import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.js.config.EcmaVersion
 import java.io.File
 import java.io.StringWriter
 
@@ -106,3 +109,9 @@ internal fun <T> KotlinJsIrTarget.webTargetVariant(
 internal fun json(obj: Any) = StringWriter().also {
     GsonBuilder().setPrettyPrinting().create().toJson(obj, it)
 }.toString()
+
+/**
+ * A converter from a string `target` option to an [EcmaVersion]
+ */
+internal val KotlinJsCompilerOptions.targetVersion: Provider<EcmaVersion>
+    get() = target.map(EcmaVersion::fromName)

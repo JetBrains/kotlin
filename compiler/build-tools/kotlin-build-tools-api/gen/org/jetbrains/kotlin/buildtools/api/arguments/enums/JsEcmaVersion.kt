@@ -13,5 +13,6 @@ public enum class JsEcmaVersion(
 ) {
   ES5("es5"),
   ES2015("es2015"),
+  ES2020("es2020"),
   ;
 }

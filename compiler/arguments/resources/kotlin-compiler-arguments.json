@@ -1574,6 +1574,15 @@
                         "deprecatedVersion": null,
                         "removedVersion": null
                     }
+                },
+                {
+                    "name": "es2020",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.5.0",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
                 }
             ]
         },
@@ -14613,8 +14622,14 @@
                                                             }
                                                         },
                                                         "valueDescription": {
-                                                            "current": "{ es5, es2015 }",
-                                                            "valueInVersions": []
+                                                            "current": "{ es5, es2015, es2020 }",
+                                                            "valueInVersions": [
+                                                                {
+                                                                    "minReleaseVersion": "1.0.0",
+                                                                    "maxReleaseVersion": "2.4.20",
+                                                                    "value": "{ es5, es2015 }"
+                                                                }
+                                                            ]
                                                         },
                                                         "releaseVersionsMetadata": {
                                                             "introducedVersion": "1.0.0",
