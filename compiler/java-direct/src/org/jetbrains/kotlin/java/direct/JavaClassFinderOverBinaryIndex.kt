@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
-import org.jetbrains.kotlin.fir.java.deserialization.JvmBinaryClassFinderInputs
-import org.jetbrains.kotlin.fir.java.hasMetadataAnnotation
 import org.jetbrains.kotlin.load.java.JavaClassFinder
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.readBinaryJavaClass
 import org.jetbrains.kotlin.name.ClassId
@@ -22,15 +22,16 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Index-based [JvmBinaryClassFinderInputs] for the java-direct library session.
- * Skips Kotlin `@Metadata` classes (handled by the Kotlin deserializer path).
+ * Binary-side [JavaClassFinder] over the CLI [JvmDependenciesIndex], used by the java-direct
+ * library session. Kotlin `@Metadata` classes are filtered out by
+ * [org.jetbrains.kotlin.fir.java.FirJavaFacade.findClass], which owns every read of this finder.
  */
 @Suppress("UnstableApiUsage")
-class JvmBinaryClassFinderInputsOverIndex(
+class JavaClassFinderOverBinaryIndex(
     private val index: JvmDependenciesIndex,
     private val scope: GlobalSearchScope,
-    private val enableSearchInCtSym: Boolean,
-) : JvmBinaryClassFinderInputs {
+    enableSearchInCtSym: Boolean,
+) : JavaClassFinder {
 
     private val extensions: JavaFileExtensions =
         if (enableSearchInCtSym) BINARY_CLASS_AND_SIG_EXTENSIONS else BINARY_CLASS_EXTENSIONS
@@ -45,33 +46,24 @@ class JvmBinaryClassFinderInputsOverIndex(
 
     private val knownClassNamesCache: MutableMap<FqName, Set<String>> = HashMap()
 
-    override fun hasTopLevelBinaryClass(classId: ClassId): Boolean {
-        val knownNames = knownClassNamesInPackage(classId.packageFqName)
-        val topLevelName = classId.relativeClassName.asString().substringBefore(".")
-        return topLevelName in knownNames
+    override fun findClass(request: JavaClassFinder.Request): JavaClass? =
+        findClassImpl(request, applyScopeFilter = true)
+
+    override fun findClasses(request: JavaClassFinder.Request): List<JavaClass> =
+        listOfNotNull(findClass(request))
+
+    /**
+     * A package exists on the binary side if some classpath root contains the corresponding
+     * directory. Its annotations, if any, come from `package-info.class` and are only looked up
+     * when the caller expects them (see `FirJavaFacade.packageCache`).
+     */
+    override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? {
+        val packageInfoClass = if (mayHaveAnnotations) findPackageInfoClass(fqName) else null
+        if (packageInfoClass == null && !containsDirectory(fqName)) return null
+        return BinaryIndexJavaPackage(fqName, packageInfoClass)
     }
 
-    override fun knownBinaryClassNamesInPackage(packageFqName: FqName): Set<String> =
-        knownClassNamesInPackage(packageFqName)
-
-    override fun hasBinaryPackage(fqName: FqName): Boolean {
-        var found = false
-        index.traverseDirectoriesInPackage(fqName, JavaRoot.OnlyBinary) { _, _ ->
-            found = true
-            false // stop at the first hit
-        }
-        return found
-    }
-
-    override fun findBinaryClass(classId: ClassId, knownContent: ByteArray?): JavaClass? =
-        findClassImpl(JavaClassFinder.Request(classId, knownContent), applyScopeFilter = true)
-            ?.takeIf { it.isFromSource || !it.hasMetadataAnnotation() }
-
-    /** Binary `package-info.class` for package default-nullability annotations, if present. */
-    fun findPackageInfoClass(packageFqName: FqName): JavaClass? =
-        findBinaryClass(ClassId(packageFqName, Name.identifier("package-info")), knownContent = null)
-
-    private fun knownClassNamesInPackage(packageFqName: FqName): Set<String> =
+    override fun knownClassNamesInPackage(packageFqName: FqName): Set<String> =
         knownClassNamesCache.getOrPut(packageFqName) {
             val result = LinkedHashSet<String>()
             index.traverseClassVirtualFilesInPackage(packageFqName, extensions) { file ->
@@ -82,6 +74,21 @@ class JvmBinaryClassFinderInputsOverIndex(
             }
             result
         }
+
+    override fun canComputeKnownClassNamesInPackage(): Boolean = true
+
+    /** Binary `package-info.class` for package default-nullability annotations, if present. */
+    private fun findPackageInfoClass(packageFqName: FqName): JavaClass? =
+        findClass(JavaClassFinder.Request(ClassId(packageFqName, PACKAGE_INFO_NAME)))
+
+    private fun containsDirectory(fqName: FqName): Boolean {
+        var found = false
+        index.traverseDirectoriesInPackage(fqName, JavaRoot.OnlyBinary) { _, _ ->
+            found = true
+            false // stop at the first hit
+        }
+        return found
+    }
 
     /** Cross-references from bytecode must resolve against the full classpath, not only [scope]. */
     private fun findClassWithoutScopeFilter(request: JavaClassFinder.Request): JavaClass? =
@@ -119,8 +126,29 @@ class JvmBinaryClassFinderInputsOverIndex(
     }
 
     private companion object {
+        private val PACKAGE_INFO_NAME = Name.identifier("package-info")
         private val BINARY_CLASS_EXTENSIONS = JavaFileExtensions(JavaFileExtension.CLASS)
         private val BINARY_CLASS_AND_SIG_EXTENSIONS =
             JavaFileExtensions(JavaFileExtension.CLASS, JavaFileExtension.SIG)
     }
+}
+
+/** [JavaPackage] carrying only the binary `package-info.class` annotations, if any. */
+private class BinaryIndexJavaPackage(
+    override val fqName: FqName,
+    private val packageInfoClass: JavaClass?,
+) : JavaPackage {
+    override val annotations: Collection<JavaAnnotation>
+        get() = packageInfoClass?.annotations.orEmpty()
+
+    override val isDeprecatedInJavaDoc: Boolean
+        get() = false
+
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? =
+        annotations.find { it.classId?.asSingleFqName() == fqName }
+
+    override val subPackages: Collection<JavaPackage>
+        get() = emptyList()
+
+    override fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass> = emptyList()
 }

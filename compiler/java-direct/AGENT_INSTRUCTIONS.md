@@ -16,7 +16,7 @@ resolver-unification residue have landed.
 
 **Key files**: `JavaClassOverAst.kt`, `JavaTypeOverAst.kt`, `JavaMemberOverAst.kt`,
 `JavaResolutionContext.kt`, `JavaClassFinderOverAstImpl.kt`,
-`JvmBinaryClassFinderInputsOverIndex.kt`, `JavaModelSessionAccess.kt`.
+`JavaClassFinderOverBinaryIndex.kt`, `JavaModelSessionAccess.kt`.
 Full map in `implDocs/ARCHITECTURE.md`.
 
 ---
@@ -153,7 +153,6 @@ grep -A5 "FAILED" "$JD_TMP/jd_test.txt" | grep -E "IllegalState|NoSuch|Exception
 - `compiler/fir/fir-jvm/src/.../javaAnnotationsMapping.kt`
 - `compiler/fir/fir-jvm/src/.../JavaSymbolProvider.kt`
 - `compiler/fir/fir-jvm/src/.../deserialization/JvmClassFileBasedSymbolProvider.kt`
-- `compiler/fir/fir-jvm/src/.../deserialization/JvmBinaryClassFinderInputs.kt`
 - `compiler/fir/entrypoint/src/.../session/FirJvmSessionFactory.kt`
 - `compiler/cli/cli-jvm/src/.../pipeline/jvm/JvmFrontendPipelinePhase.kt`
 - `core/compiler.common.jvm/src/.../load/java/structure/*.kt`
