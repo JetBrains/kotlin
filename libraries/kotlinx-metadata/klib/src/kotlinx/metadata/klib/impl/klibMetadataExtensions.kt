@@ -42,7 +42,18 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         klibMetadataSource: List<ProtoBuf.Annotation>,
         c: ReadContext,
         destination: MutableList<KmAnnotation>,
-    ) = commonMetadataSource.ifEmpty { klibMetadataSource }.mapTo(destination) { it.readAnnotation(c.strings) }
+    ) {
+        val metadataSource = commonMetadataSource.ifEmpty { klibMetadataSource }
+        if (metadataSource.isEmpty()) return
+
+        val annotationExt: KlibAnnotationReadExtension? = c.contextExtensions.firstIsInstanceOrNull<KlibAnnotationReadExtension>()
+
+        for (proto in metadataSource) {
+            val annotation = proto.readAnnotation(c.strings)
+            annotationExt?.processAnnotation(annotation)
+            destination += annotation
+        }
+    }
 
     private fun writeAnnotations(
         annotations: List<KmAnnotation>,

@@ -5,7 +5,10 @@
 
 package kotlinx.metadata.klib.impl
 
+import kotlin.metadata.KmAnnotation
 import kotlin.metadata.KmType
 import kotlin.metadata.internal.ReadContextExtension
 
 class KlibTypeReadExtension(val processType: (KmType) -> Unit) : ReadContextExtension
+
+class KlibAnnotationReadExtension(val processAnnotation: (KmAnnotation) -> Unit) : ReadContextExtension

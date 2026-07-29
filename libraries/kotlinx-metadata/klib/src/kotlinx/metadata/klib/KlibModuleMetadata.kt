@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.ApproximatingStringTable
+import kotlin.metadata.KmAnnotation
 import kotlin.metadata.KmType
 
 /**
@@ -32,6 +33,11 @@ interface KlibModuleFragmentReadStrategy {
      * Allows post-processing [KmType] after deserializing it.
      */
     fun processType(type: KmType) {}
+
+    /**
+     * Allows post-processing [KmAnnotation] after deserializing it.
+     */
+    fun processAnnotation(annotation: KmAnnotation) {}
 
     companion object {
         val DEFAULT = object : KlibModuleFragmentReadStrategy {}
@@ -132,10 +138,13 @@ class KlibModuleMetadata(
                 library.packageMetadataParts(packageFqName).map { part ->
                     val packageFragment = parsePackageFragment(library.packageMetadata(packageFqName, part))
                     val nameResolver = NameResolverImpl(packageFragment.strings, packageFragment.qualifiedNames)
-                    val typeExt = if (readStrategy !== KlibModuleFragmentReadStrategy.DEFAULT)
-                        KlibTypeReadExtension(readStrategy::processType)
-                    else null
-                    packageFragment.toKmModuleFragment(nameResolver, listOfNotNull(typeExt))
+                    val readExtensions = if (readStrategy !== KlibModuleFragmentReadStrategy.DEFAULT)
+                        listOf(
+                            KlibTypeReadExtension(readStrategy::processType),
+                            KlibAnnotationReadExtension(readStrategy::processAnnotation)
+                        )
+                    else emptyList()
+                    packageFragment.toKmModuleFragment(nameResolver, readExtensions)
                 }.let(readStrategy::processModuleParts)
             }
             return KlibModuleMetadata(
