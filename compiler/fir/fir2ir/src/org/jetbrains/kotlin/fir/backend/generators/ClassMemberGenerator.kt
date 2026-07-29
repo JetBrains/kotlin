@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.ValhallaSupportMode.ALL_VALUES
+import org.jetbrains.kotlin.config.ValhallaSupportMode.PRIMITIVES_AND_FULL_VALUE_CLASSES
+import org.jetbrains.kotlin.config.valhallaSupportMode
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
@@ -101,10 +104,15 @@ internal class ClassMemberGenerator(
                 }
             }
 
-            // For full value class primary constructors with a non-Any superclass,
-            // move field-from-parameter initializations before the delegating super call.
+            // Move field-from-parameter initializations before the delegating super call for full value class primary
+            // constructors that must assign their fields before `super(...)`: those with a non-Any (value class) superclass,
+            // and — under Project Valhalla (JVM) — every full value class, since its strict fields (JEP 401) must be definitely
+            // assigned before `super()` even when it extends `Any`. Non-Valhalla backends (e.g. JS/ES6, where `this` may not be
+            // used before `super()`) keep the plain order for `Any`-extending value classes.
             @OptIn(UnsafeDuringIrConstructionAPI::class)
-            if (!configuration.skipBodies && irPrimaryConstructor != null && irClass.isFullValueClass && irClass.superClass != null && irClass.isFinalClass) {
+            if (!configuration.skipBodies && irPrimaryConstructor != null && irClass.isFullValueClass && irClass.isFinalClass &&
+                (irClass.superClass != null || irClass.isValhallaFullValueClass())
+            ) {
                 moveFieldFromParameterInitsBeforeSuperCall(irPrimaryConstructor, irClass)
             }
 
@@ -387,6 +395,13 @@ internal class ClassMemberGenerator(
             }
         }
     }
+
+    // A full value class is compiled as a Project Valhalla value class (with strict instance fields) starting from the mode that
+    // enables full value classes. The mode is JVM-only, so this is `false` on other backends. Inline value classes are handled
+    // separately in JvmInlineClassLowering.
+    private fun IrClass.isValhallaFullValueClass(): Boolean =
+        isFullValueClass && configuration.languageVersionSettings.valhallaSupportMode
+            .let { it == PRIMITIVES_AND_FULL_VALUE_CLASSES || it == ALL_VALUES }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun moveFieldFromParameterInitsBeforeSuperCall(irConstructor: IrConstructor, irClass: IrClass) {

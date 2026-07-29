@@ -611,7 +611,7 @@ private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): 
                 isEnumClass -> Opcodes.ACC_ENUM or Opcodes.ACC_SUPER or modality.flags
                 hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) -> VersionIndependentOpcodes.ACC_RECORD or Opcodes.ACC_SUPER or modality.flags
                 else -> Opcodes.ACC_SUPER or modality.flags
-            }
+            }.let { if (isValhallaValueClass(languageVersionSettings)) it and ACC_IDENTITY.inv() else it }
 
 private fun IrClass.getSynthAccessFlag(languageVersionSettings: LanguageVersionSettings): Int {
     if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME))
@@ -623,13 +623,15 @@ private fun IrClass.getSynthAccessFlag(languageVersionSettings: LanguageVersionS
     return 0
 }
 
+const val ACC_IDENTITY = Opcodes.ACC_SUPER
+
 private fun IrField.computeFieldFlags(context: JvmBackendContext, languageVersionSettings: LanguageVersionSettings): Int =
     origin.flags or visibility.flags or
             (if (isDeprecatedCallable(context) ||
                 correspondingPropertySymbol?.owner?.isDeprecatedCallable(context) == true
             ) Opcodes.ACC_DEPRECATED else 0) or
             (if (isFinal) Opcodes.ACC_FINAL else 0) or
-            (if (isStatic) Opcodes.ACC_STATIC else 0) or
+            (if (isStatic) Opcodes.ACC_STATIC else if (parentAsClass.isValhallaValueClass(languageVersionSettings)) Opcodes.ACC_STRICT else 0) or
             (if (hasAnnotation(VOLATILE_ANNOTATION_FQ_NAME)) Opcodes.ACC_VOLATILE else 0) or
             (if (hasAnnotation(TRANSIENT_ANNOTATION_FQ_NAME)) Opcodes.ACC_TRANSIENT else 0) or
             (if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
