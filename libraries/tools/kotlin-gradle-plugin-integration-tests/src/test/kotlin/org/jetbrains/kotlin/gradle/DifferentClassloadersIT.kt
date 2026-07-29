@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.DeprecatedWarningGradleProperties
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.PluginLoadedInMultipleProjectsError
@@ -44,7 +45,7 @@ class DifferentClassloadersIT : KGPBaseTest() {
 
             // after enabling isolated projects support by default we should not fail the build
             buildAndFail("publish", "-PmppProjectDependency=true") {
-                assertHasDiagnostic(PluginLoadedInMultipleProjectsError)
+                assertHasPerProjectPluginLoadedInMultipleProjectsErrorDiagnostics()
             }
         }
     }
@@ -62,10 +63,7 @@ class DifferentClassloadersIT : KGPBaseTest() {
 
             fun checkThatErrorIsThrown() {
                 build("-PmppProjectDependency=true") {
-                    assertHasDiagnostic(
-                        PluginLoadedInMultipleProjectsError,
-                        withSubstring = "':jvm-app', ':mpp-lib'"
-                    )
+                    assertHasPerProjectPluginLoadedInMultipleProjectsErrorDiagnostics()
                 }
             }
 
@@ -152,5 +150,13 @@ class DifferentClassloadersIT : KGPBaseTest() {
         buildGradle.appendText(
             "\ntasks.create(\"publish\").dependsOn(gradle.includedBuild(\"allopenPluginsDsl\").task(\":assemble\"))"
         )
+    }
+
+    private fun BuildResult.assertHasPerProjectPluginLoadedInMultipleProjectsErrorDiagnostics() {
+        // The plugin is expected to first load in :jvm-app, which should succeed. Only the later
+        // attempts to load the plugin in other subprojects will fail.
+        assertNoDiagnostic(PluginLoadedInMultipleProjectsError, withSubstring = ":jvm-app")
+        assertHasDiagnostic(PluginLoadedInMultipleProjectsError, withSubstring = ":mpp-lib")
+        assertHasDiagnostic(PluginLoadedInMultipleProjectsError, withSubstring = ":mpp-lib-two")
     }
 }

@@ -11,6 +11,7 @@ if (project.findProperty("mppProjectDependency") == "true") {
 
     dependencies {
         api project(":mpp-lib")
+        api project(":mpp-lib-two")
     }
 
 } else {
@@ -21,6 +22,7 @@ if (project.findProperty("mppProjectDependency") == "true") {
 
     dependencies {
         api "com.example:mpp-lib:1.0"
+        api "com.example:mpp-lib-two:1.0"
     }
 
 }
