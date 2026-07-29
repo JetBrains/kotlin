@@ -36,6 +36,23 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-29 — Re-derive the KT-74097 guard rationale after enum-entry annotations went lazy
+- **Change**: re-traced whether the lazy Java annotation lists retire any cycle breaker. They do
+  not: they removed the only known crashing trigger (`@Deprecated` enum constant,
+  `testIntellij_vcs_git`), demoting `cycleSafeClassLikeSymbol` to genuine defense-in-depth, but the
+  cycle class stays reachable — the `declarations` lazy reads `FirJavaClass.typeParameters`, whose
+  bound enhancement iterates the *class's own* annotations via `extractDefaultQualifiers` (plus a raw
+  outer-class `getClassLikeSymbolByClassId`); the enum-entry `returnTypeRef` is still eager because
+  `SignatureEnhancement` requires a resolved ref; and 3 of 5 guard call sites carry no annotation
+  (const-field values, `@Target`, type-argument substitution). The other breakers
+  (`cycleGuardedSupertypeWalk`, supertype memoization, local `visited` sets) are annotation-agnostic.
+  Docs/comments updated accordingly; also fixed the stale `JavaSupertypeLoopChecker` name (the code
+  is `cycleGuardedSupertypeWalk` / `JavaModelSupertypeWalkGuard`).
+- **Files**: `resolution/JavaModelSessionAccess.kt`, `test/.../JavaCycleBreakerTest.kt` (comments
+  only), `AGENT_INSTRUCTIONS.md`.
+- **Tests**: not run — comment/docs-only, verified via `git diff` that no code line changed.
+- **Result**: green (no code changes).
+
 ### 2026-07-29 — Clamp the lightweight scanner's brace/paren balance at zero
 - **Change**: review of `extractFileInfoLightweight` against its production ancestor
   `SingleJavaFileRootsIndex.JavaSourceClassIdReader` (cli-base). Unmatched closers drove the

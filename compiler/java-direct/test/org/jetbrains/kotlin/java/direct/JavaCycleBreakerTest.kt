@@ -119,18 +119,19 @@ class JavaCycleBreakerTest {
 
     // --- cycleSafeClassLikeSymbol / JavaModelInFlightResolutions -------------------------------
 
-    // What this breaker protects in the real IntelliJ full-pipeline scenario
-    // (`IntelliJFullPipelineTestsGenerated.testIntellij_vcs_git`:
+    // What this breaker protects:
     //
-    // `community/plugins/git4idea/src/git4idea/commands/GitSimpleEventDetector.java` has a nested
-    // enum `Event` with a constant annotated `@Deprecated`. Resolving the simple name `Deprecated`
-    // produces the enclosing-qualified candidate `ClassId` GitSimpleEventDetector.Event.Deprecated.
-    // Because that module has compiler plugins enabled, the candidate is probed through
-    // `FirExtensionDeclarationsSymbolProvider` -> `FirNestedClassifierScopeImpl`, which forces
-    // `FirJavaClass.declarations` — a PUBLICATION lazy that re-runs on same-thread re-entrance
-    // (KT-74097). Materialising declarations can trigger re-entrant symbol lookup for the same
-    // ClassId (e.g. via PUBLICATION-lazy re-entrance). `cycleSafeClassLikeSymbol` marks the
-    // ClassId in-flight to break the cycle.
+    // Resolving an unqualified name inside a Java class yields enclosing-qualified candidate
+    // `ClassId`s (`Outer.Nested.Deprecated`). With compiler plugins enabled such a candidate is
+    // probed through `FirExtensionDeclarationsSymbolProvider` -> `FirNestedClassifierScopeImpl`,
+    // which forces `FirJavaClass.declarations` — a PUBLICATION lazy that re-runs its initializer on
+    // same-thread re-entrance (KT-74097). Member annotations are deferred, but the class's own
+    // annotations are read from inside that lazy by type-parameter bound enhancement (default
+    // qualifier extraction), and the lazy also resolves enum-entry return types, so a probe can
+    // still arrive for a ClassId whose `declarations` are in flight. `cycleSafeClassLikeSymbol`
+    // marks the ClassId in-flight so the re-entrant probe returns null instead of re-running the
+    // initializer. The guard also bounds probes with no annotation involved at all: const-field
+    // values, `@Target` lookups, supertype and type-argument ClassIds.
     //
     // The test below reproduces this re-entrance shape using a minimal stub provider.
 

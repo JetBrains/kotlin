@@ -16,8 +16,7 @@ resolver-unification residue have landed.
 
 **Key files**: `JavaClassOverAst.kt`, `JavaTypeOverAst.kt`, `JavaMemberOverAst.kt`,
 `JavaResolutionContext.kt`, `JavaClassFinderOverAstImpl.kt`,
-`JvmBinaryClassFinderInputsOverIndex.kt`, `JavaModelSessionAccess.kt`,
-`JavaSupertypeLoopChecker.kt`.
+`JvmBinaryClassFinderInputsOverIndex.kt`, `JavaModelSessionAccess.kt`.
 Full map in `implDocs/ARCHITECTURE.md`.
 
 ---
@@ -217,30 +216,26 @@ test regresses:
   `FirSession.symbolProvider` consumer in `compiler/java-direct/.../resolution/` —
   funnel every probe through `FirSession.cycleSafeClassLikeSymbol` (the builtins-filtered
   class-existence probe `tryResolve` in `JavaTypeResolver.kt` is layered directly on top of it).
-  - **Why the guard and not "just make the annotations lazy" (reviewer Q on `JavaCycleBreakerTest`,
-    KT-74097).** A recurring reviewer suggestion is to stop resolving annotations eagerly while
-    `FirJavaClass.declarations` is materialised — "we already have `FirLazyJavaAnnotationList` for
-    that." The hint correctly names the *trigger*: regular Java members (`FirJavaField` /
-    `FirJavaMethod`, params, type params) already defer annotations via `FirLazyJavaAnnotationList`,
-    but the **enum-entry arm** of `convertJavaFieldToFir` (`buildEnumEntry` in `FirJavaFacade.kt`)
-    resolves them *eagerly* (`setAnnotationsFromJava` + `replaceDeprecationsProvider(... getDeprecationsProviderFromAnnotations ...)`),
-    which re-resolves the very in-flight `ClassId` (the `@Deprecated` enum constant in the
-    `IntelliJFullPipelineTestsGenerated.testIntellij_vcs_git` reproducer) → the self-cycle. It is
-    **not** a local `java-direct` fix, for three reasons: (1) `FirLazyJavaAnnotationList` is a
-    Java-declaration-specific slot (`FirJavaField`/`FirJavaMethod`); a `FirEnumEntry` is a generic
-    `FirVariable` whose `annotations` are set eagerly via `replaceAnnotations`, so there is no
-    drop-in lazy slot — it would need a new lazy mechanism or a Java-specific enum-entry node;
-    (2) `convertJavaFieldToFir` / `buildEnumEntry` live in the shared `fir-jvm` module, so switching
-    enum-entry annotations to lazy is a compiler-wide change with ordering knock-ons (deprecation
-    info is forced right there and is often needed early); (3) even if applied, laziness removes only
-    *this* trigger, not the cycle class — the guard protects the resolution chokepoint itself and
-    bounds re-entrant probes from *any* path, whereas laziness merely defers the same self-referential
-    lookup to whenever the annotation is finally forced. So the `cycleSafeClassLikeSymbol` guard stays
-    as the self-contained, defense-in-depth fix; making enum entries defer annotations like other Java
-    members (or fixing the PUBLICATION-lazy re-entrance itself) is an **upstream follow-up under
-    KT-74097**, not a replacement for the guard.
-- **`JavaSupertypeLoopChecker.guarded(classId)`** bounds supertype walks against
-  cycles. When a helper both *enters* the guard and *calls another helper that
+  - **Why the guard survives lazy annotations (reviewer Q on `JavaCycleBreakerTest`, KT-74097).**
+    All Java annotations reachable while `FirJavaClass.declarations` is materialised are now
+    deferred — members via `FirLazyJavaAnnotationList`, enum entries via
+    `FirLazyJavaAnnotationMutableList` + `FirJavaLazyDeprecationsProvider` (`FirJavaFacade.kt`).
+    That removed the only known crashing trigger (the `@Deprecated` enum constant in
+    `IntelliJFullPipelineTestsGenerated.testIntellij_vcs_git`), so the guard is now genuine
+    defense-in-depth — but it is **not** dead code, and the cycle class is still reachable:
+    (1) the `declarations` lazy reads `FirJavaClass.typeParameters`, whose bound enhancement calls
+    `extractDefaultQualifiers`, which iterates the **class's own** `annotations` (and the outer
+    class's, through a raw `getClassLikeSymbolByClassId`) — the same self-referential shape, for any
+    generic Java class with an unqualified annotation name; (2) the enum-entry arm still resolves its
+    `returnTypeRef` eagerly, as `SignatureEnhancement` requires a `FirResolvedTypeRef` there;
+    (3) three of the five `cycleSafeClassLikeSymbol` call sites involve no annotation at all
+    (const-field values, `@Target`/TYPE_USE lookup, type-argument substitution) — the guard protects
+    the chokepoint, not one annotation path. Making the `declarations` lazy stop reading
+    `typeParameters`, and the enum-entry `returnTypeRef` lazy, are **upstream follow-ups under
+    KT-74097** (shared `fir-jvm`, need both regression gates), not replacements for the guard.
+- **`cycleGuardedSupertypeWalk(classId, default) { ... }`** (`JavaModelSessionAccess.kt`,
+  backed by `JavaModelSupertypeWalkGuard`) bounds supertype walks against cycles.
+  When a helper both *enters* the guard and *calls another helper that
   re-enters with the same `classId`*, the inner call returns `emptyList()`
   silently (cf. archived 2026-05-08 `findInheritedNestedClass` double-guard fix).
   Hoist the supertype lookup *out* of the guard region instead.
@@ -432,7 +427,16 @@ Keep the working doc set small — these files are read into context every sessi
 
 ---
 
-*Last updated: 2026-07-28 (rewrote Source Comment Conventions after a branch-wide comment
+*Last updated: 2026-07-29 (re-derived the KT-74097 guard rationale after enum-entry annotations went
+lazy: the guard is now defense-in-depth rather than the sole crash preventer, but the cycle class is
+still reachable through the class's own annotations (type-parameter bound enhancement →
+`extractDefaultQualifiers`) and through the three non-annotation `cycleSafeClassLikeSymbol` call
+sites; dropped the two disproven "no drop-in lazy slot" / "compiler-wide change" arguments. Fixed the
+stale `JavaSupertypeLoopChecker` name — the code is `cycleGuardedSupertypeWalk` /
+`JavaModelSupertypeWalkGuard` in `JavaModelSessionAccess.kt` — in the key-files list and Critical
+Patterns.)*
+
+*Previously: 2026-07-28 (rewrote Source Comment Conventions after a branch-wide comment
 cleanup: added the "default is no comment" gate (why-decisions, API contracts, real traps
 only), the ~3% density baseline vs the ~25% this branch's LLM-authored comments reached,
 and explicit bans on counterfactual "rather than" phrasing, caller inventories, obvious
