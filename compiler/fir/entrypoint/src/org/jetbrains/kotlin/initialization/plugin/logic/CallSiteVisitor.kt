@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.initialization.plugin.logic
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.initialization.plugin.model.AccessibleIndex
 import org.jetbrains.kotlin.initialization.plugin.model.DefaultedFunctionIndex
 import org.jetbrains.kotlin.initialization.plugin.model.DependencyNodeIndex
@@ -223,15 +224,10 @@ internal class CallSiteVisitor(
         crossinline staticAccess: context(CallSiteVisitContext, A) DependencyGraphBuilder.(S, EnclosingEntity<*>) -> Unit,
         crossinline instanceAccess: context(CallSiteVisitContext, A) DependencyGraphBuilder.(S) -> Unit,
     ) {
-        val realSymbols = when {
-            symbol.owner.isFakeOverride -> symbol.owner.overriddenSymbols.asSequence().flatMap { it.realOverridden() }.distinct()
-            else -> sequenceOf(symbol)
-        }
+        // If the callable is an extension, visit the extension receiver for dependencies
+        symbol.owner.extensionReceiverSupplier(access)?.visitRecursively()
 
-        realSymbols.forEach { symbol ->
-            // If the callable is an extension, visit the extension receiver for dependencies
-            symbol.owner.extensionReceiverSupplier(access)?.visitRecursively()
-
+        symbol.realOverridden().filter { it.owner.modality != Modality.ABSTRACT }.distinct().forEach { symbol ->
             // Compute the node to this callable based on the access' dispatch receiver
             when (val receiver = symbol.owner.dispatchReceiverSupplier(access)) {
                 // `super.` access
@@ -244,7 +240,7 @@ internal class CallSiteVisitor(
                     context.accessingEntity?.let { staticAccess(symbol, it) } ?: instanceAccess(symbol)
                 // `A.` qualifier access
                 is IrGetObjectValue -> {
-                    val enclosingEntity = receiver.symbol.asObjectEntity() ?: return
+                    val enclosingEntity = receiver.symbol.asObjectEntity() ?: return@forEach
                     staticAccess(symbol, enclosingEntity)
                 }
                 // `E.ENTRY.` enum entry access
@@ -255,7 +251,7 @@ internal class CallSiteVisitor(
                     receiver.visitRecursively()
                     instanceAccess(symbol)
                 }
-                else -> return
+                else -> {}
             }
         }
     }
