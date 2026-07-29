@@ -308,10 +308,6 @@ tasks {
         dependsOn(":compiler:ir.serialization.js:test")
     }
 
-    testLifecycleTask("wasmCompilerTest") {
-        // KTI-2670: TODO: don't invoke this obsolete task in KTI
-    }
-
     testLifecycleTask("wasmFirCompilerTest") {
         dependsOn(":wasm:wasm.tests:test")
         // Windows WABT release requires Visual C++ Redistributable
