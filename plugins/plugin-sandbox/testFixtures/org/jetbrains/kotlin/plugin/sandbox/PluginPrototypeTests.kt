@@ -7,23 +7,23 @@ package org.jetbrains.kotlin.plugin.sandbox
 
 import org.jetbrains.kotlin.js.test.runners.AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase
 import org.jetbrains.kotlin.js.test.runners.AbstractJsTest
+import org.jetbrains.kotlin.js.test.runners.AbstractLightTreeJsIrTextTest
 import org.jetbrains.kotlin.js.test.runners.AbstractLoadCompiledJsKotlinTest
 import org.jetbrains.kotlin.kotlinp.jvm.test.CompareMetadataHandler
 import org.jetbrains.kotlin.plugin.sandbox.PluginSandboxDirectives.DONT_LOAD_IN_SYNTHETIC_MODULES
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
 import org.jetbrains.kotlin.test.configuration.setupJvmPipelineSteps
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_FIR_DUMP_HANDLER
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackend
 import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticPsiTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractJvmBlackBoxCodegenWithSeparateKmpCompilationTestBase
+import org.jetbrains.kotlin.test.runners.ir.AbstractJvmIrTextTest
 
 open class AbstractFirJvmLightTreePluginBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -56,9 +57,9 @@ open class AbstractFirJvmLightTreePluginBlackBoxCodegenWithSeparateKmpCompilatio
     }
 }
 
-open class AbstractJsLightTreePluginBlackBoxCodegenTest(testGroupOutputDirPrefix: String = "pluginSandboxBox/") : AbstractJsTest(
+open class AbstractJsLightTreePluginBlackBoxCodegenTest : AbstractJsTest(
     pathToTestDir = "plugins/plugin-sandbox/testData/box",
-    testGroupOutputDirPrefix = testGroupOutputDirPrefix,
+    testGroupOutputDirPrefix = "pluginSandboxBox/",
     parser = FirParser.LightTree
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -66,18 +67,7 @@ open class AbstractJsLightTreePluginBlackBoxCodegenTest(testGroupOutputDirPrefix
         builder.commonFirWithPluginFrontendConfiguration(dumpFir = false)
         builder.defaultDirectives {
             +DISABLE_FIR_DUMP_HANDLER
-            +JsEnvironmentConfigurationDirectives.NO_COMMON_FILES
         }
-        builder.configureIrHandlersStep { useHandlers(::IrTextDumpHandler) }
-    }
-}
-
-open class AbstractJsLightTreePluginBlackBoxCodegenTestWithoutPlugins : AbstractJsLightTreePluginBlackBoxCodegenTest(
-    testGroupOutputDirPrefix = "pluginSandboxBoxWithoutPlugins/"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.commonWithoutPluginConfiguration()
     }
 }
 
@@ -94,6 +84,36 @@ open class AbstractJsLightTreePluginBlackBoxCodegenWithSeparateKmpCompilationTes
         builder.defaultDirectives {
             +DISABLE_FIR_DUMP_HANDLER
         }
+    }
+}
+
+open class AbstractFirLightTreeJvmPluginIrTextTest : AbstractJvmIrTextTest(FirParser.LightTree) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.commonFirWithPluginFrontendConfiguration()
+        builder.defaultDirectives { +CodegenTestDirectives.SKIP_KT_DUMP }
+    }
+}
+
+open class AbstractFirLightTreeJvmPluginIrTextTestWithoutPlugins : AbstractFirLightTreeJvmPluginIrTextTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.commonWithoutPluginConfiguration()
+    }
+}
+
+open class AbstractLightTreeJsPluginIrTextTest : AbstractLightTreeJsIrTextTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.commonFirWithPluginFrontendConfiguration()
+        builder.defaultDirectives { +CodegenTestDirectives.SKIP_KT_DUMP }
+    }
+}
+
+open class AbstractLightTreeJsPluginIrTextTestWithoutPlugins : AbstractLightTreeJsPluginIrTextTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.commonWithoutPluginConfiguration()
     }
 }
 

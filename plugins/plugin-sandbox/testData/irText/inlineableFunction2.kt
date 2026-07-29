@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// DUMP_IR
 // WITH_AND_WITHOUT_PLUGIN
 // DUMP_IR_DIFFERENCE: JVM
 //   K/JVM invokes `println (message: kotlin.Int)` instead of `println (message: kotlin.Any?)`
