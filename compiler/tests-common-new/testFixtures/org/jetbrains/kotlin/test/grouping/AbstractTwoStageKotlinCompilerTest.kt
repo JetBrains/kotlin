@@ -32,6 +32,7 @@ abstract class AbstractTwoStageKotlinCompilerTest @UnspecifiedTargetBackend cons
             useAdditionalService { createApplicationDisposableProvider() }
             useAdditionalService { createKotlinStandardLibrariesPathProvider() }
             useSourcePreprocessor(::BatchingPackageInserter)
+            useConfigurators(::ReflectionPackageNameOptInConfigurator)
             useFailureSuppressors(::IrValidationErrorChecker)
         }
 

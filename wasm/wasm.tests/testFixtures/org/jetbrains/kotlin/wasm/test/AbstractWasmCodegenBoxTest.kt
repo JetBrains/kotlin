@@ -81,6 +81,7 @@ abstract class AbstractWasmCodegenBoxTest(
                 DIAGNOSTICS with listOf("-infos")
             }
             useConfigurators(::WasmSecondStageEnvironmentConfigurator.bind(wasmTarget))
+            useAdditionalService { wasmReflectionPackageNameAnnotation }
             configureIgnoredTestSuppressor()
             useFailureSuppressors(
                 ::FirMetaInfoDiffSuppressor,

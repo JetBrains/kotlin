@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.computeBlackBoxTestInstances
+import org.jetbrains.kotlin.konan.test.blackbox.support.nativeReflectionPackageNameAnnotation
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createTestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.getOrCreateTestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
@@ -53,6 +54,7 @@ abstract class AbstractTwoStageNativeCoreTest : AbstractTwoStageKotlinCompilerNa
             useAdditionalService { // Register TestRunProvider into TestServices
                 extensionContext.getOrCreateTestRunProvider()
             }
+            useAdditionalService { nativeReflectionPackageNameAnnotation }
         }
     }
 }
