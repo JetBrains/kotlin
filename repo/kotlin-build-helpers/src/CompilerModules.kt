@@ -12,7 +12,6 @@ object CompilerModules {
      * Common modules, used by K1 frontend, K2 frontend, backends, AA and CLI
      */
     val commonCompilerModules = descriptorsCompilerModules + arrayOf(
-        ":analysis:light-classes-base",
         ":compiler:psi:psi-api",
         ":compiler:psi:psi-impl",
         ":compiler:psi:psi-utils",
@@ -230,6 +229,7 @@ object CompilerModules {
         ":analysis:decompiled:light-classes-for-decompiled",
         ":analysis:low-level-api-fir",
         ":analysis:stubs",
+        ":analysis:light-classes-base",
         ":analysis:symbol-light-classes",
     )
 

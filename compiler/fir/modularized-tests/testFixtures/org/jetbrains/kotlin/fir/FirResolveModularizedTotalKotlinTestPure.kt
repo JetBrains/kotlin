@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.util.Disposer
-import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import com.sun.management.HotSpotDiagnosticMXBean
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
-import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.*
@@ -128,8 +126,6 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
         @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         try {
-            PsiElementFinder.EP.getPoint(environment.project)
-                .unregisterExtension(JavaElementFinder::class.java)
             runAnalysis(moduleData, environment)
         } finally {
             environment.projectEnvironment.environment.application.runWriteAction {
