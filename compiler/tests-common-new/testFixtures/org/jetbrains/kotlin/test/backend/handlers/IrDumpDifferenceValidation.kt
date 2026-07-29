@@ -45,11 +45,13 @@ internal fun validateTargetSpecificDumpFile(
 ) {
     val moduleStructure = testServices.moduleStructure
 
-    fun default() = assertions.assertEqualsToDump(moduleStructure, baseDumpExtension, actualDump.ifEmpty { null })
+    fun assertWithoutPatch() {
+        assertions.assertEqualsToDump(moduleStructure, baseDumpExtension, actualDump.ifEmpty { null })
+    }
 
     // Classified patches are not collapsed, so for consistency, they're always against classified dumps.
     val mainExpectedFile = moduleStructure.getClassifiedDumpFile(baseDumpExtension)
-    val targetBackend = testServices.defaultsProvider.targetBackend ?: return default()
+    val targetBackend = testServices.defaultsProvider.targetBackend ?: return assertWithoutPatch()
     val targetBackendDirectiveName = targetBackend.name
     val dumpDescription = if (isKotlinLikeDump) "Kotlin-like IR dump" else "IR dump"
 
@@ -107,7 +109,7 @@ internal fun validateTargetSpecificDumpFile(
                     "$targetBackendDirectiveName or its compatible target: $existingTargetSpecificFile"
         }
         if (moduleStructure.allDirectives[CodegenTestDirectives.DUMP_IR_DIFFERENCE].isEmpty()) {
-            default()
+            assertWithoutPatch()
         } else {
             // Because DUMP_IR_DIFFERENCE is set, some other backend will force classified dump to be generated.
             assertions.assertEqualsToFile(mainExpectedFile, actualDump)
