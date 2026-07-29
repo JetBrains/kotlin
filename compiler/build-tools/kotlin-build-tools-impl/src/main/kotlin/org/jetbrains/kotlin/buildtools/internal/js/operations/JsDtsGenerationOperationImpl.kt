@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsModuleKind
 import org.jetbrains.kotlin.buildtools.api.js.JsDtsCompilationStrategy
 import org.jetbrains.kotlin.buildtools.api.js.JsDtsGranularity
@@ -20,14 +21,25 @@ import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
 import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
+import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.checkOptionIsAvailableForVersion
 import org.jetbrains.kotlin.buildtools.internal.initializeOptions
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.ir.backend.js.jsOutputName
+import org.jetbrains.kotlin.js.config.JsGenerationGranularity
+import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.js.config.TsCompilationStrategy
+import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.js.tsexport.TypeScriptExportConfig
 import org.jetbrains.kotlin.js.tsexport.TypeScriptModuleConfig
 import org.jetbrains.kotlin.js.tsexport.runTypeScriptExport
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.metadata.KlibInputModule
+import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.platform.js.JsPlatforms
+import java.io.File
 import java.nio.file.Path
 
 internal class JsDtsGenerationOperationImpl private constructor(
@@ -45,26 +57,75 @@ internal class JsDtsGenerationOperationImpl private constructor(
         initializeOptions(this::class, options)
     }
 
-    override fun executeImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): CompilationResult {
-        // implementation goes here
-        val typeScriptExportConfig: TypeScriptExportConfig = TODO("Not yet implemented")
-        runTypeScriptExport(transformKlibsIntoKlibInputModule(klibs), typeScriptExportConfig)
+    override fun executeImpl(
+        projectId: ProjectId,
+        executionPolicy: ExecutionPolicy,
+        logger: KotlinLogger?,
+        sessionIsAliveFlagFile: Lazy<File>,
+    ): CompilationResult {
+        val inputModules = transformKlibsIntoKlibInputModule(klibs, logger)
+        // The main KLIB is the last one in the list; its manifest drives the merged artifact naming.
+        val mainModule = inputModules.last()
+        val typeScriptExportConfig = TypeScriptExportConfig(
+            targetPlatform = JsPlatforms.defaultJsPlatform,
+            artifactConfiguration = WebArtifactConfiguration(
+                moduleKind = ModuleKind.fromType(this[MODULE_KIND].stringValue),
+                moduleName = mainModule.name,
+                outputDirectory = outputDirectory.toFile(),
+                outputName = mainModule.config.outputName ?: mainModule.name,
+                granularity = JsGenerationGranularity.valueOf(this[GRANULARITY].name),
+                tsCompilationStrategy = TsCompilationStrategy.valueOf(this[TS_COMPILATION_STRATEGY].name),
+                production = false,
+                minimizedMemberNames = false,
+            ),
+            compileLongAsBigInt = this[COMPILE_LONG_AS_BIG_INT],
+            implementableInterfaces = this[IMPLEMENT_INTERFACES],
+            exportableSuspendLambdas = this[EXPORT_SUSPEND_LAMBDAS],
+            dataClassCopyRespectsConstructorVisibility = this[DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY],
+            exportUntypedAsUnknown = this[EXPORT_UNTYPED_AS_UNKNOWN],
+        )
+        runTypeScriptExport(inputModules, typeScriptExportConfig)
         return CompilationResult.COMPILATION_SUCCESS
     }
 
-    private fun transformKlibsIntoKlibInputModule(klibs: List<Path>): List<KlibInputModule<TypeScriptModuleConfig>> =
-        klibs.map {
-            val name = TODO("Not yet implemented") // read from the klib manifest?
-            val outputName = TODO("Not yet implemented")
-            KlibInputModule(name, it, TypeScriptModuleConfig(outputName))
+    private fun transformKlibsIntoKlibInputModule(
+        klibs: List<Path>,
+        logger: KotlinLogger?,
+    ): List<KlibInputModule<TypeScriptModuleConfig>> =
+        klibs.map { path ->
+            val result = KlibLoader { libraryPaths(path.toString()) }.load()
+            result.reportLoadingProblemsIfAny { _, message ->
+                logger?.error(message)
+                error(message)
+            }
+            val library = result.librariesStdlibFirst.single()
+            KlibInputModule(library.uniqueName, path, TypeScriptModuleConfig(outputName = library.jsOutputName))
         }
 
     override fun configureFrom(linkingOperation: JsLinkingOperation) {
         check(linkingOperation is JsLinkingOperationImpl) { "Unexpected linking operation: ${linkingOperation::class}." }
-        this[MODULE_KIND] = linkingOperation.compilerArguments[JsArgumentsImpl.MODULE_KIND] ?: JsModuleKind.PLAIN // todo: should it be a fallback to PLAIN?
-        this[COMPILE_LONG_AS_BIG_INT] = linkingOperation.compilerArguments[JsArgumentsImpl.X_ES_LONG_AS_BIGINT] ?: false // todo should it be a fallback to false?
+
+        this[COMPILE_LONG_AS_BIG_INT] = linkingOperation.compilerArguments[JsArgumentsImpl.X_ES_LONG_AS_BIGINT] ?: false
         this[IMPLEMENT_INTERFACES] = linkingOperation.compilerArguments[JsArgumentsImpl.X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT]
         this[EXPORT_SUSPEND_LAMBDAS] = linkingOperation.compilerArguments[JsArgumentsImpl.X_SUSPEND_LAMBDA_EXPORTING]
+        this[DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY] =
+            linkingOperation.compilerArguments[CommonCompilerArgumentsImpl.X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY]
+        this[EXPORT_UNTYPED_AS_UNKNOWN] =
+            linkingOperation.compilerArguments[JsArgumentsImpl.X_TS_EXPORT_UNTYPED_AS_UNKNOWN]
+
+        this[MODULE_KIND] = linkingOperation.compilerArguments[JsArgumentsImpl.MODULE_KIND]
+            ?: JsModuleKind.ES.takeIf {
+                val target = linkingOperation.compilerArguments[JsArgumentsImpl.TARGET]
+                target != null && target >= JsEcmaVersion.ES2015
+            }
+            ?: JsModuleKind.UMD
+
+        this[GRANULARITY] = when {
+            linkingOperation.compilerArguments[JsArgumentsImpl.X_IR_PER_FILE] -> JsDtsGranularity.PER_FILE
+            // Right now, we don't support per-module d.ts generation for IR. So for the backward compatibility, we use whole-program granularity.
+            linkingOperation.compilerArguments[JsArgumentsImpl.X_IR_PER_MODULE] -> JsDtsGranularity.WHOLE_PROGRAM
+            else -> JsDtsGranularity.WHOLE_PROGRAM
+        }
     }
 
     @UseFromImplModuleRestricted
@@ -105,10 +166,13 @@ internal class JsDtsGenerationOperationImpl private constructor(
                             false
                         )
                     } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it")
-                } ?: JsModuleKind.PLAIN // todo: should it be a fallback to PLAIN?
+                } ?: JsModuleKind.UMD
         )
-        val COMPILE_LONG_AS_BIG_INT: Option<Boolean> = Option("COMPILE_LONG_AS_BIG_INT", defaultArgsReference.compileLongAsBigInt ?: false) // todo should it be a fallback to false?
+        val COMPILE_LONG_AS_BIG_INT: Option<Boolean> = Option("COMPILE_LONG_AS_BIG_INT", defaultArgsReference.compileLongAsBigInt ?: false)
         val IMPLEMENT_INTERFACES: Option<Boolean> = Option("IMPLEMENT_INTERFACES", defaultArgsReference.allowImplementableInterfacesExporting)
         val EXPORT_SUSPEND_LAMBDAS: Option<Boolean> = Option("EXPORT_SUSPEND_LAMBDAS", defaultArgsReference.allowExportingSuspendLambdas)
+        val EXPORT_UNTYPED_AS_UNKNOWN: Option<Boolean> = Option("EXPORT_UNTYPED_AS_UNKNOWN", defaultArgsReference.exportUntypedAsUnknown)
+        val DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY: Option<Boolean> =
+            Option("DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY", defaultArgsReference.consistentDataClassCopyVisibility)
     }
 }

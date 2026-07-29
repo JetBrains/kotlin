@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalSubclassOptIn::class)
 package org.jetbrains.kotlin.buildtools.api.js.operations
 
 import org.jetbrains.kotlin.buildtools.api.BuildOperation
@@ -138,5 +139,21 @@ public interface JsDtsGenerationOperation : BuildOperation<CompilationResult> {
          */
         @JvmField
         public val EXPORT_SUSPEND_LAMBDAS: Option<Boolean> = Option("EXPORT_SUSPEND_LAMBDAS", KotlinReleaseVersion(2, 5, 0))
+
+        /**
+         * Whether the generated `copy` of a data class respects the visibility of its primary constructor
+         * (corresponds to the `DataClassCopyRespectsConstructorVisibility` language feature).
+         */
+        @JvmField
+        public val DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY: Option<Boolean> =
+            Option("DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY", KotlinReleaseVersion(2, 5, 0))
+
+        /**
+         * Whether `unknown` (a built-in TypeScript type) should be used instead of `any`
+         * Must match the JS linking `-Xts-export-untyped-as-unknown`.
+         */
+        @JvmField
+        public val EXPORT_UNTYPED_AS_UNKNOWN: Option<Boolean> =
+            Option("EXPORT_UNTYPED_AS_UNKNOWN", KotlinReleaseVersion(2, 5, 0))
     }
 }
