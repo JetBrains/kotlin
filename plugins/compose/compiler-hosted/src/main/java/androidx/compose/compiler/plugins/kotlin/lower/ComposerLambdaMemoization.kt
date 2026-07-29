@@ -335,6 +335,7 @@ class ComposerLambdaMemoization(
             name = Name.identifier("ComposableSingletons${"$"}$shortName")
         }.also {
             it.createThisReceiverParameter()
+            it.superTypes = listOf(context.irBuiltIns.anyType)
 
             // store the full file path to the file that this class is associated with in an
             // annotation on the class. This will be used by tooling to associate the keys
