@@ -46,6 +46,9 @@ internal class JvmClasspathSnapshottingOperationImpl private constructor(
         options[key] = value
     }
 
+    override val usesApplicationEnvironment: Boolean
+        get() = false
+
     override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
