@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.tooling.core.withClosure
 import org.opentest4j.AssertionFailedError
 import org.opentest4j.FileInfo
 import java.io.File
+import java.nio.file.FileSystem
+import java.nio.file.FileSystems
 import java.nio.file.Path
 import kotlin.io.path.absolute
 import kotlin.io.path.invariantSeparatorsPathString
@@ -58,6 +60,54 @@ class DomainsDumpTest {
                 actualText,
             )
         }
+
+        /* Check if any 'include' or 'exclude' rules are orphan (not matching anything) */
+
+        fun globMatchesAnyNode(glob: String): Boolean {
+            val matcher = FileSystems.getDefault().getPathMatcher("glob:$glob")
+            return conflatedTree.withClosure { it.children }.any { node ->
+                matcher.matches(node.path.value)
+            }
+        }
+
+        class UnmatchedRule(val domain: DomainInfo, val rule: String, val isInclude: Boolean)
+
+        val unmatchedRules = mutableListOf<UnmatchedRule>()
+
+        allDomainInfos.forEach { domain ->
+            domain.include.forEach forEachRule@{ include ->
+                if (!globMatchesAnyNode(include)) {
+                    unmatchedRules.add(UnmatchedRule(domain, include, isInclude = true))
+                }
+            }
+
+            domain.exclude.forEach forEachRule@{ exclude ->
+                if (!globMatchesAnyNode(exclude)) {
+                    unmatchedRules.add(UnmatchedRule(domain, exclude, isInclude = false))
+                }
+            }
+        }
+
+        if (unmatchedRules.isNotEmpty()) error(buildString {
+            appendLine("Unmatched includes/excludes found")
+            unmatchedRules.groupBy { it.domain }.forEach { (domain, nodes) ->
+                appendLine("${domain.domain.name}:")
+                val includes = nodes.filter { it.isInclude }
+                if (includes.isNotEmpty()) {
+                    appendLine("  include:")
+                    includes.forEach { include ->
+                        appendLine("    - \"${include.rule}\"")
+                    }
+                }
+                val excludes = nodes.filterNot { it.isInclude }
+                if (excludes.isNotEmpty()) {
+                    appendLine("  exclude:")
+                    excludes.forEach { exclude ->
+                        appendLine("    - \"${exclude.rule}\"")
+                    }
+                }
+            }
+        })
     }
 
     private data class Node(
