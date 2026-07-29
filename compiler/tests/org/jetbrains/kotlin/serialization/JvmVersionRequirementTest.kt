@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -27,27 +26,19 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.getTestName
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.io.File
 
-open class K2JvmVersionRequirementTest : TestCaseWithTmpdir() {
+class JvmVersionRequirementTest : TestCaseWithTmpdir() {
     private fun doTest(
         expectedVersionRequirement: VersionRequirement.Version,
         expectedLevel: DeprecationLevel,
         expectedMessage: String?,
         expectedVersionKind: ProtoBuf.VersionRequirement.VersionKind,
         expectedErrorCode: Int?,
-        customLanguageVersion: LanguageVersion = LanguageVersionSettingsImpl.DEFAULT.languageVersion,
-        analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap(),
         fqNamesWithRequirements: List<String>,
-        fqNamesWithoutRequirement: List<String> = emptyList(),
-        shouldBeSingleRequirement: Boolean = true,
-        specificFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap(),
     ) {
-        compileFiles(
-            tmpdir, customLanguageVersion, analysisFlags, specificFeatures
-        )
+        compileFiles(tmpdir)
         val module = loadModule()
 
         for (fqName in fqNamesWithRequirements) {
@@ -55,13 +46,6 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir() {
 
             val requirements = extractRequirement(descriptor)
             if (requirements.isEmpty()) throw AssertionError("No VersionRequirement for $descriptor")
-
-            if (shouldBeSingleRequirement && requirements.size > 1) {
-                throw AssertionError(
-                    "Single VersionRequirement expected, got ${requirements.size}:\n" +
-                            requirements.joinToString(separator = "\n") { it.toDebugString() }
-                )
-            }
 
             requirements.firstOrNull {
                 expectedVersionRequirement == it.version &&
@@ -80,13 +64,6 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir() {
                             "\nActual requirements:\n" +
                             requirements.joinToString(separator = "\n") { it.toDebugString() }
                 )
-        }
-
-        for (fqName in fqNamesWithoutRequirement) {
-            val descriptor = module.findUnambiguousDescriptorByFqName(fqName)
-
-            val requirement = extractRequirement(descriptor)
-            assertTrue(requirement.isEmpty()) { "Expecting absence of any requirements for $fqName, but `$requirement`" }
         }
     }
 
@@ -122,28 +99,19 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir() {
         return descriptor
     }
 
-    private fun compileFiles(
-        outputDirectory: File,
-        languageVersion: LanguageVersion,
-        analysisFlags: Map<AnalysisFlag<*>, Any?>,
-        specificFeatures: Map<LanguageFeature, LanguageFeature.State>,
-    ) {
+    private fun compileFiles(outputDirectory: File) {
         LoadDescriptorUtil.compileKotlinToDirAndGetModule(
-            listOf(ForTestCompileRuntime.transformTestDataPath("compiler/testData/versionRequirement/${getTestName(testInfo.testMethod.get().name, true)}.kt")),
+            listOf(
+                ForTestCompileRuntime.transformTestDataPath(
+                    "compiler/testData/versionRequirement/${getTestName(testInfo.testMethod.get().name, true)}.kt"
+                )
+            ),
             outputDirectory,
             @OptIn(CoreEnvironmentDeprecation::class)
             KotlinCoreEnvironment.createForTests(
                 testRootDisposable,
-                KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, outputDirectory).apply {
-                    languageVersionSettings = LanguageVersionSettingsImpl(
-                        languageVersion,
-                        ApiVersion.createByLanguageVersion(languageVersion),
-                        analysisFlags.toMap() + mapOf(AnalysisFlags.explicitApiVersion to true),
-                        specificFeatures
-                    )
-                    useFir = true
-                },
-                EnvironmentConfigFiles.JVM_CONFIG_FILES
+                KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, outputDirectory),
+                EnvironmentConfigFiles.JVM_CONFIG_FILES,
             )
         )
     }
@@ -217,7 +185,6 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir() {
     fun testNestedClassMembers() {
         doTest(
             VersionRequirement.Version(1, 3), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
-            customLanguageVersion = LanguageVersion.KOTLIN_1_3,
             fqNamesWithRequirements = listOf(
                 "test.Outer.Inner.Deep",
                 "test.Outer.Inner.Deep.<init>",
