@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.ValhallaSupportMode.ALL_VALUES
-import org.jetbrains.kotlin.config.ValhallaSupportMode.PRIMITIVES_AND_FULL_VALUE_CLASSES
-import org.jetbrains.kotlin.config.valhallaSupportMode
+import org.jetbrains.kotlin.config.isKotlinValhallaValueClass
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
@@ -34,19 +32,14 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resultOrNull
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.resultOrNull
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
@@ -400,8 +393,7 @@ internal class ClassMemberGenerator(
     // enables full value classes. The mode is JVM-only, so this is `false` on other backends. Inline value classes are handled
     // separately in JvmInlineClassLowering.
     private fun IrClass.isValhallaFullValueClass(): Boolean =
-        isFullValueClass && configuration.languageVersionSettings.valhallaSupportMode
-            .let { it == PRIMITIVES_AND_FULL_VALUE_CLASSES || it == ALL_VALUES }
+        isFullValueClass && valueClassRepresentation.isKotlinValhallaValueClass(configuration.languageVersionSettings)
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun moveFieldFromParameterInitsBeforeSuperCall(irConstructor: IrConstructor, irClass: IrClass) {

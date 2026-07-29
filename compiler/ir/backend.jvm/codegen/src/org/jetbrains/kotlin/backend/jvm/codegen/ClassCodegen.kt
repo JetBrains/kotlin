@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
+import org.jetbrains.org.objectweb.asm.util.TextifierSupport
 import java.io.File
 
 class ClassCodegen private constructor(
@@ -137,6 +138,10 @@ class ClassCodegen private constructor(
 
     private var generated = false
 
+    // Descriptors of this class's fields whose type is a Valhalla value class, collected during field generation and emitted as
+    // the `LoadableDescriptors` attribute (JEP 401).
+    private val loadableFieldDescriptors = mutableSetOf<String>()
+
     fun generate() {
         // TODO: reject repeated generate() calls; currently, these can happen for objects in finally
         //       blocks since they are `accept`ed once per each CFG edge out of the try-finally.
@@ -194,6 +199,8 @@ class ClassCodegen private constructor(
 
         generateInnerAndOuterClasses()
 
+        generateLoadableDescriptorsAttribute()
+
         visitor.done(config.generateSmapCopyToAnnotation)
         jvmMethodSignatureClashDetector.reportErrorsTo(context.diagnosticReporter)
         jvmFieldSignatureClashDetector.reportErrorsTo(context.diagnosticReporter)
@@ -214,6 +221,19 @@ class ClassCodegen private constructor(
         for (sealedSubclassSymbol in sealedSubclasses) {
             classVisitor.visitPermittedSubclass(typeMapper.mapClass(sealedSubclassSymbol.owner).internalName)
         }
+    }
+
+    private fun generateLoadableDescriptorsAttribute() {
+        if (loadableFieldDescriptors.isEmpty()) return
+        visitor.visitor.visitAttribute(LoadableDescriptorsAttribute(loadableFieldDescriptors.toList()))
+    }
+
+    private fun IrField.isValhallaLoadableFieldType(descriptor: String): Boolean {
+        val languageVersionSettings = config.languageVersionSettings
+        if (type.classOrNull?.owner?.isKotlinValhallaValueClass(languageVersionSettings) == true) return true
+        // A field of a JDK value-based class (JEP 401 migrates all of them to value classes) is loadable, exactly like javac.
+        // The set covers the whole value-based list (wrappers, java.time, Optional, …), not just boxed primitives.
+        return languageVersionSettings.isValhallaSupportEnabled() && descriptor in JDK_VALUE_BASED_FIELD_DESCRIPTORS
     }
 
     fun generateAssertFieldIfNeeded(generatingClInit: Boolean): IrExpression? {
@@ -377,6 +397,9 @@ class ClassCodegen private constructor(
 
     private fun generateField(field: IrField) {
         val fieldType = typeMapper.mapType(field)
+        if (field.isValhallaLoadableFieldType(fieldType.descriptor)) {
+            loadableFieldDescriptors.add(fieldType.descriptor)
+        }
         val fieldSignature =
             if (field.origin == IrDeclarationOrigin.PROPERTY_DELEGATE) null
             else methodSignatureMapper.mapFieldSignature(field)
@@ -600,6 +623,54 @@ class ClassCodegen private constructor(
     }
 }
 
+// The JDK value-based classes (marked `@jdk.internal.ValueBased`). JEP 401 migrates all of them to value classes, so a field of
+// such a type must be listed in `LoadableDescriptors` exactly like a field of a user value class (this mirrors javac's output).
+// The set is the whole list of publicly-nameable value-based classes, retrieved from the target JDK (JEP 401 EA) rather than
+// limited to primitive wrappers; regenerate it by scanning the JDK image for classes carrying `@jdk.internal.ValueBased`:
+//   jimage extract --dir out "$JDK/lib/modules" && grep -rl 'jdk/internal/ValueBased' out
+// (internal implementation classes, which can never be a declared field type, are omitted.)
+private val JDK_VALUE_BASED_FIELD_DESCRIPTORS = setOf(
+    // java.lang primitive wrappers
+    "Ljava/lang/Boolean;", "Ljava/lang/Byte;", "Ljava/lang/Character;", "Ljava/lang/Short;",
+    "Ljava/lang/Integer;", "Ljava/lang/Long;", "Ljava/lang/Float;", "Ljava/lang/Double;",
+    // other java.lang value-based classes
+    "Ljava/lang/Record;", "Ljava/lang/Runtime\$Version;",
+    // java.time
+    "Ljava/time/Duration;", "Ljava/time/Instant;", "Ljava/time/LocalDate;", "Ljava/time/LocalDateTime;",
+    "Ljava/time/LocalTime;", "Ljava/time/MonthDay;", "Ljava/time/OffsetDateTime;", "Ljava/time/OffsetTime;",
+    "Ljava/time/Period;", "Ljava/time/Year;", "Ljava/time/YearMonth;", "Ljava/time/ZonedDateTime;",
+    "Ljava/time/ZoneId;", "Ljava/time/ZoneOffset;",
+    "Ljava/time/chrono/HijrahDate;", "Ljava/time/chrono/JapaneseDate;", "Ljava/time/chrono/MinguoDate;",
+    "Ljava/time/chrono/ThaiBuddhistDate;",
+    // java.util
+    "Ljava/util/Optional;", "Ljava/util/OptionalDouble;", "Ljava/util/OptionalInt;", "Ljava/util/OptionalLong;",
+    // jdk.incubator.vector
+    "Ljdk/incubator/vector/Float16;",
+)
+
+/**
+ * The `LoadableDescriptors` class-file attribute (JEP 401), listing field descriptors of value-class field types so the JVM may
+ * eagerly load them and flatten their storage. Layout: `u2 number_of_descriptors; u2 descriptors[number_of_descriptors]`, where
+ * each entry is a constant-pool index of a `CONSTANT_Utf8` holding a field descriptor.
+ *
+ * Implements [TextifierSupport] so the descriptors are rendered in the textified bytecode used by `// CHECK_BYTECODE_TEXT` tests.
+ */
+private class LoadableDescriptorsAttribute(private val descriptors: List<String>) :
+    Attribute("LoadableDescriptors"), TextifierSupport {
+    override fun write(
+        classWriter: ClassWriter, code: ByteArray?, codeLength: Int, maxStack: Int, maxLocals: Int
+    ): ByteVector = ByteVector().apply {
+        putShort(descriptors.size)
+        for (descriptor in descriptors) {
+            putShort(classWriter.newUTF8(descriptor))
+        }
+    }
+
+    override fun textify(stringBuilder: StringBuilder, labelNames: MutableMap<Label, String>?) {
+        stringBuilder.append(descriptors.joinToString(prefix = " : ", postfix = "\n"))
+    }
+}
+
 private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): Int =
     origin.flags or
             getVisibilityAccessFlagForClass() or
@@ -611,7 +682,7 @@ private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): 
                 isEnumClass -> Opcodes.ACC_ENUM or Opcodes.ACC_SUPER or modality.flags
                 hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) -> VersionIndependentOpcodes.ACC_RECORD or Opcodes.ACC_SUPER or modality.flags
                 else -> Opcodes.ACC_SUPER or modality.flags
-            }.let { if (isValhallaValueClass(languageVersionSettings)) it and ACC_IDENTITY.inv() else it }
+            }.let { if (isKotlinValhallaValueClass(languageVersionSettings)) it and ACC_IDENTITY.inv() else it }
 
 private fun IrClass.getSynthAccessFlag(languageVersionSettings: LanguageVersionSettings): Int {
     if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME))
@@ -631,7 +702,7 @@ private fun IrField.computeFieldFlags(context: JvmBackendContext, languageVersio
                 correspondingPropertySymbol?.owner?.isDeprecatedCallable(context) == true
             ) Opcodes.ACC_DEPRECATED else 0) or
             (if (isFinal) Opcodes.ACC_FINAL else 0) or
-            (if (isStatic) Opcodes.ACC_STATIC else if (parentAsClass.isValhallaValueClass(languageVersionSettings)) Opcodes.ACC_STRICT else 0) or
+            (if (isStatic) Opcodes.ACC_STATIC else if (parentAsClass.isKotlinValhallaValueClass(languageVersionSettings)) Opcodes.ACC_STRICT else 0) or
             (if (hasAnnotation(VOLATILE_ANNOTATION_FQ_NAME)) Opcodes.ACC_VOLATILE else 0) or
             (if (hasAnnotation(TRANSIENT_ANNOTATION_FQ_NAME)) Opcodes.ACC_TRANSIENT else 0) or
             (if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
