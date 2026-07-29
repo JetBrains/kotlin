@@ -50,8 +50,6 @@ internal interface LinkKlibsContext : NativeBackendPhaseContext {
     @OptIn(K1Deprecation::class)
     val builtIns: KonanBuiltIns
 
-    val bindingContext: BindingContext
-
     @OptIn(K1Deprecation::class)
     val stdlibModule: ModuleDescriptor
         get() = this.builtIns.any.module
