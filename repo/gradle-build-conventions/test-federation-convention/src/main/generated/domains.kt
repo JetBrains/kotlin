@@ -4,6 +4,9 @@ package org.jetbrains.kotlin.testFederation
 
 enum class Domain {
     Compiler,
+    Frontend,
+    CommonBackend,
+    Jvm,
     Wasm,
     Js,
     Native,
@@ -24,28 +27,49 @@ enum class Domain {
 
 internal object CompilerDomainInfo : DomainInfo {
     override val domain = Domain.Compiler
-    override val include: List<String> = listOf("compiler", "core", "build-common", "compiler/psi/parser", "plugins/plugin-sandbox", "plugins/scripting", "jps")
-    override val exclude: List<String> = listOf("compiler/psi", "compiler/build-tools", "compiler/incremental-compilation-*", "compiler/daemon", "compiler/compiler-runner-unshaded")
+    override val include: List<String> = listOf("build-common", "compiler/*.kts", "compiler/*.md", "compiler/arguments", "compiler/arguments.common", "compiler/cli", "compiler/compiler.version", "compiler/config", "compiler/config.jvm", "compiler/container", "compiler/preloader", "compiler/test-infrastructure*", "compiler/test-security-manager", "compiler/testData", "compiler/testFixtures", "compiler/testResources", "compiler/tests", "compiler/tests-common*", "compiler/tests-compiler-utils", "compiler/tests-gen", "compiler/tests-integration", "compiler/tests-mutes", "compiler/util", "compiler/util-io", "core", "jps")
+    override val exclude: List<String> = listOf("compiler/cli/cli-jklib")
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo) }
+}
+
+internal object FrontendDomainInfo : DomainInfo {
+    override val domain = Domain.Frontend
+    override val include: List<String> = listOf("compiler/fir", "compiler/frontend*", "compiler/ir/ir.psi2ir", "compiler/java-direct", "compiler/javac-wrapper", "compiler/multiplatform-parsing", "compiler/psi/parser", "compiler/resolution*", "compiler/serialization*", "compiler/tests-java8", "compiler/tests-spec", "thiswontmatch")
+    override val exclude: List<String> = listOf("thisWontEither")
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf() }
+}
+
+internal object CommonBackendDomainInfo : DomainInfo {
+    override val domain = Domain.CommonBackend
+    override val include: List<String> = listOf("compiler/cli/cli-jklib", "compiler/ir/backend.common", "compiler/ir/ir.actualization", "compiler/ir/ir.inline", "compiler/ir/ir.tree", "compiler/ir/ir.validation", "compiler/ir/serialization.common", "compiler/ir/serialization.jklib", "compiler/jklib.tests", "compiler/util-klib", "compiler/util-klib-abi", "compiler/util-klib-metadata")
+    override val exclude: List<String> = listOf()
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf() }
+}
+
+internal object JvmDomainInfo : DomainInfo {
+    override val domain = Domain.Jvm
+    override val include: List<String> = listOf("compiler/android-tests", "compiler/backend", "compiler/backend.common.jvm", "compiler/ir/backend.jvm", "compiler/ir/serialization.jvm", "compiler/tests-different-jdk")
+    override val exclude: List<String> = listOf()
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf() }
 }
 
 internal object WasmDomainInfo : DomainInfo {
     override val domain = Domain.Wasm
-    override val include: List<String> = listOf("wasm", "js/js.translator/testData")
+    override val include: List<String> = listOf("wasm", "compiler/ir/backend.wasm", "js/js.translator/testData")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
 }
 
 internal object JsDomainInfo : DomainInfo {
     override val domain = Domain.Js
-    override val include: List<String> = listOf("js", "libraries/tools/analysis-api-based-klib-reader")
+    override val include: List<String> = listOf("js", "libraries/tools/analysis-api-based-klib-reader", "compiler/ir/backend.js", "compiler/ir/serialization.js")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
 }
 
 internal object NativeDomainInfo : DomainInfo {
     override val domain = Domain.Native
-    override val include: List<String> = listOf("native", "kotlin-native")
+    override val include: List<String> = listOf("native", "kotlin-native", "compiler/ir/backend.native", "compiler/ir/ir.objcinterop", "compiler/ir/serialization.native")
     override val exclude: List<String> = listOf("native/swift")
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
 }
@@ -80,7 +104,7 @@ internal object SwiftExportDomainInfo : DomainInfo {
 
 internal object CompilerPluginsDomainInfo : DomainInfo {
     override val domain = Domain.CompilerPlugins
-    override val include: List<String> = listOf("plugins")
+    override val include: List<String> = listOf("plugins", "compiler/plugin-api")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo) }
 }
@@ -124,6 +148,9 @@ internal object UnknownDomainInfo : DomainInfo {
 internal val allDomainInfos: List<DomainInfo> by lazy {
     listOf(
         CompilerDomainInfo,
+        FrontendDomainInfo,
+        CommonBackendDomainInfo,
+        JvmDomainInfo,
         WasmDomainInfo,
         JsDomainInfo,
         NativeDomainInfo,
