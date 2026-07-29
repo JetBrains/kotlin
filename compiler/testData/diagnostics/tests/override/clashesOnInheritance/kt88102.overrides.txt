@@ -1,0 +1,36 @@
+P:
+  [Delegated]: public open override fun foo(): R|A| from Use site scope of /P [id: 0]
+    [Source]: public abstract fun foo(): R|A| from Use site scope of /A [id: 1]
+    [IntersectionOverride]: public abstract override fun foo(): R|A| from Use site scope of /AB [id: 2]
+      [Source]: public abstract fun foo(): R|A| from Use site scope of /A [id: 1]
+      [Source]: public abstract fun foo(): R|A| from Use site scope of /B [id: 3]
+    [Source]: public abstract fun foo(): R|C| from Use site scope of /C [id: 4]
+
+Q:
+  [Delegated]: public open override fun foo(): R|A| from Use site scope of /Q [id: 0]
+    [Source]: public abstract fun foo(): R|A| from Use site scope of /A [id: 1]
+    [Source]: public abstract fun foo(): R|C| from Use site scope of /C [id: 2]
+
+GP:
+  [Delegated]: public open override fun foo(): R|A| from Use site scope of /GP [id: 0]
+    [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(): R|A| from Substitution scope for [Use site scope of /GA] for type GP [id: 1]
+      [Source]: public abstract fun foo(): R|T| from Use site scope of /GA [id: 2]
+    [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(): R|A| from Substitution scope for [Use site scope of /GAB] for type GP [id: 3]
+      [IntersectionOverride]: public abstract override fun foo(): R|T| from Use site scope of /GAB [id: 4]
+        [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(): R|T| from Substitution scope for [Use site scope of /GA] for type GAB<T> [id: 5]
+          [Source]: public abstract fun foo(): R|T| from Use site scope of /GA [id: 2]
+        [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(): R|T| from Substitution scope for [Use site scope of /GB] for type GAB<T> [id: 6]
+          [Source]: public abstract fun foo(): R|T| from Use site scope of /GB [id: 7]
+    [Source]: public abstract fun foo(): R|C| from Use site scope of /C [id: 8]
+
+GP2:
+  [Delegated]: public open override fun foo(): R|A| from Use site scope of /GP2 [id: 0]
+    [IntersectionOverride]: public abstract override fun foo(): R|A| from Use site scope of /GAB2 [id: 1]
+      [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(): R|A| from Substitution scope for [Use site scope of /GA] for type GAB2 [id: 2]
+        [Source]: public abstract fun foo(): R|T| from Use site scope of /GA [id: 3]
+      [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(): R|A| from Substitution scope for [Use site scope of /GB] for type GAB2 [id: 4]
+        [Source]: public abstract fun foo(): R|T| from Use site scope of /GB [id: 5]
+    [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(): R|A| from Substitution scope for [Use site scope of /GA] for type GP2 [id: 6]
+      [Source]: public abstract fun foo(): R|T| from Use site scope of /GA [id: 3]
+    [Source]: public abstract fun foo(): R|C| from Use site scope of /C [id: 7]
+
