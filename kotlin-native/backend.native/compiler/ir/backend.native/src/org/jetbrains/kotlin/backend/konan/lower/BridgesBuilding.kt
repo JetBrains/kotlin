@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
@@ -42,7 +43,8 @@ import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.ERASED_VALUE_PARAMETERS_SHORT_NAMES
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.SIGNATURE_TO_DEFAULT_VALUES_MAP
 import org.jetbrains.kotlin.load.kotlin.computeJvmSignature
-import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
+import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.DFS.AbstractNodeHandler
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 private var IrFunction.bridges: MutableMap<BridgeDirections, IrSimpleFunction>? by irAttribute(copyByDefault = false)
@@ -50,9 +52,23 @@ private var IrFunction.bridges: MutableMap<BridgeDirections, IrSimpleFunction>? 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun IrFunction.getDefaultValueForOverriddenBuiltinFunction(): SpecialGenericSignatures.TypeSafeBarrierDescription? {
     if (descriptor.name !in ERASED_VALUE_PARAMETERS_SHORT_NAMES) return null
-    return descriptor.firstOverridden {
-        it.computeJvmSignature() in SIGNATURE_TO_DEFAULT_VALUES_MAP.keys
-    }?.let { SIGNATURE_TO_DEFAULT_VALUES_MAP[it.computeJvmSignature()] }
+    var result: CallableMemberDescriptor? = null
+    return DFS.dfs(listOf<CallableMemberDescriptor>(descriptor),
+            { current ->
+                val descriptor = if (false) current?.original else current
+                descriptor?.overriddenDescriptors ?: emptyList()
+            },
+            object : AbstractNodeHandler<CallableMemberDescriptor, CallableMemberDescriptor?>() {
+                override fun beforeChildren(current: CallableMemberDescriptor) = result == null
+                override fun afterChildren(current: CallableMemberDescriptor) {
+                    if (result == null && current.computeJvmSignature() in SIGNATURE_TO_DEFAULT_VALUES_MAP.keys) {
+                        result = current
+                    }
+                }
+
+                override fun result(): CallableMemberDescriptor? = result
+            }
+       )?.let { SIGNATURE_TO_DEFAULT_VALUES_MAP[it.computeJvmSignature()] }
 }
 
 internal class BridgesSupport(val irBuiltIns: IrBuiltIns, val symbols: BackendNativeSymbols, val irFactory: IrFactory) {
