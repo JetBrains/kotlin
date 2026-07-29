@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.playwright
 
+import org.gradle.api.GradleException
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.tasks.testing.TestExecuter
@@ -32,6 +33,9 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 import org.jetbrains.kotlin.gradle.utils.property
+import java.io.File
+import java.net.InetAddress
+import java.net.ServerSocket
 import java.net.URI
 import java.nio.file.Path
 import java.time.Duration
@@ -106,12 +110,48 @@ internal class KotlinPlaywrightJsTestFramework(
 
     override val executable: Property<String> = objects.property(nodeJs.executable)
 
-    /**
-     * Chromium remote debugging port supplied by IntelliJ IDEA when a Playwright browser test debug session is started.
-     * The Ultimate Gradle init script sets it before Gradle asks this framework to create the execution spec.
-     */
+    private val debugPort: Property<Int> = objects.property<Int>()
+
+    @Transient
+    private var debuggerReadySocket: ServerSocket? = null
+
+    class DebugSessionInfo(
+        val url: URI,
+        val bundleDirectory: File,
+        val debuggerReadyPort: Int,
+    )
+
+    /** Prepares everything IDEA needs before it creates the remote debug configuration. */
     @Suppress("unused")
-    val debugPort: Property<Int> = objects.property<Int>()
+    fun prepareDebugSession(task: KotlinJsTest): DebugSessionInfo {
+        if (frameworkTaskInputs.chromiumRunners.get().isEmpty()) {
+            task.logger.warn(
+                "No Chromium runner is configured for Playwright debugging. " +
+                        "Kotlin will launch Chromium using the first configured browser runner's test settings. " +
+                        "Define a Chromium runner in the browser test DSL to customize the debug browser configuration."
+            )
+        }
+        val runner = getDebugRunner()
+        return DebugSessionInfo(
+            url = buildDebugUrl(task, runner),
+            bundleDirectory = runner.testsLocation.get().bundleLocation.get().asFile,
+            debuggerReadyPort = prepareDebuggerReadyPort(),
+        )
+    }
+
+    /** Completes the two-phase setup with the CDP port allocated by IDEA. */
+    @Suppress("unused")
+    fun configureRemoteDebuggingPort(remoteDebuggingPort: Int) {
+        debugPort.set(remoteDebuggingPort)
+    }
+
+    private fun prepareDebuggerReadyPort(): Int {
+        check(debuggerReadySocket == null) { "Playwright debugger readiness socket is already prepared" }
+        return ServerSocket(0, 1, InetAddress.getLoopbackAddress()).also {
+            it.soTimeout = DEBUGGER_READY_TIMEOUT_MILLIS
+            debuggerReadySocket = it
+        }.localPort
+    }
 
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = setOf(
@@ -128,18 +168,30 @@ internal class KotlinPlaywrightJsTestFramework(
      * Called from the Ultimate Gradle init script before the browser is launched, so source mappings can be prepared.
      */
     @Suppress("unused")
-    fun buildDebugUrl(task: KotlinJsTest): URI {
+    fun buildDebugUrl(task: KotlinJsTest): URI = buildDebugUrl(task, getDebugRunner())
+
+    private fun buildDebugUrl(task: KotlinJsTest, runner: BrowserRunnerInput): URI {
         val cliArgs = KotlinTestRunnerCliArgs(
             include = task.includePatterns,
             exclude = task.excludePatterns,
         ).toList()
-        val runner = getDebugRunner()
         return runner.buildRunnerUrl(runner.testsLocation.get().url.get(), cliArgs)
     }
 
-    @Suppress("unused")
-    fun getDebugRunner(): ChromiumRunnerInput =
-        frameworkTaskInputs.chromiumRunners.get().firstOrNull() ?: createDefaultDebugRunner()
+    private fun getDebugRunner(): ChromiumRunnerInput {
+        frameworkTaskInputs.chromiumRunners.get().firstOrNull()?.let { return it }
+
+        val configuredRunner = firstRunnerInput()
+        return createChromiumInputs(objects).apply {
+            name.convention("chromium")
+            testsLocation.convention(configuredRunner.testsLocation)
+            timeout.convention(configuredRunner.timeout)
+            headless.convention(true)
+            launchArgs.convention(emptyList())
+            launchEnvironmentVariables.convention(emptyMap())
+            finishMarker.convention(configuredRunner.finishMarker)
+        }
+    }
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
@@ -161,20 +213,10 @@ internal class KotlinPlaywrightJsTestFramework(
         ).toList()
 
         val browsersDirectory = frameworkTaskInputs.playwrightBrowsersDirectory.getFile().toPath()
-        val debugOptions = if (debug) {
-            if (!debugPort.isPresent) {
-                task.logger.warn(
-                    "IDEA did not configure a remote debugging port for this Playwright debug run. " +
-                            "Continuing without IDEA debugger attachment."
-                )
-            }
-            PwDebugOptions(debugPort.orNull)
-        } else {
-            null
-        }
+        val debugOptions = if (debug) takeDebugOptions() else null
 
         val pwRunners = buildList {
-            if (debugOptions?.remoteDebuggingPort != null) {
+            if (debugOptions != null) {
                 val runner = getDebugRunner()
                 add(
                     runner.createPwRunnerSpec(
@@ -208,6 +250,22 @@ internal class KotlinPlaywrightJsTestFramework(
         )
     }
 
+    private fun takeDebugOptions(): PwDebugOptions {
+        if (!debugPort.isPresent) {
+            throw GradleException("IDEA did not configure a remote debugging port for this Playwright debug run")
+        }
+        val remoteDebuggingPort = debugPort.get()
+
+        // The execution spec owns and closes the socket after this point.
+        val readySocket = debuggerReadySocket
+            ?: throw GradleException("IDEA did not configure debugger attachment synchronization for this Playwright debug run")
+        debuggerReadySocket = null
+        return PwDebugOptions(
+            remoteDebuggingPort = remoteDebuggingPort,
+            debuggerReadySocket = readySocket,
+        )
+    }
+
     private fun BrowserRunnerInput.createPwRunnerSpec(
         kind: PwBrowserKind,
         browsersDirectory: Path,
@@ -237,19 +295,6 @@ internal class KotlinPlaywrightJsTestFramework(
         return runnerConfig.buildUrlWithConfigState(baseUrl)
     }
 
-    private fun createDefaultDebugRunner(): ChromiumRunnerInput {
-        val configuredRunner = firstRunnerInput()
-        return createChromiumInputs(objects).apply {
-            name.convention("chromium")
-            testsLocation.convention(configuredRunner.testsLocation)
-            timeout.convention(configuredRunner.timeout)
-            headless.convention(true)
-            launchArgs.convention(emptyList())
-            launchEnvironmentVariables.convention(emptyMap())
-            finishMarker.convention(configuredRunner.finishMarker)
-        }
-    }
-
     private fun firstRunnerInput(): BrowserRunnerInput =
         frameworkTaskInputs.chromiumRunners.get().firstOrNull()
             ?: frameworkTaskInputs.firefoxRunners.get().firstOrNull()
@@ -257,6 +302,8 @@ internal class KotlinPlaywrightJsTestFramework(
             ?: error("No Playwright browser runners configured")
 
     companion object {
+        private const val DEBUGGER_READY_TIMEOUT_MILLIS = 30_000
+
         fun createInputs(objects: ObjectFactory): Inputs =
             objects.newInstance(Inputs::class.java)
 

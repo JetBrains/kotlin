@@ -38,6 +38,8 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.net.URI
+import java.net.ServerSocket
+import java.net.SocketTimeoutException
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.time.Duration
@@ -64,7 +66,8 @@ internal class PwRunnerSpec(
 
 internal class PwDebugOptions(
     // IntelliJ starts a Chromium remote-debug configuration on this port before Gradle launches Playwright.
-    val remoteDebuggingPort: Int?,
+    val remoteDebuggingPort: Int,
+    val debuggerReadySocket: ServerSocket,
 )
 
 /**
@@ -252,6 +255,7 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
         browser.use {
             val page = browser.newPage()
             page.use {
+                runner.awaitDebuggerAttached()
                 page.setDefaultTimeout(runner.timeout.inWholeMilliseconds.toDouble())
                 var finished = false
                 page.onConsoleMessage {
@@ -267,6 +271,17 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
                 page.navigate(url.toString())
                 page.waitForCondition({ finished })
             }
+        }
+    }
+
+    private fun PwRunnerSpec.awaitDebuggerAttached() {
+        val readySocket = debugOptions?.debuggerReadySocket ?: return
+        try {
+            readySocket.use { serverSocket ->
+                serverSocket.accept().use { }
+            }
+        } catch (e: SocketTimeoutException) {
+            throw IllegalStateException("Timed out waiting for IntelliJ debugger to attach to '$name'", e)
         }
     }
 
