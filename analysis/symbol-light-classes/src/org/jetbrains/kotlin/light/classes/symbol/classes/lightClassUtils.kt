@@ -40,7 +40,7 @@ internal fun KaClassSymbol.shouldNotBeVisibleAsLightClass(): Boolean {
 
     val classOrObjectPsi = sourcePsiSafe<KtClassOrObject>()
     if (isLocal && classOrObjectPsi != null) {
-        if ((containingFile?.psi as? KtFile)?.virtualFile == null) return true
+        if ((containingFile?.psi as? KtFile)?.originalFile?.virtualFile == null) return true
         if (hasParseErrorsAround(classOrObjectPsi) || PsiUtilCore.hasErrorElementChild(classOrObjectPsi)) return true
         if (classDeclaredInUnexpectedPosition(classOrObjectPsi)) return true
     }

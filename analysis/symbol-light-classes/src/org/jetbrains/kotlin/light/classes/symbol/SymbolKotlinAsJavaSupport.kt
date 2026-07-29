@@ -144,6 +144,8 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
                         -> {
                         moduleBasedLightClassCache.invalidateAll()
                         calculatedContextModuleCache.invalidateAll()
+                        symbolKeyInterner.clear()
+                        moduleKeyInterner.clear()
                     }
 
                     is KotlinCodeFragmentContextModificationEvent -> {}
@@ -351,14 +353,13 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
     }
 
     override fun getLightClass(classOrObject: KtClassOrObject, searchScope: GlobalSearchScope?): KtLightClass? = ifValid(classOrObject) {
-        if (classOrObject is KtEnumEntry) {
-            // Light classes for KtEnumEntries should be constructed via their anonymous initializers
-            // and not directly through KtEnumEntry.
-            return null
-        }
         val kaModule = classOrObject.findContextModule(searchScope) ?: return null
         analyzeForLightClasses(kaModule) {
-            val classSymbol = classOrObject.classSymbol ?: return@analyzeForLightClasses null
+            val classSymbol = when (classOrObject) {
+                is KtEnumEntry -> classOrObject.symbol.initializer
+                else -> classOrObject.classSymbol
+            } ?: return@analyzeForLightClasses null
+
             getLightClass(classSymbol, kaModule)
         }
     }
