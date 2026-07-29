@@ -5,6 +5,8 @@
 // ^ JS fails with Error loading module 'kotlin_m1'. Its dependency 'kotlin_m12' was not found
 // DONT_TARGET_EXACT_BACKEND: NATIVE
 // ^Native fails on Linux with ld.lld: error: duplicate symbol: kfun:box._when_.NoWhenBranchMatchedException.pkg1.S#$clinit_trigger#static(){}
+// WASM_IGNORE_FOR: mode=multi-module
+// ^KT-88076
 // MODULE: m1
 // FILE: m1.kt
 sealed interface S
