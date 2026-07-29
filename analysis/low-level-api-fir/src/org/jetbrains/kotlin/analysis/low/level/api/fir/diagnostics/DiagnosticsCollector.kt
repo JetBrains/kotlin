@@ -16,11 +16,10 @@ internal class DiagnosticsCollector(private val fileStructureCache: FileStructur
      */
     fun diagnostics(element: KtElement, filter: DiagnosticCheckerFilter, isRecursive: Boolean): Sequence<LLDiagnostic> {
         val fileStructure = fileStructureCache.getFileStructure(element.containingKtFile)
-        if (isRecursive) {
-            return fileStructure.diagnostics(element, filter)
+        return if (isRecursive) {
+            fileStructure.diagnostics(element, filter)
+        } else {
+            fileStructure.directDiagnostics(element, filter)
         }
-
-        val structureElement = fileStructure.getStructureElementFor(element)
-        return structureElement.diagnostics.diagnosticsFor(filter, element).asSequence()
     }
 }

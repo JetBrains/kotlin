@@ -65,7 +65,7 @@ internal class FileStructure private constructor(
          *
          * @see getNonLocalContainingOrThisElement
          */
-        private fun findNonLocalContainer(element: KtElement): KtElement? {
+        private fun findNonLocalContainer(element: PsiElement): KtElement? {
             return element.getNonLocalContainingOrThisElement(predicate = KtElement::isAutonomousElement)
         }
     }
@@ -95,13 +95,24 @@ internal class FileStructure private constructor(
         nonLocalContainer: KtElement? = findNonLocalContainer(element),
     ): FileStructureElement {
         val container = getContainerKtElement(element, nonLocalContainer)
+        return getStructureElementForContainer(container)
+    }
+
+    private fun getStructureElementForContainer(container: KtElement): FileStructureElement {
         return structureElements.getOrPut(container) { createStructureElement(container) }
     }
 
-    private fun addStructureElementForTo(element: KtElement, result: MutableCollection<FileStructureElement>) {
+    private fun structureElementForOrNull(element: KtElement): FileStructureElement? {
         checkCanceled()
-        LLFirDiagnosticVisitor.suppressAndLogExceptions {
-            result += getStructureElementFor(element)
+        return LLFirDiagnosticVisitor.suppressAndLogExceptions {
+            getStructureElementFor(element)
+        }
+    }
+
+    private fun structureElementForContainerOrNull(container: KtElement): FileStructureElement? {
+        checkCanceled()
+        return LLFirDiagnosticVisitor.suppressAndLogExceptions {
+            getStructureElementForContainer(container)
         }
     }
 
@@ -142,6 +153,47 @@ internal class FileStructure private constructor(
     }
 
     /**
+     * Returns the [closestContainer] followed by all its own containers, up to the [KtFile]. The [FileStructureElement] of them may
+     * own diagnostics reported on the element the [closestContainer] was computed for, or inside it.
+     *
+     * A diagnostic is not necessarily owned by the structure element of the closest non-local container of the element it is reported on:
+     *
+     * - Container checkers report diagnostics on their nested declarations. `MUST_BE_INITIALIZED`, for instance, is reported on a property
+     *   by the containing file or class, as only the container has the control flow graph the check is based on.
+     * - Control flow checkers only run on non-nested control flow graphs. A constructor, an initializer block and a property initializer are
+     *   all a part of the container's graph, so diagnostics reported inside them (`UNREACHABLE_CODE`, for instance) belong to the container
+     *   as well, no matter how deeply nested the reported element is.
+     *
+     * @see getStructureElementFor
+     */
+    private fun containersOf(closestContainer: KtElement): Sequence<KtElement> = generateSequence(closestContainer) { container ->
+        when {
+            // The file is the outermost container, so there is nothing above it
+            container is KtFile -> null
+
+            // The super type call redirection is only relevant for the requested element: a container of a container is always found by
+            // walking the parents up, so [getContainerKtElement] is not needed here.
+            else -> findNonLocalContainer(container.parent) ?: container.containingKtFile
+        }
+    }
+
+    /**
+     * Returns diagnostics reported on [element] itself, but not on its children.
+     *
+     * @see containersOf
+     */
+    fun directDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): Sequence<LLDiagnostic> = sequence {
+        val closestContainer = getContainerKtElement(element, findNonLocalContainer(element))
+
+        for (container in containersOf(closestContainer)) {
+            ProgressManager.checkCanceled()
+
+            val structureElement = getStructureElementForContainer(container)
+            yieldAll(structureElement.diagnostics.directDiagnostics(filter, element))
+        }
+    }
+
+    /**
      * Returns diagnostics reported on [element] and on all its children.
      *
      * Only [FileStructureElement]s which may contain diagnostics of the [element]'s subtree are computed, so requesting diagnostics for a
@@ -156,35 +208,72 @@ internal class FileStructure private constructor(
         for (structureElement in getStructureElementsFor(element)) {
             ProgressManager.checkCanceled()
 
-            structureElement.diagnostics.forEach(filter) { diagnostics ->
-                if (isWholeFile) {
-                    yieldAll(diagnostics)
-                } else {
-                    // A structure element may cover a wider piece of code than the requested element, and it may even own diagnostics
-                    // reported outside its own declaration (e.g., a primary constructor element owns diagnostics of the super type
-                    // call). So diagnostics reported outside the element have to be dropped.
-                    for (llDiagnostic in diagnostics) {
-                        if (element.isAncestor(llDiagnostic.diagnostic.psiElement, strict = false)) {
-                            yield(llDiagnostic)
-                        }
-                    }
+            for (llDiagnostic in structureElement.diagnostics.diagnostics(filter)) {
+                // A structure element may cover a wider piece of code than the requested element, and it may even own diagnostics reported
+                // outside its own declaration (e.g., a primary constructor element owns diagnostics of the super type call). So diagnostics
+                // reported outside the element have to be dropped.
+                if (isWholeFile || element.isAncestor(llDiagnostic.diagnostic.psiElement, strict = false)) {
+                    yield(llDiagnostic)
                 }
             }
         }
     }
 
-    fun getAllStructureElements(): Collection<FileStructureElement> = getStructureElementsFor(ktFile)
+    internal fun getAllStructureElements(): Collection<FileStructureElement> = getStructureElementsFor(ktFile).toList()
 
     /**
-     * Returns all [FileStructureElement]s which may contain diagnostics reported on [element] or on its children:
-     * the structure element of the closest non-local container of [element], and structure elements of all declarations inside [element].
+     * Returns all [FileStructureElement]s which may contain diagnostics reported on [element] or on its children: structure elements of all
+     * declarations inside [element], and structure elements of all [containers][containersOf] of [element].
+     *
+     * The outer containers come last and are computed lazily, as they are the most expensive structure elements: a consumer which stops early
+     * never computes them.
      */
-    private fun getStructureElementsFor(element: KtElement): Collection<FileStructureElement> {
-        val structureElements = mutableSetOf<FileStructureElement>()
+    private fun getStructureElementsFor(element: KtElement): Sequence<FileStructureElement> {
+        val closestContainer = getContainerKtElement(element, findNonLocalContainer(element))
 
-        // The element is not necessarily visited by the collector below (e.g., a function literal is not visited as a declaration),
-        // and in any case it might belong to the structure element of its container.
-        addStructureElementForTo(element, structureElements)
+        // Sic! These structure elements are created eagerly, the closest container first and the inner ones in the document order. Creating a
+        // structure element triggers the resolution of its declaration, and checkers depend on the resolution order:
+        //
+        // - The checker context of a nested declaration is built from the file downwards, so the file has to be resolved first.
+        // - Class checkers may inspect related declarations reached through a member scope. 'FirOverrideChecker', for instance, compares the
+        //   default values of an override with the ones of the base declaration, and reports on the base default value expression. An
+        //   unresolved expression has no source, which makes the checker throw.
+        // - Declarations may have interdependent implicit types.
+        //
+        // A single structure element may have several anchors (a class and its super class type reference, for instance), hence the set.
+        //
+        // TODO(KT-88111): compute the inner structure elements lazily as well
+        val innerElements = LinkedHashSet<FileStructureElement>()
+        structureElementForContainerOrNull(closestContainer)?.let(innerElements::add)
+
+        for (anchor in collectInnerAnchorsFor(element, closestContainer)) {
+            structureElementForOrNull(anchor)?.let(innerElements::add)
+        }
+
+        // Diagnostics are collected from bottom to top, so that all nested declarations are fully resolved before the outer one (KT-65562).
+        // The closest container is already handled above, so only the outer ones are left. They may repeat an inner structure element, as a
+        // super type call anchors the primary constructor while its own container is the class.
+        val outerElements = containersOf(closestContainer)
+            .drop(1)
+            .mapNotNull(::structureElementForContainerOrNull)
+            .filter { it !in innerElements }
+
+        return innerElements.toList().asReversed().asSequence() + outerElements
+    }
+
+    /**
+     * Collects elements inside [element] which anchor their own [FileStructureElement], in the document order.
+     *
+     * Nothing is collected if the [closestContainer] cannot have inner structure elements, as every declaration inside such a container is
+     * local and thus belongs to the container itself. Apart from being an optimization, this avoids a pointless traversal over the whole
+     * subtree of an arbitrary expression, which is the most common request.
+     */
+    private fun collectInnerAnchorsFor(element: KtElement, closestContainer: KtElement): List<KtElement> {
+        if (!closestContainer.canHaveInnerStructureElements) {
+            return emptyList()
+        }
+
+        val anchors = mutableListOf<KtElement>()
 
         element.accept(object : KtVisitorVoid() {
             override fun visitElement(element: PsiElement) {
@@ -192,45 +281,36 @@ internal class FileStructure private constructor(
             }
 
             override fun visitDeclaration(dcl: KtDeclaration) {
-                addStructureElementForTo(dcl, structureElements)
+                anchors += dcl
 
                 // Go down only in the case of container declaration
-                val canHaveInnerStructure = dcl is KtClassOrObject || dcl is KtScript || dcl is KtDestructuringDeclaration
-                if (canHaveInnerStructure) {
+                if (dcl.canHaveInnerStructureElements) {
                     dcl.acceptChildren(this)
                 }
             }
 
             override fun visitModifierList(list: KtModifierList) {
                 if (elementCanBeLazilyResolved(list)) {
-                    addStructureElementForTo(list, structureElements)
+                    anchors += list
                 }
             }
 
             /**
-             * A super type call is split between two structure elements: the super class type reference belongs to the class, while the
-             * rest of the call belongs to the primary constructor. Both halves have to be requested explicitly, as neither of them is a
-             * declaration.
+             * A super type call is split between two structure elements: the super class type reference belongs to the class, while the rest
+             * of the call belongs to the primary constructor. The call is not a declaration, so it has to be anchored explicitly, and no
+             * container of it can stand in: the primary constructor is a sibling of the super type list, not its parent.
+             *
+             * There is no need to go inside the call. The type reference half is covered by the class, which is a container of the call, and
+             * every declaration inside an argument is local and thus belongs to the primary constructor anyway.
              *
              * @see getStructureKtElement
              */
             override fun visitSuperTypeCallEntry(call: KtSuperTypeCallEntry) {
-                addStructureElementForTo(call, structureElements)
-
-                call.acceptChildren(this)
-            }
-
-            /** @see visitSuperTypeCallEntry */
-            override fun visitTypeReference(typeReference: KtTypeReference) {
-                if (typeReference.parent is KtConstructorCalleeExpression) {
-                    addStructureElementForTo(typeReference, structureElements)
-                }
-
-                typeReference.acceptChildren(this)
+                anchors += call
             }
         })
 
-        return structureElements.toList().asReversed()
+        return anchors
     }
 
     private fun createRootStructure(): RootStructureElement {
@@ -274,3 +354,15 @@ internal class FileStructure private constructor(
         }
     }
 }
+
+/**
+ * Whether the element may contain declarations which anchor their own [FileStructureElement].
+ *
+ * Only declarations directly nested in a file, a class, a script or a destructuring declaration can be resolved autonomously, and only a
+ * file or a class body can hold a non-local dangling modifier list. So anything nested deeper – inside a function body, a property
+ * initializer or an initializer block – is local and belongs to the structure element of the enclosing declaration.
+ *
+ * @see org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.elementCanBeLazilyResolved
+ */
+private val KtElement.canHaveInnerStructureElements: Boolean
+    get() = this is KtFile || this is KtClassOrObject || this is KtScript || this is KtDestructuringDeclaration

@@ -7,5 +7,3 @@ class TopLevel {
 }
 
 interface InterfaceWithParameter<T>
-
-// SUPPRESS_INDIVIDUAL_DIAGNOSTICS_CHECK: KT-63221

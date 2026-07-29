@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLDiagnostic
 internal class FileStructureElementDiagnosticList(
     private val map: Map<PsiElement, List<LLDiagnostic>>
 ) {
-    fun diagnosticsFor(element: PsiElement): List<LLDiagnostic> = map[element] ?: emptyList()
+    fun directDiagnostics(element: PsiElement): List<LLDiagnostic> = map[element] ?: emptyList()
 
-    inline fun forEach(action: (List<LLDiagnostic>) -> Unit) = map.values.forEach(action)
+    fun diagnostics(): Sequence<LLDiagnostic> = map.values.asSequence().flatten()
 }
