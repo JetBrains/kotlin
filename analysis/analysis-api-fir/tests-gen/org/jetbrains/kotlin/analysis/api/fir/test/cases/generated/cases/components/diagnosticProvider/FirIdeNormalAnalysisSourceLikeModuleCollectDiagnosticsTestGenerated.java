@@ -405,6 +405,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleCollectDiagnosticsTestGenerated
   }
 
   @Test
+  @TestMetadata("unreachableCodeInClassInitializerAndConstructor.kt")
+  public void testUnreachableCodeInClassInitializerAndConstructor() {
+    run("unreachableCodeInClassInitializerAndConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("unreachableCodeInPropertyInitializer.kt")
+  public void testUnreachableCodeInPropertyInitializer() {
+    run("unreachableCodeInPropertyInitializer.kt");
+  }
+
+  @Test
   @TestMetadata("unresolved.kt")
   public void testUnresolved() {
     run("unresolved.kt");
