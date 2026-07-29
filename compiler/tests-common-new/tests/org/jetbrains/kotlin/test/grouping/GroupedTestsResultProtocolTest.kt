@@ -306,6 +306,53 @@ class GroupedTestsResultProtocolTest {
     }
 
     @Test
+    fun `given generated driver source when inspected then every protocol line is printed with a leading newline`() {
+        val source = GroupedTestsResultProtocol.generateResultCollectingRunnerSource(
+            proxyClassNames = listOf("ProxyLauncher_a", "ProxyLauncher_b"),
+            exportedEntryPointGenerator = object : GroupedTestsExportedEntryPointGenerator() {
+                override fun generateExportedEntryPointSource(runAllFunctionName: String): String =
+                    "fun entryPoint() { $runAllFunctionName() }"
+            },
+        )
+
+        // The BEGIN/END sentinels plus the STARTED/PASSED/FAILED lines of `__kgtiReport`.
+        val protocolPrints = source.lines().filter { "println(" in it && "##KGTI" in it }
+        assertEquals(5, protocolPrints.size, source)
+        for (line in protocolPrints) {
+            // A test body ending with `print(...)` leaves stdout mid-line, so a protocol line without the leading
+            // `\n` would be glued onto that leftover and match neither the sentinel nor the LINE_PREFIX check.
+            assertTrue("""println("\n##KGTI""" in line, "Protocol line is printed without a leading newline: $line")
+        }
+    }
+
+    @Test
+    fun `given output left mid-line when parse then the leading newline keeps the following result line intact`() {
+        val output = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            // What the VM prints for a test whose body ends with `print(...)`: leftover output with no newline,
+            // immediately followed by the driver's `\n`-prefixed terminal line.
+            append("leftover output with no trailing newline")
+            appendLine("\n${GroupedTestsResultProtocol.LINE_PREFIX}|id|${GroupedTestsResultProtocol.PASSED}||")
+            appendLine(GroupedTestsResultProtocol.END)
+        }
+
+        assertTrue(GroupedTestsResultProtocol.parse(output).getValue("id").passed)
+    }
+
+    @Test
+    fun `given result line glued onto preceding output when parse then it is not recognized`() {
+        // Pins the reason the driver prefixes every protocol line with `\n`: line matching is deliberately exact,
+        // so a glued line is dropped and the test would be misreported as having crashed the VM.
+        val output = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            appendLine("glued${GroupedTestsResultProtocol.LINE_PREFIX}|id|${GroupedTestsResultProtocol.PASSED}||")
+            appendLine(GroupedTestsResultProtocol.END)
+        }
+
+        assertTrue(GroupedTestsResultProtocol.parse(output).isEmpty())
+    }
+
+    @Test
     fun `given started ids across multiple outputs when parseMerged then they are unioned`() {
         val vmA = buildString {
             appendLine(GroupedTestsResultProtocol.BEGIN)

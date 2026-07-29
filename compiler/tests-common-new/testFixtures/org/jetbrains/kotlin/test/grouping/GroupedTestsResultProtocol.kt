@@ -27,6 +27,13 @@ package org.jetbrains.kotlin.test.grouping
  * `status` is [STARTED] (printed *before* each test) then [PASSED]/[FAILED] (*after*): a [STARTED] with no terminal
  * line marks the test that crashed the VM mid-run; neither line means it never ran. `message`/`details` are escaped
  * so no field holds a raw [SEP], letting [parse] split safely: `\`→`\\`, `|`→`\p`, newline→`\n`, CR→`\r`.
+ *
+ * Every line above is emitted with a **leading newline** (so a blank line may precede it in the VM output, which
+ * [parse] ignores). That guarantees the line starts at a line boundary even when the test body left stdout
+ * mid-line — `kotlin.io.print` writes without a trailing newline on wasm-wasi, and on wasm-js under the shell VMs
+ * it maps to the engine's `write`, which does the same. Without the leading newline such leftover output would be
+ * glued in front of the next protocol line, which would then match neither [isSentinelLine] nor the [LINE_PREFIX]
+ * check in [parse]: the test's terminal result would be silently dropped and the test misreported as a VM crasher.
  */
 object GroupedTestsResultProtocol {
     const val BEGIN: String = "##KGTI_BEGIN##"
@@ -39,6 +46,14 @@ object GroupedTestsResultProtocol {
 
     /** Name of the generated function that runs and reports every test; the exported entry point calls it. */
     private const val RUN_ALL_FUNCTION_NAME: String = "__kgtiRunAll"
+
+    /**
+     * The `\n` escape sequence, emitted verbatim into the generated source so that every protocol line the driver
+     * prints starts at a line boundary regardless of what the preceding test body left on stdout.
+     * It is two characters (`\` and `n`) here on purpose: it lands inside a regular string literal of the
+     * *generated* Kotlin source, where the target compiler turns it into an actual newline.
+     */
+    private const val LEADING_NEWLINE: String = "\\n"
 
     /** A single per-test result parsed out of the structured block. */
     data class Outcome(val id: String, val passed: Boolean, val message: String?, val details: String?)
@@ -215,6 +230,9 @@ object GroupedTestsResultProtocol {
      *  - `__kgtiRunAll` — prints [BEGIN], reports each [proxyClassNames] test, prints [END];
      *  - the target-specific exported entry point (supplied by [exportedEntryPointGenerator]) that simply calls `__kgtiRunAll`.
      *
+     * Every printed protocol line starts with `\n` ([LEADING_NEWLINE]) so it begins at a line boundary even when the
+     * preceding test body left stdout mid-line (e.g. via `print`) — see the [GroupedTestsResultProtocol] doc.
+     *
      * The generated code deliberately builds strings via `+` concatenation (never `"$..."` interpolation) so no
      * `$` handling leaks into the emitted source.
      */
@@ -234,23 +252,23 @@ object GroupedTestsResultProtocol {
         appendLine(
             """
             private fun __kgtiReport(id: String, body: () -> Unit) {
-                println("$LINE_PREFIX$SEP" + id + "$SEP$STARTED$SEP$SEP")
+                println("$LEADING_NEWLINE$LINE_PREFIX$SEP" + id + "$SEP$STARTED$SEP$SEP")
                 try {
                     body()
-                    println("$LINE_PREFIX$SEP" + id + "$SEP$PASSED$SEP$SEP")
+                    println("$LEADING_NEWLINE$LINE_PREFIX$SEP" + id + "$SEP$PASSED$SEP$SEP")
                 } catch (e: Throwable) {
-                    println("$LINE_PREFIX$SEP" + id + "$SEP$FAILED$SEP" + __kgtiEscape(e.message) + "$SEP" + __kgtiEscape(e.stackTraceToString()))
+                    println("$LEADING_NEWLINE$LINE_PREFIX$SEP" + id + "$SEP$FAILED$SEP" + __kgtiEscape(e.message) + "$SEP" + __kgtiEscape(e.stackTraceToString()))
                 }
             }
             """.trimIndent()
         )
         appendLine()
         appendLine("private fun $RUN_ALL_FUNCTION_NAME() {")
-        appendLine("""    println("$BEGIN")""")
+        appendLine("""    println("$LEADING_NEWLINE$BEGIN")""")
         for (name in proxyClassNames) {
             appendLine("""    __kgtiReport("$name") { $name().runTest() }""")
         }
-        appendLine("""    println("$END")""")
+        appendLine("""    println("$LEADING_NEWLINE$END")""")
         appendLine("}")
         appendLine()
         appendLine(exportedEntryPointGenerator.generateExportedEntryPointSource(RUN_ALL_FUNCTION_NAME))
