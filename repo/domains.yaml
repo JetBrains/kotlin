@@ -2,109 +2,109 @@ $schema: domains.schema.json
 
 Compiler:
   include:
-    - "compiler/**"
-    - "core/**"
-    - "build-common/**"
-    - "compiler/psi/parser/**"
-    - "plugins/plugin-sandbox/**"
-    - "plugins/scripting/**"
-    - "jps/**"
+    - "compiler"
+    - "core"
+    - "build-common"
+    - "compiler/psi/parser"
+    - "plugins/plugin-sandbox"
+    - "plugins/scripting"
+    - "jps"
   exclude:
-    - "compiler/psi/**"
-    - "compiler/build-tools/**"
-    - "compiler/incremental-compilation-*/**"
-    - "compiler/daemon/**"
-    - "compiler/compiler-runner-unshaded/**"
+    - "compiler/psi"
+    - "compiler/build-tools"
+    - "compiler/incremental-compilation-*"
+    - "compiler/daemon"
+    - "compiler/compiler-runner-unshaded"
   fullyAffectedBy:
     - CoreLibs
 
 Wasm:
   include:
-    - "wasm/**"
-    - "js/js.translator/testData/**"
+    - "wasm"
+    - "js/js.translator/testData"
   fullyAffectedBy:
     - Compiler
     - CoreLibs
 Js:
   include:
-    - "js/**"
-    - "libraries/tools/analysis-api-based-klib-reader/**"
+    - "js"
+    - "libraries/tools/analysis-api-based-klib-reader"
   fullyAffectedBy:
     - Compiler
     - CoreLibs
 
 Native:
   include:
-    - "native/**"
-    - "kotlin-native/**"
+    - "native"
+    - "kotlin-native"
   exclude:
-    - "native/swift/**"
+    - "native/swift"
   fullyAffectedBy:
     - Compiler
     - CoreLibs
 
 CoreLibs:
   include:
-    - "libraries/stdlib/**"
-    - "libraries/tools/kotlin-annotations-jvm/**"
-    - "core/metadata*/**"
-    - "core/reflect*/**"
+    - "libraries/stdlib"
+    - "libraries/tools/kotlin-annotations-jvm"
+    - "core/metadata*"
+    - "core/reflect*"
     # Old reflect
-    - "core/descriptors.runtime/**"
-    - "libraries/kotlinx-metadata/**"
-    - "libraries/reflect/**"
-    - "libraries/kotlin.test/**"
+    - "core/descriptors.runtime"
+    - "libraries/kotlinx-metadata"
+    - "libraries/reflect"
+    - "libraries/kotlin.test"
     - "libraries/tools/jdk-api-validator"
 
 AnalysisApi:
   include:
-    - "analysis/**"
-    - "compiler/psi/**"
-    - "prepare/analysis-api/**"
+    - "analysis"
+    - "compiler/psi"
+    - "prepare/analysis-api"
   exclude:
-    - "compiler/psi/parser/**"
+    - "compiler/psi/parser"
   fullyAffectedBy:
     - Compiler
     - CoreLibs
 
 BuildToolsApi:
   include:
-    - "build-common/**"
-    - "compiler/build-tools/**"
-    - "compiler/incremental-compilation-*/**"
-    - "compiler/daemon/**"
-    - "compiler/compiler-runner-unshaded/**"
+    - "build-common"
+    - "compiler/build-tools"
+    - "compiler/incremental-compilation-*"
+    - "compiler/daemon"
+    - "compiler/compiler-runner-unshaded"
   fullyAffectedBy:
     - Compiler
 
 SwiftExport:
   include:
-    - "native/swift/**"
-    - "libraries/tools/analysis-api-based-klib-reader/**"
+    - "native/swift"
+    - "libraries/tools/analysis-api-based-klib-reader"
   fullyAffectedBy:
     - AnalysisApi # todo: Replace this dependency with a reviewed set of @AffectedByAnalysisApi tests
 
 CompilerPlugins:
   include:
-    - "plugins/**"
+    - "plugins"
   fullyAffectedBy:
     - Compiler
 
 Gradle:
   include:
-    - "build-common/**"
-    - "libraries/tools/*gradle*/**"
-    - "compiler/build-tools/kotlin-build-statistics/**"
+    - "build-common"
+    - "libraries/tools/*gradle*"
+    - "compiler/build-tools/kotlin-build-statistics"
 
 Maven:
   include:
-    - "libraries/tools/*maven*/**"
+    - "libraries/tools/*maven*"
 
 # The IntelliJ domain has no owned files in this repository.
 # It is used to declare which domains will affect IntelliJ and to infer when to run tests against kt-master
 IntelliJ:
   include:
-    - "prepare/ide-plugin-dependencies/**"
+    - "prepare/ide-plugin-dependencies"
   fullyAffectedBy:
     - Compiler
     - AnalysisApi
@@ -112,14 +112,14 @@ IntelliJ:
 
 BuildInfrastructure:
   include:
-    - "repo/**"
-    - "gradle/**"
+    - "repo"
+    - "gradle"
     - "build.gradle.kts"
     - "settings.gradle.kts"
     - "gradle.properties"
-    - "scripts/**"
-    - ".space/**"
-    - ".idea/**"
+    - "scripts"
+    - ".space"
+    - ".idea"
 
 Unknown:
   # Files not matching other domains will be sorted into 'Unknown' by default.

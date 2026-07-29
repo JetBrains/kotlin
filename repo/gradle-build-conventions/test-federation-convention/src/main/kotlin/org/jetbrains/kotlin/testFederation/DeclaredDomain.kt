@@ -12,23 +12,23 @@ internal data class DeclaredDomain(
     val name: String,
 
     /**
-     * Files matching these 'glob' patterns will be included in this subsystem.
-     * - e.g., 'compiler/​**' will include all files under the 'compiler' subdirectory
-     * - e.g., '**​/​*gradle* will include all files containing the word 'gradle'
+     * Files matching these patterns will be included in this subsystem. Directory paths include all their descendants.
+     * - e.g., 'compiler' will include the 'compiler' directory and all files under it
+     * - e.g., '**​/​*gradle*' will include all paths whose name contains the word 'gradle'
      */
     val includes: List<String>,
 
     /**
-     * Files matching these 'glob' patterns will be excluded from this subsystem
+     * Files matching these patterns will be excluded from this subsystem. Directory paths exclude all their descendants.
      * See [includes].
      *
-     * Note: If a file matches an 'include' and 'exclude' glob pattern, then the 'most specific' pattern will dominate.
+     * Note: If a file matches an 'include' and 'exclude' pattern, then the 'most specific' pattern will dominate.
      * e.g., a definition like
      * ```yaml
      * include:
-     *     - foo/​**
+     *     - foo
      * exclude:
-     *     - foo/​**​/bar
+     *     - foo/abc
      * ```
      *
      * Will exclude 'foo/abc/bar', as the exclude rule is considered 'more specific'.

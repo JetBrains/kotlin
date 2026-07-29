@@ -44,13 +44,15 @@ e.g., the `Native` domain could be defined as:
 ```yaml
 Native:
   include:
-    - "native/**"
-    - "kotlin-native/**"
+    - "native"
+    - "kotlin-native"
   fullyAffectedBy:
     - Compiler
 ```
 
-Files belonging to this 'Native' domain are included using the `native/**` and `kotlin-native/**` globs.
+Entries under `include` and `exclude` can be directory paths or glob patterns. A directory path matches the directory and
+all its descendants, so the `Native` domain above includes everything under the `native` and `kotlin-native` directories.
+When `include` and `exclude` entries overlap, the most specific matching entry takes precedence.
 A domain is always marked as 'affected' if any file, belonging to the domain, is changed.
 
 ## '^affects' commit command
