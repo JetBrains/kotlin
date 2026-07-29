@@ -23,8 +23,8 @@ dependencies {
     implementation(project(":js:typescript-export-model"))
     implementation(project(":js:typescript-printer"))
     implementation(project(":libraries:tools:analysis-api-based-klib-reader"))
-    implementation(project(":kotlin-util-klib-metadata"))
 
+    api(project(":kotlin-util-klib-metadata"))
     api(project(":core:compiler.common"))
     api(project(":js:js.config"))
 }

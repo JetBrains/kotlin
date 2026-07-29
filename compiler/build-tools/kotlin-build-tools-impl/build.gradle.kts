@@ -25,6 +25,7 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    implementation(project(":js:typescript-export-standalone")) // todo: should it be a compileOnly with bundling ts export into compiler embeddable or something like that?
     implementation(project(":kotlin-tooling-core"))
 
     runtimeOnly(project(":kotlin-compiler-embeddable"))
