@@ -9,22 +9,11 @@ FILE fqName:<root> fileName:/dynamicArrayInc.kt
             receiver: GET_VAR 'val obj: dynamic declared in <root>.box' type=dynamic origin=null
             0: CONST String type=kotlin.String value="a"
           0: CONST Int type=kotlin.Int value=2
-      VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:dynamic [val]
-        GET_VAR 'val obj: dynamic declared in <root>.box' type=dynamic origin=null
-      VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.String [val]
-        CONST String type=kotlin.String value="a"
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        DYN_OP operator=EQ type=dynamic
-          receiver: GET_VAR 'val tmp_0: dynamic declared in <root>.box' type=dynamic origin=null
-          0: GET_VAR 'val tmp_1: kotlin.String declared in <root>.box' type=kotlin.String origin=null
-          1: DYN_OP operator=PREFIX_INCREMENT type=dynamic
-            receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
-              receiver: GET_VAR 'val tmp_0: dynamic declared in <root>.box' type=dynamic origin=null
-              0: GET_VAR 'val tmp_1: kotlin.String declared in <root>.box' type=kotlin.String origin=null
-      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        DYN_OP operator=ARRAY_ACCESS type=dynamic
-          receiver: GET_VAR 'val tmp_0: dynamic declared in <root>.box' type=dynamic origin=null
-          0: GET_VAR 'val tmp_1: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+        DYN_OP operator=PREFIX_INCREMENT type=dynamic
+          receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+            receiver: GET_VAR 'val obj: dynamic declared in <root>.box' type=dynamic origin=IMPLICIT_ARGUMENT
+            0: CONST String type=kotlin.String value="a"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: DYN_OP operator=EXCLEQ type=kotlin.Boolean
@@ -38,22 +27,11 @@ FILE fqName:<root> fileName:/dynamicArrayInc.kt
               DYN_OP operator=ARRAY_ACCESS type=dynamic
                 receiver: GET_VAR 'val obj: dynamic declared in <root>.box' type=dynamic origin=null
                 0: CONST String type=kotlin.String value="a"
-      VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:dynamic [val]
-        GET_VAR 'val obj: dynamic declared in <root>.box' type=dynamic origin=null
-      VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.String [val]
-        CONST String type=kotlin.String value="a"
-      VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:dynamic [val]
-        DYN_OP operator=ARRAY_ACCESS type=dynamic
-          receiver: GET_VAR 'val tmp_2: dynamic declared in <root>.box' type=dynamic origin=null
-          0: GET_VAR 'val tmp_3: kotlin.String declared in <root>.box' type=kotlin.String origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        DYN_OP operator=EQ type=dynamic
-          receiver: GET_VAR 'val tmp_2: dynamic declared in <root>.box' type=dynamic origin=null
-          0: GET_VAR 'val tmp_3: kotlin.String declared in <root>.box' type=kotlin.String origin=null
-          1: DYN_OP operator=POSTFIX_INCREMENT type=dynamic
-            receiver: GET_VAR 'val tmp_4: dynamic declared in <root>.box' type=dynamic origin=null
-      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_VAR 'val tmp_4: dynamic declared in <root>.box' type=dynamic origin=null
+        DYN_OP operator=POSTFIX_INCREMENT type=dynamic
+          receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+            receiver: GET_VAR 'val obj: dynamic declared in <root>.box' type=dynamic origin=IMPLICIT_ARGUMENT
+            0: CONST String type=kotlin.String value="a"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: DYN_OP operator=EXCLEQ type=kotlin.Boolean
@@ -67,22 +45,11 @@ FILE fqName:<root> fileName:/dynamicArrayInc.kt
               DYN_OP operator=ARRAY_ACCESS type=dynamic
                 receiver: GET_VAR 'val obj: dynamic declared in <root>.box' type=dynamic origin=null
                 0: CONST String type=kotlin.String value="a"
-      VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:dynamic [val]
-        GET_VAR 'val obj: dynamic declared in <root>.box' type=dynamic origin=null
-      VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:kotlin.String [val]
-        CONST String type=kotlin.String value="a"
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        DYN_OP operator=EQ type=dynamic
-          receiver: GET_VAR 'val tmp_5: dynamic declared in <root>.box' type=dynamic origin=null
-          0: GET_VAR 'val tmp_6: kotlin.String declared in <root>.box' type=kotlin.String origin=null
-          1: DYN_OP operator=PREFIX_DECREMENT type=dynamic
-            receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
-              receiver: GET_VAR 'val tmp_5: dynamic declared in <root>.box' type=dynamic origin=null
-              0: GET_VAR 'val tmp_6: kotlin.String declared in <root>.box' type=kotlin.String origin=null
-      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        DYN_OP operator=ARRAY_ACCESS type=dynamic
-          receiver: GET_VAR 'val tmp_5: dynamic declared in <root>.box' type=dynamic origin=null
-          0: GET_VAR 'val tmp_6: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+        DYN_OP operator=PREFIX_DECREMENT type=dynamic
+          receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+            receiver: GET_VAR 'val obj: dynamic declared in <root>.box' type=dynamic origin=IMPLICIT_ARGUMENT
+            0: CONST String type=kotlin.String value="a"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: DYN_OP operator=EXCLEQ type=kotlin.Boolean
@@ -96,22 +63,11 @@ FILE fqName:<root> fileName:/dynamicArrayInc.kt
               DYN_OP operator=ARRAY_ACCESS type=dynamic
                 receiver: GET_VAR 'val obj: dynamic declared in <root>.box' type=dynamic origin=null
                 0: CONST String type=kotlin.String value="a"
-      VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:dynamic [val]
-        GET_VAR 'val obj: dynamic declared in <root>.box' type=dynamic origin=null
-      VAR IR_TEMPORARY_VARIABLE name:tmp_8 type:kotlin.String [val]
-        CONST String type=kotlin.String value="a"
-      VAR IR_TEMPORARY_VARIABLE name:tmp_9 type:dynamic [val]
-        DYN_OP operator=ARRAY_ACCESS type=dynamic
-          receiver: GET_VAR 'val tmp_7: dynamic declared in <root>.box' type=dynamic origin=null
-          0: GET_VAR 'val tmp_8: kotlin.String declared in <root>.box' type=kotlin.String origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        DYN_OP operator=EQ type=dynamic
-          receiver: GET_VAR 'val tmp_7: dynamic declared in <root>.box' type=dynamic origin=null
-          0: GET_VAR 'val tmp_8: kotlin.String declared in <root>.box' type=kotlin.String origin=null
-          1: DYN_OP operator=POSTFIX_DECREMENT type=dynamic
-            receiver: GET_VAR 'val tmp_9: dynamic declared in <root>.box' type=dynamic origin=null
-      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_VAR 'val tmp_9: dynamic declared in <root>.box' type=dynamic origin=null
+        DYN_OP operator=POSTFIX_DECREMENT type=dynamic
+          receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+            receiver: GET_VAR 'val obj: dynamic declared in <root>.box' type=dynamic origin=IMPLICIT_ARGUMENT
+            0: CONST String type=kotlin.String value="a"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: DYN_OP operator=EXCLEQ type=kotlin.Boolean
