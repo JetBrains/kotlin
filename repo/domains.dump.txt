@@ -119,16 +119,6 @@ Native:
  - native/unsafe-mem
  - native/utils
 
-Js, Wasm:
- - js/js.translator/testData
-
-Compiler, CoreLibs:
- - core/descriptors.runtime
- - core/metadata
- - core/metadata.jvm
- - core/reflection.common.jvm
- - core/reflection.jvm
-
 CoreLibs:
  - libraries/kotlin.test
  - libraries/kotlinx-metadata
@@ -185,13 +175,6 @@ CompilerPlugins:
  - plugins/power-assert
  - plugins/sam-with-receiver
  - plugins/test-plugins
-
-Compiler, CompilerPlugins:
- - plugins/plugin-sandbox
- - plugins/scripting
-
-Js, SwiftExport:
- - libraries/tools/analysis-api-based-klib-reader
 
 Gradle:
  - libraries/tools/gradle
@@ -324,8 +307,25 @@ Unknown:
  - tests-permissions.template.policy
  - third-party
 
-BuildToolsApi, Compiler, Gradle:
- - build-common
+Js, Wasm:
+ - js/js.translator/testData
+
+Compiler, CoreLibs:
+ - core/descriptors.runtime
+ - core/metadata
+ - core/metadata.jvm
+ - core/reflection.common.jvm
+ - core/reflection.jvm
+
+Compiler, CompilerPlugins:
+ - plugins/plugin-sandbox
+ - plugins/scripting
+
+Js, SwiftExport:
+ - libraries/tools/analysis-api-based-klib-reader
 
 BuildToolsApi, Gradle:
  - compiler/build-tools/kotlin-build-statistics
+
+BuildToolsApi, Compiler, Gradle:
+ - build-common

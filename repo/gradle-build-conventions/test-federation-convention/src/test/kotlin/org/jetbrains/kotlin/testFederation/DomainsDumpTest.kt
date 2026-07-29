@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.testFederation
 
+import groovy.util.MapEntry
 import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
 import org.jetbrains.kotlin.tooling.core.withClosure
 import org.opentest4j.AssertionFailedError
@@ -36,8 +37,11 @@ class DomainsDumpTest {
             appendLine("####################################################")
             appendLine()
 
+            fun <T> sorting() = compareBy<Map.Entry<Collection<Domain>, T>> { (domains, _) -> domains.size }
+                .thenComparing { (domains, _) -> domains.sumOf { it.ordinal } }
+
             conflatedTree.withClosure { it.children }.filter { it.children.isEmpty() }
-                .groupBy { it.domains }.entries.sortedBy { it.key.sumOf { it.ordinal } }.forEach { (domains, nodes) ->
+                .groupBy { it.domains }.entries.sortedWith(sorting()).forEach { (domains, nodes) ->
                     appendLine("${domains.joinToString(", ") { it.name }}:")
                     nodes.toList().sortedBy { it.path.value.invariantSeparatorsPathString }.forEach { node ->
                         appendLine(" - ${node.path.value.invariantSeparatorsPathString}")
