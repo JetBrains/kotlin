@@ -1,4 +1,0 @@
-FUNCTION:
-  /Combined.equals
-EQUALITY_BOUND:
-  null
