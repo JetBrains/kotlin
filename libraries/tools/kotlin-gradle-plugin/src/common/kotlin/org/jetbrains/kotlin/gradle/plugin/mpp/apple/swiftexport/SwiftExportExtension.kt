@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UNUSED_PARAMETER") // Ignore not-yet-used API added for PoC.
+
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport
 
 import org.gradle.api.Action
