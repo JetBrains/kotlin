@@ -295,6 +295,7 @@ class ComposableDefaultParamLowering(
         }.apply {
             parent.addChild(this)
             createThisReceiverParameter()
+            superTypes = listOf(context.irBuiltIns.anyType)
         }
     }
 
