@@ -156,7 +156,9 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
                     +expression.argument.transformVoid()
                     // TODO: Don't generate these casts in the first place
                     // in K1, the nullable types had to be treated as compatible for Java interop (due to the absence of flexible nullability)
-                    val expressionExtendedType = if (backendContext.config.useFir) expression.type else expression.type.makeNullable()
+                    val expressionExtendedType =
+                        if (backendContext.config.languageVersionSettings.languageVersion.usesK2) expression.type
+                        else expression.type.makeNullable()
                     if (!expression.argument.type.isSubtypeOf(expressionExtendedType, backendContext.typeSystem)) {
                         +IrCompositeImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, expression.type)
                     }
