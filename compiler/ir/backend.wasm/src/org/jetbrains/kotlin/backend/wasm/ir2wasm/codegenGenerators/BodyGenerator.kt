@@ -596,7 +596,8 @@ class BodyGenerator(
 
         // Skip redundant field initializers that set fields to type-default values, since we
         // already initialize fields to type-default values in the code that initializes the objects
-        // at creation time.
+        // at creation time. See the tests e.g. fieldInitializerOptimization.kt and
+        // CorrectOrder3.kt.
         if (functionContext.irFunction is IrConstructor &&
             expression.origin == IrStatementOrigin.INITIALIZE_FIELD &&
             expressionValue is IrConst &&
