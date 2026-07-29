@@ -2,6 +2,8 @@
 // ^Implementing sealed interfaces in a different module fails with IncompatibleClassChangeError starting from JVM 17
 // WITH_STDLIB
 // LANGUAGE: +NoWhenBranchMatchedExceptionWithMessage
+// IGNORE_BACKEND: WASM
+// ^^^ KT-88074 Package renaming leads to the mismatch with the expected message
 // MODULE: m1
 // FILE: m1.kt
 package pkg1
