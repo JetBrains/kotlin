@@ -23,6 +23,6 @@ internal fun Iterable<File>.filterAndReportUnsupportedKotlinArchiveLibraries(dia
 internal fun Iterable<File>.reportUnsupportedKotlinArchiveLibraries(diagnostics: UsesKotlinToolingDiagnostics) {
     val karFiles = filter { it.isKarOrKarXZFile() }
     if (karFiles.isNotEmpty()) {
-        diagnostics.reportDiagnostic(UnsupportedKotlinArchiveUsage(karFiles))
+        diagnostics.reportDiagnostic(UnsupportedKotlinArchiveUsage(karFiles), reportOnce = true)
     }
 }

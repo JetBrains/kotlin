@@ -1412,7 +1412,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/MetadataDependencyT
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/api/file/ProjectLayout;)V
 	protected final fun getParentLibrariesIndexFiles ()Lorg/gradle/api/provider/SetProperty;
 	protected final fun getTransformedLibrariesIndexFile ()Lorg/gradle/api/file/RegularFileProperty;
-	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 	public final fun transformMetadata ()V
 }
 
@@ -1470,7 +1470,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/XCFrameworkTa
 	protected final fun getFatFrameworksDir ()Ljava/io/File;
 	public final fun getInputFrameworkFiles ()Ljava/util/Collection;
 	public final fun getOutputDir ()Ljava/io/File;
-	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 	public final fun setBaseName (Lorg/gradle/api/provider/Provider;)V
 	public final fun setBuildType (Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;)V
 	public final fun setOutputDir (Ljava/io/File;)V
@@ -5868,7 +5868,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompile : 
 	protected final fun getMultiModuleICSettings ()Lorg/jetbrains/kotlin/daemon/common/MultiModuleICSettings;
 	public fun getNormalizedKotlinDaemonJvmArguments ()Lorg/gradle/api/provider/Provider;
 	protected fun makeIncrementalCompilationFeatures ()Lorg/jetbrains/kotlin/incremental/IncrementalCompilationFeatures;
-	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 	public final fun setIncremental (Z)V
 	protected fun skipCondition ()Z
 }
@@ -5956,7 +5956,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gr
 	public abstract fun getProviderFactory ()Lorg/gradle/api/provider/ProviderFactory;
 	public final fun getSettings ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/DefaultCInteropSettings;
 	public final fun processInterop ()V
-	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 }
 
 public class org/jetbrains/kotlin/gradle/tasks/CleanDataTask : org/gradle/api/DefaultTask {
@@ -6210,7 +6210,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompile : or
 	public final fun getShortModuleName ()Ljava/lang/String;
 	public fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public fun kotlinOptions (Lorg/gradle/api/Action;)V
-	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 	public synthetic fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/CommonToolArguments;ZZ)V
 	public fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments;ZZ)V
 }
@@ -6250,7 +6250,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeLink : org/j
 	public final fun isStaticFramework ()Z
 	public final fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public final fun kotlinOptions (Lorg/gradle/api/Action;)V
-	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 	public fun setCompilerPluginClasspath (Lorg/gradle/api/file/FileCollection;)V
 	public final fun setKotlinPluginData (Lorg/gradle/api/provider/Provider;)V
 	public fun toolOptions (Lkotlin/jvm/functions/Function1;)V
@@ -6289,7 +6289,7 @@ public final class org/jetbrains/kotlin/gradle/tasks/TasksUtilsKt {
 public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/CheckPomTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics {
 	protected final fun execute ()V
 	public abstract fun getPom ()Lorg/gradle/api/provider/Property;
-	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 }
 
 public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/CheckSigningTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics {
@@ -6304,7 +6304,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/CheckSigningT
 	public abstract fun getPublicationNamesWithSigning ()Lorg/gradle/api/provider/MapProperty;
 	public abstract fun getSignatory ()Lorg/gradle/api/provider/Property;
 	public abstract fun getSignatoryKeyId ()Lorg/gradle/api/provider/Property;
-	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 }
 
 public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/GeneratePgpKeys : org/gradle/api/DefaultTask {
