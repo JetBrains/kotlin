@@ -381,6 +381,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleCollectDiagnosticsTestGenerated
   }
 
   @Test
+  @TestMetadata("superTypeCallDiagnostics.kt")
+  public void testSuperTypeCallDiagnostics() {
+    run("superTypeCallDiagnostics.kt");
+  }
+
+  @Test
   @TestMetadata("syntheticHashCode.kt")
   public void testSyntheticHashCode() {
     run("syntheticHashCode.kt");
