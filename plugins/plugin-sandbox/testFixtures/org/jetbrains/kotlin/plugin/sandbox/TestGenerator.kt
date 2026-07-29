@@ -23,6 +23,22 @@ fun main(args: Array<String>) {
                 model("diagnostics", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
+            testClass<AbstractFirLightTreeJvmPluginIrTextTest> {
+                model("irText", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
+            testClass<AbstractFirLightTreeJvmPluginIrTextTestWithoutPlugins> {
+                model("irText", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
+            testClass<AbstractLightTreeJsPluginIrTextTest> {
+                model("irText", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
+            testClass<AbstractLightTreeJsPluginIrTextTestWithoutPlugins> {
+                model("irText", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
             testClass<AbstractFirJvmLightTreePluginBlackBoxCodegenTest> {
                 model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
@@ -36,10 +52,6 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractJsLightTreePluginBlackBoxCodegenTest> {
-                model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-            }
-
-            testClass<AbstractJsLightTreePluginBlackBoxCodegenTestWithoutPlugins> {
                 model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
