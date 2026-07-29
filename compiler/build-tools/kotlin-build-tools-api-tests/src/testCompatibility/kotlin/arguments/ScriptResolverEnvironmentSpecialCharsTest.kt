@@ -40,7 +40,7 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
         assumeArgumentSupported(toolchain.getCompilerVersion())
         val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
 
-        operation.compilerArguments.applyArgumentStrings(
+        operation.compilerArguments.applyCommandLineArguments(
             expectedArgumentStringsFor("key=val1,val2")
         )
 
@@ -72,7 +72,7 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
         assumeArgumentSupported(toolchain.getCompilerVersion())
         val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
 
-        operation.compilerArguments.applyArgumentStrings(
+        operation.compilerArguments.applyCommandLineArguments(
             expectedArgumentStringsFor("key=\"quoted\"")
         )
 
@@ -104,7 +104,7 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
         assumeArgumentSupported(toolchain.getCompilerVersion())
         val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
 
-        operation.compilerArguments.applyArgumentStrings(
+        operation.compilerArguments.applyCommandLineArguments(
             expectedArgumentStringsFor("key=path\\to\\file")
         )
 
@@ -136,7 +136,7 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
         assumeArgumentSupported(toolchain.getCompilerVersion())
         val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
 
-        operation.compilerArguments.applyArgumentStrings(
+        operation.compilerArguments.applyCommandLineArguments(
             expectedArgumentStringsFor("key=\"value1,key2\"")
         )
 
@@ -168,7 +168,7 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
         assumeArgumentSupported(toolchain.getCompilerVersion())
         val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
 
-        operation.compilerArguments.applyArgumentStrings(
+        operation.compilerArguments.applyCommandLineArguments(
             expectedArgumentStringsFor("key=value1\\,key2")
         )
 
