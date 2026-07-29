@@ -149,6 +149,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
             symbol = FirRegularClassSymbol(classId)
             annotateWith(JsStandardClassIds.Annotations.JsExportIgnore)
             source = owner.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
+            superTypeRefs += session.builtinTypes.anyType
         }.symbol
     }
 
