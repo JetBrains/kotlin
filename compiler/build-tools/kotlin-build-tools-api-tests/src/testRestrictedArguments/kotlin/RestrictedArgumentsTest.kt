@@ -27,7 +27,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 import kotlin.io.path.absolutePathString
 
-@DisplayName("Restricted arguments via applyArgumentStrings")
+@DisplayName("Restricted arguments via applyCommandLineArguments")
 class RestrictedArgumentsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-Xbuild-file emits a warning")
@@ -214,7 +214,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-no-stdlib"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-no-stdlib"))
             }) {
                 assertLogDoesNotContainPatterns(LogLevel.WARN, Regex(".*is not supported in the Build Tools API.*"))
                 assertLogContainsPatterns(LogLevel.DEBUG, "Kotlin compiler args: .* -no-stdlib .*".toRegex())
@@ -228,7 +228,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-Xallow-kotlin-package"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-Xallow-kotlin-package"))
             }) {
                 assertLogDoesNotContainPatterns(LogLevel.WARN, Regex(".*is not supported in the Build Tools API.*"))
                 assertLogContainsPatterns(LogLevel.DEBUG, "Kotlin compiler args: .* -Xallow-kotlin-package .*".toRegex())
@@ -243,7 +243,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
             val module = module("basic-multimodule-project/module-1")
 
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-Xassertions=jVm"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-Xassertions=jVm"))
                 @OptIn(ExperimentalCompilerArgument::class)
                 assertEquals(it.compilerArguments[X_ASSERTIONS], AssertionsMode.JVM)
             }) {
@@ -291,7 +291,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
         if (isWarning) {
             compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(configuredArgs)
+                it.compilerArguments.applyCommandLineArguments(configuredArgs)
             }) {
                 if (expectedCompilationError) {
                     expectFail()
@@ -306,7 +306,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
             val compilationBody = {
                 compile(compilationConfigAction = {
-                    it.compilerArguments.applyArgumentStrings(configuredArgs)
+                    it.compilerArguments.applyCommandLineArguments(configuredArgs)
                 }) {
                     if (expectedCompilationError) {
                         expectFail()

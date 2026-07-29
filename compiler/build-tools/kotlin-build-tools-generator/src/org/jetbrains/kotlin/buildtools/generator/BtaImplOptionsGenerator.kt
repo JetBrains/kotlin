@@ -197,7 +197,8 @@ internal class BtaImplOptionsGenerator(
                     addFunction(toCompilerArgumentsAffectingOutcomeFun.build())
                 }
 
-                maybeAddApplyArgumentStringsFun(level, parentClass, generateCompatLayer)
+                maybeAddApplyArgumentStringsFun(level, generateCompatLayer)
+                maybeAddApplyCommandLineArgumentsFun(level, generateCompatLayer)
                 maybeAddToArgumentsStringFun(level, parentClass)
                 if (!generateCompatLayer) {
                     generateRestrictedArgViolationCollection(level, parentClass)
@@ -672,7 +673,7 @@ internal class BtaImplOptionsGenerator(
         }
         function("set") {
             val typeParameter = TypeVariableName("V")
-            addModifiers(KModifier.OPERATOR, KModifier.PRIVATE)
+            addModifiers(KModifier.OPERATOR)
             addTypeVariable(typeParameter)
             addParameter("key", implParameter.parameterizedBy(typeParameter))
             addParameter("value", typeParameter)
@@ -1012,7 +1013,6 @@ private fun toCompilerConverterFunBuilder(
 
 private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
     level: KotlinCompilerArgumentsLevel,
-    parentClass: TypeName?,
     generateCompatLayer: Boolean,
 ) {
     if (!level.isLeaf()) {
@@ -1022,8 +1022,9 @@ private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
 
     function("applyArgumentStrings") {
         addModifiers(KModifier.OVERRIDE)
-        if (parentClass == null) {
-            addModifiers(KModifier.OPEN)
+        annotation<Deprecated> {
+            addMember("%S", "This method is deprecated. Use applyCommandLineArguments instead.")
+            addMember("%T(%S)", ReplaceWith::class, "applyCommandLineArguments(arguments)")
         }
         addParameter("arguments", listTypeNameOf<String>())
         addStatement(
@@ -1048,6 +1049,44 @@ private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
             )
         }
         addStatement("applyCompilerArguments(compilerArgs)")
+    }
+}
+
+private fun TypeSpec.Builder.maybeAddApplyCommandLineArgumentsFun(
+    level: KotlinCompilerArgumentsLevel,
+    generateCompatLayer: Boolean,
+) {
+    if (!level.isLeaf()) {
+        return
+    }
+    val compilerArgumentsClass = level.getCompilerArgumentsClassName()
+
+    function("applyCommandLineArguments") {
+        addModifiers(KModifier.OVERRIDE)
+
+        addParameter("arguments", listTypeNameOf<String>())
+        if (!generateCompatLayer) {
+            addStatement("val compilerArgs = toCompilerArguments()")
+            addStatement(
+                "%M(arguments, compilerArgs, false)",
+                MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments")
+            )
+            addStatement(
+                "%M(this, compilerArgs)",
+                MemberName("org.jetbrains.kotlin.buildtools.internal.arguments", "handleCustomPluginArguments")
+            )
+            addStatement("collectRestrictedArgViolations(compilerArgs, %T())", compilerArgumentsClass)
+            addStatement(
+                "%M(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }",
+                MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArgumentsAllErrors"),
+            )
+            // has to run before the values are applied, so that values previously set through the typed argument API
+            // are still observable
+            addStatement("argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }")
+            addStatement("applyCompilerArguments(compilerArgs)")
+        } else {
+            addStatement("TODO(\"To be handled in v1 wrapper\")")
+        }
     }
 }
 
