@@ -216,6 +216,53 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
     }
 
     @Test
+    fun testLightweightScannerToleratesUnbalancedClosingBrace(@TempDir tempDir: Path) {
+        // An unmatched `}` must not shift the remaining declarations out of the top-level frame:
+        // without clamping, `Foo` is missed and the file is dropped from the index entirely.
+        val file = tempDir.resolve("Foo.java")
+        file.writeText(
+            """
+            package com.example;
+
+            class Broken {
+            }
+            }
+
+            public class Foo {}
+        """.trimIndent()
+        )
+
+        val info = extractFileInfoLightweight(file.toFile())
+        assert(info != null) { "Expected non-null LightweightFileInfo" }
+        assert(info!!.packageName == "com.example") { "Expected package 'com.example', got '${info.packageName}'" }
+        assert(info.topLevelClassNames == setOf("Broken", "Foo")) {
+            "Expected {Broken, Foo}, got ${info.topLevelClassNames}"
+        }
+    }
+
+    @Test
+    fun testLightweightScannerToleratesUnbalancedClosingParenthesis(@TempDir tempDir: Path) {
+        val file = tempDir.resolve("Foo.java")
+        file.writeText(
+            """
+            package com.example;
+
+            public class Foo {
+                void m() { f(1)); }
+            }
+
+            class Bar {}
+        """.trimIndent()
+        )
+
+        val info = extractFileInfoLightweight(file.toFile())
+        assert(info != null) { "Expected non-null LightweightFileInfo" }
+        assert(info!!.topLevelClassNames == setOf("Foo", "Bar")) {
+            "Expected {Foo, Bar}, got ${info.topLevelClassNames}"
+        }
+    }
+
+    @Test
     fun testSmallFileCachedDuringIndexing(@TempDir tempDir: Path) {
         val pkgDir = tempDir.resolve("com/example")
         pkgDir.toFile().mkdirs()

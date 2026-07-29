@@ -16,23 +16,19 @@ import com.intellij.platform.syntax.syntaxElementTypeSetOf
 import com.intellij.pom.java.LanguageLevel
 import java.io.File
 
-/** Lightweight Java-lexer scan for package name and top-level class names (no full parse). */
-
 private val TOP_LEVEL_TYPE_KEYWORDS = syntaxElementTypeSetOf(
     JavaSyntaxTokenType.CLASS_KEYWORD, JavaSyntaxTokenType.INTERFACE_KEYWORD, JavaSyntaxTokenType.ENUM_KEYWORD
 )
 
-/**
- * Result of lightweight (no-parse) file scanning.
- */
 internal data class LightweightFileInfo(
     val packageName: String?,
     val topLevelClassNames: Set<String>,
 )
 
 /**
- * Package and top-level type names via Java lexer (no full parse).
- * Tolerates a missing package `;` for PSI error-tolerant parity.
+ * Package and top-level type names via Java lexer, without a parse.
+ * For PSI error-tolerant parity, tolerates a missing package `;` and unmatched closing braces/parentheses.
+ * Modelled after `SingleJavaFileRootsIndex` TODO: merge implementations (KT-57845)
  */
 internal fun extractFileInfoLightweight(file: File): LightweightFileInfo? {
     val fileContent = readJavaSourceFileText(file) ?: return null
@@ -45,11 +41,12 @@ internal fun extractFileInfoLightweight(file: File): LightweightFileInfo? {
     fun end(): Boolean = lexer.getTokenType() == null
 
     fun advance() {
-        when {
-            at(JavaSyntaxTokenType.LBRACE) -> braceBalance++
-            at(JavaSyntaxTokenType.RBRACE) -> braceBalance--
-            at(JavaSyntaxTokenType.LPARENTH) -> parenthesisBalance++
-            at(JavaSyntaxTokenType.RPARENTH) -> parenthesisBalance--
+        // Balances limited to be non-negative: to tolerate extra closing brackets while still being able to extract subsequent class names.
+        when (lexer.getTokenType()) {
+            JavaSyntaxTokenType.LBRACE -> braceBalance++
+            JavaSyntaxTokenType.RBRACE -> if (braceBalance > 0) braceBalance--
+            JavaSyntaxTokenType.LPARENTH -> parenthesisBalance++
+            JavaSyntaxTokenType.RPARENTH -> if (parenthesisBalance > 0) parenthesisBalance--
         }
         lexer.advance()
     }
@@ -73,13 +70,11 @@ internal fun extractFileInfoLightweight(file: File): LightweightFileInfo? {
             when {
                 type == JavaSyntaxTokenType.IDENTIFIER || type == JavaSyntaxTokenType.DOT -> name.append(lexer.getTokenText())
                 type == SyntaxTokenTypes.WHITE_SPACE || type in JavaSyntaxDefinition.comments -> Unit
-                // Missing `;` is accepted (PSI error-tolerant); any other token ends the package decl.
                 else -> break@loop
             }
             advance()
         }
-        if (at(JavaSyntaxTokenType.SEMICOLON)) advance()
-        packageName = name.toString()
+        packageName = name.toString().takeIf { it.isNotEmpty() }
     }
 
     val classNames = mutableSetOf<String>()

@@ -36,6 +36,26 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-29 — Clamp the lightweight scanner's brace/paren balance at zero
+- **Change**: review of `extractFileInfoLightweight` against its production ancestor
+  `SingleJavaFileRootsIndex.JavaSourceClassIdReader` (cli-base). Unmatched closers drove the
+  balances negative, so `atTypeDeclaration()` (`== 0`) stopped firing and every top-level type
+  after a stray `}`/`)` was lost — for a stray `}` before the file's namesake class the file is
+  dropped from the index entirely (`tryBuildFileEntry` requires the base name). Now clamped,
+  mirroring `Kotlin.flex`'s `if (lBraceCount == 0) popState() else lBraceCount--`; no-op on
+  well-formed input. Also dropped a dangling KDoc, the redundant `if (at(SEMICOLON)) advance()`
+  (the class-scan loop skips it anyway) and mapped an empty package name to `null`.
+  Divergences from the ancestor are intentional and stay: the `break@loop` on a non-`package`
+  token (upstream appends the first class name to the package on a missing `;`), no `isPackageInfo`
+  arm (`JavaPackageIndexer` routes `package-info.java` to `JavaPackageInfoIndexer` first), and
+  `when (lexer.getTokenType())` instead of four `at()` calls. `getTokenType()` itself is a cached
+  field read (`JavaLexer.locateToken`: `if (myTokenType != null) return`), so repeated calls need
+  no hoisting; `getTokenText()` is the allocating one, and it is only reached at balance 0.
+- **Files**: `util/JavaSourceIndex.kt` (+7/−12); `JavaParsingLightweightScannerTest.kt` (+47, 2 tests).
+- **Tests**: `JavaParsing*` 16/16; box+phased 2792 executed / 0 FAILED. Both new tests fail
+  without the clamp (`got [Broken]`, `got [Foo]`).
+- **Result**: green (error-tolerance fix).
+
 ### 2026-07-29 — Delete the `JavaSourceFileReader` abstraction; read via `File.readText`
 - **Change**: after the `VirtualFile`→`File` switch the interface had a single implementation
   (`DefaultJavaSourceFileReader`), `walkSourceRoots` had no callers (it served the deleted eager
