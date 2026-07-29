@@ -45,7 +45,8 @@ public expect enum class DurationUnit {
      */
     DAYS;
 
-    @SinceKotlin("2.4") public companion object
+    @SinceKotlin("2.5")
+    public companion object
 }
 
 /**
@@ -60,9 +61,9 @@ public expect enum class DurationUnit {
  *
  * @sample samples.time.Durations.convertUnitLong
  */
-@SinceKotlin("2.4")
+@SinceKotlin("2.5")
 @ExperimentalTime
-public fun DurationUnit.Companion.convert(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long =
+public fun DurationUnit.Companion.convertInWhole(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long =
     convertDurationUnit(value, sourceUnit, targetUnit)
 
 /**
@@ -71,16 +72,25 @@ public fun DurationUnit.Companion.convert(value: Long, sourceUnit: DurationUnit,
  * The part of the [value] that is smaller than the specified [targetUnit]
  * becomes a fractional part of the result and then is truncated (rounded towards zero).
  *
- * If the result doesn't fit in the range of [Int] type, it is coerced into that range:
- * - [Int.MIN_VALUE] is returned if it's less than `Int.MIN_VALUE`,
- * - [Int.MAX_VALUE] is returned if it's greater than `Int.MAX_VALUE`.
+ * If the result doesn't fit in the range of [Long] type, it is coerced into that range:
+ * - [Long.MIN_VALUE] is returned if it's less than `Long.MIN_VALUE`,
+ * - [Long.MAX_VALUE] is returned if it's greater than `Long.MAX_VALUE`.
+ *
+ * If the converted results needs to be converted back to [Int],
+ * please make sure that the chosen conversion method suits business logic of an application
+ * and will not result in accidental data loss.
+ *
+ * It is recommended to use [Long.coerceIn] (`coerceIn(Int.MIN_VALUE.toLong(), Int.MAX_VALUE.toLong()).toInt()`) instead of calling
+ * [Long.toInt] on the result directly. While the former will clamp a value outside of range representable by [Int] to
+ * either [Int.MIN_VALUE], or [Int.MAX_VALUE], the latter (`toInt`) will truncate the value and drop most significant bits of the result.
  *
  * @sample samples.time.Durations.convertUnitInt
+ * @sample samples.time.Durations.convertIntValueAndCastBackToInt
  */
-@SinceKotlin("2.4")
+@SinceKotlin("2.5")
 @ExperimentalTime
-public fun DurationUnit.Companion.convert(value: Int, sourceUnit: DurationUnit, targetUnit: DurationUnit): Int =
-    convert(value.toLong(), sourceUnit, targetUnit).coerceIn(Int.MIN_VALUE.toLong(), Int.MAX_VALUE.toLong()).toInt()
+public fun DurationUnit.Companion.convertInWhole(value: Int, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long =
+    convertInWhole(value.toLong(), sourceUnit, targetUnit)
 
 /**
  * Converts the given time duration [value] expressed in the [sourceUnit] duration unit into the specified [targetUnit].
@@ -93,10 +103,10 @@ public fun DurationUnit.Companion.convert(value: Int, sourceUnit: DurationUnit, 
  *
  * @sample samples.time.Durations.convertUnitDouble
  */
-@SinceKotlin("2.4")
+@SinceKotlin("2.5")
 @ExperimentalTime
 public fun DurationUnit.Companion.convert(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double =
-    @Suppress("DEPRECATED") Duration.convert(value, sourceUnit, targetUnit)
+    @Suppress("DEPRECATION") Duration.convert(value, sourceUnit, targetUnit)
 
 /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
 @SinceKotlin("1.3")

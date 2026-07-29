@@ -41,7 +41,8 @@ public actual enum class DurationUnit(internal val timeUnit: TimeUnit) {
      */
     DAYS(TimeUnit.DAYS);
 
-    @SinceKotlin("2.4") public actual companion object
+    @SinceKotlin("2.5")
+    public actual companion object
 }
 
 /**

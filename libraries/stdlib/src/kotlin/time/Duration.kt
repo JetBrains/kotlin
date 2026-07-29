@@ -71,6 +71,7 @@ internal constructor(private val rawValue: Long) :
         /**
          * Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit].
          *
+         * @see DurationUnit.convertInWhole
          * @see DurationUnit.convert
          */
         @ExperimentalTime
@@ -78,7 +79,7 @@ internal constructor(private val rawValue: Long) :
             "Use DurationUnit.convert instead.",
             replaceWith = ReplaceWith("DurationUnit.convert(value, sourceUnit, targetUnit)"),
         )
-        @DeprecatedSinceKotlin(warningSince = "2.4")
+        @DeprecatedSinceKotlin(warningSince = "2.5")
         public fun convert(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double =
             convertDurationUnit(value, sourceUnit, targetUnit)
 

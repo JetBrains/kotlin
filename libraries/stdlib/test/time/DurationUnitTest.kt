@@ -6,17 +6,21 @@
 package test.time
 
 import kotlin.math.sign
+import kotlin.test.ExperimentalKotlinTestApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.DurationUnit.*
 import kotlin.time.ExperimentalTime
 import kotlin.time.convert
+import kotlin.time.convertInWhole
 
 class DurationUnitTest {
     @Test
     @OptIn(ExperimentalTime::class)
+    @Suppress("DEPRECATION")
     fun conversion() = doubleConversionBase(Duration::convert)
 
     @Test
@@ -75,11 +79,11 @@ class DurationUnitTest {
     fun longValueConversion() {
         fun test(sourceValue: Long, sourceUnit: DurationUnit, targetValue: Long, targetUnit: DurationUnit) {
             assertEquals(
-                targetValue, DurationUnit.convert(sourceValue, sourceUnit, targetUnit),
+                targetValue, DurationUnit.convertInWhole(sourceValue, sourceUnit, targetUnit),
                 "Expected $sourceValue $sourceUnit to be $targetValue $targetUnit"
             )
             assertEquals(
-                -targetValue, DurationUnit.convert(-sourceValue, sourceUnit, targetUnit),
+                -targetValue, DurationUnit.convertInWhole(-sourceValue, sourceUnit, targetUnit),
                 "Expected ${-sourceValue} $sourceUnit to be ${-targetValue} $targetUnit"
             )
         }
@@ -99,9 +103,9 @@ class DurationUnitTest {
         test(50L, NANOSECONDS, 0L, MICROSECONDS)
         test(1_500_000L, MICROSECONDS, 1L, SECONDS)
 
-        assertEquals(Long.MAX_VALUE, DurationUnit.convert(110_000L, DAYS, NANOSECONDS))
-        assertEquals(Long.MIN_VALUE, DurationUnit.convert(-110_000L, DAYS, NANOSECONDS))
-        assertEquals(106_751L, DurationUnit.convert(Long.MAX_VALUE, NANOSECONDS, DAYS))
+        assertEquals(Long.MAX_VALUE, DurationUnit.convertInWhole(110_000L, DAYS, NANOSECONDS))
+        assertEquals(Long.MIN_VALUE, DurationUnit.convertInWhole(-110_000L, DAYS, NANOSECONDS))
+        assertEquals(106_751L, DurationUnit.convertInWhole(Long.MAX_VALUE, NANOSECONDS, DAYS))
 
         for (unit in DurationUnit.entries) {
             test(0L, unit, 0L, unit)
@@ -110,25 +114,26 @@ class DurationUnitTest {
             test(Long.MIN_VALUE, unit, Long.MIN_VALUE, unit)
 
             for (otherUnit in DurationUnit.entries) {
-                test(1L, unit, unitConversionTable.getValue(unit).getValue(otherUnit).first, otherUnit)
+                test(1L, unit, unitConversionTable.getValue(unit).getValue(otherUnit), otherUnit)
             }
         }
     }
 
     @Test
     fun intValueConversion() {
-        fun test(sourceValue: Int, sourceUnit: DurationUnit, targetValue: Int, targetUnit: DurationUnit) {
+        fun test(sourceValue: Int, sourceUnit: DurationUnit, targetValue: Long, targetUnit: DurationUnit) {
             assertEquals(
-                targetValue, DurationUnit.convert(sourceValue, sourceUnit, targetUnit),
+                targetValue, DurationUnit.convertInWhole(sourceValue, sourceUnit, targetUnit),
                 "Expected $sourceValue $sourceUnit to be $targetValue $targetUnit"
             )
-            // These values are coming only from the unit conversion table, so let's use this hack.
-            // All other MIN/MAX value conversion cases calls assertEquals directly.
-            val minusTargetValue = if (targetValue == Int.MAX_VALUE) Int.MIN_VALUE else -targetValue
-            val minusSourceValue = if (sourceValue == Int.MAX_VALUE) Int.MIN_VALUE else -sourceValue
+            assertNotEquals(
+                Int.MIN_VALUE,
+                sourceValue,
+                "The test function can't handle Int.MIN_VALUE, implement checks on your own"
+            )
             assertEquals(
-                minusTargetValue, DurationUnit.convert(minusSourceValue, sourceUnit, targetUnit),
-                "Expected $minusSourceValue $sourceUnit to be $minusTargetValue $targetUnit"
+                -targetValue, DurationUnit.convertInWhole(-sourceValue, sourceUnit, targetUnit),
+                "Expected ${-sourceValue} $sourceUnit to be ${-targetValue} $targetUnit"
             )
         }
 
@@ -145,21 +150,23 @@ class DurationUnitTest {
         test(50, NANOSECONDS, 0, MICROSECONDS)
         test(1_500_000, MICROSECONDS, 1, SECONDS)
 
-        assertEquals(Int.MAX_VALUE, DurationUnit.convert(1, DAYS, NANOSECONDS))
-        assertEquals(Int.MIN_VALUE, DurationUnit.convert(-1, DAYS, NANOSECONDS))
-        assertEquals(0, DurationUnit.convert(Int.MAX_VALUE, NANOSECONDS, DAYS))
-        assertEquals(0, DurationUnit.convert(Int.MIN_VALUE, NANOSECONDS, DAYS))
-        assertEquals(2, DurationUnit.convert(Int.MAX_VALUE, NANOSECONDS, SECONDS))
-        assertEquals(-2, DurationUnit.convert(Int.MIN_VALUE, NANOSECONDS, SECONDS))
+        assertEquals(86400000000000L, DurationUnit.convertInWhole(1, DAYS, NANOSECONDS))
+        assertEquals(-86400000000000L, DurationUnit.convertInWhole(-1, DAYS, NANOSECONDS))
+        assertEquals(Long.MAX_VALUE, DurationUnit.convertInWhole(1000000, DAYS, NANOSECONDS))
+        assertEquals(Long.MIN_VALUE, DurationUnit.convertInWhole(-1000000, DAYS, NANOSECONDS))
+        assertEquals(0, DurationUnit.convertInWhole(Int.MAX_VALUE, NANOSECONDS, DAYS))
+        assertEquals(0, DurationUnit.convertInWhole(Int.MIN_VALUE, NANOSECONDS, DAYS))
+        assertEquals(2, DurationUnit.convertInWhole(Int.MAX_VALUE, NANOSECONDS, SECONDS))
+        assertEquals(-2, DurationUnit.convertInWhole(Int.MIN_VALUE, NANOSECONDS, SECONDS))
 
         for (unit in DurationUnit.entries) {
             test(0, unit, 0, unit)
             test(1, unit, 1, unit)
-            test(Int.MAX_VALUE, unit, Int.MAX_VALUE, unit)
-            test(Int.MIN_VALUE, unit, Int.MIN_VALUE, unit)
+            test(Int.MAX_VALUE, unit, Int.MAX_VALUE.toLong(), unit)
+            assertEquals(Int.MIN_VALUE.toLong(), DurationUnit.convertInWhole(Int.MIN_VALUE, unit, unit))
 
             for (otherUnit in DurationUnit.entries) {
-                test(1, unit, unitConversionTable.getValue(unit).getValue(otherUnit).second, otherUnit)
+                test(1, unit, unitConversionTable.getValue(unit).getValue(otherUnit), otherUnit)
             }
         }
     }
@@ -180,47 +187,47 @@ class DurationUnitTest {
 }
 
 // maps representing how a unit value (1) in one unit is represented in other units
-private val unitConversionTable: Map<DurationUnit, Map<DurationUnit, Pair<Long, Int>>> = mapOf(
+private val unitConversionTable: Map<DurationUnit, Map<DurationUnit, Long>> = mapOf(
     NANOSECONDS to mapOf(
-        NANOSECONDS to (1L to 1),
-    ).withDefault { _ -> 0L to 0 },
+        NANOSECONDS to 1L,
+    ).withDefault { _ -> 0L },
     MICROSECONDS to mapOf(
-        NANOSECONDS to (1_000L to 1_000),
-        MICROSECONDS to (1L to 1),
-    ).withDefault { _ -> 0L to 0 },
+        NANOSECONDS to 1_000L,
+        MICROSECONDS to 1L,
+    ).withDefault { _ -> 0L },
     MILLISECONDS to mapOf(
-        NANOSECONDS to (1_000_000L to 1_000_000),
-        MICROSECONDS to (1_000L to 1_000),
-        MILLISECONDS to (1L to 1),
-    ).withDefault { _ -> 0L to 0 },
+        NANOSECONDS to 1_000_000L,
+        MICROSECONDS to 1_000L,
+        MILLISECONDS to 1L,
+    ).withDefault { _ -> 0L },
     SECONDS to mapOf(
-        NANOSECONDS to (1_000_000_000L to 1_000_000_000),
-        MICROSECONDS to (1_000_000L to 1_000_000),
-        MILLISECONDS to (1_000L to 1_000),
-        SECONDS to (1L to 1),
-    ).withDefault { _ -> 0L to 0 },
+        NANOSECONDS to 1_000_000_000L,
+        MICROSECONDS to 1_000_000L,
+        MILLISECONDS to 1_000L,
+        SECONDS to 1L,
+    ).withDefault { _ -> 0L },
     MINUTES to mapOf(
-        NANOSECONDS to (60_000_000_000L to Int.MAX_VALUE),
-        MICROSECONDS to (60_000_000L to 60_000_000),
-        MILLISECONDS to (60_000L to 60_000),
-        SECONDS to (60L to 60),
-        MINUTES to (1L to 1),
-    ).withDefault { _ -> 0L to 0 },
+        NANOSECONDS to 60_000_000_000L,
+        MICROSECONDS to 60_000_000L,
+        MILLISECONDS to 60_000L,
+        SECONDS to 60L,
+        MINUTES to 1L,
+    ).withDefault { _ -> 0L },
     HOURS to mapOf(
-        NANOSECONDS to (3_600_000_000_000L to Int.MAX_VALUE),
-        MICROSECONDS to (3_600_000_000L to Int.MAX_VALUE),
-        MILLISECONDS to (3_600_000L to 3_600_000),
-        SECONDS to (3_600L to 3_600),
-        MINUTES to (60L to 60),
-        HOURS to (1L to 1),
-    ).withDefault { _ -> 0L to 0 },
+        NANOSECONDS to 3_600_000_000_000L,
+        MICROSECONDS to 3_600_000_000L,
+        MILLISECONDS to 3_600_000L,
+        SECONDS to 3_600L,
+        MINUTES to 60L,
+        HOURS to 1L,
+    ).withDefault { _ -> 0L },
     DAYS to mapOf(
-        NANOSECONDS to (86_400_000_000_000L to Int.MAX_VALUE),
-        MICROSECONDS to (86_400_000_000L to Int.MAX_VALUE),
-        MILLISECONDS to (86_400_000L to 86_400_000),
-        SECONDS to (86_400L to 86_400),
-        MINUTES to (1_440L to 1_440),
-        HOURS to (24L to 24),
-        DAYS to (1L to 1),
+        NANOSECONDS to 86_400_000_000_000L,
+        MICROSECONDS to 86_400_000_000L,
+        MILLISECONDS to 86_400_000L,
+        SECONDS to 86_400L,
+        MINUTES to 1_440L,
+        HOURS to 24L,
+        DAYS to 1L,
     )
 )
