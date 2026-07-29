@@ -38,6 +38,9 @@ internal class DumpJvmAbiToStringOperationImpl private constructor(
         initializeOptions(this::class, options)
     }
 
+    override val usesApplicationEnvironment: Boolean
+        get() = false
+
     override fun executeImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?) {
         val filters = options[PATTERN_FILTERS]?.let { AbiValidationUtils.convert(it) } ?: org.jetbrains.kotlin.abi.tools.AbiFilters.EMPTY
         abiTools.printJvmDump(appendable, inputFiles.map { it.toFile() }, filters)
