@@ -37,6 +37,7 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
+sourcesJar()
 
 projectTests {
     testTask(javaLauncher = JdkMajorVersion.JDK_1_8)

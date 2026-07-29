@@ -26,6 +26,7 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
 }
+sourcesJar()
 
 val checkForeignClassUsage = tasks.register("checkForeignClassUsage", CheckForeignClassUsageTask::class) {
     outputFile = file("api/language-targets-api.foreign")
