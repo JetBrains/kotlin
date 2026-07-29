@@ -1,0 +1,4 @@
+FUNCTION:
+  impl/JavaListLike.equals
+EQUALITY_BOUND:
+  api.ListLike

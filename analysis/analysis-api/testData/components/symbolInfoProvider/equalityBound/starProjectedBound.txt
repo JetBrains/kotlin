@@ -1,0 +1,4 @@
+FUNCTION:
+  /Generic.equals
+EQUALITY_BOUND:
+  Generic<*>

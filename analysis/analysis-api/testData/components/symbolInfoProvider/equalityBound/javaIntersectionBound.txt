@@ -1,0 +1,4 @@
+FUNCTION:
+  /JavaCombined.equals
+EQUALITY_BOUND:
+  ClassBound & InterfaceBound

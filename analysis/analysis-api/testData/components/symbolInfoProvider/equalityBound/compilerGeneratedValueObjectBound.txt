@@ -1,0 +1,4 @@
+FUNCTION:
+  /ValueSingleton.equals
+EQUALITY_BOUND:
+  ValueSingleton
