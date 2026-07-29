@@ -43,16 +43,6 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         get() = ArtifactKinds.Wasm
 
     /**
-     * Holder for a single VM-execution result: the captured stdout (if the run succeeded)
-     * and any exception thrown by the VM wrapper (if the run failed or detected a failure
-     * in the output).
-     */
-    protected data class RunResult(
-        val collectedOutputs: List<String>,
-        val exceptions: List<Throwable>,
-    )
-
-    /**
      * Determines whether to use
      * - box-export mode: call `box()` directly and expect "OK" return value or
      * - unit-test mode: run the batch via the result-collecting driver and parse the structured
@@ -86,9 +76,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                 outputCollector = null,
             )
             if (exceptions.isNotEmpty()) {
-                input.catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this) }) {
-                    throw exceptions.first()
-                }
+                input.failWith(exceptions.first())
             }
         } else {
             // Unit test mode: run the batch and parse the structured GroupedTestsResultProtocol block from stdout.
@@ -98,13 +86,15 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                 useUnitTestRunnerOnly = true,
                 outputCollector = collectedOutputs,
             )
-            handleRunResult(RunResult(collectedOutputs, exceptions))
+            handleRunResult(collectedOutputs = collectedOutputs, exceptions = exceptions)
         }
     }
 
-    protected fun handleRunResult(runResult: RunResult) {
-        val (collectedOutputs, exceptions) = runResult
-
+    /**
+     * @param collectedOutputs the stdout captured from every VM that finished normally
+     * @param exceptions whatever the VM wrappers threw (a failed run, or a failure detected in the output)
+     */
+    private fun handleRunResult(collectedOutputs: List<String>, exceptions: List<Throwable>) {
         // Collect every text that may carry the structured result block: stdout of VMs that finished normally
         // (collectedOutputs) plus any VM-failure exception messages, which embed the captured stdout — so a
         // partial block from a VM that crashed mid-batch is still recovered.
@@ -120,14 +110,12 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             return
         }
 
-        // Legacy single-test unit-test batch: no result-collecting driver was generated (the launcher exports no
-        // `runGroupedTests`/`startTest`, so the VM fell back to the compiler's `startUnitTests()`). There is
-        // exactly one test in such a batch, so any failure is unambiguously attributed to it — no demux needed.
+        // No result-collecting driver was generated (the launcher exports no `runGroupedTests`/`startTest`, so the
+        // VM fell back to the compiler's `startUnitTests()`), which leaves nothing to demux by. Such a batch is
+        // normally a single isolated test, but a VM that died before printing the block leaves a grouped batch
+        // here too, so blame every input: none of them reported a result, and none may pass silently.
         if (exceptions.isNotEmpty()) {
-            val input = testServices.groupingStageInputs.first()
-            input.catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this) }) {
-                throw exceptions.first()
-            }
+            testServices.groupingStageInputs.forEach { it.failWith(exceptions.first()) }
         }
     }
 
@@ -135,8 +123,8 @@ abstract class AbstractWasmGroupingStageBoxRunner(
     /**
      * Attributes structured per-test results back to the individual grouping inputs via their
      * [NonGroupingStageOutput.catchingExecutor], so JUnit reports each failure against the specific test rather
-     * than against the whole batch. A test whose stable `ProxyLauncher_<hash>` id is absent from [results] is
-     * failed with a sanity error: it was expected to run in the batch but produced no result line. The message
+     * than against the whole batch. A test whose stable `ProxyLauncher_<hash>` id is absent from the parsed outcomes
+     * is failed with a sanity error: it was expected to run in the batch but produced no result line. The message
      * distinguishes a test that crashed the VM mid-run (a `STARTED` line with no terminal result — see
      * [GroupedTestsResultProtocol.ParsedBatchResult.crashedInProgress]) from one that never ran at all (neither a
      * start nor a result, e.g. a stripped launcher) — which also prevents a silently-skipped test from
@@ -157,21 +145,20 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         val expectedIds = testServices.groupingStageInputs.map { input ->
             computeProxyLauncherClassName(input.testServices.testInfo)
         }
-        val nonEmptyCheck = TestRunChecks.checkNonEmpty(testReport)
-        val nonEmptyFailureReason = (nonEmptyCheck as? TestRunChecks.Result.Failed)?.reason
+        // When not a single test reported a result, the batch as a whole is broken rather than one test being
+        // skipped. There is no batch-level failure sink, so the reason is prepended to every missing test below.
+        val emptyReportReason = (TestRunChecks.checkNonEmpty(testReport) as? TestRunChecks.Result.Failed)?.reason
         val excessiveIds = TestRunChecks.findExcessiveResults(expectedIds, testReport)
 
         if (excessiveIds.isNotEmpty()) {
-            testServices.groupingStageInputs.first().catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this) }) {
-                throw AssertionError(
-                    """
-                    Sanity check failed: grouped batch reported unexpected test ids: $excessiveIds.
-                    Expected ids: $expectedIds
-                    This indicates protocol/report desynchronization (results for tests that were not part of this batch).
-                    Collected outputs:
-                    """.trimIndent() + "\n" + texts.joinToString("\n")
-                )
-            }
+            // No single input is to blame for a desynchronized batch, so the first one carries the report — an
+            // arbitrary choice, but it must not pass silently.
+            testServices.groupingStageInputs.first().failWithCollectedOutputs(
+                texts,
+                "Sanity check failed: grouped batch reported unexpected test ids: $excessiveIds.",
+                "Expected ids: $expectedIds",
+                "This indicates protocol/report desynchronization (results for tests that were not part of this batch).",
+            )
             anyFailureAttributed = true
         }
 
@@ -187,52 +174,34 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             }
 
             val id = computeProxyLauncherClassName(input.testServices.testInfo)
-            val outcome = results[id]
             when {
                 id in missingIds -> {
-                    val missingDiagnosis = if (parsedBatchResult.crashedInProgress(id)) {
-                        "The VM printed a '${GroupedTestsResultProtocol.STARTED}' line for '$id' but no terminal " +
-                                "'${GroupedTestsResultProtocol.PASSED}'/'${GroupedTestsResultProtocol.FAILED}' result — " +
-                                "this test most likely crashed the VM (a hard trap, OOM, or process exit) while executing."
-                    } else {
-                        "The test was expected to run as part of the batch, but produced no " +
-                                "'${GroupedTestsResultProtocol.LINE_PREFIX}' line (not even a " +
-                                "'${GroupedTestsResultProtocol.STARTED}' one). This typically indicates the test was silently " +
-                                "skipped (e.g. a stripped ProxyLauncher class), or a VM crashed before this test's launcher was reached."
-                    }
-                    input.catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this) }) {
-                        throw AssertionError(
-                            """
-                            ${nonEmptyFailureReason?.let { "$it\n" } ?: ""}
-                            Sanity check failed: no per-test result was reported for '$id' in the grouped batch.
-                            $missingDiagnosis
-                            Collected outputs:
-                            """.trimIndent() + "\n" + texts.joinToString("\n")
-                        )
-                    }
+                    input.failWithCollectedOutputs(
+                        texts,
+                        emptyReportReason,
+                        "Sanity check failed: no per-test result was reported for '$id' in the grouped batch.",
+                        missingResultDiagnosis(id, crashed = parsedBatchResult.crashedInProgress(id)),
+                    )
                     anyFailureAttributed = true
                 }
-                id in testReport.failedTests && outcome != null -> {
-                    input.catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this) }) {
-                        throw AssertionError(listOfNotNull(outcome.message, outcome.details).joinToString("\n"))
-                    }
+                id in testReport.failedTests -> {
+                    // The failure the test itself reported: its own message and stack trace say everything, so the
+                    // batch's collected outputs are not repeated here.
+                    val outcome = results.getValue(id)
+                    input.failWith(AssertionError(listOfNotNull(outcome.message, outcome.details).joinToString("\n")))
                     anyFailureAttributed = true
                 }
                 // The test ran to completion on at least one VM, but took another one down while executing. Without
                 // this branch the surviving VM's result would report it as passing, and the crash would surface
                 // only as the unattributed batch-level VM exception below.
                 parsedBatchResult.crashedInProgress(id) -> {
-                    input.catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this) }) {
-                        throw AssertionError(
-                            """
-                            Test '$id' reported a result on at least one VM, but on another VM it printed a
-                            '${GroupedTestsResultProtocol.STARTED}' line with no terminal
-                            '${GroupedTestsResultProtocol.PASSED}'/'${GroupedTestsResultProtocol.FAILED}' result —
-                            this test most likely crashed that VM (a hard trap, OOM, or process exit) while executing.
-                            Collected outputs:
-                            """.trimIndent() + "\n" + texts.joinToString("\n")
-                        )
-                    }
+                    input.failWithCollectedOutputs(
+                        texts,
+                        "Test '$id' reported a result on at least one VM, but on another VM it printed a " +
+                                "'${GroupedTestsResultProtocol.STARTED}' line with no terminal " +
+                                "'${GroupedTestsResultProtocol.PASSED}'/'${GroupedTestsResultProtocol.FAILED}' result — " +
+                                "this test most likely crashed that VM (a hard trap, OOM, or process exit) while executing.",
+                    )
                     anyFailureAttributed = true
                 }
             }
@@ -242,6 +211,33 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         // was attributed to a specific test, surface the raw VM exception so the batch does not pass silently.
         if (!anyFailureAttributed && exceptions.isNotEmpty()) {
             throw exceptions.first()
+        }
+    }
+
+    /** Explains why the batch carries no result for [id]: [crashed] tells a VM-crasher from a never-run test. */
+    private fun missingResultDiagnosis(id: String, crashed: Boolean): String = if (crashed) {
+        "The VM printed a '${GroupedTestsResultProtocol.STARTED}' line for '$id' but no terminal " +
+                "'${GroupedTestsResultProtocol.PASSED}'/'${GroupedTestsResultProtocol.FAILED}' result — " +
+                "this test most likely crashed the VM (a hard trap, OOM, or process exit) while executing."
+    } else {
+        "The test was expected to run as part of the batch, but produced no " +
+                "'${GroupedTestsResultProtocol.LINE_PREFIX}' line (not even a " +
+                "'${GroupedTestsResultProtocol.STARTED}' one). This typically indicates the test was silently " +
+                "skipped (e.g. a stripped ProxyLauncher class), or a VM crashed before this test's launcher was reached."
+    }
+
+    /**
+     * Fails this specific test with [lines] (`null` ones are dropped) followed by every text the batch collected,
+     * so JUnit reports it against this test instead of against the whole batch.
+     */
+    private fun NonGroupingStageOutput.failWithCollectedOutputs(texts: List<String>, vararg lines: String?) {
+        failWith(AssertionError((lines.filterNotNull() + "Collected outputs:" + texts).joinToString("\n")))
+    }
+
+    /** Routes [error] into this test's own failure sink, so JUnit attributes it to this test. */
+    private fun NonGroupingStageOutput.failWith(error: Throwable) {
+        catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this@AbstractWasmGroupingStageBoxRunner) }) {
+            throw error
         }
     }
 
