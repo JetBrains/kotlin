@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.ValhallaSupportMode.*
-import org.jetbrains.kotlin.config.valhallaSupportMode
+import org.jetbrains.kotlin.config.isKotlinValhallaValueClass
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -65,17 +65,8 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
 import java.lang.annotation.RetentionPolicy
 
-fun IrClass.isValhallaValueClass(languageVersionSettings: LanguageVersionSettings): Boolean = when (valueClassRepresentation) {
-    is InlineClassRepresentation<*> -> when (languageVersionSettings.valhallaSupportMode) {
-        NONE, PRIMITIVES, PRIMITIVES_AND_FULL_VALUE_CLASSES, null -> false
-        ALL_VALUES -> true
-    }
-    is FullValueClassRepresentation<*> -> when (languageVersionSettings.valhallaSupportMode) {
-        NONE, PRIMITIVES, null -> false
-        PRIMITIVES_AND_FULL_VALUE_CLASSES, ALL_VALUES -> true
-    }
-    null -> false
-}
+fun IrClass.isKotlinValhallaValueClass(languageVersionSettings: LanguageVersionSettings): Boolean =
+    valueClassRepresentation.isKotlinValhallaValueClass(languageVersionSettings)
 
 fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     // TODO lower @JvmName and @JvmExposeBoxed?

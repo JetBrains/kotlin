@@ -18,9 +18,8 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
-import org.jetbrains.kotlin.config.ValhallaSupportMode
+import org.jetbrains.kotlin.config.isValhallaSupportEnabled
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.valhallaSupportMode
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -91,10 +90,7 @@ fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
 
 
 private fun isValhallaSupportEnabled(context: JvmBackendContext): Boolean =
-    when (context.configuration.languageVersionSettings.valhallaSupportMode) {
-        ValhallaSupportMode.NONE, null -> false
-        else -> true
-    }
+    context.configuration.languageVersionSettings.isValhallaSupportEnabled()
 
 private fun IrClass.innerAccessFlagsForModalityAndKind(): Int {
     when (kind) {
