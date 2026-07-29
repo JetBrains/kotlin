@@ -47,6 +47,20 @@ tasks.withType<Test>().configureEach {
         logger.quiet("Affected Domains: '${formattedAffectedDomains.get()}'")
         logger.quiet("Domain Test Mode: '${testFederationMode.get()}'")
 
+        /*
+        At this point: Assert that JUnit5 is used, as 'Smoke Test' configurations use JUnit5 features.
+        */
+        if (testFramework !is JUnitPlatformTestFramework && smokeTestConfig !is SmokeTestConfig.Disabled) {
+            error(buildString {
+                appendLine("Unsupported 'testFramwork' found for task '$path'")
+                appendLine("  testFramework: ${testFramework.javaClass.simpleName}; expected: '${JUnitPlatformTestFramework::class.simpleName}'")
+                appendLine("  solutions:")
+                appendLine("     - Use the 'project-tests-convention' testTask")
+                appendLine("     - Use JUnit5 by callling 'useJUnitPlatform()'")
+                appendLine("     - Disable the task for smoke tests: 'smokeTestConfig = SmokeTestConfig.Disabled'")
+            })
+        }
+
         /* The test task was explicitly marked as 'isSmokeTest=false', therefore, won't further execute in smoke mode */
         if (smokeTestConfig is SmokeTestConfig.Disabled && testFederationMode.get() == TestFederationMode.Smoke) {
             throw StopExecutionException("The test task is disabled in Smoke Test mode")
@@ -61,12 +75,8 @@ tasks.withType<Test>().configureEach {
             return@doFirst
         }
 
-        /*
-         At this point: Assert that JUnit5 is used, as 'Smoke Test' configurations use JUnit5 features.
-         */
-        if (testFramework !is JUnitPlatformTestFramework) {
-            error("Unsupported 'testFramework': $testFramework; Expected 'JUnitPlatformTestFramework'")
-        }
+        /* At this point we know that only JUnitPlatformTestFrameworks survive */
+        testFramework as JUnitPlatformTestFramework
 
         /*
         Configure the test environment
