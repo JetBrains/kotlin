@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public final class A$B {
-    // source: 'innerModifiers.kt'
+    // source: 'test.kt'
     private final field x: char
     public method <init>(p0: char): void
     public final method getX(): char
@@ -9,7 +9,7 @@ public final class A$B {
 
 @kotlin.Metadata
 public class A$C {
-    // source: 'innerModifiers.kt'
+    // source: 'test.kt'
     private final field x: char
     public method <init>(p0: char): void
     public final method getX(): char
@@ -18,7 +18,7 @@ public class A$C {
 
 @kotlin.Metadata
 public final class A$Companion {
-    // source: 'innerModifiers.kt'
+    // source: 'test.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final inner class A$Companion
@@ -26,7 +26,7 @@ public final class A$Companion {
 
 @kotlin.Metadata
 public abstract class A$D {
-    // source: 'innerModifiers.kt'
+    // source: 'test.kt'
     private final field x: char
     public method <init>(p0: char): void
     public final method getX(): char
@@ -35,7 +35,7 @@ public abstract class A$D {
 
 @kotlin.Metadata
 public final class A$E {
-    // source: 'innerModifiers.kt'
+    // source: 'test.kt'
     synthetic final field this$0: A
     private final field x: char
     public method <init>(p0: A, p1: char): void
@@ -45,7 +45,7 @@ public final class A$E {
 
 @kotlin.Metadata
 public final class A$F$Companion {
-    // source: 'innerModifiers.kt'
+    // source: 'test.kt'
     synthetic final static field $$INSTANCE: A$F$Companion
     static method <clinit>(): void
     private method <init>(): void
@@ -55,7 +55,7 @@ public final class A$F$Companion {
 
 @kotlin.Metadata
 public interface A$F {
-    // source: 'innerModifiers.kt'
+    // source: 'test.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: A$F$Companion
     public final static @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field static: java.lang.String
     static method <clinit>(): void
@@ -67,14 +67,14 @@ public interface A$F {
 @java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class A$G {
-    // source: 'innerModifiers.kt'
+    // source: 'test.kt'
     public abstract method x(): char
     public inner class A$G
 }
 
 @kotlin.Metadata
 public final enum class A$H {
-    // source: 'innerModifiers.kt'
+    // source: 'test.kt'
     private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
     private synthetic final static field $VALUES: A$H[]
     public final enum static field OK: A$H
@@ -87,9 +87,41 @@ public final enum class A$H {
     public final inner class A$H
 }
 
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class A$I {
+    // source: 'test.kt'
+    private final field x: char
+    private synthetic method <init>(p0: char): void
+    public synthetic final static method box-impl(p0: char): A$I
+    public static method constructor-impl(p0: char): char
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: char, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: char, p1: char): boolean
+    public final method getX(): char
+    public method hashCode(): int
+    public static method hashCode-impl(p0: char): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: char): java.lang.String
+    public synthetic final method unbox-impl(): char
+    public final inner class A$I
+}
+
+@kotlin.Metadata
+public final class A$J {
+    // source: 'test.kt'
+    private final field x: char
+    public method <init>(p0: char): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): char
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public final inner class A$J
+}
+
 @kotlin.Metadata
 public final class A {
-    // source: 'innerModifiers.kt'
+    // source: 'test.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: A$Companion
     public final @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field instance: java.lang.String
     public final static @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field static: java.lang.String
@@ -100,6 +132,8 @@ public final class A {
     public final inner class A$Companion
     public final inner class A$E
     public final inner class A$H
+    public final inner class A$I
+    public final inner class A$J
     public inner class A$C
     public inner class A$F
     public inner class A$G
@@ -113,32 +147,52 @@ public final class Generated_Box_MainKt {
 }
 
 @kotlin.Metadata
-public final class InnerModifiersKt$box$1 {
-    // source: 'innerModifiers.kt'
-    enclosing method InnerModifiersKt.box()Ljava/lang/String;
-    inner (anonymous) class InnerModifiersKt$box$1
+public final class TestKt$box$1 {
+    // source: 'test.kt'
+    enclosing method TestKt.box()Ljava/lang/String;
+    inner (anonymous) class TestKt$box$1
     method <init>(): void
     public abstract inner class A$D
 }
 
 @kotlin.Metadata
-public final class InnerModifiersKt$box$2 {
-    // source: 'innerModifiers.kt'
-    enclosing method InnerModifiersKt.box()Ljava/lang/String;
-    inner (anonymous) class InnerModifiersKt$box$2
+public final class TestKt$box$2 {
+    // source: 'test.kt'
+    enclosing method TestKt.box()Ljava/lang/String;
+    inner (anonymous) class TestKt$box$2
     method <init>(): void
     public method getX(): char
     public inner class A$F
 }
 
 @kotlin.Metadata
-public final class InnerModifiersKt {
-    // source: 'innerModifiers.kt'
-    inner (anonymous) class InnerModifiersKt$box$1
-    inner (anonymous) class InnerModifiersKt$box$2
+public final class TestKt {
+    // source: 'test.kt'
+    inner (anonymous) class TestKt$box$1
+    inner (anonymous) class TestKt$box$2
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final inner class A$B
     public final inner class A$E
+    public final inner class A$I
+    public final inner class A$J
     public inner class A$C
     public inner class A$F
+}
+
+@kotlin.Metadata
+public final class UseNV {
+    // source: 'test.kt'
+    private final @org.jetbrains.annotations.NotNull field v: Outer$NV
+    public method <init>(@org.jetbrains.annotations.NotNull p0: Outer$NV): void
+    public final @org.jetbrains.annotations.NotNull method getV(): Outer$NV
+    public final inner class Outer$NV
+}
+
+@kotlin.Metadata
+public final class UseV {
+    // source: 'test.kt'
+    private final @org.jetbrains.annotations.NotNull field v: Outer$V
+    public method <init>(@org.jetbrains.annotations.NotNull p0: Outer$V): void
+    public final @org.jetbrains.annotations.NotNull method getV(): Outer$V
+    public final inner class Outer$V
 }
