@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.buildtools.`internal`.arguments
 import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Boolean
+import kotlin.Deprecated
 import kotlin.OptIn
+import kotlin.ReplaceWith
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.List
@@ -77,7 +79,7 @@ internal class WasmArgumentsImpl(
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: WasmArgument<V>): V = optionsMap[key.id] as V
 
-  private operator fun <V> `set`(key: WasmArgument<V>, `value`: V) {
+  public operator fun <V> `set`(key: WasmArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
 
@@ -226,8 +228,21 @@ internal class WasmArgumentsImpl(
     return arguments
   }
 
+  @Deprecated(
+    "This method is deprecated. Use applyCommandLineArguments instead.",
+    ReplaceWith("applyCommandLineArguments(arguments)"),
+  )
   override fun applyArgumentStrings(arguments: List<String>) {
     val compilerArgs: KotlinWasmCompilerArguments = parseCommandLineArguments(arguments)
+    collectRestrictedArgViolations(compilerArgs, KotlinWasmCompilerArguments())
+    validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
+    applyCompilerArguments(compilerArgs)
+  }
+
+  override fun applyCommandLineArguments(arguments: List<String>) {
+    val compilerArgs = toCompilerArguments()
+    parseCommandLineArguments(arguments, compilerArgs, false)
+    handleCustomPluginArguments(this, compilerArgs)
     collectRestrictedArgViolations(compilerArgs, KotlinWasmCompilerArguments())
     validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
     applyCompilerArguments(compilerArgs)
