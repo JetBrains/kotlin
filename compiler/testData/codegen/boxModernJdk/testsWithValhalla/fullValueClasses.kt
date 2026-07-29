@@ -1,7 +1,7 @@
 // VALHALLA_SUPPORT: PRIMITIVES_AND_FULL_VALUE_CLASSES
 // LANGUAGE: +FullValueClasses
 // CHECK_BYTECODE_LISTING
-// CHECK_BYTECODE_TEXT
+// CHECK_JVM_FLAGS
 
 value class Point(val x: Int, val y: Int)
 
@@ -46,19 +46,55 @@ fun box(): String {
     return "OK"
 }
 
-// Full value classes (Point, Record, AbstractValue, SealedValue) are Valhalla value classes here: they lose their identity (the
-// ACC_SUPER access flag 0x20 is cleared, giving 0x11 concrete / 0x10011 record / 0x401 abstract) and their instance fields are strict.
-// 1 access flags 0x11\npublic final class Point
-// 1 access flags 0x10011\npublic final class Record
-// 1 access flags 0x401\npublic abstract class AbstractValue
-// 1 access flags 0x401\npublic abstract class SealedValue
-// 1 access flags 0x11\npublic final class SealedChild
-// 1 private final strictfp I x
-// 1 private final strictfp I y
-// 1 private final strictfp I a
-// 1 private final strictfp I b
-// 1 private final strictfp I s
-// The inline value class Id is NOT a Valhalla value class in this mode: it keeps its identity (0x31) and its field stays non-strict.
-// 1 access flags 0x31\npublic final class Id
-// 1 private final I value
-// 0 private final strictfp I value
+// Full value classes (Point, Record, AbstractValue, SealedValue, SealedChild) are Valhalla value classes here: they lose their
+// identity (the ACC_SUPER access flag is cleared, so it is absent below) and their instance fields are strict (ACC_STRICT).
+// The inline value class Id is NOT a Valhalla value class in this mode: it keeps its identity (ACC_SUPER) and its field stays
+// non-strict (no ACC_STRICT).
+
+// TESTED_OBJECT_KIND: class
+// TESTED_OBJECTS: Point
+// FLAGS: ACC_PUBLIC, ACC_FINAL
+
+// TESTED_OBJECT_KIND: class
+// TESTED_OBJECTS: Record
+// FLAGS: ACC_PUBLIC, ACC_FINAL, ACC_RECORD
+
+// TESTED_OBJECT_KIND: class
+// TESTED_OBJECTS: AbstractValue
+// FLAGS: ACC_PUBLIC, ACC_ABSTRACT
+
+// TESTED_OBJECT_KIND: class
+// TESTED_OBJECTS: SealedValue
+// FLAGS: ACC_PUBLIC, ACC_ABSTRACT
+
+// TESTED_OBJECT_KIND: class
+// TESTED_OBJECTS: SealedChild
+// FLAGS: ACC_PUBLIC, ACC_FINAL
+
+// TESTED_OBJECT_KIND: class
+// TESTED_OBJECTS: Id
+// FLAGS: ACC_PUBLIC, ACC_FINAL, ACC_SUPER
+
+// TESTED_OBJECT_KIND: property
+// TESTED_OBJECTS: Point, x
+// FLAGS: ACC_PRIVATE, ACC_FINAL, ACC_STRICT
+
+// TESTED_OBJECT_KIND: property
+// TESTED_OBJECTS: Point, y
+// FLAGS: ACC_PRIVATE, ACC_FINAL, ACC_STRICT
+
+// TESTED_OBJECT_KIND: property
+// TESTED_OBJECTS: Record, a
+// FLAGS: ACC_PRIVATE, ACC_FINAL, ACC_STRICT
+
+// TESTED_OBJECT_KIND: property
+// TESTED_OBJECTS: Record, b
+// FLAGS: ACC_PRIVATE, ACC_FINAL, ACC_STRICT
+
+// TESTED_OBJECT_KIND: property
+// TESTED_OBJECTS: SealedChild, s
+// FLAGS: ACC_PRIVATE, ACC_FINAL, ACC_STRICT
+
+// TESTED_OBJECT_KIND: property
+// TESTED_OBJECTS: Id, value
+// FLAGS: ACC_PRIVATE, ACC_FINAL
