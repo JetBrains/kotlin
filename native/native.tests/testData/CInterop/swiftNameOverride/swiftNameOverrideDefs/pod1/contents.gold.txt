@@ -1,0 +1,311 @@
+library {
+  // module name: <pod1.def>
+
+  library fragment {
+    // package name: pod1
+
+    // class name: pod1/A1Base
+    // class name: pod1/A1Base.Companion
+    // class name: pod1/A1BaseMeta
+    // class name: pod1/A1Child
+    // class name: pod1/A1Child.Companion
+    // class name: pod1/A1ChildMeta
+    // class name: pod1/A2Base
+    // class name: pod1/A2Base.Companion
+    // class name: pod1/A2BaseMeta
+    // class name: pod1/A2Child
+    // class name: pod1/A2Child.Companion
+    // class name: pod1/A2ChildMeta
+    // class name: pod1/A3Base
+    // class name: pod1/A3Base.Companion
+    // class name: pod1/A3BaseMeta
+    // class name: pod1/A3Child
+    // class name: pod1/A3Child.Companion
+    // class name: pod1/A3ChildMeta
+    // class name: pod1/A4Base
+    // class name: pod1/A4Base.Companion
+    // class name: pod1/A4BaseMeta
+    // class name: pod1/A4Grand
+    // class name: pod1/A4Grand.Companion
+    // class name: pod1/A4GrandMeta
+    // class name: pod1/A4Middle
+    // class name: pod1/A4Middle.Companion
+    // class name: pod1/A4MiddleMeta
+    // class name: pod1/A5Base
+    // class name: pod1/A5Base.Companion
+    // class name: pod1/A5BaseMeta
+    // class name: pod1/A5Grand
+    // class name: pod1/A5Grand.Companion
+    // class name: pod1/A5GrandMeta
+    // class name: pod1/A5Middle
+    // class name: pod1/A5Middle.Companion
+    // class name: pod1/A5MiddleMeta
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A1Base : kotlinx/cinterop/ObjCObjectBase {
+
+      protected /* secondary */ constructor()
+
+      @kotlinx/cinterop/ObjCMethod(selector = "a1", encoding = "v16@0:8", isStret = false)
+      public open external fun a1(): kotlin/Unit
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object pod1/A1Base.Companion : pod1/A1BaseMeta, kotlinx/cinterop/ObjCClassOf<pod1/A1Base> {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A1BaseMeta : kotlinx/cinterop/ObjCObjectBaseMeta {
+
+      protected /* secondary */ constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A1Child : pod1/A1Base {
+
+      protected /* secondary */ constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object pod1/A1Child.Companion : pod1/A1ChildMeta, kotlinx/cinterop/ObjCClassOf<pod1/A1Child> {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A1ChildMeta : pod1/A1BaseMeta {
+
+      protected /* secondary */ constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A2Base : kotlinx/cinterop/ObjCObjectBase {
+
+      protected /* secondary */ constructor()
+
+      @kotlinx/cinterop/ObjCMethod(selector = "a2", encoding = "v16@0:8", isStret = false)
+      public open external fun a2(): kotlin/Unit
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object pod1/A2Base.Companion : pod1/A2BaseMeta, kotlinx/cinterop/ObjCClassOf<pod1/A2Base> {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A2BaseMeta : kotlinx/cinterop/ObjCObjectBaseMeta {
+
+      protected /* secondary */ constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A2Child : pod1/A2Base {
+
+      protected /* secondary */ constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object pod1/A2Child.Companion : pod1/A2ChildMeta, kotlinx/cinterop/ObjCClassOf<pod1/A2Child> {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A2ChildMeta : pod1/A2BaseMeta {
+
+      protected /* secondary */ constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A3Base : kotlinx/cinterop/ObjCObjectBase {
+
+      protected /* secondary */ constructor()
+
+      @kotlinx/cinterop/ObjCMethod(selector = "a3", encoding = "v16@0:8", isStret = false)
+      public open external fun a3(): kotlin/Unit
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object pod1/A3Base.Companion : pod1/A3BaseMeta, kotlinx/cinterop/ObjCClassOf<pod1/A3Base> {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A3BaseMeta : kotlinx/cinterop/ObjCObjectBaseMeta {
+
+      protected /* secondary */ constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A3Child : pod1/A3Base {
+
+      protected /* secondary */ constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object pod1/A3Child.Companion : pod1/A3ChildMeta, kotlinx/cinterop/ObjCClassOf<pod1/A3Child> {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A3ChildMeta : pod1/A3BaseMeta {
+
+      protected /* secondary */ constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A4Base : kotlinx/cinterop/ObjCObjectBase {
+
+      protected /* secondary */ constructor()
+
+      @kotlinx/cinterop/ObjCMethod(selector = "a4", encoding = "v16@0:8", isStret = false)
+      public open external fun a4(): kotlin/Unit
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object pod1/A4Base.Companion : pod1/A4BaseMeta, kotlinx/cinterop/ObjCClassOf<pod1/A4Base> {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A4BaseMeta : kotlinx/cinterop/ObjCObjectBaseMeta {
+
+      protected /* secondary */ constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A4Grand : pod1/A4Middle {
+
+      protected /* secondary */ constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object pod1/A4Grand.Companion : pod1/A4GrandMeta, kotlinx/cinterop/ObjCClassOf<pod1/A4Grand> {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A4GrandMeta : pod1/A4MiddleMeta {
+
+      protected /* secondary */ constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A4Middle : pod1/A4Base {
+
+      protected /* secondary */ constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object pod1/A4Middle.Companion : pod1/A4MiddleMeta, kotlinx/cinterop/ObjCClassOf<pod1/A4Middle> {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A4MiddleMeta : pod1/A4BaseMeta {
+
+      protected /* secondary */ constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A5Base : kotlinx/cinterop/ObjCObjectBase {
+
+      protected /* secondary */ constructor()
+
+      @kotlinx/cinterop/ObjCMethod(selector = "a5", encoding = "v16@0:8", isStret = false)
+      public open external fun a5(): kotlin/Unit
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object pod1/A5Base.Companion : pod1/A5BaseMeta, kotlinx/cinterop/ObjCClassOf<pod1/A5Base> {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A5BaseMeta : kotlinx/cinterop/ObjCObjectBaseMeta {
+
+      protected /* secondary */ constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A5Grand : pod1/A5Middle {
+
+      protected /* secondary */ constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object pod1/A5Grand.Companion : pod1/A5GrandMeta, kotlinx/cinterop/ObjCClassOf<pod1/A5Grand> {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A5GrandMeta : pod1/A5MiddleMeta {
+
+      protected /* secondary */ constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A5Middle : pod1/A5Base {
+
+      protected /* secondary */ constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object pod1/A5Middle.Companion : pod1/A5MiddleMeta, kotlinx/cinterop/ObjCClassOf<pod1/A5Middle> {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class pod1/A5MiddleMeta : pod1/A5BaseMeta {
+
+      protected /* secondary */ constructor()
+    }
+  }
+}

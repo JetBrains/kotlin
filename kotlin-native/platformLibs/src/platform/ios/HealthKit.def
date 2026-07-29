@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation Secur
 language = Objective-C
 package = platform.HealthKit
 modules = HealthKit
+apiNotesSwiftName = true
 
 compilerOpts = -framework HealthKit
 linkerOpts = -framework HealthKit

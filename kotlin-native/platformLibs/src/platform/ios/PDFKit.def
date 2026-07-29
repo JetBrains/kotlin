@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Cor
 language = Objective-C
 package = platform.PDFKit
 modules = PDFKit
+apiNotesSwiftName = true
 
 compilerOpts = -framework PDFKit
 linkerOpts = -framework PDFKit

@@ -2,6 +2,7 @@ depends = CFCGTypes CoreFoundation CoreFoundationBase Foundation Security _Locat
 language = Objective-C
 package = platform.CoreLocation
 modules = CoreLocation
+apiNotesSwiftName = true
 
 compilerOpts = -framework CoreLocation
 linkerOpts = -framework CoreLocation

@@ -2,6 +2,7 @@ depends = AppKit ApplicationServices BackgroundAssets CFCGTypes CFNetwork CloudK
 language = Objective-C
 package = platform.StoreKit
 modules = StoreKit
+apiNotesSwiftName = true
 
 compilerOpts = -framework StoreKit
 linkerOpts = -framework StoreKit

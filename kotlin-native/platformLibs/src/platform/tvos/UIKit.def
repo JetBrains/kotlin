@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Cor
 language = Objective-C
 package = platform.UIKit
 modules = UIKit
+apiNotesSwiftName = true
 
 compilerOpts = -framework UIKit
 linkerOpts = -framework UIKit

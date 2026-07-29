@@ -1,0 +1,4 @@
+module swiftNameOverrideLib {
+    header "swiftNameOverrideLib.h"
+    export *
+}

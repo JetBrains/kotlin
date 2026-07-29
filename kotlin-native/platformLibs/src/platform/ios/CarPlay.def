@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFounda
 language = Objective-C
 package = platform.CarPlay
 modules = CarPlay
+apiNotesSwiftName = true
 
 compilerOpts = -framework CarPlay
 linkerOpts = -framework CarPlay

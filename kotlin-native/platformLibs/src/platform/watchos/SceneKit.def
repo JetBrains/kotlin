@@ -2,6 +2,7 @@ depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics Foundation Se
 language = Objective-C
 package = platform.SceneKit
 modules = SceneKit
+apiNotesSwiftName = true
 
 compilerOpts = -framework SceneKit
 linkerOpts = -framework SceneKit

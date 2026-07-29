@@ -84,6 +84,7 @@ fun main(args: Array<String>) {
                 model("builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("cCallMode/cCallMode", pattern = "^([^_](.+))$", recursive = false)
                 model("swiftName/swiftNameDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("swiftNameOverride/swiftNameOverrideDefs", pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractNativeCInteropNoFModulesTest>(
                 suiteTestClassName = "CInteropNoFModulesTestGenerated",
@@ -94,6 +95,7 @@ fun main(args: Array<String>) {
                 model("builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("cCallMode/cCallMode", pattern = "^([^_](.+))$", recursive = false)
                 model("swiftName/swiftNameDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("swiftNameOverride/swiftNameOverrideDefs", pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractNativeCInteropHeaderModeTest>(
                 suiteTestClassName = "CInteropHeaderModeTestGenerated",

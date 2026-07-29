@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation IOSur
 language = Objective-C
 package = platform.Metal
 modules = Metal
+apiNotesSwiftName = true
 
 compilerOpts = -framework Metal
 linkerOpts = -framework Metal

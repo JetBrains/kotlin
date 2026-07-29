@@ -1052,6 +1052,22 @@ fun NativeLibrary.getHeaderPaths(): NativeLibraryHeaders<String> {
 fun ObjCMethodOrUnavailableMethod.replaces(other: ObjCMethodOrUnavailableMethod): Boolean =
         this.isClass == other.isClass && this.selector == other.selector
 
+/**
+ * Whether this method is declared identically to [other] apart from its [ObjCMethod.swiftName].
+ *
+ * Used to drop a subclass's redeclaration of an inherited method: in Kotlin such a redeclaration is
+ * already represented by the inherited member, so re-emitting it would produce a spurious duplicate.
+ *
+ * `swiftName` is intentionally excluded from the comparison. Objective-C/Swift treat the Swift name of an
+ * overriding member as inherited from the declaration that introduces it: e.g. `NSArrayController.addObject:`,
+ * which redeclares (overrides) `NSObjectController.addObject:` without its own `swift_name`, still exposes the
+ * Swift name that API notes attach to the base declaration. The two therefore denote the same member here,
+ * even though their recorded `swiftName`s differ. Comparing via data class `equals` (which does include
+ * `swiftName`) would miss this and keep the duplicate.
+ */
+fun ObjCMethod.isSameDeclarationIgnoringSwiftName(other: ObjCMethod): Boolean =
+        this.copy(swiftName = other.swiftName) == other
+
 fun ObjCProperty.replaces(other: ObjCProperty): Boolean =
         this.getter.replaces(other.getter)
 
