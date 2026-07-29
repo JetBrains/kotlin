@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationTarget
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.FqName
 
 @KaImplementationDetail
@@ -22,6 +23,8 @@ public interface KaInternalsSymbolInformationProvider {
     public fun isDeprecated(symbol: KaSymbol): Boolean
 
     public fun canBeOperator(symbol: KaNamedFunctionSymbol): Boolean
+
+    public fun equalityBound(symbol: KaNamedFunctionSymbol): KaType?
 
     public fun applicableAnnotationTargets(symbol: KaClassSymbol): Set<KaAnnotationTarget>?
 

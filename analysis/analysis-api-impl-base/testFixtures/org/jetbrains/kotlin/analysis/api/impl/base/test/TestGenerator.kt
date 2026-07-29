@@ -540,6 +540,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
             model(it, "canBeOperator")
         }
 
+        test<AbstractEqualityBoundTest> {
+            model(it, "equalityBound")
+        }
+
         test<AbstractContainingFileAnnotationProviderTest> {
             model(it, "containingFileAnnotations")
         }
