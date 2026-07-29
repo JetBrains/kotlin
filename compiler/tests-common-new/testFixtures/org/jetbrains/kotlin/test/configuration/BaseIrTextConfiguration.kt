@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EX
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.DUMP_KLIB_ABI
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KlibAbiDumpMode
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
@@ -63,4 +64,5 @@ fun TestConfigurationBuilder.additionalK2ConfigurationForIrTextTest(parser: FirP
             LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
         }
     }
+    defaultDirectives { +TestDumpDirectives.DUMP_AS_DIFF }
 }

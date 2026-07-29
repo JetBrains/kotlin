@@ -1,5 +1,5 @@
 --- a/smartCasts.ir.txt
-+++ b/smartCasts.ir.jvm_ir.txt
++++ b/smartCasts.ir.jvm.txt
 @@ -24,7 +24,7 @@
              GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
            then: RETURN type=kotlin.Nothing from='public final fun test1 (x: kotlin.Any): kotlin.Unit declared in <root>'
