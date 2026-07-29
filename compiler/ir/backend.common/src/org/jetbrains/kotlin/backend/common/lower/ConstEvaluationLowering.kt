@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.evaluation.FloatingPointOptimizationMode
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.backend.common.ir.evaluation.evaluate
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.ir.visitors.IrTransformer
  */
 class ConstEvaluationLowering(
     val context: CommonBackendContext,
-    private val isFloatingPointOptimizationEnabled: Boolean = true
+    private val fpOptimizationMode: FloatingPointOptimizationMode = FloatingPointOptimizationMode.ENABLED,
 ) : FileLoweringPass {
     private val inlineConstTracker = context.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER]
 
@@ -34,7 +35,7 @@ class ConstEvaluationLowering(
                     irFile,
                     context.irBuiltIns,
                     inlineConstTracker,
-                    isFloatingPointOptimizationEnabled = isFloatingPointOptimizationEnabled
+                    fpOptimizationMode,
                 )
                 return evaluateResult ?: superResult
             }
