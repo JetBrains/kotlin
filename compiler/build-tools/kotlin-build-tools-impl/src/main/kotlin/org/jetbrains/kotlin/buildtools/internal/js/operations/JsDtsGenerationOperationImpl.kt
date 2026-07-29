@@ -88,6 +88,9 @@ internal class JsDtsGenerationOperationImpl private constructor(
         return CompilationResult.COMPILATION_SUCCESS
     }
 
+    override val usesApplicationEnvironment: Boolean
+        get() = true
+
     private fun transformKlibsIntoKlibInputModule(
         klibs: List<Path>,
         logger: KotlinLogger?,

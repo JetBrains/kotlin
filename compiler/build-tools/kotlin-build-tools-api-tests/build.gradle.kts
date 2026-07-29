@@ -202,6 +202,7 @@ val businessLogicTestSuits = setOf(
     "testAbiValidation",
     "testRestrictedArguments",
     "testClasspathMetadata",
+    "testBuildSession",
 )
 
 fun JvmTestSuite.addStdLibClasspaths() {
