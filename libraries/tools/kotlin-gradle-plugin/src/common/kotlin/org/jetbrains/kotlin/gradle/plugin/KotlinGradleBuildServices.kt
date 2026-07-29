@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
@@ -74,7 +73,11 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
         private val INIT_MESSAGE = "Initialized $CLASS_NAME"
         private val DISPOSE_MESSAGE = "Disposed $CLASS_NAME"
 
-        fun registerIfAbsent(project: Project): Provider<KotlinGradleBuildServices> =
+        /**
+         * Registers the build service if absent and starts it to ensure that [KotlinGradleFinishBuildHandler]'s
+         * "build start" callback is invoked. Call this method early in the plugin lifecycle, when the plugin is applied.
+         */
+        fun registerIfAbsentAndStart(project: Project) {
             project.gradle.registerClassLoaderScopedBuildService(KotlinGradleBuildServices::class) {
                 it.parameters.sessionsDir.set(project.kotlinSessionsDir)
             }.also { serviceProvider ->
@@ -84,7 +87,8 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
                         task.kotlinGradleBuildServices.set(serviceProvider)
                     }
                 }
-            }
+            }.get()
+        }
     }
 }
 

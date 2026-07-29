@@ -111,10 +111,9 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             addGradlePluginMetadataAttributes(project)
         }
 
-        val kotlinGradleBuildServices = KotlinGradleBuildServices.registerIfAbsent(project).get()
-        if (!project.isProjectIsolationEnabled) {
-            kotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, pluginVersion)
-        }
+        KotlinGradleBuildServices.registerIfAbsentAndStart(project)
+
+        KotlinPluginLoadedInMultipleProjectsDetectorService.detect(project)
 
         KotlinNativeBundleBuildService.registerIfAbsent(project)
 
