@@ -1,4 +1,0 @@
-FUNCTION:
-  /Derived.equals
-EQUALITY_BOUND:
-  null
