@@ -61,17 +61,17 @@ dependencyResolutionManagement {
     val buildProperties = getKotlinBuildPropertiesForSettings(settings)
 
     components {
-        withModule("com.google.code.gson:gson") {
-            allVariants {
-                withDependencies {
-                    add("com.google.code.gson:gson") {
-                        version {
-                            require(buildProperties.versionsProperty("gson").get())
-                        }
-                    }
-                }
-            }
-        }
+//        withModule("com.google.code.gson:gson") {
+//            allVariants {
+//                withDependencies {
+//                    add("com.google.code.gson:gson") {
+//                        version {
+//                            require(buildProperties.versionsProperty("gson").get())
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
         withModule("org.apache.commons:commons-compress") {
             allVariants {

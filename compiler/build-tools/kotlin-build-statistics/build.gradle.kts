@@ -16,7 +16,7 @@ dependencies {
     compileOnly(kotlinStdlib())
     compileOnly(intellijCore())
     implementation(project(":compiler:build-tools:kotlin-build-tools-api"))
-    implementation(commonDependency("com.google.code.gson:gson"))
+    implementation("com.google.code.gson:gson:2.8.8")
 }
 
 sourceSets {
