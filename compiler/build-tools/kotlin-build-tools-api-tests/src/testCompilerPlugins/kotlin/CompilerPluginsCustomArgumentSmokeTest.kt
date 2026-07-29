@@ -30,7 +30,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("Smoke test of compiler plugins application through applyArgumentStrings (default way)")
+    @DisplayName("Smoke test of compiler plugins application through applyCommandLineArguments (default way)")
     @TestMetadata("compiler-plugins")
     fun smokeTestCompilerPluginsApplicationDefaultArgumentsString(strategyConfig: CompilerExecutionStrategyConfiguration) {
         smokeTest(strategyConfig) {
@@ -46,12 +46,12 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                     }
                 }.joinToString(","))
             }
-            it.compilerArguments.applyArgumentStrings(it.compilerArguments.build().toArgumentStrings() + compilerPluginArgs)
+            it.compilerArguments.applyCommandLineArguments(it.compilerArguments.build().toArgumentStrings() + compilerPluginArgs)
         }
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("Smoke test of compiler plugins application through applyArgumentStrings (modern way)")
+    @DisplayName("Smoke test of compiler plugins application through applyCommandLineArguments (modern way)")
     @TestMetadata("compiler-plugins")
     fun smokeTestCompilerPluginsApplicationModernArgumentsString(strategyConfig: CompilerExecutionStrategyConfiguration) {
         smokeTest(strategyConfig) {
@@ -75,12 +75,12 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                     }"
                 )
             }
-            it.compilerArguments.applyArgumentStrings(it.compilerArguments.build().toArgumentStrings() + compilerPluginArgs)
+            it.compilerArguments.applyCommandLineArguments(it.compilerArguments.build().toArgumentStrings() + compilerPluginArgs)
         }
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("Smoke test of compiler plugins application through applyArgumentStrings (combo BTA + default way)")
+    @DisplayName("Smoke test of compiler plugins application through applyCommandLineArguments (combo BTA + default way)")
     @TestMetadata("compiler-plugins")
     fun smokeTestCompilerPluginsApplicationComboDefaultArgumentsString(strategyConfig: CompilerExecutionStrategyConfiguration) {
         smokeTest(strategyConfig) {
@@ -94,12 +94,12 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                 }.joinToString(","))
             }
             it.compilerArguments[COMPILER_PLUGINS] = listOf(ASSIGNMENT_PLUGIN)
-            it.compilerArguments.applyArgumentStrings(it.compilerArguments.build().toArgumentStrings() + compilerPluginArgs)
+            it.compilerArguments.applyCommandLineArguments(it.compilerArguments.build().toArgumentStrings() + compilerPluginArgs)
         }
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("Smoke test of compiler plugins application through applyArgumentStrings (combo BTA + modern way)")
+    @DisplayName("Smoke test of compiler plugins application through applyCommandLineArguments (combo BTA + modern way)")
     @TestMetadata("compiler-plugins")
     fun smokeTestCompilerPluginsApplicationComboModernArgumentsString(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
@@ -117,7 +117,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                     )
                 }
                 it.compilerArguments[COMPILER_PLUGINS] = listOf(ASSIGNMENT_PLUGIN)
-                it.compilerArguments.applyArgumentStrings(it.compilerArguments.build().toArgumentStrings() + compilerPluginArgs)
+                it.compilerArguments.applyCommandLineArguments(it.compilerArguments.build().toArgumentStrings() + compilerPluginArgs)
             }) {
                 // BTA currently transforms the structured way to the "default way", such a combination is considered illegal
                 expectFail()
@@ -130,7 +130,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("Smoke test of compiler plugins application through applyArgumentStrings (legacy + modern mixed)")
+    @DisplayName("Smoke test of compiler plugins application through applyCommandLineArguments (legacy + modern mixed)")
     @TestMetadata("compiler-plugins")
     fun smokeTestCompilerPluginsApplicationLegacyModernMixedArgumentsString(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
@@ -156,7 +156,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                         }"
                     )
                 }
-                it.compilerArguments.applyArgumentStrings(it.compilerArguments.build().toArgumentStrings() + legacyArgs + modernArgs)
+                it.compilerArguments.applyCommandLineArguments(it.compilerArguments.build().toArgumentStrings() + legacyArgs + modernArgs)
             }) {
                 expectFail()
                 assertLogContainsPatterns(

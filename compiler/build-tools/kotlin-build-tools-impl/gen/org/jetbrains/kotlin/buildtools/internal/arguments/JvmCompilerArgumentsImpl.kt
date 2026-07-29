@@ -14,6 +14,7 @@ import kotlin.Deprecated
 import kotlin.DeprecationLevel
 import kotlin.Int
 import kotlin.OptIn
+import kotlin.ReplaceWith
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.List
@@ -461,8 +462,22 @@ internal class JvmCompilerArgumentsImpl(
     return arguments
   }
 
+  @Deprecated(
+    "This method is deprecated. Use applyCommandLineArguments instead.",
+    ReplaceWith("applyCommandLineArguments(arguments)"),
+  )
   override fun applyArgumentStrings(arguments: List<String>) {
     val compilerArgs: K2JVMCompilerArguments = parseCommandLineArguments(arguments)
+    collectRestrictedArgViolations(compilerArgs, K2JVMCompilerArguments())
+    validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
+    argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }
+    applyCompilerArguments(compilerArgs)
+  }
+
+  override fun applyCommandLineArguments(arguments: List<String>) {
+    val compilerArgs = toCompilerArguments()
+    parseCommandLineArguments(arguments, compilerArgs, false)
+    handleCustomPluginArguments(this, compilerArgs)
     collectRestrictedArgViolations(compilerArgs, K2JVMCompilerArguments())
     validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
     argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }
