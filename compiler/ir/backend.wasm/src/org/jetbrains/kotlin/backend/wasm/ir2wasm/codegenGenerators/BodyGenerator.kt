@@ -597,7 +597,7 @@ class BodyGenerator(
         // Skip redundant field initializers that set fields to type-default values, since we
         // already initialize fields to type-default values in the code that initializes the objects
         // at creation time. See the tests e.g. fieldInitializerOptimization.kt and
-        // CorrectOrder3.kt. But also see KT-15642 for more about the JVM behavior itself.
+        // CorrectOrder3.kt. But also see KT-15642 for more about the original JVM behavior itself.
         if (functionContext.irFunction is IrConstructor &&
             expression.origin == IrStatementOrigin.INITIALIZE_FIELD &&
             expressionValue is IrConst &&
