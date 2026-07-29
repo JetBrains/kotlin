@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.isJavaValueClass
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
@@ -81,11 +82,16 @@ fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
         visibility === DescriptorVisibilities.LOCAL -> Opcodes.ACC_PUBLIC
         else -> getVisibilityAccessFlag()
     }
+    val isIdentity = isValhallaSupportEnabled(context) &&
+            !isInterface &&
+            !isAnnotationClass &&
+            !isKotlinValhallaValueClass(context.config.languageVersionSettings) &&
+            !isJavaValueClass
     return visibility or
             (if (origin.isSynthetic) Opcodes.ACC_SYNTHETIC else 0) or
             innerAccessFlagsForModalityAndKind() or
             (if (isInner) 0 else Opcodes.ACC_STATIC) or
-            (if (!isValhallaSupportEnabled(context) || isInterface || isAnnotationClass) 0 else ACC_IDENTITY)
+            (if (isIdentity) ACC_IDENTITY else 0)
 }
 
 
