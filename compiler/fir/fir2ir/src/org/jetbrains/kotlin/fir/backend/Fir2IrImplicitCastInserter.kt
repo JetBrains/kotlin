@@ -22,16 +22,6 @@ import org.jetbrains.kotlin.name.StandardClassIds
 class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScope: Fir2IrConversionScope) : Fir2IrComponents by c {
 
     /**
-     * Currently, it's a bit vaguely defined how implicit casts differ from conversion (e.g., SAM or suspend ones).
-     *
-     * But the current assumption is that whenever ones need the former they need the latter, too.
-     *
-     * And for that case, there's an utility [org.jetbrains.kotlin.fir.backend.utils.prepareExpressionForGivenExpectedType].
-     */
-    @RequiresOptIn
-    annotation class NoConversionsExpected
-
-    /**
      * This functions processes the following casts:
      * - coercion to Unit
      * - nullability casts based on nullability annotations
@@ -40,7 +30,6 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
      * This function doesn't apply conversion operations, for which one might use
      * [org.jetbrains.kotlin.fir.backend.utils.prepareExpressionForGivenExpectedType]
      */
-    @NoConversionsExpected
     internal fun IrExpression.insertSpecialCast(
         expression: FirExpression,
         valueType: ConeKotlinType,
