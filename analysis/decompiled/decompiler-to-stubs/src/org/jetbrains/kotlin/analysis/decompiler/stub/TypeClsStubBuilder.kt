@@ -328,6 +328,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 hasValOrVar = false,
                 hasDefaultValue = false,
                 functionTypeParameterName = getFunctionTypeParameterName(annotations),
+                equalityBoundType = null,
             )
 
             createTypeReferenceStub(parameter, parameterType, loadTypeAnnotations = { annotations })
@@ -388,6 +389,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 hasValOrVar = false,
                 isMutable = false,
                 functionTypeParameterName = null,
+                equalityBoundType = createKotlinTypeBean(valueParameterProto.equalityBoundType(c.typeTable)),
             )
 
             val varargElementType = valueParameterProto.varargElementType(c.typeTable)

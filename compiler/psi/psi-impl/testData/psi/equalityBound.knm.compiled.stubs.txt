@@ -13,6 +13,7 @@ FILE[kind=File[packageFqName=<root>]]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
+            equalityBoundType: Base
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=EqualityBound]
                 valueArguments: [ bound -> NormalClass(value=/Base) ]
@@ -48,6 +49,7 @@ FILE[kind=File[packageFqName=<root>]]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
+            equalityBoundType: Base
             TYPE_REFERENCE
               NULLABLE_TYPE
                 USER_TYPE
@@ -71,6 +73,7 @@ FILE[kind=File[packageFqName=<root>]]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
+            equalityBoundType: Generic<STAR>
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=EqualityBound]
                 valueArguments: [ bound -> NormalClass(value=/Generic) ]
@@ -106,6 +109,7 @@ FILE[kind=File[packageFqName=<root>]]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
+            equalityBoundType: Base (abbreviatedType: BaseAlias)
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=EqualityBound]
                 valueArguments: [ bound -> NormalClass(value=/Base) ]
@@ -170,6 +174,7 @@ FILE[kind=File[packageFqName=<root>]]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
+            equalityBoundType: Data
             TYPE_REFERENCE
               NULLABLE_TYPE
                 USER_TYPE
