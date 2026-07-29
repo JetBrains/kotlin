@@ -24,8 +24,8 @@ internal interface UsesKotlinToolingDiagnosticsParameters {
 }
 
 internal interface UsesKotlinToolingDiagnostics : UsesKotlinToolingDiagnosticsParameters, Task {
-    fun reportDiagnostic(diagnostic: ToolingDiagnostic) {
-        toolingDiagnosticsCollector.get().report(this, diagnostic)
+    fun reportDiagnostic(diagnostic: ToolingDiagnostic, reportOnce: Boolean = false) {
+        toolingDiagnosticsCollector.get().report(this, diagnostic, reportOnce = reportOnce)
     }
 }
 

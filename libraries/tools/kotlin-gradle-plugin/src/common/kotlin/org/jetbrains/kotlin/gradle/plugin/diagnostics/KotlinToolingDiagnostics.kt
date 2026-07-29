@@ -454,7 +454,15 @@ internal object KotlinToolingDiagnostics {
         operator fun invoke(
             libraries: Collection<File>,
             resolvedByMavenCoordinates: String? = null,
-        ) = build {
+        ) = build(
+            /* Reporting the diagnostic only once per build requires a good 'id' including the params as input */
+            idSuffix = run {
+                var idHash = resolvedByMavenCoordinates.hashCode()
+                libraries.forEach { path ->
+                    idHash = 31 * idHash + path.path.hashCode()
+                }
+                idHash.toString()
+            }) {
             title("Unsupported Kotlin Archive (.kar) used")
                 .description(buildString {
                     appendLine("${libraries.size} use(s) the '.kar' format, which is not supported by this version of Kotlin.")
