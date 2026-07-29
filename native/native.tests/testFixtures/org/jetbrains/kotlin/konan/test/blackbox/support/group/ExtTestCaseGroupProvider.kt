@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
@@ -218,7 +217,6 @@ private class ExtTestDataFile(
         }
 
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNative" // for `Any.isPermanent()` and `Any.isStack()`
-        args += "-opt-in=kotlin.native.internal.InternalForKotlinNativeTests" // for ReflectionPackageName
         if (!settings.withPlatformLibs && !structure.directives.contains(WITH_PLATFORM_LIBS))
             args += "-no-default-libs"
         val freeCInteropArgs = structure.directives[FREE_CINTEROP_ARGS]
@@ -313,11 +311,11 @@ private class ExtTestDataFile(
 
         filesToTransform.forEach { handler ->
             val visitor = BatchingPackageInserter.PackageNamePatcher(
-                NativePlatforms.unspecifiedNativePlatform,
                 handler.psiFactory,
                 oldToNewPackageNameMapping,
                 basePackageName,
-                transformHelpersPackage = false
+                transformHelpersPackage = false,
+                reflectionPackageNameAnnotation = ReflectionPackageNameAnnotation,
             )
             handler.accept(visitor, emptySet())
         }

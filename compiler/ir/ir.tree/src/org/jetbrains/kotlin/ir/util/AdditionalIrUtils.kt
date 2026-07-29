@@ -418,6 +418,19 @@ inline fun <reified T> IrAnnotation.getConstArgument(name: String): T? {
     return expression?.value as? T
 }
 
+private val reflectionPackageNameFqName = StandardClassIds.Annotations.ReflectionPackageName.asSingleFqName()
+
+/**
+ * The package name that should be reported in the reflective information of the classes declared in this file
+ * instead of the real package name, or `null` if the file is not annotated with `@kotlin.internal.ReflectionPackageName`.
+ *
+ * The test infrastructure uses that annotation to compensate for the package renaming it performs when compiling
+ * several tests into one batch. Backends supporting reflective information are expected to respect it, so that
+ * the renaming does not affect the observable fully qualified names.
+ */
+val IrFile.reflectionPackageName: String?
+    get() = getAnnotation(reflectionPackageNameFqName)?.getConstArgument("name")
+
 val IrBlock.singleExpressionOrNull get() = statements.singleOrNull() as? IrExpression
 
 tailrec fun getSinglePropertyReference(expression: IrExpression?, expectedReturn: IrReturnableBlockSymbol?): IrRichPropertyReference? {
