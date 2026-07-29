@@ -7,6 +7,7 @@ import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskContainer
+import org.gradle.api.tasks.TaskProvider
 
 /**
  * Adds a task dependency to all tasks named [task] from the given [projects].
@@ -21,8 +22,8 @@ fun Task.dependsOnAll(task: String, projects: List<String>) {
  * Registers a task that does not execute any tests by itself, but depends on other test tasks.
  * IntelliJ IDEA will recognize it as a test task and show the test execution UI.
  */
-fun TaskContainer.testLifecycleTask(name: String, action: Action<Task>) {
-    register(name, TestLifecycleTask::class.java) {
+fun TaskContainer.testLifecycleTask(name: String, action: Action<Task>): TaskProvider<out Task> {
+    return register(name, TestLifecycleTask::class.java) {
         extensions.extraProperties["idea.internal.test"] = "true"
         action.execute(this)
     }

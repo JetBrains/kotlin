@@ -256,7 +256,7 @@ tasks {
         dependsOnAll("publish", coreLibsPublishable)
     }
 
-    testLifecycleTask("coreLibsTest") {
+    val coreLibsTest = testLifecycleTask("coreLibsTest") {
         dependsOnAll(
             task = "check",
             projects = coreLibsBuildable + listOf(
@@ -268,7 +268,7 @@ tasks {
         )
     }
 
-    testLifecycleTask("gradlePluginTest") {
+    val gradlePluginTest = testLifecycleTask("gradlePluginTest") {
         gradlePluginProjects.forEach {
             dependsOn("$it:check")
         }
@@ -278,7 +278,7 @@ tasks {
         dependsOn(":kotlin-gradle-plugin-integration-tests:check")
     }
 
-    testLifecycleTask("jvmCompilerTest") {
+    val jvmCompilerTest = testLifecycleTask("jvmCompilerTest") {
         dependsOn(
             ":compiler:tests-common-new:test",
             ":compiler:container:test",
@@ -291,7 +291,7 @@ tasks {
         dependsOn(":compiler:tests-common-new:test")
     }
 
-    testLifecycleTask("jvmCompilerIntegrationTest") {
+    val jvmCompilerIntegrationTest = testLifecycleTask("jvmCompilerIntegrationTest") {
         dependsOn(
             ":kotlin-compiler-embeddable:test",
             ":kotlin-compiler-client-embeddable:test"
@@ -380,7 +380,7 @@ tasks {
         dependsOn(":compiler:fastJarFSLongTests")
     }
 
-    testLifecycleTask("scriptingJvmTest") {
+    val scriptingJvmTest = testLifecycleTask("scriptingJvmTest") {
         dependsOn(":kotlin-scripting-compiler:test")
         dependsOn(":kotlin-scripting-common:test")
         dependsOn(":kotlin-scripting-jvm:test")
@@ -395,58 +395,16 @@ tasks {
         dependsOn(":kotlin-scripting-jsr223-test:test")
     }
 
-    testLifecycleTask("scriptingTest") {
-        dependsOn("scriptingJvmTest")
+    val scriptingTest = testLifecycleTask("scriptingTest") {
+        dependsOn(scriptingJvmTest)
     }
 
-    testLifecycleTask("compilerTest") {
-        dependsOn("jvmCompilerTest")
-        dependsOn("miscCompilerTest")
-    }
-
-    testLifecycleTask("miscCompilerTest") {
-        dependsOn(":compiler:test")
-        dependsOn(":compiler:tests-integration:test")
-        dependsOn(":compiler:java-direct:test")
-        dependsOn(":kotlin-compiler-embeddable:test")
-        dependsOn("incrementalCompilationTest")
-        dependsOn("scriptingTest")
-        dependsOn("jvmCompilerIntegrationTest")
-        dependsOn("compilerPluginTest")
-        dependsOn(":kotlin-daemon-tests:test")
-        dependsOn(":compiler:arguments:check")
-        dependsOn(":compiler:multiplatform-parsing:jvmTest")
-        dependsOn(":compiler:fir:modularized-tests:test")
-        dependsOn(":compiler:util:test")
-        dependsOn(":core:names:check")
-        dependsOn(":core:language.model:check")
-        dependsOn(":core:language.targets:check")
-        dependsOn(":core:language.targets.jvm:check")
-        dependsOn(":core:language.version-settings:check")
-        dependsOn(":core:language.version-settings:test")
-    }
-
-    testLifecycleTask("miscTest") {
-        dependsOn("coreLibsTest")
-        dependsOn("toolsTest")
-        dependsOn("examplesTest")
-        dependsOn(":kotlin-build-common:test")
-        dependsOn(":core:descriptors.runtime:test")
-        dependsOn(":kotlin-util-io:test")
-        dependsOn(":kotlin-util-klib:test")
-        dependsOn(":kotlin-util-klib-abi:test")
-        dependsOn(":kotlinx-metadata-klib:test")
-        dependsOn(":compiler:ir.validation:test")
-        dependsOn(":generators:test")
-        dependsOn(":kotlin-gradle-plugin-dsl-codegen:test")
-    }
-
-    testLifecycleTask("incrementalCompilationTest") {
+    val incrementalCompilationTest = testLifecycleTask("incrementalCompilationTest") {
         dependsOn(":compiler:incremental-compilation-impl:test")
         dependsOn(":compiler:incremental-compilation-impl:testJvmICWithJdk11")
     }
 
-    testLifecycleTask("compilerPluginTest") {
+    val compilerPluginTest = testLifecycleTask("compilerPluginTest") {
         dependsOn(":kotlin-allopen-compiler-plugin:test")
         dependsOn(":kotlin-assignment-compiler-plugin:test")
         dependsOn(":kotlin-atomicfu-compiler-plugin:test")
@@ -463,7 +421,34 @@ tasks {
         dependsOn(":kotlin-dataframe-compiler-plugin:test")
     }
 
-    testLifecycleTask("toolsTest") {
+    val miscCompilerTest = testLifecycleTask("miscCompilerTest") {
+        dependsOn(":compiler:test")
+        dependsOn(":compiler:tests-integration:test")
+        dependsOn(":compiler:java-direct:test")
+        dependsOn(":kotlin-compiler-embeddable:test")
+        dependsOn(incrementalCompilationTest)
+        dependsOn(scriptingTest)
+        dependsOn(jvmCompilerIntegrationTest)
+        dependsOn(compilerPluginTest)
+        dependsOn(":kotlin-daemon-tests:test")
+        dependsOn(":compiler:arguments:check")
+        dependsOn(":compiler:multiplatform-parsing:jvmTest")
+        dependsOn(":compiler:fir:modularized-tests:test")
+        dependsOn(":compiler:util:test")
+        dependsOn(":core:names:check")
+        dependsOn(":core:language.model:check")
+        dependsOn(":core:language.targets:check")
+        dependsOn(":core:language.targets.jvm:check")
+        dependsOn(":core:language.version-settings:check")
+        dependsOn(":core:language.version-settings:test")
+    }
+
+    val compilerTest = testLifecycleTask("compilerTest") {
+        dependsOn(jvmCompilerTest)
+        dependsOn(miscCompilerTest)
+    }
+
+    val toolsTest = testLifecycleTask("toolsTest") {
         dependsOn(":tools:kotlinp-jvm:test")
         dependsOn(":native:kotlin-klib-commonizer:test")
         dependsOn(":native:kotlin-klib-commonizer-api:test")
@@ -477,30 +462,49 @@ tasks {
         dependsOn(":libraries:tools:abi-validation:abi-tools-tests:check")
     }
 
-    testLifecycleTask("buildToolsApiTest") {
-        dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
-        dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
-        dependsOn(":compiler:build-tools:kotlin-build-tools-api-forward-tests:check")
-    }
-
-    testLifecycleTask("examplesTest") {
-        dependsOn("dist")
+    val examplesTest = testLifecycleTask("examplesTest") {
+        dependsOn(dist)
         project(":examples").subprojects.forEach { p ->
             dependsOn("${p.path}:check")
         }
     }
 
+    testLifecycleTask("miscTest") {
+        dependsOn(coreLibsTest)
+        dependsOn(toolsTest)
+        dependsOn(examplesTest)
+        dependsOn(":kotlin-build-common:test")
+        dependsOn(":core:descriptors.runtime:test")
+        dependsOn(":kotlin-util-io:test")
+        dependsOn(":kotlin-util-klib:test")
+        dependsOn(":kotlin-util-klib-abi:test")
+        dependsOn(":kotlinx-metadata-klib:test")
+        dependsOn(":compiler:ir.validation:test")
+        dependsOn(":generators:test")
+        dependsOn(":kotlin-gradle-plugin-dsl-codegen:test")
+    }
+
+    val buildToolsApiTest = testLifecycleTask("buildToolsApiTest") {
+        dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
+        dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
+        dependsOn(":compiler:build-tools:kotlin-build-tools-api-forward-tests:check")
+    }
+
+    val frontendApiTests = testLifecycleTask("frontendApiTests") {
+        dependsOn(":analysis:analysisAllTests")
+    }
+
     testLifecycleTask("distTest") {
-        dependsOn("compilerTest")
-        dependsOn("frontendApiTests")
-        dependsOn("toolsTest")
-        dependsOn("gradlePluginTest")
-        dependsOn("examplesTest")
-        dependsOn("buildToolsApiTest")
+        dependsOn(compilerTest)
+        dependsOn(frontendApiTests)
+        dependsOn(toolsTest)
+        dependsOn(gradlePluginTest)
+        dependsOn(examplesTest)
+        dependsOn(buildToolsApiTest)
     }
 
     testLifecycleTask("specTest") {
-        dependsOn("dist")
+        dependsOn(dist)
         dependsOn(":compiler:tests-spec:test")
     }
 
@@ -509,12 +513,8 @@ tasks {
     }
 
     testLifecycleTask("jps-tests") {
-        dependsOn("dist")
+        dependsOn(dist)
         dependsOn(":jps:jps-plugin:test")
-    }
-
-    testLifecycleTask("frontendApiTests") {
-        dependsOn(":analysis:analysisAllTests")
     }
 
     testLifecycleTask("kaptTests") {
@@ -537,14 +537,14 @@ tasks {
         dependsOn(":kotlin-gradle-statistics:test")
     }
 
-    register("test") {
+    val test = register("test") {
         doLast {
             throw GradleException("Don't use directly, use aggregate '*Test' tasks instead")
         }
     }
 
     named("check") {
-        dependsOn("test")
+        dependsOn(test)
     }
 
     named("checkBuild") {
