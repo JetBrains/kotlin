@@ -194,8 +194,8 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
         }
     }
 
-    @NativeGradlePluginTests
     @GradleTest
+    @OtherGradlePluginTests
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_8)
     fun `karOrKarXZFilesInCompileClasspathAreReported - native`(gradleVersion: GradleVersion) {
         nativeProject("native-simple-project", gradleVersion) {
@@ -220,8 +220,8 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
         }
     }
 
-    @JsGradlePluginTests
     @GradleTest
+    @OtherGradlePluginTests
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_8)
     fun `karOrKarXZFilesInCompileClasspathAreReported - js`(gradleVersion: GradleVersion) {
         project(
