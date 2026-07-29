@@ -14,10 +14,10 @@ abstract class FirCachesFactory : FirSessionComponent {
      * Creates a cache which returns a value by key on demand if it is computed.
      * Otherwise, computes the value in [createValue] and caches it for future invocations.
      *
-     * [FirCache.getValue] should not be called inside [createValue].
+     * [FirCache.getValue] may be called inside [createValue], as the value is computed outside any lock held by the cache. Recursive access
+     * for the *same* key should be avoided.
      *
-     * Note that [createValue] might be called multiple times for the same value,
-     * but all threads will always get the same value.
+     * Note that [createValue] might be called multiple times for the same value, but all threads will always observe the same value.
      *
      * Where:
      * [CONTEXT] -- type of value which be used to create value by [createValue]
@@ -30,7 +30,10 @@ abstract class FirCachesFactory : FirSessionComponent {
      * Creates a cache which returns a value by key on demand if it is computed.
      * Otherwise, computes the value in [createValue] and caches it for future invocations.
      *
-     * [FirCache.getValue] should not be called inside [createValue].
+     * [FirCache.getValue] may be called inside [createValue], as the value is computed outside any lock held by the cache. Recursive access
+     * for the *same* key should be avoided.
+     *
+     * Note that [createValue] might be called multiple times for the same value, but all threads will always observe the same value.
      *
      * Where:
      * [CONTEXT] -- type of value which be used to create value by [createValue]
@@ -53,7 +56,9 @@ abstract class FirCachesFactory : FirSessionComponent {
      * [FirCache.getValue] can be safely called in [postCompute] from the same thread and the correct value computed by [createValue] will
      * be returned.
      *
-     * [FirCache.getValue] should not be called inside [createValue].
+     * Unlike [createCache], [FirCache.getValue] must not be called inside [createValue]: the value may be computed under a lock, so
+     * recursive access for the same key is prohibited, and recursive access for other keys risks a deadlock when two threads request the
+     * same keys in a different order.
      *
      * Where:
      *  [CONTEXT] -- type of value which be used to create value by [createValue]
@@ -97,7 +102,10 @@ abstract class FirCachesFactory : FirSessionComponent {
      * Creates a cache which returns a value by key on demand if it is computed.
      * Otherwise, computes the value in [createValue] and caches it for future invocations.
      *
-     * [FirCache.getValue] should not be called inside [createValue].
+     * [FirCache.getValue] may be called inside [createValue], as the value is computed outside any lock held by the cache. Recursive access
+     * for the *same* key should be avoided.
+     *
+     * Note that [createValue] might be called multiple times for the same value, but all threads will always observe the same value.
      *
      * The cache may be limited in various dimensions, such as time, size, and the choice of references. Limits should be understood as
      * *suggestions*. Whether the suggested limit is applied is up to the cache factory implementation. Hence, it is legal for a cache
