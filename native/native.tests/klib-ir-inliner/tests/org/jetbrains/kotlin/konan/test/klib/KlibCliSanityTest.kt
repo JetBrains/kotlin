@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.collections.set
+import kotlin.io.path.absolutePathString
 import kotlin.text.contains
 
 @Tag("klib")
@@ -103,8 +104,8 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
             "non-existent-klib.klib",
             "non-existent-dir/non-existent-klib",
             "non-existent-dir/non-existent-klib.klib",
-            modules.modules[0].sourceFile.parentFile.resolve("non-existent-klib").absolutePath,
-            modules.modules[0].sourceFile.parentFile.resolve("non-existent-klib.klib").absolutePath,
+            (modules.modules[0] as RegularKlibTestSourceModule).sourceFile.parent.resolve("non-existent-klib").absolutePathString(),
+            (modules.modules[0] as RegularKlibTestSourceModule).sourceFile.parent.resolve("non-existent-klib.klib").absolutePathString(),
         ).forEach { libraryPath ->
             modules.compileToKlibsViaCli(
                 extraCliArgs = listOf(
