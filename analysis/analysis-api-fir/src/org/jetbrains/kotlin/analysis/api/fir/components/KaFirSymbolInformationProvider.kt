@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.toKaAnnotationTarg
 import org.jetbrains.kotlin.analysis.api.impl.base.components.toKaLevel
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -30,11 +31,14 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.analysis.checkers.getActualTargetList
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundTypeOfParameter
 import org.jetbrains.kotlin.fir.declarations.utils.klibFileAnnotations
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.noJavaOrigin
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.FqName
@@ -102,6 +106,14 @@ internal class KaFirSymbolInformationProvider(
             analysisSession.firSession,
             analysisSession.getScopeSessionFor(analysisSession.firSession)
         ).isSuccess
+    }
+
+    override fun equalityBound(symbol: KaNamedFunctionSymbol): KaType? = withValidityAssertion {
+        val firSymbol = symbol.firSymbol as? FirNamedFunctionSymbol ?: return null
+
+        // An inherited bound is set while the status of the *function* is resolved, so resolving only the value parameter is not enough.
+        firSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+        return firSymbol.equalityBoundTypeOfParameter?.asKaType()
     }
 
     private fun KaFirPsiJavaClassSymbol.mayHaveDeprecation(): Boolean {
