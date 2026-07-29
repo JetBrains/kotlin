@@ -14,6 +14,11 @@ import org.jetbrains.kotlin.psi.stubs.KotlinParameterStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
+/**
+ * @param equalityBoundType The equality bound of an `operator fun equals` parameter, see `kotlin.EqualityBound`.
+ * It is only present in stubs built from binaries, as the bound might be inherited from an overridden `equals`, and so is not necessarily
+ * spelled out by an annotation on this parameter itself.
+ */
 @OptIn(KtImplementationDetail::class)
 class KotlinParameterStubImpl(
     parent: StubElement<*>?,
@@ -23,6 +28,7 @@ class KotlinParameterStubImpl(
     override val hasValOrVar: Boolean,
     override val hasDefaultValue: Boolean,
     val functionTypeParameterName: String?,
+    val equalityBoundType: KotlinTypeBean?,
 ) : KotlinStubBaseImpl<KtParameter>(parent, KtStubElementTypes.VALUE_PARAMETER), KotlinParameterStub {
 
     override fun getName(): String? = name?.string
@@ -40,6 +46,7 @@ class KotlinParameterStubImpl(
         hasValOrVar = hasValOrVar,
         hasDefaultValue = hasDefaultValue,
         functionTypeParameterName = functionTypeParameterName,
+        equalityBoundType = equalityBoundType,
     )
 
     @KtImplementationDetail
@@ -50,5 +57,6 @@ class KotlinParameterStubImpl(
                 other.isMutable == isMutable &&
                 other.hasValOrVar == hasValOrVar &&
                 other.hasDefaultValue == hasDefaultValue &&
-                other.functionTypeParameterName == functionTypeParameterName
+                other.functionTypeParameterName == functionTypeParameterName &&
+                other.equalityBoundType == equalityBoundType
 }

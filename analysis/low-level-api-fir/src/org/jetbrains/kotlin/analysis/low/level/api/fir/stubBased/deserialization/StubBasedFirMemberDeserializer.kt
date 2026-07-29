@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingFieldAttr
 import org.jetbrains.kotlin.fir.declarations.utils.isDelegatedPropertyAttr
 import org.jetbrains.kotlin.fir.declarations.utils.isDeserializedPropertyFromAnnotation
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isFromCompanionBlock
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinParameterStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -784,6 +786,11 @@ internal class StubBasedFirMemberDeserializer(
         isCrossinline = parameter.hasModifier(KtTokens.CROSSINLINE_KEYWORD)
         isNoinline = parameter.hasModifier(KtTokens.NOINLINE_KEYWORD)
         annotations += c.annotationDeserializer.loadAnnotations(parameter)
+    }.also { valueParameter ->
+        val parameterStub: KotlinParameterStubImpl = parameter.compiledStub
+        parameterStub.equalityBoundType?.let { typeBean ->
+            valueParameter.equalityBoundType = c.typeDeserializer.type(typeBean)
+        }
     }
 
     private fun KtTypeReference.toTypeRef(context: StubBasedFirDeserializationContext): FirTypeRef =

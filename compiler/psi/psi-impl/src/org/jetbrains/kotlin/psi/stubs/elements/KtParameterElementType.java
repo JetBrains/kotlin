@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinParameterStubImpl;
 
 import java.io.IOException;
 
+import static org.jetbrains.kotlin.psi.stubs.elements.TypeBeanSerializationKt.deserializeTypeBean;
+import static org.jetbrains.kotlin.psi.stubs.elements.TypeBeanSerializationKt.serializeTypeBean;
+
 public class KtParameterElementType extends KtStubElementType<KotlinParameterStubImpl, KtParameter> {
     public KtParameterElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtParameter.class, KotlinParameterStub.class);
@@ -31,7 +34,8 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
         StringRef fqNameRef = StringRef.fromString(fqName != null ? fqName.asString() : null);
         return new KotlinParameterStubImpl(
                 (StubElement<?>) parentStub, fqNameRef, StringRef.fromString(psi.getName()),
-                psi.isMutable(), psi.hasValOrVar(), psi.hasDefaultValue(), null
+                psi.isMutable(), psi.hasValOrVar(), psi.hasDefaultValue(), null,
+                /* equalityBoundType = */ null
         );
     }
 
@@ -44,6 +48,7 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
         FqName name = stub.getFqName();
         dataStream.writeName(name != null ? name.asString() : null);
         dataStream.writeName(stub.getFunctionTypeParameterName());
+        serializeTypeBean(dataStream, stub.getEqualityBoundType());
     }
 
     @NotNull
@@ -56,7 +61,7 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
         StringRef fqName = dataStream.readName();
 
         return new KotlinParameterStubImpl((StubElement<?>) parentStub, fqName, name, isMutable, hasValOrValNode, hasDefaultValue,
-                                           dataStream.readNameString());
+                                           dataStream.readNameString(), deserializeTypeBean(dataStream));
     }
 
     @Override
