@@ -86,7 +86,7 @@ fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
             (if (origin.isSynthetic) Opcodes.ACC_SYNTHETIC else 0) or
             innerAccessFlagsForModalityAndKind() or
             (if (isInner) 0 else Opcodes.ACC_STATIC) or
-            (if (!isValhallaSupportEnabled(context) || isInterface || isAnnotationClass) 0 else Opcodes.ACC_SUPER)
+            (if (!isValhallaSupportEnabled(context) || isInterface || isAnnotationClass) 0 else ACC_IDENTITY)
 }
 
 
