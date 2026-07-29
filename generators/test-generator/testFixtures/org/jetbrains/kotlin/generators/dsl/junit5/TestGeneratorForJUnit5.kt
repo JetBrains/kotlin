@@ -300,7 +300,7 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
                     generateTestMethod(p, methodModel)
                 }
             } else if (!tolerateEmptyModels) {
-                throw IllegalStateException("Test class ${testClassModel.name} is empty. Please remove it")
+                throw IllegalStateException("Test class ${testClassModel.name}: ${testClassModel.testKClass} (with data at ${testClassModel.dataString}) is empty. Please remove it")
             }
 
             for (innerTestClass in innerTestClasses) {
