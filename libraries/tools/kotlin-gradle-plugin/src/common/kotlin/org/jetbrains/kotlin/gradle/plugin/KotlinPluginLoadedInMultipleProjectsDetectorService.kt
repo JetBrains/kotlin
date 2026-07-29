@@ -61,7 +61,7 @@ internal abstract class KotlinPluginLoadedInMultipleProjectsDetectorService : Bu
             } catch (_: ClassCastException) {
                 val propertiesProvider = PropertiesProvider(project)
                 if (propertiesProvider.ignorePluginLoadedInMultipleProjects != true) {
-                    project.reportDiagnostic(PluginLoadedInMultipleProjectsError(loadedInProjects = emptyList()))
+                    project.reportDiagnostic(PluginLoadedInMultipleProjectsError())
                 }
             }
         }

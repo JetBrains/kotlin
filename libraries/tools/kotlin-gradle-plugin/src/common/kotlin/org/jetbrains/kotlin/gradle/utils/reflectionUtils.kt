@@ -5,7 +5,17 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
+const val MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING: String =
+    "The Kotlin Gradle plugin was loaded multiple times in different subprojects, which is not supported and may break the build. \n" +
+
+            "This might happen in subprojects that apply the Kotlin plugins with the Gradle 'plugins { ... }' DSL if they specify " +
+            "explicit versions, even if the versions are equal.\n" +
+
+            "Please add the Kotlin plugin to the common parent project or the root project, then remove the versions in the subprojects.\n" +
+
+            "If the parent project does not need the plugin, add 'apply false' to the plugin line.\n" +
+
+            "See: https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl"
 
 class IsolatedKotlinClasspathClassCastException : ClassCastException(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
 
