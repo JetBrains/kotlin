@@ -32,6 +32,7 @@ package org.jetbrains.kotlin.compilerRunner.btapi.js
 package org.jetbrains.kotlin.compilerRunner.btapi.jvm
 package org.jetbrains.kotlin.compilerRunner.btapi.metadata
 package org.jetbrains.kotlin.compilerRunner.btapi.wasm
+package org.jetbrains.kotlin.components
 package org.jetbrains.kotlin.config
 package org.jetbrains.kotlin.incremental
 package org.jetbrains.kotlin.incremental.components

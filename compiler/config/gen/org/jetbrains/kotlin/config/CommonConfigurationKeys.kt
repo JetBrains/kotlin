@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.config
  */
 
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.components.ClassLoadersCache
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -135,6 +136,10 @@ object CommonConfigurationKeys {
 
     @JvmField
     val TARGET_PLATFORM = CompilerConfigurationKey.create<TargetPlatform>("TARGET_PLATFORM")
+
+    // Cache for classloaders to be used by compiler plugins (e.g. Kapt)
+    @JvmField
+    val CLASSLOADERS_CACHE = CompilerConfigurationKey.create<ClassLoadersCache>("CLASSLOADERS_CACHE")
 
 }
 
@@ -274,4 +279,8 @@ var CompilerConfiguration.detailedPerf: Boolean
 var CompilerConfiguration.targetPlatform: TargetPlatform?
     get() = get(CommonConfigurationKeys.TARGET_PLATFORM)
     set(value) { put(CommonConfigurationKeys.TARGET_PLATFORM, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.classloadersCache: ClassLoadersCache?
+    get() = get(CommonConfigurationKeys.CLASSLOADERS_CACHE)
+    set(value) { putIfNotNull(CommonConfigurationKeys.CLASSLOADERS_CACHE, value) }
 
