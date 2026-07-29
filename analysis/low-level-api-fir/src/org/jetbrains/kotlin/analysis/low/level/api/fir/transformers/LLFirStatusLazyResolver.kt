@@ -5,21 +5,26 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.session
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnalysisReadiness
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeclarationStatusIsResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.unwrapCopy
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer
@@ -263,7 +268,7 @@ private class LLFirStatusTargetResolver(
         is FirNamedFunction -> {
             performResolveWithOverriddenCallables(
                 target,
-                { transformer.statusResolver.getOverriddenFunctions(it, transformer.containingClass) },
+                { transformer.statusResolver.getOverriddenFunctions(it.declarationForOverrideLookup(), transformer.containingClass) },
                 { element, overridden -> transformer.transformNamedFunction(element, overridden) },
             )
 
@@ -273,7 +278,7 @@ private class LLFirStatusTargetResolver(
         is FirProperty -> {
             performResolveWithOverriddenCallables(
                 target,
-                { transformer.statusResolver.getOverriddenProperties(it, transformer.containingClass) },
+                { transformer.statusResolver.getOverriddenProperties(it.declarationForOverrideLookup(), transformer.containingClass) },
                 { element, overridden -> transformer.transformProperty(element, overridden) },
             )
 
@@ -281,6 +286,28 @@ private class LLFirStatusTargetResolver(
         }
 
         else -> false
+    }
+
+    /**
+     * The declaration for which overridden callables have to be looked up to compute the status of [this] callable.
+     *
+     * Usually it is [this] callable itself. Overridden callables are searched in the scope of the transformer's `containingClass`, which
+     * comes from the designation path of the resolve target. The path of a declaration from a dangling file in the
+     * [KaDanglingFileResolutionMode.IGNORE_SELF] mode, though, consists of declarations of the **original** file, so that the copied
+     * declaration is resolved in the context of the original one (see `patchDesignationPathIfNeeded`). As a search in a scope is keyed by
+     * symbol identity, and the original class knows nothing about the copied callable, nothing would be found (see KT-77071).
+     *
+     * So the search has to be performed for the counterpart of [this] callable in the original class, which is consistent with the rest
+     * of the resolution of such a copied declaration.
+     */
+    private inline fun <reified T : FirCallableDeclaration> T.declarationForOverrideLookup(): T {
+        val module = llFirModuleData.ktModule
+        if (module !is KaDanglingFileModule || module.resolutionMode != KaDanglingFileResolutionMode.IGNORE_SELF) {
+            return this
+        }
+
+        val originalPsi = psi?.unwrapCopy() ?: return this
+        return transformer.containingClass?.declarations?.firstOrNull { it.psi == originalPsi } as? T ?: this
     }
 
     private inline fun <T : FirCallableDeclaration> performResolveWithOverriddenCallables(
