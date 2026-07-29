@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.generators.tests.standalone
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
 
