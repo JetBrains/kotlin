@@ -54,35 +54,15 @@ class BtaV2StrategyAndPlatformAgnosticCompilationTestArgumentProvider : Argument
 
     companion object {
         fun namedStrategyArguments(): List<Named<ProjectCreator>> {
-            return BtaV2StrategyAgnosticCompilationTestArgumentProvider.namedStrategyArguments().flatMap { executionStrategyConfiguration ->
-                listOfNotNull(
-                    named(
-                        "${executionStrategyConfiguration.name}[JVM]"
-                    ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
-                        baseTest.jvmProject(executionStrategyConfiguration.payload, testAction)
-                    },
-                    if (executionStrategyConfiguration.payload.first.supportsJs()) {
-                        named(
-                            "${executionStrategyConfiguration.name}[JS]"
-                        ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
-                            baseTest.jsProject(executionStrategyConfiguration.payload, testAction)
+            return BtaV2StrategyAgnosticCompilationTestArgumentProvider.namedStrategyArguments().flatMap { strategy ->
+                val toolchain = strategy.payload.first
+                val policy = strategy.payload.second
+                BtaV2PlatformAgnosticCompilationTestArgumentProvider.projectWithPolicyCreators(toolchain, strategy.name)
+                    .map { platform ->
+                        named(platform.name) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
+                            platform.payload(baseTest, policy, testAction)
                         }
-                    } else null,
-                    if (executionStrategyConfiguration.payload.first.supportsWasm()) {
-                        named(
-                            "${executionStrategyConfiguration.name}[Wasm]"
-                        ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
-                            baseTest.wasmProject(executionStrategyConfiguration.payload, testAction)
-                        }
-                    } else null,
-                    if (executionStrategyConfiguration.payload.first.supportsMetadata()) {
-                        named(
-                            "${executionStrategyConfiguration.name}[Metadata]"
-                        ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
-                            baseTest.metadataProject(executionStrategyConfiguration.payload, testAction)
-                        }
-                    } else null,
-                )
+                    }
             }
         }
     }
@@ -111,6 +91,38 @@ class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider
                     } else null
                 )
             }
+        }
+    }
+}
+
+/**
+ * Fans out over every platform BTAv2 supports without fixing an
+ * execution policy. Each argument is a [ProjectWithPolicyCreator] plus the [KotlinToolchains]; the test chooses the policy
+ * itself (e.g. in-process) via the toolchain and passes it to the opener.
+ */
+class BtaV2PlatformAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        return projectWithPolicyCreators(toolchain, "[v2][${toolchain.getCompilerVersion()}]")
+            .map { Arguments.of(it, toolchain) }.stream()
+    }
+
+    companion object {
+        fun projectWithPolicyCreators(toolchain: KotlinToolchains, labelPrefix: String): List<Named<ProjectWithPolicyCreator>> {
+            return listOfNotNull(
+                named("$labelPrefix[JVM]") { baseTest: BaseCompilationTest, policy: ExecutionPolicy, action: ProjectAction ->
+                    baseTest.jvmProject(toolchain, policy, action)
+                },
+                if (toolchain.supportsJs()) named("$labelPrefix[JS]") { baseTest: BaseCompilationTest, policy: ExecutionPolicy, action: ProjectAction ->
+                    baseTest.jsProject(toolchain, policy, action)
+                } else null,
+                if (toolchain.supportsWasm()) named("$labelPrefix[Wasm]") { baseTest: BaseCompilationTest, policy: ExecutionPolicy, action: ProjectAction ->
+                    baseTest.wasmProject(toolchain, policy, action)
+                } else null,
+                if (toolchain.supportsMetadata()) named("$labelPrefix[Metadata]") { baseTest: BaseCompilationTest, policy: ExecutionPolicy, action: ProjectAction ->
+                    baseTest.metadataProject(toolchain, policy, action)
+                } else null,
+            )
         }
     }
 }
@@ -246,6 +258,7 @@ class BtaVersionsCompilationTestArgumentProvider : ArgumentsProvider {
 }
 
 typealias ProjectCreator = BaseCompilationTest.(ProjectAction) -> Unit
+typealias ProjectWithPolicyCreator = BaseCompilationTest.(ExecutionPolicy, ProjectAction) -> Unit
 typealias ProjectAction = AbstractProject<out BaseCompilationOperation, out BaseCompilationOperation.Builder, out BaseIncrementalCompilationConfiguration.Builder>.() -> Unit
 
 typealias ScenarioCreator = BaseCompilationTest.(ScenarioAction) -> Unit
