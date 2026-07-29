@@ -3273,4 +3273,30 @@ class IrValidatorTest {
             ),
         )
     }
+
+    @Test
+    fun `class without superTypes`() {
+        val file = createIrFile("test.kt")
+
+        val klass = IrFactoryImpl.buildClass {
+            name = Name.identifier("MyClass")
+        }
+
+        file.addChild(klass)
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: IrClass must have at least one supertype
+                    CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]
+                      inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                )
+            ),
+        )
+    }
 }

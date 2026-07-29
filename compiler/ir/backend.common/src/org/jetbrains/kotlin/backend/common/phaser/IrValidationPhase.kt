@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.validation.*
 import org.jetbrains.kotlin.ir.validation.checkers.IrNestedOffsetRangeChecker
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrClassSuperTypesChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrExpressionBodyInFunctionChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.InlineFunctionUseSiteChecker
@@ -47,6 +48,7 @@ class KlibIrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Co
                 IrExpressionBodyInFunctionChecker,
                 IrVisibilityChecker.Relaxed,
                 IrCrossFileFieldUsageChecker,
+                IrClassSuperTypesChecker,
             )
             .withVarargChecks()
             //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
