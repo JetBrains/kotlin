@@ -43,7 +43,6 @@ dependencies {
     testFixturesApi(project(":compiler:cli-jvm"))
     testFixturesApi(project(":compiler:cli-js"))
     testFixturesApi(project(":compiler:cli-metadata"))
-    testFixturesApi(project(":analysis:light-classes-base"))
     testFixturesApi(project(":compiler:serialization"))
     testFixturesApi(project(":kotlin-preloader"))
     testFixturesApi(project(":daemon-common"))
