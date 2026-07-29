@@ -15,7 +15,7 @@ FUNCTION:
   isExternal: false
   isInfix: false
   isInline: false
-  isOperator: false
+  isOperator: true
   isOverride: true
   isStatic: false
   isSuspend: false
