@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
+import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
@@ -124,7 +125,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             try {
                 setIdeaIoUseFallback()
 
-                val code = doExecute(arguments, configuration, rootDisposable)
+                val code = doExecute(arguments, configuration, rootDisposable, services)
 
                 performanceManager.notifyCompilationFinished()
                 if (arguments.reportPerf) {
@@ -171,6 +172,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         @NotNull arguments: K2NativeCompilerArguments,
         @NotNull configuration: CompilerConfiguration,
         @NotNull rootDisposable: Disposable,
+        services: Services,
     ): ExitCode {
 
         if (arguments.version) {
@@ -186,6 +188,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 arguments.pluginOrderConstraints,
                 configuration,
                 rootDisposable,
+                services[PluginsLoader::class.java],
             )
             if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
