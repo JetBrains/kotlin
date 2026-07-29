@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.LeanJavaClassFinder
-import org.jetbrains.kotlin.java.direct.util.DefaultJavaSourceFileReader
-import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
@@ -84,14 +82,10 @@ private class SameFileOnlyClassFinder(private val context: () -> JavaResolutionC
 /**
  * Test-only [JavaClassFinderOverAstImpl] factory that supplies a dummy source-kind [FirSession].
  */
-internal fun JavaClassFinderOverAstImpl(
-    sourceRoots: List<File>,
-    sourceFileReader: JavaSourceFileReader = DefaultJavaSourceFileReader,
-): JavaClassFinderOverAstImpl =
+internal fun JavaClassFinderOverAstImpl(sourceRoots: List<File>): JavaClassFinderOverAstImpl =
     JavaClassFinderOverAstImpl(
         createDummyFirSessionForTests(),
         JavaSourceRootEntry.fromRootsWithoutPrefix(sourceRoots),
-        sourceFileReader,
     )
 
 /**

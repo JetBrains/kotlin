@@ -36,6 +36,24 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-29 — Delete the `JavaSourceFileReader` abstraction; read via `File.readText`
+- **Change**: after the `VirtualFile`→`File` switch the interface had a single implementation
+  (`DefaultJavaSourceFileReader`), `walkSourceRoots` had no callers (it served the deleted eager
+  `buildIndex`), and no production or test call site ever substituted a reader — the parameter was
+  threaded through four collaborators for nothing. Replaced by one internal
+  `readJavaSourceFileText(File): String?`; the reader parameter is gone from `JavaClassCache`,
+  `JavaPackageIndexer`, `JavaPackageInfoIndexer`, `JavaSupertypeGraph`,
+  `JavaClassFinderOverAstImpl` and `extractFileInfoLightweight`. Content is now read with
+  `File.readText()` instead of `String(readBytes(), UTF_8)`: measured over 1503 repo `.java` files
+  (37 MB, interleaved rounds, 7 samples) the medians are 46 ms vs 48 ms — ~2 ms of pure read time
+  per full corpus, i.e. negligible against lexing/parsing.
+- **Files**: deleted `util/JavaSourceFileReader.kt` (−57), added `util/javaSourceFileText.kt` (+19);
+  `JavaClassCache.kt`, `JavaClassFinderOverAstImpl.kt`, `JavaPackageIndexer.kt`,
+  `JavaPackageInfoIndexer.kt`, `util/JavaSourceIndex.kt`, `util/JavaSupertypeGraph.kt`; tests
+  `JavaParsingTestBase.kt`, `JavaParsingLightweightScannerTest.kt`; `implDocs/ARCHITECTURE.md`.
+- **Tests**: `JavaParsing*` green; box+phased 2790 executed / 0 FAILED.
+- **Result**: green (behaviour-preserving simplification).
+
 ### 2026-07-28 — Replace `FirJavaEnumEntry` with `buildEnumEntry` + lazy `MutableList` annotations
 - **Change**: review follow-up on the 2026-07-21 KT-74097 fix — the hand-written `FirJavaEnumEntry`
   duplicated `FirEnumEntryImpl` (~180 LoC) just to host a lazy annotation slot. The tree generator

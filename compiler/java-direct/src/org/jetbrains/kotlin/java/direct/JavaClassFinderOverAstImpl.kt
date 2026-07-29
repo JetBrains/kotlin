@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.java.direct
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.java.direct.model.JavaPackageOverAst
 import org.jetbrains.kotlin.java.direct.resolution.*
-import org.jetbrains.kotlin.java.direct.util.DefaultJavaSourceFileReader
-import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
 import org.jetbrains.kotlin.java.direct.util.JavaSupertypeGraph
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
@@ -34,7 +32,6 @@ import org.jetbrains.kotlin.name.Name
 class JavaClassFinderOverAstImpl internal constructor(
     private val session: FirSession,
     sourceRootEntries: List<JavaSourceRootEntry>,
-    sourceFileReader: JavaSourceFileReader = DefaultJavaSourceFileReader,
 ) : JavaClassFinder, LeanJavaClassFinder {
 
     init {
@@ -56,21 +53,18 @@ class JavaClassFinderOverAstImpl internal constructor(
     }
 
     private val packageInfoIndexer = JavaPackageInfoIndexer(
-        sourceFileReader = sourceFileReader,
         resolutionContextFactory = { tree -> JavaResolutionContext.create(tree, classFinder = this, session = session) },
     )
 
-    private val packageIndexer = JavaPackageIndexer(sourceRootEntries, sourceFileReader, packageInfoIndexer)
+    private val packageIndexer = JavaPackageIndexer(sourceRootEntries, packageInfoIndexer)
 
     private val classCache = JavaClassCache(
-        sourceFileReader = sourceFileReader,
         resolutionContextFactory = { tree -> JavaResolutionContext.create(tree, classFinder = this, session = session) },
     )
 
     private val supertypeGraph = JavaSupertypeGraph(
         packageIndexer = packageIndexer,
         classCache = classCache,
-        sourceFileReader = sourceFileReader,
     )
 
     override fun isClassInIndex(classId: ClassId): Boolean {

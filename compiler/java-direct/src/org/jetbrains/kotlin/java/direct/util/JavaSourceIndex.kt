@@ -34,8 +34,8 @@ internal data class LightweightFileInfo(
  * Package and top-level type names via Java lexer (no full parse).
  * Tolerates a missing package `;` for PSI error-tolerant parity.
  */
-internal fun extractFileInfoLightweight(file: File, reader: JavaSourceFileReader): LightweightFileInfo? {
-    val fileContent = reader.readFileContent(file) ?: return null
+internal fun extractFileInfoLightweight(file: File): LightweightFileInfo? {
+    val fileContent = readJavaSourceFileText(file) ?: return null
     val lexer = JavaSyntaxDefinition.createLexer(LanguageLevel.HIGHEST).apply { start(fileContent) }
 
     var braceBalance = 0

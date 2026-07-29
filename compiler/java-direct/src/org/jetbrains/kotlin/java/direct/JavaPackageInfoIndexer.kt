@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.java.direct.model.JavaAnnotationOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
-import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
+import org.jetbrains.kotlin.java.direct.util.readJavaSourceFileText
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
@@ -25,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap
  * are merged.
  */
 internal class JavaPackageInfoIndexer(
-    private val sourceFileReader: JavaSourceFileReader,
     private val resolutionContextFactory: (JavaLightTree) -> JavaResolutionContext,
 ) {
     private val packageAnnotationNodes: ConcurrentHashMap<FqName, List<JavaAnnotation>> = ConcurrentHashMap()
@@ -38,7 +37,7 @@ internal class JavaPackageInfoIndexer(
      *   When null (the file type source roots in init), any package is accepted.
      */
     fun indexPackageInfo(file: File, expectedPackage: FqName?) {
-        val source = sourceFileReader.readFileContent(file) ?: return
+        val source = readJavaSourceFileText(file) ?: return
         val tree = parseJavaToLightTree(source, 0)
         val root = tree.getRoot()
 

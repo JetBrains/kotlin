@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
 import org.jetbrains.kotlin.java.direct.util.extractFileInfoLightweight
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -46,7 +45,6 @@ internal data class JavaSourceRootEntry(val root: File, val packagePrefix: FqNam
  */
 internal class JavaPackageIndexer(
     sourceRoots: List<JavaSourceRootEntry>,
-    private val sourceFileReader: JavaSourceFileReader,
     private val packageInfoIndexer: JavaPackageInfoIndexer,
 ) {
     internal data class FileEntry(
@@ -338,7 +336,7 @@ internal class JavaPackageIndexer(
      * match are skipped (matching javac's directory-mirrors-package rule).
      */
     private fun tryBuildFileEntry(file: File, expectedPackage: FqName? = null): FileEntry? {
-        val info = extractFileInfoLightweight(file, sourceFileReader) ?: return null
+        val info = extractFileInfoLightweight(file) ?: return null
         val packageFqName = if (info.packageName != null) FqName(info.packageName) else FqName.ROOT
 
         if (expectedPackage != null && packageFqName != expectedPackage) return null

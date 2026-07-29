@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import org.jetbrains.kotlin.java.direct.util.DefaultJavaSourceFileReader
 import org.jetbrains.kotlin.java.direct.util.extractFileInfoLightweight
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.name.ClassId
@@ -31,7 +30,7 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val info = extractFileInfoLightweight(file.toFile(), DefaultJavaSourceFileReader)
+        val info = extractFileInfoLightweight(file.toFile())
         assert(info != null) { "Expected non-null LightweightFileInfo" }
         assert(info!!.packageName == "com.example") { "Expected package 'com.example', got '${info.packageName}'" }
         assert(info.topLevelClassNames == setOf("Foo")) { "Expected {Foo}, got ${info.topLevelClassNames}" }
@@ -50,7 +49,7 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val info = extractFileInfoLightweight(file.toFile(), DefaultJavaSourceFileReader)
+        val info = extractFileInfoLightweight(file.toFile())
         assert(info != null) { "Expected non-null LightweightFileInfo" }
         assert(info!!.packageName == "com.example") { "Expected package 'com.example', got '${info.packageName}'" }
         assert(info.topLevelClassNames == setOf("Foo")) { "Expected {Foo}, got ${info.topLevelClassNames}" }
@@ -65,7 +64,7 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val info = extractFileInfoLightweight(file.toFile(), DefaultJavaSourceFileReader)
+        val info = extractFileInfoLightweight(file.toFile())
         assert(info != null) { "Expected non-null LightweightFileInfo" }
         assert(info!!.packageName == null) { "Expected null package (default), got '${info.packageName}'" }
         assert(info.topLevelClassNames == setOf("Bar")) { "Expected {Bar}, got ${info.topLevelClassNames}" }
@@ -85,7 +84,7 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val info = extractFileInfoLightweight(file.toFile(), DefaultJavaSourceFileReader)
+        val info = extractFileInfoLightweight(file.toFile())
         assert(info != null) { "Expected non-null LightweightFileInfo" }
         assert(info!!.packageName == "test") { "Expected package 'test', got '${info.packageName}'" }
         assert(info.topLevelClassNames == setOf("Multi", "Helper", "Service", "Color")) {
@@ -112,7 +111,7 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val info = extractFileInfoLightweight(file.toFile(), DefaultJavaSourceFileReader)
+        val info = extractFileInfoLightweight(file.toFile())
         assert(info != null) { "Expected non-null LightweightFileInfo" }
         assert(info!!.topLevelClassNames == setOf("Comments")) {
             "Expected only {Comments}, got ${info.topLevelClassNames}"
@@ -134,7 +133,7 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val info = extractFileInfoLightweight(file.toFile(), DefaultJavaSourceFileReader)
+        val info = extractFileInfoLightweight(file.toFile())
         assert(info != null) { "Expected non-null LightweightFileInfo" }
         assert(info!!.topLevelClassNames == setOf("Outer")) {
             "Expected only {Outer}, got ${info.topLevelClassNames}"
@@ -156,7 +155,7 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val info = extractFileInfoLightweight(file.toFile(), DefaultJavaSourceFileReader)
+        val info = extractFileInfoLightweight(file.toFile())
         assert(info != null) { "Expected non-null LightweightFileInfo" }
         assert(info!!.topLevelClassNames == setOf("BlockComment")) {
             "Expected only {BlockComment}, got ${info.topLevelClassNames}"
@@ -174,7 +173,7 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val info = extractFileInfoLightweight(file.toFile(), DefaultJavaSourceFileReader)
+        val info = extractFileInfoLightweight(file.toFile())
         assert(info != null) { "Expected non-null LightweightFileInfo" }
         assert(info!!.packageName == "geometry") { "Expected package 'geometry', got '${info.packageName}'" }
         assert(info.topLevelClassNames == setOf("Point")) { "Expected {Point}, got ${info.topLevelClassNames}" }
@@ -190,7 +189,7 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val info = extractFileInfoLightweight(file.toFile(), DefaultJavaSourceFileReader)
+        val info = extractFileInfoLightweight(file.toFile())
         assert(info == null) { "Expected null for file with no class declarations" }
     }
 
@@ -207,7 +206,7 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val info = extractFileInfoLightweight(file.toFile(), DefaultJavaSourceFileReader)
+        val info = extractFileInfoLightweight(file.toFile())
         assert(info != null) { "Expected non-null LightweightFileInfo" }
         assert(info!!.packageName == "annotations") { "Expected 'annotations', got '${info.packageName}'" }
         // @interface declares a type named MyAnnotation — the scanner extracts "MyAnnotation" from "interface MyAnnotation"
