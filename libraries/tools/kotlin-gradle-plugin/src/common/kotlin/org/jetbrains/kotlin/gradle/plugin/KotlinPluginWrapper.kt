@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_COMPAT
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
-import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.internal.attributes.setupAttributesMatchingStrategy
 import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpCompatibilityCheck.runAgpCompatibilityCheckIfAgpIsApplied
@@ -112,10 +111,9 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             addGradlePluginMetadataAttributes(project)
         }
 
-        val kotlinGradleBuildServices = KotlinGradleBuildServices.registerIfAbsent(project).get()
-        if (!project.isProjectIsolationEnabled) {
-            kotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, pluginVersion)
-        }
+        KotlinGradleBuildServices.registerIfAbsent(project)
+
+        KotlinPluginLoadedInMultipleProjectsDetectorService.detect(project)
 
         KotlinNativeBundleBuildService.registerIfAbsent(project)
 

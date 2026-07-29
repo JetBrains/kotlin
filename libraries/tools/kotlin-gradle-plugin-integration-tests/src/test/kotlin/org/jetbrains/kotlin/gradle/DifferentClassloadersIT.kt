@@ -37,8 +37,6 @@ class DifferentClassloadersIT : KGPBaseTest() {
         project(
             "differentClassloaders",
             gradleVersion,
-            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             setupDifferentClassloadersProject()
 
@@ -62,10 +60,7 @@ class DifferentClassloadersIT : KGPBaseTest() {
 
             fun checkThatErrorIsThrown() {
                 build("-PmppProjectDependency=true") {
-                    assertHasDiagnostic(
-                        PluginLoadedInMultipleProjectsError,
-                        withSubstring = "':jvm-app', ':mpp-lib'"
-                    )
+                    assertHasDiagnostic(PluginLoadedInMultipleProjectsError)
                 }
             }
 
@@ -81,23 +76,6 @@ class DifferentClassloadersIT : KGPBaseTest() {
                     DeprecatedWarningGradleProperties,
                     withSubstring = "kotlin.pluginLoadedInMultipleProjects.ignore",
                 )
-            }
-        }
-    }
-
-    @DisplayName("Different classloader detection is disabled when project isolation is enabled")
-    @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_5) // First version that supports project isolation.
-    fun detectionDisabledWithProjectIsolation(gradleVersion: GradleVersion) {
-        project(
-            "differentClassloaders",
-            gradleVersion,
-        ) {
-            setupDifferentClassloadersProject()
-
-            // after enabling isolated projects support by default we should not fail the build
-            buildAndFail("publish", "-PmppProjectDependency=true") {
-                assertNoDiagnostic(PluginLoadedInMultipleProjectsError)
             }
         }
     }
