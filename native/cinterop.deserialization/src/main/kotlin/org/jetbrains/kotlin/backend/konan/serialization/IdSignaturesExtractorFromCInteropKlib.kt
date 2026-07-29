@@ -57,7 +57,7 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
 
     override fun extractAllPublicSignatures(): ExtractedSignatures {
         val [allReferencedClasses: Set<ClassId>, metadataModule] = readMetadataModule(
-            loadOnlyTopLevelReferencedSignatures = false
+            loadOnlyTopLevelReferencedClassIds = false
         )
 
         // All declared classes, including nested classes/companion objects, etc.
@@ -103,7 +103,7 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
 
     override fun extractOnlyTopLevelPublicSignatures(): ExtractedSignatures {
         val [onlyTopLevelReferencedClasses, metadataModule] = readMetadataModule(
-            loadOnlyTopLevelReferencedSignatures = true
+            loadOnlyTopLevelReferencedClassIds = true
         )
 
         val transformer = createTransformer { null }
@@ -134,8 +134,8 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
         )
     }
 
-    private fun readMetadataModule(loadOnlyTopLevelReferencedSignatures: Boolean): Pair<Set<ClassId>, KlibModuleMetadata> {
-        val strategy = KlibModuleFragmentReadStrategyImpl(loadOnlyTopLevelReferencedSignatures)
+    private fun readMetadataModule(loadOnlyTopLevelReferencedClassIds: Boolean): Pair<Set<ClassId>, KlibModuleMetadata> {
+        val strategy = KlibModuleFragmentReadStrategyImpl(loadOnlyTopLevelReferencedClassIds)
 
         val metadataModule = KlibModuleMetadata.readLenient(
             library = MetadataLibraryProviderImpl(library = library),
@@ -186,7 +186,7 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
     }
 
     private class KlibModuleFragmentReadStrategyImpl(
-        private val loadOnlyTopLevelReferencedSignatures: Boolean
+        private val loadOnlyTopLevelReferencedClassIds: Boolean
     ) : KlibModuleFragmentReadStrategy {
 
         val referencedClassIds: Set<ClassId>
@@ -209,7 +209,7 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
                 is KmAnnotationArgument.KClassValue -> processReferencedClassName(argument.className)
                 is KmAnnotationArgument.ArrayKClassValue -> processReferencedClassName(argument.className)
                 is KmAnnotationArgument.EnumValue -> processReferencedClassName(
-                    if (loadOnlyTopLevelReferencedSignatures)
+                    if (loadOnlyTopLevelReferencedClassIds)
                         argument.enumClassName
                     else
                         argument.enumClassName + "." + argument.enumEntryName
@@ -223,7 +223,7 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
             // Extract class ID from a String.
             val classId = ClassId.fromString(className)
 
-            if (!loadOnlyTopLevelReferencedSignatures || !classId.isNestedClass) {
+            if (!loadOnlyTopLevelReferencedClassIds || !classId.isNestedClass) {
                 referencedClassIds += classId
             }
         }
