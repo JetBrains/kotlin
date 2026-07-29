@@ -116,8 +116,11 @@ internal fun newSourceModules(init: KlibTestSourceModulesBuilder.() -> Unit): Kl
                     appendLine("fun ${module.name}(indent: Int) {")
                     appendLine("    repeat(indent) { print(\"  \") }")
                     appendLine("    println(\"${module.name}\")")
-                    module.dependencyNames.forEach { dependencyName ->
-                        appendLine("    $dependencyName.$dependencyName(indent + 1)")
+                    module.dependencies.forEach { dependency ->
+                        if (dependency.kind == KlibTestSourceModule.Kind.CINTEROP) {
+                            appendLine("    @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)")
+                        }
+                        appendLine("    ${dependency.name}.${dependency.name}(indent + 1)")
                     }
                     appendLine("}")
 
