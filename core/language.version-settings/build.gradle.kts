@@ -35,6 +35,7 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
+sourcesJar()
 
 projectTests {
     testTask(
