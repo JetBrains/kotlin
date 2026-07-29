@@ -1243,6 +1243,7 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JdkReleas
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JsEcmaVersion : java/lang/Enum {
 	public static final field ES2015 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JsEcmaVersion;
+	public static final field ES2020 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JsEcmaVersion;
 	public static final field ES5 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JsEcmaVersion;
 	public final fun getStringValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JsEcmaVersion;

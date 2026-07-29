@@ -231,7 +231,7 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
 
     @Argument(
         value = "-target",
-        valueDescription = "{ es5, es2015 }",
+        valueDescription = "{ es5, es2015, es2020 }",
         description = "Generate JS files for the specified ECMA version.",
     )
     var target: String? = null

@@ -16,15 +16,14 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.ES_2015
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.json
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.js.config.supportsEsModules
 import org.jetbrains.kotlin.platform.js.SwcConfig
 
 /**
@@ -47,7 +46,11 @@ internal abstract class GenerateSwcConfig : DefaultTask() {
     @get:Internal
     internal val moduleSystemToUse: Provider<ModuleKind> =
         moduleKind
-            .orElse(esTarget.map { if (it == ES_2015) JsModuleKind.MODULE_ES else JsModuleKind.MODULE_UMD })
+            .orElse(
+                esTarget
+                    .map(EcmaVersion::fromName)
+                    .map { if (it.supportsEsModules) JsModuleKind.MODULE_ES else JsModuleKind.MODULE_UMD }
+            )
             .map { ModuleKind.fromType(it.kind) }
 
     @get:OutputFile

@@ -19,15 +19,6 @@ import java.io.File
 import java.io.IOException
 import kotlin.math.min
 
-val K2JSCompilerArguments.targetVersion: EcmaVersion?
-    get() {
-        val targetString = target
-        return when {
-            targetString != null -> EcmaVersion.entries.firstOrNull { it.name == targetString }
-            else -> EcmaVersion.defaultVersion()
-        }
-    }
-
 internal val sourceMapContentEmbeddingMap: Map<String, SourceMapSourceEmbedding> = mapOf(
     K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS to SourceMapSourceEmbedding.ALWAYS,
     K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER to SourceMapSourceEmbedding.NEVER,
