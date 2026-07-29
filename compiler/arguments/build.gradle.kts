@@ -10,7 +10,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
     id("project-tests-convention")
     `jvm-test-suite`
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 description = "Contains a unified representation of Kotlin compiler arguments for current and old Kotlin releases."

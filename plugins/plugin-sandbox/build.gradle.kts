@@ -11,7 +11,7 @@ plugins {
     id("d8-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.

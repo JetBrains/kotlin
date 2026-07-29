@@ -9,7 +9,7 @@ plugins {
     id("binaryen-configuration")
     id("nodejs-configuration")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 dependencies {

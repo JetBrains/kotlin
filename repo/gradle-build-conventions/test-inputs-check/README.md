@@ -1,9 +1,8 @@
-# test-inputs-check-v2
+# test-inputs-check
 
 This convention plugin verifies that your tests don't read files which are not declared as Gradle inputs.
 
-It's a successor of `test-inputs-check` (v1). Either `test-inputs-check` or `test-inputs-check-v2` must be applied to make the tests
-cacheable.
+It must be applied to make the tests cacheable.
 
 Under the hood, it applies `java-flight-recorder` convention to configure Java Flight Recorder for test execution.
 See [java-flight-recorder/README.md](../java-flight-recorder/README.md) for available configuration options.
@@ -12,7 +11,7 @@ See [java-flight-recorder/README.md](../java-flight-recorder/README.md) for avai
 
 ```kotlin
 plugins {
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 // all config options with their default values
@@ -142,7 +141,7 @@ assertThat(syntheticClass.sourceFile).doesNotExist()
 
 In that case, the only way to fix the false positive would be to either:
 
-- explicitly tell `test-inputs-check-v2` to allow it
+- explicitly tell `test-inputs-check` to allow it
     - that would require maintaining a hand-crafted whitelist that can grow huge (as it was the case for `test-inputs-check` v1)
 - modify the code
     - but the code is perfectly valid, it generates a synthetic class and asserts that its source file does not exist

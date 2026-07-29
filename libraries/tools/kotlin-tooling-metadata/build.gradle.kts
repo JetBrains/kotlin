@@ -6,7 +6,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     java
     kotlin("jvm")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 publish()

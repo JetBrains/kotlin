@@ -358,7 +358,7 @@ fun ProjectTestsExtension.nativeTestTask(
     group = "verification"
 
     if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
-        if (!project.plugins.hasPlugin("test-inputs-check-v2")) {
+        if (!project.plugins.hasPlugin("test-inputs-check")) {
             workingDir = project.rootDir
         }
 
