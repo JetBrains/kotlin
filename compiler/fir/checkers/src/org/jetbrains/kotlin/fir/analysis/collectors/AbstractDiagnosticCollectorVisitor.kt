@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -471,13 +470,13 @@ abstract class AbstractDiagnosticCollectorVisitor(
     inline fun <R> withAdditionalSuppresses(property: FirProperty, block: () -> R): R {
         val existingContext = context
         property.correspondingValueParameterFromPrimaryConstructor?.let {
-            it.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
             addSuppressedDiagnosticsToContext(it.fir)
         }
+
         FirDestructuringDeclarationChecker.getDestructuringVariableIfEntry(property)?.let {
-            it.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
             addSuppressedDiagnosticsToContext(it.fir)
         }
+
         return try {
             block()
         } finally {
