@@ -64,21 +64,27 @@ object GroupedTestsResultProtocol {
      * [sawStructuredBlock] is `true` when at least one output contained a [BEGIN] sentinel line, even if no
      * valid per-test lines were parsed.
      *
-     * [startedIds] holds every id that printed a [STARTED] line on any VM. An id in [startedIds] but absent from
-     * [outcomes] is a test that began running but never reported a terminal result — i.e. it crashed the VM while
-     * executing. Use [crashedInProgress] to tell such a test apart from one that never ran at all.
+     * [startedIds] holds every id that printed a [STARTED] line on any VM.
+     *
+     * [crashedIds] is tracked **per output**: an id lands here as soon as *one* output starts it without ever
+     * reporting a terminal result in that same output. Deriving it globally (started anywhere, no outcome
+     * anywhere) would mask the common cross-VM case — a test that passes on V8 and takes SpiderMonkey down still
+     * has a `PASSED` outcome from V8, so the crash would go unattributed and surface only as a batch-level VM
+     * exception. Use [crashedInProgress] rather than comparing [startedIds] against [outcomes] by hand.
      */
     data class ParsedBatchResult(
         val outcomes: Map<String, Outcome>,
         val sawStructuredBlock: Boolean,
-        val startedIds: Set<String>,
+        val crashedIds: Set<String>,
     ) {
         /**
-         * `true` if [id] started on some VM but produced no terminal [PASSED]/[FAILED] result — the signature of a
-         * test that took the VM down mid-execution. Distinguishes a crasher from a test that was never reached
-         * (stripped launcher, or a VM that died before this test), which has neither a start nor a result.
+         * `true` if [id] started on some VM and produced no terminal [PASSED]/[FAILED] result *on that same VM* —
+         * the signature of a test that took the VM down mid-execution. Holds even when another VM ran the test to
+         * completion, so a crash is never hidden by a pass elsewhere. Distinguishes a crasher from a test that was
+         * never reached (stripped launcher, or a VM that died before this test), which has neither a start nor a
+         * result anywhere.
          */
-        fun crashedInProgress(id: String): Boolean = id in startedIds && id !in outcomes
+        fun crashedInProgress(id: String): Boolean = id in crashedIds
 
         /**
          * The per-test pass/fail status as a shared [TestReport], keyed by the stable `ProxyLauncher_<hash>` id.
@@ -115,17 +121,26 @@ object GroupedTestsResultProtocol {
      * several VMs whose stdout was concatenated), a `FAILED` outcome wins over a `PASSED` one, so a failure on
      * any engine is never masked.
      */
-    fun parse(output: String): Map<String, Outcome> {
-        val result = LinkedHashMap<String, Outcome>()
-        parseInto(output, result, LinkedHashSet())
-        return result
+    fun parse(output: String): Map<String, Outcome> = parseSingleOutput(output).outcomes
+
+    /**
+     * What one captured text — the stdout of a single VM run, or the output a VM-failure exception embeds —
+     * reported on its own. Kept separate per output so that [crashedIds] can be computed against the starts and
+     * results of *the same* VM; see [ParsedBatchResult.crashedIds].
+     */
+    private class SingleOutputParse(
+        val outcomes: LinkedHashMap<String, Outcome>,
+        val startedIds: LinkedHashSet<String>,
+        val sawStructuredBlock: Boolean,
+    ) {
+        /** Ids this output started but never reported a terminal result for — i.e. it died while running them. */
+        val crashedIds: Set<String>
+            get() = startedIds.filterTo(LinkedHashSet()) { it !in outcomes }
     }
 
-    private fun parseInto(
-        output: String,
-        destination: LinkedHashMap<String, Outcome>,
-        startedDestination: LinkedHashSet<String>,
-    ): Boolean {
+    private fun parseSingleOutput(output: String): SingleOutputParse {
+        val destination = LinkedHashMap<String, Outcome>()
+        val startedDestination = LinkedHashSet<String>()
         val linePrefix = "$LINE_PREFIX$SEP"
         var insideBlock = false
         var sawStructuredBlock = false
@@ -159,36 +174,49 @@ object GroupedTestsResultProtocol {
                         message = unescape(parts[2]).ifEmpty { null },
                         details = unescape(parts[3]).ifEmpty { null },
                     )
-                    val existing = destination[id]
-                    // Keep a failure over a pass, so a per-test failure on any VM is reported.
-                    if (existing == null || (existing.passed && !passed)) {
-                        destination[id] = outcome
-                    }
+                    putFailureWins(destination, outcome)
                 }
                 // Any other status is a malformed line: ignore it.
             }
         }
-        return sawStructuredBlock
+        return SingleOutputParse(destination, startedDestination, sawStructuredBlock)
+    }
+
+    /** Records [outcome], keeping a failure over a pass so a per-test failure on any VM is never masked. */
+    private fun putFailureWins(destination: LinkedHashMap<String, Outcome>, outcome: Outcome) {
+        val existing = destination[outcome.id]
+        if (existing == null || (existing.passed && !outcome.passed)) {
+            destination[outcome.id] = outcome
+        }
     }
 
     /**
      * Parses and merges multiple VM outputs using the same failure-wins semantics as [parse]. Started-test ids
      * are unioned across outputs, so a start observed on any VM localizes a crash even if that VM's block was
      * partial.
+     *
+     * Crashed ids are computed **per output before merging** and only then unioned: a test that completes on one
+     * VM and dies on another is reported as a crasher, which a post-merge comparison of started ids against
+     * outcomes could not detect (see [ParsedBatchResult.crashedIds]).
      */
     fun parseMerged(outputs: Iterable<String>): ParsedBatchResult {
         var sawStructuredBlock = false
         val merged = LinkedHashMap<String, Outcome>()
-        val startedIds = LinkedHashSet<String>()
+        val crashedIds = LinkedHashSet<String>()
 
         for (output in outputs) {
-            sawStructuredBlock = parseInto(output, merged, startedIds) || sawStructuredBlock
+            val parsed = parseSingleOutput(output)
+            sawStructuredBlock = parsed.sawStructuredBlock || sawStructuredBlock
+            crashedIds += parsed.crashedIds
+            for (outcome in parsed.outcomes.values) {
+                putFailureWins(merged, outcome)
+            }
         }
 
         return ParsedBatchResult(
             outcomes = merged,
             sawStructuredBlock = sawStructuredBlock,
-            startedIds = startedIds,
+            crashedIds = crashedIds,
         )
     }
 

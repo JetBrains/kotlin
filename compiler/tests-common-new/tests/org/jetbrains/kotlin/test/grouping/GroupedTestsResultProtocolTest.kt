@@ -353,6 +353,65 @@ class GroupedTestsResultProtocolTest {
     }
 
     @Test
+    fun `given id completing on one VM and crashing another when parseMerged then it is still crashed in progress`() {
+        // The batch runs on several engines. Here the test passes on the first VM and takes the second one down
+        // mid-execution. Deriving "crashed" globally (started anywhere, no outcome anywhere) would miss it, because
+        // the first VM's PASSED fills the merged outcomes — the crash would then go unattributed.
+        val passingVm = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|crasher|${GroupedTestsResultProtocol.STARTED}||")
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|crasher|${GroupedTestsResultProtocol.PASSED}||")
+            appendLine(GroupedTestsResultProtocol.END)
+        }
+        val crashingVm = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|crasher|${GroupedTestsResultProtocol.STARTED}||")
+            // The VM died here: no terminal line for `crasher` and no END sentinel.
+        }
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(passingVm, crashingVm))
+
+        assertTrue(result.crashedInProgress("crasher"))
+        // The surviving VM's outcome is still reported, so the runner can show what that engine saw.
+        assertTrue(result.outcomes.getValue("crasher").passed)
+        // ...but it is not "missing": the crash must be reported through crashedInProgress, not the missing-id path.
+        assertTrue(TestRunChecks.findMissingResults(listOf("crasher"), result.toTestReport()).isEmpty())
+    }
+
+    @Test
+    fun `given id completing on every VM when parseMerged then it is not crashed in progress`() {
+        val vmOutput = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|id|${GroupedTestsResultProtocol.STARTED}||")
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|id|${GroupedTestsResultProtocol.PASSED}||")
+            appendLine(GroupedTestsResultProtocol.END)
+        }
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(vmOutput, vmOutput, vmOutput))
+
+        assertFalse(result.crashedInProgress("id"))
+    }
+
+    @Test
+    fun `given failure on one VM and crash on another when parseMerged then both signals are kept`() {
+        val failingVm = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|id|${GroupedTestsResultProtocol.STARTED}||")
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|id|${GroupedTestsResultProtocol.FAILED}|msg|details")
+            appendLine(GroupedTestsResultProtocol.END)
+        }
+        val crashingVm = buildString {
+            appendLine(GroupedTestsResultProtocol.BEGIN)
+            appendLine("${GroupedTestsResultProtocol.LINE_PREFIX}|id|${GroupedTestsResultProtocol.STARTED}||")
+        }
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(failingVm, crashingVm))
+
+        assertFalse(result.outcomes.getValue("id").passed)
+        assertTrue(result.crashedInProgress("id"))
+    }
+
+    @Test
     fun `given started ids across multiple outputs when parseMerged then they are unioned`() {
         val vmA = buildString {
             appendLine(GroupedTestsResultProtocol.BEGIN)

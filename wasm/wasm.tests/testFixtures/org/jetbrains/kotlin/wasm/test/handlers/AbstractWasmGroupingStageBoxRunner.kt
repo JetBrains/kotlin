@@ -141,6 +141,10 @@ abstract class AbstractWasmGroupingStageBoxRunner(
      * [GroupedTestsResultProtocol.ParsedBatchResult.crashedInProgress]) from one that never ran at all (neither a
      * start nor a result, e.g. a stripped launcher) — which also prevents a silently-skipped test from
      * masquerading as passing.
+     *
+     * A test that crashed a VM is failed even when another VM ran it to completion: the batch executes on several
+     * engines, and `crashedInProgress` is tracked per VM output, so a pass on one engine cannot hide a hard trap
+     * on another.
      */
     private fun attributeStructuredResults(
         parsedBatchResult: GroupedTestsResultProtocol.ParsedBatchResult,
@@ -211,6 +215,23 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                 id in testReport.failedTests && outcome != null -> {
                     input.catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this) }) {
                         throw AssertionError(listOfNotNull(outcome.message, outcome.details).joinToString("\n"))
+                    }
+                    anyFailureAttributed = true
+                }
+                // The test ran to completion on at least one VM, but took another one down while executing. Without
+                // this branch the surviving VM's result would report it as passing, and the crash would surface
+                // only as the unattributed batch-level VM exception below.
+                parsedBatchResult.crashedInProgress(id) -> {
+                    input.catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this) }) {
+                        throw AssertionError(
+                            """
+                            Test '$id' reported a result on at least one VM, but on another VM it printed a
+                            '${GroupedTestsResultProtocol.STARTED}' line with no terminal
+                            '${GroupedTestsResultProtocol.PASSED}'/'${GroupedTestsResultProtocol.FAILED}' result —
+                            this test most likely crashed that VM (a hard trap, OOM, or process exit) while executing.
+                            Collected outputs:
+                            """.trimIndent() + "\n" + texts.joinToString("\n")
+                        )
                     }
                     anyFailureAttributed = true
                 }
