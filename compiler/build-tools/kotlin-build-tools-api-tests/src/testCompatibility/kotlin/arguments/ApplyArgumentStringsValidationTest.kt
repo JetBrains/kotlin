@@ -20,7 +20,7 @@ class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     fun `applyCompilerArguments with all valid values produces no validation errors`(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val [kotlinToolchains, _] = strategyConfig
-        // Old BTA versions throw from applyArgumentStrings; new versions store the error and report it during executeOperation
+        // Old BTA versions throw from applyCommandLineArguments; new versions store the error and report it during executeOperation
         val kotlinToolingVersion = KotlinToolingVersion(kotlinToolchains.getCompilerVersion())
         assumeTrue { kotlinToolingVersion >= KotlinToolingVersion(2, 4, 20, "snapshot") }
 
@@ -28,7 +28,7 @@ class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
             val module = module("basic-multimodule-project/module-1")
             module.compile(
                 compilationConfigAction = {
-                    it.compilerArguments.applyArgumentStrings(listOf("-jvm-target", "21", "-jvm-default", "enable"))
+                    it.compilerArguments.applyCommandLineArguments(listOf("-jvm-target", "21", "-jvm-default", "enable"))
                 },
                 assertions = { assertOutputs("FooKt.class", "Bar.class", "BazKt.class") })
         }
@@ -38,7 +38,7 @@ class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     fun `applyCompilerArguments with single invalid enum collects one error`(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val [kotlinToolchains, _] = strategyConfig
-        // Old BTA versions throw from applyArgumentStrings; new versions store the error and report it during executeOperation
+        // Old BTA versions throw from applyCommandLineArguments; new versions store the error and report it during executeOperation
         val kotlinToolingVersion = KotlinToolingVersion(kotlinToolchains.getCompilerVersion())
         assumeTrue { kotlinToolingVersion >= KotlinToolingVersion(2, 4, 20, "snapshot") }
 
@@ -46,7 +46,7 @@ class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
             val module = module("basic-multimodule-project/module-1")
             module.compile(
                 compilationConfigAction = {
-                    it.compilerArguments.applyArgumentStrings(listOf("-jvm-target", "21", "-jvm-default", "bogus"))
+                    it.compilerArguments.applyCommandLineArguments(listOf("-jvm-target", "21", "-jvm-default", "bogus"))
                 },
                 assertions = {
                     expectFail()
@@ -59,7 +59,7 @@ class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     fun `applyCompilerArguments collects errors for every invalid enum, not just the first`(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val [kotlinToolchains, _] = strategyConfig
-        // Old BTA versions throw from applyArgumentStrings; new versions store the error and report it during executeOperation
+        // Old BTA versions throw from applyCommandLineArguments; new versions store the error and report it during executeOperation
         val kotlinToolingVersion = KotlinToolingVersion(kotlinToolchains.getCompilerVersion())
         assumeTrue { kotlinToolingVersion >= KotlinToolingVersion(2, 4, 20, "snapshot") }
 
@@ -67,7 +67,7 @@ class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
             val module = module("basic-multimodule-project/module-1")
             module.compile(
                 compilationConfigAction = {
-                    it.compilerArguments.applyArgumentStrings(listOf("-jvm-target", "target", "-jvm-default", "bogus"))
+                    it.compilerArguments.applyCommandLineArguments(listOf("-jvm-target", "target", "-jvm-default", "bogus"))
                 },
                 assertions = {
                     expectFail()

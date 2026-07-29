@@ -349,8 +349,17 @@ internal class KotlinWrapperPre2_3_20(
             base.set(key, value)
         }
 
+        @Deprecated(
+            "This method is deprecated. Use applyCommandLineArguments instead.",
+            replaceWith = ReplaceWith("applyCommandLineArguments(arguments)")
+        )
         override fun applyArgumentStrings(arguments: List<String>) {
             base.applyArgumentStrings(arguments)
+        }
+
+        override fun applyCommandLineArguments(arguments: List<String>) {
+            // this will never get called because KotlinWrapperPre2_5_0 will provide this functionality for all lower versions
+            TODO("Not implemented")
         }
     }
 }

@@ -78,7 +78,7 @@ internal class JsCompilerArgumentConversionTest : BaseCompilationTest() {
         assumeArgumentSupported()
         for (value in argumentRawValues) {
             val arguments = buildArguments {
-                applyArgumentStrings(expectedArgumentStringsFor(value))
+                applyCommandLineArguments(expectedArgumentStringsFor(value))
             }
 
             assertEquals(value, getValueString(getArgument(arguments)))
@@ -90,7 +90,7 @@ internal class JsCompilerArgumentConversionTest : BaseCompilationTest() {
     fun <T> JsArgumentConfiguration<T>.testNoRawArgumentStrings() {
         assumeArgumentSupported()
         val arguments = buildArguments {
-            applyArgumentStrings(listOf())
+            applyCommandLineArguments(listOf())
         }
 
         assertEquals(
@@ -109,7 +109,7 @@ internal class JsCompilerArgumentConversionTest : BaseCompilationTest() {
             module.compile()
             for (invalidValue in argumentConfig.invalidRawValues) {
                 module.link(compilationConfigAction = {
-                    it.compilerArguments.applyArgumentStrings(argumentConfig.expectedArgumentStringsFor(invalidValue))
+                    it.compilerArguments.applyCommandLineArguments(argumentConfig.expectedArgumentStringsFor(invalidValue))
                 }) {
                     expectFail()
                     assertLogContainsPatterns(LogLevel.ERROR, Regex(".*${Regex.escape(invalidValue)}.*"))

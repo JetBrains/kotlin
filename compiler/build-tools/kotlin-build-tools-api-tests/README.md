@@ -20,7 +20,7 @@ The module defines test suites using the `jvm-test-suite` plugin.
       the overall test execution time.
 * Escapable characters: a special test suit that runs against classpath and module paths containing symbols that typically should be escaped (whitespaces, hashes, etc)
     * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testEscapableCharacters` to run them
-* Restricted arguments: verifies that arguments not supported via `applyArgumentStrings` (e.g. `-Xbuild-file`, `-d`) are properly rejected
+* Restricted arguments: verifies that arguments not supported via `applyCommandLineArguments` (e.g. `-Xbuild-file`, `-d`) are properly rejected
     * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testRestrictedArguments` to run them
 * Classpath metadata: verifies the experimental incremental compilation feature for KMP projects targeting the JVM
     * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testClasspathMetadata` to run them

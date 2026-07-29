@@ -91,7 +91,7 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
         assumeArgumentAvailable()
         for (value in argumentRawValues) {
             val operation = kotlinToolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
-                compilerArguments.applyArgumentStrings(expectedArgumentStringsFor(value))
+                compilerArguments.applyCommandLineArguments(expectedArgumentStringsFor(value))
             }.build()
 
             assertEquals(value, getValueString(operation.compilerArguments[argumentKey]))
@@ -103,7 +103,7 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
     fun <T> JvmArgumentConfiguration<T>.testNoRawArgumentStrings() {
         assumeArgumentAvailable()
         val operation = kotlinToolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
-            compilerArguments.applyArgumentStrings(listOf())
+            compilerArguments.applyCommandLineArguments(listOf())
         }.build()
 
         assertEquals(
@@ -137,14 +137,14 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
     @DisplayName("Raw argument with non-existent BTA argument value is rejected at configuration or execution time")
     fun <T> JvmArgumentConfiguration<T>.testInvalidRawArgumentConversionFails() {
         assumeArgumentAvailable()
-        // Old BTA versions throw from applyArgumentStrings; new versions store the error and report it during executeOperation
+        // Old BTA versions throw from applyCommandLineArguments; new versions store the error and report it during executeOperation
         val kotlinToolingVersion = KotlinToolingVersion(kotlinToolchain.getCompilerVersion())
         assumeTrue { kotlinToolingVersion < KotlinToolingVersion(2, 4, 20, "snapshot") }
 
         for (invalidValue in invalidRawValues) {
             assertThrows<Throwable> {
                 kotlinToolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
-                    compilerArguments.applyArgumentStrings(
+                    compilerArguments.applyCommandLineArguments(
                         expectedArgumentStringsFor(invalidValue)
                     )
                     compilerArguments[argumentKey]
@@ -158,7 +158,7 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
     fun testInvalidRawArgumentCompilationFails(config: Pair<JvmArgumentConfiguration<*>, CompilerExecutionStrategyConfiguration>) {
         val [argumentConfig, strategyConfig] = config
         argumentConfig.assumeArgumentAvailable()
-        // Old BTA versions throw from applyArgumentStrings; new versions store the error and report it during executeOperation
+        // Old BTA versions throw from applyCommandLineArguments; new versions store the error and report it during executeOperation
         val kotlinToolingVersion = KotlinToolingVersion(argumentConfig.kotlinToolchain.getCompilerVersion())
         assumeTrue { kotlinToolingVersion >= KotlinToolingVersion(2, 4, 20, "snapshot") }
 
@@ -166,7 +166,7 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
             val module = module("basic-multimodule-project/module-1")
             for (invalidValue in argumentConfig.invalidRawValues) {
                 module.compile(compilationConfigAction = {
-                    it.compilerArguments.applyArgumentStrings(argumentConfig.expectedArgumentStringsFor(invalidValue))
+                    it.compilerArguments.applyCommandLineArguments(argumentConfig.expectedArgumentStringsFor(invalidValue))
                 }) {
                     expectFail()
                     assertLogContainsPatterns(LogLevel.ERROR, Regex(".*${Regex.escape(invalidValue)}.*"))
