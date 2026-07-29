@@ -5,4 +5,10 @@ plugins {
     kotlin("jvm")
 }
 
-publishJarsForIde(listOf(":analysis:symbol-light-classes"))
+publishJarsForIde(
+    listOf(
+        ":analysis:light-classes-base",
+        ":analysis:symbol-light-classes",
+        ":analysis:decompiled:light-classes-for-decompiled"
+    )
+)

@@ -24,7 +24,6 @@ dependencies {
     testFixturesApi(project(":compiler:cli-jvm"))
     testFixturesApi(project(":compiler:cli-js"))
     testFixturesApi(project(":compiler:cli-metadata"))
-    testFixturesImplementation(project(":analysis:light-classes-base"))
     testFixturesImplementation(project(":compiler:container"))
     testFixturesImplementation(project(":compiler:resolution"))
     testFixturesImplementation(project(":native:native.config"))
