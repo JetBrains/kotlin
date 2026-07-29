@@ -397,10 +397,34 @@ internal fun FirElementWithResolveState.tryCollectDesignation(providedFile: FirF
     return designation?.takeIf { it.fileOrNull != null }
 }
 
+/**
+ * Replaces the containers in [targetPath] if [target] has to be resolved in a context other than the one its own containers provide.
+ *
+ * @see patchDesignationPathForCopy
+ */
 internal fun patchDesignationPathIfNeeded(target: FirElementWithResolveState, targetPath: List<FirDeclaration>): List<FirDeclaration> {
     return patchDesignationPathForCopy(target, targetPath) ?: targetPath
 }
 
+/**
+ * Replaces every container in [targetPath] with its counterpart from the original file
+ * if [target] comes from a dangling file in the [KaDanglingFileResolutionMode.IGNORE_SELF] mode.
+ *
+ * Such a copy is intentionally invisible to itself, as its declaration provider is empty (see [requiresDependenciesSearch]), so the copied
+ * declaration has to be resolved in the context of the original file. A path built from the copy's own containers would provide the wrong
+ * context, hence the patching.
+ *
+ * A counterpart is found by PSI via [unwrapCopy] and is then mapped back to FIR via the **context** module. So the patched containers come
+ * already resolved in their own context, and no resolution of the copy is triggered.
+ *
+ * Only the path is patched; [target] stays the copied declaration, as it is the one to be resolved. Consumers which treat the last path
+ * element as the owner of [target] have to map the target to its original counterpart on their own (see KT-77071).
+ *
+ * @return the patched path, or `null` if [target] is not such a copy, or if the path cannot be patched **entirely** – the caller is
+ * supposed to fall back to the unpatched path then (see [patchDesignationPathIfNeeded]). The most common reason for a failure is a
+ * structural divergence between the copy and the original file, as [unwrapCopy] can map only elements which are still at the same
+ * position in the tree.
+ */
 private fun patchDesignationPathForCopy(target: FirElementWithResolveState, targetPath: List<FirDeclaration>): List<FirDeclaration>? {
     val targetModule = target.llFirModuleData.ktModule
 

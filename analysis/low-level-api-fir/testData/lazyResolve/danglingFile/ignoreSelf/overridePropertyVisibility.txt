@@ -280,8 +280,8 @@ FILE: [ResolvedTo(IMPORTS)] fake.kt
             LAZY_super<Base>
         }
 
-        public open override [ResolvedTo(STATUS)] val property: R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+        protected open override [ResolvedTo(STATUS)] val property: R|kotlin/Int|
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
 
     }
 
@@ -321,8 +321,8 @@ FILE: [ResolvedTo(IMPORTS)] fake.kt
             LAZY_super<Base>
         }
 
-        public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val property: R|kotlin/Int|
-            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+        protected open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val property: R|kotlin/Int|
+            protected [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
 
     }
 
@@ -362,8 +362,8 @@ FILE: [ResolvedTo(IMPORTS)] fake.kt
             LAZY_super<Base>
         }
 
-        public open override [ResolvedTo(CONTRACTS)] val property: R|kotlin/Int|
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+        protected open override [ResolvedTo(CONTRACTS)] val property: R|kotlin/Int|
+            protected [ResolvedTo(CONTRACTS)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
 
     }
 
@@ -403,8 +403,8 @@ FILE: [ResolvedTo(IMPORTS)] fake.kt
             LAZY_super<Base>
         }
 
-        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val property: R|kotlin/Int|
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+        protected open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val property: R|kotlin/Int|
+            protected [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
 
     }
 
@@ -444,8 +444,8 @@ FILE: [ResolvedTo(IMPORTS)] fake.kt
             LAZY_super<Base>
         }
 
-        public open override [ResolvedTo(CONSTANT_EVALUATION)] val property: R|kotlin/Int|
-            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+        protected open override [ResolvedTo(CONSTANT_EVALUATION)] val property: R|kotlin/Int|
+            protected [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
 
     }
 
@@ -485,8 +485,8 @@ FILE: [ResolvedTo(IMPORTS)] fake.kt
             LAZY_super<Base>
         }
 
-        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] val property: R|kotlin/Int|
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+        protected open override [ResolvedTo(ANNOTATION_ARGUMENTS)] val property: R|kotlin/Int|
+            protected [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
 
     }
 
@@ -526,8 +526,8 @@ FILE: [ResolvedTo(IMPORTS)] fake.kt
             LAZY_super<Base>
         }
 
-        public open override [ResolvedTo(BODY_RESOLVE)] val property: R|kotlin/Int|
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] get(): R|kotlin/Int| {
+        protected open override [ResolvedTo(BODY_RESOLVE)] val property: R|kotlin/Int|
+            protected [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] get(): R|kotlin/Int| {
                 ^ Int(2)
             }
 

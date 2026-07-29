@@ -253,7 +253,7 @@ FILE: [ResolvedTo(IMPORTS)] fake.kt
             LAZY_super<Base>
         }
 
-        public open override [ResolvedTo(STATUS)] fun times([ResolvedTo(STATUS)] other: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+        protected open override operator infix [ResolvedTo(STATUS)] fun times([ResolvedTo(STATUS)] other: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
 
     }
 
@@ -290,7 +290,7 @@ FILE: [ResolvedTo(IMPORTS)] fake.kt
             LAZY_super<Base>
         }
 
-        public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun times([ResolvedTo(EXPECT_ACTUAL_MATCHING)] other: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+        protected open override operator infix [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun times([ResolvedTo(EXPECT_ACTUAL_MATCHING)] other: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
 
     }
 
@@ -327,7 +327,7 @@ FILE: [ResolvedTo(IMPORTS)] fake.kt
             LAZY_super<Base>
         }
 
-        public open override [ResolvedTo(CONTRACTS)] fun times([ResolvedTo(CONTRACTS)] other: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+        protected open override operator infix [ResolvedTo(CONTRACTS)] fun times([ResolvedTo(CONTRACTS)] other: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
 
     }
 
@@ -364,7 +364,7 @@ FILE: [ResolvedTo(IMPORTS)] fake.kt
             LAZY_super<Base>
         }
 
-        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun times([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+        protected open override operator infix [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun times([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
 
     }
 
@@ -401,7 +401,7 @@ FILE: [ResolvedTo(IMPORTS)] fake.kt
             LAZY_super<Base>
         }
 
-        public open override [ResolvedTo(CONSTANT_EVALUATION)] fun times([ResolvedTo(CONSTANT_EVALUATION)] other: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+        protected open override operator infix [ResolvedTo(CONSTANT_EVALUATION)] fun times([ResolvedTo(CONSTANT_EVALUATION)] other: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
 
     }
 
@@ -438,7 +438,7 @@ FILE: [ResolvedTo(IMPORTS)] fake.kt
             LAZY_super<Base>
         }
 
-        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun times([ResolvedTo(ANNOTATION_ARGUMENTS)] other: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+        protected open override operator infix [ResolvedTo(ANNOTATION_ARGUMENTS)] fun times([ResolvedTo(ANNOTATION_ARGUMENTS)] other: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
 
     }
 
@@ -475,7 +475,7 @@ FILE: [ResolvedTo(IMPORTS)] fake.kt
             LAZY_super<Base>
         }
 
-        public open override [ResolvedTo(BODY_RESOLVE)] fun times([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/Int| {
+        protected open override operator infix [ResolvedTo(BODY_RESOLVE)] fun times([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/Int| {
             ^times Int(2)
         }
 
