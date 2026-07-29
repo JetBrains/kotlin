@@ -100,4 +100,5 @@ fun IrValidatorConfig.withAllChecks() = withBasicFirstStageChecks()
         IrFieldVisibilityChecker,
         IrExpressionBodyInFunctionChecker,
         IrNestedOffsetRangeChecker,
+        IrClassSuperTypesChecker,
     )

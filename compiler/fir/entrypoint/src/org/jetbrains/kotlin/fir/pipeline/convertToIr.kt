@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.validation.*
 import org.jetbrains.kotlin.ir.validation.checkers.IrNestedOffsetRangeChecker
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrClassSuperTypesChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrExpressionBodyInFunctionChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallTypeArgumentCountChecker
@@ -521,6 +522,7 @@ private class Fir2IrPipeline(
                     IrValueAccessScopeChecker,
                     IrTypeParameterScopeChecker,
                     IrVisibilityChecker.Strict,
+                    IrClassSuperTypesChecker,
                 )
                 .withVarargChecks()
                 .applyIf(extension == null) {
