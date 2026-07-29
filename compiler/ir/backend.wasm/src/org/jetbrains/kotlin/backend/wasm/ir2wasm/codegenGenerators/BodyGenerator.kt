@@ -592,6 +592,20 @@ class BodyGenerator(
     override fun visitSetField(expression: IrSetField) {
         val field = expression.symbol.owner
         val receiver = expression.receiver
+        val expressionValue = expression.value
+
+        // Skip redundant field initializers that set fields to type-default values, since we
+        // already initialize fields to type-default values in the code that initializes the objects
+        // at creation time. See the tests e.g. fieldInitializerOptimization.kt and
+        // CorrectOrder3.kt. But also see KT-15642 for more about the original JVM behavior itself.
+        if (functionContext.irFunction is IrConstructor &&
+            expression.origin == IrStatementOrigin.INITIALIZE_FIELD &&
+            expressionValue is IrConst &&
+            isDefaultValueForType(field.type, expressionValue)
+        ) {
+            body.buildGetUnit()
+            return
+        }
 
         val location = expression.getSourceLocation()
 
@@ -612,6 +626,17 @@ class BodyGenerator(
 
         body.buildGetUnit()
     }
+
+    private fun isDefaultValueForType(type: IrType, const: IrConst): Boolean =
+        when {
+            type.isBoolean() -> const.value is Boolean && const.value == false
+            type.isChar() -> const.value is Char && (const.value as Char).code == 0
+            type.isByte() || type.isShort() || type.isInt() || type.isLong() ->
+                const.value is Number && (const.value as Number).toLong() == 0L
+            type.isFloat() -> const.value is Float && (const.value as Float).equals(0.0f)
+            type.isDouble() -> const.value is Double && (const.value as Double).equals(0.0)
+            else -> const.kind == IrConstKind.Null
+        }
 
     override fun visitGetValue(expression: IrGetValue) {
         val valueSymbol = expression.symbol
