@@ -46,9 +46,10 @@ open class JavaSymbolProvider(
             symbol
         }
 
-    // Source-only: binary Java classes come from JvmClassFileBasedSymbolProvider.
+    // In application sessions the underlying class finder is source-only (scope- or root-restricted),
+    // so binary Java classes are left to JvmClassFileBasedSymbolProvider.
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
-        if (javaFacade.isInSourceIndex(classId)) getClassLikeSymbolByClassId(classId, null) else null
+        if (javaFacade.hasTopLevelClassOf(classId)) getClassLikeSymbolByClassId(classId, null) else null
 
     fun getClassLikeSymbolByClassId(classId: ClassId, javaClass: JavaClass?): FirRegularClassSymbol? =
         classCache.getValue(
@@ -68,13 +69,13 @@ open class JavaSymbolProvider(
     @OptIn(FirSymbolProviderInternals::class)
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {}
 
-    override fun hasPackage(fqName: FqName): Boolean = javaFacade.hasPackageInSources(fqName)
+    override fun hasPackage(fqName: FqName): Boolean = javaFacade.hasPackage(fqName)
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
         override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
 
         override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>? =
-            javaFacade.sourceClassNamesInPackage(packageFqName)?.mapToSetOrEmpty { Name.identifier(it) }
+            javaFacade.knownClassNamesInPackage(packageFqName)?.mapToSetOrEmpty { Name.identifier(it) }
     }
 }
 

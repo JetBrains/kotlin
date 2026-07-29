@@ -4,6 +4,17 @@ Review of the `~ [j] implement binary/source finder divide` commit (`266caf3b9da
 stands on the current branch head, plus a completeness check of the wider `java-direct`
 plan. Total removal of the PSI *fallback* is out of scope (known-deferred).
 
+> **Partly superseded (2026-07-29).** The two lookup vocabularies this review describes are
+> gone. The source-only probes on `JavaClassFinder`/`FirJavaFacade` (`isInSourceIndex`,
+> `hasPackageInSources`, `sourceClassNamesInPackage`) and the deserializer seam
+> (`JvmBinaryClassFinderInputs`) were deleted; sidedness is now expressed only by *which*
+> `JavaClassFinder` a session is given. `JvmBinaryClassFinderInputsOverIndex` became
+> `JavaClassFinderOverBinaryIndex : JavaClassFinder` and absorbed `LibraryJavaClassFinder`.
+> Also note §3 wrongly claimed `isInSourceIndex` delegated to
+> `JavaClassFinderOverAstImpl.isClassInIndex` — it never did; it evaluated to a constant
+> `true`. §4.2's dead `CombinedJavaClassFinder.kt` was already removed by the divide commit.
+> Sections about the seam, its fallbacks and its flag-gating are historical.
+
 ---
 
 ## 1. Scope & method

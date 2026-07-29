@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.java.FirJvmTargetProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.FirJvmBuiltinsSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.FirJvmClasspathBuiltinSymbolProvider
-import org.jetbrains.kotlin.fir.java.deserialization.JvmBinaryClassFinderInputs
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -85,8 +84,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
         context: Context,
         createJavaFacade: (AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade =
             AbstractProjectEnvironment::getFirJavaFacade,
-        createBinaryClassFinderInputs: (AbstractProjectEnvironment, AbstractProjectFileSearchScope) -> JvmBinaryClassFinderInputs? =
-            { _, _ -> null },
     ): FirSession {
         return createLibrarySession(
             context,
@@ -103,7 +100,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
                 }?.takeUnless { it.isEmpty } ?: context.librariesScope
                 val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(searchScope)
                 val javaFacade = createJavaFacade(projectEnvironment, session, moduleData, context.librariesScope)
-                val binaryClassFinderInputs = createBinaryClassFinderInputs(projectEnvironment, context.librariesScope)
                 listOfNotNull(
                     JvmClassFileBasedSymbolProvider(
                         session,
@@ -112,7 +108,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
                         context.packagePartProviderForLibraries,
                         kotlinClassFinder,
                         javaFacade,
-                        binaryClassFinderInputs = binaryClassFinderInputs,
                     ),
                     runUnless(languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
                         initializeBuiltinsProvider(

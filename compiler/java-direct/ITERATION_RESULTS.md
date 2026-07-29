@@ -36,6 +36,49 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-29 — Fail-safe finder dispatch: identify the source scope, default to binary
+- **Change**: `createJavaDirectJavaFacadeBuilder` now takes `javaSourcesScope` instead of
+  `librariesScope` and dispatches `scope === javaSourcesScope -> JavaClassFinderOverAstImpl`, every
+  other scope -> `JavaClassFinderOverBinaryIndex` over *that* scope. Previously the single
+  whitelisted case was the library scope, so any new binary scope (IC output,
+  HMPP-fragment classpath) would silently have been answered by the source AST finder. Memo map is
+  now an `IdentityHashMap` keyed by the scope object (was `System.identityHashCode` + ct.sym flag in
+  a data class — collision-prone with several scopes in play); the `CliVirtualFileFinderFactory`
+  lookup is hoisted out of the lambda. Also routed the HMPP-common library session
+  (`JvmFrontendPipelinePhase.kt:397`) through `javaDirectFacade`: it already asks for
+  `context.librariesScope`, so it reuses the *same* memoized binary finder, and it is a literal
+  no-op when `useJavaDirect` is off. The IC precompiled-binaries provider still constructs the PSI
+  facade deliberately — it has no test coverage (see the 2026-07-29 review notes).
+- **Files**: `JavaDirectFacadeBuilder.kt` (−13/+16), `JvmFrontendPipelinePhase.kt` (2 lines),
+  `implDocs/ARCHITECTURE.md` §3.
+- **Tests**: java-direct box+phased 2792/2792, `PhasedJvmDiagnosticLightTreeTestGenerated`
+  10988/10991 (3 pre-existing skips).
+- **Result**: green. The green java-direct suite is now itself evidence the source branch is taken:
+  if the scope identity failed to match, the source session would receive the binary finder and
+  every Java-source test would fail.
+
+### 2026-07-29 — Express binary/source sidedness by wiring, not by two lookup vocabularies
+- **Change**: dropped both parallel APIs added by the divide commit. (1) Removed the source-only
+  probes `isInSourceIndex` / `hasPackageInSources` / `sourceClassNamesInPackage` from
+  `JavaClassFinder` + `FirJavaFacade`; every production finder is already single-sided by
+  construction, so `JavaSymbolProvider` is back on `hasTopLevelClassOf` / `hasPackage` /
+  `knownClassNamesInPackage` (this restores a real AST-index gate on java-direct, where
+  `isInSourceIndex` was a constant `true`, and re-enables the facade caches). (2) Deleted the
+  `JvmBinaryClassFinderInputs` seam: `JvmBinaryClassFinderInputsOverIndex` became
+  `JavaClassFinderOverBinaryIndex : JavaClassFinder`, absorbing `LibraryJavaClassFinder` /
+  `BinaryPackageInfoJavaPackage`, so `JvmClassFileBasedSymbolProvider` has one input
+  (`javaFacade`), no `?:` fallbacks and no flag awareness. The `packagePartProvider` fallback in
+  `hasPackage` (for `@file:JvmPackageName`) is now unconditional.
+- **Files**: `JavaClassFinder.kt`, `FirJavaFacade.kt`, `JavaSymbolProvider.kt`,
+  `JvmClassFileBasedSymbolProvider.kt`, `FirJvmSessionFactory.kt`, `JvmFrontendPipelinePhase.kt`,
+  `JavaDirectFacadeBuilder.kt`, +`JavaClassFinderOverBinaryIndex.kt`,
+  −`JvmBinaryClassFinderInputs.kt`, −`JvmBinaryClassFinderInputsOverIndex.kt`.
+- **Tests**: java-direct box+phased 2792/2792, `PhasedJvmDiagnosticLightTreeTestGenerated`
+  10991/10991, `FirLightTreeBlackBoxCodegenTestGenerated` (full) 10643/10643 incl.
+  `CompileKotlinAgainstKotlin`.
+- **Result**: green. See the superseded banner in
+  `implDocs/BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22.md`.
+
 ### 2026-07-29 — Re-derive the KT-74097 guard rationale after enum-entry annotations went lazy
 - **Change**: re-traced whether the lazy Java annotation lists retire any cycle breaker. They do
   not: they removed the only known crashing trigger (`@Deprecated` enum constant,
