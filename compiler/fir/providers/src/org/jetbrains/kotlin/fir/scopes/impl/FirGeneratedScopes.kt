@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 class FirGeneratedClassDeclaredMemberScope private constructor(
     classId: ClassId,
     private val storage: FirGeneratedMemberDeclarationsStorage.CallableStorage,
+    private val generationContext: MemberGenerationContext,
     private val nestedClassifierScope: FirNestedClassifierScope?
 ) : FirClassDeclaredMemberScope(classId) {
     companion object {
@@ -38,6 +39,8 @@ class FirGeneratedClassDeclaredMemberScope private constructor(
             regularDeclaredScope: FirClassDeclaredMemberScope?,
             scopeForGeneratedClass: Boolean
         ): FirGeneratedClassDeclaredMemberScope? {
+            val generationContext = MemberGenerationContext(classSymbol, regularDeclaredScope)
+
             /*
              * Extensions can modify source classes of the same session in which they are enabled
              * This implies the contract that if declaration-site session and use-site session
@@ -47,7 +50,7 @@ class FirGeneratedClassDeclaredMemberScope private constructor(
             val storage = classSymbol.moduleData
                 .session
                 .generatedDeclarationsStorage
-                .getCallableStorage(classSymbol, regularDeclaredScope, scopeForGeneratedClass)
+                .getCallableStorage(classSymbol, generationContext, scopeForGeneratedClass)
                 ?: return null
 
             val nestedClassifierScope = runIf(scopeForGeneratedClass) {
@@ -57,7 +60,8 @@ class FirGeneratedClassDeclaredMemberScope private constructor(
             return FirGeneratedClassDeclaredMemberScope(
                 classSymbol.classId,
                 storage,
-                nestedClassifierScope
+                generationContext,
+                nestedClassifierScope,
             )
         }
     }
@@ -78,20 +82,20 @@ class FirGeneratedClassDeclaredMemberScope private constructor(
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         if (name !in getCallableNames()) return
-        for (functionSymbol in storage.functionCache.getValue(name)) {
+        for (functionSymbol in storage.functionCache.getValue(name, generationContext)) {
             processor(functionSymbol)
         }
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         if (name !in getCallableNames()) return
-        for (propertySymbol in storage.propertyCache.getValue(name)) {
+        for (propertySymbol in storage.propertyCache.getValue(name, generationContext)) {
             processor(propertySymbol)
         }
     }
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
-        for (constructorSymbol in storage.constructorCache.getValue()) {
+        for (constructorSymbol in storage.constructorCache.getValue(generationContext)) {
             processor(constructorSymbol)
         }
     }
@@ -105,7 +109,8 @@ class FirGeneratedClassDeclaredMemberScope private constructor(
 class FirGeneratedClassNestedClassifierScope private constructor(
     useSiteSession: FirSession,
     klass: FirClass,
-    private val storage: FirGeneratedMemberDeclarationsStorage.ClassifierStorage
+    private val storage: FirGeneratedMemberDeclarationsStorage.ClassifierStorage,
+    private val generationContext: NestedClassGenerationContext,
 ) : FirNestedClassifierScope(klass, useSiteSession) {
     companion object {
         fun create(
@@ -113,6 +118,8 @@ class FirGeneratedClassNestedClassifierScope private constructor(
             classSymbol: FirClassSymbol<*>,
             regularNestedClassifierScope: FirNestedClassifierScope?,
         ): FirGeneratedClassNestedClassifierScope? {
+            val generationContext = NestedClassGenerationContext(classSymbol, regularNestedClassifierScope)
+
             /*
              * Extensions can modify source classes of the same session in which they are enabled
              * This implies the contract that if declaration-site session and use-site session
@@ -122,15 +129,20 @@ class FirGeneratedClassNestedClassifierScope private constructor(
             val storage = classSymbol.moduleData
                 .session
                 .generatedDeclarationsStorage
-                .getClassifierStorage(classSymbol, regularNestedClassifierScope)
+                .getClassifierStorage(classSymbol, generationContext)
                 ?: return null
 
-            return FirGeneratedClassNestedClassifierScope(useSiteSession, classSymbol.fir, storage)
+            return FirGeneratedClassNestedClassifierScope(
+                useSiteSession,
+                classSymbol.fir,
+                storage,
+                generationContext,
+            )
         }
     }
 
     override fun getNestedClassSymbol(name: Name): FirRegularClassSymbol? {
-        return storage.classifiersCache.getValue(name)
+        return storage.classifiersCache.getValue(name, generationContext)
     }
 
     override fun isEmpty(): Boolean {
@@ -147,73 +159,81 @@ class FirGeneratedClassNestedClassifierScope private constructor(
     }
 }
 
+/**
+ * A storage for caching compiler plugin-generated callables and classifiers. Centralized caching ensures the uniqueness of these
+ * declarations, while avoiding injection of the declarations into the original FIR.
+ *
+ * @see CallableStorage
+ * @see ClassifierStorage
+ */
 class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : FirSessionComponent {
     private val cachesFactory = session.firCachesFactory
 
     internal fun getCallableStorage(
         classSymbol: FirClassSymbol<*>,
-        regularDeclaredScope: FirClassDeclaredMemberScope?,
+        generationContext: MemberGenerationContext,
         scopeForGeneratedClass: Boolean
     ): CallableStorage? {
-        val generationContext = MemberGenerationContext(classSymbol, regularDeclaredScope)
         val extensionsByCallableName = groupExtensionsByName(classSymbol) { getCallableNamesForClass(it, generationContext) }
         if (extensionsByCallableName.isEmpty() && !scopeForGeneratedClass) return null
-        return callableStorageByClass.getValue(classSymbol, StorageContext(generationContext, extensionsByCallableName))
+        return callableStorageByClass.getValue(classSymbol, extensionsByCallableName)
     }
 
     internal fun getClassifierStorage(
         classSymbol: FirClassSymbol<*>,
-        regularNestedClassifierScope: FirNestedClassifierScope?
+        generationContext: NestedClassGenerationContext,
     ): ClassifierStorage? {
-        val generationContext = NestedClassGenerationContext(classSymbol, regularNestedClassifierScope)
         val extensionsByClassifierName = groupExtensionsByName(classSymbol) { getNestedClassifiersNames(it, generationContext) }
         if (extensionsByClassifierName.isEmpty()) return null
-        return classifierStorageByClass.getValue(classSymbol, StorageContext(generationContext, extensionsByClassifierName))
+        return classifierStorageByClass.getValue(classSymbol, extensionsByClassifierName)
     }
 
-    private data class StorageContext<C>(
-        val generationContext: C,
-        val extensionsByName: Map<Name, List<FirDeclarationGenerationExtension>>
-    )
+    private typealias ExtensionsByName = Map<Name, List<FirDeclarationGenerationExtension>>
 
-    private val callableStorageByClass: FirCache<FirClassSymbol<*>, CallableStorage, StorageContext<MemberGenerationContext>> =
-        cachesFactory.createCache { _, (val context = generationContext, val extensionsMap = extensionsByName) ->
-            CallableStorage(cachesFactory, context, extensionsMap)
+    private val callableStorageByClass: FirCache<FirClassSymbol<*>, CallableStorage, ExtensionsByName> =
+        cachesFactory.createCache { classSymbol, extensionsMap ->
+            CallableStorage(cachesFactory, classSymbol, extensionsMap)
         }
 
-    private val classifierStorageByClass: FirCache<FirClassSymbol<*>, ClassifierStorage, StorageContext<NestedClassGenerationContext>> =
-        cachesFactory.createCache { classSymbol, (val context = generationContext, val extensionsMap = extensionsByName) ->
-            ClassifierStorage(cachesFactory, classSymbol, context, extensionsMap)
+    private val classifierStorageByClass: FirCache<FirClassSymbol<*>, ClassifierStorage, ExtensionsByName> =
+        cachesFactory.createCache { classSymbol, extensionsMap ->
+            ClassifierStorage(cachesFactory, classSymbol, extensionsMap)
         }
 
+    /**
+     * A storage for compiler plugin-generated callables.
+     *
+     * The storage avoids caching the [MemberGenerationContext] that is used to generate declarations. This is crucial, as we would
+     * otherwise cache the heavy member scope embedded into the context. Instead, the storage requires passing a generation context on each
+     * cache access.
+     *
+     * @see FirGeneratedMemberDeclarationsStorage
+     */
     internal class CallableStorage(
         cachesFactory: FirCachesFactory,
-        private val generationContext: MemberGenerationContext,
+        val classSymbol: FirClassSymbol<*>,
         private val extensionsByCallableName: Map<Name, List<FirDeclarationGenerationExtension>>
     ) {
-        val functionCache: FirCache<Name, List<FirNamedFunctionSymbol>, Nothing?> =
-            cachesFactory.createCache { name -> generateMemberFunctions(name) }
+        val functionCache: FirCache<Name, List<FirNamedFunctionSymbol>, MemberGenerationContext> =
+            cachesFactory.createCache { name, context -> generateMemberFunctions(name, context) }
 
-        val propertyCache: FirCache<Name, List<FirVariableSymbol<*>>, Nothing?> =
-            cachesFactory.createCache { name -> generateMemberProperties(name) }
+        val propertyCache: FirCache<Name, List<FirVariableSymbol<*>>, MemberGenerationContext> =
+            cachesFactory.createCache { name, context -> generateMemberProperties(name, context) }
 
-        val constructorCache: FirLazyValue<List<FirConstructorSymbol>> =
-            cachesFactory.createLazyValue { generateConstructors() }
+        val constructorCache: FirLazyValueWithContext<List<FirConstructorSymbol>, MemberGenerationContext> =
+            cachesFactory.createLazyValueWithContext { context -> generateConstructors(context) }
 
         val allCallableNames: Set<Name>
             get() = extensionsByCallableName.keys
 
-        private val classSymbol: FirClassSymbol<*>
-            get() = generationContext.owner
-
-        private fun generateMemberFunctions(name: Name): List<FirNamedFunctionSymbol> {
+        private fun generateMemberFunctions(name: Name, generationContext: MemberGenerationContext): List<FirNamedFunctionSymbol> {
             if (name == SpecialNames.INIT) return emptyList()
             return extensionsByCallableName[name].orEmpty()
                 .flatMap { it.generateFunctions(CallableId(classSymbol.classId, name), generationContext) }
                 .onEach { it.fir.validate() }
         }
 
-        private fun generateMemberProperties(name: Name): List<FirVariableSymbol<*>> {
+        private fun generateMemberProperties(name: Name, generationContext: MemberGenerationContext): List<FirVariableSymbol<*>> {
             if (name == SpecialNames.INIT) return emptyList()
             val extensions = extensionsByCallableName[name] ?: return emptyList()
             return buildList {
@@ -226,26 +246,34 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
             }.onEach { it.fir.validate() }
         }
 
-        private fun generateConstructors(): List<FirConstructorSymbol> {
+        private fun generateConstructors(generationContext: MemberGenerationContext): List<FirConstructorSymbol> {
             return extensionsByCallableName[SpecialNames.INIT].orEmpty()
                 .flatMap { it.generateConstructors(generationContext) }
                 .onEach { it.fir.validate() }
         }
     }
 
+    /**
+     * A storage for compiler plugin-generated classifiers.
+     *
+     * The storage avoids caching the [NestedClassGenerationContext] that is used to generate declarations. This is crucial, as we would
+     * otherwise cache the heavy member scope embedded into the context. Instead, the storage requires passing a generation context on each
+     * cache access.
+     *
+     * @see FirGeneratedMemberDeclarationsStorage
+     */
     internal class ClassifierStorage(
         cachesFactory: FirCachesFactory,
         private val classSymbol: FirClassSymbol<*>,
-        private val generationContext: NestedClassGenerationContext,
         private val extensionsByClassifierName: Map<Name, List<FirDeclarationGenerationExtension>>
     ) {
-        val classifiersCache: FirCache<Name, FirRegularClassSymbol?, Nothing?> =
-            cachesFactory.createCache { name -> generateNestedClassifier(name) }
+        val classifiersCache: FirCache<Name, FirRegularClassSymbol?, NestedClassGenerationContext> =
+            cachesFactory.createCache { name, context -> generateNestedClassifier(name, context) }
 
         val allClassifierNames: Set<Name>
             get() = extensionsByClassifierName.keys
 
-        private fun generateNestedClassifier(name: Name): FirRegularClassSymbol? {
+        private fun generateNestedClassifier(name: Name, generationContext: NestedClassGenerationContext): FirRegularClassSymbol? {
             if (classSymbol is FirRegularClassSymbol) {
                 val companion = classSymbol.companionObjectSymbol
                 if (companion != null && companion.origin.generated && companion.classId.shortClassName == name) {
