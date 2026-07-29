@@ -306,13 +306,67 @@ class GroupedTestsResultProtocolTest {
     }
 
     @Test
+    fun `given values with protocol-significant characters when escaped and parsed back then they survive verbatim`() {
+        // The round trip that matters: escape exactly as the generated driver does, put the result on a wire line,
+        // and let the parser split and unescape it. Covers the whole path a failure message travels.
+        for (value in PROTOCOL_HOSTILE_VALUES) {
+            val output = buildString {
+                appendLine(GroupedTestsResultProtocol.BEGIN)
+                append(GroupedTestsResultProtocol.LINE_PREFIX)
+                append(GroupedTestsResultProtocol.SEP)
+                append("id")
+                append(GroupedTestsResultProtocol.SEP)
+                append(GroupedTestsResultProtocol.FAILED)
+                append(GroupedTestsResultProtocol.SEP)
+                append(GroupedTestsResultProtocol.escape(value))
+                append(GroupedTestsResultProtocol.SEP)
+                appendLine(GroupedTestsResultProtocol.escape("stack trace of: $value"))
+                appendLine(GroupedTestsResultProtocol.END)
+            }
+
+            val parsed = GroupedTestsResultProtocol.parse(output)
+
+            // Exactly one outcome: a fake result line inside a message cannot spoof an extra test's status.
+            assertEquals(setOf("id"), parsed.keys, "Escaped fields leaked out of their line: <$value>")
+            val outcome = parsed.getValue("id")
+            assertEquals(value, outcome.message, "Message did not survive the round trip: <$value>")
+            assertEquals("stack trace of: $value", outcome.details, "Details did not survive the round trip: <$value>")
+        }
+    }
+
+    @Test
+    fun `given values with protocol-significant characters when escaped then no field holds a raw separator or line break`() {
+        // The property the line format depends on: an escaped field can never break out of its own field or line,
+        // which is what lets the parser split on the separator and treat one line as one result.
+        for (value in PROTOCOL_HOSTILE_VALUES) {
+            val escaped = GroupedTestsResultProtocol.escape(value)
+            assertFalse(GroupedTestsResultProtocol.SEP in escaped, "Escaped value still holds a raw separator: <$value>")
+            assertFalse('\n' in escaped, "Escaped value still holds a raw newline: <$value>")
+            assertFalse('\r' in escaped, "Escaped value still holds a raw carriage return: <$value>")
+        }
+    }
+
+    @Test
+    fun `given generated driver source when inspected then its escaping matches the parsing side`() {
+        val source = GroupedTestsResultProtocol.generateResultCollectingRunnerSource(
+            proxyClassNames = listOf("ProxyLauncher_a"),
+            exportedEntryPointGenerator = NoOpEntryPointGenerator,
+        )
+
+        // Spelled out rather than derived from the protocol, so that changing the escaping fails this test and the
+        // change to the wire format has to be acknowledged. `escape`, `unescape` and this emitted chain must agree;
+        // the round-trip tests above cover the first two, and this pins the third.
+        assertTrue(
+            """return s.replace("\\", "\\\\").replace("|", "\\p").replace("\n", "\\n").replace("\r", "\\r")""" in source,
+            source,
+        )
+    }
+
+    @Test
     fun `given generated driver source when inspected then every protocol line is printed with a leading newline`() {
         val source = GroupedTestsResultProtocol.generateResultCollectingRunnerSource(
             proxyClassNames = listOf("ProxyLauncher_a", "ProxyLauncher_b"),
-            exportedEntryPointGenerator = object : GroupedTestsExportedEntryPointGenerator() {
-                override fun generateExportedEntryPointSource(runAllFunctionName: String): String =
-                    "fun entryPoint() { $runAllFunctionName() }"
-            },
+            exportedEntryPointGenerator = NoOpEntryPointGenerator,
         )
 
         // The BEGIN/END sentinels plus the STARTED/PASSED/FAILED lines of `__kgtiReport`.
@@ -430,5 +484,37 @@ class GroupedTestsResultProtocolTest {
         assertTrue(result.startedIds.containsAll(listOf("a", "b")))
         assertFalse(result.crashedInProgress("a"))
         assertTrue(result.crashedInProgress("b"))
+    }
+
+    private companion object {
+        /**
+         * Values a failing test can realistically put into its message or stack trace, each hostile to the line
+         * format in its own way: the field separator, the escape character, text that already looks escaped, line
+         * breaks (including CRLF), and a whole fake result line that must not be able to spoof another test's status.
+         */
+        val PROTOCOL_HOSTILE_VALUES: List<String> = listOf(
+            "plain failure message",
+            "Test failed with: FAIL. Expected <OK>, actual <FAIL>.",
+            "a ${GroupedTestsResultProtocol.SEP} separator",
+            GroupedTestsResultProtocol.SEP.repeat(3),
+            "a trailing backslash \\",
+            "a double backslash \\\\",
+            "text that already looks escaped: \\p \\n \\r \\q",
+            "first line\nsecond line",
+            "CRLF line\r\nnext line",
+            "\n" + GroupedTestsResultProtocol.LINE_PREFIX + GroupedTestsResultProtocol.SEP + "spoofed" +
+                    GroupedTestsResultProtocol.SEP + GroupedTestsResultProtocol.PASSED +
+                    GroupedTestsResultProtocol.SEP + GroupedTestsResultProtocol.SEP,
+            "AssertionError: boom\n\tat Foo.box(foo.kt:1)\n\tat ProxyLauncher_a.runTest(ProxyBatchLauncher.kt:3)",
+            "ünïcödé ✓ 日本語",
+            "\$dollar and {braces}",
+        )
+
+        /** An entry point generator that contributes nothing of interest, for tests inspecting the driver itself. */
+        val NoOpEntryPointGenerator: GroupedTestsExportedEntryPointGenerator =
+            object : GroupedTestsExportedEntryPointGenerator() {
+                override fun generateExportedEntryPointSource(runAllFunctionName: String): String =
+                    "fun entryPoint() { $runAllFunctionName() }"
+            }
     }
 }

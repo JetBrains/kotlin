@@ -220,24 +220,57 @@ object GroupedTestsResultProtocol {
         )
     }
 
-    /** Reverses the escaping applied by the generated driver's `__kgtiEscape`. */
+    /**
+     * The escaping of the `message`/`details` fields as `raw to escaped` pairs, applied in order — the escape
+     * character itself must come first, so that it is doubled before the other rules introduce it.
+     *
+     * Single source of truth for the three places the escaping appears: [escape], [unescape], and the
+     * `__kgtiEscape` function generated into the driver by [generateResultCollectingRunnerSource]. Deriving all
+     * three from one table is what makes the emitting and parsing sides verifiable against each other in a
+     * round-trip test, instead of being hand-written copies — one in Kotlin/JVM, one in generated Kotlin/Wasm
+     * source — that can silently drift apart.
+     *
+     * Every escaped form must be a backslash followed by exactly one character; [unescape] relies on that.
+     */
+    private val ESCAPE_RULES: List<Pair<String, String>> = listOf(
+        "\\" to "\\\\",
+        SEP to "\\p",
+        "\n" to "\\n",
+        "\r" to "\\r",
+    )
+
+    /** Maps the character after a backslash back to the raw text it stands for; derived from [ESCAPE_RULES]. */
+    private val ESCAPED_CHAR_TO_RAW: Map<Char, String> = ESCAPE_RULES.associate { [raw, escaped] ->
+        require(escaped.length == 2 && escaped[0] == '\\') { "Escaped form of '$raw' must be a backslash pair: '$escaped'" }
+        escaped[1] to raw
+    }
+
+    /**
+     * Escapes a `message`/`details` value so it can never contain a raw [SEP] or line break, keeping the wire
+     * line splittable and multi-line stack traces intact.
+     *
+     * This is the JVM-side mirror of the generated driver's `__kgtiEscape` — both are derived from
+     * [ESCAPE_RULES], so a round-trip against [unescape] exercises the actual wire format.
+     */
+    fun escape(value: String): String = ESCAPE_RULES.fold(value) { acc, [raw, replacement] ->
+        acc.replace(raw, replacement)
+    }
+
+    /**
+     * Reverses [escape] / the generated driver's `__kgtiEscape`.
+     *
+     * A backslash that does not start a known escape sequence is passed through together with the character that
+     * follows it: a well-formed driver never emits one, and preserving it loses no information from a malformed line.
+     */
     private fun unescape(s: String): String {
         if ('\\' !in s) return s
         val sb = StringBuilder(s.length)
         var i = 0
         while (i < s.length) {
             val c = s[i]
-            if (c == '\\' && i + 1 < s.length) {
-                when (s[i + 1]) {
-                    '\\' -> sb.append('\\')
-                    'p' -> sb.append('|')
-                    'n' -> sb.append('\n')
-                    'r' -> sb.append('\r')
-                    else -> {
-                        sb.append(c)
-                        sb.append(s[i + 1])
-                    }
-                }
+            val raw = if (c == '\\' && i + 1 < s.length) ESCAPED_CHAR_TO_RAW[s[i + 1]] else null
+            if (raw != null) {
+                sb.append(raw)
                 i += 2
             } else {
                 sb.append(c)
@@ -248,11 +281,39 @@ object GroupedTestsResultProtocol {
     }
 
     /**
+     * The `.replace(...)` chain of the generated `__kgtiEscape`, derived from [ESCAPE_RULES] so the emitting side
+     * cannot drift from [escape] and [unescape]. Only `String.replace` is used, so the driver compiles against
+     * every stdlib version, including the previously-released ones of the KLIB-compatibility tests.
+     */
+    private val generatedEscapeReplaceChain: String
+        get() = ESCAPE_RULES.joinToString("") { [raw, escaped] ->
+            ".replace(${raw.toKotlinSourceLiteral()}, ${escaped.toKotlinSourceLiteral()})"
+        }
+
+    /**
+     * Renders this value as a Kotlin string literal, quotes included, for embedding into the generated source, so
+     * that the target compiler reads back exactly this value: a backslash becomes `\\`, a newline `\n`, and so on.
+     */
+    private fun String.toKotlinSourceLiteral(): String = buildString {
+        append('"')
+        for (c in this@toKotlinSourceLiteral) {
+            when (c) {
+                '\\' -> append("\\\\")
+                '"' -> append("\\\"")
+                '$' -> append("\\$")
+                '\n' -> append("\\n")
+                '\r' -> append("\\r")
+                else -> append(c)
+            }
+        }
+        append('"')
+    }
+
+    /**
      * Generates the Kotlin source of the result-collecting driver appended to the synthesized batch launcher.
      *
      * Emits:
-     *  - `__kgtiEscape` — mirrors [unescape] on the emitting side (uses only `String` operations, so it works
-     *    with every stdlib version, including the previously-released ones used by KLIB-compatibility tests);
+     *  - `__kgtiEscape` — the emitting side of [escape]/[unescape], generated from the shared [ESCAPE_RULES];
      *  - `__kgtiReport` — prints a [STARTED] line, runs one test body in a `try`/`catch`, then prints its terminal
      *    [PASSED]/[FAILED] line; a start with no terminal line marks the test that crashed the VM;
      *  - `__kgtiRunAll` — prints [BEGIN], reports each [proxyClassNames] test, prints [END];
@@ -272,7 +333,7 @@ object GroupedTestsResultProtocol {
             """
             private fun __kgtiEscape(s: String?): String {
                 if (s == null) return ""
-                return s.replace("\\", "\\\\").replace("|", "\\p").replace("\n", "\\n").replace("\r", "\\r")
+                return s$generatedEscapeReplaceChain
             }
             """.trimIndent()
         )
