@@ -135,7 +135,8 @@ class IrTextDumpHandler(
         val builder = baseDumper.builderForModule(module.name)
 
         for ([moduleAndFile, irFile] in info.irModuleFragment.files.groupWithTestFiles(testServices, ordered = true)) {
-            if (moduleAndFile?.second?.directives?.contains(EXTERNAL_FILE) == true) continue
+            val testFile = moduleAndFile?.second
+            if (testFile?.directives?.contains(EXTERNAL_FILE) == true || moduleAndFile?.second?.isAdditional == true) continue
             val actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, dumpOptions)
             builder.append(actualDump)
         }
