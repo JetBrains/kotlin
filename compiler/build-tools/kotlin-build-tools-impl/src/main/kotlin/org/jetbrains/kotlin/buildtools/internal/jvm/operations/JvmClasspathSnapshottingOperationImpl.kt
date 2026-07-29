@@ -45,6 +45,9 @@ internal class JvmClasspathSnapshottingOperationImpl private constructor(
         options[key] = value
     }
 
+    override val usesApplicationEnvironment: Boolean
+        get() = false
+
     override fun executeImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): ClasspathEntrySnapshot {
         val granularity: ClassSnapshotGranularity = get(GRANULARITY)
         val parseInlinedLocalClasses: Boolean = get(PARSE_INLINED_LOCAL_CLASSES)

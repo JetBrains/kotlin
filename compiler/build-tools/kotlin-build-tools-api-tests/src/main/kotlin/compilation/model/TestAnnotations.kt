@@ -56,6 +56,20 @@ annotation class BtaVersionsOnlyCompilationTest
 )
 annotation class BtaV2StrategyAndPlatformAgnosticCompilationTest
 
+/**
+ * Annotation for parameterized tests that evaluate compilation behavior using only BTAv2 on all supported platforms,
+ * without fixing an execution policy. The test receives a [ProjectWithPolicyCreator] and the `KotlinToolchains`, and
+ * chooses the execution policy itself (e.g. in-process, to observe in-process compiler state a daemon run would not
+ * expose).
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Retention(AnnotationRetention.RUNTIME)
+@ParameterizedTest(name = "{0}: {displayName}")
+@ArgumentsSource(
+    BtaV2PlatformAgnosticCompilationTestArgumentProvider::class
+)
+annotation class BtaV2PlatformAgnosticCompilationTest
+
 
 /**
  * Annotation for parameterized tests that evaluate compilation behavior using both BTA implementations on all supported platforms

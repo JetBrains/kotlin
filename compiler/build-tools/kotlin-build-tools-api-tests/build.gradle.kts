@@ -205,6 +205,7 @@ val businessLogicTestSuits = setOf(
     "testInternalInputsTracker",
     "testAbiValidation",
     "testRestrictedArguments",
+    "testBuildSession",
 )
 
 fun JvmTestSuite.addSnapshotBuildToolsImpl() {
