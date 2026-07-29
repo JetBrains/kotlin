@@ -1,0 +1,4 @@
+FUNCTION:
+  /Platform.equals
+EQUALITY_BOUND:
+  Platform
