@@ -316,7 +316,7 @@ class KotlinPlaywrightTestFrameworkWiringTest {
     }
 
     @Test
-    fun `playwright intellij debug falls back to chromium for firefox runner`() {
+    fun `playwright intellij debug uses default chromium for firefox runner`() {
         val setup = buildBrowserTestProject {
             firefox("selected") {
                 it.launchArgs.set(listOf("-devtools"))
@@ -352,7 +352,7 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         )
         val runner = spec.runners.single()
 
-        assertEquals("selected", runner.name)
+        assertEquals("chromium", runner.name)
         assertEquals(PwBrowserKind.CHROMIUM, runner.browserKind)
         assertEquals(emptyList(), runner.launchArgs)
         assertEquals(emptyMap(), runner.launchEnvironmentVariables)
