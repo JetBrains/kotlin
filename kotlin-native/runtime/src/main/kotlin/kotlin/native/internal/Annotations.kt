@@ -147,17 +147,6 @@ internal annotation class InternalForKotlinNative
 public annotation class GCUnsafeCall(val callee: String)
 
 /**
- * Marks a declaration that is internal for Kotlin/Native tests and shouldn't be used externally.
- */
-@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
-@Retention(value = AnnotationRetention.BINARY)
-internal annotation class InternalForKotlinNativeTests
-
-@InternalForKotlinNativeTests
-@Target(AnnotationTarget.FILE)
-public annotation class ReflectionPackageName(val name: String)
-
-/**
  * Indicates that the marked function is an exported bridge between Kotlin and the platform.
  * This annotation prevents the function from being removed by DCE
  * and specifies a stable [bridgeName] for the function symbol.

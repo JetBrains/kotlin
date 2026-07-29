@@ -340,6 +340,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations {
 	public final fun getOptionalExpectation ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getPublishedApi ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getRawTypeAnnotation ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getReflectionPackageName ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getRepeatable ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getRequireKotlin ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getRestrictsSuspension ()Lorg/jetbrains/kotlin/name/ClassId;

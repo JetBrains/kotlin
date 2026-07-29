@@ -60,7 +60,6 @@ class CustomNativeCompilerFirstStageFacade(testServices: TestServices) : CustomK
                     K2NativeCompilerArguments::kotlinHome.cliArgument, customNativeCompilerSettings.nativeHome.absolutePath,
                     K2NativeCompilerArguments::nodefaultlibs.cliArgument,
                     K2NativeCompilerArguments::optIn.cliArgument("kotlin.native.internal.InternalForKotlinNative"),
-                    K2NativeCompilerArguments::optIn.cliArgument("kotlin.native.internal.InternalForKotlinNativeTests"),
                 ),
                 regularAndFriendDependencies.flatMap {
                     listOf(K2NativeCompilerArguments::libraries.cliArgument, it)

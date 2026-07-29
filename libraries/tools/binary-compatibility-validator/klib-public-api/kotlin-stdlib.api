@@ -10038,14 +10038,6 @@ open annotation class kotlin.native.internal/LeakDetectorCandidate : kotlin/Anno
 }
 
 // Targets: [native]
-open annotation class kotlin.native.internal/ReflectionPackageName : kotlin/Annotation { // kotlin.native.internal/ReflectionPackageName|null[0]
-    constructor <init>(kotlin/String) // kotlin.native.internal/ReflectionPackageName.<init>|<init>(kotlin.String){}[0]
-
-    final val name // kotlin.native.internal/ReflectionPackageName.name|{}name[0]
-        final fun <get-name>(): kotlin/String // kotlin.native.internal/ReflectionPackageName.name.<get-name>|<get-name>(){}[0]
-}
-
-// Targets: [native]
 open annotation class kotlin.native.runtime/NativeRuntimeApi : kotlin/Annotation { // kotlin.native.runtime/NativeRuntimeApi|null[0]
     constructor <init>() // kotlin.native.runtime/NativeRuntimeApi.<init>|<init>(){}[0]
 }

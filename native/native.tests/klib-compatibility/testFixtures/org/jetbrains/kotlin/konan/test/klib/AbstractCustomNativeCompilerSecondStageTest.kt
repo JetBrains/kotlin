@@ -55,7 +55,6 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
 
             OPT_IN with listOf(
                 "kotlin.native.internal.InternalForKotlinNative",
-                "kotlin.native.internal.InternalForKotlinNativeTests",
                 "kotlin.experimental.ExperimentalNativeApi"
             )
         }
