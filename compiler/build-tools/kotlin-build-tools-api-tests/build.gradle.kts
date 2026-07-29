@@ -291,7 +291,6 @@ testing {
 
                 implementation(project())
                 implementation(project(":kotlin-tooling-core"))
-                implementation(project(":compiler:test-security-manager"))
                 implementation(project(":compiler:build-tools:kotlin-build-tools-api"))
                 implementation(project(":compiler:arguments"))
                 if (isRegular) {

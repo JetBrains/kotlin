@@ -1066,5 +1066,3 @@ if (buildProperties.isKotlinNativeEnabled.get()) {
     include(":native:native.tests:cli-tests")
     include(":kotlin-native:tools:minidump-analyzer")
 }
-
-include("compiler:test-security-manager")

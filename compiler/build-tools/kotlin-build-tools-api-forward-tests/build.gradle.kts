@@ -309,7 +309,6 @@ testing {
                 implementation(project())
                 implementation(project(":compiler:build-tools:kotlin-build-tools-api-forward-tests:shared"))
                 implementation(project(":kotlin-tooling-core"))
-                implementation(project(":compiler:test-security-manager"))
                 implementation(project(":compiler:arguments"))
             }
             targets.all {
