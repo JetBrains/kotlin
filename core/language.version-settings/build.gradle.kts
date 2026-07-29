@@ -9,7 +9,7 @@ plugins {
     id("gradle-plugin-compiler-dependency-configuration")
     id("kotlin-git.gradle-build-conventions.foreign-class-usage-checker")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)

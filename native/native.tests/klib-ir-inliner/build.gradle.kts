@@ -8,7 +8,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 val llvmDevBinaryDataUsage = configurations.create("llvmDevBinaryDataUsage") {

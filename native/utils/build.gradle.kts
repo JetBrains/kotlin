@@ -4,7 +4,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 description = "Kotlin/Native utils"

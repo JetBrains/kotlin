@@ -357,7 +357,7 @@ fun Project.configureTests() {
             ":kotlin-main-kts",
             ":kotlin-main-kts-test",
             ":kotlin-metadata-jvm",
-            ":kotlin-power-assert-runtime", // TODO(KTI-3056): 'test-inputs-check-v2' cannot be combined with 'multiplatform' projects
+            ":kotlin-power-assert-runtime", // TODO(KTI-3056): 'test-inputs-check' cannot be combined with 'multiplatform' projects
             ":kotlin-scripting-common",
             ":kotlin-scripting-dependencies",
             ":kotlin-scripting-dependencies-maven",
@@ -388,7 +388,7 @@ fun Project.configureTests() {
             ":test-instrumenter"
         )
         val projectPath = project.path
-        val hasTestInputCheckPlugin = plugins.hasPlugin("test-inputs-check-v2")
+        val hasTestInputCheckPlugin = plugins.hasPlugin("test-inputs-check")
         if (!hasTestInputCheckPlugin) {
             outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
         }
@@ -398,7 +398,7 @@ fun Project.configureTests() {
                     throw GradleException(
                         """
                         Tests are not cacheable in: $projectPath
-                        Apply id("test-inputs-check-v2") to the project to make the tests cacheable.
+                        Apply id("test-inputs-check") to the project to make the tests cacheable.
                     """.trimIndent()
                     )
                 }

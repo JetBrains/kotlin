@@ -8,7 +8,7 @@ import javax.inject.Inject
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-abstract class TestInputsCheckExtensionV2 @Inject constructor(objects: ObjectFactory) {
+abstract class TestInputsCheckExtension @Inject constructor(objects: ObjectFactory) {
     /**
      * Enable or disable test input checking
      */

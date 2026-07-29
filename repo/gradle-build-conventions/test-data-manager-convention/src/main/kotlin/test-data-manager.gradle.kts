@@ -98,7 +98,7 @@ private fun AbstractTestDataModuleTask.wireOptions(peerTaskName: String) {
     javaLauncher = testTask.javaLauncher
 
     /**
-     * Filter out system properties used by `test-inputs-check` and `test-inputs-check-v2`.
+     * Filter out system properties used by `test-inputs-check`.
      * Otherwise, the task would crash with either missing security policy or `declared-inputs-for-test.txt` file.
      *
      * Also see KT-84278.
@@ -108,7 +108,7 @@ private fun AbstractTestDataModuleTask.wireOptions(peerTaskName: String) {
     }
 
     /**
-     * Filter out JVM argument provider used by `test-inputs-check-v2`
+     * Filter out JVM argument provider used by `test-inputs-check`
      */
     jvmArgumentProviders += testTask.jvmArgumentProviders
         .filter { it !is JfrArgumentProvider }

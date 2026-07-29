@@ -2,8 +2,8 @@ plugins {
     id("java-flight-recorder")
 }
 
-val pluginBuildDir = "test-inputs-check-v2"
-val testInputsCheck = extensions.create<TestInputsCheckExtensionV2>("testInputsCheck")
+val pluginBuildDir = "test-inputs-check"
+val testInputsCheck = extensions.create<TestInputsCheckExtension>("testInputsCheck")
 
 tasks.withType<Test>().configureEach {
     val test = this

@@ -12,7 +12,7 @@ plugins {
     id("java-test-fixtures")
     id("d8-configuration")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 val jsoIrRuntimeForTests = configurations.create("jsoIrRuntimeForTests") {
