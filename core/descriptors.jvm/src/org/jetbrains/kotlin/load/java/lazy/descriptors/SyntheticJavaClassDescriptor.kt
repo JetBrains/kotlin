@@ -193,6 +193,8 @@ class SyntheticJavaClassDescriptor(
             get() = classKind == ClassKind.ENUM_CLASS
         override val isRecord: Boolean
             get() = this@SyntheticJavaClassDescriptor.isRecord
+        override val isValue: Boolean
+            get() = this@SyntheticJavaClassDescriptor.isValue
         override val isSealed: Boolean
             get() = modality == Modality.SEALED
         override val permittedTypes: Sequence<JavaClassifierType>

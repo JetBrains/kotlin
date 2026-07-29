@@ -145,6 +145,9 @@ class SymbolBasedClass(
     override val isRecord: Boolean
         get() = false
 
+    override val isValue: Boolean
+        get() = false
+
     override val recordComponents: Collection<JavaRecordComponent>
         get() = emptyList()
 

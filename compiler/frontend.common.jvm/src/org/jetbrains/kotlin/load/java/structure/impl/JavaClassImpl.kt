@@ -9,6 +9,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElementFactory
+import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiTypeParameter
 import com.intellij.psi.SyntaxTraverser
 import com.intellij.psi.search.SearchScope
@@ -76,6 +77,9 @@ class JavaClassImpl(psiClassSource: JavaElementPsiSource<PsiClass>) : JavaClassi
 
     override val isRecord: Boolean
         get() = psi.isRecord
+
+    override val isValue: Boolean
+        get() = psi.hasModifierProperty(PsiModifier.VALUE)
 
     override val outerClass: JavaClassImpl?
         get() {

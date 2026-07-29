@@ -292,7 +292,7 @@ class KotlinCoreEnvironment private constructor(
             updateClasspath(roots.map { JavaSourceRoot(it, null) })
         })
 
-        project.setupHighestLanguageLevel()
+        project.setupHighestLanguageLevel(isValhallaSupportEnabled = configuration.languageVersionSettings.isValhallaSupportEnabled())
     }
 
     private fun collectAdditionalSources(project: MockProject) {

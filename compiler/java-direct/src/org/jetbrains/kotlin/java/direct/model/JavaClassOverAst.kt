@@ -198,6 +198,9 @@ class JavaClassOverAst(
     override val isRecord: Boolean
         get() = tree.findChildByType(node, JavaSyntaxTokenType.RECORD_KEYWORD) != null
 
+    override val isValue: Boolean
+        get() = tree.findChildByType(node, JavaSyntaxTokenType.VALUE_KEYWORD) != null
+
     override val isSealed: Boolean
         get() = hasModifier(JavaSyntaxTokenType.SEALED_KEYWORD)
 

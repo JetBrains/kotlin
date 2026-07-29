@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.backend.common.isJavaValueClass
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.codegen.AnnotationCodegen.Companion.annotationClass
@@ -230,10 +231,21 @@ class ClassCodegen private constructor(
 
     private fun IrField.isValhallaLoadableFieldType(descriptor: String): Boolean {
         val languageVersionSettings = config.languageVersionSettings
-        if (type.classOrNull?.owner?.isKotlinValhallaValueClass(languageVersionSettings) == true) return true
-        // A field of a JDK value-based class (JEP 401 migrates all of them to value classes) is loadable, exactly like javac.
-        // The set covers the whole value-based list (wrappers, java.time, Optional, …), not just boxed primitives.
-        return languageVersionSettings.isValhallaSupportEnabled() && descriptor in JDK_VALUE_BASED_FIELD_DESCRIPTORS
+        if (!languageVersionSettings.isValhallaSupportEnabled()) return false
+        val fieldClass = type.classOrNull?.owner
+        return when {
+            // A field of the class's own type is never listed: the class is already being loaded, so there is nothing to preload
+            // (matches javac, which excludes only the exact self-type — mutually-referential value classes still list each other).
+            fieldClass == irClass -> false
+            // A Kotlin value class compiled as a Valhalla value class
+            fieldClass?.isKotlinValhallaValueClass(languageVersionSettings) == true -> true
+            // A value class defined in Java (`value class`, resolved from source or a binary/jar dependency).
+            fieldClass?.isJavaValueClass == true -> true
+            // A field of a JDK value-based class (JEP 401 migrates all of them to value classes) is loadable, exactly like javac.
+            // The set covers the whole value-based list (wrappers, java.time, Optional, …), not just boxed primitives.
+            descriptor in JDK_VALUE_BASED_FIELD_DESCRIPTORS -> true
+            else -> false
+        }
     }
 
     fun generateAssertFieldIfNeeded(generatingClInit: Boolean): IrExpression? {
