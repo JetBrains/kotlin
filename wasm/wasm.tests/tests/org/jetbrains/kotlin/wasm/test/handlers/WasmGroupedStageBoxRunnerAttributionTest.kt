@@ -117,6 +117,50 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         assertTrue("most likely crashed the VM" !in neverRanMessage, neverRanMessage)
     }
 
+    @Test
+    fun `given a grouped batch whose driver never ran when the VM exits cleanly then every test is failed`() {
+        val first = GroupedTest("testFirst")
+        val second = GroupedTest("testSecond")
+
+        // What a grouped batch prints when `test.mjs` does not find the driver export and falls back to the
+        // compiler's `startUnitTests()`: the launcher classes carry no `@kotlin.test.Test`, so nothing runs, nothing
+        // is reported, and the VM exits cleanly. Not a single test of the batch was actually executed.
+        val stdoutWithoutBlock = "unrelated VM output\nwith no structured result block in it\n"
+
+        runner(listOf(first, second), vmStdout = listOf(stdoutWithoutBlock), vmFailures = emptyList())
+            .processArtifact(FakeWasmArtifact)
+
+        for (test in listOf(first, second)) {
+            assertEquals(1, test.reportedFailures.size, "Expected exactly one failure for ${test.id}")
+            val message = test.reportedFailure?.message.orEmpty()
+            assertTrue(GroupedTestsResultProtocol.BEGIN in message, message)
+            assertTrue("not a single test reported a result" in message, message)
+        }
+    }
+
+    @Test
+    fun `given a single isolated test without a structured block when the VM exits cleanly then it is not failed`() {
+        // An isolated batch gets no result-collecting driver at all, so the absence of a block is expected there:
+        // its verdict comes from `box()` / the unit-test runner in the launcher glue, which exits non-zero on failure.
+        val only = GroupedTest("testOnlyOne")
+
+        runner(listOf(only), vmStdout = listOf("output of the legacy single-test runner\n"), vmFailures = emptyList())
+            .processArtifact(FakeWasmArtifact)
+
+        assertNull(only.reportedFailure, "An isolated passing test was failed: ${only.reportedFailure?.message}")
+    }
+
+    @Test
+    fun `given a single isolated test without a structured block when the VM fails then the failure is attributed to it`() {
+        val only = GroupedTest("testOnlyOne")
+        val vmFailure = WasmVMException(AssertionError("Wrong box result 'FAIL'; Expected \"OK\""), vmName = "V8")
+
+        runner(listOf(only), vmStdout = emptyList(), vmFailures = listOf(vmFailure))
+            .processArtifact(FakeWasmArtifact)
+
+        assertEquals(vmFailure, only.reportedFailure)
+    }
+
     /**
      * One test of the batch: its [KotlinTestInfo], the `ProxyLauncher_<hash>` [id] the protocol keys it by, and the
      * failure the runner attributed to it, if any.
@@ -147,6 +191,10 @@ class WasmGroupedStageBoxRunnerAttributionTest {
                 }
             },
         )
+
+        /** Everything the runner attributed to this test; more than one entry means it was reported twice. */
+        val reportedFailures: List<Throwable>
+            get() = failures.toList()
 
         val reportedFailure: Throwable?
             // TODO KT-87785: get() silently tolerates multiple failures attributed to one test. That's a reachable bug class

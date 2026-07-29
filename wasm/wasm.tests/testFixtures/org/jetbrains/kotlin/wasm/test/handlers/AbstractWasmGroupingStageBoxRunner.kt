@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
 import org.jetbrains.kotlin.test.grouping.TestRunChecks
 import org.jetbrains.kotlin.test.groupingStageInputs
+import org.jetbrains.kotlin.test.isSingleTestBatch
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.GroupingStageHandler
@@ -110,10 +111,29 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             return
         }
 
-        // No result-collecting driver was generated (the launcher exports no `runGroupedTests`/`startTest`, so the
-        // VM fell back to the compiler's `startUnitTests()`), which leaves nothing to demux by. Such a batch is
-        // normally a single isolated test, but a VM that died before printing the block leaves a grouped batch
-        // here too, so blame every input: none of them reported a result, and none may pass silently.
+        // A grouped batch always generates the result-collecting driver, so a batch of several tests reaching this
+        // point means the driver was never invoked: `test.mjs` did not find its exported entry point and fell back
+        // to the compiler's `startUnitTests()`, which finds nothing to run now that the launcher classes carry no
+        // `@kotlin.test.Test`. That reports no failure and exits cleanly, so nothing here would fail and the whole
+        // batch would be reported green without a single test having run. Fail every test of the batch instead —
+        // the same guarantee the `##teamcity[testSuiteFinished` sanity check used to give.
+        if (!testServices.isSingleTestBatch()) {
+            testServices.groupingStageInputs.forEach { input ->
+                input.failWithCollectedOutputs(
+                    texts,
+                    "Sanity check failed: the grouped batch printed no '${GroupedTestsResultProtocol.BEGIN}' block, " +
+                            "so not a single test reported a result. The launcher's result-collecting driver was " +
+                            "never invoked — most likely its exported entry point " +
+                            "(`runGroupedTests` on wasm-js, `startTest` on wasm-wasi) was missing or renamed, which " +
+                            "means no test of this batch actually ran.",
+                )
+            }
+            return
+        }
+
+        // A single isolated test: no driver is generated for it, so a missing block is expected. There is nothing to
+        // demux either — any VM failure is unambiguously that test's own, and its pass verdict comes from the
+        // `box()`/`hasTestFailures` checks in the launcher glue, which make the VM exit non-zero on failure.
         if (exceptions.isNotEmpty()) {
             testServices.groupingStageInputs.forEach { it.failWith(exceptions.first()) }
         }
