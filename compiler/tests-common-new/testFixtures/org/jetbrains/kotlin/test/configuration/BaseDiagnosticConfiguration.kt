@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.TESTED_LANGUAGE_FEATURE_DISABLED
+import org.jetbrains.kotlin.test.directives.SingleTestDumpClassifier
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
@@ -333,6 +334,8 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths() {
     }
 }
 
+object LatestLanguageVersionClassifier : SingleTestDumpClassifier<LatestLanguageVersionClassifier>("latestLV")
+
 /**
  * Sets up running the test with latest LV instead of latest stable LV
  */
@@ -341,7 +344,7 @@ fun TestConfigurationBuilder.configurationForTestWithLatestLanguageVersion() {
         LANGUAGE_VERSION with LanguageVersion.entries.last()
         +ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
         +USE_LATEST_LANGUAGE_VERSION
-        TestDumpDirectives.DUMP_CLASSIFIER with "latestLV"
+        TestDumpDirectives.DUMP_CLASSIFIER with LatestLanguageVersionClassifier.classifier
         LANGUAGE with LanguageFeature.entries.mapNotNull { feature ->
             runIf(feature.enabledInLatestLVTests) { "+${feature.name}" }
         }
@@ -353,13 +356,15 @@ fun TestConfigurationBuilder.configurationForTestWithLatestLanguageVersion() {
     )
 }
 
+object DisabledClassifier : SingleTestDumpClassifier<DisabledClassifier>("disabled")
+
 /**
  * Sets up running the test with some LF disabled.
  */
 fun TestConfigurationBuilder.configurationForTestWithLanguageFeatureDisabled() {
     defaultDirectives {
         +TESTED_LANGUAGE_FEATURE_DISABLED
-        TestDumpDirectives.DUMP_CLASSIFIER with "disabled"
+        TestDumpDirectives.DUMP_CLASSIFIER with DisabledClassifier.classifier
     }
     useMetaTestConfigurators(::LanguageFeatureDisabledMetaConfigurator)
     useAfterAnalysisCheckers(

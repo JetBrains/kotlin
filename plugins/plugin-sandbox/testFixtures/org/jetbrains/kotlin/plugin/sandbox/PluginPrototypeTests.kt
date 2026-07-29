@@ -196,7 +196,7 @@ fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration(dumpFir: B
 fun TestConfigurationBuilder.commonWithoutPluginConfiguration() {
     defaultDirectives {
         +PluginSandboxDirectives.DISABLE_PLUGIN
-        TestDumpDirectives.DUMP_CLASSIFIER with "withoutPlugin"
+        TestDumpDirectives.DUMP_CLASSIFIER with WithoutPluginsTestConfigurator.WithoutPluginClassifier.classifier
     }
 
     useMetaTestConfigurators(::WithoutPluginsTestConfigurator)

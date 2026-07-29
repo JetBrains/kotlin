@@ -5,14 +5,17 @@
 
 package org.jetbrains.kotlin.plugin.sandbox
 
+import org.jetbrains.kotlin.test.directives.SingleTestDumpClassifier
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 
-class WithoutPluginsTestConfigurator(testServices: TestServices): MetaTestConfigurator(testServices) {
+class WithoutPluginsTestConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(PluginSandboxDirectives)
+
+    object WithoutPluginClassifier : SingleTestDumpClassifier<WithoutPluginClassifier>("withoutPlugin")
 
     override fun shouldSkipTest() = PluginSandboxDirectives.WITH_AND_WITHOUT_PLUGIN !in testServices.moduleStructure.allDirectives
 }

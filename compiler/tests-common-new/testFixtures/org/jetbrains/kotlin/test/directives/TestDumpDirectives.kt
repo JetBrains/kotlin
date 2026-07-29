@@ -28,13 +28,53 @@ object TestDumpDirectives : SimpleDirectivesContainer() {
      * This classifier should be placed before the dump extension, allowing variants of the same dump file to be generated.
      * This allows multiple runners to dump the same file but with variations depending on the runner configuration.
      */
-    val DUMP_CLASSIFIER by stringDirective(
-        description = "The test runner classifier for dump files."
-    )
-
+    val DUMP_CLASSIFIER by valueDirective<TestDumpClassifier<*>>(description = "The test runner classifier for dump files.") {
+        error("DUMP_CLASSIFIER should not be set at the file level")
+    }
     val DUMP_AS_DIFF by directive(
         description = "Whether to produce a diff between the expected and actual dump files."
     )
+}
+
+abstract class TestDumpRoot<out Self : TestDumpRoot<Self>>(val uniqueName: String) {
+    override fun toString(): String = uniqueName
+}
+
+interface TestDumpClassifier<out Root : TestDumpRoot<Root>> {
+    /**
+     * Must *not* be a self-reference! No cycles either!
+     * The safest way to ensure both conditions is to extend this class using an `enum class`, with a constructor overriding [compatibleWith]
+     */
+    val compatibleWith: TestDumpClassifier<Root>?
+    val root: Root
+    val name: String
+    val extension: String get() = name.replaceFirstChar { it.lowercaseChar() }
+}
+
+/**
+ * Shortcut for declaring a classifier hierarchy of just a single classifier.
+ */
+abstract class SingleTestDumpClassifier<out Self : SingleTestDumpClassifier<Self>>(uniqueName: String) :
+    TestDumpRoot<Self>(uniqueName) {
+    val classifier: TestDumpClassifier<Self> = object : TestDumpClassifier<Self> {
+        override val compatibleWith: TestDumpClassifier<Self>?
+            get() = null
+
+        @Suppress("UNCHECKED_CAST")
+        override val root: Self
+            get() = this@SingleTestDumpClassifier as Self
+        override val name: String
+            get() = this@SingleTestDumpClassifier.uniqueName
+
+        override fun toString(): String = name
+    }
+}
+
+private tailrec fun TestDumpClassifier<*>.isCompatibleWith(other: TestDumpClassifier<*>): Boolean {
+    return this == other || when (val compatibleWith = compatibleWith) {
+        null -> false
+        else -> compatibleWith.isCompatibleWith(other)
+    }
 }
 
 /**
@@ -68,8 +108,45 @@ fun TestModuleStructure.getDefaultDumpFile(extension: String): File {
  */
 @TestInfrastructureInternals
 fun File.toClassifiedDumpFile(extension: String, directives: RegisteredDirectives): File {
-    val classifier = directives[TestDumpDirectives.DUMP_CLASSIFIER].lastOrNull() ?: ""
-    return withExtension("${classifier.removePrefix(".")}.${extension.removePrefix(".")}")
+    val classifiers = independentClassifiers(directives[TestDumpDirectives.DUMP_CLASSIFIER]).sortedBy { it.root.uniqueName }
+    return withExtension(
+        classifiers.joinToString(
+            separator = ".",
+            postfix = ".${extension.removePrefix(".")}",
+        ) { it.extension.removePrefix(".") })
+}
+
+private fun independentClassifiers(classifiers: Iterable<TestDumpClassifier<*>>): Set<TestDumpClassifier<*>> {
+    val roots = mutableSetOf<TestDumpRoot<*>>()
+    val independentClassifiers = mutableSetOf<TestDumpClassifier<*>>()
+    // INV: independentClassifiers.map { it.root }.toSet() == roots && roots.size == independentClassifiers.size
+    //  I.e. `independentClassifiers` have distinct roots, matching `roots` exactly
+    for (classifier in classifiers.distinct()) {
+        when (val compatibleWith = classifier.compatibleWith) {
+            null -> {
+                val root = classifier.root
+                if (root in roots) error(
+                    "Invalid $root classifier chain: " +
+                            "$classifier and ${independentClassifiers.single { it.root == root }} are incompatible"
+                )
+                roots += root
+                independentClassifiers.add(classifier)
+            }
+            is TestDumpClassifier<*> -> {
+                if (compatibleWith !in independentClassifiers) {
+                    val root = compatibleWith.root
+                    val incompatibleClassifier =
+                        independentClassifiers.find { it.root == root }?.takeUnless { classifier.isCompatibleWith(it) }
+                    if (incompatibleClassifier != null)
+                        error("Invalid $root classifier chain: $classifier and $incompatibleClassifier are incompatible")
+                    else error("Invalid $root classifier chain: Please add $compatibleWith to the classifier chain")
+                }
+                independentClassifiers.remove(compatibleWith)
+                independentClassifiers.add(classifier)
+            }
+        }
+    }
+    return independentClassifiers
 }
 
 /**

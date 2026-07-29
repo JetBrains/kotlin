@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
+import org.jetbrains.kotlin.test.directives.TestDumpClassifier
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.TestDumpRoot
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
@@ -29,6 +31,18 @@ abstract class AbstractKaptStubConverterTest(
         doOpenInternalPackagesIfRequired()
     }
 
+    enum class StubGenerationSchemeClassifier(val scheme: StubGenerationScheme) : TestDumpClassifier<StubGenerationSchemeClassifier.Root> {
+        DIRECT(StubGenerationScheme.DIRECT),
+        JTREE(StubGenerationScheme.JTREE),
+        ;
+
+        override val compatibleWith get() = null
+        override val root get() = Root
+        override val extension: String = scheme.stringValue
+
+        companion object Root : TestDumpRoot<Root>("stubGenerationScheme")
+    }
+
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         globalDefaults {
             frontend = FrontendKinds.FIR
@@ -40,7 +54,7 @@ abstract class AbstractKaptStubConverterTest(
             +MAP_DIAGNOSTIC_LOCATIONS
             +WITH_STDLIB
             STUB_GENERATION_SCHEME with stubGenerationScheme.stringValue
-            TestDumpDirectives.DUMP_CLASSIFIER with stubGenerationScheme.stringValue.lowercase()
+            TestDumpDirectives.DUMP_CLASSIFIER with StubGenerationSchemeClassifier.entries.single { it.scheme == stubGenerationScheme }
         }
 
         useConfigurators(

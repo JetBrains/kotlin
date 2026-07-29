@@ -47,7 +47,7 @@ abstract class AbstractLLReversedDiagnosticsTest : AbstractLLCompilerBasedTest()
             useFailureSuppressors(::LLFirOnlyReversedTestSuppressor)
             useMetaTestConfigurators(::reversedDiagnosticsConfigurator)
             defaultDirectives {
-                TestDumpDirectives.DUMP_CLASSIFIER with "reversed"
+                TestDumpDirectives.DUMP_CLASSIFIER with LLClassifier.Reversed
             }
         }
     }
