@@ -205,23 +205,24 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                     anyFailureAttributed = true
                 }
                 id in testReport.failedTests -> {
-                    // The failure the test itself reported: its own message and stack trace say everything, so the
-                    // batch's collected outputs are not repeated here.
                     val outcome = results.getValue(id)
-                    input.failWith(AssertionError(listOfNotNull(outcome.message, outcome.details).joinToString("\n")))
+                    val reportedFailure = listOfNotNull(outcome.message, outcome.details).joinToString("\n")
+                    if (parsedBatchResult.crashedInProgress(id)) {
+                        // The test both reported a failure on one VM and took another one down. Report the two
+                        // together: the assertion alone would hide that it crashes an engine, and the crash alone
+                        // would hide what the test actually asserted. The crash needs the VM output to diagnose.
+                        input.failWithCollectedOutputs(texts, reportedFailure, crashedAnotherVmDiagnosis(id))
+                    } else {
+                        // Its own message and stack trace say everything, so the collected outputs are not repeated.
+                        input.failWith(AssertionError(reportedFailure))
+                    }
                     anyFailureAttributed = true
                 }
                 // The test ran to completion on at least one VM, but took another one down while executing. Without
                 // this branch the surviving VM's result would report it as passing, and the crash would surface
                 // only as the unattributed batch-level VM exception below.
                 parsedBatchResult.crashedInProgress(id) -> {
-                    input.failWithCollectedOutputs(
-                        texts,
-                        "Test '$id' reported a result on at least one VM, but on another VM it printed a " +
-                                "'${GroupedTestsResultProtocol.STARTED}' line with no terminal " +
-                                "'${GroupedTestsResultProtocol.PASSED}'/'${GroupedTestsResultProtocol.FAILED}' result — " +
-                                "this test most likely crashed that VM (a hard trap, OOM, or process exit) while executing.",
-                    )
+                    input.failWithCollectedOutputs(texts, crashedAnotherVmDiagnosis(id))
                     anyFailureAttributed = true
                 }
             }
@@ -233,6 +234,16 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             throw exceptions.first()
         }
     }
+
+    /**
+     * Explains that [id] took one VM down even though another one ran it to completion — reported whether that other
+     * VM saw it pass or fail, so a crash is never hidden behind an outcome from a surviving engine.
+     */
+    private fun crashedAnotherVmDiagnosis(id: String): String =
+        "Test '$id' reported a result on at least one VM, but on another VM it printed a " +
+                "'${GroupedTestsResultProtocol.STARTED}' line with no terminal " +
+                "'${GroupedTestsResultProtocol.PASSED}'/'${GroupedTestsResultProtocol.FAILED}' result — " +
+                "this test most likely crashed that VM (a hard trap, OOM, or process exit) while executing."
 
     /** Explains why the batch carries no result for [id]: [crashed] tells a VM-crasher from a never-run test. */
     private fun missingResultDiagnosis(id: String, crashed: Boolean): String = if (crashed) {

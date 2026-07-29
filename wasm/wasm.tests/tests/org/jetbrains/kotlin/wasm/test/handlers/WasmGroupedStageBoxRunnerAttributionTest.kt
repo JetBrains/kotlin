@@ -118,6 +118,59 @@ class WasmGroupedStageBoxRunnerAttributionTest {
     }
 
     @Test
+    fun `given a test failing on one VM and crashing another then the failure and the crash are both reported`() {
+        val failingCrasher = GroupedTest("testFailingCrasher")
+        val other = GroupedTest("testOther")
+
+        // The first VM ran the whole batch and saw `failingCrasher` report a failure.
+        val finishedVmStdout = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(other.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(other.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolLine(failingCrasher.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(
+                failingCrasher.id,
+                GroupedTestsResultProtocol.FAILED,
+                GroupedTestsResultProtocol.escape(FAILURE_MESSAGE),
+                GroupedTestsResultProtocol.escape(FAILURE_DETAILS),
+            )
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+        // On the second VM that same test never got to report anything: it took the VM down while executing.
+        val crashedVmStdout = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(other.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(other.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolLine(failingCrasher.id, GroupedTestsResultProtocol.STARTED)
+        }
+        val crashedVmFailure = WasmVMException(
+            AssertionError(
+                "Command \"wasmedge test.wasm\" terminated with exit code 139 in working dir \"/tmp/batch\"\n" +
+                        "OUTPUT:\n$crashedVmStdout\n---"
+            ),
+            vmName = "WasmEdge",
+        )
+
+        runner(
+            listOf(other, failingCrasher),
+            vmStdout = listOf(finishedVmStdout),
+            vmFailures = listOf(crashedVmFailure),
+        ).processArtifact(FakeWasmArtifact)
+
+        assertNull(other.reportedFailure, "A passing test was failed: ${other.reportedFailure?.message}")
+
+        // One report, carrying both halves of what happened: reporting only the assertion would hide that this test
+        // takes an engine down, and reporting only the crash would hide what it actually asserted.
+        assertEquals(1, failingCrasher.reportedFailures.size, "Expected exactly one failure for ${failingCrasher.id}")
+        val message = failingCrasher.reportedFailure?.message.orEmpty()
+        assertTrue(FAILURE_MESSAGE in message, message)
+        assertTrue(FAILURE_DETAILS in message, message)
+        assertTrue("most likely crashed that VM" in message, message)
+        // The crash is only diagnosable with the VM output, so it has to come along.
+        assertTrue("Collected outputs:" in message, message)
+    }
+
+    @Test
     fun `given a grouped batch whose driver never ran when the VM exits cleanly then every test is failed`() {
         val first = GroupedTest("testFirst")
         val second = GroupedTest("testSecond")
