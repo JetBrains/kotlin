@@ -65,9 +65,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArguments.kt
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for Simple>[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class Sum : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Sum] constructor(): R|Sum| {
-            LAZY_super<R|kotlin/Any|>
+    @<ERROR TYPE REF: Symbol not found for Simple>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class Sum : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sum] constructor(): R|Sum| {
+            super<R|kotlin/Any|>()
         }
 
     }
@@ -134,9 +134,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArguments.kt
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for StringLiteral>[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class WithStringLiteralConcat : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithStringLiteralConcat] constructor(): R|WithStringLiteralConcat| {
-            LAZY_super<R|kotlin/Any|>
+    @<ERROR TYPE REF: Symbol not found for StringLiteral>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class WithStringLiteralConcat : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithStringLiteralConcat] constructor(): R|WithStringLiteralConcat| {
+            super<R|kotlin/Any|>()
         }
 
     }
