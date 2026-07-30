@@ -27,7 +27,7 @@ internal class JvmBuildOperationFactory(val compilerArgs: List<String>, val kotl
             args.destination = null // TODO: KT-85394 refactor setting up arguments to avoid this hack
             compilationOperationBuilder[KOTLINSCRIPT_EXTENSIONS] = kotlinScriptExtensions.toTypedArray()
         }
-        compilationOperationBuilder.compilerArguments.applyArgumentStrings(args.toArgumentStrings(allowArgFileInValues = false))
+        compilationOperationBuilder.compilerArguments.applyCommandLineArguments(args.toArgumentStrings(allowArgFileInValues = false))
         return compilationOperationBuilder
     }
 }
