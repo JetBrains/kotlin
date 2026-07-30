@@ -486,7 +486,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
-    fun `KT-88106 - Firebase dump task fails when version key changes from exact to from`(version: GradleVersion) {
+    fun `KT-88106 - Firebase dump task does not fail when version key changes from exact to from`(version: GradleVersion) {
         val useFromVersionKey = "useFromVersionKey"
 
         project("empty", version) {
@@ -509,7 +509,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
                 build("dumpXcodebuildArgsMacosx")
 
-                buildAndFail("dumpXcodebuildArgsMacosx", "-P$useFromVersionKey=true")
+                build("dumpXcodebuildArgsMacosx", "-P$useFromVersionKey=true")
             }
         }
     }
