@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.collectAllSubclasses
+import org.jetbrains.kotlin.fir.declarations.collectAllSubclassesIfSealed
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -441,7 +441,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         subjectType: ConeKotlinType,
         destination: MutableCollection<WhenMissingCase>
     ) {
-        val allSubclasses = subjectType.toClassSymbol()?.collectAllSubclasses(c.session) ?: return
+        val allSubclasses = subjectType.toClassSymbol()?.collectAllSubclassesIfSealed(c.session) ?: return
         val checkedSubclasses = mutableSetOf<FirClassSymbol<*>>()
         val info = Info(allSubclasses, checkedSubclasses, c.session)
 
@@ -550,7 +550,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         // ----- all functions below should be removed together with the `ImprovedExhaustivenessChecker` language feature -----
 
         private fun processBranchUsingSealedInheritors(symbolToCheck: FirClassSymbol<*>, isNegated: Boolean, info: Info) {
-            val subclassesOfType = symbolToCheck.collectAllSubclasses(info.session)
+            val subclassesOfType = symbolToCheck.collectAllSubclassesIfSealed(info.session)
             val supertypesWhichAreSealedInheritors = symbolToCheck.collectAllSuperclasses(info.session, info)
             if (subclassesOfType.none { it in info.allSubclasses } && supertypesWhichAreSealedInheritors.isEmpty()) {
                 return

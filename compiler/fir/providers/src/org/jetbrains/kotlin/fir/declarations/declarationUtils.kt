@@ -208,14 +208,14 @@ fun FirClassSymbol<*>.collectEnumEntries(session: FirSession): List<FirEnumEntry
 }
 
 context(holder: SessionHolder)
-fun FirEnumEntrySymbol.getComplementarySymbols(): Set<FirEnumEntrySymbol>? = resolvedReturnType
+fun FirEnumEntrySymbol.getEnumSiblings(): Set<FirEnumEntrySymbol>? = resolvedReturnType
     .toRegularClassSymbol()
     ?.collectEnumEntries(holder.session)
     ?.filterTo(mutableSetOf()) { it != this }
 
 context(holder: SessionHolder)
-fun FirRegularClassSymbol.getComplementarySymbols(): Set<FirClassSymbol<*>> =
-    holder.session.sealedSiblingsCalculator.collectComplementarySymbolsFor(this)
+fun FirRegularClassSymbol.getSealedSiblings(): Set<FirClassSymbol<*>> =
+    holder.session.sealedSiblingsCalculator.collectSealedSiblingsFor(this)
 
 /**
  * Returns the FirClassLikeDeclaration that the
