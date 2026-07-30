@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.testFederation
 
 import org.gradle.api.Project
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
 
@@ -55,9 +56,9 @@ internal val Project.testFederationAffectedDomains: Provider<Set<Domain>>
 
 internal const val SMOKE_TEST_CONFIG_KEY = "org.jetbrains.kotlin.testFederation.smokeTestConfig"
 
-var Test.smokeTestConfig: SmokeTestConfig?
-    set(value) = extensions.extraProperties.set(SMOKE_TEST_CONFIG_KEY, value)
-    get() = if (extensions.extraProperties.has(SMOKE_TEST_CONFIG_KEY)) extensions.extraProperties.get(SMOKE_TEST_CONFIG_KEY) as SmokeTestConfig? else null
+val Test.smokeTestConfig: Property<SmokeTestConfig> by extensionProperty {
+    project.objects.property(SmokeTestConfig::class.java).convention(SmokeTestConfig.Default)
+}
 
 /**
  * Returns true if the current project is tested in 'Smoke Test Mode' according to the test federation.
