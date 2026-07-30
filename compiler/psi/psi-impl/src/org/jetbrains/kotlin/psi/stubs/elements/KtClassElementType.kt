@@ -52,6 +52,8 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
             isTopLevel = isTopLevel,
             kdocText = null,
             valueClassRepresentation = null,
+            inlineClassUnderlyingPropertyNameRef = null,
+            inlineClassUnderlyingType = null,
         )
     }
 
@@ -75,6 +77,10 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
 
         val representation = stub.valueClassRepresentation
         dataStream.writeVarInt(if (representation == null) 0 else representation.ordinal + 1)
+        if (representation != null) {
+            dataStream.writeName(stub.inlineClassUnderlyingPropertyName)
+            serializeTypeBean(dataStream, stub.inlineClassUnderlyingType)
+        }
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinClassStubImpl {
@@ -101,6 +107,8 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
                 null
             else
                 KotlinValueClassRepresentation.entries[representationOrdinal - 1]
+        val inlineClassUnderlyingPropertyName = if (representation != null) dataStream.readName() else null
+        val inlineClassUnderlyingType = if (representation != null) deserializeTypeBean(dataStream) else null
 
         return KotlinClassStubImpl(
             parent = parentStub,
@@ -114,6 +122,8 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
             isTopLevel = isTopLevel,
             kdocText = kdocText,
             valueClassRepresentation = representation,
+            inlineClassUnderlyingPropertyNameRef = inlineClassUnderlyingPropertyName,
+            inlineClassUnderlyingType = inlineClassUnderlyingType,
         )
     }
 

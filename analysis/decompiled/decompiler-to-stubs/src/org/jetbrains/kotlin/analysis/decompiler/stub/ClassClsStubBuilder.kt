@@ -170,6 +170,8 @@ private class ClassClsStubBuilder(
             ProtoBuf.Class.Kind.ENUM_ENTRY -> error("Enum entries have to be created as members via '${::createEnumEntryStubs.name}'")
 
             else -> {
+                val inlineClassUnderlyingProperty = getInlineClassUnderlyingProperty()
+
                 KotlinClassStubImpl(
                     parent = parentStub,
                     qualifiedName = fqName.ref(),
@@ -181,15 +183,42 @@ private class ClassClsStubBuilder(
                     isLocal = false,
                     isTopLevel = isTopLevel,
                     kdocText = kdoc,
-                    valueClassRepresentation = valueClassRepresentation(),
+                    valueClassRepresentation = inlineClassUnderlyingProperty?.let { KotlinValueClassRepresentation.INLINE_CLASS },
+                    inlineClassUnderlyingPropertyNameRef = inlineClassUnderlyingProperty?.name?.ref(),
+                    inlineClassUnderlyingType = inlineClassUnderlyingProperty?.type,
                 )
             }
         }
     }
 
-    private fun valueClassRepresentation(): KotlinValueClassRepresentation? = when {
-        classProto.hasInlineClassUnderlyingPropertyName() -> KotlinValueClassRepresentation.INLINE_CLASS
-        else -> null
+    private class InlineClassUnderlyingProperty(val name: Name, val type: KotlinTypeBean?)
+
+    /**
+     * Returns the underlying property of an inline value class, or `null` when the class is not an inline value class.
+     *
+     * [InlineClassUnderlyingProperty.type] is `null` only for malformed metadata: the compiler either writes the type into the
+     * class itself, or serializes the underlying property it can be read from.
+     *
+     * @see org.jetbrains.kotlin.serialization.deserialization.loadValueClassRepresentation
+     */
+    private fun getInlineClassUnderlyingProperty(): InlineClassUnderlyingProperty? {
+        if (!classProto.hasInlineClassUnderlyingPropertyName()) return null
+
+        val name = c.nameResolver.getName(classProto.inlineClassUnderlyingPropertyName)
+        val typeProto = classProto.inlineClassUnderlyingType(c.typeTable) ?: findInlineClassUnderlyingPropertyTypeProto(name)
+        return InlineClassUnderlyingProperty(name, typeProto?.let(typeStubBuilder::createKotlinTypeBean))
+    }
+
+    private fun findInlineClassUnderlyingPropertyTypeProto(name: Name): ProtoBuf.Type? {
+        val property = classProto.propertyList.singleOrNull { property ->
+            c.nameResolver.getName(property.name) == name &&
+                    !property.hasReceiver() &&
+                    !property.hasCompanionExtensionReceiver() &&
+                    property.contextParameterList.isEmpty() &&
+                    property.contextReceiverTypes(c.typeTable).isEmpty()
+        }
+
+        return property?.returnType(c.typeTable)
     }
 
     private fun computeFoldedProperties(): Map<Name, ProtoBuf.Property> {

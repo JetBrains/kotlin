@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeRigidType
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -272,7 +271,7 @@ internal fun deserializeClassToSymbol(
     }.apply {
         if (classStub != null) {
             if (isInlineOrValue) {
-                valueClassRepresentation = classStub.deserializeValueClassRepresentation(this)
+                valueClassRepresentation = classStub.deserializeValueClassRepresentation(this, context.typeDeserializer)
             }
 
             val clsStubCompiledToJvmDefaultImplementation = classStub.isClsStubCompiledToJvmDefaultImplementation
@@ -295,29 +294,29 @@ internal fun deserializeClassToSymbol(
     }
 }
 
-private fun KotlinClassStubImpl.deserializeValueClassRepresentation(klass: FirRegularClass): ValueClassRepresentation<ConeRigidType>? {
-    val constructor by lazy(LazyThreadSafetyMode.NONE) {
-        klass.declarations.firstNotNullOfOrNull { declaration ->
-            (declaration as? FirConstructor)?.takeIf(FirConstructor::isPrimary)
-        } ?: errorWithAttachment("Value class must have primary constructor") {
+private fun KotlinClassStubImpl.deserializeValueClassRepresentation(
+    klass: FirRegularClass,
+    typeDeserializer: StubBasedFirTypeDeserializer,
+): ValueClassRepresentation<ConeRigidType>? {
+    if (valueClassRepresentation != KotlinValueClassRepresentation.INLINE_CLASS) {
+        return null
+    }
+
+    val propertyName = inlineClassUnderlyingPropertyName
+        ?: errorWithAttachment("Inline value class must have an underlying property name") {
             withFirEntry("class", klass)
         }
-    }
 
-    if (valueClassRepresentation == KotlinValueClassRepresentation.INLINE_CLASS) {
-        val parameter = constructor.valueParameters.single()
-        return InlineClassRepresentation(parameter.name, parameter.coneRigidType())
-    }
+    val type = inlineClassUnderlyingType?.let { typeDeserializer.type(it) }
+        ?: errorWithAttachment("Cannot determine the underlying type of an inline value class") {
+            withEntry("underlyingPropertyName", propertyName)
+            withFirEntry("class", klass)
+        }
 
-    return null
-}
-
-private fun FirValueParameter.coneRigidType(): ConeRigidType {
-    val type = returnTypeRef.coneType
     requireWithAttachment(type is ConeRigidType, { "Underlying type must be rigid type" }) {
         withConeTypeEntry("type", type)
-        withFirEntry("valueParameter", this@coneRigidType)
+        withFirEntry("class", klass)
     }
 
-    return type
+    return InlineClassRepresentation(underlyingPropertyName = Name.identifier(propertyName), underlyingType = type)
 }

@@ -9,6 +9,10 @@ plugins {
     id("test-inputs-check")
 }
 
+val jvmAbiGenPlugin = configurations.create("jvmAbiGenPlugin") {
+    isTransitive = false
+}
+
 dependencies {
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
@@ -87,6 +91,8 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:psi:psi-api")))
     testImplementation(libs.lincheck)
     testImplementation(libs.junit.jupiter.params)
+
+    jvmAbiGenPlugin(project(":plugins:jvm-abi-gen"))
 }
 
 sourceSets {
@@ -116,6 +122,8 @@ projectTests {
             JdkMajorVersion.JDK_21_0  // TestsWithJava21 and others
         )
     ) {
+        addClasspathProperty(jvmAbiGenPlugin, "kotlin.jvm.abi.jar.path")
+
         if (!kotlinBuildProperties.isTeamcityBuild.get()) {
             // Ensure golden tests run first since some LL tests are complementary for the surface tests
             mustRunAfter(":analysis:analysis-api-fir:test")
