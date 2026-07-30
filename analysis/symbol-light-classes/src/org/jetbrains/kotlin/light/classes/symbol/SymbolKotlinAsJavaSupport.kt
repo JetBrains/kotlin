@@ -16,6 +16,7 @@ import com.intellij.psi.impl.ResolveScopeManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
@@ -118,7 +119,8 @@ private fun KaModule.isValidContextModule(): Boolean {
     return targetPlatform.isJvm() || isMultiplatformSupportAvailable
 }
 
-internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport() {
+@OptIn(KaImplementationDetail::class)
+internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport(), KaInternalsLightClassBridge {
 
     init {
         project.analysisMessageBus.connect(project).subscribe(
