@@ -27,7 +27,9 @@ object SealedClassInheritorsProviderImpl : SealedClassInheritorsProvider() {
     }
 }
 
-
+/**
+ * Returns the list of direct inheritors of [this] `sealed` class.
+ */
 fun FirRegularClass.getSealedClassInheritors(session: FirSession): List<ClassId> {
     require(this.isSealed)
     return session.sealedClassInheritorsProvider.getSealedClassInheritors(this)
