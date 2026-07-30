@@ -50,7 +50,7 @@ infix fun OperationStatement.implies(effect: Statement): Implication = Implicati
 infix fun RealVariable.valueNotEq(symbol: FirBasedSymbol<*>): MutableTypeStatement =
     MutableTypeStatement(this, lowerTypes = linkedSetOf(DfaType.Symbol(symbol)))
 
-infix fun RealVariable.valueNotEq(symbols: List<FirBasedSymbol<*>>): MutableTypeStatement =
+infix fun RealVariable.valueNotEq(symbols: Set<FirBasedSymbol<*>>): MutableTypeStatement =
     MutableTypeStatement(this, lowerTypes = symbols.mapTo(mutableSetOf(), DfaType::Symbol))
 
 infix fun RealVariable.valueNotEq(boolean: Boolean): MutableTypeStatement =
