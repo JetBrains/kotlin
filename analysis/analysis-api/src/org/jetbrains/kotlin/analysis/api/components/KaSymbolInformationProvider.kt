@@ -284,6 +284,7 @@ public val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
     replaceWith = ReplaceWith("this.deprecation", "org.jetbrains.kotlin.analysis.api.symbols.deprecation"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -299,6 +300,7 @@ public val KaSymbol.deprecation: KaDeprecation?
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
     replaceWith = ReplaceWith("this.isDeprecated", "org.jetbrains.kotlin.analysis.api.symbols.isDeprecated"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -332,6 +334,7 @@ public val KaSymbol.isDeprecated: Boolean
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
     replaceWith = ReplaceWith("this.canBeOperator", "org.jetbrains.kotlin.analysis.api.symbols.canBeOperator"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -345,6 +348,7 @@ public val KaNamedFunctionSymbol.canBeOperator: Boolean
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
     replaceWith = ReplaceWith("this.applicableAnnotationTargets", "org.jetbrains.kotlin.analysis.api.symbols.applicableAnnotationTargets"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -360,6 +364,7 @@ public val KaClassSymbol.applicableAnnotationTargets: Set<KaAnnotationTarget>?
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
     replaceWith = ReplaceWith("this.isInline", "org.jetbrains.kotlin.analysis.api.symbols.isInline"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -373,6 +378,7 @@ public val KaKotlinPropertySymbol.isInline: Boolean
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
     replaceWith = ReplaceWith("this.importableFqName", "org.jetbrains.kotlin.analysis.api.symbols.importableFqName"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -395,6 +401,7 @@ public val KaSymbol.importableFqName: FqName?
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
     replaceWith = ReplaceWith("this.defaultAnnotationTargets", "org.jetbrains.kotlin.analysis.api.symbols.defaultAnnotationTargets"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -409,6 +416,7 @@ public val KaSymbol.defaultAnnotationTargets: Set<KaAnnotationTarget>?
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
     replaceWith = ReplaceWith("this.returnValueStatus", "org.jetbrains.kotlin.analysis.api.symbols.returnValueStatus"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -425,6 +433,7 @@ public val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
     replaceWith = ReplaceWith("this.containingFileAnnotations", "org.jetbrains.kotlin.analysis.api.symbols.containingFileAnnotations"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)

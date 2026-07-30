@@ -51,6 +51,7 @@ public interface KaRenderer : KaSessionComponent {
         "this.render(renderer)",
         "org.jetbrains.kotlin.analysis.api.renderer.render",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaExperimentalApi
 @KaContextParameterApi
@@ -77,6 +78,7 @@ public fun KaDeclarationSymbol.render(renderer: KaDeclarationRenderer = KaDeclar
         "this.render(renderer, position)",
         "org.jetbrains.kotlin.analysis.api.renderer.render",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaExperimentalApi
 @KaContextParameterApi

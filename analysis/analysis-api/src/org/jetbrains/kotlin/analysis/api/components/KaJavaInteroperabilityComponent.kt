@@ -222,6 +222,7 @@ public fun KaType.asPsiType(
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
     replaceWith = ReplaceWith("this.asKaType(useSitePosition)", "org.jetbrains.kotlin.analysis.api.javaInterop.asKaType"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -242,6 +243,7 @@ public fun PsiType.asKaType(useSitePosition: PsiElement): KaType? {
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
     replaceWith = ReplaceWith("this.mapToJvmTypeDescriptor()", "org.jetbrains.kotlin.analysis.api.javaInterop.mapToJvmTypeDescriptor"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -258,6 +260,7 @@ public fun KaType.mapToJvmTypeDescriptor(): String {
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
     replaceWith = ReplaceWith("this.isPrimitiveBacked", "org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -271,6 +274,7 @@ public val KaType.isPrimitiveBacked: Boolean
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
     replaceWith = ReplaceWith("this.namedClassSymbol", "org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -283,6 +287,7 @@ public val PsiClass.namedClassSymbol: KaNamedClassSymbol?
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
     replaceWith = ReplaceWith("this.callableSymbol", "org.jetbrains.kotlin.analysis.api.javaInterop.callableSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -302,6 +307,7 @@ public val PsiMember.callableSymbol: KaCallableSymbol?
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
     replaceWith = ReplaceWith("this.containingJvmClassName", "org.jetbrains.kotlin.analysis.api.javaInterop.containingJvmClassName"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)

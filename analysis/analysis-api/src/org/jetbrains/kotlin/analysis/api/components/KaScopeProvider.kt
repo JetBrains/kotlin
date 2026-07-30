@@ -536,6 +536,7 @@ public class KaScopeWithKindImpl(
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.memberScope", "org.jetbrains.kotlin.analysis.api.scopes.memberScope"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -622,6 +623,7 @@ public val KaDeclarationContainerSymbol.memberScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.staticMemberScope", "org.jetbrains.kotlin.analysis.api.scopes.staticMemberScope"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -634,6 +636,7 @@ public val KaDeclarationContainerSymbol.staticMemberScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.combinedMemberScope", "org.jetbrains.kotlin.analysis.api.scopes.combinedMemberScope"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -653,6 +656,7 @@ public val KaDeclarationContainerSymbol.combinedMemberScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.declaredMemberScope", "org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -672,6 +676,7 @@ public val KaDeclarationContainerSymbol.declaredMemberScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.staticDeclaredMemberScope", "org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -686,6 +691,7 @@ public val KaDeclarationContainerSymbol.staticDeclaredMemberScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.combinedDeclaredMemberScope", "org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -724,6 +730,7 @@ public val KaDeclarationContainerSymbol.combinedDeclaredMemberScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.delegatedMemberScope", "org.jetbrains.kotlin.analysis.api.scopes.delegatedMemberScope"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -736,6 +743,7 @@ public val KaDeclarationContainerSymbol.delegatedMemberScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.fileScope", "org.jetbrains.kotlin.analysis.api.scopes.fileScope"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -748,6 +756,7 @@ public val KaFileSymbol.fileScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.packageScope", "org.jetbrains.kotlin.analysis.api.scopes.packageScope"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -760,6 +769,7 @@ public val KaPackageSymbol.packageScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.asCompositeScope()", "org.jetbrains.kotlin.analysis.api.scopes.asCompositeScope"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -794,6 +804,7 @@ public fun List<KaScope>.asCompositeScope(): KaScope {
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.scope", "org.jetbrains.kotlin.analysis.api.scopes.scope"),
+    level = DeprecationLevel.ERROR,
 )
 @KaExperimentalApi
 @KaContextParameterApi
@@ -807,6 +818,7 @@ public val KaType.scope: KaTypeScope?
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.declarationScope", "org.jetbrains.kotlin.analysis.api.scopes.declarationScope"),
+    level = DeprecationLevel.ERROR,
 )
 @KaExperimentalApi
 @KaContextParameterApi
@@ -821,6 +833,7 @@ public val KaTypeScope.declarationScope: KaScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.syntheticJavaPropertiesScope", "org.jetbrains.kotlin.analysis.api.scopes.syntheticJavaPropertiesScope"),
+    level = DeprecationLevel.ERROR,
 )
 @KaExperimentalApi
 @KaContextParameterApi
