@@ -361,6 +361,7 @@ tasks {
     }
 
     withType<ShadowJar>().configureEach {
+        outputs.cacheIf { false }
         relocate("com.github.gundy", "$kotlinEmbeddableRootPackage.com.github.gundy")
         val baseSourcePackage = "org.jetbrains.kotlin"
         val baseTargetPackage = "org.jetbrains.kotlin.gradle.internal"
