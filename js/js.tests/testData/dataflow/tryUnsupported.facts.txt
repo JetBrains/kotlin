@@ -1,0 +1,2 @@
+// FUNCTION: box
+// unsupportedConstruct: IrTryImpl

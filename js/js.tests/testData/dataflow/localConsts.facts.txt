@@ -1,0 +1,7 @@
+// FUNCTION: box
+local c: value=Top type=Exact(Char) final
+local flag: value=true type=Exact(Boolean) final
+local n: value=42:Int type=Exact(Int) final
+local s: value="OK" type=Exact(String) final
+local u: value=Unit type=Top
+local z: value=null type=Top

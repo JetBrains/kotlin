@@ -1,0 +1,15 @@
+// FUNCTION: take
+// blocks=1 entry=BB0
+BB0:
+  terminator: Return("OK")
+
+// FUNCTION: <init>
+// blocks=1 entry=BB0
+BB0:
+  Any()
+  terminator: Return(Unit)
+
+// FUNCTION: box
+// blocks=1 entry=BB0
+BB0:
+  terminator: Return(take(p = Child(), n = 7))

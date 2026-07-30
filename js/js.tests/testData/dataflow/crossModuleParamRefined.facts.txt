@@ -1,0 +1,7 @@
+// FUNCTION: take
+param p: value=Top type=Exact(Child) final
+local tmp: value=Top type=Top
+
+// FUNCTION: <init>
+
+// FUNCTION: box

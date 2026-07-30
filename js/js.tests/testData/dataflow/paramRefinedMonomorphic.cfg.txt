@@ -1,0 +1,39 @@
+// FUNCTION: <init>
+// blocks=1 entry=BB0
+BB0:
+  Any()
+  terminator: Return(Unit)
+
+// FUNCTION: take
+// blocks=7 entry=BB0
+BB0:
+  var tmp: String
+  var tmp: Boolean
+  terminator: MultiCond(jsInstanceOfIntrinsic(a = p, b = jsClassIntrinsic<Child>()) -> BB1, true -> BB2)
+  succs: BB1, BB2
+BB1:
+  tmp = jsEqeqeq(a = n, b = 7)
+  terminator: Goto(BB3)
+  succs: BB3
+BB2:
+  tmp = false
+  terminator: Goto(BB3)
+  succs: BB3
+BB3:
+  terminator: MultiCond(tmp -> BB4, true -> BB5)
+  succs: BB4, BB5
+BB4:
+  tmp = "OK"
+  terminator: Goto(BB6)
+  succs: BB6
+BB5:
+  tmp = "FAIL"
+  terminator: Goto(BB6)
+  succs: BB6
+BB6:
+  terminator: Return(tmp)
+
+// FUNCTION: box
+// blocks=1 entry=BB0
+BB0:
+  terminator: Return(take(p = Child(), n = 7))
