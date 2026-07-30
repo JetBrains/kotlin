@@ -25,14 +25,14 @@ public abstract class CMutableSet2 /* test.CMutableSet2*/<Elem>  implements java
   @kotlin.js.JsExport.Ignore()
   public boolean retainAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  retainAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
 
-  @kotlin.SinceKotlin()
+  @kotlin.SinceKotlin(version = "2.0")
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
   @kotlin.js.JsDontExportDefaultImplementation()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlySet<Elem> asJsReadonlySetView();//  asJsReadonlySetView()
 
-  @kotlin.SinceKotlin()
+  @kotlin.SinceKotlin(version = "2.0")
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
   @kotlin.js.JsDontExportDefaultImplementation()

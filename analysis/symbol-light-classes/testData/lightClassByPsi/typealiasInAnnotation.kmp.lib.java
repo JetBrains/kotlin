@@ -10,6 +10,6 @@ public abstract @interface Ann /* Ann*/ {
 public abstract interface B /* B*/<T, R>  {
 }
 
-@Ann(kClass = {})
+@Ann(kClass = {A.class, A.class, A.class, B.class, B.class})
 public abstract interface Test /* Test*/ {
 }

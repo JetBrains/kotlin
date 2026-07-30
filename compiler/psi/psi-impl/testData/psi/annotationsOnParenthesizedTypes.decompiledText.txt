@@ -2,7 +2,7 @@ A.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @kotlin.annotation.Target public final annotation class A public constructor() : kotlin.Annotation {
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER]) public final annotation class A public constructor() : kotlin.Annotation {
   }
 
 AnnotationsOnParenthesizedTypes.class:

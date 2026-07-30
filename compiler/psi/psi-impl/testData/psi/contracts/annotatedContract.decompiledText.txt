@@ -2,7 +2,7 @@ Anno.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @kotlin.annotation.Target @kotlin.annotation.Retention public final annotation class Anno public constructor() : kotlin.Annotation {
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.EXPRESSION]) @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE) public final annotation class Anno public constructor() : kotlin.Annotation {
   }
 
 CheckKt.class:

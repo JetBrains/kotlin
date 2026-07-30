@@ -101,7 +101,7 @@ WithArrays.class:
     IMPORT_LIST
     CLASS[classId=/WithArrays, fqName=WithArrays, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithArrays, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Arrays]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Arrays]
           valueArguments: [
             ia -> [1, 2, 3]
             la -> [1.toLong()]
@@ -114,6 +114,39 @@ WithArrays.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Arrays]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=ia]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=3]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=la]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=fa]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=da]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=2.2]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=ca]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=ba]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
+                BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+                BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithArrays]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -126,7 +159,7 @@ WithExplicitArrays.class:
     IMPORT_LIST
     CLASS[classId=/WithExplicitArrays, fqName=WithExplicitArrays, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithExplicitArrays, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Arrays]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Arrays]
           valueArguments: [
             ia -> [1, 2, 3]
             la -> [1.toLong()]
@@ -139,6 +172,39 @@ WithExplicitArrays.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Arrays]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=ia]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=3]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=la]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=fa]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=da]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=2.2]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=ca]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=ba]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
+                BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+                BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithExplicitArrays]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST

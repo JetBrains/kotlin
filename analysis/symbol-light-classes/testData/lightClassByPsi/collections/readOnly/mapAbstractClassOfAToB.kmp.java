@@ -8,7 +8,7 @@ public abstract class ABMap /* test.ABMap*/ implements java.util.Map<@org.jetbra
 
 public abstract class ABMap2 /* test.ABMap2*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
-  @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
+  @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
   @kotlin.js.JsDontExportDefaultImplementation()

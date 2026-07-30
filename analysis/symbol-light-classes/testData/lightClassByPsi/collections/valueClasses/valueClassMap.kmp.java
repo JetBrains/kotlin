@@ -4,7 +4,7 @@ public abstract class CMap /* test.CMap*/ implements java.util.Map<@org.jetbrain
 
 public abstract class CMap2 /* test.CMap2*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
-  @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
+  @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
   @kotlin.js.JsDontExportDefaultImplementation()

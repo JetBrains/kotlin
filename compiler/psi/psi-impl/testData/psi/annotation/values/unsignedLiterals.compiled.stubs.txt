@@ -75,7 +75,7 @@ WithMaxValues.class:
     IMPORT_LIST
     CLASS[classId=/WithMaxValues, fqName=WithMaxValues, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithMaxValues, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Unsigned]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Unsigned]
           valueArguments: [
             ub -> -1.toByte()
             us -> -1.toShort()
@@ -86,6 +86,31 @@ WithMaxValues.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unsigned]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=ub]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=us]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=ui]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=ul]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithMaxValues]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -98,7 +123,7 @@ WithSmallValues.class:
     IMPORT_LIST
     CLASS[classId=/WithSmallValues, fqName=WithSmallValues, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithSmallValues, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Unsigned]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Unsigned]
           valueArguments: [
             ub -> 1.toByte()
             us -> 2.toShort()
@@ -109,6 +134,23 @@ WithSmallValues.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unsigned]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=ub]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=us]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=ui]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=ul]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4L]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithSmallValues]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST

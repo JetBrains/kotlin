@@ -293,11 +293,13 @@ fun createTargetedAnnotationStubs(
 
     annotations.forEach { annotation ->
         val (annotationWithArgs, target) = annotation
+        val args = annotationWithArgs.args
+        val hasStubBasedArguments = args.isNotEmpty() && args.areRepresentableAsStubs()
         val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
             parent,
             shortNameRef = annotationWithArgs.classId.shortClassName.ref(),
-            hasValueArguments = false,
-            annotationWithArgs.args,
+            hasValueArguments = hasStubBasedArguments,
+            args,
         )
         if (target != null) {
             KotlinAnnotationUseSiteTargetStubImpl(annotationEntryStubImpl, StringRef.fromString(target.name)!!)
@@ -306,6 +308,10 @@ fun createTargetedAnnotationStubs(
             KotlinPlaceHolderStubImpl<KtConstructorCalleeExpression>(annotationEntryStubImpl, KtStubElementTypes.CONSTRUCTOR_CALLEE)
         val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(constructorCallee, KtStubElementTypes.TYPE_REFERENCE)
         createStubForTypeName(annotationWithArgs.classId, typeReference)
+
+        if (hasStubBasedArguments) {
+            createValueArgumentListStub(annotationEntryStubImpl, args)
+        }
     }
 }
 

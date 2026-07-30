@@ -10,7 +10,7 @@ public abstract @interface AnnotationArray /* AnnotationArray*/ {
   public abstract @org.jetbrains.annotations.NotNull() Annotation @org.jetbrains.annotations.NotNull() [] value();//  value()
 }
 
-@AnnotationArray(value = {})
+@AnnotationArray(value = {@Annotation(strings = {"[sar]1", "[sar]2"})})
 public final class CA /* CA*/ {
   public  CA();//  .ctor()
 }

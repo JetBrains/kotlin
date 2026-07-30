@@ -16,7 +16,7 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/ implements test.IMutab
   public @org.jetbrains.annotations.Nullable() java.lang.Integer remove(int);//  remove(int)
 
   @java.lang.Override()
-  @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
+  @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
   @kotlin.js.JsDontExportDefaultImplementation()
@@ -24,7 +24,7 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/ implements test.IMutab
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsMap<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer> asJsMapView();//  asJsMapView()
 
   @java.lang.Override()
-  @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
+  @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
   @kotlin.js.JsDontExportDefaultImplementation()

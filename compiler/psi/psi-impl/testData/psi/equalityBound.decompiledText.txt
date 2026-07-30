@@ -3,7 +3,7 @@ Aliased.class:
   // Implementation of methods is not available
 
   public final class Aliased public constructor() : Base {
-      public open operator fun equals(@kotlin.EqualityBound other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+      public open operator fun equals(@kotlin.EqualityBound(bound = Base::class) other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
   }
 
 Base.class:
@@ -11,7 +11,7 @@ Base.class:
   // Implementation of methods is not available
 
   public interface Base {
-      public abstract operator fun equals(@kotlin.EqualityBound other: kotlin.Any?): kotlin.Boolean
+      public abstract operator fun equals(@kotlin.EqualityBound(bound = Base::class) other: kotlin.Any?): kotlin.Boolean
   }
 
 Data.class:
@@ -43,7 +43,7 @@ Generic.class:
   // Implementation of methods is not available
 
   public final class Generic<T> public constructor() {
-      public open operator fun equals(@kotlin.EqualityBound other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+      public open operator fun equals(@kotlin.EqualityBound(bound = Generic::class) other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
   }
 
 Inherited.class:

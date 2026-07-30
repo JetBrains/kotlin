@@ -5,7 +5,7 @@ public abstract class CSet /* test.CSet*/<Elem>  implements java.util.Set<Elem>,
 public abstract class CSet2 /* test.CSet2*/<Elem>  implements java.util.Set<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   private final int size;
 
-  @kotlin.SinceKotlin()
+  @kotlin.SinceKotlin(version = "2.0")
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
   @kotlin.js.JsDontExportDefaultImplementation()

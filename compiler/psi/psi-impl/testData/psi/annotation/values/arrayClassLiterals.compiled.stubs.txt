@@ -86,7 +86,7 @@ WithArrayClassLiterals.class:
     IMPORT_LIST
     CLASS[classId=/WithArrayClassLiterals, fqName=WithArrayClassLiterals, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithArrayClassLiterals, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=ClassLiteral]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=ClassLiteral]
           valueArguments: [
             c1 -> NormalClass(value=kotlin/Array<kotlin/Int>)
             c2 -> NormalClass(value=kotlin/Array<kotlin/Array<kotlin/String>>)
@@ -96,6 +96,57 @@ WithArrayClassLiterals.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=ClassLiteral]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=c1]
+              CLASS_LITERAL_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=Array]
+                    TYPE_ARGUMENT_LIST
+                      TYPE_PROJECTION[projectionKind=NONE]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=kotlin]
+                            REFERENCE_EXPRESSION[referencedName=Int]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=c2]
+              CLASS_LITERAL_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=Array]
+                    TYPE_ARGUMENT_LIST
+                      TYPE_PROJECTION[projectionKind=NONE]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=kotlin]
+                            REFERENCE_EXPRESSION[referencedName=Array]
+                            TYPE_ARGUMENT_LIST
+                              TYPE_PROJECTION[projectionKind=NONE]
+                                TYPE_REFERENCE
+                                  USER_TYPE
+                                    USER_TYPE
+                                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                                    REFERENCE_EXPRESSION[referencedName=String]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=c3]
+              CLASS_LITERAL_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=Array]
+                    TYPE_ARGUMENT_LIST
+                      TYPE_PROJECTION[projectionKind=NONE]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=ClassLiteral]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithArrayClassLiterals]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -108,7 +159,7 @@ WithPrimitiveArrayClassLiterals.class:
     IMPORT_LIST
     CLASS[classId=/WithPrimitiveArrayClassLiterals, fqName=WithPrimitiveArrayClassLiterals, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithPrimitiveArrayClassLiterals, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=ClassLiteral]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=ClassLiteral]
           valueArguments: [
             c1 -> NormalClass(value=kotlin/IntArray)
             c2 -> NormalClass(value=kotlin/Array<kotlin/IntArray>)
@@ -118,6 +169,51 @@ WithPrimitiveArrayClassLiterals.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=ClassLiteral]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=c1]
+              CLASS_LITERAL_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=IntArray]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=c2]
+              CLASS_LITERAL_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=Array]
+                    TYPE_ARGUMENT_LIST
+                      TYPE_PROJECTION[projectionKind=NONE]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=kotlin]
+                            REFERENCE_EXPRESSION[referencedName=IntArray]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=c3]
+              CLASS_LITERAL_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=Array]
+                    TYPE_ARGUMENT_LIST
+                      TYPE_PROJECTION[projectionKind=NONE]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=kotlin]
+                            REFERENCE_EXPRESSION[referencedName=Array]
+                            TYPE_ARGUMENT_LIST
+                              TYPE_PROJECTION[projectionKind=NONE]
+                                TYPE_REFERENCE
+                                  USER_TYPE
+                                    USER_TYPE
+                                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                                    REFERENCE_EXPRESSION[referencedName=IntArray]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithPrimitiveArrayClassLiterals]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST

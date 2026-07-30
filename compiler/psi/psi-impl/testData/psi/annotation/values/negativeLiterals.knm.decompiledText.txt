@@ -20,12 +20,12 @@
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Negative public final class WithMinValues public constructor() {
+  @Negative(i = -2147483648, l = -9223372036854775808L, b = -128, s = -32768, d = -1.7976931348623157E308, f = -3.4028235E38F) public final class WithMinValues public constructor() {
   }
 
 2_.knm:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Negative public final class WithNegativeLiterals public constructor() {
+  @Negative(i = -1, l = -1L, b = -1, s = -1, d = -1.0, f = -1.0F) public final class WithNegativeLiterals public constructor() {
   }

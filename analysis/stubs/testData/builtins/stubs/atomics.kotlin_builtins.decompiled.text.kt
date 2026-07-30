@@ -3,7 +3,7 @@
 
 package kotlin.concurrent.atomics
 
-@kotlin.SinceKotlin @kotlin.concurrent.atomics.ExperimentalAtomicApi public final class AtomicArray<T> {
+@kotlin.SinceKotlin(version = "2.1") @kotlin.concurrent.atomics.ExperimentalAtomicApi public final class AtomicArray<T> {
     public constructor(array: kotlin.Array<T>) { /* compiled code */ }
 
     public final val size: kotlin.Int /* compiled code */
@@ -21,7 +21,7 @@ package kotlin.concurrent.atomics
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.SinceKotlin @kotlin.concurrent.atomics.ExperimentalAtomicApi public final class AtomicBoolean public constructor(value: kotlin.Boolean) {
+@kotlin.SinceKotlin(version = "2.1") @kotlin.concurrent.atomics.ExperimentalAtomicApi public final class AtomicBoolean public constructor(value: kotlin.Boolean) {
     public final fun load(): kotlin.Boolean { /* compiled code */ }
 
     public final fun store(newValue: kotlin.Boolean): kotlin.Unit { /* compiled code */ }
@@ -35,7 +35,7 @@ package kotlin.concurrent.atomics
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.SinceKotlin @kotlin.concurrent.atomics.ExperimentalAtomicApi public final class AtomicInt public constructor(value: kotlin.Int) {
+@kotlin.SinceKotlin(version = "2.1") @kotlin.concurrent.atomics.ExperimentalAtomicApi public final class AtomicInt public constructor(value: kotlin.Int) {
     public final fun load(): kotlin.Int { /* compiled code */ }
 
     public final fun store(newValue: kotlin.Int): kotlin.Unit { /* compiled code */ }
@@ -53,7 +53,7 @@ package kotlin.concurrent.atomics
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.SinceKotlin @kotlin.concurrent.atomics.ExperimentalAtomicApi public final class AtomicIntArray {
+@kotlin.SinceKotlin(version = "2.1") @kotlin.concurrent.atomics.ExperimentalAtomicApi public final class AtomicIntArray {
     public constructor(size: kotlin.Int) { /* compiled code */ }
 
     public constructor(array: kotlin.IntArray) { /* compiled code */ }
@@ -77,7 +77,7 @@ package kotlin.concurrent.atomics
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.SinceKotlin @kotlin.concurrent.atomics.ExperimentalAtomicApi public final class AtomicLong public constructor(value: kotlin.Long) {
+@kotlin.SinceKotlin(version = "2.1") @kotlin.concurrent.atomics.ExperimentalAtomicApi public final class AtomicLong public constructor(value: kotlin.Long) {
     public final fun load(): kotlin.Long { /* compiled code */ }
 
     public final fun store(newValue: kotlin.Long): kotlin.Unit { /* compiled code */ }
@@ -95,7 +95,7 @@ package kotlin.concurrent.atomics
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.SinceKotlin @kotlin.concurrent.atomics.ExperimentalAtomicApi public final class AtomicLongArray {
+@kotlin.SinceKotlin(version = "2.1") @kotlin.concurrent.atomics.ExperimentalAtomicApi public final class AtomicLongArray {
     public constructor(size: kotlin.Int) { /* compiled code */ }
 
     public constructor(array: kotlin.LongArray) { /* compiled code */ }
@@ -119,7 +119,7 @@ package kotlin.concurrent.atomics
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.SinceKotlin @kotlin.concurrent.atomics.ExperimentalAtomicApi public final class AtomicReference<T> public constructor(value: T) {
+@kotlin.SinceKotlin(version = "2.1") @kotlin.concurrent.atomics.ExperimentalAtomicApi public final class AtomicReference<T> public constructor(value: T) {
     public final fun load(): T { /* compiled code */ }
 
     public final fun store(newValue: T): kotlin.Unit { /* compiled code */ }
@@ -133,5 +133,5 @@ package kotlin.concurrent.atomics
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.RequiresOptIn @kotlin.annotation.Retention @kotlin.annotation.Target @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin public final annotation class ExperimentalAtomicApi public constructor() : kotlin.Annotation {
+@kotlin.RequiresOptIn(level = kotlin.RequiresOptIn.Level.ERROR) @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FIELD, kotlin.annotation.AnnotationTarget.LOCAL_VARIABLE, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.TYPEALIAS]) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "2.1") public final annotation class ExperimentalAtomicApi public constructor() : kotlin.Annotation {
 }

@@ -4,7 +4,7 @@ Negative.class:
     IMPORT_LIST
     CLASS[classId=/Negative, fqName=Negative, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Negative, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
           valueArguments: [ i -> -1 ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
@@ -12,6 +12,13 @@ Negative.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=Simple]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=i]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Negative]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -24,7 +31,7 @@ Negative2.class:
     IMPORT_LIST
     CLASS[classId=/Negative2, fqName=Negative2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Negative2, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
           valueArguments: [ i -> -1 ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
@@ -32,6 +39,13 @@ Negative2.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=Simple]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=i]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Negative2]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -44,7 +58,7 @@ Positive.class:
     IMPORT_LIST
     CLASS[classId=/Positive, fqName=Positive, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Positive, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
           valueArguments: [ i -> 1 ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
@@ -52,6 +66,11 @@ Positive.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=Simple]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=i]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Positive]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -64,7 +83,7 @@ Qualified.class:
     IMPORT_LIST
     CLASS[classId=/Qualified, fqName=Qualified, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Qualified, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
           valueArguments: [ i -> 1 ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
@@ -72,6 +91,11 @@ Qualified.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=Simple]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=i]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Qualified]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -138,7 +162,7 @@ Sum.class:
     IMPORT_LIST
     CLASS[classId=/Sum, fqName=Sum, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Sum, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
           valueArguments: [ i -> 3 ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
@@ -146,6 +170,11 @@ Sum.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=Simple]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=i]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Sum]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST

@@ -2,28 +2,28 @@
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @VarArg public final class One public constructor() {
+  @VarArg(v = [1]) public final class One public constructor() {
   }
 
 1_.knm:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @VarArg public final class Spread public constructor() {
+  @VarArg(v = [1, 2, 3, 4]) public final class Spread public constructor() {
   }
 
 2_.knm:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @VarArg public final class Three public constructor() {
+  @VarArg(v = [1, 2, 3]) public final class Three public constructor() {
   }
 
 3_.knm:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @VarArg public final class Two public constructor() {
+  @VarArg(v = [1, 2]) public final class Two public constructor() {
   }
 
 4_.knm:

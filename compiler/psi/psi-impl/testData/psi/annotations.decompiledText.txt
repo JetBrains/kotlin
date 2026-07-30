@@ -78,14 +78,14 @@ a.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @kotlin.annotation.Target public final annotation class a public constructor() : kotlin.Annotation {
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER, kotlin.annotation.AnnotationTarget.FIELD]) public final annotation class a public constructor() : kotlin.Annotation {
   }
 
 b.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.annotation.Repeatable public final annotation class b public constructor(e: E) : kotlin.Annotation {
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.TYPE]) @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE) @kotlin.annotation.Repeatable public final annotation class b public constructor(e: E) : kotlin.Annotation {
       public final val e: E /* compiled code */
   }
 
@@ -93,12 +93,12 @@ c.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @kotlin.annotation.Target public final annotation class c public constructor() : kotlin.Annotation {
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.CLASS]) public final annotation class c public constructor() : kotlin.Annotation {
   }
 
 f.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @kotlin.annotation.Target public final annotation class f public constructor() : kotlin.Annotation {
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.FIELD]) public final annotation class f public constructor() : kotlin.Annotation {
   }

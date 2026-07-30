@@ -11,7 +11,7 @@ MultifileClass.class:
 
   public var p1Var: kotlin.Int /* compiled code */
 
-  @kotlin.Deprecated public const val annotatedConstVal: kotlin.Int = COMPILED_CODE /* compiled code */
+  @kotlin.Deprecated(message = "deprecated") public const val annotatedConstVal: kotlin.Int = COMPILED_CODE /* compiled code */
 
   public fun p1Fun(): kotlin.Unit { /* compiled code */ }
 
@@ -52,7 +52,7 @@ MultifileClass__MultifileClassKt.class:
 
   public var p1Var: kotlin.Int /* compiled code */
 
-  @kotlin.Deprecated public const val annotatedConstVal: kotlin.Int /* compiled code */
+  @kotlin.Deprecated(message = "deprecated") public const val annotatedConstVal: kotlin.Int /* compiled code */
 
   public fun p1Fun(): kotlin.Unit { /* compiled code */ }
 

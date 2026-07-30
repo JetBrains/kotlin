@@ -14,8 +14,11 @@ import org.jetbrains.kotlin.psi.stubs.KotlinOperationReferenceExpressionStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-@OptIn(KtImplementationDetail::class)
-internal class KotlinOperationReferenceExpressionStubImpl(
+/**
+ * @see org.jetbrains.kotlin.psi.KtOperationReferenceExpression
+ */
+@KtImplementationDetail
+class KotlinOperationReferenceExpressionStubImpl(
     parent: StubElement<*>?,
     private val referencedNameRef: StringRef,
     override val operationToken: IElementType,

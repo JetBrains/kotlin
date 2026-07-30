@@ -1,7 +1,7 @@
 KT element: KtClass
 KT element text:
 public final class Explicit public constructor() {
-    public open operator fun equals(@kotlin.EqualityBound other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+    public open operator fun equals(@kotlin.EqualityBound(bound = Explicit::class) other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind

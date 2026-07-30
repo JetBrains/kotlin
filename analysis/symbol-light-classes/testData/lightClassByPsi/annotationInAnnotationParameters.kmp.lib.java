@@ -8,7 +8,7 @@ public abstract @interface B /* b.B*/ {
   public abstract @org.jetbrains.annotations.NotNull() a.A param();//  param()
 }
 
-@b.B()
+@b.B(param = @a.A())
 public final class C /* b.C*/ {
   public  C();//  .ctor()
 }

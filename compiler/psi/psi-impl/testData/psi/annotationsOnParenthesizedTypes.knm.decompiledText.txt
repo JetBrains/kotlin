@@ -25,7 +25,7 @@ public final class AnnotationsOnParenthesizedTypes public constructor() {
     public final fun returnArgument(): B<@A C> { /* compiled code */ }
 }
 
-@kotlin.annotation.Target public final annotation class A public constructor() : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER]) public final annotation class A public constructor() : kotlin.Annotation {
 }
 
 public interface B<T> {

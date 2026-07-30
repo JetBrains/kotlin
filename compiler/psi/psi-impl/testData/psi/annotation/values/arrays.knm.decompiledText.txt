@@ -20,12 +20,12 @@
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Arrays public final class WithArrays public constructor() {
+  @Arrays(ia = [1, 2, 3], la = [1L], fa = [], da = [2.2], ca = ['a'], ba = [true, false]) public final class WithArrays public constructor() {
   }
 
 2_.knm:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Arrays public final class WithExplicitArrays public constructor() {
+  @Arrays(ia = [1, 2, 3], la = [1L], fa = [], da = [2.2], ca = ['a'], ba = [true, false]) public final class WithExplicitArrays public constructor() {
   }

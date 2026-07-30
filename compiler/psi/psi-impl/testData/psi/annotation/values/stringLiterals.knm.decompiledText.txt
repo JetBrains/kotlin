@@ -16,26 +16,26 @@
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @StringLiteral public final class WithStringConstant public constructor() {
+  @StringLiteral(s1 = "some 1", s2 = " 3", s3 = "str3") public final class WithStringConstant public constructor() {
   }
 
 2_.knm:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @StringLiteral public final class WithStringInterpolationPrefix public constructor() {
+  @StringLiteral(s1 = "0", s2 = "0", s3 = "0") public final class WithStringInterpolationPrefix public constructor() {
   }
 
 3_.knm:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @StringLiteral public final class WithStringLiteral public constructor() {
+  @StringLiteral(s1 = "some", s2 = "", s3 = "H0") public final class WithStringLiteral public constructor() {
   }
 
 4_.knm:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @StringLiteral public final class WithStringLiteralConcat public constructor() {
+  @StringLiteral(s1 = "some1", s2 = "02", s3 = "03") public final class WithStringLiteralConcat public constructor() {
   }

@@ -360,3 +360,49 @@ KtFile: escapedNames.kt
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(annotation)('annotation')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('`Annotation Class With Arguments`')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('`parameter name`')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('`Enum Class`')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('`Annotation Class With Arguments`')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('`Enum Class`')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('`Enum Entry`')
+          PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('`Annotated Class`')

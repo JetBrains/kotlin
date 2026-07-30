@@ -5,7 +5,7 @@ public abstract class SSet /* test.SSet*/ implements java.util.Set<@org.jetbrain
 public abstract class SSet2 /* test.SSet2*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
   private final int size;
 
-  @kotlin.SinceKotlin()
+  @kotlin.SinceKotlin(version = "2.0")
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
   @kotlin.js.JsDontExportDefaultImplementation()

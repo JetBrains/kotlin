@@ -12,33 +12,33 @@ WithComparison.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Binary public final class WithComparison public constructor() {
+  @Binary(b = true) public final class WithComparison public constructor() {
   }
 
 WithEquality.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Binary public final class WithEquality public constructor() {
+  @Binary(b = false) public final class WithEquality public constructor() {
   }
 
 WithGreaterOrEqual.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Binary public final class WithGreaterOrEqual public constructor() {
+  @Binary(b = false) public final class WithGreaterOrEqual public constructor() {
   }
 
 WithInequality.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Binary public final class WithInequality public constructor() {
+  @Binary(b = true) public final class WithInequality public constructor() {
   }
 
 WithInfixFunction.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Binary public final class WithInfixFunction public constructor() {
+  @Binary(i = 4) public final class WithInfixFunction public constructor() {
   }

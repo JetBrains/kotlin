@@ -75,7 +75,7 @@
     IMPORT_LIST
     CLASS[classId=/WithMaxValues, fqName=WithMaxValues, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithMaxValues, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Unsigned]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Unsigned]
           valueArguments: [
             ub -> -1.toUByte()
             us -> -1.toUShort()
@@ -86,6 +86,23 @@
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unsigned]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=ub]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=255u]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=us]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=65535u]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=ui]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4294967295u]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=ul]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=18446744073709551615uL]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithMaxValues]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -98,7 +115,7 @@
     IMPORT_LIST
     CLASS[classId=/WithSmallValues, fqName=WithSmallValues, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithSmallValues, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Unsigned]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Unsigned]
           valueArguments: [
             ub -> 1.toUByte()
             us -> 2.toUShort()
@@ -109,6 +126,23 @@
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unsigned]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=ub]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1u]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=us]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2u]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=ui]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3u]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=ul]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4uL]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithSmallValues]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST

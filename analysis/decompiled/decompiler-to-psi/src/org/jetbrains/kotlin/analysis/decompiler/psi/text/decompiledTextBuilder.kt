@@ -553,7 +553,7 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = buildIn
 
         override fun visitReferenceExpression(expression: KtReferenceExpression) {
             if (expression is KtSimpleNameExpression) {
-                append(expression.getReferencedName())
+                append(expression.getReferencedName().quoteIfNeeded())
             } else {
                 visitElement(expression)
             }
@@ -583,6 +583,69 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = buildIn
             }
 
             annotationEntry.typeReference?.accept(this)
+            process(annotationEntry.valueArgumentList)
+        }
+
+        override fun visitValueArgumentList(list: KtValueArgumentList) {
+            appendCollection(list.arguments, prefix = "(", postfix = ")") {
+                process(it)
+            }
+        }
+
+        override fun visitArgument(argument: KtValueArgument) {
+            withSuffix(" = ") { process(argument.getArgumentName()?.referenceExpression) }
+            process(argument.getArgumentExpression())
+        }
+
+        override fun visitTypeArgumentList(typeArgumentList: KtTypeArgumentList) {
+            appendCollection(typeArgumentList.arguments, prefix = "<", postfix = ">") {
+                appendBlocks(
+                    separator = " ",
+                    { it.projectionKind.token?.value?.let(::append) },
+                    { process(it.typeReference) },
+                )
+            }
+        }
+
+        override fun visitConstantExpression(expression: KtConstantExpression) {
+            append(expression.text)
+        }
+
+        override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {
+            append('"')
+            for (entry in expression.entries) {
+                append(entry.text)
+            }
+
+            append('"')
+        }
+
+        override fun visitPrefixExpression(expression: KtPrefixExpression) {
+            append(expression.operationReference.getReferencedName())
+            process(expression.baseExpression)
+        }
+
+        override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
+            process(expression.receiverExpression)
+            append('.')
+            process(expression.selectorExpression)
+        }
+
+        override fun visitCallExpression(expression: KtCallExpression) {
+            process(expression.calleeExpression)
+            process(expression.typeArgumentList)
+            process(expression.valueArgumentList)
+        }
+
+        override fun visitClassLiteralExpression(expression: KtClassLiteralExpression) {
+            process(expression.receiverExpression)
+            append("::class")
+        }
+
+        override fun visitCollectionLiteralExpression(expression: KtCollectionLiteralExpression) {
+            appendCollection(expression.getInnerExpressions(), prefix = "[", postfix = "]") {
+                process(it)
+            }
         }
 
         override fun visitElement(element: PsiElement) {

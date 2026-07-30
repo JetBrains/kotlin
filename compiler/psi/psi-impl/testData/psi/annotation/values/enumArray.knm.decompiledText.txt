@@ -20,5 +20,5 @@
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Arrays public final class WithArrays public constructor() {
+  @Arrays(value = [MyEnum.ENTRY1, MyEnum.ENTRY2]) public final class WithArrays public constructor() {
   }

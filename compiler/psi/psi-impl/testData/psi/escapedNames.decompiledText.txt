@@ -1,10 +1,29 @@
+Annotated Class.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package `one two`.`three four`
+
+  @`one two`.`three four`.`Annotation Class With Arguments`(`parameter name` = `one two`.`three four`.`Enum Class`.`Enum Entry`) public final class `Annotated Class` public constructor() {
+  }
+
+Annotation Class With Arguments.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package `one two`.`three four`
+
+  public final annotation class `Annotation Class With Arguments` public constructor(`parameter name`: `one two`.`three four`.`Enum Class`) : kotlin.Annotation {
+      public final val `parameter name`: `one two`.`three four`.`Enum Class` /* compiled code */
+  }
+
 Annotation Class.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
   package `one two`.`three four`
 
-  @kotlin.annotation.Target public final annotation class `Annotation Class` public constructor() : kotlin.Annotation {
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS, kotlin.annotation.AnnotationTarget.TYPEALIAS, kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY]) public final annotation class `Annotation Class` public constructor() : kotlin.Annotation {
   }
 
 Enum Class.class:

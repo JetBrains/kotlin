@@ -2,14 +2,14 @@ Anno1.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @kotlin.annotation.Target public final annotation class Anno1 public constructor() : kotlin.Annotation {
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER]) public final annotation class Anno1 public constructor() : kotlin.Annotation {
   }
 
 Anno2.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @kotlin.annotation.Target public final annotation class Anno2 public constructor() : kotlin.Annotation {
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER]) public final annotation class Anno2 public constructor() : kotlin.Annotation {
   }
 
 FooKt.class:
@@ -31,4 +31,3 @@ I2.class:
 
   public interface I2 {
   }
-
