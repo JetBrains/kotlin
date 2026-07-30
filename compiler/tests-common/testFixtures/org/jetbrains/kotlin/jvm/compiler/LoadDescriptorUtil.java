@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.common.output.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.cli.jvm.javac.JavacWrapperRegistrarKt;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -142,9 +141,6 @@ public class LoadDescriptorUtil {
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         configureEnvironment.accept(environment);
-        if (useJavacWrapper) {
-            JavacWrapperRegistrarKt.registerJavac(environment);
-        }
         @SuppressWarnings("deprecation")
         AnalysisResult analysisResult = JvmResolveUtil.analyze(environment);
 
