@@ -103,7 +103,7 @@ internal object IntelliJDomainInfo : DomainInfo {
     override val domain = Domain.IntelliJ
     override val include: List<String> = listOf("prepare/ide-plugin-dependencies/**")
     override val exclude: List<String> = listOf()
-    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, AnalysisApiDomainInfo, CoreLibsDomainInfo) }
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, AnalysisApiDomainInfo, CoreLibsDomainInfo, BuildToolsApiDomainInfo) }
 }
 
 internal object BuildInfrastructureDomainInfo : DomainInfo {
