@@ -55,7 +55,7 @@ internal fun determineLinkerOutput(context: NativeBackendPhaseContext): LinkerOu
                 if (context.config.target.family == Family.ANDROID) {
                     val configuration = context.config.configuration
                     val androidProgramType = configuration.get(BinaryOptions.androidProgramType) ?: AndroidProgramType.Default
-                    when (androidProgramType) {
+                    return@run when (androidProgramType) {
                         AndroidProgramType.Standalone -> LinkerOutputKind.EXECUTABLE
                         AndroidProgramType.NativeActivity -> LinkerOutputKind.DYNAMIC_LIBRARY
                     }
