@@ -344,7 +344,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         val typeFromVar =
             if (variable is SyntheticVariable) variable.fir.coneTypeOrNull
             else variable.originalType
-        val known = flow.getTypeStatementWithOneWayData(variable)
+        val known = flow.getTypeStatement(variable)
         val approvedStatements = when {
             known != null && typeFromVar != null -> mapOf(variable to known.toMutable().also { it.upperTypes += typeFromVar })
             known != null && typeFromVar == null -> mapOf(variable to known)

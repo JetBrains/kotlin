@@ -1912,8 +1912,8 @@ abstract class FirDataFlowAnalyzer(
         if (previous == flow) return
         receiverStack.implicitValues.forEach {
             val variable = RealVariable.implicit(it.boundSymbol, it.originalType)
-            val newStatement = flow?.getTypeStatementWithOneWayData(variable)
-            if (newStatement != previous?.getTypeStatementWithOneWayData(variable)) {
+            val newStatement = flow?.getTypeStatement(variable)
+            if (newStatement != previous?.getTypeStatement(variable)) {
                 implicitUpdated(newStatement ?: MutableTypeStatement(variable))
             }
         }

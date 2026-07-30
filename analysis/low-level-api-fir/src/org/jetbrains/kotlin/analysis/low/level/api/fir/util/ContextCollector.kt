@@ -352,7 +352,7 @@ private class ContextCollectorVisitor(
                 .sortedBy { it.symbol.memberDeclarationNameOrNull?.asString() }
 
             for (realVariable in realVariables) {
-                val typeStatement = flow.getTypeStatementWithOneWayData(realVariable) ?: continue
+                val typeStatement = flow.getTypeStatement(realVariable) ?: continue
 
                 val stability = context(bodyHolder, context.dataFlowAnalyzerContext) {
                     realVariable.computeEffectiveStability(flow, typeStatement.upperTypes)
@@ -412,7 +412,7 @@ private class ContextCollectorVisitor(
     private fun computeExpressionStability(fir: FirExpression, flow: Flow): SmartcastStability? {
         val storage = VariableStorage(bodyHolder.session)
         val realVariable = storage.get(fir, createReal = true, unwrapAlias = { it }) as? RealVariable ?: return null
-        val targetTypes = flow.getTypeStatementWithOneWayData(realVariable)?.upperTypes
+        val targetTypes = flow.getTypeStatement(realVariable)?.upperTypes
 
         return context(bodyHolder, context.dataFlowAnalyzerContext) {
             realVariable.computeEffectiveStability(flow, targetTypes)
