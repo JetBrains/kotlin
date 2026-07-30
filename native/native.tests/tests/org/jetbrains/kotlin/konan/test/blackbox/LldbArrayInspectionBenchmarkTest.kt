@@ -91,8 +91,14 @@ class LldbArrayInspectionBenchmarkTest : AbstractNativeSimpleTest() {
 
                     assertContains(normalizedOutput, "== ints ==")
                     assertContains(normalizedOutput, "== points ==")
+                    assertContains(normalizedOutput, "== list ==")
+                    assertContains(normalizedOutput, "== nestedList ==")
+                    assertContains(normalizedOutput, "== set ==")
+                    assertContains(normalizedOutput, "== map ==")
                     assertContains(normalizedOutput, "batch 000-049")
                     assertContains(normalizedOutput, "batch 250-299")
+                    assertContains(normalizedOutput, "shared array address cache: passed")
+                    assertContains(normalizedOutput, "shared list backing cache: passed")
                     true
                 }
             ),
@@ -119,7 +125,7 @@ class LldbArrayInspectionBenchmarkTest : AbstractNativeSimpleTest() {
         add("-o")
         add("command script import ${prettyPrinters.absolutePath}")
         add("-o")
-        add("b main.kt:5")
+        add("b main.kt:12")
         add("-o")
         add("r")
         add("-o")
@@ -133,6 +139,13 @@ class LldbArrayInspectionBenchmarkTest : AbstractNativeSimpleTest() {
             fun main() {
                 val ints = IntArray(300) { it }
                 val points = Array(300) { Point(it, it + 1) }
+                val list: List<Int> = List(300) { it }
+                val nestedList = List(300) { row ->
+                    List(300) { column -> row * 300 + column }
+                }
+                val set: Set<Int> = (0 until 300).toSet()
+                val map: Map<Int, Int> = (0 until 300).associateWith { it }
+                val booleanArray = BooleanArray(300) { it % 2 == 0 }
 
                 println(ints[0])
             }
@@ -163,6 +176,10 @@ class LldbArrayInspectionBenchmarkTest : AbstractNativeSimpleTest() {
                     return "Konan_DebugBatchGetFieldCount"
                 if "Konan_DebugBatchObjectToUtf8Array" in expr:
                     return "Konan_DebugBatchObjectToUtf8Array"
+                if "Konan_DebugBatchGetTypeName" in expr:
+                    return "Konan_DebugBatchGetTypeName"
+                if "Konan_DebugGetTypeName" in expr:
+                    return "Konan_DebugGetTypeName"
                 if "Konan_DebugGetFieldAddress" in expr:
                     return "Konan_DebugGetFieldAddress"
                 if "Konan_DebugGetFieldType" in expr:
@@ -224,6 +241,9 @@ class LldbArrayInspectionBenchmarkTest : AbstractNativeSimpleTest() {
             patch_function(konan_lldb, "_evaluate", EVAL_STATS, lambda expr: classify_expr(expr))
             patch_function(konan_lldb, "_type_info", CALL_STATS)
             patch_function(konan_lldb, "_is_string_or_array", CALL_STATS)
+            patch_function(konan_lldb, "_is_kotlin_list", CALL_STATS)
+            patch_function(konan_lldb, "_is_kotlin_map", CALL_STATS)
+            patch_function(konan_lldb, "_is_kotlin_set", CALL_STATS)
             patch_function(konan_lldb, "_render_object", CALL_STATS)
             patch_function(konan_lldb, "kotlin_object_type_summary", CALL_STATS)
             patch_function(konan_lldb, "_select_provider", CALL_STATS)
@@ -253,6 +273,7 @@ class LldbArrayInspectionBenchmarkTest : AbstractNativeSimpleTest() {
             def describe(child):
                 return {
                     "name": child.GetName(),
+                    "type": child.GetTypeName(),
                     "value": child.GetValue(),
                     "summary": child.GetSummary(),
                     "num_children": child.GetNumChildren(),
@@ -287,7 +308,20 @@ class LldbArrayInspectionBenchmarkTest : AbstractNativeSimpleTest() {
                     )
             
             
-            def bench_var(name, page_size=50, limit=300):
+            def bench_var(
+                name,
+                page_size=50,
+                limit=300,
+                expected_root_summary=None,
+                expected_children=None,
+                expected_entry_children=None,
+                expected_first_entry_type=None,
+                expected_first_entry_value=None,
+                expected_first_entry_runtime_type=None,
+                expected_first_entry_summary=None,
+                expected_first_entry_summaries=None,
+                inspect_each_child=True,
+            ):
                 eval_before = snapshot(EVAL_STATS)
                 call_before = snapshot(CALL_STATS)
                 value = resolve_var(name)
@@ -297,10 +331,22 @@ class LldbArrayInspectionBenchmarkTest : AbstractNativeSimpleTest() {
                 start = time.perf_counter()
                 root_summary = value.GetSummary() or value.GetValue()
                 print(f"root summary: {time.perf_counter() - start:.6f}s -> {root_summary}")
+                if (
+                    expected_root_summary is not None
+                    and root_summary != expected_root_summary
+                ):
+                    raise AssertionError(
+                        f"{name} root summary is {root_summary}, expected "
+                        f"{expected_root_summary}"
+                    )
             
                 start = time.perf_counter()
                 num_children = value.GetNumChildren()
                 print(f"num children: {time.perf_counter() - start:.6f}s -> {num_children}")
+                if expected_children is not None and num_children != expected_children:
+                    raise AssertionError(
+                        f"{name} has {num_children} children, expected {expected_children}"
+                    )
             
                 limit = min(limit, num_children)
                 start_total = time.perf_counter()
@@ -312,9 +358,83 @@ class LldbArrayInspectionBenchmarkTest : AbstractNativeSimpleTest() {
                         child = value.GetChildAtIndex(index)
                         if index == batch_start:
                             first_child = describe(child)
-                        _ = child.MightHaveChildren()
-                        _ = child.GetValue()
-                        _ = child.GetSummary()
+                            if (
+                                expected_entry_children is not None
+                                and first_child["num_children"] != expected_entry_children
+                            ):
+                                raise AssertionError(
+                                    f"{name} entry has {first_child['num_children']} children, "
+                                    f"expected {expected_entry_children}"
+                                )
+                            if (
+                                expected_first_entry_type is not None
+                                and index == 0
+                                and first_child["type"] != expected_first_entry_type
+                            ):
+                                raise AssertionError(
+                                    f"{name} first entry type is "
+                                    f"{first_child['type']}, expected "
+                                    f"{expected_first_entry_type}"
+                                )
+                            if (
+                                expected_first_entry_value is not None
+                                and index == 0
+                                and first_child["value"] != expected_first_entry_value
+                            ):
+                                raise AssertionError(
+                                    f"{name} first entry value is "
+                                    f"{first_child['value']}, expected "
+                                    f"{expected_first_entry_value}"
+                                )
+                            if expected_first_entry_runtime_type is not None and index == 0:
+                                direct_type_name_requests = EVAL_STATS[
+                                    "Konan_DebugGetTypeName"
+                                ]["count"]
+                                runtime_type = konan_lldb._get_runtime_type(child)
+                                if runtime_type != expected_first_entry_runtime_type:
+                                    raise AssertionError(
+                                        f"{name} first entry runtime type is "
+                                        f"{runtime_type}, expected "
+                                        f"{expected_first_entry_runtime_type}"
+                                    )
+                                if (
+                                    EVAL_STATS["Konan_DebugGetTypeName"]["count"]
+                                    != direct_type_name_requests
+                                ):
+                                    raise AssertionError(
+                                        f"{name} first entry runtime type was not prefetched"
+                                    )
+                            if (
+                                expected_first_entry_summary is not None
+                                and index == 0
+                                and first_child["summary"] != expected_first_entry_summary
+                            ):
+                                raise AssertionError(
+                                    f"{name} first entry summary is "
+                                    f"{first_child['summary']}, expected "
+                                    f"{expected_first_entry_summary}"
+                                )
+                            if (
+                                expected_first_entry_summaries is not None
+                                and index == 0
+                            ):
+                                entry_children = [
+                                    child.GetChildAtIndex(entry_index)
+                                    for entry_index in range(expected_entry_children)
+                                ]
+                                actual_summaries = [
+                                    entry_child.GetSummary() or entry_child.GetValue()
+                                    for entry_child in entry_children
+                                ]
+                                if actual_summaries != expected_first_entry_summaries:
+                                    raise AssertionError(
+                                        f"{name} first entry has {actual_summaries}, "
+                                        f"expected {expected_first_entry_summaries}"
+                                    )
+                        if inspect_each_child:
+                            _ = child.MightHaveChildren()
+                            _ = child.GetValue()
+                            _ = child.GetSummary()
                     batch_duration = time.perf_counter() - batch_start_time
                     print(
                         f"batch {batch_start:03d}-{batch_end - 1:03d}: "
@@ -325,8 +445,95 @@ class LldbArrayInspectionBenchmarkTest : AbstractNativeSimpleTest() {
                 print_stats_delta("provider hotspots:", CALL_STATS, call_before)
             
             
-            bench_var("ints")
-            bench_var("points")
+            def verify_shared_array_address_cache():
+                konan_lldb._clear_sbvalue_query_cache("benchmark")
+                value = selected_frame().FindVariable("points")
+                before = EVAL_STATS["Konan_DebugBatchGetFieldAddress"]["count"]
+
+                first_proxy = konan_lldb.KonanProxyTypeProvider(value, {})
+                if first_proxy.get_child_at_index(0) is None:
+                    raise AssertionError("first array child is missing")
+                after_first = EVAL_STATS["Konan_DebugBatchGetFieldAddress"]["count"]
+                if after_first == before:
+                    raise AssertionError("first array proxy did not prefetch addresses")
+
+                second_proxy = konan_lldb.KonanProxyTypeProvider(value, {})
+                if second_proxy.get_child_at_index(0) is None:
+                    raise AssertionError("second array child is missing")
+                after_second = EVAL_STATS["Konan_DebugBatchGetFieldAddress"]["count"]
+                if after_second != after_first:
+                    raise AssertionError("second array proxy repeated address prefetch")
+
+                print("shared array address cache: passed")
+
+
+            def verify_shared_list_backing_cache():
+                konan_lldb._clear_sbvalue_query_cache("benchmark")
+                value = selected_frame().FindVariable("list")
+                before = EVAL_STATS["Konan_DebugGetFieldName"]["count"]
+
+                first_proxy = konan_lldb.KonanProxyTypeProvider(value, {})
+                if first_proxy.get_child_at_index(0) is None:
+                    raise AssertionError("first List child is missing")
+                after_first = EVAL_STATS["Konan_DebugGetFieldName"]["count"]
+                if after_first == before:
+                    raise AssertionError("first List proxy did not resolve fields")
+
+                second_proxy = konan_lldb.KonanProxyTypeProvider(value, {})
+                if second_proxy.get_child_at_index(0) is None:
+                    raise AssertionError("second List child is missing")
+                after_second = EVAL_STATS["Konan_DebugGetFieldName"]["count"]
+                if after_second != after_first:
+                    raise AssertionError("second List proxy repeated field lookup")
+
+                print("shared list backing cache: passed")
+
+
+            bench_var(
+                "ints",
+                expected_root_summary="IntArray(size=300) [0, 1, 2, 3, 4, 5, 6, 7, 8, ..., 299]",
+            )
+            bench_var(
+                "points",
+                expected_root_summary="Array(size=300) [Point(x=0, y=1), Point(x=1, y=2), Point(x=2, y=3), Point(x=3, y=4), Point(x=4, y=5), Point(x=5, y=6), Point(x=6, y=7), Point(x=7, y=8), Point(x=8, y=9), ..., Point(x=299, y=300)]",
+                expected_first_entry_runtime_type="Point",
+            )
+            verify_shared_array_address_cache()
+            verify_shared_list_backing_cache()
+            bench_var(
+                "booleanArray",
+                expected_root_summary="BooleanArray(size=300) [true, false, true, false, true, false, true, false, true, ..., false]",
+                expected_children=300,
+                expected_first_entry_type="bool",
+                expected_first_entry_value="true",
+            )
+            bench_var(
+                "list",
+                expected_root_summary="List(size=300) [0, 1, 2, 3, 4, 5, 6, 7, 8, ..., 299]",
+            )
+            bench_var(
+                "nestedList",
+                expected_root_summary="List(size=300) [List(size=300), List(size=300), List(size=300), List(size=300), List(size=300), List(size=300), List(size=300), List(size=300), List(size=300), ..., List(size=300)]",
+                expected_children=300,
+                expected_entry_children=300,
+                inspect_each_child=False,
+            )
+            bench_var(
+                "set",
+                expected_root_summary="Set(size=300) [0, 1, 2, 3, 4, 5, 6, 7, 8, ..., 299]",
+                expected_children=300,
+                expected_first_entry_summary="0",
+            )
+            bench_var(
+                "map",
+                expected_root_summary="Map(size=300) [0=0, 1=1, 2=2, 3=3, 4=4, 5=5, 6=6, 7=7, 8=8, ..., 299=299]",
+                expected_children=300,
+                expected_entry_children=2,
+                expected_first_entry_summary="0 = 0",
+                expected_first_entry_summaries=["0", "0"],
+            )
+
+
         """.trimIndent()
     }
 }
