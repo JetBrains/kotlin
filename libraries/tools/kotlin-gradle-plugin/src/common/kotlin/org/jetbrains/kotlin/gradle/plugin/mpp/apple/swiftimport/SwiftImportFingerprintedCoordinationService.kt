@@ -126,6 +126,15 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
     internal fun sharedCheckoutDir(packageHash: String): File =
         parameters.sharedCheckoutDirectoryRoot.get().asFile.resolve(packageHash)
 
+    internal fun sharedPackageGenerationOutputsExist(packageHash: String): Boolean =
+        sharedPackageGenerationRoot(packageHash).resolve("Package.swift").isFile
+
+    internal fun sharedSwiftResolveOutputsExist(packageHash: String): Boolean {
+        val packageRoot = sharedPackageGenerationRoot(packageHash)
+        val checkoutDir = sharedCheckoutDir(packageHash)
+        return sharedPackageResolved(packageRoot).isFile && sharedCheckoutWorkspaceStateJsonFile(checkoutDir).isFile
+    }
+
     private fun sharedCheckoutWorkspaceStateJsonFile(checkoutDir: File): File =
         checkoutDir.resolve("workspace-state.json")
 
