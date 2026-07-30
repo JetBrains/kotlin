@@ -265,7 +265,11 @@ private fun applyCommandLineArgumentsImpl(base: CommonCompilerArguments.Builder,
         // impossible to guess the new COMPILER_PLUGINS value from the arguments (the transformation is not reversible).
         // Later, inside `applyArgumentStrings` (below), COMPILER_PLUGINS will be set to the "RAW_PLUGIN_ID" value, indicating
         // that the raw values of compiler related arguments must be considered.
-        base[CommonCompilerArguments.COMPILER_PLUGINS] = emptyList()
+        try {
+            base[CommonCompilerArguments.COMPILER_PLUGINS] = emptyList()
+        } catch (_: Exception) {
+            // some older compiler versions don't support COMPILER_PLUGINS
+        }
     }
     base.applyArgumentStrings(argumentStrings)
 }
