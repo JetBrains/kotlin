@@ -185,6 +185,7 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
                 "CODE_SIGN_IDENTITY=",
                 "COMPILER_INDEX_STORE_ENABLE=NO",
                 "SWIFT_INDEX_STORE_ENABLE=NO",
+                "SWIFT_ENABLE_EXPLICIT_MODULES=NO",
             )
 
             args.addAll(parameters.additionalXcodeArgs.get())

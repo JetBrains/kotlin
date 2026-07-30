@@ -619,13 +619,14 @@ private fun Project.enableFingerprintCoordination(
     syncPersistedPackageResolvedToSyntheticSwiftPMPackage: TaskProvider<SyncPackageResolvedTask>,
     syncSyntheticPackageResolvedToPersisted: TaskProvider<SyncPackageResolvedTask>,
 ) {
-    val fingerprintedSwiftPMDependencyGraph = transitiveSwiftPMMetadataProvider.zip(directSwiftPMMetadata) { transitiveMetadata, directMetadata ->
-        fingerprintSwiftPMDependencyGraph(
-            directMetadata,
-            transitiveMetadata,
-            normalizeVersions = false,
-        )
-    }
+    val fingerprintedSwiftPMDependencyGraph =
+        transitiveSwiftPMMetadataProvider.zip(directSwiftPMMetadata) { transitiveMetadata, directMetadata ->
+            fingerprintSwiftPMDependencyGraph(
+                directMetadata,
+                transitiveMetadata,
+                normalizeVersions = true,
+            )
+        }
 
     syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure {
         // dest files is fixed to synthetic package
@@ -1086,7 +1087,7 @@ internal fun Project.swiftPMImportIdeModelProvider(): Provider<SwiftPMImportIdeM
             hasDirectOrTransitiveSwiftPMDependencies,
             ("${project.path}:${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}").replace("::", ":"),
             SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
-            project.directSwiftPMDependencies().map directSwiftPMDependencies@ { dependencies ->
+            project.directSwiftPMDependencies().map directSwiftPMDependencies@{ dependencies ->
                 val declaredDependencies = dependencies.map {
                     when (it) {
                         is SwiftPMDependency.Local -> LocalSwiftPMDependencyForIde(it.absolutePath)
