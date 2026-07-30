@@ -24,8 +24,7 @@ internal class MetadataKlibBuildOperationFactory(private val compilerArgs: List<
         val compilationOperationBuilder =
             kotlinToolchains.metadata.metadataKlibCompilationOperationBuilder(extractSourceFiles(args.freeArgs), destination)
         args.destination = null // TODO: KT-85394 refactor setting up arguments to avoid this hack
-        @OptIn(ExperimentalCompilerArgument::class)
-        compilationOperationBuilder.compilerArguments.applyArgumentStrings(
+        compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false
             )
