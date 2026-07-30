@@ -97,6 +97,19 @@ void Konan_DebugBatchGetFieldAddress(KRef obj, const int32_t* indices, int32_t c
 RUNTIME_EXPORT RUNTIME_WEAK
 void Konan_DebugBatchGetFieldCount(KRef obj, const int32_t* indices, int32_t count, int32_t* result);
 
+// Put runtime type names of object fields or array elements at the provided indices into the buffer.
+// `offsets` receives byte offsets within `buffer` and `lengths` receives written byte counts.
+RUNTIME_EXPORT RUNTIME_WEAK
+void Konan_DebugBatchGetTypeName(
+    KRef obj,
+    const int32_t* indices,
+    int32_t count,
+    int32_t* offsets,
+    int32_t* lengths,
+    char* buffer,
+    int32_t bufferSize
+);
+
 // Compute address of field or an array element at the index, or null, if incorrect.
 RUNTIME_EXPORT RUNTIME_WEAK
 const char* Konan_DebugGetFieldName(KRef obj, int32_t index);
