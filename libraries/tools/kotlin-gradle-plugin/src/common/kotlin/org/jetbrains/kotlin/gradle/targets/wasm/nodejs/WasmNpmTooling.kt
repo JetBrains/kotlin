@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.wasm.nodejs
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
+import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersionInternal
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.NpmToolingEnv
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.toHexString
@@ -29,14 +29,15 @@ abstract class WasmNpmTooling internal constructor() {
 
     abstract val installationDir: DirectoryProperty
 
-    internal abstract val allDeps: ListProperty<NpmPackageVersion>
+    internal abstract val allDeps: ListProperty<NpmPackageVersionInternal>
 
     fun produceEnv(): Provider<NpmToolingEnv> {
         return allDeps.map { allDepsValue ->
             val md = MessageDigest.getInstance("MD5")
-            allDepsValue.forEach { (name, version) ->
-                md.update(name.toByteArray(StandardCharsets.UTF_8))
-                md.update(version.toByteArray(StandardCharsets.UTF_8))
+            allDepsValue.forEach { dep ->
+                md.update(dep.name.toByteArray(StandardCharsets.UTF_8))
+                md.update(dep.requestedVersion.toByteArray(StandardCharsets.UTF_8))
+                md.update(dep.resolvedVersion.toByteArray(StandardCharsets.UTF_8))
             }
 
             val hashVersion = md.digest().toHexString()
