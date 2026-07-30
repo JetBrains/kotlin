@@ -1,0 +1,14 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+}
+
+kotlin.jvmToolchain(8)
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}

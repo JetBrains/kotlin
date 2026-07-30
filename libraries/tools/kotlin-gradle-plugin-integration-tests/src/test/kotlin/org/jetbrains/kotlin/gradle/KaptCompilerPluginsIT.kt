@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.uklibs.applyJvm
 import org.jetbrains.kotlin.testFederation.AffectedByCompilerPlugins
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
@@ -23,72 +21,13 @@ class KaptCompilerPluginsIT : KaptBaseIT() {
     @DisplayName("K2 kapt stubs use kotlin.jvm.functions.Function0 instead of compiler plugin function kinds")
     @GradleTest
     fun testFunctionTypeKindCompilerPluginInKapt(gradleVersion: GradleVersion) {
-        val buildOptions = defaultBuildOptions.copy(
-            // KT-76289 KAPT does not support isolated projects
-            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED
-        )
-        val kotlinVersion = buildOptions.kotlinVersion
-
         project(
-            "empty",
+            "kapt/stubsFunction0",
             gradleVersion,
-            buildOptions = buildOptions,
         ) {
             createCompilerPluginFunctionKindProject()
 
             transferPluginRepositoriesIntoBuildScript()
-
-            buildScriptBuildscriptBlockInjection {
-                buildscript.configurations.getByName("classpath").dependencies.add(
-                    buildscript.dependencies.create("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-                )
-            }
-
-            buildScriptInjection {
-                val pluginProject = project.project(":plugin")
-                pluginProject.applyJvm {
-                    jvmToolchain(8)
-                    compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)
-                    compilerOptions.optIn.add("org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
-                }
-                pluginProject.dependencies.add(
-                    "implementation",
-                    "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlinVersion",
-                )
-                pluginProject.dependencies.add(
-                    "compileOnly",
-                    "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion",
-                )
-
-                val annotationProcessorProject = project.project(":annotation-processor")
-                annotationProcessorProject.applyJvm {
-                    jvmToolchain(8)
-                }
-                annotationProcessorProject.dependencies.add(
-                    "implementation",
-                    "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion",
-                )
-
-                val exampleProject = project.project(":example")
-                exampleProject.applyJvm {
-                    jvmToolchain(8)
-                }
-                exampleProject.plugins.apply("org.jetbrains.kotlin.kapt")
-
-                exampleProject.dependencies.add("implementation", "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-                exampleProject.dependencies.add(
-                    "implementation",
-                    exampleProject.dependencies.project(mapOf("path" to ":annotation-processor")),
-                )
-                exampleProject.dependencies.add(
-                    "kapt",
-                    exampleProject.dependencies.project(mapOf("path" to ":annotation-processor")),
-                )
-                exampleProject.dependencies.add(
-                    "kotlinCompilerPluginClasspath",
-                    exampleProject.dependencies.project(mapOf("path" to ":plugin")),
-                )
-            }
 
             build(":example:kaptGenerateStubsKotlin") {
                 assertTasksExecuted(":example:kaptGenerateStubsKotlin")

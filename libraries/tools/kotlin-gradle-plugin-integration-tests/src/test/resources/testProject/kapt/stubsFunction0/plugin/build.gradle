@@ -1,0 +1,23 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+}
+
+kotlin {
+    jvmToolchain(8)
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_1_8)
+        optIn.set(["org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi"])
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlin_version"
+}
