@@ -93,7 +93,7 @@ public interface CommonToolArguments {
     public fun build(): CommonToolArguments
 
     /**
-     * Deprecated. Use applyCommandLineArguments instead.
+     * Deprecated. Use applyCommandLineArguments instead. This will become an error in Kotlin 2.6.0, and will be removed in 2.7.0.
      *
      * This method is unsafe to use - it wipes all options previously set on this instance to defaults before applying the passed [arguments].
      *
@@ -105,7 +105,7 @@ public interface CommonToolArguments {
      * @param arguments a list of arguments for the Kotlin CLI compiler
      */
     @Deprecated(
-      message = "This method is deprecated. Use applyCommandLineArguments instead.",
+      message = "This method is deprecated. Use applyCommandLineArguments instead. This will become an error in Kotlin 2.6.0, and will be removed in 2.7.0.",
       level = DeprecationLevel.WARNING,
       replaceWith = ReplaceWith("applyCommandLineArguments(arguments)"),
     )
@@ -114,8 +114,20 @@ public interface CommonToolArguments {
     /**
      * Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
      *
+     * In general, using this method should be avoided if possible, and the type-safe [set] method should be used instead. It is provided 
+     * only to make migration from previous non-BTA integrations to BTA easier. 
+     *
+     * Please note that after calling this method, some BTA type-safe
+     * synthetic arguments might be lost (though their values will still be accessible through string arguments). 
+     * Currently, [CommonCompilerArguments.COMPILER_PLUGINS] is one such example where its contents may be translated to related string arguments (-P, -Xplugin and
+     *  -Xcompiler-plugin-order) and the original `COMPILER_PLUGINS` value will be cleared.
+     *
      * When compiling with Kotlin compiler 2.4.20 and above, parsing errors are collected on this instance and reported as compilation errors when the compilation is executed.
-     * @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when compiling with Kotlin compiler below 2.4.20 and the `arguments` contain errors and cannot be parsed, or when an unsupported argument has become an error
+     *
+     * Even though this method was introduced in Build Tools API 2.5.0, it's usable when compiling with all supported Kotlin compiler versions.
+     *
+     * @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when compiling with Kotlin compiler below 2.4.20 and the `arguments` contain errors and cannot be parsed
+     * @since 2.5.0
      *
      * @param arguments a list of arguments for the Kotlin CLI compiler
      */
