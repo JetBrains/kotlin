@@ -105,8 +105,9 @@ public interface CommonToolArguments {
      * @param arguments a list of arguments for the Kotlin CLI compiler
      */
     @Deprecated(
-      "This method is deprecated. Use applyCommandLineArguments instead.",
-      ReplaceWith("applyCommandLineArguments(arguments)"),
+      message = "This method is deprecated. Use applyCommandLineArguments instead.",
+      level = DeprecationLevel.WARNING,
+      replaceWith = ReplaceWith("applyCommandLineArguments(arguments)"),
     )
     public fun applyArgumentStrings(arguments: List<String>)
 
