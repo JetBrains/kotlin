@@ -194,7 +194,7 @@ internal class BtaImplOptionsGenerator(
                     addFunction(toCompilerArgumentsAffectingOutcomeFun.build())
                 }
 
-                maybeAddApplyArgumentStringsFun(level, generateCompatLayer)
+                maybeAddApplyArgumentStringsFun(level, generateCompatLayer, compatLayerConfig?.currentKotlinVersion ?: kotlinVersion)
                 maybeAddApplyCommandLineArgumentsFun(level, generateCompatLayer)
                 maybeAddToArgumentsStringFun(level, parentClass)
                 if (!generateCompatLayer) {
@@ -1013,38 +1013,43 @@ private fun toCompilerConverterFunBuilder(
 private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
     level: KotlinCompilerArgumentsLevel,
     generateCompatLayer: Boolean,
+    kotlinVersion: KotlinReleaseVersion,
 ) {
     if (!level.isLeaf()) {
         return
     }
     val compilerArgumentsClass = level.getCompilerArgumentsClassName()
-
-    function("applyArgumentStrings") {
-        addModifiers(KModifier.OVERRIDE)
-        annotation<Deprecated> {
-            addMember("%S", "This method is deprecated. Use applyCommandLineArguments instead.")
-            addMember("%T(%S)", ReplaceWith::class, "applyCommandLineArguments(arguments)")
-        }
-        addParameter("arguments", listTypeNameOf<String>())
-        addStatement(
-            "val compilerArgs: %T = %M(arguments)",
-            compilerArgumentsClass,
-            MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments")
-        )
-        if (!generateCompatLayer) {
-            addStatement("collectRestrictedArgViolations(compilerArgs, %T())", compilerArgumentsClass)
+    withDeprecationCycle(
+        kotlinVersion,
+        warnFrom = KotlinReleaseVersion.v2_5_0,
+        errorFrom = KotlinReleaseVersion.v2_6_0,
+        removeFrom = KotlinReleaseVersion.v2_7_0,
+        deprecationMessage = "This method is deprecated. Use applyCommandLineArguments instead."
+    ) { annotation ->
+        function("applyArgumentStrings") {
+            addModifiers(KModifier.OVERRIDE)
+            annotation?.let { addAnnotation(it) }
+            addParameter("arguments", listTypeNameOf<String>())
             addStatement(
-                "%M(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }",
-                MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArgumentsAllErrors"),
+                "val compilerArgs: %T = %M(arguments)",
+                compilerArgumentsClass,
+                MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments")
             )
-        } else {
-            addStatement(
-                "%M(compilerArgs.errors)?.let { throw %M(it) }",
-                MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArguments"),
-                MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
-            )
+            if (!generateCompatLayer) {
+                addStatement("collectRestrictedArgViolations(compilerArgs, %T())", compilerArgumentsClass)
+                addStatement(
+                    "%M(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }",
+                    MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArgumentsAllErrors"),
+                )
+            } else {
+                addStatement(
+                    "%M(compilerArgs.errors)?.let { throw %M(it) }",
+                    MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArguments"),
+                    MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
+                )
+            }
+            addStatement("applyCompilerArguments(compilerArgs)")
         }
-        addStatement("applyCompilerArguments(compilerArgs)")
     }
 }
 
