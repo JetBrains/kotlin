@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticIm
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.CleanSwiftImportFingerprintArtifacts
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SHARED_CHECKOUT_DIR
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SHARED_SYNTHETIC_PACKAGE_DIR
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
@@ -245,7 +246,7 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
 
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
-    fun `KT-88107 - clean does not remove shared SwiftPM checkout when Kotlin is not applied to root project`(version: GradleVersion) {
+    fun `KT-88107 - clean removes shared SwiftPM checkout when Kotlin is not applied to root project`(version: GradleVersion) {
         val libraryProjectName = "lib1"
 
         project("empty", version) {
@@ -273,10 +274,14 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
                 build(":$libraryProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}")
                 assertDirectoryExists(sharedCheckoutDir)
 
-                build("clean")
+                build("clean"){
+                    assertTasksExecuted(
+                        ":$libraryProjectName:${CleanSwiftImportFingerprintArtifacts.TASK_NAME}"
+                    )
+                }
                 assertDirectoryExists(sharedCheckoutDir)
                 assertTrue(
-                    sharedCheckoutDir.listDirectoryEntries().isNotEmpty(),
+                    sharedCheckoutDir.listDirectoryEntries().isEmpty(),
                     "Shared SwiftPM checkout directory should be empty after clean",
                 )
             }
