@@ -10,12 +10,19 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.js.AbstractDecompiledJsTextT
 import org.jetbrains.kotlin.analysis.decompiler.psi.jvm.AbstractDecompiledJvmTextTest
 import org.jetbrains.kotlin.analysis.stubs.common.AbstractCompiledCommonStubsTest
 import org.jetbrains.kotlin.analysis.stubs.js.AbstractCompiledJsStubsTest
+import org.jetbrains.kotlin.analysis.stubs.jvm.AbstractCompiledJvmAbiStubsTest
 import org.jetbrains.kotlin.analysis.stubs.jvm.AbstractCompiledJvmStubsTest
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
+        testGroup("analysis/stubs/tests-gen", "analysis/stubs/testData") {
+            testClass<AbstractCompiledJvmAbiStubsTest> {
+                model("jvmAbi", pattern = TestGeneratorUtil.KT)
+            }
+        }
+
         testGroup("analysis/stubs/tests-gen", "compiler/psi/psi-impl/testData") {
             testClass<AbstractSourceStubsTest> {
                 model("psi", pattern = TestGeneratorUtil.KT_OR_KTS)
