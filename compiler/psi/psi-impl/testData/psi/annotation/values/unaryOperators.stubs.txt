@@ -140,22 +140,46 @@ WithParentheses.kt:
             VALUE_ARGUMENT[isSpread=false]
               PREFIX_EXPRESSION
                 OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                PARENTHESIZED
+                  PREFIX_EXPRESSION
+                    OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
             VALUE_ARGUMENT[isSpread=false]
               PREFIX_EXPRESSION
                 OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                PARENTHESIZED
+                  PREFIX_EXPRESSION
+                    OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
             VALUE_ARGUMENT[isSpread=false]
               PREFIX_EXPRESSION
                 OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                PARENTHESIZED
+                  PREFIX_EXPRESSION
+                    OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                    FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.0]
             VALUE_ARGUMENT[isSpread=false]
               PREFIX_EXPRESSION
                 OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                PARENTHESIZED
+                  PREFIX_EXPRESSION
+                    OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                    FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.0F]
             VALUE_ARGUMENT[isSpread=false]
               PREFIX_EXPRESSION
                 OPERATION_REFERENCE[operationToken=EXCL, referencedName=!]
+                PARENTHESIZED
+                  PREFIX_EXPRESSION
+                    OPERATION_REFERENCE[operationToken=EXCL, referencedName=!]
+                    BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
             VALUE_ARGUMENT[isSpread=false]
               COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
                 PREFIX_EXPRESSION
                   OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                  PARENTHESIZED
+                    PREFIX_EXPRESSION
+                      OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
 
 
 WithPlus.kt:

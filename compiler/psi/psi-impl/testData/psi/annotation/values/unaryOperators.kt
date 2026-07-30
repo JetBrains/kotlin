@@ -21,6 +21,5 @@ class WithPlus
 class WithNested
 
 // FILE: WithParentheses.kt
-// Parenthesized expressions are not stub-based, so the operand is available only via the AST
 @Unary(-(-1), -(-1L), -(-1.0), -(-1.0F), !(!true), [-(-1)])
 class WithParentheses

@@ -43,6 +43,7 @@ public interface KtTokenSets {
             PREFIX_EXPRESSION,
             POSTFIX_EXPRESSION,
             BINARY_EXPRESSION,
+            PARENTHESIZED,
 
             STRING_TEMPLATE,
 

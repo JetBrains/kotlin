@@ -77,6 +77,16 @@ Positive.kt:
             VALUE_ARGUMENT[isSpread=false]
               PREFIX_EXPRESSION
                 OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                PARENTHESIZED
+                  PREFIX_EXPRESSION
+                    OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                    DOT_QUALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
+                        DOT_QUALIFIED_EXPRESSION
+                          REFERENCE_EXPRESSION[referencedName=test]
+                          REFERENCE_EXPRESSION[referencedName=Simple]
+                        REFERENCE_EXPRESSION[referencedName=Companion]
+                      REFERENCE_EXPRESSION[referencedName=CONST1]
 
 
 Qualified.kt:

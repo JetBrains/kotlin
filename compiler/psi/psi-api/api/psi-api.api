@@ -2119,7 +2119,7 @@ public class org/jetbrains/kotlin/psi/KtParameterList : org/jetbrains/kotlin/psi
 	public fun removeParameter (Lorg/jetbrains/kotlin/psi/KtParameter;)V
 }
 
-public class org/jetbrains/kotlin/psi/KtParenthesizedExpression : org/jetbrains/kotlin/psi/KtExpressionImpl {
+public class org/jetbrains/kotlin/psi/KtParenthesizedExpression : org/jetbrains/kotlin/psi/KtExpressionImplStub {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;

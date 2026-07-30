@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
 /**
  * Represents an expression enclosed in parentheses.
@@ -18,9 +21,14 @@ import org.jetbrains.annotations.Nullable;
  * //      ^_____^
  * }</pre>
  */
-public class KtParenthesizedExpression extends KtExpressionImpl {
+public class KtParenthesizedExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<KtParenthesizedExpression>> {
     public KtParenthesizedExpression(@NotNull ASTNode node) {
         super(node);
+    }
+
+    @KtImplementationDetail
+    public KtParenthesizedExpression(@NotNull KotlinPlaceHolderStub<KtParenthesizedExpression> stub) {
+        super(stub, KtStubBasedElementTypes.PARENTHESIZED);
     }
 
     @Override
@@ -30,6 +38,14 @@ public class KtParenthesizedExpression extends KtExpressionImpl {
 
     @Nullable @IfNotParsed
     public KtExpression getExpression() {
+        KotlinPlaceHolderStub<KtParenthesizedExpression> stub = getStub();
+        if (stub != null) {
+            KtExpression[] expressions = stub.getChildrenByType(KtTokenSets.CONSTANT_EXPRESSIONS, KtExpression.EMPTY_ARRAY);
+            if (expressions.length != 0) {
+                return expressions[0];
+            }
+        }
+
         return findChildByClass(KtExpression.class);
     }
 }
