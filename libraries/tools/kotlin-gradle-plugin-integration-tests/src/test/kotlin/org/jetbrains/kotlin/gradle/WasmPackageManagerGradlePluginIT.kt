@@ -3,13 +3,21 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package org.jetbrains.kotlin.gradle
 
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.KOTLIN_JS_STORE
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.PACKAGE_LOCK
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.YARN_LOCK
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.kgpPackageLockJsonFileContent
+import org.jetbrains.kotlin.gradle.util.kgpYarnLockFileContent
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.setupCustomKgpNpmToolingDependenciesDir
 import org.jetbrains.kotlin.test.TestMetadata
@@ -261,20 +269,20 @@ abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
     fun testWasmUsePredefinedTooling(gradleVersion: GradleVersion) {
         project("kotlin-wasm-tooling-inside-project", gradleVersion) {
 
-            // extracted as val to be serializable
-            val isYarn = yarn
-
             val toolingCustomDir = projectPath.resolve(toolingCustomDirName)
 
             setupCustomKgpNpmToolingDependenciesDir(
                 toolingCustomDir = toolingCustomDir,
-                useYarn = isYarn,
+                useYarn = yarn,
             )
 
             build(":toolingInstall") {
                 assertTasksExecuted(":toolingInstall")
 
-                assertDirectoryExists(projectPath.resolve("$toolingCustomDir/node_modules"))
+                assertFileExists(toolingCustomDir.resolve("package.json"))
+                assertDirectoryExists(toolingCustomDir.resolve("node_modules"))
+
+                checkLockFiles(isYarn = yarn, toolingCustomDir = toolingCustomDir)
             }
 
             build("build") {
@@ -294,5 +302,56 @@ abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
                 assertTasksExecuted(":kotlinWasmToolingSetup")
             }
         }
+    }
+}
+
+private val json = Json {
+    prettyPrint = true
+    prettyPrintIndent = "  "
+}
+
+/**
+ * Verify the lockfiles exist, and they have not been modified during `npm/yarn install`
+ * (i.e. they are up-to-date and in sync with the `package.json`, so they will work in offline mode).
+ */
+private fun checkLockFiles(
+    isYarn: Boolean,
+    toolingCustomDir: Path,
+) {
+    val lockfile = toolingCustomDir.resolve(if (isYarn) "yarn.lock" else "package-lock.json")
+    assertFileExists(lockfile)
+
+    assertFileNotExists(
+        toolingCustomDir.resolve(if (!isYarn) "yarn.lock" else "package-lock.json")
+    )
+
+    // Must make sure KGP's store lockfiles are not outdated.
+    // Package managers might silently update them after an installation,
+    // which is a problem for offline installs.
+    if (isYarn) {
+        val expectedLockfile = kgpYarnLockFileContent
+        val actualLockfile = lockfile.readText()
+        assertEquals(expectedLockfile, actualLockfile)
+
+    } else {
+        // Only check the `packages` key.
+        // The root package, with key `""`, is for the current project and can be ignored.
+        fun extractPackages(packageLockJson: String) =
+            json.decodeFromString<JsonObject>(packageLockJson)
+                .getValue("packages")
+                .jsonObject
+                .filterKeys { it != "" }
+                .let { json.encodeToString(it) }
+
+        val expectedLockfilePackages =
+            extractPackages(kgpPackageLockJsonFileContent)
+
+        val actualLockfilePackages =
+            extractPackages(lockfile.readText())
+
+        assertEquals(
+            expectedLockfilePackages,
+            actualLockfilePackages,
+        )
     }
 }

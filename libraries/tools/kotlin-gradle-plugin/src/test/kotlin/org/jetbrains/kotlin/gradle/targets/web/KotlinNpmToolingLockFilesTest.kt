@@ -3,11 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalSerializationApi::class)
-
 package org.jetbrains.kotlin.gradle.targets.web
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.web.KotlinNpmToolingLockFilesTest.Companion.packageLockJson
@@ -82,14 +79,19 @@ class KotlinNpmToolingLockFilesTest {
     /**
      * The npm `package-lock.json` file must not have a version.
      *
-     * ```json
+     * ```json5
      * {
      *   "name": "kotlin-npm-tooling",
      *   "packages": {
      *     "": {
-     *       "name": "kotlin-npm-tooling",
-     *       "version": "...", // forbidden!
-     *       "dependencies": { /* ... */ }
+     *     "name": "kotlin-npm-tooling",
+     *     "version": "...", // forbidden!
+     *     "dependencies": {
+     *         // ...
+     *       }
+     *     }
+     *   }
+     * }
      * ```
      *
      * The lockfile is used in a shared directory, which can be used by multiple projects
