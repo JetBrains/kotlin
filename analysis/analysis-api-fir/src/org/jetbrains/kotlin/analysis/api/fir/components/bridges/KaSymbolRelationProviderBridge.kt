@@ -10,20 +10,10 @@ import org.jetbrains.kotlin.analysis.api.components.KaCallableImplementationStat
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.internals.KaInternalsSymbolRelationProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.fir.analysis.checkers.getImplementationStatus
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableImplementationState as KaEndpointCallableImplementationState
 import org.jetbrains.kotlin.analysis.api.symbols.allOverriddenSymbols as allOverriddenSymbolsEndpoint
 import org.jetbrains.kotlin.analysis.api.symbols.containingDeclaration as containingDeclarationEndpoint
@@ -48,9 +38,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.sealedClassInheritors as sealed
 internal class KaSymbolRelationProviderBridge(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseSessionComponent<KaFirSession>(), KaSymbolRelationProvider, KaFirSessionComponent {
-    private val proxy: KaInternalsSymbolRelationProvider
-        get() = analysisSession.symbolRelationProvider
-
     override val KaSymbol.containingSymbol: KaSymbol?
         get() = context(analysisSession) { containingSymbolEndpoint }
 
@@ -95,26 +82,6 @@ internal class KaSymbolRelationProviderBridge(
 
     override val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
         get() = context(analysisSession) { intersectionOverriddenSymbolsEndpoint }
-
-    @KaExperimentalApi
-    @Deprecated("Use 'implementationState()' instead", level = DeprecationLevel.HIDDEN)
-    override fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus? =
-        withValidityAssertion {
-            if (this is KaReceiverParameterSymbol) return null
-
-            require(this is KaFirSymbol<*>)
-            require(parentClassSymbol is KaFirSymbol<*>)
-
-            // Inspecting implementation status requires resolving to status
-            val memberFir = firSymbol.fir as? FirCallableDeclaration ?: return null
-            val parentClassFir = parentClassSymbol.firSymbol.fir as? FirClass ?: return null
-            memberFir.lazyResolveToPhase(FirResolvePhase.STATUS)
-
-            val scopeSession = analysisSession.getScopeSessionFor(analysisSession.firSession)
-            with(SessionHolderImpl(rootModuleSession, scopeSession)) {
-                memberFir.symbol.getImplementationStatus(parentClassFir.symbol)
-            }
-        }
 
     @KaExperimentalApi
     override fun KaCallableSymbol.implementationState(implementerClassSymbol: KaClassSymbol): KaCallableImplementationState? =

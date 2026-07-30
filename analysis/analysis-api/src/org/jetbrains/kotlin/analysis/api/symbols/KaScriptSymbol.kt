@@ -5,14 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 
 /**
  * [KaScriptSymbol] represents a [Kotlin script](https://kotlinlang.org/docs/custom-script-deps-tutorial.html).
@@ -33,8 +30,5 @@ public abstract class KaScriptSymbol : KaDeclarationSymbol, KaNamedSymbol, KaDec
     final override val isExpect: Boolean get() = withValidityAssertion { false }
     final override val isExternal: Boolean get() = withValidityAssertion { false }
 
-    @KaExperimentalApi
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
     //endregion
 }

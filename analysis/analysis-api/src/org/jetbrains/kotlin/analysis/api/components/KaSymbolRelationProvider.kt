@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.util.ImplementationStatus
 
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
@@ -262,15 +261,6 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * @see KaSymbolOrigin.INTERSECTION_OVERRIDE
      */
     public val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
-
-    /**
-     * Returns the [ImplementationStatus] of the given [KaCallableSymbol] in the given [parentClassSymbol], or `null` if this symbol is not
-     * a member.
-     */
-    @KaExperimentalApi
-    @Deprecated("Use 'implementationState()' instead", level = DeprecationLevel.HIDDEN)
-    @KaNoContextParameterBridgeRequired
-    public fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus?
 
     /**
      * Returns the [KaCallableImplementationState] of the given [KaCallableSymbol] in the context of [implementerClassSymbol].

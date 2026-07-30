@@ -5,10 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 
 /**
  * The [visibility](https://kotlinlang.org/docs/visibility-modifiers.html) of a [KaSymbol].
@@ -117,20 +113,3 @@ public enum class KaSymbolVisibility {
      */
     UNKNOWN,
 }
-
-/**
- * Converts the Kotlin compiler's [Visibility] to the Analysis API's [KaSymbolVisibility].
- */
-@Deprecated("Use 'KaDeclarationSymbol.visibility' directly", level = DeprecationLevel.HIDDEN)
-@KaExperimentalApi
-public val Visibility.asKaSymbolVisibility: KaSymbolVisibility
-    get() = when (this) {
-        Visibilities.Public -> KaSymbolVisibility.PUBLIC
-        Visibilities.Protected -> KaSymbolVisibility.PROTECTED
-        Visibilities.Internal -> KaSymbolVisibility.INTERNAL
-        JavaVisibilities.ProtectedAndPackage, JavaVisibilities.ProtectedStaticVisibility -> KaSymbolVisibility.PACKAGE_PROTECTED
-        JavaVisibilities.PackageVisibility -> KaSymbolVisibility.PACKAGE_PRIVATE
-        Visibilities.Private, Visibilities.PrivateToThis -> KaSymbolVisibility.PRIVATE
-        Visibilities.Local -> KaSymbolVisibility.LOCAL
-        else -> KaSymbolVisibility.UNKNOWN
-    }

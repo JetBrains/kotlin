@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.CallableId
@@ -43,9 +42,6 @@ internal class KaFirSamConstructorSymbol(
     override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { firSymbol.createContextReceivers(builder) }
     override val modality: KaSymbolModality get() = withValidityAssertion { firSymbol.kaSymbolModality }
     override val visibility: KaSymbolVisibility get() = withValidityAssertion { firSymbol.visibility.asKaSymbolVisibility }
-
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    override val compilerVisibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
     override val valueParameters: List<KaValueParameterSymbol>
         get() = withValidityAssertion {

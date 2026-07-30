@@ -25,9 +25,6 @@ class KaBaseContractCallsInPlaceContractEffectDeclaration(
 
     override val valueParameterReference: KaContractParameterValue get() = withValidityAssertion { backingValueParameterReference }
 
-    @Deprecated("Use 'invocationKind' instead", level = DeprecationLevel.HIDDEN)
-    override val occurrencesRange: EventOccurrencesRange get() = withValidityAssertion { backingOccurrencesRange }
-
     override val invocationKind: KaContractInvocationKind get() = withValidityAssertion { backingInvocationKind }
 
     override fun hashCode(): Int = Objects.hashCode(backingValueParameterReference, backingInvocationKind)

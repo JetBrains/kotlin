@@ -10,18 +10,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
-import org.jetbrains.kotlin.analysis.api.KaCustomContextParameterBridge
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaNoContextParameterBridgeRequired
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.org.objectweb.asm.Type
 
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
@@ -87,16 +83,6 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
     public fun KaType.mapToJvmTypeDescriptor(): String
 
     /**
-     * Convert the given [KaType] to a JVM [ASM](https://asm.ow2.io) type.
-     *
-     * @see TypeMappingMode
-     */
-    @Deprecated("Use 'mapToJvmTypeDescriptor' instead.", level = DeprecationLevel.HIDDEN)
-    @KaExperimentalApi
-    @KaNoContextParameterBridgeRequired
-    public fun KaType.mapToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type
-
-    /**
      * Whether the given [KaType] is backed by a single JVM primitive type.
      */
     @KaExperimentalApi
@@ -146,22 +132,6 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
         replaceWith = ReplaceWith("this.setter?.javaMethodName", "org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName"),
     )
     public val KaPropertySymbol.javaSetterName: Name?
-}
-
-/**
- * Convert the given [KaType] to a JVM [ASM](https://asm.ow2.io) type.
- *
- * @see TypeMappingMode
- */
-@Deprecated("Use 'mapToJvmTypeDescriptor' instead.", level = DeprecationLevel.HIDDEN)
-@KaExperimentalApi
-@KaContextParameterApi
-@KaCustomContextParameterBridge
-context(session: KaSession)
-public fun KaType.mapToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type {
-    @OptIn(KaSessionComponentImplementationDetail::class)
-    return KaJavaInteroperabilityComponent::class.java.getDeclaredMethod("mapToJvmType", KaType::class.java, TypeMappingMode::class.java)
-        .invoke(session, this, mode) as Type
 }
 
 /**

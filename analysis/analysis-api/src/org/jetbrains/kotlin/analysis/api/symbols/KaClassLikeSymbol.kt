@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerS
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -81,9 +79,6 @@ public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbo
     final override val isExpect: Boolean get() = withValidityAssertion { false }
     final override val isExternal: Boolean get() = withValidityAssertion { false }
 
-    @KaExperimentalApi
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
     //endregion
 }
 
@@ -194,10 +189,6 @@ public abstract class KaAnonymousObjectSymbol : KaClassSymbol() {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
     final override val visibility: KaSymbolVisibility get() = withValidityAssertion { KaSymbolVisibility.LOCAL }
-
-    @KaExperimentalApi
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
 
     final override val isExpect: Boolean get() = withValidityAssertion { false }
     final override val isActual: Boolean get() = withValidityAssertion { false }

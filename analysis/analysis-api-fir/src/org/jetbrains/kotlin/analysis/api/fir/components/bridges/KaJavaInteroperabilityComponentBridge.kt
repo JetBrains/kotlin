@@ -12,19 +12,14 @@ import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
-import org.jetbrains.kotlin.analysis.api.fir.components.createFirJvmTypeMapper
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsJavaInteroperabilityComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.kotlin.analysis.api.javaInterop.asKaType as asKaTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.javaInterop.callableSymbol as callableSymbolEndpoint
 import org.jetbrains.kotlin.analysis.api.javaInterop.containingJvmClassName as containingJvmClassNameEndpoint
@@ -37,8 +32,6 @@ internal class KaJavaInteroperabilityComponentBridge(
 ) : KaBaseSessionComponent<KaFirSession>(), KaJavaInteroperabilityComponent, KaFirSessionComponent {
     private val proxy: KaInternalsJavaInteroperabilityComponent
         get() = analysisSession.javaInteroperabilityComponent
-
-    private val jvmTypeMapper: FirJvmTypeMapper by lazy { createFirJvmTypeMapper(analysisSession) }
 
     // Migrated callables — routed through the public endpoints.
 
@@ -80,11 +73,6 @@ internal class KaJavaInteroperabilityComponentBridge(
         preserveAnnotations,
         allowNonJvmPlatforms,
     )
-
-    @Deprecated("Use 'mapToJvmTypeDescriptor' instead.", level = DeprecationLevel.HIDDEN)
-    override fun KaType.mapToJvmType(mode: TypeMappingMode): Type = withValidityAssertion {
-        jvmTypeMapper.mapType(coneType, mode, sw = null, unresolvedQualifierRemapper = null)
-    }
 
     @Deprecated("Use the 'javaMethodName' endpoint on the property getter instead.")
     override val KaPropertySymbol.javaGetterName: Name

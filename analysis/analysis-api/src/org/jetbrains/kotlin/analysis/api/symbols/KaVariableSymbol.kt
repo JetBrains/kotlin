@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerS
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -103,10 +101,6 @@ public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
     final override val isCompanion: Boolean get() = withValidityAssertion { false }
 
     @KaExperimentalApi
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Private }
-
-    @KaExperimentalApi
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
 
     final override val contextParameters: List<KaContextParameterSymbol> get() = withValidityAssertion { emptyList() }
@@ -183,10 +177,6 @@ public abstract class KaEnumEntrySymbol : KaVariableSymbol() {
     final override val isDelegated: Boolean get() = withValidityAssertion { false }
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
     final override val visibility: KaSymbolVisibility get() = withValidityAssertion { KaSymbolVisibility.PUBLIC }
-
-    @KaExperimentalApi
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Public }
 
     final override val isActual: Boolean get() = withValidityAssertion { false }
 
@@ -582,9 +572,6 @@ public abstract class KaLocalVariableSymbol : KaVariableSymbol() {
     @KaExperimentalApi
     final override val isCompanion: Boolean get() = withValidityAssertion { false }
 
-    @KaExperimentalApi
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
     //endregion
 }
 
@@ -600,10 +587,6 @@ public sealed class KaParameterSymbol : KaVariableSymbol() {
 
     //region Implementation details
     final override val visibility: KaSymbolVisibility get() = withValidityAssertion { KaSymbolVisibility.PUBLIC }
-
-    @KaExperimentalApi
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Public }
 
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
 

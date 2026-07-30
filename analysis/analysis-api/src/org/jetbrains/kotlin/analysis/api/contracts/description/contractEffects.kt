@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBooleanExpression
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
-import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 
 /**
  * Represents [kotlin.contracts.Effect].
@@ -25,9 +24,6 @@ public sealed interface KaContractEffectDeclaration : KaLifetimeOwner
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaContractCallsInPlaceContractEffectDeclaration : KaContractEffectDeclaration {
     public val valueParameterReference: KaContractParameterValue
-
-    @Deprecated("Use 'invocationKind' instead", level = DeprecationLevel.HIDDEN)
-    public val occurrencesRange: EventOccurrencesRange
 
     /**
      * Describes how many times the [valueParameterReference] is invoked by a function.
