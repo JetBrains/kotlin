@@ -46,9 +46,7 @@ internal class KaFirTypeParameterType(
     @Suppress("DEPRECATION_ERROR")
     override val nullability: KaTypeNullability
         get() = withValidityAssertion {
-            KaTypeNullability.create(
-                coneType.isMarkedNullable
-            )
+            if (coneType.isMarkedNullable) KaTypeNullability.NULLABLE else KaTypeNullability.NON_NULLABLE
         }
 
     override val abbreviation: KaUsualClassType?

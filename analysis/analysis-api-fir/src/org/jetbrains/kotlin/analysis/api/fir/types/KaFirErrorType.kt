@@ -41,8 +41,11 @@ internal class KaFirErrorType(
     @Suppress("DEPRECATION_ERROR")
     override val nullability: KaTypeNullability
         get() = withValidityAssertion {
-            coneType.nullable?.let(KaTypeNullability::create)
-                ?: KaTypeNullability.UNKNOWN
+            when (coneType.nullable) {
+                true -> KaTypeNullability.NULLABLE
+                false -> KaTypeNullability.NON_NULLABLE
+                null -> KaTypeNullability.UNKNOWN
+            }
         }
 
     @KaNonPublicApi
