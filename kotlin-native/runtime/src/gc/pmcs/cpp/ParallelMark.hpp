@@ -9,11 +9,11 @@
 #include <condition_variable>
 #include <mutex>
 
-#include "GCStatistics.hpp"
+#include "gc/GCStatistics.hpp"
 #include "ManuallyScoped.hpp"
 #include "ObjectData.hpp"
 #include "concurrent/ParallelProcessor.hpp"
-#include "ThreadRegistry.hpp"
+#include "mm/ThreadRegistry.hpp"
 #include "Utils.hpp"
 
 namespace kotlin::gc::mark {

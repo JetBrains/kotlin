@@ -7,9 +7,9 @@
 
 #include <vector>
 
-#include "GC.hpp"
-#include "GCScheduler.hpp"
-#include "GCState.hpp"
+#include "gc/GC.hpp"
+#include "gcScheduler/GCScheduler.hpp"
+#include "gc/GCState.hpp"
 #include "ParallelMark.hpp"
 #include "Utils.hpp"
 #include "concurrent/UtilityThread.hpp"

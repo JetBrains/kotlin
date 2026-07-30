@@ -1,0 +1,60 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
+ */
+
+#ifndef RUNTIME_MM_GLOBAL_DATA_H
+#define RUNTIME_MM_GLOBAL_DATA_H
+
+#include "alloc/Allocator.hpp"
+#include "mm/AppStateTracking.hpp"
+#include "CallsChecker.hpp"
+#include "gc/GC.hpp"
+#include "gcScheduler/GCScheduler.hpp"
+#include "mm/GlobalsRegistry.hpp"
+#include "ManuallyScoped.hpp"
+#include "mm/ExternalRCRefRegistry.hpp"
+#include "mm/ThreadRegistry.hpp"
+#include "Utils.hpp"
+
+namespace kotlin {
+namespace mm {
+
+void waitGlobalDataInitialized() noexcept;
+
+// Global (de)initialization is undefined in C++. Use single global singleton to define it for simplicity.
+class GlobalData : private Pinned {
+public:
+    static GlobalData& Instance() noexcept;
+
+    // init() can only be called once.
+    static void init() noexcept;
+
+    ThreadRegistry& threadRegistry() noexcept { return threadRegistry_; }
+    GlobalsRegistry& globalsRegistry() noexcept { return globalsRegistry_; }
+    ExternalRCRefRegistry& externalRCRefRegistry() noexcept { return externalRCRefRegistry_; }
+    gcScheduler::GCScheduler& gcScheduler() noexcept { return gcScheduler_; }
+    alloc::Allocator& allocator() noexcept { return allocator_; }
+    gc::GC& gc() noexcept { return gc_; }
+    AppStateTracking& appStateTracking() noexcept { return appStateTracking_; }
+
+private:
+    friend class ManuallyScoped<GlobalData>;
+
+    GlobalData() noexcept;
+    ~GlobalData() = delete;
+
+    [[no_unique_address]] CallsChecker callsChecker_;
+    ThreadRegistry threadRegistry_;
+    AppStateTracking appStateTracking_;
+    GlobalsRegistry globalsRegistry_;
+    ExternalRCRefRegistry externalRCRefRegistry_;
+    gcScheduler::GCScheduler gcScheduler_;
+    alloc::Allocator allocator_;
+    gc::GC gc_{allocator_, gcScheduler_};
+};
+
+} // namespace mm
+} // namespace kotlin
+
+#endif // RUNTIME_MM_GLOBAL_DATA_H

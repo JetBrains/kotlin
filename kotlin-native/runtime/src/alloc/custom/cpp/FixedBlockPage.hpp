@@ -12,7 +12,7 @@
 
 #include "Constants.hpp"
 #include "AtomicStack.hpp"
-#include "GCStatistics.hpp"
+#include "gc/GCStatistics.hpp"
 #include "AnyPage.hpp"
 #include "CustomLogging.hpp"
 #include "GCApi.hpp"

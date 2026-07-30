@@ -7,12 +7,12 @@
 
 #include <memory>
 
-#include "Allocator.hpp"
-#include "GC.hpp"
-#include "GCScheduler.hpp"
-#include "GCStatistics.hpp"
-#include "MarkAndSweepUtils.hpp"
-#include "ObjectOps.hpp"
+#include "alloc/Allocator.hpp"
+#include "gc/GC.hpp"
+#include "gcScheduler/GCScheduler.hpp"
+#include "gc/GCStatistics.hpp"
+#include "gc/MarkAndSweepUtils.hpp"
+#include "mm/ObjectOps.hpp"
 
 using namespace kotlin;
 

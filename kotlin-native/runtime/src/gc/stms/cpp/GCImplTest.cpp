@@ -8,8 +8,8 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "GlobalData.hpp"
-#include "TracingGCTest.hpp"
+#include "mm/GlobalData.hpp"
+#include "gc/TracingGCTest.hpp"
 
 using namespace kotlin;
 

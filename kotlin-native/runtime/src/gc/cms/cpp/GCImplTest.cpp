@@ -11,9 +11,9 @@
 #include "gtest/gtest.h"
 
 #include "ExternalRCRef.hpp"
-#include "GlobalData.hpp"
+#include "mm/GlobalData.hpp"
 #include "TestSupport.hpp"
-#include "TracingGCTest.hpp"
+#include "gc/TracingGCTest.hpp"
 
 using namespace kotlin;
 

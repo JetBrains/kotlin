@@ -11,8 +11,8 @@
 
 #include "AllocatedSizeTracker.hpp"
 #include "AtomicStack.hpp"
-#include "GlobalData.hpp"
-#include "GCStatistics.hpp"
+#include "mm/GlobalData.hpp"
+#include "gc/GCStatistics.hpp"
 #include "std_support/Atomic.hpp"
 
 namespace kotlin::alloc {

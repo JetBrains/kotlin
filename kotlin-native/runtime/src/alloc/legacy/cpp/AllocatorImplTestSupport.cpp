@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-#include "AllocatorTestSupport.hpp"
+#include "alloc/AllocatorTestSupport.hpp"
 
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"

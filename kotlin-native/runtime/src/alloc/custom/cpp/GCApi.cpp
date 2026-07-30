@@ -27,10 +27,10 @@
 #include "CompilerConstants.hpp"
 #include "CustomAllocator.hpp"
 #include "CustomLogging.hpp"
-#include "ExtraObjectData.hpp"
+#include "mm/ExtraObjectData.hpp"
 #include "FinalizerHooks.hpp"
-#include "GC.hpp"
-#include "GCStatistics.hpp"
+#include "gc/GC.hpp"
+#include "gc/GCStatistics.hpp"
 #include "KAssert.h"
 #include "Memory.h"
 

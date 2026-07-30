@@ -13,7 +13,7 @@
 
 #include "concurrent/ScopedThread.hpp"
 #include "TestSupport.hpp"
-#include "ThreadState.hpp"
+#include "mm/ThreadState.hpp"
 
 using namespace kotlin;
 

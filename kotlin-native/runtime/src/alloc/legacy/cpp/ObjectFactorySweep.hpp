@@ -7,9 +7,9 @@
 
 #include "ExtraObjectDataFactory.hpp"
 #include "FinalizerHooks.hpp"
-#include "GC.hpp"
-#include "GCStatistics.hpp"
-#include "SegregatedFinalizerQueue.hpp"
+#include "gc/GC.hpp"
+#include "gc/GCStatistics.hpp"
+#include "alloc/SegregatedFinalizerQueue.hpp"
 
 namespace kotlin::alloc {
 

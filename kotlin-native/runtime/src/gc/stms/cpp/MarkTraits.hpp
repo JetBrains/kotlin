@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "GC.hpp"
+#include "gc/GC.hpp"
 #include "IntrusiveList.hpp"
 #include "ObjectData.hpp"
 

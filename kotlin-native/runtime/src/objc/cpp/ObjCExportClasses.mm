@@ -16,6 +16,7 @@
 #import <dispatch/dispatch.h>
 
 #import "CallsChecker.hpp"
+#import "KotlinBase.h"
 #include "ObjCBackRef.hpp"
 #import "ObjCExport.h"
 #import "ObjCExportInit.h"

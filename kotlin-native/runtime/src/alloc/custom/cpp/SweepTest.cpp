@@ -10,7 +10,7 @@
 #include "gtest/gtest.h"
 
 #include "AtomicStack.hpp"
-#include "ExtraObjectData.hpp"
+#include "mm/ExtraObjectData.hpp"
 #include "FixedBlockPage.hpp"
 #include "SingleObjectPage.hpp"
 #include "AllocationSize.hpp"

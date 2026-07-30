@@ -15,7 +15,7 @@
 #include "CustomFinalizerProcessor.hpp"
 #include "FixedBlockPage.hpp"
 #include "SingleObjectPage.hpp"
-#include "GCStatistics.hpp"
+#include "gc/GCStatistics.hpp"
 
 namespace kotlin::alloc::test_support {
 

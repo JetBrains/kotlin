@@ -10,7 +10,7 @@
 #include <cstring>
 
 #include "AllocationSize.hpp"
-#include "ExtraObjectData.hpp"
+#include "mm/ExtraObjectData.hpp"
 #include "Heap.hpp"
 #include "NextFitPage.hpp"
 #include "Memory.h"

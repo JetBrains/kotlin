@@ -10,7 +10,7 @@
 #include "ConcurrentMark.hpp"
 #include "GCImpl.hpp"
 #include "ObjectTestSupport.hpp"
-#include "ObjectOps.hpp"
+#include "mm/ObjectOps.hpp"
 #include "ReferenceOps.hpp"
 #include "TestSupport.hpp"
 #include "ObjectData.hpp"
