@@ -17,6 +17,7 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.exportUntypedAsUnknown = from.exportUntypedAsUnknown
     to.extensionFunctionsInExternals = from.extensionFunctionsInExternals
     to.generatePolyfills = from.generatePolyfills
+    to.integerDivisionCheck = from.integerDivisionCheck
     to.irBuildCache = from.irBuildCache
     to.irGenerateInlineAnonymousFunctions = from.irGenerateInlineAnonymousFunctions
     to.irKeep = from.irKeep

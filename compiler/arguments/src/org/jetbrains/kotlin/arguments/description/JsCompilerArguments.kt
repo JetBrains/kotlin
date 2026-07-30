@@ -138,6 +138,20 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
     }
 
     compilerArgument {
+        name = "Xinteger-division-check"
+        description =
+            "Check for division by zero in integer arithmetic and throw ArithmeticException.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+
+        additionalAnnotations(Enables(LanguageFeature.JsIntegerDivisionCheck))
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
+    }
+
+    compilerArgument {
         name = "Xir-build-cache"
         description = "Use the compiler to build the cache.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

@@ -11,6 +11,7 @@ where advanced options include:
   -Xes-generators            Enable ES2015 generator functions usage inside the compiled code. Enabled by default in case of ES2015 target usage
   -Xes-long-as-bigint        Compile Long values as ES2020 bigint instead of object.
   -Xgenerate-polyfills       Generate polyfills for features from the ES6+ standards.
+  -Xinteger-division-check   Check for division by zero in integer arithmetic and throw ArithmeticException.
   -Xir-build-cache           Use the compiler to build the cache.
   -Xir-generate-inline-anonymous-functions
                              Lambda expressions that capture values are translated into in-line anonymous JavaScript functions.
