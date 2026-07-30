@@ -27,10 +27,10 @@ class CommonCompilerDeserializationConfiguration(
 
     override val allowUnstableDependencies = languageVersionSettings.getFlag(AnalysisFlags.allowUnstableDependencies)
 
-    override val typeAliasesAllowed = languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)
+    override val typeAliasesAllowed = languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases, ignore2ndStageCheck = true)
 
-    override val isJvmPackageNameSupported = languageVersionSettings.supportsFeature(LanguageFeature.JvmPackageName)
+    override val isJvmPackageNameSupported = languageVersionSettings.supportsFeature(LanguageFeature.JvmPackageName, ignore2ndStageCheck = true)
 
     override val readDeserializedContracts: Boolean =
-        languageVersionSettings.supportsFeature(LanguageFeature.ReadDeserializedContracts)
+        languageVersionSettings.supportsFeature(LanguageFeature.ReadDeserializedContracts, ignore2ndStageCheck = true)
 }

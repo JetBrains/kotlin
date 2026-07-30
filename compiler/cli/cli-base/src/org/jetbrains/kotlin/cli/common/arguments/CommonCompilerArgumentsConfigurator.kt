@@ -252,6 +252,12 @@ fun CommonCompilerArguments.toLanguageVersionSettings(
     reporter: CommonCompilerArgumentsConfigurator.Reporter,
     additionalAnalysisFlags: Map<AnalysisFlag<*>, Any>,
 ): LanguageVersionSettings {
+    val isSecondStage = when (this) {
+        is K2NativeCompilerArguments -> produce != "library"
+        is CommonJsAndWasmCompilerArguments -> includes != null
+        else -> false
+    }
+
     val languageVersion = parseOrConfigureLanguageVersion(reporter)
     // If only "-language-version" is specified, API version is assumed to be equal to the language version
     // (API version cannot be greater than the language version)
@@ -261,7 +267,8 @@ fun CommonCompilerArguments.toLanguageVersionSettings(
         languageVersion,
         apiVersion,
         configureAnalysisFlags(reporter, languageVersion) + additionalAnalysisFlags,
-        configureLanguageFeatures(reporter, languageVersion)
+        configureLanguageFeatures(reporter, languageVersion),
+        isSecondStage = isSecondStage,
     )
 
     val reporterWithProperWarningLevels = reporter.withLanguageVersionSettings(languageVersionSettings)

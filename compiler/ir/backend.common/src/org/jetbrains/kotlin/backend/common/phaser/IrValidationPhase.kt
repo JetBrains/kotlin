@@ -54,7 +54,8 @@ class KlibIrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Co
             //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
             // FIXME(KT-71243): This checker should be added unconditionally, but currently the ExplicitBackingFields feature de-facto allows specifying
             //  non-private visibilities for fields.
-            .applyIf(!context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields)) {
+            // This check for LV will be dropped soon.
+            .applyIf(!context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields, ignore2ndStageCheck = true)) {
                 withCheckers(IrFieldVisibilityChecker)
             }
             .withCheckersByName(context.configuration.additionalIrCheckers, listOf(IrNestedOffsetRangeChecker))

@@ -655,13 +655,6 @@ internal class LLFirSessionFactory(
                     else -> original.getFeatureSupport(feature)
                 }
             }
-
-            override fun supportsFeature(feature: LanguageFeature): Boolean {
-                return when (getFeatureSupport(feature)) {
-                    LanguageFeature.State.ENABLED -> true
-                    else -> false
-                }
-            }
         }
     }
 

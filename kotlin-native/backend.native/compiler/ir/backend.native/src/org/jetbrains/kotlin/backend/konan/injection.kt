@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.lazy.BasicAbsentDescriptorHandler
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
 
@@ -33,7 +34,11 @@ fun createTopDownAnalyzerProviderForKonan(
 ): ComponentProvider {
     return createContainer("TopDownAnalyzerForKonan", NativePlatformAnalyzerServices) {
         configureModule(moduleContext, NativePlatforms.unspecifiedNativePlatform, NativePlatformAnalyzerServices, bindingTrace,
-                languageVersionSettings,
+                // Those LanguageVersionSettings are used just to initialize K1 frontend, which is mostly unused anyway, and which will
+                // be removed soon. Clone them to reset the isSecondStage flag, not to report the queried LFs as on the 2-nd stage.
+                (languageVersionSettings as? LanguageVersionSettingsImpl)?.run {
+                    LanguageVersionSettingsImpl(languageVersion, apiVersion, analysisFlags, specificFeatures)
+                } ?: languageVersionSettings,
                 optimizingOptions = null,
                 absentDescriptorHandlerClass = BasicAbsentDescriptorHandler::class.java)
 

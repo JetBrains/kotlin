@@ -64,6 +64,7 @@ enum class LanguageFeature(
     val forcesPreReleaseBinariesBefore: LanguageVersion? = null,
     val testOnly: Boolean = false,
     val behaviorAfterSinceVersion: LanguageFeatureBehaviorAfterSinceVersion = CannotBeDisabled,
+    val isAllowedAtSecondStage: Boolean = false,
 ) {
     // Note: names of these entries are also used in diagnostic tests and in user-visible messages (see presentableText below)
 
@@ -347,7 +348,7 @@ enum class LanguageFeature(
     ProhibitInlineModifierOnPrimaryConstructorParameters(KOTLIN_2_1, enabledInProgressiveMode = true, "KT-59664"),
     ProhibitSingleNamedFunctionAsExpression(KOTLIN_2_1, enabledInProgressiveMode = true, "KT-62573"),
     ForbidLambdaParameterWithMissingDependencyType(KOTLIN_2_1, enabledInProgressiveMode = true, "KT-64474"),
-    JsAllowInvalidCharsIdentifiersEscaping(KOTLIN_2_1, "KT-31799"),
+    JsAllowInvalidCharsIdentifiersEscaping(KOTLIN_2_1, "KT-31799", isAllowedAtSecondStage = true),
     SupportJavaErrorEnhancementOfArgumentsOfWarningLevelEnhanced(KOTLIN_2_1, enabledInProgressiveMode = true, "KT-63209"),
     ProhibitPrivateOperatorCallInInline(KOTLIN_2_1, enabledInProgressiveMode = true, "KT-65494"),
     ProhibitTypealiasAsCallableQualifierInImport(KOTLIN_2_1, enabledInProgressiveMode = true, "KT-64350"),
@@ -575,7 +576,7 @@ enum class LanguageFeature(
 
     ExpectActualClasses(sinceVersion = null, "KT-62885", enabledInLatestLVTests = false),
 
-    DataClassCopyRespectsConstructorVisibility(sinceVersion = null, issue = "KT-11914", enabledInLatestLVTests = true), // KT-11914 Deprecation phase 3
+    DataClassCopyRespectsConstructorVisibility(sinceVersion = null, issue = "KT-11914", enabledInLatestLVTests = true, isAllowedAtSecondStage = true), // KT-11914 Deprecation phase 3
 
     // Disabled for an indefinite time as we've moved it forward a version twice already, and
     // it's probably better to go the other way around, and only enable it once we're ready.
@@ -649,7 +650,7 @@ enum class LanguageFeature(
 
     // We don't want to turn it on by default (so to show an error instead of a warning) until there will be a possibility to export declarations from libraries
     JsExposedNotExportedSuperInterfaceApiByExportedOne(sinceVersion = null, issue = "KT-83009", enabledInLatestLVTests = false),
-    JsExportInterfacesInImplementableWay(sinceVersion = null, issue = "KT-65802", enabledInLatestLVTests = false),
+    JsExportInterfacesInImplementableWay(sinceVersion = null, issue = "KT-65802", enabledInLatestLVTests = false, isAllowedAtSecondStage = true),
 
     JsAllowImplementingFunctionInterface(sinceVersion = null, NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
     CustomEqualsInValueClasses(sinceVersion = null, "KT-24874", enabledInLatestLVTests = false),
@@ -675,14 +676,14 @@ enum class LanguageFeature(
     DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives(sinceVersion = null, "KT-70722", enabledInLatestLVTests = false),
     ExportKlibToOlderAbiVersion(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-76131", enabledInLatestLVTests = false),
     JvmLoadAnnotationsOnAnnotationProperties(sinceVersion = null, "KT-22463", enabledInLatestLVTests = false),
-    ExportKDocDocumentationToKlib(sinceVersion = null, "KT-83921", enabledInLatestLVTests = false),
+    ExportKDocDocumentationToKlib(sinceVersion = null, "KT-83921", enabledInLatestLVTests = false, isAllowedAtSecondStage = true),
     FullValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-84904", enabledInLatestLVTests = true) {
         context(context: CrossFeatureChecksResultsCollector)
         override fun crossFeatureChecks() {
             checkEnabledNotEarlierThan(NameBasedDestructuring)
         }
     },
-    JsExportingSuspendLambdas(sinceVersion = null, "KT-80188", enabledInLatestLVTests = false),
+    JsExportingSuspendLambdas(sinceVersion = null, "KT-80188", enabledInLatestLVTests = false, isAllowedAtSecondStage = true),
 
     InferThrowableTypeParameterToUpperBound(sinceVersion = null, issue = "KT-82961", enabledInLatestLVTests = true),
     EagerLambdaAnalysis(sinceVersion = null, issue = "KT-51107", enabledInLatestLVTests = true) {
@@ -706,6 +707,7 @@ enum class LanguageFeature(
         enabledInProgressiveMode: Boolean = false,
         forcesPreReleaseBinaries: Boolean = false,
         forcesPreReleaseBinariesBefore: LanguageVersion? = null,
+        isAllowedAtSecondStage: Boolean = false,
     ) : this(
         sinceVersion,
         issue,
@@ -714,13 +716,21 @@ enum class LanguageFeature(
         enabledInLatestLVTests = false,
         forcesPreReleaseBinaries = forcesPreReleaseBinaries,
         forcesPreReleaseBinariesBefore = forcesPreReleaseBinariesBefore,
+        isAllowedAtSecondStage = isAllowedAtSecondStage,
     )
 
     constructor(
         sinceVersion: LanguageVersion,
         enabledInProgressiveMode: Boolean,
         issue: String,
-    ) : this(sinceVersion, issue, enabledInProgressiveMode = enabledInProgressiveMode, enabledInLatestLVTests = false)
+        isAllowedAtSecondStage: Boolean = false,
+    ) : this(
+        sinceVersion,
+        issue,
+        enabledInProgressiveMode = enabledInProgressiveMode,
+        enabledInLatestLVTests = false,
+        isAllowedAtSecondStage = isAllowedAtSecondStage,
+    )
 
     val presentableName: String
         // E.g. "DestructuringLambdaParameters" -> ["Destructuring", "Lambda", "Parameters"] -> "destructuring lambda parameters"
@@ -842,9 +852,11 @@ fun LanguageVersionSettings.toKotlinVersion() = languageVersion.toKotlinVersion(
 
 interface LanguageVersionSettings {
     fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State
+    fun getFeatureSupport(feature: LanguageFeature, ignore2ndStageCheck: Boolean): LanguageFeature.State = getFeatureSupport(feature)
 
-    fun supportsFeature(feature: LanguageFeature): Boolean =
-        getFeatureSupport(feature) == LanguageFeature.State.ENABLED
+    fun supportsFeature(feature: LanguageFeature): Boolean = supportsFeature(feature, false)
+    fun supportsFeature(feature: LanguageFeature, ignore2ndStageCheck: Boolean = false): Boolean =
+        getFeatureSupport(feature, ignore2ndStageCheck) == LanguageFeature.State.ENABLED
 
     fun getCustomizedLanguageFeatures(): Map<LanguageFeature, LanguageFeature.State>
 
@@ -866,15 +878,21 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
     override val languageVersion: LanguageVersion,
     override val apiVersion: ApiVersion,
     analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap(),
-    specificFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap()
+    specificFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap(),
+    private val isSecondStage: Boolean = false
 ) : LanguageVersionSettings {
-    private val analysisFlags: Map<AnalysisFlag<*>, *> = Collections.unmodifiableMap(analysisFlags)
-    private val specificFeatures: Map<LanguageFeature, LanguageFeature.State> = Collections.unmodifiableMap(specificFeatures)
+    val analysisFlags: Map<AnalysisFlag<*>, *> = Collections.unmodifiableMap(analysisFlags)
+    val specificFeatures: Map<LanguageFeature, LanguageFeature.State> = Collections.unmodifiableMap(specificFeatures)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> getFlag(flag: AnalysisFlag<T>): T = analysisFlags[flag] as T? ?: flag.defaultValue
 
-    override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State {
+    override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State = getFeatureSupport(feature, false)
+    override fun getFeatureSupport(feature: LanguageFeature, ignore2ndStageCheck: Boolean): LanguageFeature.State {
+        if (isSecondStage && !feature.isAllowedAtSecondStage && !ignore2ndStageCheck) {
+            throw IllegalArgumentException("!!! Usage of unregistered feature $feature at the second stage of compilation")
+        }
+
         specificFeatures[feature]?.let { return it }
 
         return if (isEnabledByDefault(feature)) {
