@@ -33,6 +33,7 @@ Compiler:
  - compiler/psi/parser
  - compiler/resolution
  - compiler/resolution.common
+ - compiler/resolution.common.js
  - compiler/resolution.common.jvm
  - compiler/serialization
  - compiler/serialization.common
@@ -85,8 +86,6 @@ Js:
  - js/ReadMe.md
  - js/js.ast
  - js/js.config
- - js/js.frontend
- - js/js.frontend.common
  - js/js.parser
  - js/js.sourcemap
  - js/js.tests

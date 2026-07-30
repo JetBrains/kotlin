@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.scripting.ide_common.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.scripting.ide_common.idea.resolve.frontendService
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
+import org.jetbrains.kotlin.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.load.kotlin.toSourceElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe

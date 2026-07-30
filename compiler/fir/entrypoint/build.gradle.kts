@@ -32,10 +32,10 @@ dependencies {
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.serialization.common"))
     implementation(project(":compiler:ir.tree"))
+    implementation(project(":compiler:resolution.common.js"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:deserialization"))
     implementation(project(":js:js.config"))
-    implementation(project(":js:js.frontend.common"))
     implementation(project(":kotlin-util-klib-metadata"))
 
     compileOnly(intellijCore())
