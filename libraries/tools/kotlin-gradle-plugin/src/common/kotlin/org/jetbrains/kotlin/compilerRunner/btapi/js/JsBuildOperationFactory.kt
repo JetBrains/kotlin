@@ -24,7 +24,7 @@ internal class JsKlibBuildOperationFactory(private val compilerArgs: List<String
         val destination = Path(requireNotNull(args.outputDir))
         val compilationOperationBuilder =
             kotlinToolchains.js.jsKlibCompilationOperationBuilder(extractSourceFiles(args.freeArgs), destination)
-        @OptIn(ExperimentalCompilerArgument::class) compilationOperationBuilder.compilerArguments.applyArgumentStrings(
+        compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false
             )
@@ -39,7 +39,7 @@ internal class JsLinkingBuildOperationFactory(private val compilerArgs: List<Str
         val destination = Path(requireNotNull(args.outputDir))
         val includes = Path(requireNotNull(args.includes))
         val compilationOperationBuilder = kotlinToolchains.js.jsLinkingOperationBuilder(includes, destination)
-        @OptIn(ExperimentalCompilerArgument::class) compilationOperationBuilder.compilerArguments.applyArgumentStrings(
+        compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false
             )
