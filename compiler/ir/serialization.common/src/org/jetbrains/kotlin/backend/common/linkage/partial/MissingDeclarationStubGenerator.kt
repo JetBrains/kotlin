@@ -13,15 +13,14 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.IrErrorModuleFragment
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.error.ErrorUtils
 
 /**
  * Generates the simplest possible stubs for missing declarations.
@@ -36,7 +35,7 @@ internal class MissingDeclarationStubGenerator(
     private val nothingType: IrType,
 ) {
     private val commonParent by lazy {
-        createEmptyExternalPackageFragment(IrModuleFragmentImpl(ErrorUtils.errorModule), FqName.ROOT)
+        createEmptyExternalPackageFragment(IrErrorModuleFragment, FqName.ROOT)
     }
 
     val allStubbedSymbols: Set<IrSymbol>

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.cli.klib.KlibToolArgumentsParserResult.ParsedArguments
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultTypeWithoutArguments
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.types.error.ErrorModuleDescriptor
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.util.*
@@ -215,7 +213,7 @@ internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: ParsedArgu
                 fileEntry = NaiveSourceBasedFileEntryImpl(name = "<unknown>"),
                 symbol = IrFileSymbolImpl(),
                 packageFqName = FqName.ROOT,
-                module = IrModuleFragmentImpl(ErrorModuleDescriptor)
+                module = IrErrorModuleFragment
         )
 
         val dumpOptions = DumpIrTreeOptions(

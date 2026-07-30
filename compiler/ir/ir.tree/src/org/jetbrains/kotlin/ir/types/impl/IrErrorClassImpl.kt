@@ -18,14 +18,13 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
+import org.jetbrains.kotlin.ir.util.IrErrorModuleFragment
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.error.ErrorModuleDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 private val ErrorFile = IrFileImpl(
@@ -45,7 +44,7 @@ private val ErrorFile = IrFileImpl(
     },
     symbol = IrFileSymbolImpl(),
     packageFqName = FqName("<error-package>"),
-    module = IrModuleFragmentImpl(ErrorModuleDescriptor)
+    module = IrErrorModuleFragment
 )
 
 val IrErrorClassImpl: IrClass = IrFactoryImpl.createClass(
