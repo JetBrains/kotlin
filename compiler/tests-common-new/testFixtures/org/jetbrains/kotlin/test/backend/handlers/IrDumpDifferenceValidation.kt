@@ -75,7 +75,7 @@ private fun TestModuleStructure.findTargetSpecificPatchFile(targetBackend: Targe
     var current = targetBackend
     while (current != TargetBackend.ANY) {
         val ext = targetSpecificDumpExtension(baseDumpExtension, current)
-        val file = getClassifiedDumpFile(ext)
+        val file = getClassifiedDumpFile(ext).fullyClassifiedFile
         if (file.exists()) {
             return file
         }

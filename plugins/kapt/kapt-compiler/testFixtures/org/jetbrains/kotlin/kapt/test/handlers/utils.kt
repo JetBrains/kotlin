@@ -21,7 +21,7 @@ import kotlin.metadata.jvm.KotlinClassMetadata
 @OptIn(TestInfrastructureInternals::class)
 fun Assertions.checkTxtAccordingToBackend(module: TestModule, actual: String, fileSuffix: String = "") {
     val testDataFile = module.files.first().originalFile
-    val expectedFile = testDataFile.toClassifiedDumpFile("$fileSuffix.txt", module.directives)
+    val expectedFile = testDataFile.toClassifiedDumpFile("$fileSuffix.txt", module.directives).fullyClassifiedFile
     assertEqualsToFile(expectedFile, actual)
 }
 

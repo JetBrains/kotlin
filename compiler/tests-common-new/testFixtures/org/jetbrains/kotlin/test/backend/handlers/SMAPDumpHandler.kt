@@ -81,13 +81,13 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
         if (actualDump == null) return
 
         if (separateDumpEnabled && isSeparateCompilation) {
-            val otherFile = testServices.moduleStructure.getClassifiedDumpFile(SMAP_NON_SEP_EXT)
+            val otherFile = testServices.moduleStructure.getClassifiedDumpFile(SMAP_NON_SEP_EXT).fullyClassifiedFile
             if (!otherFile.exists()) return
 
-            val expectedFile = testServices.moduleStructure.getClassifiedDumpFile(SMAP_SEP_EXT)
+            val expectedFile = testServices.moduleStructure.getClassifiedDumpFile(SMAP_SEP_EXT).fullyClassifiedFile
             val expectedText = expectedFile.readText()
             if (expectedText == otherFile.readText()) {
-                val smapFile = testServices.moduleStructure.getClassifiedDumpFile(SMAP_EXT)
+                val smapFile = testServices.moduleStructure.getClassifiedDumpFile(SMAP_EXT).fullyClassifiedFile
                 smapFile.writeText(expectedText)
                 expectedFile.delete()
                 otherFile.delete()
