@@ -425,6 +425,12 @@ public class SymbolLightClassesMatcherByPsiForLibraryTestGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("valueClassAsUpperBound.kt")
+  public void testValueClassAsUpperBound() {
+    run("valueClassAsUpperBound.kt");
+  }
+
+  @Test
   @TestMetadata("valueClassInSignature.kt")
   public void testValueClassInSignature() {
     run("valueClassInSignature.kt");
