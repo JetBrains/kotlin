@@ -75,6 +75,7 @@ public interface KaSignatureSubstitutor : KaSessionComponent {
         "this.substitute(substitutor)",
         "org.jetbrains.kotlin.analysis.api.signatures.substitute",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -98,6 +99,7 @@ public fun <S : KaCallableSymbol> S.substitute(substitutor: KaSubstitutor): KaCa
         "this.substitute(substitutor)",
         "org.jetbrains.kotlin.analysis.api.signatures.substitute",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -121,6 +123,7 @@ public fun <S : KaFunctionSymbol> S.substitute(substitutor: KaSubstitutor): KaFu
         "this.substitute(substitutor)",
         "org.jetbrains.kotlin.analysis.api.signatures.substitute",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -142,6 +145,7 @@ public fun <S : KaVariableSymbol> S.substitute(substitutor: KaSubstitutor): KaVa
         "this.asSignature()",
         "org.jetbrains.kotlin.analysis.api.signatures.asSignature",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -161,6 +165,7 @@ public fun <S : KaCallableSymbol> S.asSignature(): KaCallableSignature<S> {
         "this.asSignature()",
         "org.jetbrains.kotlin.analysis.api.signatures.asSignature",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -180,6 +185,7 @@ public fun <S : KaFunctionSymbol> S.asSignature(): KaFunctionSignature<S> {
         "this.asSignature()",
         "org.jetbrains.kotlin.analysis.api.signatures.asSignature",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)

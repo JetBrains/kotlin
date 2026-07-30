@@ -1382,6 +1382,7 @@ public interface KaResolver : KaSessionComponent {
 @Deprecated(
     message = "Use the 'tryResolveSymbols' resolution endpoint instead",
     replaceWith = ReplaceWith("this.tryResolveSymbols()", "org.jetbrains.kotlin.analysis.api.resolution.tryResolveSymbols"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -1418,6 +1419,7 @@ public fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? {
 @Deprecated(
     message = "Use the 'resolveSymbols' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbols()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbols"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -1453,6 +1455,7 @@ public fun KtResolvable.resolveSymbols(): Collection<KaSymbol> {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -1486,6 +1489,7 @@ public fun KtResolvable.resolveSymbol(): KaSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -1519,6 +1523,7 @@ public fun KtAnnotationEntry.resolveSymbol(): KaConstructorSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -1558,6 +1563,7 @@ public fun KtSuperTypeCallEntry.resolveSymbol(): KaConstructorSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -1597,6 +1603,7 @@ public fun KtConstructorDelegationCall.resolveSymbol(): KaConstructorSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -1632,6 +1639,7 @@ public fun KtConstructorDelegationReferenceExpression.resolveSymbol(): KaConstru
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -1665,6 +1673,7 @@ public fun KtCallElement.resolveSymbol(): KaFunctionSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -1714,6 +1723,7 @@ public fun KtCallableReferenceExpression.resolveSymbol(): KaCallableSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -1749,6 +1759,7 @@ public fun KtArrayAccessExpression.resolveSymbol(): KaNamedFunctionSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -1785,6 +1796,7 @@ public fun KtCollectionLiteralExpression.resolveSymbol(): KaNamedFunctionSymbol?
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -1824,6 +1836,7 @@ public fun KtEnumEntrySuperclassReferenceExpression.resolveSymbol(): KaNamedClas
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -1865,6 +1878,7 @@ public fun KtLabelReferenceExpression.resolveSymbol(): KaDeclarationSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -1904,6 +1918,7 @@ public fun KtReturnExpression.resolveSymbol(): KaFunctionSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -1941,6 +1956,7 @@ public fun KtWhenConditionInRange.resolveSymbol(): KaNamedFunctionSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -1972,6 +1988,7 @@ public fun KtDestructuringDeclarationEntry.resolveSymbol(): KaCallableSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2005,6 +2022,7 @@ public fun KtQualifiedExpression.resolveSymbol(): KaCallableSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2053,6 +2071,7 @@ public fun KtConstructorCalleeExpression.resolveSymbol(): KaConstructorSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2088,6 +2107,7 @@ public fun KtInstanceExpressionWithLabel.resolveSymbol(): KaDeclarationSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2122,6 +2142,7 @@ public fun KtNullableType.resolveSymbol(): KaClassifierSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2164,6 +2185,7 @@ public fun KtFunctionType.resolveSymbol(): KaClassSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2199,6 +2221,7 @@ public fun KtTypeReference.resolveSymbol(): KaClassifierSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2233,6 +2256,7 @@ public fun KtClassLiteralExpression.resolveSymbol(): KaClassifierSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2265,6 +2289,7 @@ public fun KtSuperTypeEntry.resolveSymbol(): KaClassifierSymbol? {
 @Deprecated(
     message = "Use the 'resolveSymbol' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveSymbol()", "org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2297,6 +2322,7 @@ public fun KtDelegatedSuperTypeEntry.resolveSymbol(): KaClassifierSymbol? {
 @Deprecated(
     message = "Use the 'tryResolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.tryResolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.tryResolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2319,6 +2345,7 @@ public fun KtResolvableCall.tryResolveCall(): KaCallResolutionAttempt? {
 @Deprecated(
     message = "Use the 'tryResolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.tryResolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.tryResolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2341,6 +2368,7 @@ public fun KtForExpression.tryResolveCall(): KaForLoopCallResolutionAttempt? {
 @Deprecated(
     message = "Use the 'tryResolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.tryResolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.tryResolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2372,6 +2400,7 @@ public fun KtPropertyDelegate.tryResolveCall(): KaDelegatedPropertyCallResolutio
 @Deprecated(
     message = "Use the 'resolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2405,6 +2434,7 @@ public fun KtResolvableCall.resolveCall(): KaSingleOrMultiCall? {
 @Deprecated(
     message = "Use the 'resolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2438,6 +2468,7 @@ public fun KtAnnotationEntry.resolveCall(): KaAnnotationCall? {
 @Deprecated(
     message = "Use the 'resolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2476,6 +2507,7 @@ public fun KtSuperTypeCallEntry.resolveCall(): KaFunctionCall<KaConstructorSymbo
 @Deprecated(
     message = "Use the 'resolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2514,6 +2546,7 @@ public fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall
 @Deprecated(
     message = "Use the 'resolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2549,6 +2582,7 @@ public fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegated
 @Deprecated(
     message = "Use the 'resolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2582,6 +2616,7 @@ public fun KtCallElement.resolveCall(): KaFunctionCall<*>? {
 @Deprecated(
     message = "Use the 'resolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2631,6 +2666,7 @@ public fun KtCallableReferenceExpression.resolveCall(): KaCallableReferenceCall<
 @Deprecated(
     message = "Use the 'resolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2666,6 +2702,7 @@ public fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<KaNamedFunction
 @Deprecated(
     message = "Use the 'resolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2699,6 +2736,7 @@ public fun KtCollectionLiteralExpression.resolveCall(): KaFunctionCall<KaNamedFu
 @Deprecated(
     message = "Use the 'resolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2739,6 +2777,7 @@ public fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedCo
 @Deprecated(
     message = "Use the 'resolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2776,6 +2815,7 @@ public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionS
 @Deprecated(
     message = "Use the 'resolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2807,6 +2847,7 @@ public fun KtDestructuringDeclarationEntry.resolveCall(): KaSingleCall<*, *>? {
 @Deprecated(
     message = "Use the 'resolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2845,6 +2886,7 @@ public fun KtQualifiedExpression.resolveCall(): KaSingleCall<*, *>? {
 @Deprecated(
     message = "Use the 'resolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2882,6 +2924,7 @@ public fun KtForExpression.resolveCall(): KaForLoopCall? {
 @Deprecated(
     message = "Use the 'resolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2915,6 +2958,7 @@ public fun KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall? {
 @Deprecated(
     message = "Use the 'resolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2948,6 +2992,7 @@ public fun KtConstructorCalleeExpression.resolveCall(): KaFunctionCall<KaConstru
 @Deprecated(
     message = "Use the 'resolveCall' resolution endpoint instead",
     replaceWith = ReplaceWith("this.resolveCall()", "org.jetbrains.kotlin.analysis.api.resolution.resolveCall"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -2971,6 +3016,7 @@ public fun KtNameReferenceExpression.resolveCall(): KaSingleCall<*, *>? {
 @Deprecated(
     message = "Use the 'collectCallCandidates' resolution endpoint instead",
     replaceWith = ReplaceWith("this.collectCallCandidates()", "org.jetbrains.kotlin.analysis.api.resolution.collectCallCandidates"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -3068,6 +3114,7 @@ public fun KtReference.isImplicitReferenceToCompanion(): Boolean {
         "this.isImplicitReferenceToCompanion",
         "org.jetbrains.kotlin.analysis.api.expressions.isImplicitReferenceToCompanion",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -3161,6 +3208,7 @@ public val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
         "this.contextSensitiveResolutionStatus",
         "org.jetbrains.kotlin.analysis.api.expressions.contextSensitiveResolutionStatus",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
