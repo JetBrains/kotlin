@@ -17,7 +17,8 @@ public final enum class Enum private constructor() : kotlin.Enum<a.b.c.test.enum
     F;
 
     public companion object {
-        @a.b.c.test.enum.Ann public final val c: kotlin.Int /* compiled code */
+        @a.b.c.test.enum.Ann
+        public final val c: kotlin.Int /* compiled code */
     }
 
     public open fun f(): kotlin.Int { /* compiled code */ }

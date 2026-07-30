@@ -2,12 +2,14 @@ Qualified.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @kotlin.Deprecated(message = "Deprecated", replaceWith = kotlin.ReplaceWith(expression = "NewClass", imports = ["foo.bar.baz.NewClass"]), level = kotlin.DeprecationLevel.HIDDEN) public final class Qualified public constructor() {
+  @kotlin.Deprecated(message = "Deprecated", replaceWith = kotlin.ReplaceWith(expression = "NewClass", imports = ["foo.bar.baz.NewClass"]), level = kotlin.DeprecationLevel.HIDDEN)
+  public final class Qualified public constructor() {
   }
 
 Simple.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @kotlin.Deprecated(message = "Deprecated", replaceWith = kotlin.ReplaceWith(expression = "NewClass", imports = ["foo.bar.baz.NewClass"]), level = kotlin.DeprecationLevel.HIDDEN) public final class Simple public constructor() {
+  @kotlin.Deprecated(message = "Deprecated", replaceWith = kotlin.ReplaceWith(expression = "NewClass", imports = ["foo.bar.baz.NewClass"]), level = kotlin.DeprecationLevel.HIDDEN)
+  public final class Simple public constructor() {
   }

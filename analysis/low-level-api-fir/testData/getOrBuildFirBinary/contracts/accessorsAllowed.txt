@@ -8,7 +8,8 @@ public final class Foo public constructor() {
     public final val Foo.Status.isError: kotlin.Boolean /* compiled code */
         public final get() { contract { /* compiled contract */ }; /* compiled code */ }
 
-    context(s: Foo.Status) public final val isContextError: kotlin.Boolean /* compiled code */
+    context(s: Foo.Status)
+    public final val isContextError: kotlin.Boolean /* compiled code */
         public final get() { contract { /* compiled contract */ }; /* compiled code */ }
 
     public sealed class Status protected constructor() {

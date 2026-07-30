@@ -24,12 +24,14 @@
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Outer(some = "value", nested = foo.Nested(i = 0, s = "nested value")) public final class WithNested public constructor() {
+  @Outer(some = "value", nested = foo.Nested(i = 0, s = "nested value"))
+  public final class WithNested public constructor() {
   }
 
 2_.knm:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Outer(some = "value", nested = foo.Nested(i = 1, s = "nested value")) public final class WithQualifiedNested public constructor() {
+  @Outer(some = "value", nested = foo.Nested(i = 1, s = "nested value"))
+  public final class WithQualifiedNested public constructor() {
   }

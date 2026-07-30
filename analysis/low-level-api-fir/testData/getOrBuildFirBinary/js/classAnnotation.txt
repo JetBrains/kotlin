@@ -1,6 +1,7 @@
 KT element: KtClass
 KT element text:
-@Y public final class Cls public constructor() {
+@Y
+public final class Cls public constructor() {
 }
 FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind

@@ -14,12 +14,14 @@ WithArrayClassLiterals.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @ClassLiteral(c1 = kotlin.Array<kotlin.Int>::class, c2 = kotlin.Array<kotlin.Array<kotlin.String>>::class, c3 = kotlin.Array<ClassLiteral>::class) public final class WithArrayClassLiterals public constructor() {
+  @ClassLiteral(c1 = kotlin.Array<kotlin.Int>::class, c2 = kotlin.Array<kotlin.Array<kotlin.String>>::class, c3 = kotlin.Array<ClassLiteral>::class)
+  public final class WithArrayClassLiterals public constructor() {
   }
 
 WithPrimitiveArrayClassLiterals.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @ClassLiteral(c1 = kotlin.IntArray::class, c2 = kotlin.Array<kotlin.IntArray>::class, c3 = kotlin.Array<kotlin.Array<kotlin.IntArray>>::class) public final class WithPrimitiveArrayClassLiterals public constructor() {
+  @ClassLiteral(c1 = kotlin.IntArray::class, c2 = kotlin.Array<kotlin.IntArray>::class, c3 = kotlin.Array<kotlin.Array<kotlin.IntArray>>::class)
+  public final class WithPrimitiveArrayClassLiterals public constructor() {
   }

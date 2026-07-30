@@ -16,12 +16,14 @@ WithMaxValues.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Unsigned(ub = -1, us = -1, ui = -1, ul = -1L) public final class WithMaxValues public constructor() {
+  @Unsigned(ub = -1, us = -1, ui = -1, ul = -1L)
+  public final class WithMaxValues public constructor() {
   }
 
 WithSmallValues.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Unsigned(ub = 1, us = 2, ui = 3, ul = 4L) public final class WithSmallValues public constructor() {
+  @Unsigned(ub = 1, us = 2, ui = 3, ul = 4L)
+  public final class WithSmallValues public constructor() {
   }

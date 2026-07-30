@@ -24,7 +24,8 @@ public abstract class Foo public constructor(fromConstructor: kotlin.String) {
         public final get() { /* compiled code */ }
 
     public final val defaultGetterWithAnnotation: kotlin.String /* compiled code */
-        @one.Anno public final get
+        @one.Anno
+        public final get
 
     public final var defaultSetterWithAnotherVisibility: kotlin.String /* compiled code */
         private final set(value: kotlin.String) { /* compiled code */ }

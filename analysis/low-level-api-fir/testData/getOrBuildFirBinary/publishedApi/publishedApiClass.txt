@@ -1,6 +1,7 @@
 KT element: KtClass
 KT element text:
-@kotlin.PublishedApi internal final class Foo public constructor() {
+@kotlin.PublishedApi
+internal final class Foo public constructor() {
 }
 FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind

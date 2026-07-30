@@ -4,7 +4,8 @@ A.class:
 
   package test
 
-  @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME) public final annotation class A public constructor() : kotlin.Annotation {
+  @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+  public final annotation class A public constructor() : kotlin.Annotation {
   }
 
 PrivateConstField.class:
@@ -17,10 +18,13 @@ PrivateConstField.class:
       private companion object {
           public const val CONST: kotlin.Int = COMPILED_CODE /* compiled code */
 
-          @test.A @field:java.lang.Deprecated public const val CONST_WITH_ANNOTATION: kotlin.Int = COMPILED_CODE /* compiled code */
+          @test.A
+          @field:java.lang.Deprecated
+          public const val CONST_WITH_ANNOTATION: kotlin.Int = COMPILED_CODE /* compiled code */
 
           public final val field: kotlin.Int /* compiled code */
 
-          @test.A public final val fieldWithAnnotation: kotlin.Int /* compiled code */
+          @test.A
+          public final val fieldWithAnnotation: kotlin.Int /* compiled code */
       }
   }

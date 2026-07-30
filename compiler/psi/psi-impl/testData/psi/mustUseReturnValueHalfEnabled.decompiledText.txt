@@ -2,14 +2,16 @@ Marked.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @kotlin.MustUseReturnValues public final class Marked public constructor() {
+  @kotlin.MustUseReturnValues
+  public final class Marked public constructor() {
       public final var prop: kotlin.String /* compiled code */
           public final get() { /* compiled code */ }
           public final set(value: kotlin.String) { /* compiled code */ }
 
       public final fun alreadyApplied(): kotlin.String { /* compiled code */ }
 
-      @kotlin.IgnorableReturnValue public final fun ignorable(): kotlin.String { /* compiled code */ }
+      @kotlin.IgnorableReturnValue
+      public final fun ignorable(): kotlin.String { /* compiled code */ }
   }
 
 MarkedTopLevelKt.class:
@@ -44,7 +46,8 @@ Unmarked.class:
 
       public final fun getStuff(): kotlin.String { /* compiled code */ }
 
-      @kotlin.IgnorableReturnValue public final fun ignorable(): kotlin.String { /* compiled code */ }
+      @kotlin.IgnorableReturnValue
+      public final fun ignorable(): kotlin.String { /* compiled code */ }
   }
 
 UnmarkedTopLevelKt.class:
@@ -56,4 +59,5 @@ UnmarkedTopLevelKt.class:
 
   public fun unmarkedTopFunction(): kotlin.String { /* compiled code */ }
 
-  @kotlin.IgnorableReturnValue public fun ignorableTopLvl(): kotlin.String { /* compiled code */ }
+  @kotlin.IgnorableReturnValue
+  public fun ignorableTopLvl(): kotlin.String { /* compiled code */ }

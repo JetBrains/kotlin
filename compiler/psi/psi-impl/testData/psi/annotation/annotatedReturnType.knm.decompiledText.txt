@@ -3,9 +3,11 @@
   // Implementation of methods is not available
 
   public interface MyInterface {
-      @RegularAnno public abstract val property: @TypeAnno kotlin.String
+      @RegularAnno
+      public abstract val property: @TypeAnno kotlin.String
 
-      @RegularAnno public abstract fun function(@RegularAnno argument: @TypeAnno kotlin.Int): @TypeAnno kotlin.Int
+      @RegularAnno
+      public abstract fun function(@RegularAnno argument: @TypeAnno kotlin.Int): @TypeAnno kotlin.Int
   }
 
 1_.knm:
@@ -19,5 +21,6 @@
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE]) public final annotation class TypeAnno public constructor() : kotlin.Annotation {
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
+  public final annotation class TypeAnno public constructor() : kotlin.Annotation {
   }

@@ -2,7 +2,9 @@ Ann.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE) @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.EXPRESSION]) public final annotation class Ann public constructor() : kotlin.Annotation {
+  @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.EXPRESSION])
+  public final annotation class Ann public constructor() : kotlin.Annotation {
   }
 
 AnnotatedWhenExpressionKt.class:

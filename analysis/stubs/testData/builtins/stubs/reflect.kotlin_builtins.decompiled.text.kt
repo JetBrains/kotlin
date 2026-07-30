@@ -4,7 +4,8 @@
 package kotlin.reflect
 
 public expect interface KCallable<out R> {
-    @kotlin.internal.IntrinsicConstEvaluation public expect abstract val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation
+    public expect abstract val name: kotlin.String
 }
 
 public expect interface KClass<T : kotlin.Any> : kotlin.reflect.KClassifier {
@@ -12,14 +13,16 @@ public expect interface KClass<T : kotlin.Any> : kotlin.reflect.KClassifier {
 
     public expect abstract val qualifiedName: kotlin.String?
 
-    @kotlin.SinceKotlin(version = "1.1") public expect abstract fun isInstance(value: kotlin.Any?): kotlin.Boolean
+    @kotlin.SinceKotlin(version = "1.1")
+    public expect abstract fun isInstance(value: kotlin.Any?): kotlin.Boolean
 
     public expect abstract operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
     public expect abstract fun hashCode(): kotlin.Int
 }
 
-@kotlin.SinceKotlin(version = "1.1") public interface KClassifier {
+@kotlin.SinceKotlin(version = "1.1")
+public interface KClassifier {
 }
 
 public expect interface KFunction<out R> : kotlin.reflect.KCallable<R>, kotlin.Function<R> {
@@ -56,14 +59,17 @@ public expect interface KProperty2<D, E, out V> : kotlin.reflect.KProperty<V>, (
 }
 
 public expect interface KType {
-    @kotlin.SinceKotlin(version = "1.1") public expect abstract val classifier: kotlin.reflect.KClassifier?
+    @kotlin.SinceKotlin(version = "1.1")
+    public expect abstract val classifier: kotlin.reflect.KClassifier?
 
-    @kotlin.SinceKotlin(version = "1.1") public expect abstract val arguments: kotlin.collections.List<kotlin.reflect.KTypeProjection>
+    @kotlin.SinceKotlin(version = "1.1")
+    public expect abstract val arguments: kotlin.collections.List<kotlin.reflect.KTypeProjection>
 
     public expect abstract val isMarkedNullable: kotlin.Boolean
 }
 
-@kotlin.SinceKotlin(version = "1.1") public interface KTypeParameter : kotlin.reflect.KClassifier {
+@kotlin.SinceKotlin(version = "1.1")
+public interface KTypeParameter : kotlin.reflect.KClassifier {
     public abstract val name: kotlin.String
 
     public abstract val upperBounds: kotlin.collections.List<kotlin.reflect.KType>
@@ -73,18 +79,23 @@ public expect interface KType {
     public abstract val isReified: kotlin.Boolean
 }
 
-@kotlin.SinceKotlin(version = "1.1") public final data class KTypeProjection public constructor(variance: kotlin.reflect.KVariance?, type: kotlin.reflect.KType?) {
+@kotlin.SinceKotlin(version = "1.1")
+public final data class KTypeProjection public constructor(variance: kotlin.reflect.KVariance?, type: kotlin.reflect.KType?) {
     public companion object {
-        @kotlin.PublishedApi internal final val star: kotlin.reflect.KTypeProjection /* compiled code */
+        @kotlin.PublishedApi
+        internal final val star: kotlin.reflect.KTypeProjection /* compiled code */
 
         public final val STAR: kotlin.reflect.KTypeProjection /* compiled code */
             public final get() { /* compiled code */ }
 
-        @kotlin.jvm.JvmStatic public final fun invariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection { /* compiled code */ }
+        @kotlin.jvm.JvmStatic
+        public final fun invariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection { /* compiled code */ }
 
-        @kotlin.jvm.JvmStatic public final fun contravariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection { /* compiled code */ }
+        @kotlin.jvm.JvmStatic
+        public final fun contravariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection { /* compiled code */ }
 
-        @kotlin.jvm.JvmStatic public final fun covariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection { /* compiled code */ }
+        @kotlin.jvm.JvmStatic
+        public final fun covariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection { /* compiled code */ }
     }
 
     public final val variance: kotlin.reflect.KVariance? /* compiled code */
@@ -104,7 +115,8 @@ public expect interface KType {
     public open fun hashCode(): kotlin.Int { /* compiled code */ }
 }
 
-@kotlin.SinceKotlin(version = "1.1") public final enum class KVariance private constructor() : kotlin.Enum<kotlin.reflect.KVariance> {
+@kotlin.SinceKotlin(version = "1.1")
+public final enum class KVariance private constructor() : kotlin.Enum<kotlin.reflect.KVariance> {
     INVARIANT,
 
     IN,

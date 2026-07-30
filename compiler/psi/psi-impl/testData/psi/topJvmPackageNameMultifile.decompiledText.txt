@@ -4,7 +4,8 @@ OtherKt.class:
 
   package some.other
 
-  @kotlin.SinceKotlin(version = "1.2") public fun foo(): kotlin.Unit { /* compiled code */ }
+  @kotlin.SinceKotlin(version = "1.2")
+  public fun foo(): kotlin.Unit { /* compiled code */ }
 
 OtherKt__TopJvmPackageNameMultifileKt.class:
   // IntelliJ API Decompiler stub source generated from a class file
@@ -12,4 +13,5 @@ OtherKt__TopJvmPackageNameMultifileKt.class:
 
   package some.other
 
-  @kotlin.SinceKotlin(version = "1.2") public fun foo(): kotlin.Unit { /* compiled code */ }
+  @kotlin.SinceKotlin(version = "1.2")
+  public fun foo(): kotlin.Unit { /* compiled code */ }

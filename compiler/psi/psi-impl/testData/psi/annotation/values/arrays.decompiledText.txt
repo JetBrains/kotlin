@@ -20,12 +20,14 @@ WithArrays.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Arrays(ia = [1, 2, 3], la = [1L], fa = [], da = [2.2], ca = ['a'], ba = [true, false]) public final class WithArrays public constructor() {
+  @Arrays(ia = [1, 2, 3], la = [1L], fa = [], da = [2.2], ca = ['a'], ba = [true, false])
+  public final class WithArrays public constructor() {
   }
 
 WithExplicitArrays.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Arrays(ia = [1, 2, 3], la = [1L], fa = [], da = [2.2], ca = ['a'], ba = [true, false]) public final class WithExplicitArrays public constructor() {
+  @Arrays(ia = [1, 2, 3], la = [1L], fa = [], da = [2.2], ca = ['a'], ba = [true, false])
+  public final class WithExplicitArrays public constructor() {
   }

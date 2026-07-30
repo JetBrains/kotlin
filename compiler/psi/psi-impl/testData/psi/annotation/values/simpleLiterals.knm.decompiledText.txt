@@ -24,19 +24,22 @@
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Simple(i = 12, l = 12L, b = 12, d = 3.3, f = 3.3F, c = 'a', b1 = true, b2 = false) public final class WithNamedSimple public constructor() {
+  @Simple(i = 12, l = 12L, b = 12, d = 3.3, f = 3.3F, c = 'a', b1 = true, b2 = false)
+  public final class WithNamedSimple public constructor() {
   }
 
 2_.knm:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Simple(i = 12, l = 12L, b = 12, d = 3.3, f = 3.3F, c = 'a', b1 = true, b2 = false) public final class WithSimple public constructor() {
+  @Simple(i = 12, l = 12L, b = 12, d = 3.3, f = 3.3F, c = 'a', b1 = true, b2 = false)
+  public final class WithSimple public constructor() {
   }
 
 3_.knm:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Simple(i = 2, l = 2L, b = 12, d = 0.2999999999999998, f = 6.6F, c = 'a', b1 = false, b2 = true) public final class WithSimpleOperations public constructor() {
+  @Simple(i = 2, l = 2L, b = 12, d = 0.2999999999999998, f = 6.6F, c = 'a', b1 = false, b2 = true)
+  public final class WithSimpleOperations public constructor() {
   }
