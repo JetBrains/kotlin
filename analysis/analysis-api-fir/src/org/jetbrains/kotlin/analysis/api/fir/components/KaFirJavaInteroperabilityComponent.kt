@@ -18,6 +18,7 @@ import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.bridges.lightClassBridge
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
@@ -84,7 +85,6 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.has
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.psi
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -532,12 +532,14 @@ internal class KaFirJavaInteroperabilityComponent(
     private fun computeJavaMethodName(symbol: KaCallableSymbol, defaultName: String): String? {
         symbol.jvmNameFromAnnotation?.let { return it }
 
+        val bridge = lightClassBridge
+
         // 'JvmName' above wins over value class mangling, so the check has to be performed afterwards
-        if (hasMangledNameDueToValueClasses(symbol)) return null
+        if (bridge.hasMangledNameDueToValueClasses(symbol)) return null
 
         // Top-level declarations are placed into a file facade class, and their names are never mangled.
         // Note: script declarations are members of a script class, so they are affected by mangling
-        if (jvmMethodOwner(symbol) == null) return defaultName
+        if (bridge.jvmMethodOwner(symbol) == null) return defaultName
 
         // Only the current module has a name to mangle with; library declarations already have mangled names
         val module = symbol.containingModule.baseContextModuleOrSelf as? KaSourceModule ?: return defaultName
@@ -545,111 +547,6 @@ internal class KaFirJavaInteroperabilityComponent(
         if (symbol.visibility != KaSymbolVisibility.INTERNAL) return defaultName
 
         return mangleInternalName(defaultName, module.stableModuleName ?: module.name)
-    }
-
-    /**
-     * The declaration that owns the JVM method for [symbol], or `null` if the method is placed into a file facade class.
-     *
-     * For a property accessor, the owner of the property is used, as an accessor is never owned by its property on the JVM.
-     */
-    context(_: KaSession)
-    private fun jvmMethodOwner(symbol: KaCallableSymbol): KaDeclarationSymbol? {
-        val containingDeclaration = symbol.containingDeclaration
-        return if (containingDeclaration is KaPropertySymbol) containingDeclaration.containingDeclaration else containingDeclaration
-    }
-
-    /**
-     * Whether the JVM name of [symbol] is mangled because of value classes.
-     *
-     * The suffix is either a hash of the signature, as in `classFunInParameter-5lyY9Q4`, or `impl` for a member of a value class,
-     * as in `funWithoutParameters-impl`. Neither is computed by the endpoint, so there is no name to report.
-     *
-     * @see org.jetbrains.kotlin.backend.jvm.InlineClassAbi
-     */
-    context(_: KaSession)
-    private fun hasMangledNameDueToValueClasses(symbol: KaCallableSymbol): Boolean {
-        // On the JVM, an accessor has the receiver, the context parameters, and the type of its property, while the symbol
-        // itself only has the receiver
-        val declaration = (symbol as? KaPropertyAccessorSymbol)?.containingDeclaration as? KaCallableSymbol ?: symbol
-
-        // A value class anywhere but in the return type always leads to mangling
-        if (declaration.receiverType?.let { requiresManglingAsParameterType(it) } == true) return true
-        if (declaration.contextParameters.any { requiresManglingAsParameterType(it.returnType) }) return true
-        if (declaration is KaFunctionSymbol && declaration.valueParameters.any { requiresManglingAsParameterType(it.returnType) }) {
-            return true
-        }
-
-        val owner = jvmMethodOwner(symbol)
-        val valueClassInType = declaredTypeValueClass(declaration)
-        if (symbol is KaPropertySetterSymbol) {
-            // The type of a property is the parameter type of its setter, so it mangles the name in any container.
-            // 'kotlin.Result' is excluded, as in any other parameter position
-            if (valueClassInType != null && valueClassInType.classId != StandardClassIds.Result) return true
-        } else if (owner != null && valueClassInType != null) {
-            // A value class in the return type mangles the name of a class member only, as a file facade class has no supertypes,
-            // and so nothing to clash with
-            return true
-        }
-
-        // Members of a value class are replaced with static methods, except for the ones that implement a supertype member,
-        // as an unmangled bridge method is generated for them, and the getter of the underlying property
-        return owner is KaNamedClassSymbol && owner.isInline && !isOverride(symbol) && !isUnderlyingPropertyAccessor(symbol)
-    }
-
-    /**
-     * The value class behind the declared type of [declaration], or `null` if there is none.
-     *
-     * Only an explicitly declared type is checked, as an implicit one has to be inferred from the body, and light classes,
-     * which the endpoint computes names for, are not allowed to trigger such a resolution.
-     * This is the same restriction as in `org.jetbrains.kotlin.light.classes.symbol.classes.hasValueClassInReturnType`.
-     */
-    context(_: KaSession)
-    private fun declaredTypeValueClass(declaration: KaCallableSymbol): KaNamedClassSymbol? {
-        // A declaration without real PSI, e.g., a library or a generated one, always has its type at hand
-        val psi = declaration.realPsi
-        if (psi is KtCallableDeclaration && psi.typeReference == null) return null
-
-        return valueClassSymbol(declaration.returnType)
-    }
-
-    /**
-     * Whether [type] in a parameter, receiver, or context parameter position mangles the name of the declaration.
-     *
-     * Unlike a return type, such a position doesn't mangle the name because of `kotlin.Result`, as it is erased there anyway.
-     */
-    context(_: KaSession)
-    private fun requiresManglingAsParameterType(type: KaType): Boolean {
-        val symbol = valueClassSymbol(type) ?: return false
-        return symbol.classId != StandardClassIds.Result
-    }
-
-    /**
-     * The value class behind [type] after erasure, or `null` if [type] is not represented by a value class.
-     */
-    context(_: KaSession)
-    private fun valueClassSymbol(type: KaType): KaNamedClassSymbol? {
-        // A value class is final, so it can only be an upper bound of a type parameter as is
-        val candidates = if (type is KaTypeParameterType) type.symbol.upperBounds else listOf(type)
-        return candidates.firstNotNullOfOrNull { candidate ->
-            (candidate.expandedSymbol as? KaNamedClassSymbol)?.takeIf { it.isInline }
-        }
-    }
-
-    context(_: KaSession)
-    private fun isOverride(symbol: KaCallableSymbol): Boolean = when (symbol) {
-        is KaNamedFunctionSymbol -> symbol.isOverride
-        is KaPropertyAccessorSymbol -> (symbol.containingDeclaration as? KaPropertySymbol)?.isOverride == true
-        else -> false
-    }
-
-    /**
-     * Whether [symbol] is an accessor of the underlying property of a value class, as such a property is materialized as a field,
-     * and its getter is not replaced with a static method.
-     */
-    context(_: KaSession)
-    private fun isUnderlyingPropertyAccessor(symbol: KaCallableSymbol): Boolean {
-        val property = (symbol as? KaPropertyAccessorSymbol)?.containingDeclaration
-        return property is KaKotlinPropertySymbol && property.primaryConstructorParameter != null
     }
 }
 
