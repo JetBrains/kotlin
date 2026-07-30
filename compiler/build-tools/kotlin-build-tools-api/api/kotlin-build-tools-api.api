@@ -829,6 +829,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Js
 	public static final field X_ES_GENERATORS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
 	public static final field X_ES_LONG_AS_BIGINT Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
 	public static final field X_GENERATE_POLYFILLS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
+	public static final field X_INTEGER_DIVISION_CHECK Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
 	public static final field X_IR_BUILD_CACHE Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
 	public static final field X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
 	public static final field X_IR_KEEP Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;

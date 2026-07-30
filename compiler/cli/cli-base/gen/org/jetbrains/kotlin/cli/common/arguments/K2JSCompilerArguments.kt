@@ -97,6 +97,17 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xinteger-division-check",
+        description = "Check for division by zero in integer arithmetic and throw ArithmeticException.",
+    )
+    @Enables(LanguageFeature.JsIntegerDivisionCheck)
+    var integerDivisionCheck: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xir-build-cache",
         description = "Use the compiler to build the cache.",
     )

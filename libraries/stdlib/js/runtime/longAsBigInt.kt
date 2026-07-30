@@ -109,8 +109,7 @@ internal fun Long.multiply(other: Long): Long = wrappingArithmetic(this, other, 
 @UsedFromCompilerGeneratedCode
 internal fun Long.divide(other: Long): Long {
     if (other == 0L) throw ArithmeticException("/ by zero")
-    if (other == -1L && this == Long.MIN_VALUE) return Long.MIN_VALUE
-    return (unsafeCast<BigInt>() / other.unsafeCast<BigInt>()).unsafeCast<Long>()
+    return wrappingArithmetic(this, other, BigInt::div)
 }
 
 /**

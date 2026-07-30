@@ -111,6 +111,16 @@ public interface JsCompilerLinkingArguments : JsCompilerArguments,
         JsCompilerLinkingArgument("X_GENERATE_POLYFILLS", KotlinReleaseVersion(1, 8, 20))
 
     /**
+     * Check for division by zero in integer arithmetic and throw ArithmeticException.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_INTEGER_DIVISION_CHECK: JsCompilerLinkingArgument<Boolean> =
+        JsCompilerLinkingArgument("X_INTEGER_DIVISION_CHECK", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Use the compiler to build the cache.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
