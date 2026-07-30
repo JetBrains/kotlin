@@ -183,22 +183,6 @@ To run all runtime unit tests on the host machine:
 Use `-Pgtest_filter=` to filter which tests to run (uses Google Test filter syntax).
 Use `-Pgtest_timeout=` to limit how much time each test executable can take (accepts values like `30s`, `1h15m20s`, and so on).
 
-We use [Google Test](https://github.com/google/googletest) to execute the runtime unit tests. The build automatically fetches
-the specified Google Test revision to `kotlin-native/runtime/googletest`. It is possible to manually modify the downloaded GTest sources for debug
-purposes; the build will not overwrite them by default.
-
-To forcibly redownload Google Test when running tests, use the corresponding project property:
-
-     ./gradlew :kotlin-native:runtime:hostRuntimeTests -Prefresh-gtest
-
-or run the `downloadGoogleTest` task directly with the `--refresh` CLI key:
-
-    ./gradlew :kotlin-native:downloadGoogleTest --refresh
-    
-To use a local GTest copy instead of the downloaded one, add the following line to `kotlin-native/runtime/build.gradle.kts`:
-
-    googletest.useLocalSources("<path to local GTest sources>")
-
 ## Debugging Kotlin/Native compiler
 
 To debug Kotlin/Native compiler with a debugger (e.g. in IntelliJ IDEA),
