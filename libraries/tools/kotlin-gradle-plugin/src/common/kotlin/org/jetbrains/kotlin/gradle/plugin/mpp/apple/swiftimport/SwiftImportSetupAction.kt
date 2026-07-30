@@ -9,6 +9,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -216,6 +217,19 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         when (val packageIdentifier = identifierSynchronizationOrNull()) {
             is PackageResolvedSynchronization.Identifier -> {
                 val packageResolvedSynchronizationIdentifier = packageIdentifier.identifier
+                val cleanSwiftImportFingerprintArtifacts = locateOrRegisterCleanSwiftImportFingerprintArtifactsTask()
+                cleanSwiftImportFingerprintArtifacts.configure { cleanTaskProvider ->
+                    cleanTaskProvider.syntheticPackageFingerprint.set(
+                        project.layout.buildDirectory.file(
+                            FingerprintSyntheticPackage.SYNTHETIC_PACKAGE_FINGERPRINT_PATH
+                        )
+                    )
+                    cleanTaskProvider.coordinationService.set(fingerprintCoordinationService)
+                }
+                tasks.named(LifecycleBasePlugin.CLEAN_TASK_NAME).configure {
+                    it.dependsOn(cleanSwiftImportFingerprintArtifacts)
+                }
+
                 enableFingerprintCoordination(
                     fingerprintCoordinationService = fingerprintCoordinationService,
                     generateSyntheticPackageTask = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
@@ -387,6 +401,15 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                             fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprint.get() }
                         )
                         it.xcodebuildFingerprint.set(fingerprintXcode.map { it.xcodebuildFingerprint.get() })
+                    }
+
+                    val cleanSwiftImportFingerprintArtifacts = locateOrRegisterCleanSwiftImportFingerprintArtifactsTask()
+                    cleanSwiftImportFingerprintArtifacts.configure {
+                        it.xcodebuildFingerprints.from(
+                            project.layout.buildDirectory.file(
+                                FingerprintXcodeBuild.xcodebuildFingerprintPathForSdk(targetSdk)
+                            )
+                        )
                     }
 
                     defFilesAndLdDumpGenerationTask.configure { defFileTask ->
@@ -619,12 +642,12 @@ private fun Project.enableFingerprintCoordination(
     syncSyntheticPackageResolvedToPersisted: TaskProvider<SyncPackageResolvedTask>,
 ) {
     val fingerprintedSwiftPMDependencyGraph = transitiveSwiftPMMetadataProvider.zip(directSwiftPMMetadata) { transitiveMetadata, directMetadata ->
-        fingerprintSwiftPMDependencyGraph(
-            directMetadata,
-            transitiveMetadata,
-            normalizeVersions = true,
-        )
-    }
+            fingerprintSwiftPMDependencyGraph(
+                directMetadata,
+                transitiveMetadata,
+                normalizeVersions = true,
+            )
+        }
 
     syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure {
         // dest files is fixed to synthetic package
@@ -665,6 +688,12 @@ private fun Project.enableFingerprintCoordination(
         )
         it.coordinationService.set(fingerprintCoordinationService)
     }
+}
+
+private fun Project.locateOrRegisterCleanSwiftImportFingerprintArtifactsTask(): TaskProvider<CleanSwiftImportFingerprintArtifacts> {
+    return locateOrRegisterTask<CleanSwiftImportFingerprintArtifacts>(
+        CleanSwiftImportFingerprintArtifacts.TASK_NAME,
+    )
 }
 
 private fun Project.locateOrRegisterUmbrellaFetchTask(
@@ -1085,7 +1114,7 @@ internal fun Project.swiftPMImportIdeModelProvider(): Provider<SwiftPMImportIdeM
             hasDirectOrTransitiveSwiftPMDependencies,
             ("${project.path}:${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}").replace("::", ":"),
             SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
-            project.directSwiftPMDependencies().map directSwiftPMDependencies@ { dependencies ->
+            project.directSwiftPMDependencies().map directSwiftPMDependencies@{ dependencies ->
                 val declaredDependencies = dependencies.map {
                     when (it) {
                         is SwiftPMDependency.Local -> LocalSwiftPMDependencyForIde(it.absolutePath)
