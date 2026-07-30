@@ -129,4 +129,65 @@ class JKlibJavaInteropIntegrationTest {
             disposeRootInWriteAction(disposable)
         }
     }
+
+    @Test
+    fun testKotlinPropertyShadowingJavaField(@TempDir tempDir: File) {
+        val stdlibKlib = ForTestCompileRuntime.jklibStdlibForTests().path
+
+        val javaBaseDir = File(tempDir, "javaBase").apply { mkdirs() }
+        File(javaBaseDir, "BaseJava.java").apply {
+            writeText(
+                """
+                package test;
+
+                public class BaseJava {
+                    public String foo = "java_base_foo";
+                }
+                """.trimIndent()
+            )
+        }
+
+        val javaJar = MockLibraryUtilExt.compileJavaFilesLibraryToJar(
+            javaBaseDir.path,
+            "javaBase"
+        )
+
+        val ktSubDir = File(tempDir, "ktSub").apply { mkdirs() }
+        val ktSubFile = File(ktSubDir, "KtSub.kt").apply {
+            writeText(
+                """
+                package test
+
+                open class KtSub : BaseJava() {
+                    @JvmField
+                    var foo: String = "kt_sub_foo"
+                }
+                """.trimIndent()
+            )
+        }
+
+        val ktSubKlib = File(tempDir, "ktSub.klib")
+        val compiler = K2JKlibCompiler()
+        val args = compiler.createArguments()
+        compiler.parseArguments(
+            arrayOf(
+                ktSubFile.path,
+                "-d", ktSubKlib.path,
+                "-module-name", "ktSub",
+                "-no-stdlib",
+                "-classpath", javaJar.path,
+                "-Xklib=$stdlibKlib"
+            ),
+            args
+        )
+
+        val messageCollector = MessageCollectorImpl()
+        val disposable = Disposer.newDisposable()
+        try {
+            val artifact = compiler.compileKlibAndDeserializeIr(args, messageCollector, disposable)
+            assertNotNull(artifact, "compileKlibAndDeserializeIr returned null. Messages:\n" + messageCollector.messages.joinToString("\n"))
+        } finally {
+            disposeRootInWriteAction(disposable)
+        }
+    }
 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.jklib
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.overrides.MemberWithOriginal
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
  * a Kotlin property shadows a Java superclass field of the same name by returning OVERRIDABLE.
  * Returning OVERRIDABLE suppresses duplicate fake override property creation without symbol collisions.
  */
+
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 object JKlibFieldShadowingOverridabilityCondition : IrExternalOverridabilityCondition {
     override val contract: IrExternalOverridabilityCondition.Contract
@@ -40,8 +42,8 @@ object JKlibFieldShadowingOverridabilityCondition : IrExternalOverridabilityCond
         }
 
         // 2. Do not match extension properties
-        if (superProperty.getter?.extensionReceiverParameter != null ||
-            subProperty.getter?.extensionReceiverParameter != null) {
+        if (superProperty.getter?.parameters?.any { it.kind == IrParameterKind.ExtensionReceiver } == true ||
+            subProperty.getter?.parameters?.any { it.kind == IrParameterKind.ExtensionReceiver } == true) {
             return IrExternalOverridabilityCondition.Result.UNKNOWN
         }
 
