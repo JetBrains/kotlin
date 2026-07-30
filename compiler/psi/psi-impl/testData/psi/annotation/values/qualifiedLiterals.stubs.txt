@@ -145,3 +145,15 @@ Sum.kt:
                 REFERENCE_EXPRESSION[referencedName=Simple]
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
+              BINARY_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=test]
+                      REFERENCE_EXPRESSION[referencedName=Simple]
+                    REFERENCE_EXPRESSION[referencedName=Companion]
+                  REFERENCE_EXPRESSION[referencedName=CONST1]
+                OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=Simple]
+                  REFERENCE_EXPRESSION[referencedName=CONST2]

@@ -20,6 +20,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UntilOperatorDifferentContex
               REFERENCE_EXPRESSION[referencedName=Suppress]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
+            BINARY_EXPRESSION
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+              OPERATION_REFERENCE[operationToken=RANGE_UNTIL, referencedName=..<]
+              REFERENCE_EXPRESSION[referencedName=n]
     VALUE_PARAMETER_LIST
   FUN[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
     VALUE_PARAMETER_LIST

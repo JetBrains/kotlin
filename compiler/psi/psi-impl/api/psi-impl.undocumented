@@ -69,6 +69,7 @@ org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION_ENTRY
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION_TARGET
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:BACKING_FIELD
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:BINARY_EXPRESSION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:BLOCK_CODE_FRAGMENT
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:BOOLEAN_CONSTANT
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CALL_EXPRESSION

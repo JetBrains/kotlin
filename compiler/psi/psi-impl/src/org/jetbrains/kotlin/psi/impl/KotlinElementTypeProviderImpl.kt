@@ -239,6 +239,9 @@ object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val postfixExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtPostfixExpression>, KtPostfixExpression>
         get() = KtStubElementTypes.POSTFIX_EXPRESSION
 
+    override val binaryExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtBinaryExpression>, KtBinaryExpression>
+        get() = KtStubElementTypes.BINARY_EXPRESSION
+
     override val classLiteralExpressionType: KtStubElementType<out KotlinClassLiteralExpressionStub, KtClassLiteralExpression>
         get() = KtStubElementTypes.CLASS_LITERAL_EXPRESSION
 

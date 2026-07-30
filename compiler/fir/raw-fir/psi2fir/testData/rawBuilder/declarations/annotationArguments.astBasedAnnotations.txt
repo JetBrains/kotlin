@@ -8,9 +8,6 @@ context -> FirRegularClassSymbol Sum
 context -> FirRegularClassSymbol Positive
 @Simple(LAZY_EXPRESSION)
 
-context -> FirRegularClassSymbol WithSimpleOperations
-@Simple(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
-
 context -> FirRegularClassSymbol WithStringLiteralConcat
 @StringLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)
 

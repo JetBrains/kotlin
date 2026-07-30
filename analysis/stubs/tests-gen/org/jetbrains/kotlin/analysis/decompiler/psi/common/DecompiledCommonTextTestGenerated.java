@@ -2067,6 +2067,12 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
       }
 
       @Test
+      @TestMetadata("binaryOperatorTokens.kt")
+      public void testBinaryOperatorTokens() {
+        run("binaryOperatorTokens.kt");
+      }
+
+      @Test
       @TestMetadata("classLiterals.kt")
       public void testClassLiterals() {
         run("classLiterals.kt");

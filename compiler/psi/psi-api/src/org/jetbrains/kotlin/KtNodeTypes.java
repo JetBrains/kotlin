@@ -135,7 +135,7 @@ public interface KtNodeTypes {
 
     @NotNull IElementType THIS_EXPRESSION           = new KtNodeType("THIS_EXPRESSION", KtThisExpression::new);
     @NotNull IElementType SUPER_EXPRESSION          = new KtNodeType("SUPER_EXPRESSION", KtSuperExpression::new);
-    @NotNull IElementType BINARY_EXPRESSION         = new KtNodeType("BINARY_EXPRESSION", KtBinaryExpression::new);
+    @NotNull IElementType BINARY_EXPRESSION         = KtStubBasedElementTypes.BINARY_EXPRESSION;
     @NotNull IElementType BINARY_WITH_TYPE          = new KtNodeType("BINARY_WITH_TYPE", KtBinaryExpressionWithTypeRHS::new);
     @NotNull IElementType IS_EXPRESSION             = new KtNodeType("IS_EXPRESSION", KtIsExpression::new);
     @NotNull IElementType PREFIX_EXPRESSION         = KtStubBasedElementTypes.PREFIX_EXPRESSION;

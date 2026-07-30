@@ -4,6 +4,7 @@ org.jetbrains.kotlin.KotlinElementTypeProvider.annotationEntryType
 org.jetbrains.kotlin.KotlinElementTypeProvider.annotationTargetType
 org.jetbrains.kotlin.KotlinElementTypeProvider.annotationType
 org.jetbrains.kotlin.KotlinElementTypeProvider.backingFieldType
+org.jetbrains.kotlin.KotlinElementTypeProvider.binaryExpressionType
 org.jetbrains.kotlin.KotlinElementTypeProvider.blockCodeFragmentType
 org.jetbrains.kotlin.KotlinElementTypeProvider.blockExpressionType
 org.jetbrains.kotlin.KotlinElementTypeProvider.booleanConstantType
@@ -333,6 +334,7 @@ org.jetbrains.kotlin.psi.KtBackingField.returnTypeReference
 org.jetbrains.kotlin.psi.KtBackingField:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtBackingField:constructor(KotlinBackingFieldStub)
 org.jetbrains.kotlin.psi.KtBinaryExpression:constructor(ASTNode)
+org.jetbrains.kotlin.psi.KtBinaryExpression:constructor(KotlinPlaceHolderStub<KtBinaryExpression>)
 org.jetbrains.kotlin.psi.KtBinaryExpression:getLeft()
 org.jetbrains.kotlin.psi.KtBinaryExpression:getOperationToken()
 org.jetbrains.kotlin.psi.KtBinaryExpression:getOperationTokenOrNull()

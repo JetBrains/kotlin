@@ -152,6 +152,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IncorrectMultiDollarInterpol
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
               LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=${0 + runTimeConstant}]
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+                  OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                  REFERENCE_EXPRESSION[referencedName=runTimeConstant]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -162,6 +166,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IncorrectMultiDollarInterpol
             STRING_TEMPLATE
               STRING_INTERPOLATION_PREFIX[dollarSignCount=1]
               LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=${0 + runTimeConstant}]
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+                  OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                  REFERENCE_EXPRESSION[referencedName=runTimeConstant]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -172,6 +180,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IncorrectMultiDollarInterpol
             STRING_TEMPLATE
               STRING_INTERPOLATION_PREFIX[dollarSignCount=2]
               LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=$${0 + runTimeConstant}]
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+                  OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                  REFERENCE_EXPRESSION[referencedName=runTimeConstant]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -182,6 +194,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IncorrectMultiDollarInterpol
             STRING_TEMPLATE
               STRING_INTERPOLATION_PREFIX[dollarSignCount=4]
               LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=$$$${0 + runTimeConstant}]
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+                  OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                  REFERENCE_EXPRESSION[referencedName=runTimeConstant]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -192,6 +208,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IncorrectMultiDollarInterpol
             STRING_TEMPLATE
               STRING_INTERPOLATION_PREFIX[dollarSignCount=8]
               LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=$$$$$$$${0 + runTimeConstant}]
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+                  OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                  REFERENCE_EXPRESSION[referencedName=runTimeConstant]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -309,6 +329,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IncorrectMultiDollarInterpol
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
               LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=${0 + runTimeConstant}]
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+                  OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                  REFERENCE_EXPRESSION[referencedName=runTimeConstant]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -319,6 +343,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IncorrectMultiDollarInterpol
             STRING_TEMPLATE
               STRING_INTERPOLATION_PREFIX[dollarSignCount=1]
               LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=${0 + runTimeConstant}]
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+                  OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                  REFERENCE_EXPRESSION[referencedName=runTimeConstant]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -329,6 +357,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IncorrectMultiDollarInterpol
             STRING_TEMPLATE
               STRING_INTERPOLATION_PREFIX[dollarSignCount=2]
               LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=$${0 + runTimeConstant}]
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+                  OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                  REFERENCE_EXPRESSION[referencedName=runTimeConstant]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -339,6 +371,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IncorrectMultiDollarInterpol
             STRING_TEMPLATE
               STRING_INTERPOLATION_PREFIX[dollarSignCount=4]
               LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=$$$${0 + runTimeConstant}]
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+                  OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                  REFERENCE_EXPRESSION[referencedName=runTimeConstant]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -349,6 +385,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IncorrectMultiDollarInterpol
             STRING_TEMPLATE
               STRING_INTERPOLATION_PREFIX[dollarSignCount=8]
               LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=$$$$$$$${0 + runTimeConstant}]
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+                  OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                  REFERENCE_EXPRESSION[referencedName=runTimeConstant]
     VALUE_PARAMETER_LIST
   PROPERTY[fqName=stringWithInterpolationAsInvalidConstantInitializer01, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=stringWithInterpolationAsInvalidConstantInitializer01]
     MODIFIER_LIST[const]
