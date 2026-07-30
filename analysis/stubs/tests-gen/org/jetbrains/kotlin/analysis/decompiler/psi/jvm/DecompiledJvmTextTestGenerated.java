@@ -2115,6 +2115,12 @@ public class DecompiledJvmTextTestGenerated extends AbstractDecompiledJvmTextTes
       }
 
       @Test
+      @TestMetadata("nonStubbedOperands.kt")
+      public void testNonStubbedOperands() {
+        run("nonStubbedOperands.kt");
+      }
+
+      @Test
       @TestMetadata("postfixOperators.kt")
       public void testPostfixOperators() {
         run("postfixOperators.kt");

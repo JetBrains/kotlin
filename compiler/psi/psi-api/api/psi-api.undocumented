@@ -53,6 +53,7 @@ org.jetbrains.kotlin.KotlinElementTypeProvider.nullableTypeType
 org.jetbrains.kotlin.KotlinElementTypeProvider.objectType
 org.jetbrains.kotlin.KotlinElementTypeProvider.operationReferenceType
 org.jetbrains.kotlin.KotlinElementTypeProvider.packageDirectiveType
+org.jetbrains.kotlin.KotlinElementTypeProvider.parenthesizedExpressionType
 org.jetbrains.kotlin.KotlinElementTypeProvider.postfixExpressionType
 org.jetbrains.kotlin.KotlinElementTypeProvider.prefixExpressionType
 org.jetbrains.kotlin.KotlinElementTypeProvider.primaryConstructorType
@@ -767,6 +768,7 @@ org.jetbrains.kotlin.psi.KtParameterList:getParameters()
 org.jetbrains.kotlin.psi.KtParameterList:getRightParenthesis()
 org.jetbrains.kotlin.psi.KtParameterList:getTrailingComma()
 org.jetbrains.kotlin.psi.KtParenthesizedExpression:constructor(ASTNode)
+org.jetbrains.kotlin.psi.KtParenthesizedExpression:constructor(KotlinPlaceHolderStub<KtParenthesizedExpression>)
 org.jetbrains.kotlin.psi.KtParenthesizedExpression:getExpression()
 org.jetbrains.kotlin.psi.KtPostfixExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtPostfixExpression:constructor(KotlinPlaceHolderStub<KtPostfixExpression>)

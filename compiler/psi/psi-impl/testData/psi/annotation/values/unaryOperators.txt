@@ -334,8 +334,6 @@ KtFile: unaryOperators.kt
   CLASS
     PsiComment(EOL_COMMENT)('// FILE: WithParentheses.kt')
     PsiWhiteSpace('\n')
-    PsiComment(EOL_COMMENT)('// Parenthesized expressions are not stub-based, so the operand is available only via the AST')
-    PsiWhiteSpace('\n')
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')

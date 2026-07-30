@@ -303,6 +303,10 @@ internal object KtStubBasedElementTypes {
         provider.binaryExpressionType
 
     @JvmField
+    val PARENTHESIZED: KtStubElementType<out KotlinPlaceHolderStub<KtParenthesizedExpression>, KtParenthesizedExpression> =
+        provider.parenthesizedExpressionType
+
+    @JvmField
     val CLASS_LITERAL_EXPRESSION: KtStubElementType<out KotlinClassLiteralExpressionStub, KtClassLiteralExpression> =
         provider.classLiteralExpressionType
 

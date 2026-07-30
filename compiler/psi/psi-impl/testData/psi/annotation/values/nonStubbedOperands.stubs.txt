@@ -1,0 +1,76 @@
+Anno.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Anno, fqName=Anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Anno, superNames=[]]
+      MODIFIER_LIST[annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Anno]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=Anno.value, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=value]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+
+
+WithArrayAccess.kt:
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithArrayAccessKt]]
+    facadeFqName: WithArrayAccessKt
+    partSimpleName: "WithArrayAccessKt"
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    PROPERTY[fqName=array, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=array]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=IntArray]
+    CLASS[classId=/WithArrayAccess, fqName=WithArrayAccess, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithArrayAccess, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Anno]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+
+
+WithCast.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithCast, fqName=WithCast, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithCast, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Anno]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              PARENTHESIZED
+
+
+WithSafeCall.kt:
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithSafeCallKt]]
+    facadeFqName: WithSafeCallKt
+    partSimpleName: "WithSafeCallKt"
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    PROPERTY[fqName=nullable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=nullable]
+      TYPE_REFERENCE
+        NULLABLE_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+    CLASS[classId=/WithSafeCall, fqName=WithSafeCall, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithSafeCall, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Anno]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              BINARY_EXPRESSION
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]

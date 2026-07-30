@@ -101,7 +101,7 @@ public interface KtNodeTypes {
     @NotNull IElementType ESCAPE_STRING_TEMPLATE_ENTRY  = KtStubBasedElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY;
     @NotNull IElementType STRING_INTERPOLATION_PREFIX   = KtStubBasedElementTypes.STRING_INTERPOLATION_PREFIX;
 
-    @NotNull IElementType PARENTHESIZED             = new KtNodeType("PARENTHESIZED", KtParenthesizedExpression::new);
+    @NotNull IElementType PARENTHESIZED             = KtStubBasedElementTypes.PARENTHESIZED;
     @NotNull IElementType RETURN                    = new KtNodeType("RETURN", KtReturnExpression::new);
     @NotNull IElementType THROW                     = new KtNodeType("THROW", KtThrowExpression::new);
     @NotNull IElementType CONTINUE                  = new KtNodeType("CONTINUE", KtContinueExpression::new);
