@@ -261,7 +261,7 @@ internal fun deserializeClassToSymbol(
     }.apply {
         if (classStub != null) {
             if (isInlineOrValue) {
-                valueClassRepresentation = classStub.deserializeValueClassRepresentation(this)
+                valueClassRepresentation = classStub.deserializeValueClassRepresentation(this, context.typeDeserializer)
             }
 
             val clsStubCompiledToJvmDefaultImplementation = classStub.isClsStubCompiledToJvmDefaultImplementation
@@ -284,21 +284,31 @@ internal fun deserializeClassToSymbol(
     }
 }
 
-private fun KotlinClassStubImpl.deserializeValueClassRepresentation(klass: FirRegularClass): ValueClassRepresentation<ConeRigidType>? {
-    val constructor by lazy(LazyThreadSafetyMode.NONE) {
-        klass.declarations.firstNotNullOfOrNull { declaration ->
-            (declaration as? FirConstructor)?.takeIf(FirConstructor::isPrimary)
-        } ?: errorWithAttachment("Value class must have primary constructor") {
+private fun KotlinClassStubImpl.deserializeValueClassRepresentation(
+    klass: FirRegularClass,
+    typeDeserializer: StubBasedFirTypeDeserializer,
+): ValueClassRepresentation<ConeRigidType>? {
+    if (valueClassRepresentation != KotlinValueClassRepresentation.INLINE_CLASS) {
+        return null
+    }
+
+    val propertyName = valueClassUnderlyingPropertyName
+    val propertyType = valueClassUnderlyingType?.let(typeDeserializer::type)
+    if (propertyName != null && propertyType != null) {
+        requireWithAttachment(propertyType is ConeRigidType, { "Underlying type must be rigid type" }) {
+            withConeTypeEntry("type", propertyType)
             withFirEntry("class", klass)
         }
+        return InlineClassRepresentation(Name.identifier(propertyName), propertyType)
     }
 
-    if (valueClassRepresentation == KotlinValueClassRepresentation.INLINE_CLASS) {
-        val parameter = constructor.valueParameters.single()
-        return InlineClassRepresentation(parameter.name, parameter.coneRigidType())
+    val constructor = klass.declarations.firstNotNullOfOrNull { declaration ->
+        (declaration as? FirConstructor)?.takeIf(FirConstructor::isPrimary)
+    } ?: errorWithAttachment("Value class must have primary constructor") {
+        withFirEntry("class", klass)
     }
-
-    return null
+    val parameter = constructor.valueParameters.single()
+    return InlineClassRepresentation(parameter.name, parameter.coneRigidType())
 }
 
 private fun FirValueParameter.coneRigidType(): ConeRigidType {
