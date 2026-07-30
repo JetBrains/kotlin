@@ -231,11 +231,15 @@ class NumberOperatorCallsTransformer(private val context: JsIrBackendContext) : 
         }
     }
 
-    private fun transformDiv(call: IrFunctionAccessExpression) =
-        irBinaryOp(call, symbols.jsDiv, toInt32 = BinaryOp(call).result.isInt())
+    private fun transformDiv(call: IrFunctionAccessExpression) = BinaryOp(call).run {
+        if (result.isInt()) irCall(call, symbols.jsIdiv)
+        else irBinaryOp(call, symbols.jsDiv)
+    }
 
-    private fun transformRem(call: IrFunctionAccessExpression) =
-        irBinaryOp(call, symbols.jsMod, toInt32 = BinaryOp(call).result.isInt())
+    private fun transformRem(call: IrFunctionAccessExpression) = BinaryOp(call).run {
+        if (result.isInt()) irCall(call, symbols.jsIrem)
+        else irBinaryOp(call, symbols.jsMod)
+    }
 
     private fun transformIntIncrement(call: IrFunctionAccessExpression) =
         transformCrement(call, symbols.jsPlus) { buildInt(1) }
