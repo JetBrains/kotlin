@@ -48,15 +48,15 @@ tasks.withType<Test>().configureEach {
         logger.quiet("Domain Test Mode: '${testFederationMode.get()}'")
 
         /*
-        At this point: Assert that JUnit5 is used, as 'Smoke Test' configurations use JUnit5 features.
+        At this point: Assert that JUnit 5 is used, as 'Smoke Test' configurations use JUnit 5 features.
         */
         if (testFramework !is JUnitPlatformTestFramework && smokeTestConfig !is SmokeTestConfig.Disabled) {
             error(buildString {
-                appendLine("Unsupported 'testFramwork' found for task '$path'")
+                appendLine("Unsupported 'testFramework' found for task '$path'")
                 appendLine("  testFramework: ${testFramework.javaClass.simpleName}; expected: '${JUnitPlatformTestFramework::class.simpleName}'")
                 appendLine("  solutions:")
                 appendLine("     - Use the 'project-tests-convention' testTask")
-                appendLine("     - Use JUnit5 by callling 'useJUnitPlatform()'")
+                appendLine("     - Use JUnit 5 by calling 'useJUnitPlatform()'")
                 appendLine("     - Disable the task for smoke tests: 'smokeTestConfig = SmokeTestConfig.Disabled'")
             })
         }
@@ -67,9 +67,9 @@ tasks.withType<Test>().configureEach {
         }
 
         /*
-        The test task is not using JUnit5 and is scheduled for 'full mode' -> No further configuration required. Just run the vanilla task
-        (we allow non JUnit5 for 'full' test mode, but not for Smoke Test mode)
-        This effectively only allows non JUnit5 tests with SmokeTestConfig.Disabled
+        The test task is not using JUnit 5 and is scheduled for 'full mode' -> No further configuration required. Just run the vanilla task
+        (we allow non-JUnit 5 tests for 'full' test mode, but not for Smoke Test mode)
+        This effectively only allows non-JUnit 5 tests with SmokeTestConfig.Disabled
         */
         if (testFramework !is JUnitPlatformTestFramework && testFederationMode.get() == TestFederationMode.Full) {
             return@doFirst
@@ -111,7 +111,7 @@ tasks.withType<Test>().configureEach {
             println("##teamcity[addBuildTag 'Mode: Full']")
         }
 
-        /* Configuring junit includes */
+        /* Configuring JUnit includes */
         if (testFederationMode.get() == TestFederationMode.Smoke) {
             smokeTestConfig as SmokeTestConfig.Enabled
 
@@ -128,7 +128,7 @@ tasks.withType<Test>().configureEach {
             }
         }
 
-        /* Exclude nightly tests if not specifically running in 'nightly'  mode */
+        /* Exclude nightly tests if not specifically running in 'nightly' mode */
         if (!areNightlyTestsEnabled.get()) {
             testFramework.options.excludeTags("nightly", "org.jetbrains.kotlin.testFederation.NightlyTest")
         }
