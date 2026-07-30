@@ -41,8 +41,6 @@ dependencies {
     testFixturesApi(project(":compiler:util"))
     testFixturesApi(project(":compiler:cli"))
     testFixturesApi(project(":compiler:cli-jvm"))
-    testFixturesImplementation(project(":compiler:cli-jvm:javac-integration"))
-    testFixturesImplementation(project(":compiler:javac-wrapper"))
     testFixturesApi(project(":compiler:cli-js"))
     testFixturesApi(project(":compiler:cli-metadata"))
     testFixturesApi(project(":analysis:light-classes-base"))

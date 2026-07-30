@@ -19,11 +19,6 @@ fun main(args: Array<String>) {
                     testClassName = "WithoutJavac",
                     testMethod = "doTestWithoutJavac",
                 )
-                model(
-                    "compileJavaAgainstKotlin",
-                    testClassName = "WithJavac",
-                    testMethod = "doTestWithJavac",
-                )
             }
         }
     }

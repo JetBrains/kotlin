@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.ComponentProvider
-import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.get
-import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.MutableModuleContext
@@ -34,9 +32,6 @@ import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.javac.components.JavacBasedClassFinder
-import org.jetbrains.kotlin.javac.components.JavacBasedSourceElementFactory
-import org.jetbrains.kotlin.javac.components.StubJavaResolverCache
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -59,7 +54,6 @@ import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.storage.StorageManager
-import kotlin.reflect.KFunction1
 
 @K1Deprecation
 object TopDownAnalyzerFacadeForJVM {
@@ -154,17 +148,6 @@ object TopDownAnalyzerFacadeForJVM {
             initialize(builtInsModule, languageVersionSettings)
         }.builtInsModule
 
-        fun StorageComponentContainer.useJavac() {
-            useImpl<JavacBasedClassFinder>()
-            useImpl<StubJavaResolverCache>()
-            useImpl<JavacBasedSourceElementFactory>()
-        }
-
-        @Suppress("USELESS_CAST")
-        val configureJavaClassFinder =
-            if (configuration.getBoolean(JVMConfigurationKeys.USE_JAVAC)) StorageComponentContainer::useJavac
-            else null as KFunction1<StorageComponentContainer, Unit>?
-
         val dependencyModule = run {
             val dependenciesContext = ContextForNewModule(
                 moduleContext, Name.special("<dependencies of ${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>"),
@@ -180,7 +163,7 @@ object TopDownAnalyzerFacadeForJVM {
                 targetEnvironment, lookupTracker, expectActualTracker, inlineConstTracker, enumWhenTracker,
                 packagePartProvider(dependencyScope), languageVersionSettings,
                 useBuiltInsProvider = true,
-                configureJavaClassFinder = configureJavaClassFinder,
+                configureJavaClassFinder = null,
                 implicitsResolutionFilter = implicitsResolutionFilter
             )
 
@@ -215,7 +198,7 @@ object TopDownAnalyzerFacadeForJVM {
             targetEnvironment, lookupTracker, expectActualTracker, inlineConstTracker, enumWhenTracker,
             partProvider, languageVersionSettings,
             useBuiltInsProvider = true,
-            configureJavaClassFinder = configureJavaClassFinder,
+            configureJavaClassFinder = null,
             javaClassTracker = null,
             implicitsResolutionFilter = implicitsResolutionFilter
         ).apply {

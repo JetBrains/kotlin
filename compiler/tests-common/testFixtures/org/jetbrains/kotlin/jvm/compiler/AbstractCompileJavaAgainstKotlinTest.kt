@@ -16,17 +16,15 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
-import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForCompilerTests
-import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForMultifileCompilerTests
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.javac.registerJavac
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.javac.JavacWrapper
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.useFir
+import org.jetbrains.kotlin.config.useLightTree
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -34,7 +32,6 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.*
-import org.jetbrains.kotlin.test.KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations
 import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -42,14 +39,9 @@ import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.valid
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.io.File
-import java.io.IOException
 import java.lang.annotation.Retention
 
 abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
-    protected fun doTestWithJavac(ktFilePath: String) {
-        doTest(ktFilePath, true)
-    }
-
     protected fun doTestWithoutJavac(ktFilePath: String) {
         doTest(ktFilePath, false)
     }
@@ -67,32 +59,25 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
         val directives = KotlinTestUtils.parseDirectives(ktFile.readText())
         if (directives.contains("IGNORE_FIR")) return
 
-        val compiledSuccessfully = if (useJavac) {
-            compileKotlinWithJava(
-                listOf(javaFile),
-                listOf(ktFile),
-                out, testRootDisposable
-            )
+        val result = KotlinTestUtils.compileKotlinWithJava(
+            listOf(javaFile),
+            listOf(ktFile),
+            out, testRootDisposable, this::updateConfiguration
+        )
+        if (!javaErrorFile.exists()) {
+            result.assertSuccessful()
         } else {
-            val result = KotlinTestUtils.compileKotlinWithJava(
-                listOf(javaFile),
-                listOf(ktFile),
-                out, testRootDisposable, this::updateConfiguration
-            )
-            if (!javaErrorFile.exists()) {
-                result.assertSuccessful()
-            } else {
-                val errors = if (result is JavaCompilationResult.Failure) result.diagnostics else ""
-                JUnit5Assertions.assertEqualsToFile(javaErrorFile, errors)
-            }
-            result == JavaCompilationResult.Success
+            val errors = if (result is JavaCompilationResult.Failure) result.diagnostics else ""
+            JUnit5Assertions.assertEqualsToFile(javaErrorFile, errors)
         }
+        val compiledSuccessfully = result == JavaCompilationResult.Success
 
         if (!compiledSuccessfully) return
 
         val configuration = newConfiguration(
             ConfigurationKind.ALL, TestJdkKind.FULL_JDK,
-            KtTestUtil.getAnnotationsJar(), out)
+            KtTestUtil.getAnnotationsJar(), out
+        )
         configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, true)
 
         @OptIn(CoreEnvironmentDeprecation::class)
@@ -111,34 +96,6 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
     fun updateConfiguration(configuration: CompilerConfiguration) {
         configuration.useLightTree = true
         configuration.useFir = true
-    }
-
-    @Throws(IOException::class)
-    fun compileKotlinWithJava(
-        javaFiles: List<File>,
-        ktFiles: List<File>,
-        outDir: File,
-        disposable: Disposable
-    ): Boolean {
-        val environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable)
-        setupLanguageVersionSettingsForMultifileCompilerTests(ktFiles, environment)
-        environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
-        environment.configuration.put(JVMConfigurationKeys.COMPILE_JAVA, true)
-        environment.configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, outDir)
-        @OptIn(MessageCollectorAccess::class) // write access
-        environment.configuration.messageCollector = MessageCollector.NONE
-        updateConfiguration(environment.configuration)
-        environment.registerJavac(
-            javaFiles = javaFiles,
-            kotlinFiles = listOf(KotlinTestUtils.loadKtFile(environment.project, ktFiles.first()))
-        )
-        if (!ktFiles.isEmpty()) {
-            LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment)
-        } else {
-            val mkdirs = outDir.mkdirs()
-            assert(mkdirs) { "Not created: $outDir" }
-        }
-        return JavacWrapper.getInstance(environment.project).use { it.compile() }
     }
 
     companion object {
