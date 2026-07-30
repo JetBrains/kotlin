@@ -258,7 +258,7 @@ public interface KaTypeProvider : KaSessionComponent {
     @Deprecated(
         "Use `withNullability(Boolean)` instead",
         ReplaceWith("withNullability(newNullability.isNullable)"),
-        level = DeprecationLevel.ERROR
+        level = DeprecationLevel.HIDDEN
     )
     @Suppress("DEPRECATION_ERROR")
     public fun KaType.withNullability(newNullability: KaTypeNullability): KaType =
