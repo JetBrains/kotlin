@@ -40,9 +40,7 @@ class JavaClassFinderOverBinaryIndex(
 
     private val binaryCache: MutableMap<ClassId, JavaClass?> = HashMap()
 
-    // Separate caches so a scoped miss cannot mask a later all-scope hit (and vice versa).
-    private val topLevelClassesCache: MutableMap<FqName, VirtualFile?> = HashMap()
-    private val topLevelClassesCacheAllScope: MutableMap<FqName, VirtualFile?> = HashMap()
+    private val topLevelClassesCache: MutableMap<FqName, TopLevelClassFiles> = HashMap()
 
     private val knownClassNamesCache: MutableMap<FqName, Set<String>> = HashMap()
 
@@ -98,10 +96,10 @@ class JavaClassFinderOverBinaryIndex(
         val [classId, classFileContentFromRequest, outerClassFromRequest] = request
 
         val outerMostClassFqName = classId.packageFqName.child(classId.relativeClassName.pathSegments().first())
-        val topLevelCache = if (applyScopeFilter) topLevelClassesCache else topLevelClassesCacheAllScope
-        val virtualFile = topLevelCache.getOrPut(outerMostClassFqName) {
-            findTopLevelClassVirtualFile(outerMostClassFqName, applyScopeFilter)
-        } ?: return null
+        val topLevelClassFiles = topLevelClassesCache.getOrPut(outerMostClassFqName) {
+            findTopLevelClassFiles(outerMostClassFqName)
+        }
+        val virtualFile = (if (applyScopeFilter) topLevelClassFiles.inScope else topLevelClassFiles.anywhere) ?: return null
 
         // binaryCache is shared across scope modes; cross-refs use the unscoped resolver.
         return readBinaryJavaClass(
@@ -116,14 +114,22 @@ class JavaClassFinderOverBinaryIndex(
         )
     }
 
-    private fun findTopLevelClassVirtualFile(
-        outerMostClassFqName: FqName,
-        applyScopeFilter: Boolean,
-    ): VirtualFile? {
+    private fun findTopLevelClassFiles(outerMostClassFqName: FqName): TopLevelClassFiles {
         val outerMostClassId = ClassId.topLevel(outerMostClassFqName)
-        val candidates = index.findClassVirtualFiles(outerMostClassId, extensions)
-        return if (applyScopeFilter) candidates.firstOrNull { it in scope } else candidates.firstOrNull()
+        var anywhere: VirtualFile? = null
+        for (candidate in index.findClassVirtualFiles(outerMostClassId, extensions)) {
+            if (anywhere == null) anywhere = candidate
+            if (candidate in scope) return TopLevelClassFiles(anywhere, candidate)
+        }
+        return TopLevelClassFiles(anywhere, inScope = null)
     }
+
+    /**
+     * Both answers the index can give for one top-level class name, cached together: the classpath
+     * order winner ([anywhere], for cross-references out of bytecode) and the first candidate that
+     * is also in [scope] ([inScope], for this session's own lookups).
+     */
+    private class TopLevelClassFiles(val anywhere: VirtualFile?, val inScope: VirtualFile?)
 
     private companion object {
         private val PACKAGE_INFO_NAME = Name.identifier("package-info")
