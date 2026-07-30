@@ -48,6 +48,7 @@ class PersistentFlow internal constructor(
     // in `directAliasMap`. `backwardsAliasMap` maps each representative to the rest of the set.
     internal val directAliasMap: PersistentMap<RealVariable, RealVariable>,
     private val backwardsAliasMap: PersistentMap<RealVariable, PersistentSet<RealVariable>>,
+    private val oneWayAliasMap: PersistentMap<RealVariable, PersistentSet<RealVariable>>,
 ) : Flow() {
     private val level: Int = if (previousFlow != null) previousFlow.level + 1 else 0
 
@@ -61,7 +62,7 @@ class PersistentFlow internal constructor(
         directAliasMap[variable] ?: variable
 
     override fun getTypeStatement(variable: DataFlowVariable): TypeStatement? =
-        combineTypeStatements(variable, approvedTypeStatements, backwardsAliasMap)
+        combineTypeStatements(variable, approvedTypeStatements, oneWayAliasMap)
 
     override fun getOwnTypeStatement(variable: DataFlowVariable): TypeStatement? =
         approvedTypeStatements[unwrapVariable(variable)]?.copy(variable = variable)
@@ -92,6 +93,7 @@ class PersistentFlow internal constructor(
         assignmentIndex.builder(),
         directAliasMap.builder(),
         backwardsAliasMap.builder(),
+        oneWayAliasMap.builder(),
     )
 }
 
@@ -102,9 +104,11 @@ class MutableFlow internal constructor(
     internal val assignmentIndex: PersistentMap.Builder<RealVariable, Int>,
     internal val directAliasMap: PersistentMap.Builder<RealVariable, RealVariable>,
     internal val backwardsAliasMap: PersistentMap.Builder<RealVariable, PersistentSet<RealVariable>>,
+    internal val oneWayAliasMap: PersistentMap.Builder<RealVariable, PersistentSet<RealVariable>>,
 ) : Flow() {
     constructor() : this(
         null,
+        emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
         emptyPersistentHashMapBuilder(),
@@ -119,7 +123,7 @@ class MutableFlow internal constructor(
         directAliasMap[variable] ?: variable
 
     override fun getTypeStatement(variable: DataFlowVariable): TypeStatement? =
-        combineTypeStatements(variable, approvedTypeStatements, backwardsAliasMap)
+        combineTypeStatements(variable, approvedTypeStatements, oneWayAliasMap)
 
     override fun getOwnTypeStatement(variable: DataFlowVariable): TypeStatement? =
         approvedTypeStatements[unwrapVariable(variable)]?.copy(variable = variable)
@@ -134,19 +138,31 @@ class MutableFlow internal constructor(
         assignmentIndex.build(),
         directAliasMap.build(),
         backwardsAliasMap.build(),
+        oneWayAliasMap.build(),
     )
+}
+
+private fun transitiveClosure(
+    over: DataFlowVariable,
+    to: MutableList<PersistentTypeStatement>,
+    approvedTypeStatements: Map<DataFlowVariable, PersistentTypeStatement>,
+    oneWayAliasMap: Map<RealVariable, PersistentSet<RealVariable>>,
+): List<TypeStatement> = to.also {
+    oneWayAliasMap[over]?.forEach {
+        approvedTypeStatements[it]?.let(to::add)
+        transitiveClosure(over = it, to = to, approvedTypeStatements, oneWayAliasMap)
+    }
 }
 
 private fun Flow.combineTypeStatements(
     variable: DataFlowVariable,
     approvedTypeStatements: Map<DataFlowVariable, PersistentTypeStatement>,
-    backwardsAliasMap: Map<RealVariable, PersistentSet<RealVariable>>,
+    oneWayAliasMap: Map<RealVariable, PersistentSet<RealVariable>>,
 ): TypeStatement? {
     val unwrapped = unwrapVariable(variable)
     val ownStatement = approvedTypeStatements[unwrapped]
-    val backwardsMapStatements = backwardsAliasMap[unwrapped]
-        ?.mapNotNull { if (unwrapVariable(it) == variable) null else approvedTypeStatements[it] }
-        ?.takeIf { it.isNotEmpty() }
+    val oneWayAliasMapStatements = transitiveClosure(over = unwrapped, to = mutableListOf(), approvedTypeStatements, oneWayAliasMap)
+        .takeIf { it.isNotEmpty() }
         ?: return ownStatement?.copy(variable = variable)
 
     val combinedUpper = emptyPersistentHashSetBuilder<ConeKotlinType>()
@@ -154,7 +170,7 @@ private fun Flow.combineTypeStatements(
     val combinedLower = emptyPersistentHashSetBuilder<DfaType>()
         .apply { ownStatement?.lowerTypes?.let { addAll(it) } }
 
-    for ((upperTypes, lowerTypes) in backwardsMapStatements) {
+    for ((upperTypes, lowerTypes) in oneWayAliasMapStatements) {
         combinedUpper.addAll(upperTypes)
         combinedLower.addAll(lowerTypes)
     }

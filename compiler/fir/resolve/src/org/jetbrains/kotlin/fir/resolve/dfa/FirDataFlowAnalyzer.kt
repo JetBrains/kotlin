@@ -1487,7 +1487,7 @@ abstract class FirDataFlowAnalyzer(
                 // if (b != null) { /* a != null */ }
                 logicSystem.addLocalVariableAlias(flow, propertyVariable, initializerVariable)
             } else if (property.isImplicitWhenSubjectVariable && initializerVariable is RealVariable) {
-                logicSystem.addBackwardsAliasOnly(flow, propertyVariable, initializerVariable)
+                logicSystem.addOneWayAlias(flow, propertyVariable, initializerVariable)
             } else if (initializerVariable != null && (!property.isEffectivelyLocal || !property.isVar)) {
                 // Case 1:
                 //   val b = x is String // initializer is synthetic, condition is boolean
