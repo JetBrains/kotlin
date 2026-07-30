@@ -7,37 +7,42 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.ThreadSafeMutableState
+import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.isJavaNonAbstractSealed
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
-fun FirClassSymbol<*>.collectAllSubclasses(session: FirSession): Set<FirClassSymbol<*>> {
-    return mutableSetOf<FirClassSymbol<*>>().apply { collectAllSubclassesTo(this, session) }
-}
+@ThreadSafeMutableState
+class FirSealedSiblingsCalculator(private val session: FirSession) : FirSessionComponent {
+    private val allSubclassesCache: FirCache<FirClassSymbol<*>, Set<FirClassSymbol<*>>, MutableSet<FirClassSymbol<*>>?> =
+        session.firCachesFactory.createCache { symbol, visited ->
+            when {
+                visited != null && !visited.add(symbol) -> emptySet()
+                symbol !is FirRegularClassSymbol -> setOf(symbol)
+                symbol.fir.modality == Modality.SEALED -> buildSet {
+                    if (symbol.fir.isJavaNonAbstractSealed == true) {
+                        add(symbol)
+                    }
 
-private fun FirClassSymbol<*>.collectAllSubclassesTo(
-    destination: MutableSet<FirClassSymbol<*>>,
-    session: FirSession,
-    visited: MutableSet<FirRegularClassSymbol> = mutableSetOf(),
-) {
-    if (this !is FirRegularClassSymbol) {
-        destination.add(this)
-        return
-    }
-    if (!visited.add(this)) return
-    when {
-        fir.modality == Modality.SEALED -> {
-            if (fir.isJavaNonAbstractSealed == true) {
-                destination.add(this)
-            }
-
-            fir.getSealedClassInheritors(session).forEach {
-                val symbol = session.symbolProvider.getClassLikeSymbolByClassId(it) as? FirRegularClassSymbol
-                symbol?.collectAllSubclassesTo(destination, session, visited)
+                    symbol.fir.getSealedClassInheritors(session).forEach {
+                        val inheritor = session.symbolProvider.getClassLikeSymbolByClassId(it) as? FirRegularClassSymbol ?: return@forEach
+                        addAll(allSubclassesCache.getValue(inheritor, visited ?: mutableSetOf(symbol)))
+                    }
+                }
+                else -> setOf(symbol)
             }
         }
-        else -> destination.add(this)
-    }
+
+    fun collectAllSubclassesFor(symbol: FirClassSymbol<*>): Set<FirClassSymbol<*>> =
+        allSubclassesCache.getValue(symbol, context = null)
 }
+
+val FirSession.sealedSiblingsCalculator: FirSealedSiblingsCalculator by FirSession.sessionComponentAccessor()
+
+fun FirClassSymbol<*>.collectAllSubclasses(session: FirSession): Set<FirClassSymbol<*>> =
+    session.sealedSiblingsCalculator.collectAllSubclassesFor(this)
