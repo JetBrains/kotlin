@@ -521,7 +521,6 @@ include(
     ":compiler:fir:fir-js",
     ":compiler:fir:fir-native",
     ":compiler:fir:modularized-tests",
-    ":compiler:fir:dump",
     ":compiler:fir:checkers",
     ":compiler:fir:checkers:checkers.jvm",
     ":compiler:fir:checkers:checkers.js",
