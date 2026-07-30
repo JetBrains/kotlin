@@ -1,5 +1,5 @@
 --- a/clashingFakeOverrideSignatures.ir.txt
-+++ b/clashingFakeOverrideSignatures.ir.jvm.txt
++++ b/clashingFakeOverrideSignatures.jvm.ir.txt
 @@ -91,6 +91,10 @@
        VALUE_PARAMETER kind:Regular name:x index:1 type:kotlin.String
        overridden:

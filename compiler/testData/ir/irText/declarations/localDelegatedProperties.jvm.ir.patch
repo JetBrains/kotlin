@@ -1,5 +1,5 @@
 --- a/localDelegatedProperties.ir.txt
-+++ b/localDelegatedProperties.ir.jvm.txt
++++ b/localDelegatedProperties.jvm.ir.txt
 @@ -18,13 +18,13 @@
                  ARG <this>: GET_VAR 'val x$delegate: kotlin.Lazy<kotlin.Int> declared in <root>.test1' type=kotlin.Lazy<kotlin.Int> origin=null
                  ARG thisRef: CONST Null type=kotlin.Nothing? value=null

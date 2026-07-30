@@ -1,5 +1,5 @@
 --- a/internalStdlibOverride.ir.txt
-+++ b/internalStdlibOverride.ir.js_ir.txt
++++ b/internalStdlibOverride.js_ir.ir.txt
 @@ -23,6 +23,15 @@
            TYPE_ARG K: kotlin.Int
            TYPE_ARG V: kotlin.Int

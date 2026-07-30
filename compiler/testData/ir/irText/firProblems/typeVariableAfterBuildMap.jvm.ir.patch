@@ -1,5 +1,5 @@
 --- a/typeVariableAfterBuildMap.ir.txt
-+++ b/typeVariableAfterBuildMap.ir.jvm.txt
++++ b/typeVariableAfterBuildMap.jvm.ir.txt
 @@ -131,8 +131,8 @@
            public abstract fun mustCheckInImports (): kotlin.Boolean declared in <root>.Visibility
          BLOCK_BODY

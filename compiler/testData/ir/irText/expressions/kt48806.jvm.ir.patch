@@ -1,5 +1,5 @@
 --- a/kt48806.ir.txt
-+++ b/kt48806.ir.jvm.txt
++++ b/kt48806.jvm.ir.txt
 @@ -7,9 +7,9 @@
            TRY type=kotlin.Int
              try: BLOCK type=kotlin.Nothing origin=null

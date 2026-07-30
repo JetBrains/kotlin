@@ -1,5 +1,5 @@
 --- a/forOld.ir.txt
-+++ b/forOld.ir.jvm.txt
++++ b/forOld.jvm.ir.txt
 @@ -20,7 +20,7 @@
                CALL 'public final fun component2 (): B of kotlin.Pair declared in kotlin.Pair' type=kotlin.String origin=COMPONENT_N(index=2)
                  ARG <this>: GET_VAR 'val tmp_1: kotlin.Pair<kotlin.Int, kotlin.String> declared in <root>.testDestructuring' type=kotlin.Pair<kotlin.Int, kotlin.String> origin=null

@@ -1,5 +1,5 @@
 --- a/breakContinueInWhen.ir.txt
-+++ b/breakContinueInWhen.ir.native.txt
++++ b/breakContinueInWhen.native.ir.txt
 @@ -98,7 +98,7 @@
                ARG arg0: GET_VAR 'var s: kotlin.String declared in <root>.testContinueDoWhile' type=kotlin.String origin=null
                ARG arg1: CONST String type=kotlin.String value="1;2;"

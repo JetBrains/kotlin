@@ -1,5 +1,5 @@
 --- a/ArrayMap.ir.txt
-+++ b/ArrayMap.ir.js_ir.txt
++++ b/ArrayMap.js_ir.ir.txt
 @@ -315,7 +315,7 @@
          RETURN type=kotlin.Nothing from='public open fun copy (): <root>.ArrayMap<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl'
            CONSTRUCTOR_CALL 'private constructor <init> (data: kotlin.Array<kotlin.Any?>) declared in <root>.ArrayMapImpl' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null

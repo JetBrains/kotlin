@@ -96,7 +96,7 @@ internal fun TestServices.getMatchedBackendFromDirective(directive: ValueDirecti
 
 private fun targetSpecificDumpExtension(baseDumpExtension: String, matchedBackend: TargetBackend): String {
     val extensionPrefix = baseDumpExtension.removeSuffix(".txt")
-    return "$extensionPrefix.${matchedBackend.name.lowercase()}.patch"
+    return "${matchedBackend.name.lowercase()}.$extensionPrefix.patch"
 }
 
 internal fun getTargetSpecificDumpExtension(testServices: TestServices, baseDumpExtension: String): String? {

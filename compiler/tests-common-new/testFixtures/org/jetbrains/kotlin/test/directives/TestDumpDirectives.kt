@@ -95,9 +95,9 @@ fun Assertions.assertEqualsToDump(
 ) {
     val produceDiff: Boolean = TestDumpDirectives.DUMP_AS_DIFF in moduleStructure.allDirectives
 
-    val fullExtension = extension.removeSuffix(".txt") + if (extraClassifier.isEmpty()) "" else ".$extraClassifier"
+    val newExtension = if (produceDiff) extension.removeSuffix(".txt") + ".patch" else extension
     val classifiedDumpFile =
-        moduleStructure.getClassifiedDumpFile(if (produceDiff) "$fullExtension.patch" else "$fullExtension.txt")
+        moduleStructure.getClassifiedDumpFile(if (extraClassifier.isNotEmpty()) "$extraClassifier.$newExtension" else newExtension)
     if (actualDump == null) {
         assertFileDoesntExist(classifiedDumpFile) { "Dump file detected but nothing to dump: ${classifiedDumpFile.name}" }
         return

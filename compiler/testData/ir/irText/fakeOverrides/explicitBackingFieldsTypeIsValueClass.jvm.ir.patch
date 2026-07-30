@@ -1,5 +1,5 @@
 --- a/explicitBackingFieldsTypeIsValueClass.ir.txt
-+++ b/explicitBackingFieldsTypeIsValueClass.ir.jvm.txt
++++ b/explicitBackingFieldsTypeIsValueClass.jvm.ir.txt
 @@ -151,6 +151,8 @@
          overridden:
            public final fun <get-p4> (): <root>.I declared in <root>.A

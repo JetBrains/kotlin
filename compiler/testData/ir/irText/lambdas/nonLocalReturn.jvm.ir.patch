@@ -1,5 +1,5 @@
 --- a/nonLocalReturn.ir.txt
-+++ b/nonLocalReturn.ir.jvm.txt
++++ b/nonLocalReturn.jvm.ir.txt
 @@ -57,7 +57,7 @@
                      ARG arg1: CONST Int type=kotlin.Int value=0
                    then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testLrmFoo1'

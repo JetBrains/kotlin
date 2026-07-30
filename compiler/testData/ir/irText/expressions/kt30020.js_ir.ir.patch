@@ -1,5 +1,5 @@
 --- a/kt30020.ir.txt
-+++ b/kt30020.ir.js_ir.txt
++++ b/kt30020.js_ir.ir.txt
 @@ -36,6 +36,7 @@
        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableList<kotlin.Int>
        VALUE_PARAMETER kind:Regular name:element index:1 type:kotlin.Int
