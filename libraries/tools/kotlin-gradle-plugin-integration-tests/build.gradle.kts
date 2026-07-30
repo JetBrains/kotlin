@@ -47,8 +47,6 @@ tasks.withType(AbstractKotlinCompile::class.java).configureEach {
     )
 }
 
-val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
-
 val configurationToBeConsumedInTests: MutableMap<String, Configuration> = mutableMapOf()
 
 fun createConfigurationToBeConsumedInTests(name: String, dependencyProject: String) {
@@ -83,7 +81,6 @@ dependencies {
 
     testImplementation(project(":kotlin-gradle-build-metrics"))
     testImplementation(project(":kotlin-tooling-metadata"))
-    testImplementation(kotlinGradlePluginTest)
     testImplementation(project(":kotlin-gradle-subplugin-example"))
     testImplementation(kotlinTest("junit5"))
     testImplementation(project(":kotlin-util-klib"))
