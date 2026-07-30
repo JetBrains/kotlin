@@ -103,7 +103,7 @@ internal fun getDRIFromPackage(symbol: KaPackageSymbol): DRI =
 
 internal fun KaSession.getDRIFromValueParameter(symbol: KaValueParameterSymbol): DRI {
     val function = (symbol.containingSymbol as? KaFunctionSymbol)
-        ?: throw IllegalStateException("Containing symbol is null for type parameter")
+        ?: throw IllegalStateException("Containing symbol is null for value parameter")
     val index = function.valueParameters.indexOfFirst { it.name == symbol.name }
     val funDRI = getDRIFromFunction(function)
     return funDRI.copy(target = PointingToCallableParameters(index))
@@ -111,11 +111,14 @@ internal fun KaSession.getDRIFromValueParameter(symbol: KaValueParameterSymbol):
 
 @OptIn(KaExperimentalApi::class)
 internal fun KaSession.getDRIFromContextParameter(symbol: KaContextParameterSymbol): DRI {
-    val function = (symbol.containingSymbol as? KaFunctionSymbol)
-        ?: throw IllegalStateException("Containing symbol is null for type parameter")
-    val index = function.contextParameters.indexOfFirst { it.name == symbol.name }
-    val funDRI = getDRIFromFunction(function)
-    return funDRI.copy(target = @OptIn(ExperimentalDokkaApi::class) PointingToContextParameters(index))
+    val callable = (symbol.containingSymbol as? KaCallableSymbol)
+        ?: throw IllegalStateException("Containing symbol is null for context parameter")
+    val index = callable.contextParameters.indexOfFirst { it.name == symbol.name }
+    val callableDri = when(callable) {
+        is KaVariableSymbol -> getDRIFromVariable(callable)
+        is KaFunctionSymbol -> getDRIFromFunction(callable)
+    }
+    return callableDri.copy(target = @OptIn(ExperimentalDokkaApi::class) PointingToContextParameters(index))
 }
 
 /**
