@@ -6,21 +6,17 @@ Binary.kt:
       MODIFIER_LIST[annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Binary]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=Binary.i, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=i]
+          VALUE_PARAMETER[fqName=Binary.value, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=value]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-          VALUE_PARAMETER[fqName=Binary.b, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=b]
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=Boolean]
 
 
-WithComparison.kt:
+WithElvis.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithComparison, fqName=WithComparison, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithComparison, superNames=[]]
+    CLASS[classId=/WithElvis, fqName=WithElvis, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithElvis, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           CONSTRUCTOR_CALLEE
@@ -29,19 +25,36 @@ WithComparison.kt:
                 REFERENCE_EXPRESSION[referencedName=Binary]
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
-              VALUE_ARGUMENT_NAME
-                REFERENCE_EXPRESSION[referencedName=b]
+              BINARY_EXPRESSION
+                NULL[kind=NULL, value=null]
+                OPERATION_REFERENCE[operationToken=ELVIS, referencedName=?:]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+
+
+WithIdentityEquality.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithIdentityEquality, fqName=WithIdentityEquality, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithIdentityEquality, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Binary]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
               BINARY_EXPRESSION
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
-                OPERATION_REFERENCE[operationToken=LT, referencedName=<]
+                OPERATION_REFERENCE[operationToken=EQEQEQ, referencedName====]
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
 
 
-WithEquality.kt:
+WithInOperator.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithEquality, fqName=WithEquality, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithEquality, superNames=[]]
+    CLASS[classId=/WithInOperator, fqName=WithInOperator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithInOperator, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           CONSTRUCTOR_CALLEE
@@ -50,19 +63,20 @@ WithEquality.kt:
                 REFERENCE_EXPRESSION[referencedName=Binary]
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
-              VALUE_ARGUMENT_NAME
-                REFERENCE_EXPRESSION[referencedName=b]
               BINARY_EXPRESSION
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
-                OPERATION_REFERENCE[operationToken=EQEQ, referencedName===]
-                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+                OPERATION_REFERENCE[operationToken=in, referencedName=in]
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+                  OPERATION_REFERENCE[operationToken=RANGE, referencedName=..]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
 
 
-WithGreaterOrEqual.kt:
+WithNotInOperator.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithGreaterOrEqual, fqName=WithGreaterOrEqual, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithGreaterOrEqual, superNames=[]]
+    CLASS[classId=/WithNotInOperator, fqName=WithNotInOperator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNotInOperator, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           CONSTRUCTOR_CALLEE
@@ -71,19 +85,20 @@ WithGreaterOrEqual.kt:
                 REFERENCE_EXPRESSION[referencedName=Binary]
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
-              VALUE_ARGUMENT_NAME
-                REFERENCE_EXPRESSION[referencedName=b]
               BINARY_EXPRESSION
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
-                OPERATION_REFERENCE[operationToken=GTEQ, referencedName=>=]
-                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+                OPERATION_REFERENCE[operationToken=NOT_IN, referencedName=!in]
+                BINARY_EXPRESSION
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+                  OPERATION_REFERENCE[operationToken=RANGE, referencedName=..]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
 
 
-WithInequality.kt:
+WithRange.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithInequality, fqName=WithInequality, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithInequality, superNames=[]]
+    CLASS[classId=/WithRange, fqName=WithRange, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithRange, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           CONSTRUCTOR_CALLEE
@@ -92,30 +107,7 @@ WithInequality.kt:
                 REFERENCE_EXPRESSION[referencedName=Binary]
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
-              VALUE_ARGUMENT_NAME
-                REFERENCE_EXPRESSION[referencedName=b]
               BINARY_EXPRESSION
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
-                OPERATION_REFERENCE[operationToken=EXCLEQ, referencedName=!=]
-                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-
-
-WithInfixFunction.kt:
-  FILE[kind=File[packageFqName=<root>]]
-    PACKAGE_DIRECTIVE
-    IMPORT_LIST
-    CLASS[classId=/WithInfixFunction, fqName=WithInfixFunction, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithInfixFunction, superNames=[]]
-      MODIFIER_LIST[]
-        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=Binary]
-          VALUE_ARGUMENT_LIST
-            VALUE_ARGUMENT[isSpread=false]
-              VALUE_ARGUMENT_NAME
-                REFERENCE_EXPRESSION[referencedName=i]
-              BINARY_EXPRESSION
-                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
-                OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=shl]
+                OPERATION_REFERENCE[operationToken=RANGE, referencedName=..]
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
