@@ -7,5 +7,5 @@ $TEMP_DIR$
 -ir-output-name
 out
 -language-version
-2.2
+2.3
 -XXLanguage\:+ExportKlibToOlderAbiVersion

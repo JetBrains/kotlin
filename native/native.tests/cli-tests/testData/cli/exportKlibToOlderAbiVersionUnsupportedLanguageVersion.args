@@ -4,5 +4,5 @@ library
 -o
 $TEMP_DIR$/exportKlibToOlderAbiVersionUnsupportedLanguageVersion
 -language-version
-2.2
+2.3
 -XXLanguage\:+ExportKlibToOlderAbiVersion

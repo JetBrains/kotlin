@@ -521,7 +521,7 @@
                     "releaseVersionsMetadata": {
                         "introducedVersion": "2.1.0",
                         "stabilizedVersion": "2.2.0",
-                        "deprecatedVersion": null,
+                        "deprecatedVersion": "2.5.0",
                         "removedVersion": null
                     }
                 },
