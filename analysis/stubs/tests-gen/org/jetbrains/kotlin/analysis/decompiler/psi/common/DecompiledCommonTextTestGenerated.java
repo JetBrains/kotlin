@@ -1373,6 +1373,12 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
   }
 
   @Test
+  @TestMetadata("valueClassUnderlyingTypeFromProperty.kt")
+  public void testValueClassUnderlyingTypeFromProperty() {
+    run("valueClassUnderlyingTypeFromProperty.kt");
+  }
+
+  @Test
   @TestMetadata("varargArgumentWithFunctionalType.kt")
   public void testVarargArgumentWithFunctionalType() {
     run("varargArgumentWithFunctionalType.kt");
