@@ -81,12 +81,6 @@ object JVMConfigurationKeys {
     val USE_FAST_JAR_FILE_SYSTEM = CompilerConfigurationKey.create<Boolean>("USE_FAST_JAR_FILE_SYSTEM")
 
     @JvmField
-    val USE_JAVAC = CompilerConfigurationKey.create<Boolean>("USE_JAVAC")
-
-    @JvmField
-    val COMPILE_JAVA = CompilerConfigurationKey.create<Boolean>("COMPILE_JAVA")
-
-    @JvmField
     val ADDITIONAL_JAVA_MODULES = CompilerConfigurationKey.create<List<String>>("ADDITIONAL_JAVA_MODULES")
 
     @JvmField
@@ -261,14 +255,6 @@ var CompilerConfiguration.usePsiClassFilesReading: Boolean
 var CompilerConfiguration.useFastJarFileSystem: Boolean
     get() = getBoolean(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM)
     set(value) { put(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM, value) }
-
-var CompilerConfiguration.useJavac: Boolean
-    get() = getBoolean(JVMConfigurationKeys.USE_JAVAC)
-    set(value) { put(JVMConfigurationKeys.USE_JAVAC, value) }
-
-var CompilerConfiguration.compileJava: Boolean
-    get() = getBoolean(JVMConfigurationKeys.COMPILE_JAVA)
-    set(value) { put(JVMConfigurationKeys.COMPILE_JAVA, value) }
 
 var CompilerConfiguration.additionalJavaModules: List<String>
     get() = getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES)

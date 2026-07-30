@@ -79,7 +79,6 @@ public class LoadDescriptorUtil {
             @NotNull ConfigurationKind configurationKind,
             boolean isBinaryRoot,
             boolean usePsiClassReading,
-            boolean useJavacWrapper,
             boolean withForeignAnnotations,
             @Nullable LanguageVersionSettings explicitLanguageVersionSettings
     ) {
@@ -90,7 +89,6 @@ public class LoadDescriptorUtil {
                 configurationKind,
                 isBinaryRoot,
                 usePsiClassReading,
-                useJavacWrapper,
                 withForeignAnnotations,
                 explicitLanguageVersionSettings,
                 Collections.emptyList(),
@@ -106,7 +104,6 @@ public class LoadDescriptorUtil {
             @NotNull ConfigurationKind configurationKind,
             boolean isBinaryRoot,
             boolean usePsiClassReading,
-            boolean useJavacWrapper,
             boolean withForeignAnnotations,
             @Nullable LanguageVersionSettings explicitLanguageVersionSettings,
             @NotNull List<File> additionalClasspath,
@@ -134,7 +131,6 @@ public class LoadDescriptorUtil {
         CompilerConfiguration configuration =
                 KotlinTestUtils.newConfiguration(configurationKind, testJdkKind, javaBinaryRoots, javaSourceRoots);
         configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, usePsiClassReading);
-        configuration.put(JVMConfigurationKeys.USE_JAVAC, useJavacWrapper);
         if (explicitLanguageVersionSettings != null) {
             configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, explicitLanguageVersionSettings);
         }
