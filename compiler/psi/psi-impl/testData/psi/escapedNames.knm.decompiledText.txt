@@ -5,7 +5,7 @@ package `one two`.`three four`
 
 public typealias `Top Level TypeAlias`<`Type Parameter`> = `one two`.`three four`.`Top Level Class`<`Type Parameter`>
 
-@kotlin.annotation.Target public final annotation class `Annotation Class` public constructor() : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS, kotlin.annotation.AnnotationTarget.TYPEALIAS, kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY]) public final annotation class `Annotation Class` public constructor() : kotlin.Annotation {
 }
 
 @`one two`.`three four`.`Annotation Class` public final class `Top Level Class`<`Type Parameter` : `one two`.`three four`.`Top Level Object`.`Member Level Interface`> {
@@ -30,4 +30,11 @@ public object `Top Level Object` : `one two`.`three four`.`Top Level Interface` 
 
 @`one two`.`three four`.`Annotation Class` public final enum class `Enum Class` private constructor() : kotlin.Enum<`one two`.`three four`.`Enum Class`> {
     @`one two`.`three four`.`Annotation Class` `Enum Entry`;
+}
+
+public final annotation class `Annotation Class With Arguments` public constructor(`parameter name`: `one two`.`three four`.`Enum Class`) : kotlin.Annotation {
+    public final val `parameter name`: `one two`.`three four`.`Enum Class` /* compiled code */
+}
+
+@`one two`.`three four`.`Annotation Class With Arguments`(`parameter name` = `one two`.`three four`.`Enum Class`.`Enum Entry`) public final class `Annotated Class` public constructor() {
 }

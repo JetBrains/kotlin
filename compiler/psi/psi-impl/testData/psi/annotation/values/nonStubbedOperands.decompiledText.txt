@@ -10,12 +10,12 @@ WithCast.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Anno public final class WithCast public constructor() {
+  @Anno(value = 1) public final class WithCast public constructor() {
   }
 
 WithCastOperand.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Anno public final class WithCastOperand public constructor() {
+  @Anno(value = 3) public final class WithCastOperand public constructor() {
   }

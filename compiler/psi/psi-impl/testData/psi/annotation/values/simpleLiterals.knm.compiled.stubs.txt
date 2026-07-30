@@ -127,7 +127,7 @@
     IMPORT_LIST
     CLASS[classId=/WithNamedSimple, fqName=WithNamedSimple, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNamedSimple, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
           valueArguments: [
             i -> 12
             l -> 12.toLong()
@@ -142,6 +142,39 @@
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Simple]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=i]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=l]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12L]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=b]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=d]
+              FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=f]
+              FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3F]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=c]
+              CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=b1]
+              BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=b2]
+              BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithNamedSimple]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -154,7 +187,7 @@
     IMPORT_LIST
     CLASS[classId=/WithSimple, fqName=WithSimple, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithSimple, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
           valueArguments: [
             i -> 12
             l -> 12.toLong()
@@ -169,6 +202,39 @@
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Simple]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=i]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=l]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12L]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=b]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=d]
+              FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=f]
+              FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3F]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=c]
+              CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=b1]
+              BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=b2]
+              BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithSimple]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -181,7 +247,7 @@
     IMPORT_LIST
     CLASS[classId=/WithSimpleOperations, fqName=WithSimpleOperations, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithSimpleOperations, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
           valueArguments: [
             i -> 2
             l -> 2.toLong()
@@ -196,6 +262,39 @@
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Simple]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=i]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=l]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2L]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=b]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=d]
+              FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=0.2999999999999998]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=f]
+              FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=6.6F]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=c]
+              CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=b1]
+              BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=b2]
+              BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithSimpleOperations]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST

@@ -4,7 +4,7 @@ A.class:
 
   package foo.TopLevelMembers
 
-  @kotlin.annotation.Target public final annotation class A public constructor() : kotlin.Annotation {
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.FIELD]) public final annotation class A public constructor() : kotlin.Annotation {
   }
 
 D.class:

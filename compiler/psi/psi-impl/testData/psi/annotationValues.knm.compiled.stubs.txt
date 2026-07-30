@@ -19,7 +19,7 @@ FILE[kind=File[packageFqName=test]]
     CLASS_BODY
       CLASS[classId=test/AnnotationValues.WithSimple, fqName=test.AnnotationValues.WithSimple, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithSimple, superNames=[]]
         MODIFIER_LIST[public final]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
             valueArguments: [
               i -> 12
               l -> 12.toLong()
@@ -37,13 +37,50 @@ FILE[kind=File[packageFqName=test]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=Simple]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=i]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=l]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12L]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=b]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=b2]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=d]
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=f]
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3F]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=c]
+                CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=bool1]
+                BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=bool2]
+                BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithSimple]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
       CLASS[classId=test/AnnotationValues.WithStringLiteral, fqName=test.AnnotationValues.WithStringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithStringLiteral, superNames=[]]
         MODIFIER_LIST[public final]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=StringLiteral]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=StringLiteral]
             valueArguments: [
               s1 -> "some"
               s2 -> ""
@@ -55,13 +92,28 @@ FILE[kind=File[packageFqName=test]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=StringLiteral]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=s1]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=some]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=s2]
+                STRING_TEMPLATE
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=s3]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=H12]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithStringLiteral]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
       CLASS[classId=test/AnnotationValues.WithEnumLiteral, fqName=test.AnnotationValues.WithEnumLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithEnumLiteral, superNames=[]]
         MODIFIER_LIST[public final]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=EnumLiteral]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=EnumLiteral]
             valueArguments: [
               e1 -> E.E1
               e2 -> E.E2
@@ -73,13 +125,38 @@ FILE[kind=File[packageFqName=test]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=EnumLiteral]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=e1]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=test]
+                    REFERENCE_EXPRESSION[referencedName=E]
+                  REFERENCE_EXPRESSION[referencedName=E1]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=e2]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=test]
+                    REFERENCE_EXPRESSION[referencedName=E]
+                  REFERENCE_EXPRESSION[referencedName=E2]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=e3]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=test]
+                    REFERENCE_EXPRESSION[referencedName=E]
+                  REFERENCE_EXPRESSION[referencedName=E2]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithEnumLiteral]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
       CLASS[classId=test/AnnotationValues.WithVarArg, fqName=test.AnnotationValues.WithVarArg, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithVarArg, superNames=[]]
         MODIFIER_LIST[public final]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=VarArg]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=VarArg]
             valueArguments: [ v -> [1, 2, 3] ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -87,13 +164,21 @@ FILE[kind=File[packageFqName=test]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=VarArg]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=v]
+                COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=3]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithVarArg]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
       CLASS[classId=test/AnnotationValues.WithArrays, fqName=test.AnnotationValues.WithArrays, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithArrays, superNames=[]]
         MODIFIER_LIST[public final]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Arrays]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=Arrays]
             valueArguments: [
               ia -> [1, 2, 3]
               la -> [1.toLong()]
@@ -108,13 +193,46 @@ FILE[kind=File[packageFqName=test]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=Arrays]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=ia]
+                COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=3]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=la]
+                COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=fa]
+                COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=da]
+                COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                  FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=2.2]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=ca]
+                COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                  CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=ba]
+                COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
+                  BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+                  BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithArrays]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
       CLASS[classId=test/AnnotationValues.WithClassLiteral, fqName=test.AnnotationValues.WithClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithClassLiteral, superNames=[]]
         MODIFIER_LIST[public final]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ClassLiteral]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=ClassLiteral]
             valueArguments: [
               c1 -> NormalClass(value=test/AnnotationValues.WithClassLiteral)
               c2 -> NormalClass(value=kotlin/String)
@@ -125,6 +243,23 @@ FILE[kind=File[packageFqName=test]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=ClassLiteral]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=c1]
+                CLASS_LITERAL_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=test]
+                      REFERENCE_EXPRESSION[referencedName=AnnotationValues]
+                    REFERENCE_EXPRESSION[referencedName=WithClassLiteral]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=c2]
+                CLASS_LITERAL_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=String]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=T]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithClassLiteral]
@@ -133,7 +268,7 @@ FILE[kind=File[packageFqName=test]]
         CLASS_BODY
       CLASS[classId=test/AnnotationValues.WithNested, fqName=test.AnnotationValues.WithNested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithNested, superNames=[]]
         MODIFIER_LIST[public final]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Outer]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=Outer]
             valueArguments: [
               some -> "value"
               nested -> Value(classId=test/Nested, argumentsMapping={i=12, s="nested value"})
@@ -144,6 +279,29 @@ FILE[kind=File[packageFqName=test]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=Outer]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=some]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=value]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=nested]
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=test]
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=Nested]
+                    VALUE_ARGUMENT_LIST
+                      VALUE_ARGUMENT[isSpread=false]
+                        VALUE_ARGUMENT_NAME
+                          REFERENCE_EXPRESSION[referencedName=i]
+                        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+                      VALUE_ARGUMENT[isSpread=false]
+                        VALUE_ARGUMENT_NAME
+                          REFERENCE_EXPRESSION[referencedName=s]
+                        STRING_TEMPLATE
+                          LITERAL_STRING_TEMPLATE_ENTRY[text=nested value]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithNested]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST

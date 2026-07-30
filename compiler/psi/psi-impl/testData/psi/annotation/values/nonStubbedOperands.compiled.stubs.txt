@@ -36,12 +36,17 @@ WithCast.class:
     IMPORT_LIST
     CLASS[classId=/WithCast, fqName=WithCast, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithCast, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]
           valueArguments: [ value -> 1 ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Anno]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=value]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithCast]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -54,12 +59,17 @@ WithCastOperand.class:
     IMPORT_LIST
     CLASS[classId=/WithCastOperand, fqName=WithCastOperand, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithCastOperand, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]
           valueArguments: [ value -> 3 ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Anno]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=value]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithCastOperand]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST

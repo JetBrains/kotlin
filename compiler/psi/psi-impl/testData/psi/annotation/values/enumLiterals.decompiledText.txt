@@ -30,5 +30,5 @@ WithEnumLiteral.class:
 
   package test
 
-  @test.EnumLiteral public final class WithEnumLiteral public constructor() {
+  @test.EnumLiteral(e1 = test.E.E1, e2 = test.E.E2, e3 = test.E.E2) public final class WithEnumLiteral public constructor() {
   }

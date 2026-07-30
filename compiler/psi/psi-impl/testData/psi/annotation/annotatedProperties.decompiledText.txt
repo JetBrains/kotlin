@@ -44,14 +44,14 @@ MyAnnotation7.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @kotlin.annotation.Target @kotlin.annotation.Retention public final annotation class MyAnnotation7 public constructor() : kotlin.Annotation {
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.VALUE_PARAMETER]) @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME) public final annotation class MyAnnotation7 public constructor() : kotlin.Annotation {
   }
 
 MyAnnotation8.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @kotlin.annotation.Target public final annotation class MyAnnotation8 public constructor() : kotlin.Annotation {
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE]) public final annotation class MyAnnotation8 public constructor() : kotlin.Annotation {
   }
 
 Test.class:

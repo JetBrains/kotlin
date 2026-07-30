@@ -45,7 +45,7 @@ MultifileClass.class:
       constantInitializer: 42
       origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass)
       MODIFIER_LIST[public const]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Deprecated]
           valueArguments: [ message -> "deprecated" ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
@@ -53,6 +53,12 @@ MultifileClass.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Deprecated]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=message]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=deprecated]
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
@@ -244,7 +250,7 @@ MultifileClass__MultifileClassKt.class:
     PROPERTY[fqName=test.annotatedConstVal, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=annotatedConstVal]
       origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null)
       MODIFIER_LIST[public const]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Deprecated]
           valueArguments: [ message -> "deprecated" ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
@@ -252,6 +258,12 @@ MultifileClass__MultifileClassKt.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Deprecated]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=message]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=deprecated]
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE

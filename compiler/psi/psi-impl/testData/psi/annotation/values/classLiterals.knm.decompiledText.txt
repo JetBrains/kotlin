@@ -12,5 +12,5 @@
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @ClassLiteral public final class WithClassLiteral public constructor() {
+  @ClassLiteral(c1 = WithClassLiteral::class, c2 = kotlin.Boolean::class) public final class WithClassLiteral public constructor() {
   }

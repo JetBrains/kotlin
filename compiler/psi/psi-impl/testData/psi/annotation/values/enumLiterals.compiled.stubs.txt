@@ -93,7 +93,7 @@ WithEnumLiteral.class:
     IMPORT_LIST
     CLASS[classId=test/WithEnumLiteral, fqName=test.WithEnumLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithEnumLiteral, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=EnumLiteral]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=EnumLiteral]
           valueArguments: [
             e1 -> E.E1
             e2 -> E.E2
@@ -105,6 +105,31 @@ WithEnumLiteral.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=EnumLiteral]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=e1]
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=test]
+                  REFERENCE_EXPRESSION[referencedName=E]
+                REFERENCE_EXPRESSION[referencedName=E1]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=e2]
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=test]
+                  REFERENCE_EXPRESSION[referencedName=E]
+                REFERENCE_EXPRESSION[referencedName=E2]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=e3]
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=test]
+                  REFERENCE_EXPRESSION[referencedName=E]
+                REFERENCE_EXPRESSION[referencedName=E2]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithEnumLiteral]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST

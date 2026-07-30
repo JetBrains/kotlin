@@ -4,7 +4,7 @@ A.class:
 
   package test
 
-  @kotlin.annotation.Retention public final annotation class A public constructor() : kotlin.Annotation {
+  @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME) public final annotation class A public constructor() : kotlin.Annotation {
   }
 
 PrivateConstField.class:

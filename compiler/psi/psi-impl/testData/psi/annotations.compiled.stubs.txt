@@ -497,7 +497,7 @@ a.class:
     IMPORT_LIST
     CLASS[classId=/a, fqName=a, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=a, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
           valueArguments: [ allowedTargets -> [AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.FIELD] ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
@@ -507,6 +507,81 @@ a.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=allowedTargets]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=10]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=PROPERTY]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=VALUE_PARAMETER]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=FUNCTION]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=CONSTRUCTOR]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=PROPERTY_GETTER]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=PROPERTY_SETTER]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=TYPE]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=CLASS]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=TYPE_PARAMETER]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=FIELD]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=a]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -526,7 +601,7 @@ b.class:
     IMPORT_LIST
     CLASS[classId=/b, fqName=b, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=b, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
           valueArguments: [ allowedTargets -> [AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.TYPE] ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
@@ -536,7 +611,47 @@ b.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=allowedTargets]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=5]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=PROPERTY]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=FUNCTION]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=CLASS]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=CONSTRUCTOR]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=TYPE]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
           valueArguments: [ value -> AnnotationRetention.SOURCE ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
@@ -546,6 +661,17 @@ b.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Retention]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=value]
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=annotation]
+                  REFERENCE_EXPRESSION[referencedName=AnnotationRetention]
+                REFERENCE_EXPRESSION[referencedName=SOURCE]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Repeatable]
           valueArguments: [ ]
           CONSTRUCTOR_CALLEE
@@ -584,7 +710,7 @@ c.class:
     IMPORT_LIST
     CLASS[classId=/c, fqName=c, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=c, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
           valueArguments: [ allowedTargets -> [AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.CLASS] ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
@@ -594,6 +720,67 @@ c.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=allowedTargets]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=8]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=PROPERTY]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=VALUE_PARAMETER]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=FUNCTION]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=CONSTRUCTOR]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=PROPERTY_GETTER]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=PROPERTY_SETTER]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=TYPE]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=CLASS]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=c]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -613,7 +800,7 @@ f.class:
     IMPORT_LIST
     CLASS[classId=/f, fqName=f, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=f, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
           valueArguments: [ allowedTargets -> [AnnotationTarget.FIELD] ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
@@ -623,6 +810,18 @@ f.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=allowedTargets]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=FIELD]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST

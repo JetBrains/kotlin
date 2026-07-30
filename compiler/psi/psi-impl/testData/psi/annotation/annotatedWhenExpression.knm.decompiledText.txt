@@ -3,5 +3,5 @@
 
 public fun main(): kotlin.Unit { /* compiled code */ }
 
-@kotlin.annotation.Retention @kotlin.annotation.Target public final annotation class Ann public constructor() : kotlin.Annotation {
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE) @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.EXPRESSION]) public final annotation class Ann public constructor() : kotlin.Annotation {
 }

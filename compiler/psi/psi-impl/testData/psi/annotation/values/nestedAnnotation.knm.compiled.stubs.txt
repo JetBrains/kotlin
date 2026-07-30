@@ -95,7 +95,7 @@
     IMPORT_LIST
     CLASS[classId=/WithNested, fqName=WithNested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNested, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Outer]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Outer]
           valueArguments: [
             some -> "value"
             nested -> Value(classId=foo/Nested, argumentsMapping={i=0, s="nested value"})
@@ -104,6 +104,29 @@
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Outer]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=some]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=value]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=nested]
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=foo]
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=Nested]
+                  VALUE_ARGUMENT_LIST
+                    VALUE_ARGUMENT[isSpread=false]
+                      VALUE_ARGUMENT_NAME
+                        REFERENCE_EXPRESSION[referencedName=i]
+                      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+                    VALUE_ARGUMENT[isSpread=false]
+                      VALUE_ARGUMENT_NAME
+                        REFERENCE_EXPRESSION[referencedName=s]
+                      STRING_TEMPLATE
+                        LITERAL_STRING_TEMPLATE_ENTRY[text=nested value]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithNested]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -116,7 +139,7 @@
     IMPORT_LIST
     CLASS[classId=/WithQualifiedNested, fqName=WithQualifiedNested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithQualifiedNested, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Outer]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Outer]
           valueArguments: [
             some -> "value"
             nested -> Value(classId=foo/Nested, argumentsMapping={i=1, s="nested value"})
@@ -125,6 +148,29 @@
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Outer]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=some]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=value]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=nested]
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=foo]
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=Nested]
+                  VALUE_ARGUMENT_LIST
+                    VALUE_ARGUMENT[isSpread=false]
+                      VALUE_ARGUMENT_NAME
+                        REFERENCE_EXPRESSION[referencedName=i]
+                      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                    VALUE_ARGUMENT[isSpread=false]
+                      VALUE_ARGUMENT_NAME
+                        REFERENCE_EXPRESSION[referencedName=s]
+                      STRING_TEMPLATE
+                        LITERAL_STRING_TEMPLATE_ENTRY[text=nested value]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithQualifiedNested]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST

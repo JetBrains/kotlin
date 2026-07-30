@@ -4,7 +4,7 @@ public abstract class CSet /* test.CSet*/<Elem>  implements test.ISet<Elem> {
 
 public abstract class CSet2 /* test.CSet2*/<Elem>  implements test.ISet<Elem> {
   @java.lang.Override()
-  @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
+  @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
   @kotlin.js.JsDontExportDefaultImplementation()

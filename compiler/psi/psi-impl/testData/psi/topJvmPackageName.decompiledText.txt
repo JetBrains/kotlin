@@ -3,4 +3,4 @@
 
 package some.other
 
-@kotlin.SinceKotlin public fun foo(): kotlin.Unit { /* compiled code */ }
+@kotlin.SinceKotlin(version = "1.2") public fun foo(): kotlin.Unit { /* compiled code */ }

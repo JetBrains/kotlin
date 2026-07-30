@@ -1,7 +1,7 @@
 KT element: KtClass
 KT element text:
 public final class Aliased public constructor() : Base {
-    public open operator fun equals(@kotlin.EqualityBound other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+    public open operator fun equals(@kotlin.EqualityBound(bound = Base::class) other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind

@@ -2,13 +2,13 @@
 // Implementation of methods is not available
 
 public final class RepeatableAnnotation public constructor() {
-    @MyRepeatableAnnotation public final class ClassWithOneRepeatableAnnotation public constructor() {
+    @MyRepeatableAnnotation(index = 1) public final class ClassWithOneRepeatableAnnotation public constructor() {
     }
 
-    @MyRepeatableAnnotation @MyRepeatableAnnotation public final class ClassWithTwoRepeatableAnnotations public constructor() {
+    @MyRepeatableAnnotation(index = 1) @MyRepeatableAnnotation(index = 2) public final class ClassWithTwoRepeatableAnnotations public constructor() {
     }
 
-    @MyRepeatableAnnotation @MyRepeatableAnnotation @MyRepeatableAnnotation public final class ClassWithThreeRepeatableAnnotations public constructor() {
+    @MyRepeatableAnnotation(index = 1) @MyRepeatableAnnotation(index = 2) @MyRepeatableAnnotation(index = 3) public final class ClassWithThreeRepeatableAnnotations public constructor() {
     }
 }
 

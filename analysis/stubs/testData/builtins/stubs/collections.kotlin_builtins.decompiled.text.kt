@@ -122,7 +122,7 @@ public interface Map<K, out V> {
 
     public abstract operator fun get(key: K): V?
 
-    @kotlin.SinceKotlin @kotlin.internal.PlatformDependent public open fun getOrDefault(key: K, defaultValue: V): V { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.PlatformDependent public open fun getOrDefault(key: K, defaultValue: V): V { /* compiled code */ }
 
     public interface Entry<out K, out V> {
         public abstract val key: K
@@ -206,7 +206,7 @@ public interface MutableMap<K, V> : kotlin.collections.Map<K, V> {
 
     @kotlin.IgnorableReturnValue public abstract fun remove(key: K): V?
 
-    @kotlin.SinceKotlin @kotlin.internal.PlatformDependent @kotlin.IgnorableReturnValue public open fun remove(key: K, value: V): kotlin.Boolean { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.PlatformDependent @kotlin.IgnorableReturnValue public open fun remove(key: K, value: V): kotlin.Boolean { /* compiled code */ }
 
     public abstract fun putAll(from: kotlin.collections.Map<out K, V>): kotlin.Unit
 

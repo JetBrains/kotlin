@@ -6,7 +6,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
   IMPORT_LIST
   CLASS[classId=kotlin/internal/IntrinsicConstEvaluation, fqName=kotlin.internal.IntrinsicConstEvaluation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IntrinsicConstEvaluation, superNames=[Annotation]]
     MODIFIER_LIST[internal final annotation]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -16,7 +16,33 @@ FILE[kind=File[packageFqName=kotlin.internal]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Target]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=allowedTargets]
+            COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=3]
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=annotation]
+                  REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                REFERENCE_EXPRESSION[referencedName=CONSTRUCTOR]
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=annotation]
+                  REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                REFERENCE_EXPRESSION[referencedName=FUNCTION]
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=annotation]
+                  REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                REFERENCE_EXPRESSION[referencedName=PROPERTY]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
         valueArguments: [ value -> AnnotationRetention.BINARY ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -26,7 +52,18 @@ FILE[kind=File[packageFqName=kotlin.internal]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Retention]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=value]
+            DOT_QUALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=annotation]
+                REFERENCE_EXPRESSION[referencedName=AnnotationRetention]
+              REFERENCE_EXPRESSION[referencedName=BINARY]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
         valueArguments: [ version -> "1.7" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -34,6 +71,12 @@ FILE[kind=File[packageFqName=kotlin.internal]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=version]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=1.7]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=IntrinsicConstEvaluation]
       MODIFIER_LIST[public MustUseReturnValue]
       VALUE_PARAMETER_LIST
@@ -47,7 +90,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
     CLASS_BODY
   CLASS[classId=kotlin/internal/PlatformDependent, fqName=kotlin.internal.PlatformDependent, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PlatformDependent, superNames=[Annotation]]
     MODIFIER_LIST[internal final annotation]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.FUNCTION] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -57,7 +100,19 @@ FILE[kind=File[packageFqName=kotlin.internal]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Target]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=allowedTargets]
+            COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=annotation]
+                  REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                REFERENCE_EXPRESSION[referencedName=FUNCTION]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
         valueArguments: [ value -> AnnotationRetention.BINARY ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -67,6 +122,17 @@ FILE[kind=File[packageFqName=kotlin.internal]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Retention]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=value]
+            DOT_QUALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=annotation]
+                REFERENCE_EXPRESSION[referencedName=AnnotationRetention]
+              REFERENCE_EXPRESSION[referencedName=BINARY]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PlatformDependent]
       MODIFIER_LIST[public MustUseReturnValue]
       VALUE_PARAMETER_LIST
@@ -80,7 +146,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
     CLASS_BODY
   CLASS[classId=kotlin/internal/PureReifiable, fqName=kotlin.internal.PureReifiable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PureReifiable, superNames=[Annotation]]
     MODIFIER_LIST[internal final annotation]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.TYPE_PARAMETER] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -90,7 +156,19 @@ FILE[kind=File[packageFqName=kotlin.internal]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Target]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=allowedTargets]
+            COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=annotation]
+                  REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                REFERENCE_EXPRESSION[referencedName=TYPE_PARAMETER]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
         valueArguments: [ value -> AnnotationRetention.BINARY ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -100,6 +178,17 @@ FILE[kind=File[packageFqName=kotlin.internal]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Retention]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=value]
+            DOT_QUALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=annotation]
+                REFERENCE_EXPRESSION[referencedName=AnnotationRetention]
+              REFERENCE_EXPRESSION[referencedName=BINARY]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PureReifiable]
       MODIFIER_LIST[public MustUseReturnValue]
       VALUE_PARAMETER_LIST
