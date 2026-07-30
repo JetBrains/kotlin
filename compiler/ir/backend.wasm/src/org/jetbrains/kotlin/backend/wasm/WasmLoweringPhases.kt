@@ -210,7 +210,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::TryCatchCanonicalization,
 
     ::WasmForLoopsLowering,
-    ::PropertyLazyInitLowering,
+    ::WasmPropertyLazyInitLowering,
     ::RemoveInitializersForLazyProperties,
 
     // This doesn't work with IC as of now for accessors within inline functions because

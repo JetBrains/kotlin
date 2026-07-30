@@ -207,7 +207,7 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::RangeContainsLowering,
     ::ForLoopsLowering,
     ::PrimitiveCompanionLowering,
-    ::PropertyLazyInitLowering,
+    ::JsPropertyLazyInitLowering,
     ::RemoveInitializersForLazyProperties,
     ::JsPropertyAccessorInlineLowering,
     ::CopyAccessorBodyLowerings,

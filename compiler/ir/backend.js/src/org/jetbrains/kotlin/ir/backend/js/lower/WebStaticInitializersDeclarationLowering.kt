@@ -7,22 +7,21 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irCatch
-import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrSetField
+import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -86,6 +85,8 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
     }
 
     protected abstract val context: JsCommonBackendContext
+
+    protected abstract val initializationGenerator: LazyGlobalInitializationGenerator
 
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(object : IrVisitorVoid() {
@@ -164,15 +165,33 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
 
         // It is important to define stable signature via restrictTo to be able to reference static_init of super class
         // defined in a separate module.
-        val [staticInitCalledField, staticInitFunction] = context.irFactory.stageController.restrictTo(container) {
-            val initCalledField = createStaticInitCalledField(container)
-            val initFunction = createStaticInitFunction(
-                container = container,
+        val staticInitCalledField = context.irFactory.stageController.restrictTo(container) {
+            initializationGenerator.createStateField(
+                name = Name.identifier(STATIC_INIT_CALLED_PROPERTY_NAME),
                 origin = STATIC_CLASS_INITIALIZER,
-                initCalledVar = initCalledField,
-                initializers = initializers
-            )
-            initCalledField to initFunction
+            ).apply {
+                parent = container
+            }
+        }
+        val staticInitFunction = context.irFactory.stageController.restrictTo(container) {
+            initializationGenerator.createStaticInitFunction(
+                name = Name.identifier(STATIC_INIT_FUNCTION_NAME),
+                klass = container,
+                origin = STATIC_CLASS_INITIALIZER,
+                stateField = staticInitCalledField,
+                initializers = initializers,
+                visibility = DescriptorVisibilities.PUBLIC,
+            ) {
+                val [dependencySuperInterfaces, dependencySuperClasses] =
+                    container.dependencySuperClasses.partition { it.isInterface }
+                for (superClass in dependencySuperClasses + dependencySuperInterfaces) {
+                    superClass.staticInitFunction?.let {
+                        +irCall(it.symbol)
+                    }
+                }
+            }.apply {
+                parent = container
+            }
         }
 
         // Adding static_init declaration after adding its usages to make sure we don't insert usages inside static_init itself
@@ -189,90 +208,6 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
                 origin = STATIC_FIELD_INITIALIZER
             )
         }
-
-    private object InitializationState {
-        const val UNINITIALIZED: Int = 0
-        const val INITIALIZED: Int = 1
-        const val ERROR: Int = 2
-    }
-
-    private fun createStaticInitCalledField(irClass: IrClass): IrField = context.irFactory.buildField {
-        name = Name.identifier(STATIC_INIT_CALLED_PROPERTY_NAME)
-        origin = STATIC_CLASS_INITIALIZER
-        type = context.irBuiltIns.intType
-        visibility = DescriptorVisibilities.PRIVATE
-        isStatic = true
-    }.apply {
-        parent = irClass
-        initializer = context.irFactory.createExpressionBody(
-            SYNTHETIC_OFFSET,
-            SYNTHETIC_OFFSET,
-            InitializationState.UNINITIALIZED.toIrConst(context.irBuiltIns.intType),
-        )
-    }
-
-    protected abstract fun IrBuilderWithScope.generateStaticInitializationStateCheck(getStateField: IrGetField, container: IrClass): IrCall
-
-    protected open fun IrBuilderWithScope.undefinedOrNull(): IrExpression = irNull()
-
-    protected open val catchParameterType: IrType
-        get() = context.irBuiltIns.throwableType
-
-    private fun createStaticInitFunction(
-        container: IrClass,
-        origin: IrDeclarationOrigin,
-        initCalledVar: IrField,
-        initializers: List<IrStatement>
-    ): IrSimpleFunction {
-        val initFunction = context.irFactory.buildFun {
-            startOffset = UNDEFINED_OFFSET
-            endOffset = UNDEFINED_OFFSET
-            this.origin = origin
-            name = Name.identifier(STATIC_INIT_FUNCTION_NAME)
-            visibility = DescriptorVisibilities.PUBLIC
-            returnType = context.irBuiltIns.unitType
-        }
-        return initFunction.apply {
-            val builder = context.createIrBuilder(symbol, SYNTHETIC_OFFSET)
-            parent = container
-            body = context.irFactory.createBlockBody(startOffset, endOffset) {
-                with(builder) {
-                    val stateCheck = generateStaticInitializationStateCheck(irGetField(null, initCalledVar), container)
-                    statements += irIfThen(stateCheck, irReturnUnit())
-                    statements += irSetField(null, initCalledVar, irInt(InitializationState.INITIALIZED))
-                    val allInitializers = irComposite {
-                        val [dependencySuperInterfaces, dependencySuperClasses] =
-                            container.dependencySuperClasses.partition { it.isInterface }
-                        for (superClass in dependencySuperClasses + dependencySuperInterfaces) {
-                            superClass.staticInitFunction?.let {
-                                +irCall(it.symbol)
-                            }
-                        }
-                        for (initializer in initializers) {
-                            initializer.setDeclarationsParent(initFunction)
-                        }
-                        +initializers
-                    }
-                    val catchParameter = scope.createTemporaryVariableDeclaration(
-                        irType = catchParameterType,
-                        nameHint = "reason",
-                        origin = IrDeclarationOrigin.CATCH_PARAMETER,
-                        startOffset = UNDEFINED_OFFSET,
-                        endOffset = UNDEFINED_OFFSET,
-                        inventUniqueName = false,
-                    )
-                    val catchResult = irComposite {
-                        +irSetField(null, initCalledVar, irInt(InitializationState.ERROR))
-                        +irCall(this@WebStaticInitializersDeclarationLowering.context.symbols.staticInitializationFailure).apply {
-                            arguments[0] = irCastIfNeeded(irGet(catchParameter), context.irBuiltIns.throwableType)
-                            arguments[1] = undefinedOrNull()
-                        }
-                    }
-                    statements += irTry(context.irBuiltIns.unitType, allInitializers, listOf(irCatch(catchParameter, catchResult)), null)
-                }
-            }
-        }
-    }
 
     private val IrClass.dependencySuperClasses: List<IrClass>
         get() = superTypes
