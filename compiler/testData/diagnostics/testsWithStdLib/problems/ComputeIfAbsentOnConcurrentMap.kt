@@ -3,7 +3,6 @@
 // FULL_JDK
 // JVM_TARGET: 1.8
 // DISABLE_JAVA_FACADE
-// LATEST_LV_DIFFERENCE
 // FILE: CollectionFactory.java
 import org.jetbrains.annotations.*;
 import java.util.concurrent.*;
@@ -23,7 +22,7 @@ private class Bar
 
 private fun bar(): Bar? = null
 
-private fun getOrCalculateDescriptor(foo: Foo): Bar? = map.computeIfAbsent(foo) { <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>bar()<!> }
+private fun getOrCalculateDescriptor(foo: Foo): Bar? = map.computeIfAbsent(foo) { bar() }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, inProjection, javaFunction, lambdaLiteral,
 nullableType, outProjection, propertyDeclaration, samConversion */

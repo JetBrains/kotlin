@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
-// LATEST_LV_DIFFERENCE
 
 import java.util.concurrent.*
 
@@ -14,8 +13,8 @@ fun foo() {
     concurrentHash.remove("", <!ARGUMENT_TYPE_MISMATCH!>""<!>)
 
     // Flexible types
-    concurrent.remove(<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA!>null<!>, 1)
-    concurrent.remove(<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA!>null<!>, <!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA!>null<!>)
+    concurrent.remove(null, 1)
+    concurrent.remove(null, null)
 
     // @PurelyImplements
     concurrentHash.remove(<!NULL_FOR_NONNULL_TYPE!>null<!>, 1)

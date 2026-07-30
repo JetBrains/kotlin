@@ -2,7 +2,6 @@
 // ISSUE: KT-87967
 // FULL_JDK
 // DISABLE_JAVA_FACADE
-// LATEST_LV_DIFFERENCE
 // FILE: CollectionFactory.java
 import org.jetbrains.annotations.*;
 import java.util.concurrent.*;
@@ -17,7 +16,7 @@ public class CollectionFactory {
 abstract class Bar<Element> {
     val map = CollectionFactory.createConcurrentHashMap<Element, String>()
     fun foo(element: Element) {
-        map[<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA!>element<!>] = ""
+        map[element] = ""
     }
 }
 
