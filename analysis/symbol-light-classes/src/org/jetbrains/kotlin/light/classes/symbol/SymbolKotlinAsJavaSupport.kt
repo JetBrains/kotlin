@@ -18,6 +18,7 @@ import com.intellij.util.concurrency.annotations.RequiresReadLock
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
@@ -30,6 +31,8 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProject
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.session.analysisScope
 import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
@@ -40,6 +43,8 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
+import org.jetbrains.kotlin.light.classes.symbol.classes.hasMangledNameDueToValueClasses as computeHasMangledNameDueToValueClasses
+import org.jetbrains.kotlin.light.classes.symbol.classes.jvmMethodOwner as computeJvmMethodOwner
 import org.jetbrains.kotlin.light.classes.symbol.utils.SafeNestedNullableCaffeineCache
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -626,6 +631,18 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
 
     @KaCachedService
     private val projectStructureProvider by lazyPub { KotlinProjectStructureProvider.getInstance(project) }
+    //endregion
+
+    // ============ BRIDGE ============
+    //region Bridge
+
+    context(_: KaSession)
+    override fun jvmMethodOwner(symbol: KaCallableSymbol): KaDeclarationSymbol? = computeJvmMethodOwner(symbol)
+
+    context(_: KaSession)
+    override fun hasMangledNameDueToValueClasses(symbol: KaCallableSymbol): Boolean =
+        computeHasMangledNameDueToValueClasses(symbol)
+
     //endregion
 
     // ============ CACHE ============
