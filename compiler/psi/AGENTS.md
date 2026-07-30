@@ -123,10 +123,32 @@ class KtCallExpression : ...
 
 **Test coverage requirement:**
 
-All concrete `KtElement` classes must be covered by tests in `compiler/testData/psi/`:
+All concrete `KtElement` classes must be covered by tests in `compiler/psi/psi-impl/testData/psi/`:
 - Each test consists of a `.kt` file containing example Kotlin code and a corresponding `.txt` file showing the expected PSI tree structure
 - These tests serve as documentation showing which code constructs map to which PSI elements
 - When adding a new `KtElement` class, add corresponding test cases demonstrating the syntax it represents
+
+## Working with Test Data
+
+PSI test data (`compiler/psi/psi-impl/testData/`) is managed by the same test data manager as the Analysis API, since the
+`test-data-manager` convention is applied to `:compiler:psi:psi-impl`. When modifying test data files or running generated tests
+(`*Generated`) that compare output against `.txt` files, use `updateTestData` (to rewrite files) or `checkTestData` (to verify only)
+instead of standard test commands.
+
+```bash
+# Update all PSI test data
+./gradlew :compiler:psi:psi-impl:updateTestData
+
+# Update by directory (preferred for iteration)
+./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=compiler/psi/psi-impl/testData/psi/annotation/
+```
+
+Note that a single `.kt` file under `testData/psi/` feeds several suites across two modules: the PSI tree (`.txt`) from
+`:compiler:psi:psi-impl` (`PsiParsingTest`), plus source stubs (`.stubs.txt`), compiled stubs (`.compiled.stubs.txt`,
+`.knm.compiled.stubs.txt`) and decompiled text (`.decompiledText.txt`, `.knm.decompiledText.txt`) from `:analysis:stubs`. Prefer a
+path-filtered `updateTestData` from the repo root so that every affected module is picked up.
+
+→ READ [`analysis/AGENTS.md`](../../analysis/AGENTS.md) ("Working with Test Data") for the full set of options and the rationale
 
 ## Detailed Documentation
 
