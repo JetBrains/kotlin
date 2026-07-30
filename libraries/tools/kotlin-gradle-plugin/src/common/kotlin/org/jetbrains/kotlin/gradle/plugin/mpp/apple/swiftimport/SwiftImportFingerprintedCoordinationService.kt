@@ -104,14 +104,14 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
     fun sharedXcodeDumpDir(
         xcodebuildExecutionHash: String,
         xcodebuildSdk: String,
-    ) = sharedDumpDir(sharedDumpBucketRoot(xcodebuildExecutionHash), xcodebuildSdk)
+    ) = sharedDumpDir(sharedXcodeDumpBucketRoot(xcodebuildExecutionHash), xcodebuildSdk)
 
     fun sharedXcodeDerivedDataDir(
         xcodebuildExecutionHash: String,
         xcodebuildSdk: String,
-    ) = sharedDerivedDataDir(sharedDumpBucketRoot(xcodebuildExecutionHash), xcodebuildSdk)
+    ) = sharedDerivedDataDir(sharedXcodeDumpBucketRoot(xcodebuildExecutionHash), xcodebuildSdk)
 
-    private fun sharedDumpBucketRoot(bucketId: String): File =
+    internal fun sharedXcodeDumpBucketRoot(bucketId: String): File =
         parameters.sharedXcodeDumpRoot.get().asFile.resolve(bucketId)
 
     private fun sharedDumpDir(bucketRoot: File, xcodebuildSdk: String): File =
