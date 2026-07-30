@@ -425,6 +425,12 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
   }
 
   @Test
+  @TestMetadata("valueClassAsUpperBound.kt")
+  public void testValueClassAsUpperBound() {
+    run("valueClassAsUpperBound.kt");
+  }
+
+  @Test
   @TestMetadata("valueClassInSignature.kt")
   public void testValueClassInSignature() {
     run("valueClassInSignature.kt");
