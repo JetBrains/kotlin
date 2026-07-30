@@ -8,8 +8,8 @@
 #include <atomic>
 #include <type_traits>
 
-#include "Allocator.hpp"
-#include "GC.hpp"
+#include "alloc/Allocator.hpp"
+#include "gc/GC.hpp"
 #include "IntrusiveList.hpp"
 #include "KAssert.h"
 

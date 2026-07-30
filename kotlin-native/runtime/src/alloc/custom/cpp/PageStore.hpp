@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "AtomicStack.hpp"
-#include "GCStatistics.hpp"
+#include "gc/GCStatistics.hpp"
 #include "FixedBlockPage.hpp"
 
 namespace kotlin::alloc {

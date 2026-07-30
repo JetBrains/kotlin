@@ -13,7 +13,7 @@
 #include "AnyPage.hpp"
 #include "AllocationSize.hpp"
 #include "AtomicStack.hpp"
-#include "GCStatistics.hpp"
+#include "gc/GCStatistics.hpp"
 #include "CustomLogging.hpp"
 #include "CustomFinalizerProcessor.hpp"
 

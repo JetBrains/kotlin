@@ -11,7 +11,7 @@
 #include <new>
 
 #include "CustomLogging.hpp"
-#include "ExtraObjectData.hpp"
+#include "mm/ExtraObjectData.hpp"
 #include "KAssert.h"
 #include "NextFitPage.hpp"
 #include "Memory.h"

@@ -10,9 +10,9 @@
 #include <shared_mutex>
 
 #include "Utils.hpp"
-#include "GCStatistics.hpp"
+#include "gc/GCStatistics.hpp"
 #include "ReferenceOps.hpp"
-#include "GC.hpp"
+#include "gc/GC.hpp"
 
 /** See. `ConcurrentMark` */
 namespace kotlin::gc::barriers {

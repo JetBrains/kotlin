@@ -11,8 +11,8 @@
 #include <cstring>
 
 #include "AtomicStack.hpp"
-#include "ExtraObjectData.hpp"
-#include "GCStatistics.hpp"
+#include "mm/ExtraObjectData.hpp"
+#include "gc/GCStatistics.hpp"
 #include "Memory.h"
 #include "SingleObjectPage.hpp"
 #include "NextFitPage.hpp"

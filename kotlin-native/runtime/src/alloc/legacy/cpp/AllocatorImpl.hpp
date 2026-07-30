@@ -5,19 +5,19 @@
 
 #pragma once
 
-#include "Allocator.hpp"
+#include "alloc/Allocator.hpp"
 
 #include <optional>
 
 #include "ExtraObjectDataFactory.hpp"
-#include "GC.hpp"
-#include "GCScheduler.hpp"
-#include "GCStatistics.hpp"
-#include "GlobalData.hpp"
+#include "gc/GC.hpp"
+#include "gcScheduler/GCScheduler.hpp"
+#include "gc/GCStatistics.hpp"
+#include "mm/GlobalData.hpp"
 #include "ObjectFactory.hpp"
 #include "ObjectFactoryAllocator.hpp"
 #include "ObjectFactorySweep.hpp"
-#include "SegregatedFinalizerProcessor.hpp"
+#include "alloc/SegregatedFinalizerProcessor.hpp"
 #include "Logging.hpp"
 
 namespace kotlin::alloc {

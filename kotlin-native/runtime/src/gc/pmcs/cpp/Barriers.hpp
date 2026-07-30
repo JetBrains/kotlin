@@ -10,7 +10,7 @@
 
 #include "Memory.h"
 #include "Utils.hpp"
-#include "GCStatistics.hpp"
+#include "gc/GCStatistics.hpp"
 
 namespace kotlin::gc {
 

@@ -14,7 +14,7 @@
 
 #include "Alignment.hpp"
 #include "FinalizerHooks.hpp"
-#include "HeapObject.hpp"
+#include "alloc/HeapObject.hpp"
 #include "Memory.h"
 #include "concurrent/Mutex.hpp"
 #include "Porting.h"

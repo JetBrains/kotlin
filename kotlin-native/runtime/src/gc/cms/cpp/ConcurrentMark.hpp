@@ -7,13 +7,13 @@
 
 #include <mutex>
 
-#include "GCStatistics.hpp"
+#include "gc/GCStatistics.hpp"
 #include "ManuallyScoped.hpp"
 #include "ObjectData.hpp"
 #include "concurrent/ParallelProcessor.hpp"
-#include "SafePoint.hpp"
-#include "ThreadData.hpp"
-#include "ThreadRegistry.hpp"
+#include "mm/SafePoint.hpp"
+#include "mm/ThreadData.hpp"
+#include "mm/ThreadRegistry.hpp"
 #include "Utils.hpp"
 #include "concurrent/Once.hpp"
 

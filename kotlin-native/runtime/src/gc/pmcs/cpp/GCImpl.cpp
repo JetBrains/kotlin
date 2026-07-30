@@ -7,16 +7,16 @@
 
 #include <memory>
 
-#include "Allocator.hpp"
+#include "alloc/Allocator.hpp"
 #include "CallsChecker.hpp"
 #include "CompilerConstants.hpp"
-#include "GC.hpp"
-#include "GCScheduler.hpp"
-#include "GCStatistics.hpp"
-#include "MarkAndSweepUtils.hpp"
-#include "ObjectOps.hpp"
+#include "gc/GC.hpp"
+#include "gcScheduler/GCScheduler.hpp"
+#include "gc/GCStatistics.hpp"
+#include "gc/MarkAndSweepUtils.hpp"
+#include "mm/ObjectOps.hpp"
 #include "ParallelMark.hpp"
-#include "ThreadData.hpp"
+#include "mm/ThreadData.hpp"
 
 using namespace kotlin;
 

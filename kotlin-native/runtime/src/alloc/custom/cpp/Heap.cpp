@@ -14,10 +14,10 @@
 
 #include "AtomicStack.hpp"
 #include "CustomLogging.hpp"
-#include "ExtraObjectData.hpp"
+#include "mm/ExtraObjectData.hpp"
 #include "GCApi.hpp"
 #include "Memory.h"
-#include "ThreadRegistry.hpp"
+#include "mm/ThreadRegistry.hpp"
 
 namespace kotlin::alloc {
 

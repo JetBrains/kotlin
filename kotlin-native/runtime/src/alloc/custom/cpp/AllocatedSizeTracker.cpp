@@ -5,7 +5,7 @@
 
 #include "AllocatedSizeTracker.hpp"
 #include "AllocatorImpl.hpp"
-#include "GlobalData.hpp"
+#include "mm/GlobalData.hpp"
 #include "KAssert.h"
 
 using namespace kotlin;

@@ -6,11 +6,11 @@
 #ifndef CUSTOM_ALLOC_CPP_CUSTOMFINALIZERPROCESSOR_HPP_
 #define CUSTOM_ALLOC_CPP_CUSTOMFINALIZERPROCESSOR_HPP_
 
-#include "Allocator.hpp"
+#include "alloc/Allocator.hpp"
 #include "AtomicStack.hpp"
 #include "ExtraObjectCell.hpp"
 #include "FinalizerHooks.hpp"
-#include "SegregatedFinalizerQueue.hpp"
+#include "alloc/SegregatedFinalizerQueue.hpp"
 
 namespace kotlin::alloc {
 

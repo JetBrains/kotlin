@@ -5,19 +5,19 @@
 
 #pragma once
 
-#include "GCScheduler.hpp"
+#include "gcScheduler/GCScheduler.hpp"
 
-#include "AppStateTracking.hpp"
-#include "GCSchedulerConfig.hpp"
-#include "GlobalData.hpp"
-#include "HeapGrowthController.hpp"
+#include "mm/AppStateTracking.hpp"
+#include "gcScheduler/GCSchedulerConfig.hpp"
+#include "mm/GlobalData.hpp"
+#include "gcScheduler/HeapGrowthController.hpp"
 #include "Logging.hpp"
-#include "MutatorAssists.hpp"
-#include "RegularIntervalPacer.hpp"
+#include "gcScheduler/MutatorAssists.hpp"
+#include "gcScheduler/RegularIntervalPacer.hpp"
 #include "RepeatedTimer.hpp"
-#include "SafePoint.hpp"
-#include "EpochScheduler.hpp"
-#include "ThreadData.hpp"
+#include "mm/SafePoint.hpp"
+#include "gcScheduler/EpochScheduler.hpp"
+#include "mm/ThreadData.hpp"
 
 namespace kotlin::gcScheduler {
 

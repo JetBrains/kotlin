@@ -5,11 +5,11 @@
 
 #include "AllocatorImpl.hpp"
 
-#include "Allocator.hpp"
+#include "alloc/Allocator.hpp"
 #include "ExtraObjectDataFactory.hpp"
-#include "GC.hpp"
-#include "MarkAndSweepUtils.hpp"
-#include "ThreadData.hpp"
+#include "gc/GC.hpp"
+#include "gc/MarkAndSweepUtils.hpp"
+#include "mm/ThreadData.hpp"
 
 using namespace kotlin;
 
