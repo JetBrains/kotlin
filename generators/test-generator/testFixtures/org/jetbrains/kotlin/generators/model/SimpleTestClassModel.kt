@@ -44,8 +44,8 @@ class SimpleTestClassModel(
     private val additionalMethods: Collection<MethodModel<*>>,
     val skipTestAllFilesCheck: Boolean,
     override val testKClass: Class<*>,
-    override val isSmokeTest: Boolean,
-    override val smokeTestLimit: Int,
+    override val isAutoSmokeTest: Boolean,
+    override val autoSmokeTestLimit: Int,
 ) : TestClassModel() {
     override val name: String
         get() = testClassName
@@ -78,8 +78,8 @@ class SimpleTestClassModel(
                 additionalMethods.filter { it.shouldBeGeneratedForInnerTestClass },
                 skipTestAllFilesCheck,
                 testKClass,
-                isSmokeTest,
-                smokeTestLimit
+                isAutoSmokeTest,
+                autoSmokeTestLimit
             )
         }.sortedWith(BY_NAME)
     }
@@ -143,7 +143,7 @@ class SimpleTestClassModel(
                     isSmokeTest = hasSmokeDirective(file),
                 )
             }.sortedWith(BY_NAME).mapIndexed { index, model ->
-                if (isSmokeTest && index < smokeTestLimit) model.copy(isSmokeTest = true)
+                if (isAutoSmokeTest && index < autoSmokeTestLimit) model.copy(isSmokeTest = true)
                 else model
             }
 

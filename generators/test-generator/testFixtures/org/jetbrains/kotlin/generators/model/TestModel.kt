@@ -36,10 +36,10 @@ sealed class TestEntityModel {
  * @property annotations is a list of annotations, which will be added to the generated test
  *   class in addition to the default set of annotations.
  *
- * @property isSmokeTest is a flag indicating whether the test class is used as 'SmokeTest'
+ * @property isAutoSmokeTest is a flag indicating whether the test class is used as 'SmokeTest'
  *   See 'repo/TEST_FEDERATION.md' for additional details.
  *
- * @property smokeTestLimit limits the number of 'SmokeTets' within a given test class.
+ * @property autoSmokeTestLimit limits the number of 'SmokeTets' within a given test class.
  *   Typically running just a subset (even just any single representative) test is enough when running smoke tests.
  *
  * Note that all kinds are generated in the same way regardless of the specific implementation.
@@ -53,8 +53,8 @@ abstract class TestClassModel : TestEntityModel() {
     abstract val dataPathRoot: String?
     abstract val annotations: Collection<AnnotationModel>
     abstract val testKClass: Class<*>
-    abstract val isSmokeTest: Boolean
-    abstract val smokeTestLimit: Int
+    abstract val isAutoSmokeTest: Boolean
+    abstract val autoSmokeTestLimit: Int
 
     val imports: Set<Class<*>>
         get() {
@@ -62,7 +62,7 @@ abstract class TestClassModel : TestEntityModel() {
                 annotations.flatMapTo(allImports) { it.imports() }
                 methods.flatMapTo(allImports) { it.imports() }
                 innerTestClasses.flatMapTo(allImports) { it.imports }
-                if (isSmokeTest) {
+                if (isAutoSmokeTest) {
                     allImports.add(SmokeTest::class.java)
                 }
             }
