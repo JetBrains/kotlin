@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.tooling.core.compareTo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.io.path.Path
@@ -58,20 +59,28 @@ class ApplyCommandLineArgumentsOverridingTest : BaseCompilationTest() {
     }
 
     @Test
-    fun `test applyCommandLineArguments does not override existing values in new versions`() {
+    @DisplayName("test applyCommandLineArguments does not override existing values in new versions")
+    fun testDoesNotOverrideValues() {
         runTestForAllOperations {
+
+            if (KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) >= KotlinToolingVersion("2.4.0")) {
+                assertEquals(false, this[CommonToolArguments.VERBOSE])
+            }
+
             this[CommonCompilerArguments.LANGUAGE_VERSION] = KotlinVersion.V1_7
             this[CommonToolArguments.VERBOSE] = true
 
             applyCommandLineArguments(listOf("-Werror"))
             assertEquals(KotlinVersion.V1_7, this[CommonCompilerArguments.LANGUAGE_VERSION])
             assertEquals(true, this[CommonToolArguments.VERBOSE])
+
             assertEquals(true, this[CommonToolArguments.WERROR])
         }
     }
 
     @Test
-    fun `test applyCommandLineArguments does not override compiler plugins in new versions`() {
+    @DisplayName("test applyCommandLineArguments does not override compiler plugins configured by the type-safe plugins configuration")
+    fun testUnrelatedArgumentDoesNotOverrideCompilerPlugins() {
         assumeTrue { KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) >= KotlinToolingVersion("2.3.20") }
 
         runTestForAllOperations {
@@ -95,7 +104,8 @@ class ApplyCommandLineArgumentsOverridingTest : BaseCompilationTest() {
     }
 
     @Test
-    fun `test applyCommandLineArguments updates compiler plugins when COMPILER_PLUGINS empty and related arguments are provided`() {
+    @DisplayName("test applyCommandLineArguments updates compiler plugins when COMPILER_PLUGINS empty and related arguments are provided")
+    fun testRelatedArgumentDoesOverrideEmptyCompilerPlugins() {
         assumeTrue { KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) >= KotlinToolingVersion("2.3.20") }
         runTestForAllOperations {
             this[CommonCompilerArguments.COMPILER_PLUGINS] = emptyList()
@@ -108,7 +118,8 @@ class ApplyCommandLineArgumentsOverridingTest : BaseCompilationTest() {
     }
 
     @Test
-    fun `test applyCommandLineArguments updates compiler plugins when COMPILER_PLUGINS provided and related arguments are provided`() {
+    @DisplayName("test applyCommandLineArguments updates compiler plugins when COMPILER_PLUGINS provided and related arguments are provided")
+    fun testRelatedArgumentDoesOverrideCompilerPlugins() {
         assumeTrue { KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) >= KotlinToolingVersion("2.3.20") }
         runTestForAllOperations {
             val plugin = org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin(
