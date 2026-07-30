@@ -2,6 +2,8 @@ FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/ThreadLocalDelegate, fqName=ThreadLocalDelegate, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ThreadLocalDelegate, superNames=[]]
+    inlineClassUnderlyingPropertyName: "threadLocal"
+    inlineClassUnderlyingType: java.lang.ThreadLocal<T>
     valueClassRepresentation: INLINE_CLASS
     MODIFIER_LIST[public final value]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]

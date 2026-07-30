@@ -198,6 +198,10 @@ fun main(args: Array<String>) {
                 model("getOrBuildFirBinary")
             }
 
+            testClass<AbstractJvmAbiLibraryGetOrBuildFirTest> {
+                model("getOrBuildFirJvmAbi")
+            }
+
             testClass<AbstractStdLibBasedGetOrBuildFirTest> {
                 model("getOrBuildFirForStdLib")
             }

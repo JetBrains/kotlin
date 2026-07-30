@@ -1,0 +1,31 @@
+KT element: KtClass
+KT element text:
+@kotlin.jvm.JvmInline
+public final value class ThreadLocalDelegate<T> {
+    public companion object {
+        public final fun <T> create(): ThreadLocalDelegate<T> { /* compiled code */ }
+    }
+
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+
+    public open fun hashCode(): kotlin.Int { /* compiled code */ }
+
+    public open fun toString(): kotlin.String { /* compiled code */ }
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+@R|kotlin/jvm/JvmInline|() public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=threadLocal, underlyingType=java/lang/ThreadLocal<T>)] class ThreadLocalDelegate<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> create(): R|ThreadLocalDelegate<T>|
+
+    }
+
+    public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+    public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|
+
+}
