@@ -9,25 +9,16 @@ import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltinsPackageFragmentDescriptorImpl
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.KotlinMangler
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.ir.util.toIdSignature
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.DFS
 
 fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
@@ -82,6 +73,7 @@ class CompatibilityMode(val abiVersion: KotlinAbiVersion) {
 }
 
 abstract class IrModuleDeserializer(
+    val moduleFragment: IrModuleFragment,
     val libraryAbiVersion: KotlinAbiVersion,
 ) {
     /**
@@ -128,8 +120,6 @@ abstract class IrModuleDeserializer(
      */
     open fun deserializeReachableDeclarations() { error("Unsupported Operation") }
 
-    abstract val moduleFragment: IrModuleFragment
-
     open val strategyResolver: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_DECLARATION_HEADERS }
 
     open fun fileDeserializers(): Collection<IrFileDeserializer> = emptyList()
@@ -149,27 +139,22 @@ fun IrModuleDeserializer.deserializeIrSymbolOrFail(idSig: IdSignature, symbolKin
 // Used to resolve built in symbols like `kotlin.ir.internal.*` or `kotlin.FunctionN`
 @OptIn(InternalSymbolFinderAPI::class)
 class IrModuleDeserializerWithBuiltIns(
+    moduleFragment: IrModuleFragment,
     private val symbolTable: SymbolTable,
     mangler: KotlinMangler.IrMangler,
     onDeserializedClass: (IrClass, IdSignature) -> Unit,
     private val delegate: IrModuleDeserializer
-) : IrModuleDeserializer(delegate.libraryAbiVersion) {
-
-    init {
-        // TODO: figure out how it should work for K/N
-//        assert(builtIns.builtIns.builtInsModule === delegate.moduleDescriptor)
-    }
-
+) : IrModuleDeserializer(moduleFragment, delegate.libraryAbiVersion) {
     private val signatureComputer = PublicIdSignatureComputer(mangler)
     private val syntheticProvider = IrSyntheticProvider(
-        module = delegate.moduleFragment,
+        module = moduleFragment,
         symbolTable = symbolTable,
         signatureComputer = signatureComputer::computeSignature
     )
 
     private val syntheticFunctionClassGenerator = run {
         IrBasedFunctionFactory(
-            delegate.moduleFragment,
+            moduleFragment,
             symbolTable.referenceClass(StandardClassIds.Function.toIdSignature()),
             symbolTable.referenceClass(StandardClassIds.KFunction.toIdSignature()),
             symbolTable.referenceClass(StandardClassIds.Any.toIdSignature()),
@@ -266,8 +251,6 @@ class IrModuleDeserializerWithBuiltIns(
     override fun addModuleReachableTopLevel(topLevelDeclarationSignature: IdSignature) {
         delegate.addModuleReachableTopLevel(topLevelDeclarationSignature)
     }
-
-    override val moduleFragment: IrModuleFragment get() = delegate.moduleFragment
 
     override fun fileDeserializers(): Collection<IrFileDeserializer> {
         return delegate.fileDeserializers()

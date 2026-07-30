@@ -18,22 +18,17 @@ import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_PACKAGE
-import org.jetbrains.kotlin.library.KotlinAbiVersion
-import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
-import org.jetbrains.kotlin.library.metadataVersion
-import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
@@ -43,11 +38,7 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfigu
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import org.jetbrains.kotlin.utils.putToMultiMap
 import java.lang.ref.SoftReference
-import kotlin.metadata.ClassName
-import kotlin.metadata.KmClass
-import kotlin.metadata.KmClassifier
-import kotlin.metadata.KmFunction
-import kotlin.metadata.KmProperty
+import kotlin.metadata.*
 
 /**
  * IR deserializer for C-interop Klibs.
@@ -64,11 +55,11 @@ import kotlin.metadata.KmProperty
  */
 internal class KonanInteropModuleDeserializer(
         private val deserializationConfiguration: DeserializationConfiguration,
-        moduleDescriptor: ModuleDescriptor,
+        moduleFragment: IrModuleFragment,
         override val klib: KotlinLibrary,
         private val isLibraryCached: Boolean,
         private val linker: KonanIrLinker,
-) : IrModuleDeserializer(klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
+) : IrModuleDeserializer(moduleFragment, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
     init {
         require(klib.isCInteropLibrary())
     }
@@ -83,7 +74,6 @@ internal class KonanInteropModuleDeserializer(
 
     override fun getDefinedPackageNames(): Set<FqName> = setOf(definedPackageFqName)
 
-    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
     private var externalIrPackageFragment: IrExternalPackageFragment? = null
     private var typeDefinitionsIrFile: IrFile? = null
 
