@@ -1373,6 +1373,24 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
   }
 
   @Test
+  @TestMetadata("valueClassUnderlyingTypeFromMetadata.kt")
+  public void testValueClassUnderlyingTypeFromMetadata() {
+    run("valueClassUnderlyingTypeFromMetadata.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassUnderlyingTypeFromProperty.kt")
+  public void testValueClassUnderlyingTypeFromProperty() {
+    run("valueClassUnderlyingTypeFromProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassUnderlyingTypeParameterFromMetadata.kt")
+  public void testValueClassUnderlyingTypeParameterFromMetadata() {
+    run("valueClassUnderlyingTypeParameterFromMetadata.kt");
+  }
+
+  @Test
   @TestMetadata("varargArgumentWithFunctionalType.kt")
   public void testVarargArgumentWithFunctionalType() {
     run("varargArgumentWithFunctionalType.kt");

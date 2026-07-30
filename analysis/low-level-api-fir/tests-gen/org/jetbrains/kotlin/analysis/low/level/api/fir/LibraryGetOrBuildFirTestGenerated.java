@@ -425,9 +425,21 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("valueClassWithPrivateProperty.kt")
+  public void testValueClassWithPrivateProperty() {
+    run("valueClassWithPrivateProperty.kt");
+  }
+
+  @Test
   @TestMetadata("valueClassWithTypeAliasOnAnotherValueClass.kt")
   public void testValueClassWithTypeAliasOnAnotherValueClass() {
     run("valueClassWithTypeAliasOnAnotherValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassWithTypeParameterUnderlyingType.kt")
+  public void testValueClassWithTypeParameterUnderlyingType() {
+    run("valueClassWithTypeParameterUnderlyingType.kt");
   }
 
   @Test

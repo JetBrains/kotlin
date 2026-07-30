@@ -1,6 +1,10 @@
 import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
+val jvmAbiGenPlugin = configurations.create("jvmAbiGenPlugin") {
+    isTransitive = false
+}
+
 plugins {
     id("common-configuration")
     id("test-federation-convention")
@@ -27,6 +31,8 @@ dependencies {
     testFixturesImplementation(project(":analysis:analysis-internal-utils"))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+
+    jvmAbiGenPlugin(project(":plugins:jvm-abi-gen"))
 }
 
 sourceSets {
@@ -53,6 +59,8 @@ tasks.compileTestKotlin {
 projectTests {
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
         smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 5)
+
+        addClasspathProperty(jvmAbiGenPlugin, "kotlin.jvm.abi.jar.path")
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.stubs.TestGeneratorKt")
