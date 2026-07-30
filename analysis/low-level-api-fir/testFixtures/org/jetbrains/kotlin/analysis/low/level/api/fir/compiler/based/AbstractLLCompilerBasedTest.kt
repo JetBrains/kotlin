@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.testConfiguration
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.EXPLICITLY_GENERATE_PLUGIN_FILES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
 import org.jetbrains.kotlin.test.directives.TestDumpClassifier
@@ -185,7 +185,9 @@ abstract class AbstractLLCompilerBasedTest : AbstractKotlinCompilerTest() {
 
         override val root get() = Root
 
-        companion object Root : TestDumpRoot<Root>("ll")
+        companion object Root : TestDumpRoot<Root>("ll") {
+            override fun calculateClassifiers() = entries
+        }
     }
 
     override fun runTest(filePath: String) {

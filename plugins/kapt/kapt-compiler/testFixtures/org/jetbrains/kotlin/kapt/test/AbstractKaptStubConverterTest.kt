@@ -38,9 +38,11 @@ abstract class AbstractKaptStubConverterTest(
 
         override val compatibleWith get() = null
         override val root get() = Root
-        override val extension: String = scheme.stringValue
+        override val extension: String get() = scheme.stringValue
 
-        companion object Root : TestDumpRoot<Root>("stubGenerationScheme")
+        companion object Root : TestDumpRoot<Root>("stubGenerationScheme") {
+            override fun calculateClassifiers() = entries
+        }
     }
 
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {

@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.test.runners
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TargetBackend.*
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.backend.handlers.TargetBackendClassifier
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.testFederation.AffectedByCompiler
 import org.jetbrains.kotlin.testFederation.AffectedByJs
 import org.jetbrains.kotlin.testFederation.AffectedByNative
@@ -35,6 +37,11 @@ abstract class AbstractKotlinCompilerWithTargetBackendTest @UnspecifiedTargetBac
                           |AbstractKotlinCompilerWithTargetBackendTest parent it is set to $myTargetBackend""".trimMargin()
                     }
                 }
+            }
+            defaultDirectives {
+                val backendChain =
+                    generateSequence(TargetBackendClassifier.valueOf(myTargetBackend.name)) { it.compatibleWith }
+                TestDumpDirectives.DUMP_CLASSIFIER with (backendChain.toList().asReversed())
             }
         }
     }

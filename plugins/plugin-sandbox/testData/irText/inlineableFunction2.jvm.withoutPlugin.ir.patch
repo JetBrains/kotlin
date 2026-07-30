@@ -1,5 +1,5 @@
 --- a/inlineableFunction2.ir.txt
-+++ b/inlineableFunction2.withoutPlugin.jvm.ir.txt
++++ b/inlineableFunction2.jvm.withoutPlugin.ir.txt
 @@ -18,7 +18,7 @@
    FUN name:runInlineable visibility:public modality:FINAL returnType:kotlin.Unit
      VALUE_PARAMETER kind:Regular name:block index:0 type:@[MyInlineable] kotlin.Function0<kotlin.Unit>

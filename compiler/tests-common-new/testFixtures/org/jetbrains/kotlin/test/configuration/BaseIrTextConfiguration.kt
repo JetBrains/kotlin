@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.backend.handlers.IrTreeVerifierHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS

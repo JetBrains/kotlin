@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_EXTERNAL_
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.model.BackendKind
@@ -168,15 +169,10 @@ class IrTextDumpHandler(
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val actualDump = baseDumper.generateResultingDump()
+        val actualDump = if (baseDumper.isEmpty()) null else baseDumper.generateResultingDump().ifEmpty { null }
         val baseDumpExtension = getBaseDumpExtension()
 
-        validateTargetSpecificDumpFile(
-            testServices, assertions,
-            baseDumpExtension = baseDumpExtension,
-            actualDump,
-            isKotlinLikeDump = false,
-        )
+        assertEqualsToDump(extension = baseDumpExtension, actualDump = actualDump)
     }
 
     private fun getBaseDumpExtension(): String {
@@ -184,9 +180,7 @@ class IrTextDumpHandler(
     }
 
     private fun getDumpExtension(): String {
-        return customExtension
-            ?: getTargetSpecificDumpExtension(testServices, getBaseDumpExtension())
-            ?: getBaseDumpExtension()
+        return customExtension ?: getBaseDumpExtension()
     }
 }
 
