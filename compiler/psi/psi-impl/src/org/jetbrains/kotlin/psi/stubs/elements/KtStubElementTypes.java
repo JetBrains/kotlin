@@ -102,6 +102,7 @@ public interface KtStubElementTypes {
             new KtUnaryExpressionElementType<>("PREFIX_EXPRESSION", KtPrefixExpression.class);
     @NotNull KtUnaryExpressionElementType<KtPostfixExpression> POSTFIX_EXPRESSION =
             new KtUnaryExpressionElementType<>("POSTFIX_EXPRESSION", KtPostfixExpression.class);
+    @NotNull KtPlaceHolderStubElementType<KtBinaryExpression> BINARY_EXPRESSION = KtBinaryExpressionElementType.INSTANCE;
 
     @NotNull KtEnumEntrySuperClassReferenceExpressionElementType ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION =
             new KtEnumEntrySuperClassReferenceExpressionElementType("ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION");

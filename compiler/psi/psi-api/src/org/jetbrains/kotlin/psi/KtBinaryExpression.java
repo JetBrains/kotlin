@@ -10,7 +10,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments;
 import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments;
@@ -26,9 +27,15 @@ import java.util.Arrays;
  * //      ^___^
  * }</pre>
  */
-public class KtBinaryExpression extends KtExpressionImpl implements KtOperationExpression, KtResolvableCall {
+public class KtBinaryExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<KtBinaryExpression>>
+        implements KtOperationExpression, KtResolvableCall {
     public KtBinaryExpression(@NotNull ASTNode node) {
         super(node);
+    }
+
+    @KtImplementationDetail
+    public KtBinaryExpression(@NotNull KotlinPlaceHolderStub<KtBinaryExpression> stub) {
+        super(stub, KtStubBasedElementTypes.BINARY_EXPRESSION);
     }
 
     @Override
@@ -38,7 +45,13 @@ public class KtBinaryExpression extends KtExpressionImpl implements KtOperationE
 
     @Nullable @IfNotParsed
     public KtExpression getLeft() {
-        ASTNode node = getOperationReference().getNode().getTreePrev();
+        KtOperationReferenceExpression operationReference = getOperationReference();
+        KtExpression stubBasedOperand = operationReference.getStubBasedOperandBefore$org_jetbrains_kotlin_psi_api();
+        if (stubBasedOperand != null) {
+            return stubBasedOperand;
+        }
+
+        ASTNode node = operationReference.getNode().getTreePrev();
         while (node != null) {
             PsiElement psi = node.getPsi();
             if (psi instanceof KtExpression) {
@@ -52,7 +65,13 @@ public class KtBinaryExpression extends KtExpressionImpl implements KtOperationE
 
     @Nullable @IfNotParsed
     public KtExpression getRight() {
-        ASTNode node = getOperationReference().getNode().getTreeNext();
+        KtOperationReferenceExpression operationReference = getOperationReference();
+        KtExpression stubBasedOperand = operationReference.getStubBasedOperandAfter$org_jetbrains_kotlin_psi_api();
+        if (stubBasedOperand != null) {
+            return stubBasedOperand;
+        }
+
+        ASTNode node = operationReference.getNode().getTreeNext();
         while (node != null) {
             PsiElement psi = node.getPsi();
             if (psi instanceof KtExpression) {
@@ -67,7 +86,7 @@ public class KtBinaryExpression extends KtExpressionImpl implements KtOperationE
     @Override
     @NotNull
     public KtOperationReferenceExpression getOperationReference() {
-        KtOperationReferenceExpression operationReference = findChildByType(KtNodeTypes.OPERATION_REFERENCE);
+        KtOperationReferenceExpression operationReference = getOperationReferenceOrNull();
         if (operationReference == null) {
             KotlinExceptionWithAttachments exception = new KotlinExceptionWithAttachments(
                     "No operation reference for binary expression: " + Arrays.toString(getChildren()));
@@ -81,8 +100,14 @@ public class KtBinaryExpression extends KtExpressionImpl implements KtOperationE
     @KtPsiInconsistencyHandling
     @Nullable
     public IElementType getOperationTokenOrNull() {
-        KtOperationReferenceExpression type = findChildByType(KtNodeTypes.OPERATION_REFERENCE);
+        KtOperationReferenceExpression type = getOperationReferenceOrNull();
         return type != null ? type.getReferencedNameElementType() : null;
+    }
+
+    @Nullable
+    @SuppressWarnings("deprecation") // KT-78356
+    private KtOperationReferenceExpression getOperationReferenceOrNull() {
+        return getStubOrPsiChild(KtStubBasedElementTypes.OPERATION_REFERENCE);
     }
 
     @NotNull
@@ -97,4 +122,3 @@ public class KtBinaryExpression extends KtExpressionImpl implements KtOperationE
         return tokenOrNull;
     }
 }
-

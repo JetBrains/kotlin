@@ -2067,6 +2067,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
       }
 
       @Test
+      @TestMetadata("binaryOperatorTokens.kt")
+      public void testBinaryOperatorTokens() {
+        run("binaryOperatorTokens.kt");
+      }
+
+      @Test
       @TestMetadata("classLiterals.kt")
       public void testClassLiterals() {
         run("classLiterals.kt");

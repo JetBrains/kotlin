@@ -299,6 +299,10 @@ internal object KtStubBasedElementTypes {
         provider.postfixExpressionType
 
     @JvmField
+    val BINARY_EXPRESSION: KtStubElementType<out KotlinPlaceHolderStub<KtBinaryExpression>, KtBinaryExpression> =
+        provider.binaryExpressionType
+
+    @JvmField
     val CLASS_LITERAL_EXPRESSION: KtStubElementType<out KotlinClassLiteralExpressionStub, KtClassLiteralExpression> =
         provider.classLiteralExpressionType
 
