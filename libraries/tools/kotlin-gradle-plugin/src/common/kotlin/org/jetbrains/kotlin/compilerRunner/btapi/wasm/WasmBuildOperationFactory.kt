@@ -29,7 +29,7 @@ internal class WasmKlibBuildOperationFactory(private val compilerArgs: List<Stri
         val destination = Path(requireNotNull(args.outputDir))
         val compilationOperationBuilder =
             kotlinToolchains.wasm.wasmKlibCompilationOperationBuilder(extractSourceFiles(args.freeArgs), destination)
-        compilationOperationBuilder.compilerArguments.applyArgumentStrings(
+        compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false
             )
@@ -50,7 +50,7 @@ internal class WasmLinkingBuildOperationFactory(private val compilerArgs: List<S
         val destination = Path(requireNotNull(args.outputDir))
         val includes = Path(requireNotNull(args.includes))
         val compilationOperationBuilder = kotlinToolchains.wasm.wasmLinkingOperationBuilder(includes, destination)
-        compilationOperationBuilder.compilerArguments.applyArgumentStrings(
+        compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false
             )
