@@ -50,7 +50,10 @@ org.jetbrains.kotlin.KotlinElementTypeProvider.modifierListType
 org.jetbrains.kotlin.KotlinElementTypeProvider.nullType
 org.jetbrains.kotlin.KotlinElementTypeProvider.nullableTypeType
 org.jetbrains.kotlin.KotlinElementTypeProvider.objectType
+org.jetbrains.kotlin.KotlinElementTypeProvider.operationReferenceType
 org.jetbrains.kotlin.KotlinElementTypeProvider.packageDirectiveType
+org.jetbrains.kotlin.KotlinElementTypeProvider.postfixExpressionType
+org.jetbrains.kotlin.KotlinElementTypeProvider.prefixExpressionType
 org.jetbrains.kotlin.KotlinElementTypeProvider.primaryConstructorType
 org.jetbrains.kotlin.KotlinElementTypeProvider.propertyAccessorType
 org.jetbrains.kotlin.KotlinElementTypeProvider.propertyType
@@ -727,6 +730,8 @@ org.jetbrains.kotlin.psi.KtOperationExpression
 org.jetbrains.kotlin.psi.KtOperationExpression:getOperationReference()
 org.jetbrains.kotlin.psi.KtOperationReferenceExpression.isConventionOperator()
 org.jetbrains.kotlin.psi.KtOperationReferenceExpression.operationSignTokenType
+org.jetbrains.kotlin.psi.KtOperationReferenceExpression:constructor(ASTNode)
+org.jetbrains.kotlin.psi.KtOperationReferenceExpression:constructor(KotlinOperationReferenceExpressionStub)
 org.jetbrains.kotlin.psi.KtPackageDirective:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtPackageDirective:constructor(KotlinPlaceHolderStub<KtPackageDirective>)
 org.jetbrains.kotlin.psi.KtPackageDirective:getFqName()
@@ -762,7 +767,9 @@ org.jetbrains.kotlin.psi.KtParameterList:getTrailingComma()
 org.jetbrains.kotlin.psi.KtParenthesizedExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtParenthesizedExpression:getExpression()
 org.jetbrains.kotlin.psi.KtPostfixExpression:constructor(ASTNode)
+org.jetbrains.kotlin.psi.KtPostfixExpression:constructor(KotlinPlaceHolderStub<KtPostfixExpression>)
 org.jetbrains.kotlin.psi.KtPrefixExpression:constructor(ASTNode)
+org.jetbrains.kotlin.psi.KtPrefixExpression:constructor(KotlinPlaceHolderStub<KtPrefixExpression>)
 org.jetbrains.kotlin.psi.KtPrimaryConstructor.removeRedundantConstructorKeywordAndSpace()
 org.jetbrains.kotlin.psi.KtPrimaryConstructor:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtPrimaryConstructor:constructor(KotlinConstructorStub<KtPrimaryConstructor>)
@@ -1821,6 +1828,7 @@ org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub
 org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub.referencedName
 org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
 org.jetbrains.kotlin.psi.stubs.KotlinObjectStub.isObjectLiteral
+org.jetbrains.kotlin.psi.stubs.KotlinOperationReferenceExpressionStub
 org.jetbrains.kotlin.psi.stubs.KotlinParameterStub
 org.jetbrains.kotlin.psi.stubs.KotlinParameterStub.hasDefaultValue
 org.jetbrains.kotlin.psi.stubs.KotlinParameterStub.hasValOrVar

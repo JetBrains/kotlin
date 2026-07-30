@@ -96,6 +96,13 @@ public interface KtStubElementTypes {
     @NotNull KtNameReferenceExpressionElementType REFERENCE_EXPRESSION = new KtNameReferenceExpressionElementType("REFERENCE_EXPRESSION");
     @NotNull KtDotQualifiedExpressionElementType DOT_QUALIFIED_EXPRESSION = new KtDotQualifiedExpressionElementType("DOT_QUALIFIED_EXPRESSION");
     @NotNull KtPlaceHolderStubElementType<KtCallExpression> CALL_EXPRESSION = KtCallExpressionElementType.INSTANCE;
+    @NotNull KtOperationReferenceExpressionElementType OPERATION_REFERENCE = KtOperationReferenceExpressionElementType.INSTANCE;
+
+    @NotNull KtUnaryExpressionElementType<KtPrefixExpression> PREFIX_EXPRESSION =
+            new KtUnaryExpressionElementType<>("PREFIX_EXPRESSION", KtPrefixExpression.class);
+    @NotNull KtUnaryExpressionElementType<KtPostfixExpression> POSTFIX_EXPRESSION =
+            new KtUnaryExpressionElementType<>("POSTFIX_EXPRESSION", KtPostfixExpression.class);
+
     @NotNull KtEnumEntrySuperClassReferenceExpressionElementType ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION =
             new KtEnumEntrySuperClassReferenceExpressionElementType("ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION");
     @NotNull KtPlaceHolderStubElementType<KtTypeArgumentList> TYPE_ARGUMENT_LIST =

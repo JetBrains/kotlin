@@ -279,12 +279,24 @@ internal object KtStubBasedElementTypes {
         provider.enumEntrySuperclassReferenceExpressionType
 
     @JvmField
+    val OPERATION_REFERENCE: KtStubElementType<out KotlinOperationReferenceExpressionStub, KtOperationReferenceExpression> =
+        provider.operationReferenceType
+
+    @JvmField
     val DOT_QUALIFIED_EXPRESSION: KtStubElementType<out KotlinPlaceHolderStub<KtDotQualifiedExpression>, KtDotQualifiedExpression> =
         provider.dotQualifiedExpressionType
 
     @JvmField
     val CALL_EXPRESSION: KtStubElementType<out KotlinPlaceHolderStub<KtCallExpression>, KtCallExpression> =
         provider.callExpressionType
+
+    @JvmField
+    val PREFIX_EXPRESSION: KtStubElementType<out KotlinPlaceHolderStub<KtPrefixExpression>, KtPrefixExpression> =
+        provider.prefixExpressionType
+
+    @JvmField
+    val POSTFIX_EXPRESSION: KtStubElementType<out KotlinPlaceHolderStub<KtPostfixExpression>, KtPostfixExpression> =
+        provider.postfixExpressionType
 
     @JvmField
     val CLASS_LITERAL_EXPRESSION: KtStubElementType<out KotlinClassLiteralExpressionStub, KtClassLiteralExpression> =

@@ -40,6 +40,9 @@ public interface KtTokenSets {
             CALL_EXPRESSION,
             DOT_QUALIFIED_EXPRESSION,
 
+            PREFIX_EXPRESSION,
+            POSTFIX_EXPRESSION,
+
             STRING_TEMPLATE,
 
             CLASS_LITERAL_EXPRESSION,

@@ -110,7 +110,10 @@ org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:MODIFIER_LIST
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:NULL
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:NULLABLE_TYPE
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:OBJECT_DECLARATION
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:OPERATION_REFERENCE
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:PACKAGE_DIRECTIVE
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:POSTFIX_EXPRESSION
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:PREFIX_EXPRESSION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:PRIMARY_CONSTRUCTOR
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:PROPERTY
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:PROPERTY_ACCESSOR

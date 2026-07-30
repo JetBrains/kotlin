@@ -8,9 +8,14 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.TreeElement
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lang.BinaryOperationPrecedence
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.stubs.KotlinOperationReferenceExpressionStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 import org.jetbrains.kotlin.psi.utils.OperatorTokens
 import org.jetbrains.kotlin.resolution.KtResolvableCall
@@ -70,8 +75,16 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
  * @see KtBinaryExpression
  * @see KtUnaryExpression
  */
-@OptIn(KtExperimentalApi::class)
-class KtOperationReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl(node), KtResolvableCall {
+@OptIn(KtExperimentalApi::class, KtImplementationDetail::class)
+class KtOperationReferenceExpression :
+    KtExpressionImplStub<KotlinOperationReferenceExpressionStub>,
+    KtSimpleNameExpression,
+    KtResolvableCall {
+    constructor(node: ASTNode) : super(node)
+
+    @KtImplementationDetail
+    constructor(stub: KotlinOperationReferenceExpressionStub) : super(stub, KtStubBasedElementTypes.OPERATION_REFERENCE)
+
     private companion object {
         private val OPERATION_TOKENS: TokenSet = TokenSet.create(*buildList {
             addAll(KtTokenSets.POSTFIX_OPERATIONS.types)
@@ -82,10 +95,94 @@ class KtOperationReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl
         }.toTypedArray())
     }
 
+    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
+        return visitor.visitSimpleNameExpression(this, data)
+    }
+
+    override fun getReferencedName(): String {
+        val stub = greenStub
+        if (stub != null) {
+            return stub.referencedName
+        }
+
+        return KtSimpleNameExpressionImpl.getReferencedNameImpl(this)
+    }
+
+    override fun getReferencedNameAsName(): Name {
+        return KtSimpleNameExpressionImpl.getReferencedNameAsNameImpl(this)
+    }
+
+    override fun getReferencedNameElementType(): IElementType {
+        val stub = greenStub
+        if (stub != null) {
+            return stub.operationToken
+        }
+
+        return KtSimpleNameExpressionImpl.getReferencedNameElementTypeImpl(this)
+    }
+
+    override fun getIdentifier(): PsiElement? = findChildByType(KtTokens.IDENTIFIER)
+
     override fun getReferencedNameElement() = findChildByType<PsiElement?>(OPERATION_TOKENS) ?: this
 
+    /**
+     * The closest [KtExpression] sibling **before** this operation reference in the stub tree,
+     * or `null` if the element is not stub-based or the operand is not stub-based itself.
+     *
+     * Not every expression is stub-based (e.g., [KtParenthesizedExpression]), so `null` doesn't mean the absence of the operand.
+     * The caller has to fall back to the AST-based search in this case.
+     *
+     * @see KtPostfixExpression.getBaseExpression
+     * @see KtBinaryExpression.getLeft
+     */
+    internal val stubBasedOperandBefore: KtExpression?
+        get() = findStubBasedOperand(beforeOperation = true)
+
+    /**
+     * The closest [KtExpression] sibling **after** this operation reference in the stub tree,
+     * or `null` if the element is not stub-based or the operand is not stub-based itself.
+     *
+     * @see stubBasedOperandBefore
+     * @see KtPrefixExpression.getBaseExpression
+     * @see KtBinaryExpression.getRight
+     */
+    internal val stubBasedOperandAfter: KtExpression?
+        get() = findStubBasedOperand(beforeOperation = false)
+
+    private fun findStubBasedOperand(beforeOperation: Boolean): KtExpression? {
+        val siblings = stub?.parentStub?.childrenStubs ?: return null
+
+        var lastExpressionBeforeOperation: KtExpression? = null
+        var operationFound = false
+        for (sibling in siblings) {
+            when (val siblingPsi = sibling.psi) {
+                is KtOperationReferenceExpression -> {
+                    if (beforeOperation) {
+                        return lastExpressionBeforeOperation
+                    }
+
+                    operationFound = true
+                }
+
+                is KtExpression -> when {
+                    beforeOperation -> lastExpressionBeforeOperation = siblingPsi
+                    operationFound -> return siblingPsi
+                }
+            }
+        }
+
+        return null
+    }
+
     val operationSignTokenType: KtSingleValueToken?
-        get() = (firstChild as? TreeElement)?.elementType as? KtSingleValueToken
+        get() {
+            val stub = greenStub
+            if (stub != null) {
+                return stub.operationToken as? KtSingleValueToken
+            }
+
+            return (firstChild as? TreeElement)?.elementType as? KtSingleValueToken
+        }
 
     fun isConventionOperator(): Boolean {
         val tokenType = operationSignTokenType ?: return false

@@ -128,7 +128,7 @@ public interface KtNodeTypes {
 
     @NotNull IElementType REFERENCE_EXPRESSION     = KtStubBasedElementTypes.REFERENCE_EXPRESSION;
     @NotNull IElementType ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION = KtStubBasedElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION;
-    @NotNull IElementType OPERATION_REFERENCE       = new KtNodeType("OPERATION_REFERENCE", KtOperationReferenceExpression::new);
+    @NotNull IElementType OPERATION_REFERENCE       = KtStubBasedElementTypes.OPERATION_REFERENCE;
     @NotNull IElementType LABEL                     = new KtNodeType("LABEL", KtLabelReferenceExpression::new);
 
     @NotNull IElementType LABEL_QUALIFIER           = new KtNodeType("LABEL_QUALIFIER", KtContainerNode::new);
@@ -138,8 +138,8 @@ public interface KtNodeTypes {
     @NotNull IElementType BINARY_EXPRESSION         = new KtNodeType("BINARY_EXPRESSION", KtBinaryExpression::new);
     @NotNull IElementType BINARY_WITH_TYPE          = new KtNodeType("BINARY_WITH_TYPE", KtBinaryExpressionWithTypeRHS::new);
     @NotNull IElementType IS_EXPRESSION             = new KtNodeType("IS_EXPRESSION", KtIsExpression::new);
-    @NotNull IElementType PREFIX_EXPRESSION         = new KtNodeType("PREFIX_EXPRESSION", KtPrefixExpression::new);
-    @NotNull IElementType POSTFIX_EXPRESSION        = new KtNodeType("POSTFIX_EXPRESSION", KtPostfixExpression::new);
+    @NotNull IElementType PREFIX_EXPRESSION         = KtStubBasedElementTypes.PREFIX_EXPRESSION;
+    @NotNull IElementType POSTFIX_EXPRESSION        = KtStubBasedElementTypes.POSTFIX_EXPRESSION;
     @NotNull IElementType LABELED_EXPRESSION        = new KtNodeType("LABELED_EXPRESSION", KtLabeledExpression::new);
     @NotNull IElementType CALL_EXPRESSION           = KtStubBasedElementTypes.CALL_EXPRESSION;
     @NotNull IElementType ARRAY_ACCESS_EXPRESSION   = new KtNodeType("ARRAY_ACCESS_EXPRESSION", KtArrayAccessExpression::new);

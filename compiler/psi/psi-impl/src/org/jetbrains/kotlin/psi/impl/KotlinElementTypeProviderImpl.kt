@@ -230,6 +230,15 @@ object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val callExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtCallExpression>, KtCallExpression>
         get() = KtStubElementTypes.CALL_EXPRESSION
 
+    override val operationReferenceType: KtStubElementType<out KotlinOperationReferenceExpressionStub, KtOperationReferenceExpression>
+        get() = KtStubElementTypes.OPERATION_REFERENCE
+
+    override val prefixExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtPrefixExpression>, KtPrefixExpression>
+        get() = KtStubElementTypes.PREFIX_EXPRESSION
+
+    override val postfixExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtPostfixExpression>, KtPostfixExpression>
+        get() = KtStubElementTypes.POSTFIX_EXPRESSION
+
     override val classLiteralExpressionType: KtStubElementType<out KotlinClassLiteralExpressionStub, KtClassLiteralExpression>
         get() = KtStubElementTypes.CLASS_LITERAL_EXPRESSION
 

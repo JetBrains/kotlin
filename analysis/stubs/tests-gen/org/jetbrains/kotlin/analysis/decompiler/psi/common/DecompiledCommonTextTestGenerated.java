@@ -2109,6 +2109,12 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
       }
 
       @Test
+      @TestMetadata("postfixOperators.kt")
+      public void testPostfixOperators() {
+        run("postfixOperators.kt");
+      }
+
+      @Test
       @TestMetadata("qualifiedLiterals.kt")
       public void testQualifiedLiterals() {
         run("qualifiedLiterals.kt");
@@ -2124,6 +2130,12 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
       @TestMetadata("stringLiterals.kt")
       public void testStringLiterals() {
         run("stringLiterals.kt");
+      }
+
+      @Test
+      @TestMetadata("unaryOperators.kt")
+      public void testUnaryOperators() {
+        run("unaryOperators.kt");
       }
     }
   }

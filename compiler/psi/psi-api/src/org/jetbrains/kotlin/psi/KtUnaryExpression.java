@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
 import java.util.Objects;
@@ -32,9 +34,14 @@ import java.util.Objects;
  * @see KtPrefixExpression
  * @see KtPostfixExpression
  */
-public abstract class KtUnaryExpression extends KtExpressionImpl implements KtOperationExpression, KtResolvableCall {
+public abstract class KtUnaryExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<? extends KtUnaryExpression>>
+        implements KtOperationExpression, KtResolvableCall {
     public KtUnaryExpression(ASTNode node) {
         super(node);
+    }
+
+    protected KtUnaryExpression(@NotNull KotlinPlaceHolderStub<? extends KtUnaryExpression> stub, @NotNull IStubElementType nodeType) {
+        super(stub, nodeType);
     }
 
     @Nullable @IfNotParsed
@@ -42,8 +49,9 @@ public abstract class KtUnaryExpression extends KtExpressionImpl implements KtOp
 
     @Override
     @NotNull
-    public KtSimpleNameExpression getOperationReference() {
-        return Objects.requireNonNull(findChildByType(KtNodeTypes.OPERATION_REFERENCE));
+    @SuppressWarnings("deprecation") // KT-78356
+    public KtOperationReferenceExpression getOperationReference() {
+        return Objects.requireNonNull(getStubOrPsiChild(KtStubBasedElementTypes.OPERATION_REFERENCE));
     }
 
     public IElementType getOperationToken() {
