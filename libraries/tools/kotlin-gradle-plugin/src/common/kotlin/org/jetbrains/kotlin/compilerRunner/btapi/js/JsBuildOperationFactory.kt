@@ -36,7 +36,7 @@ internal class JsKlibBuildOperationFactory(private val compilerArgs: List<String
         @Suppress("DEPRECATION")
         args.irProduceKlibFile = null
 
-        compilationOperationBuilder.compilerArguments.applyArgumentStrings(
+        compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false
             )
@@ -62,7 +62,7 @@ internal class JsLinkingBuildOperationFactory(private val compilerArgs: List<Str
         args.irProduceJs = K2JSCompilerArguments().irProduceJs
         args.includes = null
 
-        compilationOperationBuilder.compilerArguments.applyArgumentStrings(
+        compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false
             )
