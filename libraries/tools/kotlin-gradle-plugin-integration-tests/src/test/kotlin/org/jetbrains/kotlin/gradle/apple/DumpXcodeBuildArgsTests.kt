@@ -486,6 +486,36 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
+    fun `KT-88106 - Firebase dump task fails when version key changes from exact to from`(version: GradleVersion) {
+        val useFromVersionKey = "useFromVersionKey"
+
+        project("empty", version) {
+            withLockFileFixture {
+                initSwiftPmProject(
+                    cacheDirFile,
+                    nativeTargets = {
+                        listOf(
+                            macosArm64()
+                        )
+                    }) {
+                    swiftPMDependencies {
+                        swiftPackage(
+                            url = url("https://github.com/firebase/firebase-ios-sdk.git"),
+                            version = if (project.hasProperty(useFromVersionKey)) from("12.9.0") else exact("12.9.0"),
+                            products = listOf(product("FirebaseFirestore")),
+                        )
+                    }
+                }
+
+                build("dumpXcodebuildArgsMacosx")
+
+                buildAndFail("dumpXcodebuildArgsMacosx", "-P$useFromVersionKey=true")
+            }
+        }
+    }
+
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
+    @GradleTest
     fun `KT-88104 - dump task does not fail after root build directory is removed`(version: GradleVersion) {
         val libraryProjectName = "lib1"
 
