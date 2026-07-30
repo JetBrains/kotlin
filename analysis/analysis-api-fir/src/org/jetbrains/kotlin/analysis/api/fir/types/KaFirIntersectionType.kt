@@ -35,7 +35,7 @@ internal class KaFirIntersectionType(
     @Deprecated(
         "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
         replaceWith = ReplaceWith("this.isMarkedNullable"),
-        level = DeprecationLevel.ERROR
+        level = DeprecationLevel.HIDDEN,
     )
     @Suppress("DEPRECATION_ERROR")
     override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.NON_NULLABLE }
