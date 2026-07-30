@@ -1,6 +1,7 @@
 KT element: KtSecondaryConstructor
 KT element text:
-@kotlin.PublishedApi internal constructor() { /* compiled code */ }
+@kotlin.PublishedApi
+    internal constructor() { /* compiled code */ }
 FIR element: FirConstructorImpl
 FIR source kind: KtRealSourceElementKind
 

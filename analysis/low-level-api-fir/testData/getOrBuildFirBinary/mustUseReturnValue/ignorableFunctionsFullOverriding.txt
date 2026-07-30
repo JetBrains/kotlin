@@ -3,7 +3,8 @@ KT element text:
 public interface X {
     public abstract fun x(): kotlin.String
 
-    @kotlin.IgnorableReturnValue public abstract fun ignorable(): kotlin.String
+    @kotlin.IgnorableReturnValue
+    public abstract fun ignorable(): kotlin.String
 
     public final class Impl public constructor() : X {
         public open fun x(): kotlin.String { /* compiled code */ }

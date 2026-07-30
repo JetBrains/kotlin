@@ -12,40 +12,46 @@ WithBackslash.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Escaped(s = "back\\slash", c = '\\') public final class WithBackslash public constructor() {
+  @Escaped(s = "back\\slash", c = '\\')
+  public final class WithBackslash public constructor() {
   }
 
 WithControlCharacters.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Escaped(s = "\n\t\r\b", c = '\n') public final class WithControlCharacters public constructor() {
+  @Escaped(s = "\n\t\r\b", c = '\n')
+  public final class WithControlCharacters public constructor() {
   }
 
 WithDollar.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Escaped(s = "\$notATemplate\${}", c = '\$') public final class WithDollar public constructor() {
+  @Escaped(s = "\$notATemplate\${}", c = '\$')
+  public final class WithDollar public constructor() {
   }
 
 WithMixedContent.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Escaped(s = "prefix\nsuffix", c = ' ') public final class WithMixedContent public constructor() {
+  @Escaped(s = "prefix\nsuffix", c = ' ')
+  public final class WithMixedContent public constructor() {
   }
 
 WithNonPrintableCharacters.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Escaped(s = "\u0001nonPrintable\u007F", c = '\u0001') public final class WithNonPrintableCharacters public constructor() {
+  @Escaped(s = "\u0001nonPrintable\u007F", c = '\u0001')
+  public final class WithNonPrintableCharacters public constructor() {
   }
 
 WithQuotes.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Escaped(s = "\"quoted\"", c = '\'') public final class WithQuotes public constructor() {
+  @Escaped(s = "\"quoted\"", c = '\'')
+  public final class WithQuotes public constructor() {
   }

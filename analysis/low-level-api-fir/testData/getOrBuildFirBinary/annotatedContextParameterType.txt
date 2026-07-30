@@ -1,10 +1,12 @@
 KT element: KtClass
 KT element text:
 public final class MyClass public constructor() {
-    context(@MyAnnotation _: @MyAnnotation ParameterizedInterface<@MyAnnotation kotlin.String>) public final val bar: kotlin.String /* compiled code */
+    context(@MyAnnotation _: @MyAnnotation ParameterizedInterface<@MyAnnotation kotlin.String>)
+    public final val bar: kotlin.String /* compiled code */
         public final get() { /* compiled code */ }
 
-    context(@MyAnnotation _: @MyAnnotation ParameterizedInterface<@MyAnnotation kotlin.String>) public final fun foo(): kotlin.Unit { /* compiled code */ }
+    context(@MyAnnotation _: @MyAnnotation ParameterizedInterface<@MyAnnotation kotlin.String>)
+    public final fun foo(): kotlin.Unit { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind

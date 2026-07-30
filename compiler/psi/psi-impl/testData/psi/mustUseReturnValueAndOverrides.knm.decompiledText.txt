@@ -6,10 +6,12 @@
       public abstract fun unspecified(): kotlin.String
   }
 
-  @kotlin.MustUseReturnValues public interface Base2 {
+  @kotlin.MustUseReturnValues
+  public interface Base2 {
       public abstract fun mustUse(): kotlin.String
 
-      @kotlin.IgnorableReturnValue public abstract fun ignorable(): kotlin.String
+      @kotlin.IgnorableReturnValue
+      public abstract fun ignorable(): kotlin.String
   }
 
 1_.knm:
@@ -26,8 +28,10 @@
       public open fun ignorable(): kotlin.String { /* compiled code */ }
   }
 
-  @kotlin.MustUseReturnValues public final class Impl3 public constructor() : Base2 {
+  @kotlin.MustUseReturnValues
+  public final class Impl3 public constructor() : Base2 {
       public open fun mustUse(): kotlin.String { /* compiled code */ }
 
-      @kotlin.IgnorableReturnValue public open fun ignorable(): kotlin.String { /* compiled code */ }
+      @kotlin.IgnorableReturnValue
+      public open fun ignorable(): kotlin.String { /* compiled code */ }
   }

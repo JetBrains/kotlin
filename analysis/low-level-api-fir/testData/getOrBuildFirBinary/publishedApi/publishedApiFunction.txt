@@ -1,6 +1,7 @@
 KT element: KtNamedFunction
 KT element text:
-@kotlin.PublishedApi internal fun published(): kotlin.String { /* compiled code */ }
+@kotlin.PublishedApi
+internal fun published(): kotlin.String { /* compiled code */ }
 FIR element: FirNamedFunctionImpl
 FIR source kind: KtRealSourceElementKind
 

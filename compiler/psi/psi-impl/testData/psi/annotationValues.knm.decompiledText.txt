@@ -6,25 +6,32 @@ package test
 public const val CONSTANT: kotlin.Int = COMPILED_CODE /* compiled code */
 
 public final class AnnotationValues public constructor() {
-    @test.Simple(i = 12, l = 12L, b = 12, b2 = 12, d = 3.3, f = 3.3F, c = 'a', bool1 = true, bool2 = false) public final class WithSimple public constructor() {
+    @test.Simple(i = 12, l = 12L, b = 12, b2 = 12, d = 3.3, f = 3.3F, c = 'a', bool1 = true, bool2 = false)
+    public final class WithSimple public constructor() {
     }
 
-    @test.StringLiteral(s1 = "some", s2 = "", s3 = "H12") public final class WithStringLiteral public constructor() {
+    @test.StringLiteral(s1 = "some", s2 = "", s3 = "H12")
+    public final class WithStringLiteral public constructor() {
     }
 
-    @test.EnumLiteral(e1 = test.E.E1, e2 = test.E.E2, e3 = test.E.E2) public final class WithEnumLiteral public constructor() {
+    @test.EnumLiteral(e1 = test.E.E1, e2 = test.E.E2, e3 = test.E.E2)
+    public final class WithEnumLiteral public constructor() {
     }
 
-    @test.VarArg(v = [1, 2, 3]) public final class WithVarArg public constructor() {
+    @test.VarArg(v = [1, 2, 3])
+    public final class WithVarArg public constructor() {
     }
 
-    @test.Arrays(ia = [1, 2, 3], la = [1L], fa = [], da = [2.2], ca = ['a'], ba = [true, false]) public final class WithArrays public constructor() {
+    @test.Arrays(ia = [1, 2, 3], la = [1L], fa = [], da = [2.2], ca = ['a'], ba = [true, false])
+    public final class WithArrays public constructor() {
     }
 
-    @test.ClassLiteral(c1 = test.AnnotationValues.WithClassLiteral::class, c2 = kotlin.String::class) public final class WithClassLiteral<T> public constructor() {
+    @test.ClassLiteral(c1 = test.AnnotationValues.WithClassLiteral::class, c2 = kotlin.String::class)
+    public final class WithClassLiteral<T> public constructor() {
     }
 
-    @test.Outer(some = "value", nested = test.Nested(i = 12, s = "nested value")) public final class WithNested public constructor() {
+    @test.Outer(some = "value", nested = test.Nested(i = 12, s = "nested value"))
+    public final class WithNested public constructor() {
     }
 }
 

@@ -33,7 +33,8 @@ public final class AnnotationsOnNullableTypes public constructor() {
     public final fun (@receiver:A (() -> kotlin.Unit)?).functionWithAnnotatedReceiver3(): kotlin.Unit { /* compiled code */ }
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER]) public final annotation class A public constructor() : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER])
+public final annotation class A public constructor() : kotlin.Annotation {
 }
 
 public interface B<T> {

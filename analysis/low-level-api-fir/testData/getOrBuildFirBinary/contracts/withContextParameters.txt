@@ -1,6 +1,7 @@
 KT element: KtNamedFunction
 KT element text:
-context(a: kotlin.Boolean?) public fun conditionInContext(): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }
+context(a: kotlin.Boolean?)
+public fun conditionInContext(): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }
 FIR element: FirNamedFunctionImpl
 FIR source kind: KtRealSourceElementKind
 

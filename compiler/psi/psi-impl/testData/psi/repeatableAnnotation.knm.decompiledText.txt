@@ -2,16 +2,23 @@
 // Implementation of methods is not available
 
 public final class RepeatableAnnotation public constructor() {
-    @MyRepeatableAnnotation(index = 1) public final class ClassWithOneRepeatableAnnotation public constructor() {
+    @MyRepeatableAnnotation(index = 1)
+    public final class ClassWithOneRepeatableAnnotation public constructor() {
     }
 
-    @MyRepeatableAnnotation(index = 1) @MyRepeatableAnnotation(index = 2) public final class ClassWithTwoRepeatableAnnotations public constructor() {
+    @MyRepeatableAnnotation(index = 1)
+    @MyRepeatableAnnotation(index = 2)
+    public final class ClassWithTwoRepeatableAnnotations public constructor() {
     }
 
-    @MyRepeatableAnnotation(index = 1) @MyRepeatableAnnotation(index = 2) @MyRepeatableAnnotation(index = 3) public final class ClassWithThreeRepeatableAnnotations public constructor() {
+    @MyRepeatableAnnotation(index = 1)
+    @MyRepeatableAnnotation(index = 2)
+    @MyRepeatableAnnotation(index = 3)
+    public final class ClassWithThreeRepeatableAnnotations public constructor() {
     }
 }
 
-@kotlin.annotation.Repeatable public final annotation class MyRepeatableAnnotation public constructor(index: kotlin.Int) : kotlin.Annotation {
+@kotlin.annotation.Repeatable
+public final annotation class MyRepeatableAnnotation public constructor(index: kotlin.Int) : kotlin.Annotation {
     public final val index: kotlin.Int /* compiled code */
 }

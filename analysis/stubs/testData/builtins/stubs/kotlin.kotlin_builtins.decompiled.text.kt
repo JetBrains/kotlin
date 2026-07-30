@@ -17,9 +17,11 @@ public fun doubleArrayOf(vararg elements: kotlin.Double): kotlin.DoubleArray { /
 
 public inline fun <reified T> emptyArray(): kotlin.Array<T> { /* compiled code */ }
 
-@kotlin.SinceKotlin(version = "1.1") public inline fun <reified T : kotlin.Enum<T>> enumValueOf(name: kotlin.String): T { /* compiled code */ }
+@kotlin.SinceKotlin(version = "1.1")
+public inline fun <reified T : kotlin.Enum<T>> enumValueOf(name: kotlin.String): T { /* compiled code */ }
 
-@kotlin.SinceKotlin(version = "1.1") public inline fun <reified T : kotlin.Enum<T>> enumValues(): kotlin.Array<T> { /* compiled code */ }
+@kotlin.SinceKotlin(version = "1.1")
+public inline fun <reified T : kotlin.Enum<T>> enumValues(): kotlin.Array<T> { /* compiled code */ }
 
 public fun floatArrayOf(vararg elements: kotlin.Float): kotlin.FloatArray { /* compiled code */ }
 
@@ -57,22 +59,30 @@ public final class Array<T> {
 }
 
 public final class Boolean private constructor() : kotlin.Comparable<kotlin.Boolean> {
-    @kotlin.SinceKotlin(version = "1.3") public companion object {
+    @kotlin.SinceKotlin(version = "1.3")
+    public companion object {
     }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun not(): kotlin.Boolean { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun not(): kotlin.Boolean { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final infix fun and(other: kotlin.Boolean): kotlin.Boolean { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final infix fun and(other: kotlin.Boolean): kotlin.Boolean { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final infix fun or(other: kotlin.Boolean): kotlin.Boolean { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final infix fun or(other: kotlin.Boolean): kotlin.Boolean { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final infix fun xor(other: kotlin.Boolean): kotlin.Boolean { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final infix fun xor(other: kotlin.Boolean): kotlin.Boolean { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun compareTo(other: kotlin.Boolean): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun compareTo(other: kotlin.Boolean): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toString(): kotlin.String { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toString(): kotlin.String { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 
     public open fun hashCode(): kotlin.Int { /* compiled code */ }
 }
@@ -95,90 +105,136 @@ public final class Byte private constructor() : kotlin.Number, kotlin.Comparable
 
         public const val MAX_VALUE: kotlin.Byte = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin(version = "1.3") public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin(version = "1.3")
+        public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin(version = "1.3") public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin(version = "1.3")
+        public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
     }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun compareTo(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun compareTo(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Long): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Long): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Float): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Float): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Double): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Double): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
     public final operator fun inc(): kotlin.Byte { /* compiled code */ }
 
     public final operator fun dec(): kotlin.Byte { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun unaryPlus(): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun unaryPlus(): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun unaryMinus(): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun unaryMinus(): kotlin.Int { /* compiled code */ }
 
     public final operator fun rangeTo(other: kotlin.Byte): kotlin.ranges.IntRange { /* compiled code */ }
 
@@ -188,31 +244,50 @@ public final class Byte private constructor() : kotlin.Number, kotlin.Comparable
 
     public final operator fun rangeTo(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.9") @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class]) public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.IntRange { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
+    public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.IntRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.9") @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class]) public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
+    public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.9") @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class]) public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
+    public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.9") @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class]) public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
+    public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toByte(): kotlin.Byte { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toByte(): kotlin.Byte { /* compiled code */ }
 
-    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = [])) @kotlin.DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3") @kotlin.internal.IntrinsicConstEvaluation public open fun toChar(): kotlin.Char { /* compiled code */ }
+    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = []))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toChar(): kotlin.Char { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toShort(): kotlin.Short { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toShort(): kotlin.Short { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toInt(): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toInt(): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toLong(): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toLong(): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toFloat(): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toFloat(): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toDouble(): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toDouble(): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toString(): kotlin.String { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toString(): kotlin.String { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 }
 
 public final class ByteArray public constructor(size: kotlin.Int) {
@@ -229,9 +304,11 @@ public final class ByteArray public constructor(size: kotlin.Int) {
 
 public final class Char private constructor() : kotlin.Comparable<kotlin.Char> {
     public companion object {
-        @kotlin.SinceKotlin(version = "1.3") public const val MIN_VALUE: kotlin.Char = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin(version = "1.3")
+        public const val MIN_VALUE: kotlin.Char = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin(version = "1.3") public const val MAX_VALUE: kotlin.Char = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin(version = "1.3")
+        public const val MAX_VALUE: kotlin.Char = COMPILED_CODE /* compiled code */
 
         public const val MIN_HIGH_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
 
@@ -245,18 +322,24 @@ public final class Char private constructor() : kotlin.Comparable<kotlin.Char> {
 
         public const val MAX_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin(version = "1.3") public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin(version = "1.3")
+        public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin(version = "1.3") public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin(version = "1.3")
+        public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
     }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun compareTo(other: kotlin.Char): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun compareTo(other: kotlin.Char): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Int): kotlin.Char { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Int): kotlin.Char { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Char): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Char): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Int): kotlin.Char { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Int): kotlin.Char { /* compiled code */ }
 
     public final operator fun inc(): kotlin.Char { /* compiled code */ }
 
@@ -264,25 +347,48 @@ public final class Char private constructor() : kotlin.Comparable<kotlin.Char> {
 
     public final operator fun rangeTo(other: kotlin.Char): kotlin.ranges.CharRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.9") @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class]) public final operator fun rangeUntil(other: kotlin.Char): kotlin.ranges.CharRange { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
+    public final operator fun rangeUntil(other: kotlin.Char): kotlin.ranges.CharRange { /* compiled code */ }
 
-    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toByte()", imports = [])) @kotlin.DeprecatedSinceKotlin(warningSince = "1.5") @kotlin.internal.IntrinsicConstEvaluation public final fun toByte(): kotlin.Byte { /* compiled code */ }
+    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toByte()", imports = []))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final fun toByte(): kotlin.Byte { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final fun toChar(): kotlin.Char { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final fun toChar(): kotlin.Char { /* compiled code */ }
 
-    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toShort()", imports = [])) @kotlin.DeprecatedSinceKotlin(warningSince = "1.5") @kotlin.internal.IntrinsicConstEvaluation public final fun toShort(): kotlin.Short { /* compiled code */ }
+    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toShort()", imports = []))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final fun toShort(): kotlin.Short { /* compiled code */ }
 
-    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code", imports = [])) @kotlin.DeprecatedSinceKotlin(warningSince = "1.5") @kotlin.internal.IntrinsicConstEvaluation public final fun toInt(): kotlin.Int { /* compiled code */ }
+    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code", imports = []))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final fun toInt(): kotlin.Int { /* compiled code */ }
 
-    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toLong()", imports = [])) @kotlin.DeprecatedSinceKotlin(warningSince = "1.5") @kotlin.internal.IntrinsicConstEvaluation public final fun toLong(): kotlin.Long { /* compiled code */ }
+    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toLong()", imports = []))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final fun toLong(): kotlin.Long { /* compiled code */ }
 
-    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toFloat()", imports = [])) @kotlin.DeprecatedSinceKotlin(warningSince = "1.5") @kotlin.internal.IntrinsicConstEvaluation public final fun toFloat(): kotlin.Float { /* compiled code */ }
+    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toFloat()", imports = []))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final fun toFloat(): kotlin.Float { /* compiled code */ }
 
-    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toDouble()", imports = [])) @kotlin.DeprecatedSinceKotlin(warningSince = "1.5") @kotlin.internal.IntrinsicConstEvaluation public final fun toDouble(): kotlin.Double { /* compiled code */ }
+    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toDouble()", imports = []))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final fun toDouble(): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toString(): kotlin.String { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toString(): kotlin.String { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 
     public open fun hashCode(): kotlin.Int { /* compiled code */ }
 }
@@ -311,11 +417,16 @@ public interface Comparable<in T> {
     public abstract operator fun compareTo(other: T): kotlin.Int
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE]) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "1.7") public final annotation class ContextFunctionTypeParams public constructor(count: kotlin.Int) : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
+@kotlin.annotation.MustBeDocumented
+@kotlin.SinceKotlin(version = "1.7")
+public final annotation class ContextFunctionTypeParams public constructor(count: kotlin.Int) : kotlin.Annotation {
     public final val count: kotlin.Int /* compiled code */
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.TYPEALIAS]) @kotlin.annotation.MustBeDocumented public final annotation class Deprecated public constructor(message: kotlin.String, replaceWith: kotlin.ReplaceWith = COMPILED_CODE, level: kotlin.DeprecationLevel = COMPILED_CODE) : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.TYPEALIAS])
+@kotlin.annotation.MustBeDocumented
+public final annotation class Deprecated public constructor(message: kotlin.String, replaceWith: kotlin.ReplaceWith = COMPILED_CODE, level: kotlin.DeprecationLevel = COMPILED_CODE) : kotlin.Annotation {
     public final val message: kotlin.String /* compiled code */
 
     public final val replaceWith: kotlin.ReplaceWith /* compiled code */
@@ -323,7 +434,10 @@ public interface Comparable<in T> {
     public final val level: kotlin.DeprecationLevel /* compiled code */
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.TYPEALIAS]) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "1.4") public final annotation class DeprecatedSinceKotlin public constructor(warningSince: kotlin.String = COMPILED_CODE, errorSince: kotlin.String = COMPILED_CODE, hiddenSince: kotlin.String = COMPILED_CODE) : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.TYPEALIAS])
+@kotlin.annotation.MustBeDocumented
+@kotlin.SinceKotlin(version = "1.4")
+public final annotation class DeprecatedSinceKotlin public constructor(warningSince: kotlin.String = COMPILED_CODE, errorSince: kotlin.String = COMPILED_CODE, hiddenSince: kotlin.String = COMPILED_CODE) : kotlin.Annotation {
     public final val warningSince: kotlin.String /* compiled code */
 
     public final val errorSince: kotlin.String /* compiled code */
@@ -351,108 +465,169 @@ public final class Double private constructor() : kotlin.Number, kotlin.Comparab
 
         public const val NaN: kotlin.Double = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin(version = "1.4") public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin(version = "1.4")
+        public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin(version = "1.4") public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin(version = "1.4")
+        public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
     }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Long): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Long): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Float): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Float): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun compareTo(other: kotlin.Double): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun compareTo(other: kotlin.Double): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Byte): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Byte): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Short): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Short): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Int): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Int): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Long): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Long): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Float): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Float): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Byte): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Byte): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Short): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Short): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Int): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Int): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Long): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Long): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Float): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Float): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Byte): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Byte): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Short): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Short): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Int): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Int): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Long): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Long): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Float): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Float): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Byte): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Byte): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Short): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Short): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Int): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Int): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Long): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Long): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Float): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Float): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Byte): kotlin.Double { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Byte): kotlin.Double { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Short): kotlin.Double { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Short): kotlin.Double { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Int): kotlin.Double { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Int): kotlin.Double { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Long): kotlin.Double { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Long): kotlin.Double { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Float): kotlin.Double { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Float): kotlin.Double { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
     public final operator fun inc(): kotlin.Double { /* compiled code */ }
 
     public final operator fun dec(): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun unaryPlus(): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun unaryPlus(): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun unaryMinus(): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun unaryMinus(): kotlin.Double { /* compiled code */ }
 
-    @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toByte()", imports = [])) @kotlin.DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5") @kotlin.internal.IntrinsicConstEvaluation public open fun toByte(): kotlin.Byte { /* compiled code */ }
+    @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toByte()", imports = []))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toByte(): kotlin.Byte { /* compiled code */ }
 
-    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = [])) @kotlin.DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3") @kotlin.internal.IntrinsicConstEvaluation public open fun toChar(): kotlin.Char { /* compiled code */ }
+    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = []))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toChar(): kotlin.Char { /* compiled code */ }
 
-    @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toShort()", imports = [])) @kotlin.DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5") @kotlin.internal.IntrinsicConstEvaluation public open fun toShort(): kotlin.Short { /* compiled code */ }
+    @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toShort()", imports = []))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toShort(): kotlin.Short { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toInt(): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toInt(): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toLong(): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toLong(): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toFloat(): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toFloat(): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toDouble(): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toDouble(): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toString(): kotlin.String { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toString(): kotlin.String { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 }
 
 public final class DoubleArray public constructor(size: kotlin.Int) {
@@ -467,14 +642,19 @@ public final class DoubleArray public constructor(size: kotlin.Int) {
     public final operator fun iterator(): kotlin.collections.DoubleIterator { /* compiled code */ }
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS]) @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "1.1") public final annotation class DslMarker public constructor() : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS])
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
+@kotlin.annotation.MustBeDocumented
+@kotlin.SinceKotlin(version = "1.1")
+public final annotation class DslMarker public constructor() : kotlin.Annotation {
 }
 
 public abstract class Enum<E : kotlin.Enum<E>> public constructor(name: kotlin.String, ordinal: kotlin.Int) : kotlin.Comparable<E> {
     public companion object {
     }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final val name: kotlin.String /* compiled code */
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final val name: kotlin.String /* compiled code */
 
     public final val ordinal: kotlin.Int /* compiled code */
 
@@ -489,17 +669,31 @@ public abstract class Enum<E : kotlin.Enum<E>> public constructor(name: kotlin.S
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.VALUE_PARAMETER]) @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY) @kotlin.SinceKotlin(version = "2.5") public final annotation class EqualityBound public constructor(bound: kotlin.reflect.KClass<*>) : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.VALUE_PARAMETER])
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
+@kotlin.SinceKotlin(version = "2.5")
+public final annotation class EqualityBound public constructor(bound: kotlin.reflect.KClass<*>) : kotlin.Annotation {
     public final val bound: kotlin.reflect.KClass<*> /* compiled code */
 }
 
-@kotlin.RequiresOptIn(level = kotlin.RequiresOptIn.Level.ERROR) @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FIELD, kotlin.annotation.AnnotationTarget.LOCAL_VARIABLE, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.TYPEALIAS]) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "1.3") public final annotation class ExperimentalStdlibApi public constructor() : kotlin.Annotation {
+@kotlin.RequiresOptIn(level = kotlin.RequiresOptIn.Level.ERROR)
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FIELD, kotlin.annotation.AnnotationTarget.LOCAL_VARIABLE, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.TYPEALIAS])
+@kotlin.annotation.MustBeDocumented
+@kotlin.SinceKotlin(version = "1.3")
+public final annotation class ExperimentalStdlibApi public constructor() : kotlin.Annotation {
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS]) @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY) @kotlin.SinceKotlin(version = "1.8") @kotlin.RequiresOptIn public final annotation class ExperimentalSubclassOptIn public constructor() : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS])
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
+@kotlin.SinceKotlin(version = "1.8")
+@kotlin.RequiresOptIn
+public final annotation class ExperimentalSubclassOptIn public constructor() : kotlin.Annotation {
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE]) @kotlin.annotation.MustBeDocumented public final annotation class ExtensionFunctionType public constructor() : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
+@kotlin.annotation.MustBeDocumented
+public final annotation class ExtensionFunctionType public constructor() : kotlin.Annotation {
 }
 
 public final class Float private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Float> {
@@ -514,108 +708,169 @@ public final class Float private constructor() : kotlin.Number, kotlin.Comparabl
 
         public const val NaN: kotlin.Float = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin(version = "1.4") public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin(version = "1.4")
+        public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin(version = "1.4") public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin(version = "1.4")
+        public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
     }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Long): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Long): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun compareTo(other: kotlin.Float): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun compareTo(other: kotlin.Float): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Double): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Double): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Byte): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Byte): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Short): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Short): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Int): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Int): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Long): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Long): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Byte): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Byte): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Short): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Short): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Int): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Int): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Long): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Long): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Byte): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Byte): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Short): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Short): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Int): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Int): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Long): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Long): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Byte): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Byte): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Short): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Short): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Int): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Int): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Long): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Long): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Byte): kotlin.Float { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Byte): kotlin.Float { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Short): kotlin.Float { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Short): kotlin.Float { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Int): kotlin.Float { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Int): kotlin.Float { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Long): kotlin.Float { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Long): kotlin.Float { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
     public final operator fun inc(): kotlin.Float { /* compiled code */ }
 
     public final operator fun dec(): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun unaryPlus(): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun unaryPlus(): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun unaryMinus(): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun unaryMinus(): kotlin.Float { /* compiled code */ }
 
-    @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toByte()", imports = [])) @kotlin.DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5") @kotlin.internal.IntrinsicConstEvaluation public open fun toByte(): kotlin.Byte { /* compiled code */ }
+    @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toByte()", imports = []))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toByte(): kotlin.Byte { /* compiled code */ }
 
-    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = [])) @kotlin.DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3") @kotlin.internal.IntrinsicConstEvaluation public open fun toChar(): kotlin.Char { /* compiled code */ }
+    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = []))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toChar(): kotlin.Char { /* compiled code */ }
 
-    @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toShort()", imports = [])) @kotlin.DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5") @kotlin.internal.IntrinsicConstEvaluation public open fun toShort(): kotlin.Short { /* compiled code */ }
+    @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toShort()", imports = []))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toShort(): kotlin.Short { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toInt(): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toInt(): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toLong(): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toLong(): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toFloat(): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toFloat(): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toDouble(): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toDouble(): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toString(): kotlin.String { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toString(): kotlin.String { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 }
 
 public final class FloatArray public constructor(size: kotlin.Int) {
@@ -633,7 +888,10 @@ public final class FloatArray public constructor(size: kotlin.Int) {
 public interface Function<out R> {
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.FUNCTION]) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "2.3") public final annotation class IgnorableReturnValue public constructor() : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.FUNCTION])
+@kotlin.annotation.MustBeDocumented
+@kotlin.SinceKotlin(version = "2.3")
+public final annotation class IgnorableReturnValue public constructor() : kotlin.Annotation {
 }
 
 public final class Int private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Int> {
@@ -642,90 +900,136 @@ public final class Int private constructor() : kotlin.Number, kotlin.Comparable<
 
         public const val MAX_VALUE: kotlin.Int = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin(version = "1.3") public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin(version = "1.3")
+        public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin(version = "1.3") public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin(version = "1.3")
+        public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
     }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun compareTo(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun compareTo(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Long): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Long): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Float): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Float): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Double): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Double): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
     public final operator fun inc(): kotlin.Int { /* compiled code */ }
 
     public final operator fun dec(): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun unaryPlus(): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun unaryPlus(): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun unaryMinus(): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun unaryMinus(): kotlin.Int { /* compiled code */ }
 
     public final operator fun rangeTo(other: kotlin.Byte): kotlin.ranges.IntRange { /* compiled code */ }
 
@@ -735,45 +1039,69 @@ public final class Int private constructor() : kotlin.Number, kotlin.Comparable<
 
     public final operator fun rangeTo(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.9") @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class]) public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.IntRange { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
+    public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.IntRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.9") @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class]) public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
+    public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.9") @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class]) public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
+    public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.9") @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class]) public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
+    public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final infix fun shl(bitCount: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final infix fun shl(bitCount: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final infix fun shr(bitCount: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final infix fun shr(bitCount: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final infix fun ushr(bitCount: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final infix fun ushr(bitCount: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final infix fun and(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final infix fun and(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final infix fun or(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final infix fun or(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final infix fun xor(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final infix fun xor(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final fun inv(): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final fun inv(): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toByte(): kotlin.Byte { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toByte(): kotlin.Byte { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toChar(): kotlin.Char { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toChar(): kotlin.Char { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toShort(): kotlin.Short { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toShort(): kotlin.Short { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toInt(): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toInt(): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toLong(): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toLong(): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toFloat(): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toFloat(): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toDouble(): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toDouble(): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toString(): kotlin.String { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toString(): kotlin.String { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 }
 
 public final class IntArray public constructor(size: kotlin.Int) {
@@ -794,90 +1122,136 @@ public final class Long private constructor() : kotlin.Number, kotlin.Comparable
 
         public const val MAX_VALUE: kotlin.Long = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin(version = "1.3") public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin(version = "1.3")
+        public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin(version = "1.3") public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin(version = "1.3")
+        public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
     }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun compareTo(other: kotlin.Long): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun compareTo(other: kotlin.Long): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Float): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Float): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Double): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Double): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Byte): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Byte): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Short): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Short): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Int): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Int): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Byte): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Byte): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Short): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Short): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Int): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Int): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Byte): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Byte): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Short): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Short): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Int): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Int): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Byte): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Byte): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Short): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Short): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Int): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Int): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Byte): kotlin.Long { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Byte): kotlin.Long { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Short): kotlin.Long { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Short): kotlin.Long { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Int): kotlin.Long { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Int): kotlin.Long { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
     public final operator fun inc(): kotlin.Long { /* compiled code */ }
 
     public final operator fun dec(): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun unaryPlus(): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun unaryPlus(): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun unaryMinus(): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun unaryMinus(): kotlin.Long { /* compiled code */ }
 
     public final operator fun rangeTo(other: kotlin.Byte): kotlin.ranges.LongRange { /* compiled code */ }
 
@@ -887,45 +1261,71 @@ public final class Long private constructor() : kotlin.Number, kotlin.Comparable
 
     public final operator fun rangeTo(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.9") @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class]) public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.LongRange { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
+    public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.LongRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.9") @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class]) public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.LongRange { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
+    public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.LongRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.9") @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class]) public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.LongRange { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
+    public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.LongRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.9") @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class]) public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
+    public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final infix fun shl(bitCount: kotlin.Int): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final infix fun shl(bitCount: kotlin.Int): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final infix fun shr(bitCount: kotlin.Int): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final infix fun shr(bitCount: kotlin.Int): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final infix fun ushr(bitCount: kotlin.Int): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final infix fun ushr(bitCount: kotlin.Int): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final infix fun and(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final infix fun and(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final infix fun or(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final infix fun or(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final infix fun xor(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final infix fun xor(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final fun inv(): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final fun inv(): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toByte(): kotlin.Byte { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toByte(): kotlin.Byte { /* compiled code */ }
 
-    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = [])) @kotlin.DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3") @kotlin.internal.IntrinsicConstEvaluation public open fun toChar(): kotlin.Char { /* compiled code */ }
+    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = []))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toChar(): kotlin.Char { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toShort(): kotlin.Short { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toShort(): kotlin.Short { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toInt(): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toInt(): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toLong(): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toLong(): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toFloat(): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toFloat(): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toDouble(): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toDouble(): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toString(): kotlin.String { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toString(): kotlin.String { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 }
 
 public final class LongArray public constructor(size: kotlin.Int) {
@@ -940,7 +1340,9 @@ public final class LongArray public constructor(size: kotlin.Int) {
     public final operator fun iterator(): kotlin.collections.LongIterator { /* compiled code */ }
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.FILE, kotlin.annotation.AnnotationTarget.CLASS]) @kotlin.SinceKotlin(version = "2.3") public final annotation class MustUseReturnValues public constructor() : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.FILE, kotlin.annotation.AnnotationTarget.CLASS])
+@kotlin.SinceKotlin(version = "2.3")
+public final annotation class MustUseReturnValues public constructor() : kotlin.Annotation {
 }
 
 public final class Nothing private constructor() {
@@ -955,31 +1357,50 @@ public abstract class Number public constructor() {
 
     public abstract fun toInt(): kotlin.Int
 
-    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.\nIf you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.\nSee https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = [])) @kotlin.DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.3") public open fun toChar(): kotlin.Char { /* compiled code */ }
+    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.\nIf you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.\nSee https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = []))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.3")
+    public open fun toChar(): kotlin.Char { /* compiled code */ }
 
     public abstract fun toShort(): kotlin.Short
 
     public abstract fun toByte(): kotlin.Byte
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.LOCAL_VARIABLE, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.EXPRESSION, kotlin.annotation.AnnotationTarget.FILE, kotlin.annotation.AnnotationTarget.TYPEALIAS]) @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE) @kotlin.SinceKotlin(version = "1.3") public final annotation class OptIn public constructor(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>) : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.LOCAL_VARIABLE, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.EXPRESSION, kotlin.annotation.AnnotationTarget.FILE, kotlin.annotation.AnnotationTarget.TYPEALIAS])
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+@kotlin.SinceKotlin(version = "1.3")
+public final annotation class OptIn public constructor(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>) : kotlin.Annotation {
     public final val markerClass: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> /* compiled code */
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE]) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "1.1") public final annotation class ParameterName public constructor(name: kotlin.String) : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
+@kotlin.annotation.MustBeDocumented
+@kotlin.SinceKotlin(version = "1.1")
+public final annotation class ParameterName public constructor(name: kotlin.String) : kotlin.Annotation {
     public final val name: kotlin.String /* compiled code */
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY]) @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "1.1") public final annotation class PublishedApi public constructor() : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY])
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
+@kotlin.annotation.MustBeDocumented
+@kotlin.SinceKotlin(version = "1.1")
+public final annotation class PublishedApi public constructor() : kotlin.Annotation {
 }
 
-@kotlin.annotation.Target(allowedTargets = []) @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented public final annotation class ReplaceWith public constructor(expression: kotlin.String, vararg imports: kotlin.String) : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [])
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
+@kotlin.annotation.MustBeDocumented
+public final annotation class ReplaceWith public constructor(expression: kotlin.String, vararg imports: kotlin.String) : kotlin.Annotation {
     public final val expression: kotlin.String /* compiled code */
 
     public final val imports: kotlin.Array<out kotlin.String> /* compiled code */
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS]) @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "1.3") public final annotation class RequiresOptIn public constructor(message: kotlin.String = COMPILED_CODE, level: kotlin.RequiresOptIn.Level = COMPILED_CODE) : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS])
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
+@kotlin.annotation.MustBeDocumented
+@kotlin.SinceKotlin(version = "1.3")
+public final annotation class RequiresOptIn public constructor(message: kotlin.String = COMPILED_CODE, level: kotlin.RequiresOptIn.Level = COMPILED_CODE) : kotlin.Annotation {
     public final val message: kotlin.String /* compiled code */
 
     public final val level: kotlin.RequiresOptIn.Level /* compiled code */
@@ -997,90 +1418,136 @@ public final class Short private constructor() : kotlin.Number, kotlin.Comparabl
 
         public const val MAX_VALUE: kotlin.Short = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin(version = "1.3") public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin(version = "1.3")
+        public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin(version = "1.3") public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin(version = "1.3")
+        public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
     }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun compareTo(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun compareTo(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Long): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Long): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Float): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Float): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Double): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun compareTo(other: kotlin.Double): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun minus(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun times(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun times(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun div(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Short): kotlin.Int { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Int): kotlin.Int { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Long): kotlin.Long { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Long): kotlin.Long { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Float): kotlin.Float { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Float): kotlin.Float { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Double): kotlin.Double { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.1")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun rem(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
     public final operator fun inc(): kotlin.Short { /* compiled code */ }
 
     public final operator fun dec(): kotlin.Short { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun unaryPlus(): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun unaryPlus(): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun unaryMinus(): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun unaryMinus(): kotlin.Int { /* compiled code */ }
 
     public final operator fun rangeTo(other: kotlin.Byte): kotlin.ranges.IntRange { /* compiled code */ }
 
@@ -1090,31 +1557,50 @@ public final class Short private constructor() : kotlin.Number, kotlin.Comparabl
 
     public final operator fun rangeTo(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.9") @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class]) public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.IntRange { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
+    public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.IntRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.9") @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class]) public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
+    public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.9") @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class]) public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
+    public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange { /* compiled code */ }
 
-    @kotlin.SinceKotlin(version = "1.9") @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class]) public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
+    public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toByte(): kotlin.Byte { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toByte(): kotlin.Byte { /* compiled code */ }
 
-    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = [])) @kotlin.DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3") @kotlin.internal.IntrinsicConstEvaluation public open fun toChar(): kotlin.Char { /* compiled code */ }
+    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = []))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toChar(): kotlin.Char { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toShort(): kotlin.Short { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toShort(): kotlin.Short { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toInt(): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toInt(): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toLong(): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toLong(): kotlin.Long { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toFloat(): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toFloat(): kotlin.Float { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toDouble(): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toDouble(): kotlin.Double { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toString(): kotlin.String { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toString(): kotlin.String { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 }
 
 public final class ShortArray public constructor(size: kotlin.Int) {
@@ -1129,7 +1615,10 @@ public final class ShortArray public constructor(size: kotlin.Int) {
     public final operator fun iterator(): kotlin.collections.ShortIterator { /* compiled code */ }
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FIELD, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.TYPEALIAS]) @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented public final annotation class SinceKotlin public constructor(version: kotlin.String) : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FIELD, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.TYPEALIAS])
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
+@kotlin.annotation.MustBeDocumented
+public final annotation class SinceKotlin public constructor(version: kotlin.String) : kotlin.Annotation {
     public final val version: kotlin.String /* compiled code */
 }
 
@@ -1137,26 +1626,39 @@ public final class String public constructor() : kotlin.Comparable<kotlin.String
     public companion object {
     }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open val length: kotlin.Int /* compiled code */
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open val length: kotlin.Int /* compiled code */
 
-    @kotlin.internal.IntrinsicConstEvaluation public final operator fun plus(other: kotlin.Any?): kotlin.String { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public final operator fun plus(other: kotlin.Any?): kotlin.String { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun get(index: kotlin.Int): kotlin.Char { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun get(index: kotlin.Int): kotlin.Char { /* compiled code */ }
 
     public open fun subSequence(startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun compareTo(other: kotlin.String): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun compareTo(other: kotlin.String): kotlin.Int { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 
-    @kotlin.internal.IntrinsicConstEvaluation public open fun toString(): kotlin.String { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation
+    public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS]) @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "2.1") @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalSubclassOptIn::class]) public final annotation class SubclassOptInRequired public constructor(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>) : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS])
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
+@kotlin.annotation.MustBeDocumented
+@kotlin.SinceKotlin(version = "2.1")
+@kotlin.WasExperimental(markerClass = [kotlin.ExperimentalSubclassOptIn::class])
+public final annotation class SubclassOptInRequired public constructor(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>) : kotlin.Annotation {
     public final val markerClass: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> /* compiled code */
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FIELD, kotlin.annotation.AnnotationTarget.LOCAL_VARIABLE, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.EXPRESSION, kotlin.annotation.AnnotationTarget.FILE, kotlin.annotation.AnnotationTarget.TYPEALIAS]) @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE) public final annotation class Suppress public constructor(vararg names: kotlin.String) : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FIELD, kotlin.annotation.AnnotationTarget.LOCAL_VARIABLE, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.EXPRESSION, kotlin.annotation.AnnotationTarget.FILE, kotlin.annotation.AnnotationTarget.TYPEALIAS])
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+public final annotation class Suppress public constructor(vararg names: kotlin.String) : kotlin.Annotation {
     public final val names: kotlin.Array<out kotlin.String> /* compiled code */
 }
 
@@ -1176,9 +1678,14 @@ public object Unit {
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE]) @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE) @kotlin.annotation.MustBeDocumented public final annotation class UnsafeVariance public constructor() : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+@kotlin.annotation.MustBeDocumented
+public final annotation class UnsafeVariance public constructor() : kotlin.Annotation {
 }
 
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.TYPEALIAS]) @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY) internal final annotation class WasExperimental public constructor(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>) : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.TYPEALIAS])
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
+internal final annotation class WasExperimental public constructor(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>) : kotlin.Annotation {
     public final val markerClass: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> /* compiled code */
 }

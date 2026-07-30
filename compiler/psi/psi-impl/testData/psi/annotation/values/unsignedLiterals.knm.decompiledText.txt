@@ -16,12 +16,14 @@
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Unsigned(ub = 255u, us = 65535u, ui = 4294967295u, ul = 18446744073709551615uL) public final class WithMaxValues public constructor() {
+  @Unsigned(ub = 255u, us = 65535u, ui = 4294967295u, ul = 18446744073709551615uL)
+  public final class WithMaxValues public constructor() {
   }
 
 2_.knm:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Unsigned(ub = 1u, us = 2u, ui = 3u, ul = 4uL) public final class WithSmallValues public constructor() {
+  @Unsigned(ub = 1u, us = 2u, ui = 3u, ul = 4uL)
+  public final class WithSmallValues public constructor() {
   }

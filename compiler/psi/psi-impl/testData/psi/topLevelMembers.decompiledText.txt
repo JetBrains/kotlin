@@ -4,7 +4,8 @@ A.class:
 
   package foo.TopLevelMembers
 
-  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.FIELD]) public final annotation class A public constructor() : kotlin.Annotation {
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.FIELD])
+  public final annotation class A public constructor() : kotlin.Annotation {
   }
 
 D.class:
@@ -43,7 +44,8 @@ TopLevelMembersKt.class:
   public val foo.TopLevelMembers.D.Main: foo.TopLevelMembers.D? /* compiled code */
       public final get() { /* compiled code */ }
 
-  @field:foo.TopLevelMembers.A internal val Main: foo.TopLevelMembers.D? /* compiled code */
+  @field:foo.TopLevelMembers.A
+  internal val Main: foo.TopLevelMembers.D? /* compiled code */
 
   public fun funWithBlockBody(): kotlin.Unit { /* compiled code */ }
 
