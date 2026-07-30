@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.OsCondition
 import org.jetbrains.kotlin.gradle.testbase.SwiftPMImportGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
+import org.jetbrains.kotlin.gradle.testbase.assertDirectoryExists
 import org.jetbrains.kotlin.gradle.testbase.assertFileExists
 import org.jetbrains.kotlin.gradle.testbase.assertFileNotExists
 import org.jetbrains.kotlin.gradle.testbase.assertFilesContentEquals
@@ -51,8 +52,11 @@ import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.deleteRecursively
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.readText
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 @OsCondition(
     supportedOn = [OS.MAC],
@@ -235,6 +239,46 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
                     assertTasksExecuted(fetchTask)
                     assertFileExists(workspaceStateJson)
                 }
+            }
+        }
+    }
+
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
+    @GradleTest
+    fun `KT-88107 - clean does not remove shared SwiftPM checkout when Kotlin is not applied to root project`(version: GradleVersion) {
+        val libraryProjectName = "lib1"
+
+        project("empty", version) {
+            withLockFileFixture {
+                plugins {
+                    kotlin("multiplatform").apply(false)
+                }
+
+                val packageRepo = repoRef("TestPackage").also { createRepo(it.name, listOf("1.0.0")) }
+                val libraryProject = project("empty", version) {
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            swiftPackage(
+                                url = url(packageRepo.url),
+                                version = exact("1.0.0"),
+                                products = listOf(product(packageRepo.name)),
+                            )
+                        }
+                    }
+                }
+                include(libraryProject, libraryProjectName)
+
+                val sharedCheckoutDir = projectPath.resolve(SHARED_CHECKOUT_DIR)
+
+                build(":$libraryProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}")
+                assertDirectoryExists(sharedCheckoutDir)
+
+                build("clean")
+                assertDirectoryExists(sharedCheckoutDir)
+                assertTrue(
+                    sharedCheckoutDir.listDirectoryEntries().isNotEmpty(),
+                    "Shared SwiftPM checkout directory should be empty after clean",
+                )
             }
         }
     }
