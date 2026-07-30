@@ -29,6 +29,13 @@ class KotlinClassStubImpl(
     override val isTopLevel: Boolean,
     override val kdocText: String?,
     val valueClassRepresentation: KotlinValueClassRepresentation?,
+    private val valueClassUnderlyingPropertyNameRef: StringRef?,
+    /**
+     * The underlying type of an inline value class.
+     *
+     * `null` when [valueClassRepresentation] is `null`, or when the type cannot be determined from malformed metadata.
+     */
+    val valueClassUnderlyingType: KotlinTypeBean?,
 ) : KotlinStubBaseImpl<KtClass>(
     parent = parent,
     elementType = KtStubElementTypes.CLASS,
@@ -40,6 +47,14 @@ class KotlinClassStubImpl(
 
     override val superNames: List<String>
         get() = superNameRefs.map(StringRef::toString)
+
+    /**
+     * The name of the underlying property of an inline value class.
+     *
+     * Non-`null` exactly when [valueClassRepresentation] is non-`null`, as the name is always available in metadata.
+     */
+    val valueClassUnderlyingPropertyName: String?
+        get() = StringRef.toString(valueClassUnderlyingPropertyNameRef)
 
     @KtImplementationDetail
     override fun copyInto(newParent: StubElement<*>?): KotlinClassStubImpl = KotlinClassStubImpl(
@@ -53,6 +68,8 @@ class KotlinClassStubImpl(
         isLocal = isLocal,
         isTopLevel = isTopLevel,
         valueClassRepresentation = valueClassRepresentation,
+        valueClassUnderlyingPropertyNameRef = valueClassUnderlyingPropertyNameRef,
+        valueClassUnderlyingType = valueClassUnderlyingType,
         kdocText = kdocText,
     )
 
@@ -68,5 +85,7 @@ class KotlinClassStubImpl(
                 other.isInterface == isInterface &&
                 other.kdocText == kdocText &&
                 other.valueClassRepresentation == valueClassRepresentation &&
+                other.valueClassUnderlyingPropertyNameRef == valueClassUnderlyingPropertyNameRef &&
+                other.valueClassUnderlyingType == valueClassUnderlyingType &&
                 other.superNameRefs.contentEquals(superNameRefs)
 }

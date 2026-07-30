@@ -3,6 +3,8 @@ FILE[kind=File[packageFqName=<root>]]
   IMPORT_LIST
   CLASS[classId=/Box, fqName=Box, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Box, superNames=[]]
     valueClassRepresentation: INLINE_CLASS
+    valueClassUnderlyingPropertyName: "element"
+    valueClassUnderlyingType: T
     MODIFIER_LIST[public final value]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]
         valueArguments: [ ]

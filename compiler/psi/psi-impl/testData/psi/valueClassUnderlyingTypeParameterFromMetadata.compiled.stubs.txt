@@ -3,6 +3,8 @@ FILE[kind=File[packageFqName=<root>]]
   IMPORT_LIST
   CLASS[classId=/GenericValue, fqName=GenericValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=GenericValue, superNames=[]]
     valueClassRepresentation: INLINE_CLASS
+    valueClassUnderlyingPropertyName: "value"
+    valueClassUnderlyingType: T
     MODIFIER_LIST[public final value]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]

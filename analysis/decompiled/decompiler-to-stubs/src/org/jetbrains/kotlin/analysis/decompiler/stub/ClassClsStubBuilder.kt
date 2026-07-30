@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtSuperTypeList
@@ -157,6 +158,7 @@ private class ClassClsStubBuilder(
             ProtoBuf.Class.Kind.ENUM_ENTRY -> error("Enum entries have to be created as members via '${::createEnumEntryStubs.name}'")
 
             else -> {
+                val underlyingProperty = inlineClassUnderlyingProperty()
                 KotlinClassStubImpl(
                     parent = parentStub,
                     qualifiedName = fqName.ref(),
@@ -168,16 +170,54 @@ private class ClassClsStubBuilder(
                     isLocal = false,
                     isTopLevel = isTopLevel,
                     kdocText = kdoc,
-                    valueClassRepresentation = valueClassRepresentation(),
+                    valueClassRepresentation = underlyingProperty?.let { KotlinValueClassRepresentation.INLINE_CLASS },
+                    valueClassUnderlyingPropertyNameRef = underlyingProperty?.underlyingPropertyName?.ref(),
+                    valueClassUnderlyingType = underlyingProperty?.underlyingType,
                 )
             }
         }
     }
 
-    private fun valueClassRepresentation(): KotlinValueClassRepresentation? = when {
-        classProto.hasInlineClassUnderlyingPropertyName() -> KotlinValueClassRepresentation.INLINE_CLASS
-        else -> null
+    /**
+     * The underlying property of an inline value class, or `null` when the class is not an inline value class.
+     *
+     * [InlineClassUnderlyingProperty.underlyingType] is `null` only for malformed metadata: the compiler either writes the type into the
+     * class itself, or serializes the underlying property it can be read from.
+     *
+     * @see org.jetbrains.kotlin.serialization.deserialization.loadValueClassRepresentation the metadata-based counterpart which has to stay
+     * in sync with this function
+     */
+    private fun inlineClassUnderlyingProperty(): InlineClassUnderlyingProperty? {
+        if (!classProto.hasInlineClassUnderlyingPropertyName()) return null
+
+        val underlyingPropertyName = c.nameResolver.getName(classProto.inlineClassUnderlyingPropertyName)
+        val underlyingTypeProto = classProto.inlineClassUnderlyingType(c.typeTable)
+            ?: underlyingPropertyTypeProto(underlyingPropertyName)
+
+        return InlineClassUnderlyingProperty(
+            underlyingPropertyName = underlyingPropertyName,
+            underlyingType = underlyingTypeProto?.let(typeStubBuilder::createKotlinTypeBean),
+        )
     }
+
+    /**
+     * The return type of the serialized property with the given [name], or `null` when there is no such property.
+     *
+     * Extension and context receivers are excluded as they cannot represent an underlying property.
+     */
+    private fun underlyingPropertyTypeProto(name: Name): ProtoBuf.Type? {
+        val property = classProto.propertyList.singleOrNull { property ->
+            c.nameResolver.getName(property.name) == name &&
+                    !property.hasReceiver() &&
+                    !property.hasCompanionExtensionReceiver() &&
+                    property.contextParameterList.isEmpty() &&
+                    property.contextReceiverTypes(c.typeTable).isEmpty()
+        }
+
+        return property?.returnType(c.typeTable)
+    }
+
+    private class InlineClassUnderlyingProperty(val underlyingPropertyName: Name, val underlyingType: KotlinTypeBean?)
 
     private fun createConstructorStub() {
         if (!isClass()) return
