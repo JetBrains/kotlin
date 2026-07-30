@@ -12,6 +12,10 @@ plugins {
     id("test-inputs-check")
 }
 
+val jvmAbiGenPlugin = configurations.create("jvmAbiGenPlugin") {
+    isTransitive = false
+}
+
 dependencies {
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
@@ -27,6 +31,8 @@ dependencies {
     testFixturesImplementation(project(":analysis:analysis-internal-utils"))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+
+    jvmAbiGenPlugin(project(":plugins:jvm-abi-gen"))
 }
 
 sourceSets {
@@ -53,6 +59,8 @@ tasks.compileTestKotlin {
 projectTests {
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
         smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 5)
+
+        addClasspathProperty(jvmAbiGenPlugin, "kotlin.jvm.abi.jar.path")
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.stubs.TestGeneratorKt")

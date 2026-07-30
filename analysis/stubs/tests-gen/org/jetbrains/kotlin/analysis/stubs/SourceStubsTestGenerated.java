@@ -3351,6 +3351,88 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
   }
 
   @Nested
+  @TestMetadata("compiler/psi/psi-impl/testData/psi/inlineClasses")
+  @TestDataPath("$PROJECT_ROOT")
+  public class InlineClasses {
+    private void run(String fileName) {
+      runTest("compiler/psi/psi-impl/testData/psi/inlineClasses/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInInlineClasses() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/inlineClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("inlineClassPrivateProperty.kt")
+    public void testInlineClassPrivateProperty() {
+      run("inlineClassPrivateProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineClassPublicProperty.kt")
+    public void testInlineClassPublicProperty() {
+      run("inlineClassPublicProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineClassWithEscapedPropertyName.kt")
+    public void testInlineClassWithEscapedPropertyName() {
+      run("inlineClassWithEscapedPropertyName.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineClassWithSameNamedProperties.kt")
+    public void testInlineClassWithSameNamedProperties() {
+      run("inlineClassWithSameNamedProperties.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineClassWithTypeParameter.kt")
+    public void testInlineClassWithTypeParameter() {
+      run("inlineClassWithTypeParameter.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/psi/psi-impl/testData/psi/inlineClasses/jvmAbi")
+    @TestDataPath("$PROJECT_ROOT")
+    public class JvmAbi {
+      private void run(String fileName) {
+        runTest("compiler/psi/psi-impl/testData/psi/inlineClasses/jvmAbi/" + fileName);
+      }
+
+      @Test
+      public void testAllFilesPresentInJvmAbi() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/inlineClasses/jvmAbi"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("jvmAbiInlineClassWithPrivateConstructor.kt")
+      public void testJvmAbiInlineClassWithPrivateConstructor() {
+        run("jvmAbiInlineClassWithPrivateConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmAbiInlineClassWithPrivateProperty.kt")
+      public void testJvmAbiInlineClassWithPrivateProperty() {
+        run("jvmAbiInlineClassWithPrivateProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmAbiInlineClassWithPublicConstructor.kt")
+      public void testJvmAbiInlineClassWithPublicConstructor() {
+        run("jvmAbiInlineClassWithPublicConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmAbiInlineClassWithTypeParameterUnderlyingType.kt")
+      public void testJvmAbiInlineClassWithTypeParameterUnderlyingType() {
+        run("jvmAbiInlineClassWithTypeParameterUnderlyingType.kt");
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/psi/psi-impl/testData/psi/kdoc")
   @TestDataPath("$PROJECT_ROOT")
   public class Kdoc {

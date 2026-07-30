@@ -946,6 +946,30 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
     }
 
     @Test
+    @TestMetadata("inlineClassWithEscapedPropertyName.kt")
+    public void testInlineClassWithEscapedPropertyName() {
+      run("inlineClassWithEscapedPropertyName.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineClassWithPrivateProperty.kt")
+    public void testInlineClassWithPrivateProperty() {
+      run("inlineClassWithPrivateProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineClassWithSameNamedProperties.kt")
+    public void testInlineClassWithSameNamedProperties() {
+      run("inlineClassWithSameNamedProperties.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineClassWithTypeParameterUnderlyingType.kt")
+    public void testInlineClassWithTypeParameterUnderlyingType() {
+      run("inlineClassWithTypeParameterUnderlyingType.kt");
+    }
+
+    @Test
     @TestMetadata("nestedValueClass.kt")
     public void testNestedValueClass() {
       run("nestedValueClass.kt");
