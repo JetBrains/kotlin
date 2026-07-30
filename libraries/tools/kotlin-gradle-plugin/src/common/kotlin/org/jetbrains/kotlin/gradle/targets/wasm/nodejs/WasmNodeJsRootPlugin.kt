@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.wasm.nodejs
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.targets.js.allDependenciesInternal
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.TASKS_GROUP_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
@@ -72,7 +73,7 @@ abstract class WasmNodeJsRootPlugin internal constructor() : CommonNodeJsRootPlu
 
         val packageManagerName = nodeJsRoot.packageManagerExtension.map { it.name }
 
-        val allDeps = nodeJsRoot.versions.allDependencies
+        val allDeps = nodeJsRoot.versions.allDependenciesInternal()
 
         val npmTooling = target.extensions.create(
             "wasmNpmTooling",
