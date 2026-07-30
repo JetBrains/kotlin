@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.ProjectId.Companion.RandomProjectUUID
 import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain
@@ -22,10 +19,6 @@ import org.jetbrains.kotlin.buildtools.internal.js.JsPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.metadata.KotlinMetadataPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmPlatformToolchainImpl
-import org.jetbrains.kotlin.cli.create
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.incremental.clearJarCaches
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -76,23 +69,6 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         }
         private val executor by executorDelegate
 
-        private val applicationEnvironmentPin: Disposable = Disposer.newDisposable("kotlin-dsl BTA application environment pin")
-
-        /**
-         * Pins the shared application environment to this session so it is reused across build operations and
-         * disposed when the session ends (see [close]).
-         *
-         * Initialized lazily on the first in-process operation that uses the environment (see
-         * [BuildOperationImpl.usesApplicationEnvironment]).
-         */
-        private val applicationEnvironmentInitialization = lazy {
-            setupIdeaStandaloneExecution()
-            @OptIn(CoreEnvironmentDeprecation::class)
-            KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(
-                applicationEnvironmentPin, CompilerConfiguration.create()
-            )
-        }
-
         override fun <R> executeOperation(operation: BuildOperation<R>): R {
             return executeOperation(operation, logger = null)
         }
@@ -105,11 +81,6 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
             check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
             val operationBody: Callable<R> = { operation.execute(projectId, executionPolicy, logger, sessionIsAliveFlagFile) }
             return if (executionPolicy is ExecutionPolicy.InProcess) {
-                // For an operation that uses the shared application environment, pin it just before, so that it is kept
-                // alive for reuse by subsequent operations and only disposed when the session ends.
-                if (operation.usesApplicationEnvironment) {
-                    applicationEnvironmentInitialization.value
-                }
                 unwrapExecutionException(executor.submit(operationBody))
             } else {
                 operationBody.call()
@@ -130,9 +101,6 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
 
         override fun close() {
             clearJarCaches()
-            if (applicationEnvironmentInitialization.isInitialized()) {
-                Disposer.dispose(applicationEnvironmentPin)
-            }
             if (executorDelegate.isInitialized()) {
                 executor.shutdown()
             }
@@ -155,3 +123,4 @@ internal sealed interface BtaApiVersion {
     object Before2_4_20 : BtaApiVersion
     class Exact(val version: KotlinToolingVersion) : BtaApiVersion
 }
+
