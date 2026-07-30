@@ -36,6 +36,38 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-30 — Binary index remeasured on `KotlinFullPipelineTestsGenerated`; not the M1 0.5%
+- **Change**: `JavaClassFinderOverBinaryIndex` no longer builds an `FqName` per lookup: the top-level
+  cache is now two-level, keyed by the `classId`'s own `packageFqName` + outermost class `Name`
+  (new `FqName.topLevelName()`), so the string concatenation, `pathSegments()` list, `FqName`/
+  `FqNameUnsafe` pair and re-hash are gone from the hot path (378994 lookups, ~1.5M objects per
+  corpus). Paired in-run A/B: **631 -> 465 ns per hit lookup (-26%)**, but only ~54 ms per corpus.
+- **Measured** (413-module FP corpus, JDK 8 launcher, 8 GB heap, M5 Max): the whole binary finder is
+  **9.47 s = 0.99%** of 958 s of compilation, of which 72% is `readBinaryJavaClass` on 69617 class
+  files — work master does through the same reader — 18% `knownClassNamesInPackage` (2.05M name
+  strings, 35306 traversals), 5% top-level index traversals. Allocation/GC with `-Xjava-direct`
+  on vs off is **identical** (216-221 GB per corpus, 112-119 young GCs, 8-9 full GCs), so extra
+  garbage is not the mechanism. The regression does not reproduce here: two A/B batches disagree on
+  the sign (±4%), i.e. developer-machine wall time cannot resolve 0.5%.
+- **Files**: `JavaClassFinderOverBinaryIndex.kt`, review doc §12 (method, tables, and seven ranked
+  strategies for locating the gap on the mini), this file. All harnesses removed.
+- **Tests**: java-direct box+phased green; full `KotlinFullPipelineTestsGenerated` (413 modules)
+  green.
+- **Result**: index exonerated as the carrier of the M1 delta; see §12.5 for next steps.
+
+### 2026-07-30 — `TopLevelClassFiles` shape: measured, holder kept
+- **Change**: comment-only. Benchmarked the merged cache's value shape (holder object vs two-element
+  array vs `SmartList`-style encoded slot vs the pre-merge two maps) on the real workload from §10
+  (1469/1615 finders, 19k/12k cached keys, 77k/42k lookups per suite). The **whole** cache costs
+  <1 ms and ~1.4 MB per full suite; the spread between shapes is ~0.15 ms/suite (~0.1 µs per
+  compilation). The array is not faster — it is the slowest single-map variant on a 20× corpus
+  (26.7 ms vs 23.4 ms) and loses the type/names; the encoded slot saves 33% of the allocation but
+  trades the scoped/unscoped distinction for an unchecked encoding. Kept the named holder, added a
+  KDoc pointer to `implDocs/BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22.md` §11.
+- **Files**: `JavaClassFinderOverBinaryIndex.kt` (KDoc +5), review doc §11, this file.
+- **Tests**: java-direct box+phased green (no behaviour change).
+- **Result**: won't-fix by measurement — see §11.
+
 ### 2026-07-30 — One top-level-class cache in the binary finder; roll back two no-op shared-file diffs
 - **Change**: (1) `JavaClassFinderOverBinaryIndex` had two `FqName -> VirtualFile?` maps differing
   only in `firstOrNull { it in scope }` vs `firstOrNull()`. Measured over both suites (3084 finder
