@@ -13,14 +13,13 @@ import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
+import org.jetbrains.kotlin.fir.declarations.collectAllSubclasses
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.WhenOnSealedClassExhaustivenessChecker.ConditionChecker.processBranch
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -570,35 +569,6 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
             return info.allSubclasses.filterIsInstance<FirRegularClassSymbol>().filterTo(mutableSetOf()) {
                 it.isSubclassOf(lookupTag, session, isStrict = true, lookupInterfaces = true)
             }
-        }
-    }
-
-    private fun FirClassSymbol<*>.collectAllSubclasses(session: FirSession): Set<FirClassSymbol<*>> {
-        return mutableSetOf<FirClassSymbol<*>>().apply { collectAllSubclassesTo(this, session) }
-    }
-
-    private fun FirClassSymbol<*>.collectAllSubclassesTo(
-        destination: MutableSet<FirClassSymbol<*>>,
-        session: FirSession,
-        visited: MutableSet<FirRegularClassSymbol> = mutableSetOf(),
-    ) {
-        if (this !is FirRegularClassSymbol) {
-            destination.add(this)
-            return
-        }
-        if (!visited.add(this)) return
-        when {
-            fir.modality == Modality.SEALED -> {
-                if (fir.isJavaNonAbstractSealed == true) {
-                    destination.add(this)
-                }
-
-                fir.getSealedClassInheritors(session).forEach {
-                    val symbol = session.symbolProvider.getClassLikeSymbolByClassId(it) as? FirRegularClassSymbol
-                    symbol?.collectAllSubclassesTo(destination, session, visited)
-                }
-            }
-            else -> destination.add(this)
         }
     }
 }
