@@ -1,5 +1,9 @@
 @file:Suppress("HasPlatformType")
 
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
+
+
 plugins {
     id("common-configuration")
     id("test-federation-convention")
@@ -80,6 +84,10 @@ projectTests {
     ) {
         classpath += analysisApiRuntimeClasspath
         exclude("**/ObjCExportIntegrationTest.class")
+
+        // Ideally, it should be marked as affected by AnalysisApi instead.
+        // But this would be cumbersome and the tests are very fast, so let's keep things simple:
+        smokeTestConfig = SmokeTestConfig.RunAllTests
     }
 }
 
