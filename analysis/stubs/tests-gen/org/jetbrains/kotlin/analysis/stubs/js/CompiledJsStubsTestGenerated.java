@@ -2073,6 +2073,12 @@ public class CompiledJsStubsTestGenerated extends AbstractCompiledJsStubsTest {
       }
 
       @Test
+      @TestMetadata("binaryOperatorTokensWithNonConstantValue.kt")
+      public void testBinaryOperatorTokensWithNonConstantValue() {
+        run("binaryOperatorTokensWithNonConstantValue.kt");
+      }
+
+      @Test
       @TestMetadata("classLiterals.kt")
       public void testClassLiterals() {
         run("classLiterals.kt");
@@ -2118,6 +2124,12 @@ public class CompiledJsStubsTestGenerated extends AbstractCompiledJsStubsTest {
       @TestMetadata("nonStubbedOperands.kt")
       public void testNonStubbedOperands() {
         run("nonStubbedOperands.kt");
+      }
+
+      @Test
+      @TestMetadata("nonStubbedOperandsWithNonConstantValue.kt")
+      public void testNonStubbedOperandsWithNonConstantValue() {
+        run("nonStubbedOperandsWithNonConstantValue.kt");
       }
 
       @Test

@@ -12,11 +12,17 @@ Anno.kt:
                 REFERENCE_EXPRESSION[referencedName=Int]
 
 
-WithCast.kt:
-  FILE[kind=File[packageFqName=<root>]]
+WithArrayAccess.kt:
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithArrayAccessKt]]
+    facadeFqName: WithArrayAccessKt
+    partSimpleName: "WithArrayAccessKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithCast, fqName=WithCast, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithCast, superNames=[]]
+    PROPERTY[fqName=array, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=array]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=IntArray]
+    CLASS[classId=/WithArrayAccess, fqName=WithArrayAccess, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithArrayAccess, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]
           CONSTRUCTOR_CALLEE
@@ -25,14 +31,22 @@ WithCast.kt:
                 REFERENCE_EXPRESSION[referencedName=Anno]
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
-              PARENTHESIZED
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
 
 
-WithCastOperand.kt:
-  FILE[kind=File[packageFqName=<root>]]
+WithSafeCall.kt:
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithSafeCallKt]]
+    facadeFqName: WithSafeCallKt
+    partSimpleName: "WithSafeCallKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithCastOperand, fqName=WithCastOperand, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithCastOperand, superNames=[]]
+    PROPERTY[fqName=nullable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=nullable]
+      TYPE_REFERENCE
+        NULLABLE_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+    CLASS[classId=/WithSafeCall, fqName=WithSafeCall, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithSafeCall, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]
           CONSTRUCTOR_CALLEE
@@ -44,4 +58,3 @@ WithCastOperand.kt:
               BINARY_EXPRESSION
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
                 OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
-                PARENTHESIZED

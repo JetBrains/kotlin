@@ -1,10 +1,12 @@
-KtFile: binaryOperatorTokens.kt
+KtFile: binaryOperatorTokensWithNonConstantValue.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST
     <empty list>
   CLASS
-    PsiComment(EOL_COMMENT)('// Operation tokens which are compile-time constants, but are not covered by `simpleLiterals.kt`')
+    PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// Operation tokens which are never compile-time constants, so they are valid only as source stubs')
     PsiWhiteSpace('\n')
     PsiComment(EOL_COMMENT)('// FILE: Binary.kt')
     PsiWhiteSpace('\n')
@@ -20,39 +22,17 @@ KtFile: binaryOperatorTokens.kt
         VALUE_PARAMETER
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('i')
+          PsiElement(IDENTIFIER)('value')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Int')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          INTEGER_CONSTANT
-            PsiElement(INTEGER_LITERAL)('0')
-        PsiElement(COMMA)(',')
-        PsiWhiteSpace(' ')
-        VALUE_PARAMETER
-          PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiElement(IDENTIFIER)('b')
-          PsiElement(COLON)(':')
-          PsiWhiteSpace(' ')
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Boolean')
-          PsiWhiteSpace(' ')
-          PsiElement(EQ)('=')
-          PsiWhiteSpace(' ')
-          BOOLEAN_CONSTANT
-            PsiElement(false)('false')
         PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
   CLASS
-    PsiComment(EOL_COMMENT)('// FILE: WithInfixFunction.kt')
+    PsiComment(EOL_COMMENT)('// FILE: WithRange.kt')
     PsiWhiteSpace('\n')
     MODIFIER_LIST
       ANNOTATION_ENTRY
@@ -65,29 +45,21 @@ KtFile: binaryOperatorTokens.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            VALUE_ARGUMENT_NAME
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('i')
-            PsiWhiteSpace(' ')
-            PsiElement(EQ)('=')
-            PsiWhiteSpace(' ')
             BINARY_EXPRESSION
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('1')
-              PsiWhiteSpace(' ')
               OPERATION_REFERENCE
-                PsiElement(IDENTIFIER)('shl')
-              PsiWhiteSpace(' ')
+                PsiElement(RANGE)('..')
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('2')
           PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('WithInfixFunction')
+    PsiElement(IDENTIFIER)('WithRange')
   PsiWhiteSpace('\n\n')
   CLASS
-    PsiComment(EOL_COMMENT)('// FILE: WithEquality.kt')
+    PsiComment(EOL_COMMENT)('// FILE: WithElvis.kt')
     PsiWhiteSpace('\n')
     MODIFIER_LIST
       ANNOTATION_ENTRY
@@ -100,29 +72,23 @@ KtFile: binaryOperatorTokens.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            VALUE_ARGUMENT_NAME
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('b')
-            PsiWhiteSpace(' ')
-            PsiElement(EQ)('=')
-            PsiWhiteSpace(' ')
             BINARY_EXPRESSION
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('1')
+              NULL
+                PsiElement(null)('null')
               PsiWhiteSpace(' ')
               OPERATION_REFERENCE
-                PsiElement(EQEQ)('==')
+                PsiElement(ELVIS)('?:')
               PsiWhiteSpace(' ')
               INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('2')
+                PsiElement(INTEGER_LITERAL)('1')
           PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('WithEquality')
+    PsiElement(IDENTIFIER)('WithElvis')
   PsiWhiteSpace('\n\n')
   CLASS
-    PsiComment(EOL_COMMENT)('// FILE: WithInequality.kt')
+    PsiComment(EOL_COMMENT)('// FILE: WithIdentityEquality.kt')
     PsiWhiteSpace('\n')
     MODIFIER_LIST
       ANNOTATION_ENTRY
@@ -135,18 +101,12 @@ KtFile: binaryOperatorTokens.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            VALUE_ARGUMENT_NAME
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('b')
-            PsiWhiteSpace(' ')
-            PsiElement(EQ)('=')
-            PsiWhiteSpace(' ')
             BINARY_EXPRESSION
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('1')
               PsiWhiteSpace(' ')
               OPERATION_REFERENCE
-                PsiElement(EXCLEQ)('!=')
+                PsiElement(EQEQEQ)('===')
               PsiWhiteSpace(' ')
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('2')
@@ -154,10 +114,10 @@ KtFile: binaryOperatorTokens.kt
     PsiWhiteSpace('\n')
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('WithInequality')
+    PsiElement(IDENTIFIER)('WithIdentityEquality')
   PsiWhiteSpace('\n\n')
   CLASS
-    PsiComment(EOL_COMMENT)('// FILE: WithComparison.kt')
+    PsiComment(EOL_COMMENT)('// FILE: WithInOperator.kt')
     PsiWhiteSpace('\n')
     MODIFIER_LIST
       ANNOTATION_ENTRY
@@ -170,29 +130,28 @@ KtFile: binaryOperatorTokens.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            VALUE_ARGUMENT_NAME
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('b')
-            PsiWhiteSpace(' ')
-            PsiElement(EQ)('=')
-            PsiWhiteSpace(' ')
             BINARY_EXPRESSION
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('1')
               PsiWhiteSpace(' ')
               OPERATION_REFERENCE
-                PsiElement(LT)('<')
+                PsiElement(in)('in')
               PsiWhiteSpace(' ')
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('2')
+              BINARY_EXPRESSION
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('2')
+                OPERATION_REFERENCE
+                  PsiElement(RANGE)('..')
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('3')
           PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('WithComparison')
+    PsiElement(IDENTIFIER)('WithInOperator')
   PsiWhiteSpace('\n\n')
   CLASS
-    PsiComment(EOL_COMMENT)('// FILE: WithGreaterOrEqual.kt')
+    PsiComment(EOL_COMMENT)('// FILE: WithNotInOperator.kt')
     PsiWhiteSpace('\n')
     MODIFIER_LIST
       ANNOTATION_ENTRY
@@ -205,23 +164,22 @@ KtFile: binaryOperatorTokens.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            VALUE_ARGUMENT_NAME
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('b')
-            PsiWhiteSpace(' ')
-            PsiElement(EQ)('=')
-            PsiWhiteSpace(' ')
             BINARY_EXPRESSION
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('1')
               PsiWhiteSpace(' ')
               OPERATION_REFERENCE
-                PsiElement(GTEQ)('>=')
+                PsiElement(NOT_IN)('!in')
               PsiWhiteSpace(' ')
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('2')
+              BINARY_EXPRESSION
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('2')
+                OPERATION_REFERENCE
+                  PsiElement(RANGE)('..')
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('3')
           PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('WithGreaterOrEqual')
+    PsiElement(IDENTIFIER)('WithNotInOperator')

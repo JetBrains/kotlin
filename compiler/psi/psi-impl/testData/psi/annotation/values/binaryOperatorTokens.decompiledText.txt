@@ -1,0 +1,44 @@
+Binary.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final annotation class Binary public constructor(i: kotlin.Int = COMPILED_CODE, b: kotlin.Boolean = COMPILED_CODE) : kotlin.Annotation {
+      public final val i: kotlin.Int = COMPILED_CODE /* compiled code */
+
+      public final val b: kotlin.Boolean = COMPILED_CODE /* compiled code */
+  }
+
+WithComparison.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Binary public final class WithComparison public constructor() {
+  }
+
+WithEquality.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Binary public final class WithEquality public constructor() {
+  }
+
+WithGreaterOrEqual.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Binary public final class WithGreaterOrEqual public constructor() {
+  }
+
+WithInequality.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Binary public final class WithInequality public constructor() {
+  }
+
+WithInfixFunction.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Binary public final class WithInfixFunction public constructor() {
+  }

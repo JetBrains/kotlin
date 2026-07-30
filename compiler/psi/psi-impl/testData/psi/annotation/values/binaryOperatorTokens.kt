@@ -1,28 +1,23 @@
-// COMPILATION_ERRORS
-// Only compile-time constants are valid annotation arguments, but all operation tokens still have to be representable in stubs
+// Operation tokens which are compile-time constants, but are not covered by `simpleLiterals.kt`
 // FILE: Binary.kt
-annotation class Binary(val value: Int)
+annotation class Binary(val i: Int = 0, val b: Boolean = false)
 
 // FILE: WithInfixFunction.kt
-@Binary(1 shl 2)
+@Binary(i = 1 shl 2)
 class WithInfixFunction
 
-// FILE: WithRange.kt
-@Binary(1..2)
-class WithRange
+// FILE: WithEquality.kt
+@Binary(b = 1 == 2)
+class WithEquality
 
-// FILE: WithElvis.kt
-@Binary(null ?: 1)
-class WithElvis
+// FILE: WithInequality.kt
+@Binary(b = 1 != 2)
+class WithInequality
 
-// FILE: WithIdentityEquality.kt
-@Binary(1 === 2)
-class WithIdentityEquality
+// FILE: WithComparison.kt
+@Binary(b = 1 < 2)
+class WithComparison
 
-// FILE: WithInOperator.kt
-@Binary(1 in 2..3)
-class WithInOperator
-
-// FILE: WithNotInOperator.kt
-@Binary(1 !in 2..3)
-class WithNotInOperator
+// FILE: WithGreaterOrEqual.kt
+@Binary(b = 1 >= 2)
+class WithGreaterOrEqual
