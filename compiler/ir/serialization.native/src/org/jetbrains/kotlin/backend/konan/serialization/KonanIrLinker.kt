@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
@@ -30,7 +28,6 @@ import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 import java.nio.file.Path
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 class KonanIrLinker(
     private val currentModule: ModuleDescriptor,
     configuration: CompilerConfiguration,
@@ -47,10 +44,6 @@ class KonanIrLinker(
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean {
         val klib = (moduleDescriptor.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library ?: return false
         return klib.isNativeStdlib
-    }
-
-    private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let {
-        KonanForwardDeclarationModuleDeserializer(it, this)
     }
 
     override val irMangler: KotlinMangler.IrMangler = KonanManglerIr
@@ -84,23 +77,23 @@ class KonanIrLinker(
         },
     )
 
-    val moduleDeserializers = mutableMapOf<ModuleDescriptor, KonanPartialModuleDeserializer>()
+    val moduleDeserializers = mutableMapOf<IrModuleFragment, KonanPartialModuleDeserializer>()
     val klibToModuleDeserializerMap = mutableMapOf<KotlinLibrary, KonanPartialModuleDeserializer>()
 
     override fun createModuleDeserializer(
-        moduleDescriptor: ModuleDescriptor,
+        moduleFragment: IrModuleFragment,
         klib: KotlinLibrary?,
         strategyResolver: (String) -> DeserializationStrategy,
     ) = when {
-        moduleDescriptor === forwardModuleDescriptor -> {
-            forwardDeclarationDeserializer ?: error("forward declaration deserializer expected")
+        moduleFragment.descriptor === forwardModuleDescriptor -> {
+            KonanForwardDeclarationModuleDeserializer(moduleFragment, this)
         }
         klib == null -> {
-            error("Expecting kotlin library for $moduleDescriptor")
+            error("Expecting kotlin library for $moduleFragment")
         }
         klib.isCInteropLibrary() -> {
             cInteropModuleDeserializerFactory.createIrModuleDeserializer(
-                moduleDescriptor,
+                moduleFragment,
                 klib,
                 this,
             )
@@ -111,9 +104,9 @@ class KonanIrLinker(
                 else -> CacheDeserializationStrategy.WholeModule
             }
             KonanPartialModuleDeserializer(
-                this, moduleDescriptor, klib, strategyResolver, deserializationStrategy
+                this, moduleFragment, klib, strategyResolver, deserializationStrategy
             ).also {
-                moduleDeserializers[moduleDescriptor] = it
+                moduleDeserializers[moduleFragment] = it
                 klibToModuleDeserializerMap[klib] = it
             }
         }

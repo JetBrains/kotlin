@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.IrDeserializationSettings.DeserializeFunctionBodies
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -22,7 +20,6 @@ import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
-
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
 /**
@@ -35,13 +32,13 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFi
  */
 abstract class BasicIrModuleDeserializer(
     val linker: KotlinIrLinker,
-    moduleDescriptor: ModuleDescriptor,
+    moduleFragment: IrModuleFragment,
     override val klib: KotlinLibrary,
     override val strategyResolver: (String) -> DeserializationStrategy,
     libraryAbiVersion: KotlinAbiVersion,
     private val allowErrorNodes: Boolean = false,
     private val deserializeTypeAliases: Boolean = false,
-) : IrModuleDeserializer(libraryAbiVersion) {
+) : IrModuleDeserializer(moduleFragment, libraryAbiVersion) {
 
     private val fileToDeserializerMap = mutableMapOf<IrFile, IrFileDeserializer>()
 
@@ -59,8 +56,6 @@ abstract class BasicIrModuleDeserializer(
     override fun fileDeserializers(): Collection<IrFileDeserializer> {
         return fileToDeserializerMap.values.filterNot { strategyResolver(it.file.fileEntry.name).onDemand }
     }
-
-    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
 
     init {
         val fileCount = ir.irFileCount

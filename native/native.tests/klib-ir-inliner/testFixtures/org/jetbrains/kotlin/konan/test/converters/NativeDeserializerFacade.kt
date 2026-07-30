@@ -168,7 +168,7 @@ class NativeDeserializerFacade(
 
 object CInteropModuleDeserializerFactoryMock : CInteropModuleDeserializerFactory {
     override fun createIrModuleDeserializer(
-        moduleDescriptor: ModuleDescriptor,
+        moduleFragment: IrModuleFragment,
         klib: KotlinLibrary,
         linker: KonanIrLinker,
     ): IrModuleDeserializer {

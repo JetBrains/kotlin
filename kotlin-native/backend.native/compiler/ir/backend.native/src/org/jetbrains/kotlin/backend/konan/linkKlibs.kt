@@ -244,12 +244,12 @@ internal class KonanCInteropModuleDeserializerFactory(
         private val deserializationConfiguration: DeserializationConfiguration,
 ) : CInteropModuleDeserializerFactory {
     override fun createIrModuleDeserializer(
-            moduleDescriptor: ModuleDescriptor,
+            moduleFragment: IrModuleFragment,
             klib: KotlinLibrary,
             linker: KonanIrLinker,
     ): IrModuleDeserializer = KonanInteropModuleDeserializer(
             deserializationConfiguration,
-            moduleDescriptor,
+            moduleFragment,
             klib,
             cachedLibraries.isLibraryCached(klib),
             linker,

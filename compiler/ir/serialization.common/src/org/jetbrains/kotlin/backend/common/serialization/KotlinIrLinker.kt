@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -158,7 +159,7 @@ abstract class KotlinIrLinker(
     }
 
     protected abstract fun createModuleDeserializer(
-        moduleDescriptor: ModuleDescriptor,
+        moduleFragment: IrModuleFragment,
         klib: KotlinLibrary?,
         strategyResolver: (String) -> DeserializationStrategy,
     ): IrModuleDeserializer
@@ -289,7 +290,7 @@ abstract class KotlinIrLinker(
         val deserializer = deserializersForModules[moduleName] ?: registerModuleDeserializer(
             moduleName = moduleName,
             moduleDeserializer = createModuleDeserializer(
-                moduleDescriptor = moduleDescriptor,
+                moduleFragment = IrModuleFragmentImpl(moduleDescriptor),
                 klib = kotlinLibrary,
                 strategyResolver = deserializationStrategy
             )
@@ -336,6 +337,7 @@ abstract class KotlinIrLinker(
     ): IrModuleDeserializer =
         if (isBuiltInModule(moduleDeserializer.moduleFragment.descriptor)) {
             IrModuleDeserializerWithBuiltIns(
+                moduleDeserializer.moduleFragment,
                 symbolTable,
                 irMangler,
                 { clazz, signature -> fakeOverrideBuilder.enqueueClass(clazz, signature, moduleDeserializer.compatibilityMode) },
