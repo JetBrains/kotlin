@@ -42,6 +42,7 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker(MppCheckerK
          * 2. `val x = ...`
          * 3. `val x get() = ...`
          */
+        @Suppress("REDUNDANT_ELSE_IN_WHEN") // To be deleted after the next bootstrap.
         val [type, source] = when (declaration) {
             is FirProperty -> {
                 declaration.initializer?.resolvedType?.let { it to declaration.source } ?: run {
