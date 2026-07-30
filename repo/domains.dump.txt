@@ -25,7 +25,6 @@ Compiler:
  - compiler/frontend.java
  - compiler/ir
  - compiler/java-direct
- - compiler/javac-wrapper
  - compiler/jklib.tests
  - compiler/multiplatform-parsing
  - compiler/plugin-api
