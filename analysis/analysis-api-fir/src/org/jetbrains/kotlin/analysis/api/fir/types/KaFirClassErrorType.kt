@@ -60,10 +60,11 @@ internal class KaFirClassErrorType(
     override val nullability: KaTypeNullability
         get() = withValidityAssertion {
             val coneType = coneType
-            if (coneType is ConeErrorType) {
-                coneType.nullable?.let(KaTypeNullability::create) ?: KaTypeNullability.UNKNOWN
-            } else {
-                KaTypeNullability.create(coneType.isMarkedNullable)
+            val isNullable = if (coneType is ConeErrorType) coneType.nullable else coneType.isMarkedNullable
+            when (isNullable) {
+                true -> KaTypeNullability.NULLABLE
+                false -> KaTypeNullability.NON_NULLABLE
+                null -> KaTypeNullability.UNKNOWN
             }
         }
 

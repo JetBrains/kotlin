@@ -28,7 +28,10 @@ internal class KaFirCapturedType(
         level = DeprecationLevel.ERROR
     )
     @Suppress("DEPRECATION_ERROR")
-    override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.create(coneType.isMarkedNullable) }
+    override val nullability: KaTypeNullability
+        get() = withValidityAssertion {
+            if (coneType.isMarkedNullable) KaTypeNullability.NULLABLE else KaTypeNullability.NON_NULLABLE
+        }
 
     override val projection: KaTypeProjection
         get() = withValidityAssertion { builder.typeBuilder.buildTypeProjection(coneType.constructor.projection) }

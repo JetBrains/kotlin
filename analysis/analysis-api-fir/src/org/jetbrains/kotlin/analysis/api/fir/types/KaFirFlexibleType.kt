@@ -42,7 +42,7 @@ internal class KaFirFlexibleType(
             if (coneType.hasFlexibleMarkedNullability) {
                 KaTypeNullability.UNKNOWN
             } else {
-                KaTypeNullability.create(coneType.lowerBound.isMarkedNullable)
+                if (coneType.lowerBound.isMarkedNullable) KaTypeNullability.NULLABLE else KaTypeNullability.NON_NULLABLE
             }
         }
 
