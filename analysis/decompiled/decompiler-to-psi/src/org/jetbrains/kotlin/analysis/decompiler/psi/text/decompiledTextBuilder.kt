@@ -535,8 +535,8 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = buildIn
         override fun visitModifierList(list: KtModifierList) {
             appendBlocks(
                 separator = " ",
-                { process(list.contextParameterList) },
                 { printAnnotations(list) },
+                { process(list.contextParameterList) },
                 { printModifiers(list) },
             )
         }
@@ -554,8 +554,8 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = buildIn
             withSuffix("\n") {
                 appendBlocks(
                     separator = "\n",
-                    { process(list.contextParameterList) },
                     { printAnnotations(list, separator = "\n") },
+                    { process(list.contextParameterList) },
                 )
             }
 

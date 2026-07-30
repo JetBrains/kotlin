@@ -90,8 +90,8 @@ private class ClassClsStubBuilder(
     private fun createClassOrObjectStubAndModifierListStub(): StubElement<out PsiElement> {
         val classOrObjectStub = doCreateClassOrObjectStub()
         val modifierList = createModifierListForClass(classOrObjectStub)
-        typeStubBuilder.createContextReceiverStubs(modifierList, classProto.contextReceiverTypes(c.typeTable))
         createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(thisAsProtoContainer), modifierList)
+        typeStubBuilder.createContextReceiverStubs(modifierList, classProto.contextReceiverTypes(c.typeTable))
         return classOrObjectStub
     }
 

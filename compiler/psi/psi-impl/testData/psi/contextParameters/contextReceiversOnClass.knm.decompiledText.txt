@@ -4,8 +4,8 @@
 public final annotation class MyAnnotation public constructor() : kotlin.Annotation {
 }
 
-context(A, B)
 @MyAnnotation
+context(A, B)
 private open class ContextReceiversOnClass public constructor() {
 }
 
