@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.overrides.isNonPrivate
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.IrErrorModuleFragment
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.classIdWhenAvailable
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.library.metadataVersion
 import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.types.error.ErrorModuleDescriptor
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import kotlin.metadata.ClassName
 import kotlin.metadata.KmAnnotation
@@ -149,7 +148,7 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
         val packageFragment = IrExternalPackageFragmentImpl(
             symbol = IrExternalPackageFragmentSymbolImpl(),
             packageFqName = library.packageFqName?.let(::FqName) ?: error("C-interop library without the package name: ${library.path}"),
-            module = IrModuleFragmentImpl(ErrorModuleDescriptor),
+            module = IrErrorModuleFragment,
         )
 
         val symbolTable = SymbolTable(signaturer = null, IrFactoryImpl)
