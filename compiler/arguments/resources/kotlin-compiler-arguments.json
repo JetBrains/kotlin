@@ -402,6 +402,12 @@
             "major": 2,
             "minor": 6,
             "patch": 0
+        },
+        {
+            "name": "2.7.0",
+            "major": 2,
+            "minor": 7,
+            "patch": 0
         }
     ],
     "types": {
