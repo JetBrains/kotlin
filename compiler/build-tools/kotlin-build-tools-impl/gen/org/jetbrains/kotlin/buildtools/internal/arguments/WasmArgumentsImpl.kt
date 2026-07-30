@@ -9,8 +9,8 @@ import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Deprecated
+import kotlin.DeprecationLevel
 import kotlin.OptIn
-import kotlin.ReplaceWith
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.List
@@ -229,8 +229,8 @@ internal class WasmArgumentsImpl(
   }
 
   @Deprecated(
-    "This method is deprecated. Use applyCommandLineArguments instead.",
-    ReplaceWith("applyCommandLineArguments(arguments)"),
+    message = "This method is deprecated. Use applyCommandLineArguments instead.",
+    level = DeprecationLevel.WARNING,
   )
   override fun applyArgumentStrings(arguments: List<String>) {
     val compilerArgs: KotlinWasmCompilerArguments = parseCommandLineArguments(arguments)
