@@ -27,7 +27,7 @@ internal class BtaApiOptionsGenerator(
     override fun generateArgumentsForLevel(
         level: KotlinCompilerArgumentsLevel,
         parentClass: ClassName?,
-        additionalInterfaces: List<ClassName>
+        additionalInterfaces: List<ClassName>,
     ): GeneratorOutputs {
         val className = level.name.capitalizeAsciiOnly()
         val mainFileAppendable = createGeneratedFileAppendable()
@@ -69,7 +69,7 @@ internal class BtaApiOptionsGenerator(
                         returns(ClassName(targetPackage, className))
                     }
                     if (parentClass == null) {
-                        addApplyArgumentStringsFun()
+                        addApplyArgumentStringsFun(kotlinVersion)
                         addApplyCommandLineArgumentsFun()
                     } else {
                         addSuperinterface(parentClass.nestedClass("Builder"))
@@ -352,10 +352,17 @@ private fun FunSpec.Builder.addParameterIf(name: String, type: ClassName, condit
     return this
 }
 
-private fun TypeSpec.Builder.addApplyArgumentStringsFun() {
-    function("applyArgumentStrings") {
-        addKdoc(
-            """
+private fun TypeSpec.Builder.addApplyArgumentStringsFun(kotlinVersion: KotlinReleaseVersion) {
+    withDeprecationCycle(
+        kotlinVersion,
+        warnFrom = KotlinReleaseVersion.v2_5_0,
+        errorFrom = KotlinReleaseVersion.v2_6_0,
+        removeFrom = KotlinReleaseVersion.v2_7_0,
+        deprecationMessage = "This method is deprecated. Use applyCommandLineArguments instead."
+    ) { annotation ->
+        function("applyArgumentStrings") {
+            addKdoc(
+                """
         Deprecated. Use applyCommandLineArguments instead.
         
         This method is unsafe to use - it wipes all options previously set on this instance to defaults before applying the passed [arguments].
@@ -365,16 +372,18 @@ private fun TypeSpec.Builder.addApplyArgumentStringsFun() {
         When compiling with Kotlin compiler 2.4.20 and above, parsing errors are collected on this instance and reported as compilation errors when the compilation is executed.
         @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when compiling with Kotlin compiler below 2.4.20 and the `arguments` contain errors and cannot be parsed, or when an unsupported argument has become an error
         """.trimIndent()
-        )
-        addParameter(
-            ParameterSpec.builder("arguments", listTypeNameOf<String>())
-                .addKdoc("a list of arguments for the Kotlin CLI compiler").build()
-        )
-        annotation<Deprecated> {
-            addMember("%S", "This method is deprecated. Use applyCommandLineArguments instead.")
-            addMember("%T(%S)", ReplaceWith::class, "applyCommandLineArguments(arguments)")
+            )
+            addParameter(
+                ParameterSpec.builder("arguments", listTypeNameOf<String>())
+                    .addKdoc("a list of arguments for the Kotlin CLI compiler").build()
+            )
+            annotation?.let {
+                addAnnotation(
+                    it.toBuilder().addMember("replaceWith = %T(%S)", ReplaceWith::class, "applyCommandLineArguments(arguments)").build()
+                )
+            }
+            this.addModifiers(KModifier.ABSTRACT)
         }
-        this.addModifiers(KModifier.ABSTRACT)
     }
 }
 
