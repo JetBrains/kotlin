@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.testbase.assertOutputContainsExactlyTimes
 import org.jetbrains.kotlin.gradle.testbase.assertOutputDoesNotContain
 import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.build
-import org.jetbrains.kotlin.gradle.testbase.buildAndFail
 import org.jetbrains.kotlin.gradle.testbase.findTasksByPattern
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -487,7 +486,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
-    fun `KT-88104 - dump task fails after root build directory is removed`(version: GradleVersion) {
+    fun `KT-88104 - dump task does not fail after root build directory is removed`(version: GradleVersion) {
         val libraryProjectName = "lib1"
 
         project("empty", version) {
@@ -514,7 +513,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
                 projectPath.resolve("build").deleteRecursively()
 
-                buildAndFail(dumpTask)
+                build(dumpTask)
             }
         }
     }
