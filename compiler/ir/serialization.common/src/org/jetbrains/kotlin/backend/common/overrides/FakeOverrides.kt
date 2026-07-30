@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -92,9 +93,9 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         fakeOverrideDeclarationTable.inFile(file, block)
 
     override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
-        val [signature, symbol] = computeFunctionFakeOverrideSymbol(function, manglerCompatibleMode)
+        val [signature, symbol] = computeFakeOverrideSymbol(function, manglerCompatibleMode)
 
-        symbolTable.declareSimpleFunction(signature, { symbol }) {
+        symbolTable.declareSimpleFunction(signature, { symbol as IrSimpleFunctionSymbol }) {
             assert(it === symbol)
             function.acquireSymbol(it)
         }
@@ -165,8 +166,8 @@ private class IrLinkerFakeOverrideBuilderStrategy(
             setter.correspondingPropertySymbol = tempSymbol
         }
 
-        val [signature, symbol] = computePropertyFakeOverrideSymbol(property, manglerCompatibleMode)
-        symbolTable.declareProperty(signature, { symbol }) {
+        val [signature, symbol] = computeFakeOverrideSymbol(property, manglerCompatibleMode)
+        symbolTable.declareProperty(signature, { symbol as IrPropertySymbol }) {
             assert(it === symbol)
             property.acquireSymbol(it)
         }
@@ -188,16 +189,18 @@ private class IrLinkerFakeOverrideBuilderStrategy(
     private fun composeSignature(declaration: IrDeclaration, manglerCompatibleMode: Boolean) =
         fakeOverrideDeclarationTable.signatureByDeclaration(declaration, manglerCompatibleMode, recordInSignatureClashDetector = false)
 
-    private fun computeFunctionFakeOverrideSymbol(
-        function: IrFunctionWithLateBinding,
+    private fun computeFakeOverrideSymbol(
+        fakeOverride: IrOverridableDeclaration<*>,
         manglerCompatibleMode: Boolean
-    ): Pair<IdSignature, IrSimpleFunctionSymbol> {
+    ): Pair<IdSignature, IrSymbol> {
         // The class may be declared inside IrExternalPackageFragment instead of IrFile (e.g. in the case of C-interop stubs).
-        val file: IrFile? = function.parentAsClass.fileOrNull
+        val file: IrFile? = fakeOverride.parentAsClass.fileOrNull
 
-        val signature = composeSignature(function, manglerCompatibleMode)
-        val symbol = getFunctionFakeOverrideSymbol(file, signature)
-
+        val signature = composeSignature(fakeOverride, manglerCompatibleMode)
+        val symbol = when (fakeOverride) {
+            is IrSimpleFunction -> getFunctionFakeOverrideSymbol(file, signature)
+            is IrProperty -> getPropertyFakeOverrideSymbol(file, signature)
+        }
         if (!symbol.isBound) {
             return signature to symbol
         }
@@ -207,42 +210,22 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         // state or the existing function with `isInline=true`.
         // This signature is not supposed to be ever serialized (as fake overrides are not serialized in KLIBs).
         // In new KLIB signatures `isSuspend` and `isInline` flags will be taken into account as a part of signature.
-        function.isFakeOverrideNeedingDisambiguatedSignature = true
-
-        // Remove the associated signature and compute it ones again. This time it will be different because of the flag set above.
-        fakeOverrideDeclarationTable.removeDeclaration(function)
-        val disambiguatedSignature = composeSignature(function, manglerCompatibleMode)
-        assert(disambiguatedSignature != signature) { "Failed to compute disambiguated signature for fake override $function" }
-        return disambiguatedSignature to IrSimpleFunctionSymbolImpl(signature = disambiguatedSignature)
-    }
-
-    private fun computePropertyFakeOverrideSymbol(
-        property: IrPropertyWithLateBinding,
-        manglerCompatibleMode: Boolean
-    ): Pair<IdSignature, IrPropertySymbol> {
-        // The class may be declared inside IrExternalPackageFragment instead of IrFile (e.g. in the case of C-interop stubs).
-        val file: IrFile? = property.parentAsClass.fileOrNull
-
-        val signature = composeSignature(property, manglerCompatibleMode)
-        val symbol = getPropertyFakeOverrideSymbol(file, signature)
-
-        if (!symbol.isBound) {
-            return signature to symbol
+        fakeOverride.isFakeOverrideNeedingDisambiguatedSignature = true
+        if (fakeOverride is IrProperty) {
+            fakeOverride.getter?.isFakeOverrideNeedingDisambiguatedSignature = true
+            fakeOverride.setter?.isFakeOverrideNeedingDisambiguatedSignature = true
         }
 
-        // In old KLIB signatures we don't distinguish between inline and non-inline property accessors. So we need to
-        // manually patch the signature of the fake override to avoid clash with the existing property with `inline` accessors.
-        // This signature is not supposed to be ever serialized (as fake overrides are not serialized in KLIBs).
-        // In new KLIB signatures `isInline` flag will be taken into account as a part of signature.
-        property.isFakeOverrideNeedingDisambiguatedSignature = true
-        property.getter?.isFakeOverrideNeedingDisambiguatedSignature = true
-        property.setter?.isFakeOverrideNeedingDisambiguatedSignature = true
-
         // Remove the associated signature and compute it ones again. This time it will be different because of the flag set above.
-        fakeOverrideDeclarationTable.removeDeclaration(property)
-        val disambiguatedSignature = composeSignature(property, manglerCompatibleMode)
-        assert(disambiguatedSignature != signature) { "Failed to compute disambiguated signature for fake override $property" }
-        return disambiguatedSignature to IrPropertySymbolImpl(signature = disambiguatedSignature)
+        fakeOverrideDeclarationTable.removeDeclaration(fakeOverride)
+        val disambiguatedSignature = composeSignature(fakeOverride, manglerCompatibleMode)
+        assert(disambiguatedSignature != signature) { "Failed to compute disambiguated signature for fake override $fakeOverride" }
+        val disambiguatedSymbol = when (fakeOverride) {
+            is IrSimpleFunction -> IrSimpleFunctionSymbolImpl(signature = disambiguatedSignature)
+            is IrProperty -> IrPropertySymbolImpl(signature = disambiguatedSignature)
+        }
+
+        return disambiguatedSignature to disambiguatedSymbol
     }
 
     private fun getFunctionFakeOverrideSymbol(file: IrFile?, signature: IdSignature): IrSimpleFunctionSymbol {
