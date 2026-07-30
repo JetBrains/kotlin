@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
@@ -194,11 +195,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         fakeOverrideDeclarationTable.removeDeclaration(function)
         val disambiguatedSignature = composeSignature(function, manglerCompatibleMode)
         assert(disambiguatedSignature != signature) { "Failed to compute disambiguated signature for fake override $function" }
-
-        val symbolWithDisambiguatedSignature = linker.tryReferencingSimpleFunctionByLocalSignature(file, disambiguatedSignature)
-            ?: symbolTable.referenceSimpleFunction(disambiguatedSignature)
-
-        return disambiguatedSignature to symbolWithDisambiguatedSignature
+        return disambiguatedSignature to IrSimpleFunctionSymbolImpl(signature = disambiguatedSignature)
     }
 
     private fun computePropertyFakeOverrideSymbol(
@@ -228,11 +225,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         fakeOverrideDeclarationTable.removeDeclaration(property)
         val disambiguatedSignature = composeSignature(property, manglerCompatibleMode)
         assert(disambiguatedSignature != signature) { "Failed to compute disambiguated signature for fake override $property" }
-
-        val symbolWithDisambiguatedSignature = linker.tryReferencingPropertyByLocalSignature(file, disambiguatedSignature)
-            ?: symbolTable.referenceProperty(disambiguatedSignature)
-
-        return disambiguatedSignature to symbolWithDisambiguatedSignature
+        return disambiguatedSignature to IrPropertySymbolImpl(signature = disambiguatedSignature)
     }
 
     // TODO(KT-62534) use ModuleDescriptor.shouldSeeInternalsOf when it's fixed and get rid of friendModules
