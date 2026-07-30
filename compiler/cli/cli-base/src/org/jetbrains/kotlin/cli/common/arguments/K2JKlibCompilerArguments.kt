@@ -122,6 +122,17 @@ See KT-45671 for more details."""
         }
 
     @Argument(
+        value = "-jvm-target",
+        valueDescription = "<version>",
+        description = "The target version of the generated JVM bytecode (1.8 and 9–26), with 1.8 as the default.",
+    )
+    var jvmTarget: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
         value = "-Xvalue-classes",
         description = "Enable experimental value classes."
     )
