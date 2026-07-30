@@ -541,3 +541,228 @@ top-level name instead of once per name *per mode*: 31145 → 18982 index lookup
 
 The scoped answer is still consulted before the `ClassId`-keyed `binaryCache`, so an out-of-scope
 file cannot leak into a scoped result through the shared class cache.
+
+---
+
+## 11. Cost of the `TopLevelClassFiles` indirection: holder vs array vs encoded slot (2026-07-30)
+
+Follow-up question to §10: the merged cache introduced one extra object between the map and the
+`VirtualFile`. Is the indirection worth avoiding — e.g. by a two-element array, or a `SmartList`-style
+"one object for the common case" trick?
+
+**What the workload actually is.** From the §10 counters, per full suite:
+
+| | phased | box |
+|---|---|---|
+| finder instances | 1615 | 1469 |
+| distinct keys cached (= holders allocated) | 11627 | 18914 |
+| cache lookups | 41533 | 76549 |
+| entries per finder / lookups per finder | 7.2 / 25.7 | 12.9 / 52.1 |
+| share of lookups that are scoped | 42% | 29% |
+
+So the maps are tiny (7–13 entries), the holder count is ~19k **per whole suite**, and — from §10 —
+`anywhere === inScope` for 100% of the keys observed in either corpus.
+
+**Method.** A standalone harness (plain Java, run on JDK 21, outside the repo) replays exactly this
+shape: 1469/1615 episodes, each creating a fresh `HashMap` and doing the measured number of
+lookups with the measured scoped share; the index traversal is excluded because it is identical in
+all variants, so what is timed is only allocation + the read path. 30 warmup passes, then 60 timed
+passes over the whole simulated suite; per-thread allocation from
+`com.sun.management.ThreadMXBean`. Four variants:
+
+- **A holder** — `class TopLevelClassFiles(anywhere, inScope)`, i.e. current HEAD.
+- **B array2** — `MutableMap<FqName, Array<VirtualFile?>>`, slot 0 = anywhere, slot 1 = inScope.
+- **C encoded** — `MutableMap<FqName, Any>`: the `VirtualFile` **itself** when both answers coincide
+  (the 100% case), a `NOT_FOUND` sentinel when nothing was found, a holder only when the two answers
+  differ. This is the `SmartList` idea applied here: no wrapper in the common case.
+- **D two-maps** — the pre-§10 baseline, for reference.
+
+Median of 60 passes, per **whole suite** (ParallelGC / G1 gave the same picture):
+
+| variant | box: time | box: alloc | phased: time | 20×-larger corpus (`big`) |
+|---|---|---|---|---|
+| A holder (HEAD) | 0.96 ms | 1.376 MB | 0.45 ms | 23.4 ms |
+| B array2 | 0.90 ms | 1.376 MB | 0.39 ms | **26.7 ms** |
+| C encoded | 0.81 ms | 0.923 MB | 0.38 ms | 23.3 ms |
+| D two-maps | 0.85 ms | 1.471 MB | 0.37 ms | 30.9 ms |
+
+**Conclusions.**
+
+1. **The indirection is not a measurable cost.** The entire cache — every allocation and every read,
+   for 1469 compilations — is under one millisecond. The spread between the best and the worst shape
+   is ~0.15 ms per suite, i.e. ~0.1 µs per compilation, some 5–6 orders of magnitude below suite
+   runtime. Nothing here is worth optimizing; §10's win was the ~12k avoided *index traversals*, not
+   the object layout.
+2. **An array is not an improvement.** It allocates exactly the same 24–32 bytes (2-field object vs
+   2-slot array header), replaces a `getfield` with a bounds-checked `aaload` plus a branch to pick
+   the index, and loses both the type (`Array<VirtualFile?>`) and the names. On the 20×-larger corpus
+   it is consistently the **slowest** single-map variant (+14% vs the holder). Rejected.
+3. **A `SmartList`-style encoded slot is the only real win, and it is still noise.** Skipping the
+   wrapper for the 100%-coincident case removes 0.45 MB/suite (−33% of the cache's allocation) and
+   ~0.15 ms/suite. The price is an `Any`-typed map plus an `instanceof`/sentinel decision tree at
+   every read, in code whose whole point is that the scoped and the unscoped answer must not be
+   confused with one another — the §10 invariant would become an unchecked encoding invariant.
+   Not taken: 0.15 ms per suite does not buy that.
+4. **Escape analysis does not apply**, so the allocation is real: the holder is stored in a
+   long-lived map. But 19k short-field objects per suite is ~0.6 MB of young-gen garbage, which the
+   numbers above confirm is irrelevant next to what a compilation allocates.
+
+Outcome: keep the named holder; the KDoc on `TopLevelClassFiles` now points here so the question
+does not have to be re-measured. The harness was temporary and is not committed — the four variant
+bodies are ~15 lines each and are fully described above.
+
+---
+
+## 12. The binary index on `KotlinFullPipelineTestsGenerated`, and where the M1 gap is *not* (2026-07-30)
+
+§10/§11 measured the binary finder on the java-direct fixtures — a corpus so small that everything
+about the cache was noise. This section re-measures it on the real thing: the 413-module Kotlin
+full-pipeline corpus, motivated by a reported **~0.5% slowdown of Kotlin FP on a test mac mini
+(M1)**, while every other corpus and every other (Intel/Linux) machine got ~0.5% *faster* on
+java-direct.
+
+Test machine here: Apple M5 Max, 18 cores, 128 GB. The suite: `:compiler:fir:modularized-tests`
+`KotlinFullPipelineTestsGenerated`, 413 isolated CLI compilations, **JDK 8 launcher**, fixed
+`-Xms8g -Xmx8g`, JUnit `ExecutionMode.CONCURRENT`. Wall time ~65-75 s, summed test time ~930-980 s.
+
+### 12.1 Method
+
+Three temporary harnesses, all removed afterwards:
+
+1. **Counters + timers inside `JavaClassFinderOverBinaryIndex`** (`LongAdder`s in a
+   `JavaDirectIndexStats` object, dumped from a shutdown hook, enabled by a system property).
+   One trap worth recording: timing only the *public* entry points under-reports the finder,
+   because `BinaryJavaClass` resolves cross-references **lazily** — a large part of the work
+   happens long after `findClass` returned, from wherever FIR first touches a supertype or an
+   annotation. The first version reported 4.9 s "inclusive" while the inner ASM timer already
+   showed 7.1 s. Correct shape: one depth-guarded timer around `findClassImpl` itself plus the two
+   package entry points, so *every* outermost entry is counted regardless of the caller.
+2. **A paired in-run A/B**: both cache-key variants compiled into the binary, assigned round-robin
+   per finder instance, with a tightly scoped timer around just the key computation + map get (miss
+   samples excluded, since an index traversal costs ~7 µs and would swamp a ~0.5 µs fragment).
+   Necessary because run-to-run noise on this machine (±2-4% on summed test time) is far larger
+   than the effect (~50 ms per corpus).
+3. **Allocation/GC accounting in the test runner**: `com.sun.management.ThreadMXBean`
+   `getThreadAllocatedBytes` per compilation plus JVM-wide `GarbageCollectorMXBean` counters at
+   shutdown, combined with a temporary switch overriding `args.javaDirect`, i.e. `java-direct` vs
+   the PSI path inside one binary (`-Xjava-direct=false`).
+
+### 12.2 What the binary finder costs on the FP corpus
+
+Per whole corpus (413 compilations, 958 s of summed compilation time):
+
+| | value | share of the finder |
+|---|---|---|
+| finder instances | 413 | |
+| outermost entries into the finder | 420150 | |
+| **total inclusive time in the finder** | **9.47 s = 0.99% of compilation time** | 100% |
+| ASM reads + lazy cross-reference resolution | 6.81 s | 72% |
+| `knownClassNamesInPackage` index traversals | 1.68 s | 18% |
+| top-level class index traversals | 0.52 s | 5% |
+| `containsDirectory` (package existence) | 0.07 s | 1% |
+| `findClass` / `findPackage` / `knownClassNamesInPackage` calls | 63543 / 22704 / 35306 | |
+| `findClassImpl` calls | 377116, of which **307670 read nothing** (already cached) | |
+| distinct classes actually read from bytecode | 69617 (~170 per module) | |
+| class-name strings materialized by `knownClassNamesInPackage` | 2046393 | |
+| top-level cache: lookups / misses / candidates seen | 378994 / 53521 / 53265 | |
+
+So the finder is ~1% of compilation, i.e. large enough in principle to carry a 0.5% regression —
+but **72% of it is `readBinaryJavaClass` on 69617 class files, which master performs identically**:
+`KotlinCliJavaFileManagerImpl` has used the very same reader for every JVM CLI compile since 2017
+(§ the `BinaryJavaClass` review). Whatever differs between master and this branch, it is not the
+cost of reading those class files.
+
+### 12.3 The one avoidable cost found, and its size
+
+Every `findClassImpl` call built its cache key as
+`classId.packageFqName.child(classId.relativeClassName.pathSegments().first())`. That is, per call:
+a recursive `pathSegments()` with an `ArrayList` (and a `Name` + substring for an uncached
+`FqNameUnsafe`), a string concatenation, an `FqNameUnsafe`, an `FqName`, and then a `hashCode()`
+over the freshly built string. 378994 times per corpus, ~1.5M objects, to answer something that is
+a cache hit in 86% of the cases.
+
+Replaced by a two-level cache keyed on what `classId` already holds — `packageFqName` (existing
+object, cached string hash) and the outermost class `Name`, taken from `relativeClassName` via
+`topLevelName()` without building an `FqName`. The `ClassId` for the index query is now built only
+on a miss, and without any concatenation.
+
+Paired A/B, same run, ~154-171k hit samples each:
+
+| key scheme | ns per hit lookup |
+|---|---|
+| `FqName.child(pathSegments().first())` (old) | 631 |
+| package + outermost `Name` (new) | 465 (**-26%**) |
+
+Honest accounting: 166 ns × 325473 hit lookups ≈ **54 ms per whole corpus**, i.e. 0.006% of
+compilation time. Kept anyway — it is strictly less work, less garbage and not less readable — but
+it explains nothing. (The absolute ns figures include `System.nanoTime` overhead and parallel-load
+noise; only the difference is meaningful.)
+
+### 12.4 Two negatives that matter more than the positive
+
+**(a) java-direct does not allocate more than the PSI path.** Two runs each, same binary,
+`-Xjava-direct` on/off:
+
+| | allocated on test threads | per compilation | young GCs | full GCs |
+|---|---|---|---|---|
+| java-direct on | 216.7 GB / 220.6 GB | 525 MB / 534 MB | 118 / 112 (5.3 s / 5.0 s) | 9 / 8 (3.5 s / 2.9 s) |
+| java-direct off | 220.5 GB / 220.8 GB | 534 MB / 535 MB | 119 / 119 (5.2 s / 5.2 s) | 9 / 9 (3.6 s / 3.4 s) |
+
+Identical within noise (java-direct marginally *lower*). So "java-direct produces more garbage,
+which hurts a small machine more" is **not** the mechanism.
+
+**(b) The regression does not reproduce here, and this machine cannot arbitrate 0.5%.** Two
+batches of the same on/off A/B, taken 30 minutes apart, disagree on the *sign*: the first gave
+933/940 s with java-direct vs 972/979 s without (java-direct 4% faster), the second gave 922/1004 s
+vs 909/920 s (java-direct ~1.5% slower). Same command, same corpus, same binary. Within one batch
+the repeats agree to ~0.6%, so the drift is between batches, not between runs — thermal/background
+(Spotlight `mds` was observed at 35% CPU; one polluted run came out 54× slower with load average
+74). Conclusion: **summed test time on a developer machine is unusable below a few percent**, and no
+statement about 0.5% can be made from it. Anything at that magnitude must be measured on the box
+that shows it, with a metric less fragile than wall time.
+
+### 12.5 Where to look next for the M1 0.5% — concrete strategies
+
+Ordered by expected information per hour, all doable on the mini:
+
+1. **Differential async-profiler, wall + alloc.** `:compiler:fir:modularized-tests` already
+   supports it: pass `-Pfir.bench.async.profiler.classpath=...` (see `build.gradle.kts`, it is put
+   on `testRuntimeOnly`) and profile the FP corpus on master and on the branch, then diff the
+   collapsed stacks. A 0.5% shift shows up as a specific frame moving; this is the only method that
+   points at code rather than at a number.
+2. **Per-phase deltas instead of totals.** The FP tests already run with `args.reportPerf = true`,
+   and the aggregating runner (`AbstractFullPipelineModularizedTest`, as opposed to the isolated
+   JUnit one used by `KotlinFullPipelineTestsGenerated`) collects `PerformanceManager` phase times
+   (INIT / ANALYSIS / TRANSLATION / GENERATION) per module. Diff *phases* master vs branch: if the
+   0.5% sits in INIT it is session/index/classpath setup; in ANALYSIS it is the Java facade or the
+   Java parser; in GENERATION it is not java-direct at all.
+3. **Kill the parallelism coupling.** The suite runs `ExecutionMode.CONCURRENT` with a fixed 8 GB
+   heap. On an 8-core/16 GB mini that is a very different regime from an 18-core/128 GB or a Linux
+   server: 4 performance + 4 efficiency cores mean any change in thread occupancy shifts work onto
+   E-cores (~3× slower), and 8 GB of heap on 16 GB of RAM leaves little page cache for the
+   classpath. Re-run the mini comparison with `junit.jupiter.execution.parallel.enabled=false`
+   (or parallelism 2), and with `-XX:ParallelGCThreads` pinned. If 0.5% survives sequential
+   execution, it is real compiler work; if it disappears, it is scheduling/GC/page-cache coupling
+   and should be reported as such.
+4. **Compare *counts*, not times.** Counters like §12.2's are machine-independent. Re-enable that
+   harness (or an equivalent for the source-side finder) on the mini and on a Linux box: identical
+   counts + different time = a machine effect (cache/branch-predictor/E-cores/page cache), differing
+   counts = a real work difference that will also be visible locally, where it is easy to fix.
+5. **Suspect I/O, not CPU, for a mac-mini-only effect.** The finder does 35306 package traversals
+   materializing 2.05M file names and 22040 directory probes per corpus; the source side walks Java
+   source roots. That is `VirtualFile` traversal over jars/directories — page-cache bound. On a
+   RAM-rich Linux box the whole classpath is cached; on a 16 GB mini it competes with an 8 GB heap.
+   Test: run the mini corpus twice back-to-back and compare only the *second* runs (warm cache), and
+   watch `knownClassNames`/traversal timers rather than totals.
+6. **JDK 8 on aarch64.** The FP task pins `JdkMajorVersion.JDK_1_8`. 8u's aarch64 C2 is a backport
+   and is markedly less good than 17+/21 at exactly what java-direct changed (small short-lived
+   objects, megamorphic interface calls through `JavaClass`/`JavaClassFinder`). Sanity check: run the
+   same comparison on the mini with a modern launcher. If the delta vanishes on JDK 21, it is a JIT
+   artifact of the pinned JDK 8, not a property of the code.
+7. **If a target is needed anyway**, the ranked list of what the finder actually spends on the FP
+   corpus is: (i) 2.05M name strings + 35306 traversals in `knownClassNamesInPackage` — a membership
+   query (`FirJavaFacade.hasTopLevelClassOf`) forced into a materialized `Set<String>` by the
+   `JavaClassFinder` interface; a `contains`-style API would remove it, but master's
+   `KotlinCliJavaFileManagerImpl` pays the same, so it is a shared win, not a branch fix;
+   (ii) 307670 repeat `findClassImpl` calls that only re-hit `binaryCache` — the caller (FIR) asks
+   for the same class over and over; (iii) the key computation, already fixed above (54 ms).

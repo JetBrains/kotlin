@@ -40,7 +40,7 @@ class JavaClassFinderOverBinaryIndex(
 
     private val binaryCache: MutableMap<ClassId, JavaClass?> = HashMap()
 
-    private val topLevelClassesCache: MutableMap<FqName, TopLevelClassFiles> = HashMap()
+    private val topLevelClassesCache: MutableMap<FqName, MutableMap<Name, TopLevelClassFiles>> = HashMap()
 
     private val knownClassNamesCache: MutableMap<FqName, Set<String>> = HashMap()
 
@@ -95,9 +95,15 @@ class JavaClassFinderOverBinaryIndex(
     private fun findClassImpl(request: JavaClassFinder.Request, applyScopeFilter: Boolean): JavaClass? {
         val [classId, classFileContentFromRequest, outerClassFromRequest] = request
 
-        val outerMostClassFqName = classId.packageFqName.child(classId.relativeClassName.pathSegments().first())
-        val topLevelClassFiles = topLevelClassesCache.getOrPut(outerMostClassFqName) {
-            findTopLevelClassFiles(outerMostClassFqName)
+        // Keyed by the two parts of the outermost class name as they already exist in `classId`.
+        // An `FqName` of that class would be a nicer single key, but building it costs a string
+        // concatenation, an `FqName`, an `FqNameUnsafe`, a `pathSegments()` list and a hash of a
+        // fresh string on *every* lookup, and lookups outnumber misses ~7:1 (see
+        // `implDocs/BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22.md` §12).
+        val packageFqName = classId.packageFqName
+        val topLevelName = classId.relativeClassName.topLevelName()
+        val topLevelClassFiles = topLevelClassesCache.getOrPut(packageFqName) { HashMap() }.getOrPut(topLevelName) {
+            findTopLevelClassFiles(ClassId(packageFqName, topLevelName))
         }
         val virtualFile = (if (applyScopeFilter) topLevelClassFiles.inScope else topLevelClassFiles.anywhere) ?: return null
 
@@ -114,8 +120,7 @@ class JavaClassFinderOverBinaryIndex(
         )
     }
 
-    private fun findTopLevelClassFiles(outerMostClassFqName: FqName): TopLevelClassFiles {
-        val outerMostClassId = ClassId.topLevel(outerMostClassFqName)
+    private fun findTopLevelClassFiles(outerMostClassId: ClassId): TopLevelClassFiles {
         var anywhere: VirtualFile? = null
         for (candidate in index.findClassVirtualFiles(outerMostClassId, extensions)) {
             if (anywhere == null) anywhere = candidate
@@ -128,6 +133,11 @@ class JavaClassFinderOverBinaryIndex(
      * Both answers the index can give for one top-level class name, cached together: the classpath
      * order winner ([anywhere], for cross-references out of bytecode) and the first candidate that
      * is also in [scope] ([inScope], for this session's own lookups).
+     *
+     * A named holder rather than a two-element array or a value encoded into the map slot: the
+     * whole cache costs ~1 ms of allocation plus indirection per full `JavaUsingAst*` suite, and an
+     * array is *slower* on larger corpora (see `implDocs/BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22.md`
+     * §11), so the shape is chosen for readability.
      */
     private class TopLevelClassFiles(val anywhere: VirtualFile?, val inScope: VirtualFile?)
 
@@ -137,6 +147,17 @@ class JavaClassFinderOverBinaryIndex(
         private val BINARY_CLASS_AND_SIG_EXTENSIONS =
             JavaFileExtensions(JavaFileExtension.CLASS, JavaFileExtension.SIG)
     }
+}
+
+/**
+ * The name of the outermost class of a [ClassId.relativeClassName], without building an [FqName]:
+ * `Outer.Inner.Nested` -> `Outer`. Reuses the already computed short name in the top-level case,
+ * which is the vast majority of the requests.
+ */
+private fun FqName.topLevelName(): Name {
+    val relativeClassName = asString()
+    val firstDot = relativeClassName.indexOf('.')
+    return if (firstDot < 0) shortName() else Name.identifier(relativeClassName.substring(0, firstDot))
 }
 
 /** [JavaPackage] carrying only the binary `package-info.class` annotations, if any. */
