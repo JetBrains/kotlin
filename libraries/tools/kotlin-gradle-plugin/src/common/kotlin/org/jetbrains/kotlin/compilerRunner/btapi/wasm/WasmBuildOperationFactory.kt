@@ -36,7 +36,7 @@ internal class WasmKlibBuildOperationFactory(private val compilerArgs: List<Stri
         @Suppress("DEPRECATION")
         args.irProduceKlibFile = null
 
-        compilationOperationBuilder.compilerArguments.applyArgumentStrings(
+        compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false
             )
@@ -62,7 +62,7 @@ internal class WasmLinkingBuildOperationFactory(private val compilerArgs: List<S
         args.irProduceJs = K2JSCompilerArguments().irProduceJs
         args.includes = null
 
-        compilationOperationBuilder.compilerArguments.applyArgumentStrings(
+        compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false
             )
