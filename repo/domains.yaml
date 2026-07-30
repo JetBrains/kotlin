@@ -109,6 +109,7 @@ IntelliJ:
     - Compiler
     - AnalysisApi
     - CoreLibs
+    - BuildToolsApi # small set of BTA tests, opportunity for optimizations.
 
 BuildInfrastructure:
   include:
