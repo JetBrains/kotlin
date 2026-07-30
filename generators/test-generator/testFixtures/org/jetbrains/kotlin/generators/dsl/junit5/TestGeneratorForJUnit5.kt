@@ -195,6 +195,9 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
 
                     override val autoSmokeTestLimit: Int
                         get() = testClassModels.maxOf { it.autoSmokeTestLimit }
+
+                    override val hasSmokeTests: Boolean
+                        get() = testClassModels.any { it.hasSmokeTests }
                 }
             }
 
@@ -261,6 +264,9 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
 
                     override val autoSmokeTestLimit: Int
                         get() = this@unfold.autoSmokeTestLimit
+
+                    override val hasSmokeTests: Boolean
+                        get() = innerTestClasses.any { it.hasSmokeTests }
                 }
             }
             return result

@@ -55,6 +55,7 @@ abstract class TestClassModel : TestEntityModel() {
     abstract val testKClass: Class<*>
     abstract val isAutoSmokeTest: Boolean
     abstract val autoSmokeTestLimit: Int
+    abstract val hasSmokeTests: Boolean
 
     val imports: Set<Class<*>>
         get() {
@@ -62,7 +63,7 @@ abstract class TestClassModel : TestEntityModel() {
                 annotations.flatMapTo(allImports) { it.imports() }
                 methods.flatMapTo(allImports) { it.imports() }
                 innerTestClasses.flatMapTo(allImports) { it.imports }
-                if (isAutoSmokeTest) {
+                if (hasSmokeTests) {
                     allImports.add(SmokeTest::class.java)
                 }
             }

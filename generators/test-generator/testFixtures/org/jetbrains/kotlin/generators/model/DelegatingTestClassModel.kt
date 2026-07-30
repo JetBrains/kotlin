@@ -37,4 +37,7 @@ abstract class DelegatingTestClassModel(private val delegate: TestClassModel) : 
 
     override val autoSmokeTestLimit: Int
         get() = delegate.autoSmokeTestLimit
+
+    override val hasSmokeTests: Boolean
+        get() = delegate.hasSmokeTests
 }

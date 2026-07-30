@@ -143,6 +143,8 @@ class SimpleTestClassModel(
                     isSmokeTest = hasSmokeDirective(file),
                 )
             }.sortedWith(BY_NAME).mapIndexed { index, model ->
+                // This can also select a test that is manually marked via the smoke directive
+                // consequently, auto smoke testing doesn't always add *additional* smoke tests, if some were marked with the directive already
                 if (isAutoSmokeTest && index < autoSmokeTestLimit) model.copy(isSmokeTest = true)
                 else model
             }
@@ -163,6 +165,9 @@ class SimpleTestClassModel(
 
     override val dataPathRoot: String
         get() = "\$PROJECT_ROOT"
+
+    override val hasSmokeTests: Boolean
+        get() = methods.any { it.isSmokeTest } || innerTestClasses.any { it.hasSmokeTests }
 
     companion object {
         private val BY_NAME = Comparator.comparing(TestEntityModel::name)
