@@ -10,28 +10,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FakePureImplementationsProvider {
-    fun getPurelyImplementedInterface(classFqName: ClassId, concurrentMapEnhancementEnabled: Boolean): ClassId? =
-        if (!concurrentMapEnhancementEnabled) pureImplementationsClassIds[classFqName]
-        else pureImplementationsClassIdsForConcurrentMaps[classFqName] ?: pureImplementationsClassIds[classFqName]
-
-    fun getPurelyImplementedInterfaceForWarnings(classFqName: ClassId, concurrentMapEnhancementEnabled: Boolean): ClassId? =
-        if (!concurrentMapEnhancementEnabled) pureImplementationsClassIdsForConcurrentMaps[classFqName]
-        else null
-
+    fun getPurelyImplementedInterface(classFqName: ClassId): ClassId? = pureImplementationsClassIds[classFqName]
     fun getPurelyImplementedInterface(classFqName: FqName): FqName? = pureImplementationsFqNames[classFqName]
 
     private val pureImplementationsClassIds = mutableMapOf<ClassId, ClassId>()
-
-    // Additional Map bound to LanguageFeature.ConcurrentMapPurelyImplemented
-    // See KT-8761
-    private val pureImplementationsClassIdsForConcurrentMaps = mutableMapOf<ClassId, ClassId>()
-
     private infix fun ClassId.implementedWith(implementations: List<ClassId>) {
         implementations.associateWithTo(pureImplementationsClassIds) { this }
-    }
-
-    private infix fun ClassId.implementedWithForConcurrentMaps(implementations: List<ClassId>) {
-        implementations.associateWithTo(pureImplementationsClassIdsForConcurrentMaps) { this }
     }
 
     init {
@@ -39,13 +23,7 @@ object FakePureImplementationsProvider {
         StandardClassIds.MutableSet implementedWith fqNameListOf("java.util.HashSet", "java.util.TreeSet", "java.util.LinkedHashSet")
         StandardClassIds.MutableMap implementedWith fqNameListOf(
             "java.util.HashMap", "java.util.TreeMap", "java.util.LinkedHashMap",
-            "java.util.concurrent.ConcurrentHashMap", "java.util.concurrent.ConcurrentSkipListMap",
-        )
-        StandardClassIds.MutableMap implementedWithForConcurrentMaps fqNameListOf(
-            "java.util.concurrent.ConcurrentMap"
-        )
-        ClassId.topLevel(FqName("java.util.concurrent.ConcurrentMap")) implementedWithForConcurrentMaps fqNameListOf(
-            "java.util.concurrent.ConcurrentHashMap", "java.util.concurrent.ConcurrentSkipListMap",
+            "java.util.concurrent.ConcurrentHashMap", "java.util.concurrent.ConcurrentSkipListMap"
         )
         ClassId.topLevel(FqName("java.util.function.Function")) implementedWith fqNameListOf("java.util.function.UnaryOperator")
         ClassId.topLevel(FqName("java.util.function.BiFunction")) implementedWith fqNameListOf("java.util.function.BinaryOperator")
