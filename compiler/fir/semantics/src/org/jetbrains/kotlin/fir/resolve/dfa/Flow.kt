@@ -24,10 +24,10 @@ abstract class Flow {
      *
      * Avoid readding this information back into the [Flow] as it
      * will produce redundant smart casts on [variable] itself.
-     * To merge flows or update the existing information, use [getOwnTypeStatement].
+     * To merge flows or update the existing information, use [getTypeStatement].
      */
+    abstract fun getTypeStatementWithOneWayData(variable: DataFlowVariable): TypeStatement?
     abstract fun getTypeStatement(variable: DataFlowVariable): TypeStatement?
-    abstract fun getOwnTypeStatement(variable: DataFlowVariable): TypeStatement?
 
     abstract fun getImplications(variable: DataFlowVariable): Collection<Implication>?
 
@@ -61,10 +61,10 @@ class PersistentFlow internal constructor(
     override fun unwrapVariable(variable: RealVariable): RealVariable =
         directAliasMap[variable] ?: variable
 
-    override fun getTypeStatement(variable: DataFlowVariable): TypeStatement? =
+    override fun getTypeStatementWithOneWayData(variable: DataFlowVariable): TypeStatement? =
         combineTypeStatements(variable, approvedTypeStatements, oneWayAliasMap)
 
-    override fun getOwnTypeStatement(variable: DataFlowVariable): TypeStatement? =
+    override fun getTypeStatement(variable: DataFlowVariable): TypeStatement? =
         approvedTypeStatements[unwrapVariable(variable)]?.copy(variable = variable)
 
     override fun getImplications(variable: DataFlowVariable): Collection<Implication>? =
@@ -122,10 +122,10 @@ class MutableFlow internal constructor(
     override fun unwrapVariable(variable: RealVariable): RealVariable =
         directAliasMap[variable] ?: variable
 
-    override fun getTypeStatement(variable: DataFlowVariable): TypeStatement? =
+    override fun getTypeStatementWithOneWayData(variable: DataFlowVariable): TypeStatement? =
         combineTypeStatements(variable, approvedTypeStatements, oneWayAliasMap)
 
-    override fun getOwnTypeStatement(variable: DataFlowVariable): TypeStatement? =
+    override fun getTypeStatement(variable: DataFlowVariable): TypeStatement? =
         approvedTypeStatements[unwrapVariable(variable)]?.copy(variable = variable)
 
     override fun getImplications(variable: DataFlowVariable): Collection<Implication>? =

@@ -308,7 +308,7 @@ abstract class FirDataFlowAnalyzer(
         return buildSmartCastStatement(flow, variable, typeStatement)
     }
 
-    open fun extractTypeStatementFrom(flow: Flow, variable: DataFlowVariable): TypeStatement? = flow.getTypeStatement(variable)
+    open fun extractTypeStatementFrom(flow: Flow, variable: DataFlowVariable): TypeStatement? = flow.getTypeStatementWithOneWayData(variable)
 
     fun buildSmartCastStatement(
         flow: Flow,
@@ -988,10 +988,10 @@ abstract class FirDataFlowAnalyzer(
             val variable = getLocal(symbol, create = false) ?: return@forEach
             // The statement about `variable` in `conditionEnterFlow` should be empty, so to obtain the new statement
             // we can simply add the now-known input to whatever was inferred from nothing so long as the value is the same.
-            val toAdd = logicSystem.or(loopEnterAndContinueFlows.map { it.getOwnTypeStatement(variable) ?: return@forEach })
+            val toAdd = logicSystem.or(loopEnterAndContinueFlows.map { it.getTypeStatement(variable) ?: return@forEach })
                 ?.takeIf { it.isNotEmpty } ?: return@forEach
             val newStatement = logicSystem.or(conditionExitAndBreakFlows.map {
-                val atExit = it.getOwnTypeStatement(variable)
+                val atExit = it.getTypeStatement(variable)
                 if (logicSystem.isSameValueIn(conditionEnterFlow, it, variable)) {
                     logicSystem.and(atExit, toAdd)
                 } else {
@@ -1912,8 +1912,8 @@ abstract class FirDataFlowAnalyzer(
         if (previous == flow) return
         receiverStack.implicitValues.forEach {
             val variable = RealVariable.implicit(it.boundSymbol, it.originalType)
-            val newStatement = flow?.getTypeStatement(variable)
-            if (newStatement != previous?.getTypeStatement(variable)) {
+            val newStatement = flow?.getTypeStatementWithOneWayData(variable)
+            if (newStatement != previous?.getTypeStatementWithOneWayData(variable)) {
                 implicitUpdated(newStatement ?: MutableTypeStatement(variable))
             }
         }
@@ -1955,8 +1955,8 @@ abstract class FirDataFlowAnalyzer(
         buildMap {
             parent.knownVariables.forEach {
                 if (unwrapVariable(it) != it) return@forEach // will add a statement for the aliased variable instead
-                val statement = parent.getOwnTypeStatement(it)
-                if (statement != null && statement != getOwnTypeStatement(it)) put(it, statement)
+                val statement = parent.getTypeStatement(it)
+                if (statement != null && statement != getTypeStatement(it)) put(it, statement)
             }
         }
 

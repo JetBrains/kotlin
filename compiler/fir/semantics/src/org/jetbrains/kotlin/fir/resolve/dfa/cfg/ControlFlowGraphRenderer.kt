@@ -175,7 +175,7 @@ private class ControlFlowGraphRenderer(
                     if (aliased != variable) {
                         append(" = ").append(aliased.renderHtmlLike())
                     } else {
-                        getTypeStatement(variable)?.let {
+                        getTypeStatementWithOneWayData(variable)?.let {
                             append(": ").append(it.renderTypeHtmlLike())
                         }
                     }
