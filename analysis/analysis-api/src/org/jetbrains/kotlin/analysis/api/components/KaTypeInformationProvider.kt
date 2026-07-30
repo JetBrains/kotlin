@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.name.ClassId
 
 @KaSessionComponentImplementationDetail
@@ -25,14 +24,6 @@ public interface KaTypeInformationProvider : KaSessionComponent {
      * types are also known as SAM types.
      */
     public val KaType.isFunctionalInterface: Boolean
-
-    /**
-     * The [FunctionTypeKind] of the given [KaType], or `null` if the type is not a function type.
-     */
-    @KaExperimentalApi
-    @Deprecated("Use 'functionTypeFamily' instead", level = DeprecationLevel.HIDDEN)
-    @KaNoContextParameterBridgeRequired
-    public val KaType.functionTypeKind: FunctionTypeKind?
 
     /**
      * The [function type family][KaFunctionTypeFamily] of the given [KaType], or `null` if the type is not a function type.
@@ -472,21 +463,6 @@ public object DefaultTypeClassIds {
     /** A set of primitive class IDs. */
     public val PRIMITIVES: Set<ClassId> get() = KaStandardTypeClassIds.PRIMITIVES
 }
-
-/**
- * The [FunctionTypeKind] of the given [KaType], or `null` if the type is not a function type.
- */
-@Deprecated("Use 'functionTypeFamily' instead", level = DeprecationLevel.HIDDEN)
-@KaExperimentalApi
-@KaContextParameterApi
-@KaCustomContextParameterBridge
-context(session: KaSession)
-public val KaType.functionTypeKind: FunctionTypeKind?
-    get() {
-        @OptIn(KaSessionComponentImplementationDetail::class)
-        return KaTypeInformationProvider::class.java.getDeclaredMethod("getFunctionTypeKind", KaType::class.java)
-            .invoke(session, this) as FunctionTypeKind?
-    }
 
 /**
  * Whether the [KaType] is denotable. A [denotable type](https://kotlinlang.org/spec/type-system.html#type-kinds) can be expressed in

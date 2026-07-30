@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.KtProperty
@@ -67,10 +66,6 @@ internal class KaFirPropertyGetterSymbol(
 
     override val visibility: KaSymbolVisibility
         get() = compilerVisibilityImpl.asKaSymbolVisibility
-
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    override val compilerVisibility: Visibility
-        get() = compilerVisibilityImpl
 
     override val returnType: KaType
         get() = returnTypeImpl

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.FirCallableSignature
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -242,12 +241,6 @@ internal class KaFirNamedFunctionSymbol private constructor(
         get() = withValidityAssertion {
             val compilerVisibility = backingPsi?.psiBasedVisibility(::isOverride) ?: firSymbol.visibility
             compilerVisibility.asKaSymbolVisibility
-        }
-
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    override val compilerVisibility: Visibility
-        get() = withValidityAssertion {
-            backingPsi?.psiBasedVisibility(::isOverride) ?: firSymbol.visibility
         }
 
     override fun createPointer(): KaSymbolPointer<KaNamedFunctionSymbol> = withValidityAssertion {

@@ -85,10 +85,6 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
     override val visibility: KaSymbolVisibility
         get() = withValidityAssertion { (compilerVisibilityByPsi ?: firSymbol.visibility).asKaSymbolVisibility }
 
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    override val compilerVisibility: Visibility
-        get() = withValidityAssertion { compilerVisibilityByPsi ?: firSymbol.visibility }
-
     abstract val modalityByPsi: KaSymbolModality?
 
     override val modality: KaSymbolModality

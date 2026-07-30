@@ -6,19 +6,15 @@
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaBuiltinFunctionTypeFamilies
 import org.jetbrains.kotlin.analysis.api.components.KaFunctionTypeFamily
 import org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseFunctionTypeFamily
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.classId
-import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.analysis.api.types.builtinFunctionTypeFamilies as builtinFunctionTypeFamiliesEndpoint
@@ -42,9 +38,8 @@ import org.jetbrains.kotlin.analysis.api.types.isSuspendFunctionType as isSuspen
  * Routes the legacy [KaTypeInformationProvider] surface through the new public `context(session: KaSession)` type-information endpoints,
  * which in turn reach the [org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeInformationProvider] proxy.
  *
- * Three members keep their original behavior here instead of routing through a new endpoint:
- *  - `functionTypeKind` — the deprecated, hidden, reflection-accessed member, kept faithful to its original computation;
- *  - [canBeNull] — keeps its deprecated interface default (`= isNullable`).
+ * [canBeNull] keeps its original behavior here instead of routing through a new endpoint: it retains its deprecated interface
+ * default (`= isNullable`).
  *
  * The moved supporting types ([KaFunctionTypeFamily], [KaBuiltinFunctionTypeFamilies]) are subtype shims of the new
  * `types`-package interfaces, so the endpoint results are narrowed back to the legacy surface with `as`.
@@ -57,14 +52,6 @@ internal class KaTypeInformationProviderBridge(
 
     override val KaType.isFunctionalInterface: Boolean
         get() = context(analysisSession) { isFunctionalInterfaceEndpoint }
-
-    @KaExperimentalApi
-    @Deprecated("Use 'functionTypeFamily' instead", level = DeprecationLevel.HIDDEN)
-    override val KaType.functionTypeKind: FunctionTypeKind?
-        get() = withValidityAssertion {
-            @OptIn(KaImplementationDetail::class)
-            (functionTypeFamily as? KaBaseFunctionTypeFamily)?.typeKind
-        }
 
     @KaExperimentalApi
     override val KaType.functionTypeFamily: KaFunctionTypeFamily?

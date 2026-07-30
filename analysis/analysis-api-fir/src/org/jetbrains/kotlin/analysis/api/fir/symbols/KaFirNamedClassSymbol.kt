@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -78,10 +77,6 @@ internal class KaFirNamedClassSymbol private constructor(
 
     override val visibility: KaSymbolVisibility
         get() = withValidityAssertion { (backingPsi?.visibility ?: firSymbol.visibility).asKaSymbolVisibility }
-
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    override val compilerVisibility: Visibility
-        get() = withValidityAssertion { backingPsi?.visibility ?: firSymbol.visibility }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {

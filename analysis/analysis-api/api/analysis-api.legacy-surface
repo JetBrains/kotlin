@@ -190,7 +190,6 @@ org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent.con
 org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent.isPrimitiveBacked
 org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent.javaGetterName
 org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent.javaSetterName
-org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent.mapToJvmType(TypeMappingMode)
 org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent.mapToJvmTypeDescriptor()
 org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent.namedClassSymbol
 org.jetbrains.kotlin.analysis.api.components.KaKDocProvider
@@ -373,20 +372,15 @@ org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
 org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy.LENIENT
 org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy.STRICT
 org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider
-org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider.annotationApplicableTargets
 org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider.applicableAnnotationTargets
 org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider.canBeOperator
 org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider.containingFileAnnotations
 org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider.defaultAnnotationTargets
 org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider.deprecation
-org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider.deprecationStatus
-org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider.deprecationStatus(AnnotationUseSiteTarget?)
-org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider.getterDeprecationStatus
 org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider.importableFqName
 org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider.isDeprecated
 org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider.isInline
 org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider.returnValueStatus
-org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider.setterDeprecationStatus
 org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.allOverriddenSymbols
 org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.constructedClass
@@ -400,7 +394,6 @@ org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.functional
 org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.functionalInterfaceFunction
 org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.functionalInterfaceFunction
 org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.getExpectsForActual()
-org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.getImplementationStatus(KaClassSymbol)
 org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.hasConflictingSignatureWith(KaFunctionSymbol, TargetPlatform)
 org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.implementationState(KaClassSymbol)
 org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.intersectionOverriddenSymbols
@@ -430,7 +423,6 @@ org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider.defaultIn
 org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider.expandedSymbol
 org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider.fullyExpandedType
 org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider.functionTypeFamily
-org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider.functionTypeKind
 org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider.hasFlexibleNullability
 org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider.isAnyType
 org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider.isArrayOrPrimitiveArray
@@ -481,7 +473,6 @@ org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.builtinTypes
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.collectImplicitReceiverTypes(KtElement)
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.commonSupertype
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.commonSupertype
-org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.defaultType
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.defaultType
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.defaultTypeWithStarProjections
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.directSupertypes
@@ -549,7 +540,6 @@ org.jetbrains.kotlin.analysis.api.components.allOverriddenSymbols
 org.jetbrains.kotlin.analysis.api.components.allSupertypes
 org.jetbrains.kotlin.analysis.api.components.allSupertypes(Boolean)
 org.jetbrains.kotlin.analysis.api.components.analysisScope
-org.jetbrains.kotlin.analysis.api.components.annotationApplicableTargets
 org.jetbrains.kotlin.analysis.api.components.applicableAnnotationTargets
 org.jetbrains.kotlin.analysis.api.components.approximateToDenotableSubtype()
 org.jetbrains.kotlin.analysis.api.components.approximateToDenotableSubtypeOrSelf()
@@ -642,7 +632,6 @@ org.jetbrains.kotlin.analysis.api.components.findKDoc()
 org.jetbrains.kotlin.analysis.api.components.fullyExpandedType
 org.jetbrains.kotlin.analysis.api.components.functionType
 org.jetbrains.kotlin.analysis.api.components.functionTypeFamily
-org.jetbrains.kotlin.analysis.api.components.functionTypeKind
 org.jetbrains.kotlin.analysis.api.components.functionalInterface
 org.jetbrains.kotlin.analysis.api.components.functionalInterfaceFunction
 org.jetbrains.kotlin.analysis.api.components.functionalInterfaceFunction
@@ -708,7 +697,6 @@ org.jetbrains.kotlin.analysis.api.components.javaGetterName
 org.jetbrains.kotlin.analysis.api.components.javaSetterName
 org.jetbrains.kotlin.analysis.api.components.klibSourceFileName
 org.jetbrains.kotlin.analysis.api.components.lowerBoundIfFlexible()
-org.jetbrains.kotlin.analysis.api.components.mapToJvmType(TypeMappingMode)
 org.jetbrains.kotlin.analysis.api.components.mapToJvmTypeDescriptor()
 org.jetbrains.kotlin.analysis.api.components.memberScope
 org.jetbrains.kotlin.analysis.api.components.modify(KaCompilationOptionsBuilder.() -> Unit)
