@@ -46,8 +46,6 @@ open class JavaSymbolProvider(
             symbol
         }
 
-    // In application sessions the underlying class finder is source-only (scope- or root-restricted),
-    // so binary Java classes are left to JvmClassFileBasedSymbolProvider.
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
         if (javaFacade.hasTopLevelClassOf(classId)) getClassLikeSymbolByClassId(classId, null) else null
 
@@ -80,12 +78,3 @@ open class JavaSymbolProvider(
 }
 
 val FirSession.javaSymbolProvider: JavaSymbolProvider? by FirSession.nullableSessionComponentAccessor()
-
-/**
- * Looks up a Java class-like symbol by [classId], bypassing the composite symbol provider.
- *
- * Needed when a Kotlin declaration may share the same classId: `session.symbolProvider` returns the
- * first match and would hide the Java side (e.g. redeclaration checks, direct Java actualization).
- */
-fun FirSession.getJavaClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
-    javaSymbolProvider?.getClassLikeSymbolByClassId(classId)
