@@ -1,0 +1,50 @@
+FILE fqName:<root> fileName:/1.kt
+  CLASS CLASS name:KtSub modality:FINAL visibility:public superTypes:[<root>.BaseJava]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.KtSub
+    PROPERTY name:foo visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:foo type:kotlin.String visibility:public
+        annotations:
+          JvmField
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value="kt_sub_foo"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-foo> visibility:public modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KtSub
+        correspondingProperty: PROPERTY name:foo visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-foo> (): kotlin.String declared in <root>.KtSub'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:foo type:kotlin.String visibility:public' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.KtSub declared in <root>.KtSub.<get-foo>' type=<root>.KtSub origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-foo> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KtSub
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.String
+        correspondingProperty: PROPERTY name:foo visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:foo type:kotlin.String visibility:public' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.KtSub declared in <root>.KtSub.<set-foo>' type=<root>.KtSub origin=null
+            value: GET_VAR '<set-?>: kotlin.String declared in <root>.KtSub.<set-foo>' type=kotlin.String origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.KtSub [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.BaseJava'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KtSub modality:FINAL visibility:public superTypes:[<root>.BaseJava]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.BaseJava
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.BaseJava
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.BaseJava
+    PROPERTY FAKE_OVERRIDE name:foo visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final foo: @[FlexibleNullability] kotlin.String? declared in <root>.BaseJava
+  FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:sub index:0 type:<root>.KtSub
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun <get-foo> (): kotlin.String declared in <root>.KtSub' type=kotlin.String origin=GET_PROPERTY
+          ARG <this>: GET_VAR 'sub: <root>.KtSub declared in <root>.test' type=<root>.KtSub origin=null

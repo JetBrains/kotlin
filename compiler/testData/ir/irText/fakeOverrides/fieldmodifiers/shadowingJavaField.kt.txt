@@ -1,0 +1,17 @@
+class KtSub : BaseJava {
+  var foo: String
+    field = "kt_sub_foo"
+    get
+    set
+
+  constructor() /* primary */ {
+    super/*BaseJava*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun test(sub: KtSub) {
+  sub.<get-foo>() /*~> Unit */
+}
