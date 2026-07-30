@@ -1,0 +1,124 @@
+ClassLiteral.class:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/ClassLiteral, fqName=ClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassLiteral, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ClassLiteral]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c1]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=reflect]
+                REFERENCE_EXPRESSION[referencedName=KClass]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=STAR]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c2]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=reflect]
+                REFERENCE_EXPRESSION[referencedName=KClass]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=STAR]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c3]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=reflect]
+                REFERENCE_EXPRESSION[referencedName=KClass]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=STAR]
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+      CLASS_BODY
+        PROPERTY[fqName=ClassLiteral.c1, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c1]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=reflect]
+              REFERENCE_EXPRESSION[referencedName=KClass]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=STAR]
+        PROPERTY[fqName=ClassLiteral.c2, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c2]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=reflect]
+              REFERENCE_EXPRESSION[referencedName=KClass]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=STAR]
+        PROPERTY[fqName=ClassLiteral.c3, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c3]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=reflect]
+              REFERENCE_EXPRESSION[referencedName=KClass]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=STAR]
+
+
+WithArrayClassLiterals.class:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithArrayClassLiterals, fqName=WithArrayClassLiterals, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithArrayClassLiterals, superNames=[]]
+      MODIFIER_LIST[public final]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=ClassLiteral]
+          valueArguments: [
+            c1 -> NormalClass(value=kotlin/Array<kotlin/Int>)
+            c2 -> NormalClass(value=kotlin/Array<kotlin/Array<kotlin/String>>)
+            c3 -> NormalClass(value=kotlin/Array</ClassLiteral>)
+          ]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=ClassLiteral]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithArrayClassLiterals]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY
+
+
+WithPrimitiveArrayClassLiterals.class:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithPrimitiveArrayClassLiterals, fqName=WithPrimitiveArrayClassLiterals, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithPrimitiveArrayClassLiterals, superNames=[]]
+      MODIFIER_LIST[public final]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=ClassLiteral]
+          valueArguments: [
+            c1 -> NormalClass(value=kotlin/IntArray)
+            c2 -> NormalClass(value=kotlin/Array<kotlin/IntArray>)
+            c3 -> NormalClass(value=kotlin/Array<kotlin/Array<kotlin/IntArray>>)
+          ]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=ClassLiteral]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithPrimitiveArrayClassLiterals]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY

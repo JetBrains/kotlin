@@ -1,0 +1,144 @@
+Escaped.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Escaped, fqName=Escaped, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Escaped, superNames=[]]
+      MODIFIER_LIST[annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Escaped]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=Escaped.s, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=String]
+          VALUE_PARAMETER[fqName=Escaped.c, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=c]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Char]
+
+
+WithBackslash.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithBackslash, fqName=WithBackslash, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithBackslash, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Escaped]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Escaped]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=back]
+                ESCAPE_STRING_TEMPLATE_ENTRY[text=\\]
+                LITERAL_STRING_TEMPLATE_ENTRY[text=slash]
+            VALUE_ARGUMENT[isSpread=false]
+              CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='\\']
+
+
+WithControlCharacters.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithControlCharacters, fqName=WithControlCharacters, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithControlCharacters, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Escaped]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Escaped]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+                ESCAPE_STRING_TEMPLATE_ENTRY[text=\n]
+                ESCAPE_STRING_TEMPLATE_ENTRY[text=\t]
+                ESCAPE_STRING_TEMPLATE_ENTRY[text=\r]
+                ESCAPE_STRING_TEMPLATE_ENTRY[text=\b]
+            VALUE_ARGUMENT[isSpread=false]
+              CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='\n']
+
+
+WithDollar.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithDollar, fqName=WithDollar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithDollar, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Escaped]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Escaped]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+                ESCAPE_STRING_TEMPLATE_ENTRY[text=\$]
+                LITERAL_STRING_TEMPLATE_ENTRY[text=notATemplate]
+                ESCAPE_STRING_TEMPLATE_ENTRY[text=\$]
+                LITERAL_STRING_TEMPLATE_ENTRY[text={}]
+            VALUE_ARGUMENT[isSpread=false]
+              CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='$']
+
+
+WithMixedContent.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithMixedContent, fqName=WithMixedContent, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithMixedContent, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Escaped]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Escaped]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=prefix]
+                ESCAPE_STRING_TEMPLATE_ENTRY[text=\n]
+                LITERAL_STRING_TEMPLATE_ENTRY[text=suffix]
+            VALUE_ARGUMENT[isSpread=false]
+              CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value=' ']
+
+
+WithNonPrintableCharacters.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithNonPrintableCharacters, fqName=WithNonPrintableCharacters, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNonPrintableCharacters, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Escaped]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Escaped]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+                ESCAPE_STRING_TEMPLATE_ENTRY[text=\u0001]
+                LITERAL_STRING_TEMPLATE_ENTRY[text=nonPrintable]
+                ESCAPE_STRING_TEMPLATE_ENTRY[text=\u007F]
+            VALUE_ARGUMENT[isSpread=false]
+              CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='\u0001']
+
+
+WithQuotes.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithQuotes, fqName=WithQuotes, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithQuotes, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Escaped]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Escaped]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+                ESCAPE_STRING_TEMPLATE_ENTRY[text=\"]
+                LITERAL_STRING_TEMPLATE_ENTRY[text=quoted]
+                ESCAPE_STRING_TEMPLATE_ENTRY[text=\"]
+            VALUE_ARGUMENT[isSpread=false]
+              CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='\'']

@@ -1,0 +1,76 @@
+Unsigned.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Unsigned, fqName=Unsigned, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Unsigned, superNames=[]]
+      MODIFIER_LIST[annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Unsigned]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=Unsigned.ub, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ub]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=UByte]
+          VALUE_PARAMETER[fqName=Unsigned.us, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=us]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=UShort]
+          VALUE_PARAMETER[fqName=Unsigned.ui, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ui]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=UInt]
+          VALUE_PARAMETER[fqName=Unsigned.ul, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ul]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=ULong]
+
+
+WithMaxValues.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithMaxValues, fqName=WithMaxValues, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithMaxValues, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Unsigned]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Unsigned]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=UByte]
+                REFERENCE_EXPRESSION[referencedName=MAX_VALUE]
+            VALUE_ARGUMENT[isSpread=false]
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=UShort]
+                REFERENCE_EXPRESSION[referencedName=MAX_VALUE]
+            VALUE_ARGUMENT[isSpread=false]
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=UInt]
+                REFERENCE_EXPRESSION[referencedName=MAX_VALUE]
+            VALUE_ARGUMENT[isSpread=false]
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=ULong]
+                REFERENCE_EXPRESSION[referencedName=MAX_VALUE]
+
+
+WithSmallValues.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithSmallValues, fqName=WithSmallValues, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithSmallValues, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Unsigned]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Unsigned]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1u]
+            VALUE_ARGUMENT[isSpread=false]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2u]
+            VALUE_ARGUMENT[isSpread=false]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3u]
+            VALUE_ARGUMENT[isSpread=false]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4uL]

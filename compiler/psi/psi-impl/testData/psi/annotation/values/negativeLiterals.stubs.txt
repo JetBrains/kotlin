@@ -1,0 +1,112 @@
+Negative.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Negative, fqName=Negative, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Negative, superNames=[]]
+      MODIFIER_LIST[annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Negative]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=Negative.i, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=i]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+          VALUE_PARAMETER[fqName=Negative.l, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=l]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Long]
+          VALUE_PARAMETER[fqName=Negative.b, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Byte]
+          VALUE_PARAMETER[fqName=Negative.s, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Short]
+          VALUE_PARAMETER[fqName=Negative.d, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=d]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Double]
+          VALUE_PARAMETER[fqName=Negative.f, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=f]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Float]
+
+
+WithMinValues.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithMinValues, fqName=WithMinValues, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithMinValues, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Negative]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Negative]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=Int]
+                REFERENCE_EXPRESSION[referencedName=MIN_VALUE]
+            VALUE_ARGUMENT[isSpread=false]
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=Long]
+                REFERENCE_EXPRESSION[referencedName=MIN_VALUE]
+            VALUE_ARGUMENT[isSpread=false]
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=Byte]
+                REFERENCE_EXPRESSION[referencedName=MIN_VALUE]
+            VALUE_ARGUMENT[isSpread=false]
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=Short]
+                REFERENCE_EXPRESSION[referencedName=MIN_VALUE]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=Double]
+                  REFERENCE_EXPRESSION[referencedName=MAX_VALUE]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=Float]
+                  REFERENCE_EXPRESSION[referencedName=MAX_VALUE]
+
+
+WithNegativeLiterals.kt:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithNegativeLiterals, fqName=WithNegativeLiterals, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNegativeLiterals, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Negative]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Negative]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.0]
+            VALUE_ARGUMENT[isSpread=false]
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.0F]

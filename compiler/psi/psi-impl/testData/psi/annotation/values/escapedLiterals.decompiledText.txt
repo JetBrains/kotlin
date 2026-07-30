@@ -1,0 +1,51 @@
+Escaped.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final annotation class Escaped public constructor(s: kotlin.String, c: kotlin.Char) : kotlin.Annotation {
+      public final val s: kotlin.String /* compiled code */
+
+      public final val c: kotlin.Char /* compiled code */
+  }
+
+WithBackslash.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Escaped public final class WithBackslash public constructor() {
+  }
+
+WithControlCharacters.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Escaped public final class WithControlCharacters public constructor() {
+  }
+
+WithDollar.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Escaped public final class WithDollar public constructor() {
+  }
+
+WithMixedContent.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Escaped public final class WithMixedContent public constructor() {
+  }
+
+WithNonPrintableCharacters.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Escaped public final class WithNonPrintableCharacters public constructor() {
+  }
+
+WithQuotes.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Escaped public final class WithQuotes public constructor() {
+  }

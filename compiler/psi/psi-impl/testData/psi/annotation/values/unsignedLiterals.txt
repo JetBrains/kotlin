@@ -1,0 +1,161 @@
+KtFile: unsignedLiterals.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiComment(EOL_COMMENT)('// Unsigned values are stored as their signed counterparts in the metadata, so the value type has to be taken into account')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// FILE: Unsigned.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(annotation)('annotation')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Unsigned')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('ub')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('UByte')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('us')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('UShort')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('ui')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('UInt')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('ul')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('ULong')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: WithSmallValues.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Unsigned')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1u')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('2u')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('3u')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('4uL')
+          PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('WithSmallValues')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: WithMaxValues.kt')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// The maximal values are the trickiest ones as they are negative in their signed representation')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Unsigned')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('UByte')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('MAX_VALUE')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('UShort')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('MAX_VALUE')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('UInt')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('MAX_VALUE')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('ULong')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('MAX_VALUE')
+          PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('WithMaxValues')
