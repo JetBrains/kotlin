@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.backend.jklib.J2clToArrayOverridabilityCondition
 import org.jetbrains.kotlin.ir.backend.jklib.JKlibDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jklib.JKlibIrLinker
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -123,7 +124,10 @@ object JKlibIrCompilationPhase :
             symbolTable = symbolTable,
             descriptorMangler = mangler,
             typeSystemContextFactory = ::JvmIrTypeSystemContext,
-            externalOverridabilityConditions = listOf(IrJavaIncompatibilityRulesOverridabilityCondition()),
+            externalOverridabilityConditions = listOf(
+                IrJavaIncompatibilityRulesOverridabilityCondition(),
+                J2clToArrayOverridabilityCondition(),
+            ),
         )
 
         // Deserialize modules

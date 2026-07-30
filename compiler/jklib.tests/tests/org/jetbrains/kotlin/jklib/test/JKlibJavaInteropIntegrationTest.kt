@@ -129,4 +129,337 @@ class JKlibJavaInteropIntegrationTest {
             disposeRootInWriteAction(disposable)
         }
     }
+
+    @Test
+    fun testJavaCollectionToArrayOverridability(@TempDir tempDir: File) {
+        val stdlibKlib = ForTestCompileRuntime.jklibStdlibForTests().path
+        val stdlibJar = ForTestCompileRuntime.runtimeJarForTests().path
+
+        val libBDir = File(tempDir, "libB").apply { mkdirs() }
+        File(libBDir, "MyJavaCollection.java").apply {
+            writeText(
+                """
+                package test;
+
+                import java.util.AbstractCollection;
+                import java.util.Iterator;
+
+                public class MyJavaCollection<E> extends AbstractCollection<E> {
+                    @Override
+                    public Iterator<E> iterator() { return null; }
+
+                    @Override
+                    public int size() { return 0; }
+
+                    @Override
+                    public <T> T[] toArray(T[] a) {
+                        return a;
+                    }
+                }
+                """.trimIndent()
+            )
+        }
+
+        val jarB = MockLibraryUtilExt.compileJavaFilesLibraryToJar(
+            libBDir.path,
+            "libB",
+            extraClasspath = listOf(stdlibJar)
+        )
+
+        val mainDir = File(tempDir, "main").apply { mkdirs() }
+        val mainKt = File(mainDir, "Main.kt").apply {
+            writeText(
+                """
+                package test
+
+                fun test(c: MyJavaCollection<String>) {
+                    val arr = arrayOfNulls<String>(0)
+                    val res = c.toArray(arr)
+                }
+                """.trimIndent()
+            )
+        }
+
+        val mainKlib = File(tempDir, "main.klib")
+        val compiler = K2JKlibCompiler()
+        val args = compiler.createArguments()
+        compiler.parseArguments(
+            arrayOf(
+                mainKt.path,
+                "-d", mainKlib.path,
+                "-module-name", "main",
+                "-no-stdlib",
+                "-classpath", jarB.path,
+                "-Xklib=$stdlibKlib"
+            ),
+            args
+        )
+
+        val messageCollector = MessageCollectorImpl()
+        val disposable = Disposer.newDisposable()
+        try {
+            val artifact = compiler.compileKlibAndDeserializeIr(args, messageCollector, disposable)
+            assertNotNull(artifact, "compileKlibAndDeserializeIr returned null. Messages:\n" + messageCollector.messages.joinToString("\n"))
+        } finally {
+            disposeRootInWriteAction(disposable)
+        }
+    }
+
+    @Test
+    fun testPropertyAndFunctionClash(@TempDir tempDir: File) {
+        val stdlibKlib = ForTestCompileRuntime.jklibStdlibForTests().path
+        val stdlibJar = ForTestCompileRuntime.runtimeJarForTests().path
+
+        val libBDir = File(tempDir, "libB").apply { mkdirs() }
+        File(libBDir, "JavaBase.java").apply {
+            writeText(
+                """
+                package test;
+
+                public class JavaBase {
+                    public String getValue() {
+                        return "OK";
+                    }
+                }
+                """.trimIndent()
+            )
+        }
+
+        val jarB = MockLibraryUtilExt.compileJavaFilesLibraryToJar(
+            libBDir.path,
+            "libB",
+            extraClasspath = listOf(stdlibJar)
+        )
+
+        val mainDir = File(tempDir, "main").apply { mkdirs() }
+        val mainKt = File(mainDir, "Main.kt").apply {
+            writeText(
+                """
+                package test
+
+                class KotlinSub : JavaBase() {
+                    val value: String get() = super.getValue()
+                }
+
+                fun test(sub: KotlinSub) {
+                    val v = sub.value
+                    val g = sub.getValue()
+                }
+                """.trimIndent()
+            )
+        }
+
+        val mainKlib = File(tempDir, "main.klib")
+        val compiler = K2JKlibCompiler()
+        val args = compiler.createArguments()
+        compiler.parseArguments(
+            arrayOf(
+                mainKt.path,
+                "-d", mainKlib.path,
+                "-module-name", "main",
+                "-no-stdlib",
+                "-classpath", jarB.path,
+                "-Xklib=$stdlibKlib"
+            ),
+            args
+        )
+
+        val messageCollector = MessageCollectorImpl()
+        val disposable = Disposer.newDisposable()
+        try {
+            val artifact = compiler.compileKlibAndDeserializeIr(args, messageCollector, disposable)
+            assertNotNull(artifact, "compileKlibAndDeserializeIr returned null. Messages:\n" + messageCollector.messages.joinToString("\n"))
+        } finally {
+            disposeRootInWriteAction(disposable)
+        }
+    }
+
+    @Test
+    fun testVarPropertyVsJavaGetterSetterCollision(@TempDir tempDir: File) {
+        val stdlibKlib = ForTestCompileRuntime.jklibStdlibForTests().path
+        val stdlibJar = ForTestCompileRuntime.runtimeJarForTests().path
+
+        val libBDir = File(tempDir, "libB").apply { mkdirs() }
+        File(libBDir, "JavaBase.java").apply {
+            writeText(
+                """
+                package test;
+
+                public class JavaBase {
+                    public String getItem() { return "OK"; }
+                    public void setItem(String s) {}
+                }
+                """.trimIndent()
+            )
+        }
+
+        val jarB = MockLibraryUtilExt.compileJavaFilesLibraryToJar(
+            libBDir.path,
+            "libB",
+            extraClasspath = listOf(stdlibJar)
+        )
+
+        val mainDir = File(tempDir, "main").apply { mkdirs() }
+        val mainKt = File(mainDir, "Main.kt").apply {
+            writeText(
+                """
+                package test
+
+                class KotlinSub : JavaBase() {
+                    var item: String
+                        get() = super.getItem()
+                        set(value) { super.setItem(value) }
+                }
+
+                fun test(sub: KotlinSub) {
+                    sub.item = "new"
+                    val i = sub.item
+                }
+                """.trimIndent()
+            )
+        }
+
+        val mainKlib = File(tempDir, "main.klib")
+        val compiler = K2JKlibCompiler()
+        val args = compiler.createArguments()
+        compiler.parseArguments(
+            arrayOf(
+                mainKt.path,
+                "-d", mainKlib.path,
+                "-module-name", "main",
+                "-no-stdlib",
+                "-classpath", jarB.path,
+                "-Xklib=$stdlibKlib"
+            ),
+            args
+        )
+
+        val messageCollector = MessageCollectorImpl()
+        val disposable = Disposer.newDisposable()
+        try {
+            val artifact = compiler.compileKlibAndDeserializeIr(args, messageCollector, disposable)
+            assertNotNull(artifact, "compileKlibAndDeserializeIr returned null. Messages:\n" + messageCollector.messages.joinToString("\n"))
+        } finally {
+            disposeRootInWriteAction(disposable)
+        }
+    }
+
+    @Test
+    fun testJreMappedClassEqualsHashCodeToString(@TempDir tempDir: File) {
+        val stdlibKlib = ForTestCompileRuntime.jklibStdlibForTests().path
+        val stdlibJar = ForTestCompileRuntime.runtimeJarForTests().path
+
+        val mainDir = File(tempDir, "main").apply { mkdirs() }
+        val mainKt = File(mainDir, "Main.kt").apply {
+            writeText(
+                """
+                package test
+
+                class CustomList : java.util.ArrayList<String>() {
+                    override fun equals(other: Any?): Boolean = super.equals(other)
+                    override fun hashCode(): Int = super.hashCode()
+                    override fun toString(): String = super.toString()
+                }
+
+                fun test(list: CustomList) {
+                    val eq = list.equals("test")
+                    val hc = list.hashCode()
+                    val str = list.toString()
+                }
+                """.trimIndent()
+            )
+        }
+
+        val mainKlib = File(tempDir, "main.klib")
+        val compiler = K2JKlibCompiler()
+        val args = compiler.createArguments()
+        compiler.parseArguments(
+            arrayOf(
+                mainKt.path,
+                "-d", mainKlib.path,
+                "-module-name", "main",
+                "-no-stdlib",
+                "-Xklib=$stdlibKlib"
+            ),
+            args
+        )
+
+        val messageCollector = MessageCollectorImpl()
+        val disposable = Disposer.newDisposable()
+        try {
+            val artifact = compiler.compileKlibAndDeserializeIr(args, messageCollector, disposable)
+            assertNotNull(artifact, "compileKlibAndDeserializeIr returned null. Messages:\n" + messageCollector.messages.joinToString("\n"))
+        } finally {
+            disposeRootInWriteAction(disposable)
+        }
+    }
+
+    @Test
+    fun testLocalClassSignatureDisambiguation(@TempDir tempDir: File) {
+        val stdlibKlib = ForTestCompileRuntime.jklibStdlibForTests().path
+        val stdlibJar = ForTestCompileRuntime.runtimeJarForTests().path
+
+        val libBDir = File(tempDir, "libB").apply { mkdirs() }
+        File(libBDir, "JavaBase.java").apply {
+            writeText(
+                """
+                package test;
+
+                public class JavaBase {
+                    public void run() {}
+                }
+                """.trimIndent()
+            )
+        }
+
+        val jarB = MockLibraryUtilExt.compileJavaFilesLibraryToJar(
+            libBDir.path,
+            "libB",
+            extraClasspath = listOf(stdlibJar)
+        )
+
+        val mainDir = File(tempDir, "main").apply { mkdirs() }
+        val mainKt = File(mainDir, "Main.kt").apply {
+            writeText(
+                """
+                package test
+
+                fun outer() {
+                    val loc1 = object : JavaBase() {
+                        override fun run() {}
+                    }
+                    val loc2 = object : JavaBase() {
+                        override fun run() {}
+                    }
+                    loc1.run()
+                    loc2.run()
+                }
+                """.trimIndent()
+            )
+        }
+
+        val mainKlib = File(tempDir, "main.klib")
+        val compiler = K2JKlibCompiler()
+        val args = compiler.createArguments()
+        compiler.parseArguments(
+            arrayOf(
+                mainKt.path,
+                "-d", mainKlib.path,
+                "-module-name", "main",
+                "-no-stdlib",
+                "-classpath", jarB.path,
+                "-Xklib=$stdlibKlib"
+            ),
+            args
+        )
+
+        val messageCollector = MessageCollectorImpl()
+        val disposable = Disposer.newDisposable()
+        try {
+            val artifact = compiler.compileKlibAndDeserializeIr(args, messageCollector, disposable)
+            assertNotNull(artifact, "compileKlibAndDeserializeIr returned null. Messages:\n" + messageCollector.messages.joinToString("\n"))
+        } finally {
+            disposeRootInWriteAction(disposable)
+        }
+    }
 }
