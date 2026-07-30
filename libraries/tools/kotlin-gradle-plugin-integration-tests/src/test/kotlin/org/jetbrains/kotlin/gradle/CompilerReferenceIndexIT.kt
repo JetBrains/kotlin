@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.testFederation.AffectedByCompiler
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.div
 import kotlin.io.path.invariantSeparatorsPathString
@@ -29,6 +30,7 @@ import kotlin.test.*
 
 @OptIn(ExperimentalBuildToolsApi::class)
 @DisplayName("Gradle / Compiler Reference Index")
+@AffectedByCompiler
 class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
 
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(
