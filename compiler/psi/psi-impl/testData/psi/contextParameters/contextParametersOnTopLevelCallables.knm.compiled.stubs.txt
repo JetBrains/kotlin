@@ -3,6 +3,12 @@ FILE[kind=File[packageFqName=<root>]]
   IMPORT_LIST
   PROPERTY[fqName=property, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=property]
     MODIFIER_LIST[public]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+        valueArguments: [ ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=MyAnnotation]
       CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
           TYPE_REFERENCE
@@ -12,12 +18,6 @@ FILE[kind=File[packageFqName=<root>]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=B]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
-        valueArguments: [ ]
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=MyAnnotation]
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
@@ -33,6 +33,12 @@ FILE[kind=File[packageFqName=<root>]]
       VALUE_PARAMETER_LIST
   PROPERTY[fqName=propertyWithSetter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=true, name=propertyWithSetter]
     MODIFIER_LIST[public]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+        valueArguments: [ ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=MyAnnotation]
       CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
           TYPE_REFERENCE
@@ -42,12 +48,6 @@ FILE[kind=File[packageFqName=<root>]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=B]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
-        valueArguments: [ ]
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=MyAnnotation]
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
@@ -72,6 +72,12 @@ FILE[kind=File[packageFqName=<root>]]
               REFERENCE_EXPRESSION[referencedName=Int]
   FUN[fqName=function, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=function]
     MODIFIER_LIST[public]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+        valueArguments: [ ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=MyAnnotation]
       CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
           TYPE_REFERENCE
@@ -81,12 +87,6 @@ FILE[kind=File[packageFqName=<root>]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=B]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
-        valueArguments: [ ]
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=MyAnnotation]
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE

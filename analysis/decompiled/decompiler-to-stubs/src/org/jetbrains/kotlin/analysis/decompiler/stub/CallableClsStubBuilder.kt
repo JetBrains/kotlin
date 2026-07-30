@@ -184,12 +184,19 @@ abstract class CallableClsStubBuilder(
         }
     }
 
+    /**
+     * Creates the modifier list of the declaration with its [annotations] and context parameters.
+     *
+     * The annotations are created first, as this is the order they are printed in and the decompiled text
+     * has to be reparsable into the very same stub tree.
+     */
     protected fun createModifierListStubForCallableDeclaration(
         flags: Int,
         flagsToTranslate: List<FlagsToModifiers>,
         additionalModifiers: List<KtModifierKeywordToken>,
         returnValueStatus: Flags.FlagField<ProtoBuf.ReturnValueStatus>,
-    ): KotlinModifierListStubImpl {
+        annotations: List<AnnotationWithTarget>,
+    ) {
         val modifierListStub = createModifierListStubForDeclaration(
             callableStub,
             flags,
@@ -198,8 +205,8 @@ abstract class CallableClsStubBuilder(
             returnValueStatus = returnValueStatus,
         )
 
+        createTargetedAnnotationStubs(annotations, modifierListStub)
         createContextParameterStubs(modifierListStub)
-        return modifierListStub
     }
 
     protected fun createContextParameterStubs(modifierListStub: KotlinModifierListStubImpl) {
@@ -272,7 +279,11 @@ private class FunctionClsStubBuilder(
 
     override fun createModifierListStub() {
         val flags = functionProto.flags
-        val modifierListStubImpl = createModifierListStubForCallableDeclaration(
+        val annotations = c.components.annotationLoader.loadCallableAnnotations(
+            protoContainer, functionProto, AnnotatedCallableKind.FUNCTION
+        )
+
+        createModifierListStubForCallableDeclaration(
             flags = flags,
             flagsToTranslate = buildList {
                 add(VISIBILITY)
@@ -292,12 +303,8 @@ private class FunctionClsStubBuilder(
             },
             additionalModifiers = if (functionProto.hasCompanionExtensionReceiver()) listOf(KtTokens.COMPANION_KEYWORD) else emptyList(),
             returnValueStatus = Flags.RETURN_VALUE_STATUS_FUNCTION,
+            annotations = annotations.map { AnnotationWithTarget(it, target = null) },
         )
-
-        val annotations = c.components.annotationLoader.loadCallableAnnotations(
-            protoContainer, functionProto, AnnotatedCallableKind.FUNCTION
-        )
-        createAnnotationStubs(annotations, modifierListStubImpl)
     }
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
@@ -361,7 +368,20 @@ private class PropertyClsStubBuilder(
 
     override fun createModifierListStub() {
         val flags = propertyProto.flags
-        val modifierListStubImpl = createModifierListStubForCallableDeclaration(
+        val propertyAnnotations =
+            c.components.annotationLoader.loadCallableAnnotations(protoContainer, propertyProto, AnnotatedCallableKind.PROPERTY)
+        val backingFieldAnnotations =
+            c.components.annotationLoader.loadPropertyBackingFieldAnnotations(protoContainer, propertyProto)
+        val delegateFieldAnnotations =
+            c.components.annotationLoader.loadPropertyDelegateFieldAnnotations(protoContainer, propertyProto)
+
+        val allAnnotations = buildList {
+            propertyAnnotations.mapTo(this) { AnnotationWithTarget(it, null) }
+            backingFieldAnnotations.mapTo(this) { AnnotationWithTarget(it, AnnotationUseSiteTarget.FIELD) }
+            delegateFieldAnnotations.mapTo(this) { AnnotationWithTarget(it, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD) }
+        }
+
+        createModifierListStubForCallableDeclaration(
             flags = flags,
             flagsToTranslate = buildList {
                 add(VISIBILITY)
@@ -380,22 +400,8 @@ private class PropertyClsStubBuilder(
             },
             additionalModifiers = if (propertyProto.hasCompanionExtensionReceiver()) listOf(KtTokens.COMPANION_KEYWORD) else emptyList(),
             returnValueStatus = Flags.RETURN_VALUE_STATUS_PROPERTY,
+            annotations = allAnnotations,
         )
-
-        val propertyAnnotations =
-            c.components.annotationLoader.loadCallableAnnotations(protoContainer, propertyProto, AnnotatedCallableKind.PROPERTY)
-        val backingFieldAnnotations =
-            c.components.annotationLoader.loadPropertyBackingFieldAnnotations(protoContainer, propertyProto)
-        val delegateFieldAnnotations =
-            c.components.annotationLoader.loadPropertyDelegateFieldAnnotations(protoContainer, propertyProto)
-
-        val allAnnotations = buildList {
-            propertyAnnotations.mapTo(this) { AnnotationWithTarget(it, null) }
-            backingFieldAnnotations.mapTo(this) { AnnotationWithTarget(it, AnnotationUseSiteTarget.FIELD) }
-            delegateFieldAnnotations.mapTo(this) { AnnotationWithTarget(it, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD) }
-        }
-
-        createTargetedAnnotationStubs(allAnnotations, modifierListStubImpl)
     }
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
@@ -606,17 +612,17 @@ private class ConstructorClsStubBuilder(
 
     override fun createModifierListStub() {
         val flags = constructorProto.flags
-        val modifierListStubImpl = createModifierListStubForCallableDeclaration(
+        val annotations = c.components.annotationLoader.loadCallableAnnotations(
+            protoContainer, constructorProto, AnnotatedCallableKind.FUNCTION
+        )
+
+        createModifierListStubForCallableDeclaration(
             flags = flags,
             flagsToTranslate = listOf(VISIBILITY),
             additionalModifiers = emptyList(),
             returnValueStatus = Flags.RETURN_VALUE_STATUS_CTOR,
+            annotations = annotations.map { AnnotationWithTarget(it, target = null) },
         )
-
-        val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
-            protoContainer, constructorProto, AnnotatedCallableKind.FUNCTION
-        )
-        createAnnotationStubs(annotationIds, modifierListStubImpl)
     }
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
@@ -643,4 +649,3 @@ private class ConstructorClsStubBuilder(
             )
     }
 }
-
