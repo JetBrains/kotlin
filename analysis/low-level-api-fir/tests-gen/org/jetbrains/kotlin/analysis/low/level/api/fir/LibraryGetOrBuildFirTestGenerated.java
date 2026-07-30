@@ -107,6 +107,18 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("inlineClassWithPrivateProperty.kt")
+  public void testInlineClassWithPrivateProperty() {
+    run("inlineClassWithPrivateProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineClassWithTypeParameterUnderlyingType.kt")
+  public void testInlineClassWithTypeParameterUnderlyingType() {
+    run("inlineClassWithTypeParameterUnderlyingType.kt");
+  }
+
+  @Test
   @TestMetadata("multifileFacadeFunction.kt")
   public void testMultifileFacadeFunction() {
     run("multifileFacadeFunction.kt");

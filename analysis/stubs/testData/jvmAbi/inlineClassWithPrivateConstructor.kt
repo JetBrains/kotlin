@@ -1,0 +1,6 @@
+@JvmInline
+value class ThreadLocalDelegate<T> private constructor(private val threadLocal: ThreadLocal<T>) {
+    companion object {
+        fun <T> create(): ThreadLocalDelegate<T> = ThreadLocalDelegate(ThreadLocal())
+    }
+}

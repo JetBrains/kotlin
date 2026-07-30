@@ -749,6 +749,24 @@ public class CompiledJvmStubsTestGenerated extends AbstractCompiledJvmStubsTest 
   }
 
   @Test
+  @TestMetadata("inlineClassUnderlyingTypeFromMetadata.kt")
+  public void testInlineClassUnderlyingTypeFromMetadata() {
+    run("inlineClassUnderlyingTypeFromMetadata.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineClassUnderlyingTypeFromProperty.kt")
+  public void testInlineClassUnderlyingTypeFromProperty() {
+    run("inlineClassUnderlyingTypeFromProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineClassUnderlyingTypeParameterFromMetadata.kt")
+  public void testInlineClassUnderlyingTypeParameterFromMetadata() {
+    run("inlineClassUnderlyingTypeParameterFromMetadata.kt");
+  }
+
+  @Test
   @TestMetadata("Inner.kt")
   public void testInner() {
     run("Inner.kt");

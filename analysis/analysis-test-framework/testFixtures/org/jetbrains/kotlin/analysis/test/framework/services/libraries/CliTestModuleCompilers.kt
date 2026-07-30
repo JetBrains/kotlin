@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -165,7 +165,10 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
     }
 }
 
-object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
+/**
+ * A base class for [CliTestModuleCompiler]s which compile JVM test modules to a JAR with the CLI JVM compiler.
+ */
+abstract class JvmTestModuleCompiler : CliTestModuleCompiler() {
     override fun embedResourceFiles(library: Path, resourceFiles: List<TestFile>, testServices: TestServices) {
         if (resourceFiles.isEmpty()) return
 
@@ -179,9 +182,6 @@ object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
             }
         }
     }
-
-    override fun libraryOutputPath(inputPath: Path, libraryName: String): Path =
-        inputPath / "$libraryName.jar"
 
     override fun buildPlatformCompilerOptions(module: TestModule, testServices: TestServices): List<String> = buildList {
         module.directives[JvmEnvironmentConfigurationDirectives.JVM_TARGET].firstOrNull()?.let { jvmTarget ->
@@ -203,29 +203,71 @@ object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
         }
     }
 
+    override fun buildPlatformExtraClasspath(module: TestModule, testServices: TestServices): List<String> {
+        val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
+        return compilerConfiguration.jvmClasspathRoots.map { it.absolutePath }
+    }
+
+    /**
+     * Compiles the sources at [sourcesPath] into a JAR called [jarName] next to them.
+     */
+    protected fun compileToJar(sourcesPath: Path, jarName: String, options: List<String>, extraClasspath: List<String>) {
+        MockLibraryUtil.compileLibraryToJar(
+            sourcesPath = sourcesPath.absolutePathString(),
+            contentDir = sourcesPath.toFile(),
+            jarName = jarName,
+            extraOptions = options,
+            useJava11 = true,
+            extraClasspath = extraClasspath,
+        )
+    }
+}
+
+object JvmJarTestModuleCompiler : JvmTestModuleCompiler() {
+    override fun libraryOutputPath(inputPath: Path, libraryName: String): Path =
+        inputPath / "$libraryName.jar"
+
     override fun doCompile(
         sourcesPath: Path,
         options: List<String>,
         libraryOutputPath: Path,
         extraClasspath: List<String>,
     ) {
-        MockLibraryUtil.compileLibraryToJar(
-            sourcesPath = sourcesPath.absolutePathString(),
-            contentDir = sourcesPath.toFile(),
-            jarName = libraryOutputPath.nameWithoutExtension,
-            extraOptions = buildList {
-                addAll(options)
-            },
-            useJava11 = true,
+        compileToJar(sourcesPath, libraryOutputPath.nameWithoutExtension, options, extraClasspath)
+    }
+}
+
+/**
+ * Compiles a JVM test module with the `jvm-abi-gen` compiler plugin, so that the resulting library is an ABI JAR.
+ *
+ * The plugin JAR is taken from the [JVM_ABI_GEN_JAR_PATH_PROPERTY] system property, which a test suite using this compiler has to provide
+ * (see `analysis/stubs/build.gradle.kts` for an example).
+ */
+object JvmAbiTestModuleCompiler : JvmTestModuleCompiler() {
+    private const val JVM_ABI_GEN_JAR_PATH_PROPERTY = "kotlin.jvm.abi.jar.path"
+    private const val JVM_ABI_GEN_PLUGIN_ID = "org.jetbrains.kotlin.jvm.abi"
+
+    override fun libraryOutputPath(inputPath: Path, libraryName: String): Path =
+        inputPath / "$libraryName-abi.jar"
+
+    override fun doCompile(
+        sourcesPath: Path,
+        options: List<String>,
+        libraryOutputPath: Path,
+        extraClasspath: List<String>,
+    ) {
+        val pluginJar = ForTestCompileRuntime.getFileFromProperty(JVM_ABI_GEN_JAR_PATH_PROPERTY)
+        compileToJar(
+            sourcesPath,
+            // The plugin writes the ABI JAR to `libraryOutputPath`, so the compiler's own output has to go to a separate JAR.
+            jarName = "${libraryOutputPath.nameWithoutExtension}-full",
+            options = options + listOf(
+                "-Xplugin=${pluginJar.absolutePath}",
+                "-P",
+                "plugin:$JVM_ABI_GEN_PLUGIN_ID:outputDir=${libraryOutputPath.absolutePathString()}",
+            ),
             extraClasspath = extraClasspath,
         )
-    }
-
-    override fun buildPlatformExtraClasspath(module: TestModule, testServices: TestServices): List<String> = buildList {
-        val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
-        for (file in compilerConfiguration.jvmClasspathRoots) {
-            add(file.absolutePath)
-        }
     }
 }
 
