@@ -34,7 +34,7 @@ enum class KotlinVersion(val version: String) {
     /***/
     @Deprecated("Will be removed soon") KOTLIN_2_1("2.1"),
     /***/
-    KOTLIN_2_2("2.2"),
+    @Deprecated("Will be removed soon") KOTLIN_2_2("2.2"),
     /***/
     KOTLIN_2_3("2.3"),
     /***/
