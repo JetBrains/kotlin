@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.utils.errors
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-@Deprecated("Unintentionally exposed implementation detail. Do not use", level = DeprecationLevel.ERROR)
+@Deprecated("Unintentionally exposed implementation detail. Do not use", level = DeprecationLevel.HIDDEN)
 @OptIn(ExperimentalContracts::class)
 public inline fun <reified T> requireIsInstance(obj: Any) {
     contract {
@@ -17,7 +17,7 @@ public inline fun <reified T> requireIsInstance(obj: Any) {
     require(obj is T) { "Expected ${T::class} instead of ${obj::class} for $obj" }
 }
 
-@Deprecated("Unintentionally exposed implementation detail. Do not use", level = DeprecationLevel.ERROR)
+@Deprecated("Unintentionally exposed implementation detail. Do not use", level = DeprecationLevel.HIDDEN)
 @OptIn(ExperimentalContracts::class)
 public inline fun <reified T> checkIsInstance(obj: Any) {
     contract {

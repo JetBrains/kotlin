@@ -13,7 +13,7 @@ import com.intellij.util.CachedValueBase
 import com.intellij.util.containers.ContainerUtil
 import java.util.concurrent.ConcurrentHashMap
 
-@Deprecated("Unintentionally exposed API. Do not use", level = DeprecationLevel.ERROR)
+@Deprecated("Unintentionally exposed API. Do not use", level = DeprecationLevel.HIDDEN)
 public abstract class SoftCachedMap<K : Any, V : Any> {
     public abstract fun getOrPut(key: K, create: () -> V): V
 
@@ -21,7 +21,7 @@ public abstract class SoftCachedMap<K : Any, V : Any> {
 
     public abstract fun clearCachedValues()
 
-    @Deprecated("Unintentionally exposed API. Do not use", level = DeprecationLevel.ERROR)
+    @Deprecated("Unintentionally exposed API. Do not use", level = DeprecationLevel.HIDDEN)
     public companion object {
         public fun <K : Any, V : Any> create(
             project: Project,
@@ -33,7 +33,7 @@ public abstract class SoftCachedMap<K : Any, V : Any> {
         }
     }
 
-    @Deprecated("Unintentionally exposed API. Do not use", level = DeprecationLevel.ERROR)
+    @Deprecated("Unintentionally exposed API. Do not use", level = DeprecationLevel.HIDDEN)
     public enum class Kind {
         SOFT_KEYS_SOFT_VALUES,
         STRONG_KEYS_SOFT_VALUES
