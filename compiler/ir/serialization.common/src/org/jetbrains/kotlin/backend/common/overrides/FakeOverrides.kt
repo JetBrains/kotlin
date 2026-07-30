@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -73,9 +74,9 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         fakeOverrideDeclarationTable.inFile(file, block)
 
     override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
-        val [signature, symbol] = computeFunctionFakeOverrideSymbol(function, manglerCompatibleMode)
+        val [signature, symbol] = computeFakeOverrideSymbol(function, manglerCompatibleMode)
 
-        symbolTable.declareSimpleFunction(signature, { symbol }) {
+        symbolTable.declareSimpleFunction(signature, { symbol as IrSimpleFunctionSymbol }) {
             assert(it === symbol)
             function.acquireSymbol(it)
         }
@@ -146,8 +147,8 @@ private class IrLinkerFakeOverrideBuilderStrategy(
             setter.correspondingPropertySymbol = tempSymbol
         }
 
-        val [signature, symbol] = computePropertyFakeOverrideSymbol(property, manglerCompatibleMode)
-        symbolTable.declareProperty(signature, { symbol }) {
+        val [signature, symbol] = computeFakeOverrideSymbol(property, manglerCompatibleMode)
+        symbolTable.declareProperty(signature, { symbol as IrPropertySymbol }) {
             assert(it === symbol)
             property.acquireSymbol(it)
         }
@@ -169,66 +170,48 @@ private class IrLinkerFakeOverrideBuilderStrategy(
     private fun composeSignature(declaration: IrDeclaration, manglerCompatibleMode: Boolean) =
         fakeOverrideDeclarationTable.signatureByDeclaration(declaration, manglerCompatibleMode, recordInSignatureClashDetector = false)
 
-    private fun computeFunctionFakeOverrideSymbol(
-        function: IrFunctionWithLateBinding,
+    private fun computeFakeOverrideSymbol(
+        fakeOverride: IrOverridableDeclaration<*>,
         manglerCompatibleMode: Boolean
-    ): Pair<IdSignature, IrSimpleFunctionSymbol> {
+    ): Pair<IdSignature, IrSymbol> {
         // The class may be declared inside IrExternalPackageFragment instead of IrFile (e.g. in the case of C-interop stubs).
-        val file = function.parentAsClass.fileOrNull
+        val file = fakeOverride.parentAsClass.fileOrNull
 
-        val signature = composeSignature(function, manglerCompatibleMode)
-        val symbol = linker.tryReferencingSimpleFunctionByLocalSignature(file, signature)
-            ?: symbolTable.referenceSimpleFunction(signature)
-
+        val signature = composeSignature(fakeOverride, manglerCompatibleMode)
+        val symbol = when (fakeOverride) {
+            is IrSimpleFunction -> linker.tryReferencingSimpleFunctionByLocalSignature(file, signature)
+                ?: symbolTable.referenceSimpleFunction(signature)
+            is IrProperty -> linker.tryReferencingPropertyByLocalSignature(file, signature)
+                ?: symbolTable.referenceProperty(signature)
+        }
         if (!symbol.isBound) {
             return signature to symbol
         }
 
-        // If there is already a function with the same signature as the fake override, we have to compute a different one to avoid clash.
+        // If there is already a member with the same signature as the fake override, we have to compute a different one to avoid clash.
         // This signature is not supposed to be ever serialized (as fake overrides are not serialized in KLIBs).
         // There are two main (but very rare) cases where this could happen:
         // 1. There is an abstract super member "shadowed" by a member in a subclass with the same signature, but which cannot override it
         // (for example, because it is private). But because all abstract members require an override, F/O is still generated.
-        // 2. In old KLIB signatures we don't distinguish between suspend and non-suspend, inline and non-inline functions. So there can
-        // be a clash with the existing function with the different `isSuspend` flag state or the existing function with `isInline=true`.
+        // 2. In old KLIB signatures we don't distinguish between suspend and non-suspend, inline and non-inline callables. So there can
+        // be a clash with the existing member with the different `isSuspend` flag state or the existing member with `isInline=true`.
         // In new KLIB signatures `isSuspend` and `isInline` flags will be taken into account as a part of signature.
-        function.isFakeOverrideNeedingDisambiguatedSignature = true
-
-        // Remove the associated signature and compute it ones again. This time it will be different because of the flag set above.
-        fakeOverrideDeclarationTable.removeDeclaration(function)
-        val disambiguatedSignature = composeSignature(function, manglerCompatibleMode)
-        assert(disambiguatedSignature != signature) { "Failed to compute disambiguated signature for fake override $function" }
-        return disambiguatedSignature to IrSimpleFunctionSymbolImpl(signature = disambiguatedSignature)
-    }
-
-    private fun computePropertyFakeOverrideSymbol(
-        property: IrPropertyWithLateBinding,
-        manglerCompatibleMode: Boolean
-    ): Pair<IdSignature, IrPropertySymbol> {
-        // The class may be declared inside IrExternalPackageFragment instead of IrFile (e.g. in the case of C-interop stubs).
-        val file = property.parentAsClass.fileOrNull
-
-        val signature = composeSignature(property, manglerCompatibleMode)
-        val symbol = linker.tryReferencingPropertyByLocalSignature(file, signature)
-            ?: symbolTable.referenceProperty(signature)
-
-        if (!symbol.isBound) {
-            return signature to symbol
+        fakeOverride.isFakeOverrideNeedingDisambiguatedSignature = true
+        if (fakeOverride is IrProperty) {
+            fakeOverride.getter?.isFakeOverrideNeedingDisambiguatedSignature = true
+            fakeOverride.setter?.isFakeOverrideNeedingDisambiguatedSignature = true
         }
 
-        // In old KLIB signatures we don't distinguish between inline and non-inline property accessors. So we need to
-        // manually patch the signature of the fake override to avoid clash with the existing property with `inline` accessors.
-        // This signature is not supposed to be ever serialized (as fake overrides are not serialized in KLIBs).
-        // In new KLIB signatures `isInline` flag will be taken into account as a part of signature.
-        property.isFakeOverrideNeedingDisambiguatedSignature = true
-        property.getter?.isFakeOverrideNeedingDisambiguatedSignature = true
-        property.setter?.isFakeOverrideNeedingDisambiguatedSignature = true
-
         // Remove the associated signature and compute it ones again. This time it will be different because of the flag set above.
-        fakeOverrideDeclarationTable.removeDeclaration(property)
-        val disambiguatedSignature = composeSignature(property, manglerCompatibleMode)
-        assert(disambiguatedSignature != signature) { "Failed to compute disambiguated signature for fake override $property" }
-        return disambiguatedSignature to IrPropertySymbolImpl(signature = disambiguatedSignature)
+        fakeOverrideDeclarationTable.removeDeclaration(fakeOverride)
+        val disambiguatedSignature = composeSignature(fakeOverride, manglerCompatibleMode)
+        assert(disambiguatedSignature != signature) { "Failed to compute disambiguated signature for fake override $fakeOverride" }
+        val disambiguatedSymbol = when (fakeOverride) {
+            is IrSimpleFunction -> IrSimpleFunctionSymbolImpl(signature = disambiguatedSignature)
+            is IrProperty -> IrPropertySymbolImpl(signature = disambiguatedSignature)
+        }
+
+        return disambiguatedSignature to disambiguatedSymbol
     }
 
     // TODO(KT-62534) use ModuleDescriptor.shouldSeeInternalsOf when it's fixed and get rid of friendModules
