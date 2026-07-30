@@ -499,5 +499,45 @@ because it is the caching cost of removing the project-level PSI Java manager.
    modification-stamp validation (§8.4).
 4. (Optional) unify the two ASM binary readers (§4.7, §8.4 item 5).
 5. When resumed: add binary-redeclaration fixture before extending
-   `getJavaClassLikeSymbolByClassId` (§4.6).
+   `getJavaClassLikeSymbolByClassId` (§4.6). **Done differently (2026-07-30):** the helper was
+   reverted to master's direct `javaSymbolProvider?.getClassLikeSymbolByClassId` call, so the
+   fixture is a prerequisite for *introducing* binary coverage, not for keeping a seam — see §10.
 6. (Optional) thread-safety / scope-parity notes (§4.4, §4.5).
+
+---
+
+## 10. Top-level-class cache overlap: measurement and merge (2026-07-30)
+
+`JavaClassFinderOverBinaryIndex` kept two `FqName -> VirtualFile?` maps, chosen by
+`applyScopeFilter`. The two population paths differed in exactly one expression:
+`candidates.firstOrNull { it in scope }` (session's own lookups) vs `candidates.firstOrNull()`
+(cross-references out of bytecode, which must see the whole classpath).
+
+**Method.** A temporary harness registered every finder's two maps, counted lookups/misses per
+mode, and at JVM shutdown compared the maps key-by-key. Both `JavaUsingAst*` suites were run
+with `--rerun`; the harness was removed afterwards.
+
+| | phased | box |
+|---|---|---|
+| finder instances | 1615 | 1469 |
+| …with both maps non-empty | 1290 | 1457 |
+| scoped entries | 9729 | 16157 |
+| all-scope entries | 8653 | 14920 |
+| keys present in both | 6755 (69% of scoped) | 12163 (75%) |
+| …with **identical** value | 6755 (100%) | 12163 (100%) |
+| …with differing value | 0 | 0 |
+| lookups where the index returned >1 candidate | 0 | 0 |
+| lookups where the first candidate was outside `scope` | 0 | 0 |
+
+So the overlap is large, the duplicated entries never disagree, and in these corpora the scope
+filter never rejected anything: single-root candidate lists make the two expressions equivalent.
+
+**Change.** One `FqName -> TopLevelClassFiles(anywhere, inScope)` cache, filled by a single pass
+over the index candidates (`anywhere` = first candidate, `inScope` = first candidate also in
+`scope`). The two answers stay distinct — the filter is *not* dropped, because a multi-root
+classpath with per-module scopes can still make them differ — but the index is consulted once per
+top-level name instead of once per name *per mode*: 31145 → 18982 index lookups over the phased
++ box corpora (−39%), against ~2.8k extra scope-containment checks, which are far cheaper.
+
+The scoped answer is still consulted before the `ClassId`-keyed `binaryCache`, so an out-of-scope
+file cannot leak into a scoped result through the shared class cache.

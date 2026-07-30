@@ -36,6 +36,26 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-30 — One top-level-class cache in the binary finder; roll back two no-op shared-file diffs
+- **Change**: (1) `JavaClassFinderOverBinaryIndex` had two `FqName -> VirtualFile?` maps differing
+  only in `firstOrNull { it in scope }` vs `firstOrNull()`. Measured over both suites (3084 finder
+  instances): 69–75% of scoped keys were also in the all-scope map, **every** shared key had an
+  identical value, and no lookup ever saw >1 candidate or a candidate outside `scope`
+  (`multiCandidate=0`, `noCandidateInScope=0`) — see
+  `implDocs/BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22.md` §10. Replaced by one
+  `FqName -> TopLevelClassFiles(anywhere, inScope)` cache filled in a single index pass, which keeps
+  the two answers distinct while dropping ~12k redundant index lookups per suite (−39%).
+  (2) Reverted `FirJvmConflictsChecker` + the `FirSession.getJavaClassLikeSymbolByClassId` forwarder
+  and `FirDirectJavaActualDeclarationExtractor` to master: master already bypassed the composite
+  provider, so both diffs were pure restyling, and no fixture covers the Kotlin-vs-*binary*-Java
+  redeclaration case the checker's comment described.
+- **Files**: `JavaClassFinderOverBinaryIndex.kt` (−12/+15); reverted `FirJvmConflictsChecker.kt`,
+  `fir-jvm/JavaSymbolProvider.kt`, `FirDirectJavaActualDeclarationExtractor.kt` (shared-file diff
+  vs master for these three is now zero).
+- **Tests**: java-direct box+phased green, `PhasedJvmDiagnosticLightTreeTestGenerated` green,
+  `FirLightTreeBlackBoxCodegenTestGenerated*CompileKotlinAgainstKotlin*` green.
+- **Result**: green.
+
 ### 2026-07-29 — Fail-safe finder dispatch: identify the source scope, default to binary
 - **Change**: `createJavaDirectJavaFacadeBuilder` now takes `javaSourcesScope` instead of
   `librariesScope` and dispatches `scope === javaSourcesScope -> JavaClassFinderOverAstImpl`, every
