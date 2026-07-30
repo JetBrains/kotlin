@@ -25,7 +25,7 @@ class KaBaseImplicitInvokeCall(
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
     private val backingArgumentMapping: Map<KtExpression, KaVariableSignature<KaParameterSymbol>>,
     private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
-) : KaImplicitInvokeCall, @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.resolution.KaSimpleFunctionCall {
+) : KaImplicitInvokeCall, @Suppress("DEPRECATION_ERROR") org.jetbrains.kotlin.analysis.api.resolution.KaSimpleFunctionCall {
     override val token: KaLifetimeToken
         get() = backingPartiallyAppliedSymbol.token
 

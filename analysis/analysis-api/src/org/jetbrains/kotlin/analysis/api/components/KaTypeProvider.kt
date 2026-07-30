@@ -39,7 +39,8 @@ public interface KaTypeProvider : KaSessionComponent {
     @KaExperimentalApi
     @Deprecated(
         "Use `approximateToDenotableSupertype` instead",
-        ReplaceWith("this.approximateToDenotableSupertype(!approximateLocalTypes)")
+        ReplaceWith("this.approximateToDenotableSupertype(!approximateLocalTypes)"),
+        level = DeprecationLevel.ERROR,
     )
     public fun KaType.approximateToSuperPublicDenotable(approximateLocalTypes: Boolean): KaType?
 
@@ -52,10 +53,11 @@ public interface KaTypeProvider : KaSessionComponent {
     @KaExperimentalApi
     @Deprecated(
         "Use `approximateToDenotableSupertypeOrSelf` instead",
-        ReplaceWith("this.approximateToDenotableSupertypeOrSelf(!approximateLocalTypes)")
+        ReplaceWith("this.approximateToDenotableSupertypeOrSelf(!approximateLocalTypes)"),
+        level = DeprecationLevel.ERROR,
     )
     public fun KaType.approximateToSuperPublicDenotableOrSelf(approximateLocalTypes: Boolean): KaType = withValidityAssertion {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         return approximateToSuperPublicDenotable(approximateLocalTypes) ?: this
     }
 
@@ -441,11 +443,12 @@ public val builtinTypes: KaBuiltinTypes
 @KaExperimentalApi
 @Deprecated(
     "Use `approximateToDenotableSupertype` instead",
-    ReplaceWith("this.approximateToDenotableSupertype(!approximateLocalTypes)")
+    ReplaceWith("this.approximateToDenotableSupertype(!approximateLocalTypes)"),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public fun KaType.approximateToSuperPublicDenotable(approximateLocalTypes: Boolean): KaType? {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return with(session) {
         approximateToSuperPublicDenotable(
             approximateLocalTypes = approximateLocalTypes,
@@ -462,11 +465,12 @@ public fun KaType.approximateToSuperPublicDenotable(approximateLocalTypes: Boole
 @KaExperimentalApi
 @Deprecated(
     "Use `approximateToDenotableSupertypeOrSelf` instead",
-    ReplaceWith("this.approximateToDenotableSupertypeOrSelf(!approximateLocalTypes)")
+    ReplaceWith("this.approximateToDenotableSupertypeOrSelf(!approximateLocalTypes)"),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public fun KaType.approximateToSuperPublicDenotableOrSelf(approximateLocalTypes: Boolean): KaType {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return with(session) {
         approximateToSuperPublicDenotableOrSelf(
             approximateLocalTypes = approximateLocalTypes,

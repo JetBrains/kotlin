@@ -166,7 +166,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
                 val isInContentScope = searchScope.contains(virtualFile)
                 withEntry("isContextInScope", isInContentScope.toString())
 
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION_ERROR")
                 val analysisContextModule = virtualFile.analysisContextModule
                 withKaModuleEntry("analysisContextModule", analysisContextModule)
             }

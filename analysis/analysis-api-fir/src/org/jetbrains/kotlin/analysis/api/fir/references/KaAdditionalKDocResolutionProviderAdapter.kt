@@ -21,7 +21,7 @@ internal class KaAdditionalKDocResolutionProviderAdapter : KaAdditionalKDocResol
         fqName: FqName,
         contextElement: KtElement,
     ): Collection<KaSymbol> {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         return org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider.resolveKdocFqName(
             analysisSession = analysisSession,
             fqName = fqName,

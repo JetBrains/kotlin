@@ -63,7 +63,7 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
      * Note: this property throws an exception if the declaration _can't_ have a return type
      * (i.e., it is not a [KtDeclarationWithReturnType]).
      */
-    @Deprecated("Use `KtDeclarationWithReturnType.returnType` overload instead")
+    @Deprecated("Use `KtDeclarationWithReturnType.returnType` overload instead", level = DeprecationLevel.ERROR)
     public val KtDeclaration.returnType: KaType
         get() = (this as KtDeclarationWithReturnType).returnType
 
@@ -179,11 +179,11 @@ public val KtDeclarationWithReturnType.returnType: KaType
  * Note: this property throws an exception if the declaration _can't_ have a return type
  * (i.e., it is not a [KtDeclarationWithReturnType]).
  */
-@Deprecated("Use `KtDeclarationWithReturnType.returnType` overload instead")
+@Deprecated("Use `KtDeclarationWithReturnType.returnType` overload instead", level = DeprecationLevel.ERROR)
 @KaContextParameterApi
 context(session: KaSession)
 public val KtDeclaration.returnType: KaType
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     get() = with(session) { returnType }
 
 /**
