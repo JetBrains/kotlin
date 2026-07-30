@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
-import org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @OptIn(KtImplementationDetail::class)
@@ -28,6 +27,10 @@ class KotlinClassStubImpl(
     override val isLocal: Boolean,
     override val isTopLevel: Boolean,
     override val kdocText: String?,
+    /**
+     * How the class is unboxed by the compiler if it is a value class, or `null` if it is not a value class.
+     * Only stubs built from compiled metadata have this information; it is always `null` for stubs built from sources.
+     */
     val valueClassRepresentation: KotlinValueClassRepresentation?,
 ) : KotlinStubBaseImpl<KtClass>(
     parent = parent,

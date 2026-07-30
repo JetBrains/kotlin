@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassBody
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtSuperTypeList
-import org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
@@ -141,6 +141,7 @@ private class ClassClsStubBuilder(
         )
     }
 
+    @OptIn(KtImplementationDetail::class)
     private fun doCreateClassOrObjectStub(): StubElement<out PsiElement> {
         val fqName = classId.asSingleFqName()
         val shortName = fqName.shortName().ref()
@@ -181,15 +182,44 @@ private class ClassClsStubBuilder(
                     isLocal = false,
                     isTopLevel = isTopLevel,
                     kdocText = kdoc,
-                    valueClassRepresentation = valueClassRepresentation(),
+                    valueClassRepresentation = createValueClassRepresentation(),
                 )
             }
         }
     }
 
-    private fun valueClassRepresentation(): KotlinValueClassRepresentation? = when {
-        classProto.hasInlineClassUnderlyingPropertyName() -> KotlinValueClassRepresentation.INLINE_CLASS
-        else -> null
+    /**
+     * Returns how the class is unboxed by the compiler, or `null` when the class is not a value class,
+     * or when its representation cannot be restored from malformed metadata.
+     *
+     * [KotlinFullValueClassRepresentation] is not built yet.
+     * The stub format is already able to store them, so only this function has to be updated to support them.
+     *
+     * @see org.jetbrains.kotlin.serialization.deserialization.loadValueClassRepresentation
+     */
+    @OptIn(KtImplementationDetail::class)
+    private fun createValueClassRepresentation(): KotlinValueClassRepresentation? {
+        // TODO(KT-88416): build 'KotlinFullValueClassRepresentation' for full value classes
+        if (!classProto.hasInlineClassUnderlyingPropertyName()) return null
+
+        val name = c.nameResolver.getName(classProto.inlineClassUnderlyingPropertyName)
+
+        // The compiler writes the type into the class itself only when the underlying property is not a part of the ABI
+        val typeProto = classProto.inlineClassUnderlyingType(c.typeTable) ?: findInlineClassUnderlyingPropertyTypeProto(name)
+        val type = typeProto?.let(typeStubBuilder::createKotlinTypeBean) as? KotlinRigidTypeBean ?: return null
+        return KotlinInlineClassRepresentation(name, type)
+    }
+
+    private fun findInlineClassUnderlyingPropertyTypeProto(name: Name): ProtoBuf.Type? {
+        val property = classProto.propertyList.singleOrNull { property ->
+            c.nameResolver.getName(property.name) == name &&
+                    !property.hasReceiver() &&
+                    property.contextParameterList.isEmpty() &&
+                    // Fallback for old metadata where context parameters don't exist (KT-74546)
+                    property.contextReceiverTypes(c.typeTable).isEmpty()
+        }
+
+        return property?.returnType(c.typeTable)
     }
 
     private fun computeFoldedProperties(): Map<Name, ProtoBuf.Property> {

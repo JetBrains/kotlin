@@ -2,7 +2,7 @@ FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/Box, fqName=Box, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Box, superNames=[]]
-    valueClassRepresentation: INLINE_CLASS
+    valueClassRepresentation: inline [ element -> T ]
     MODIFIER_LIST[public final value]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]
         valueArguments: [ ]

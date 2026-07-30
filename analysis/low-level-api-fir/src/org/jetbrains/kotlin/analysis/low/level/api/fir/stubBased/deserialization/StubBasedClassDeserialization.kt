@@ -52,8 +52,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinFullValueClassRepresentation
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinInlineClassRepresentation
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinRigidTypeBean
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -292,7 +294,7 @@ internal fun deserializeClassToSymbol(
     }.apply {
         if (classStub != null) {
             if (isInlineOrValue) {
-                valueClassRepresentation = classStub.deserializeValueClassRepresentation(this)
+                valueClassRepresentation = classStub.deserializeValueClassRepresentation(this, context.typeDeserializer)
             }
 
             val clsStubCompiledToJvmDefaultImplementation = classStub.isClsStubCompiledToJvmDefaultImplementation
@@ -315,28 +317,33 @@ internal fun deserializeClassToSymbol(
     }
 }
 
-private fun KotlinClassStubImpl.deserializeValueClassRepresentation(klass: FirRegularClass): ValueClassRepresentation<ConeRigidType>? {
-    val constructor by lazy(LazyThreadSafetyMode.NONE) {
-        klass.declarations.firstNotNullOfOrNull { declaration ->
-            (declaration as? FirConstructor)?.takeIf(FirConstructor::isPrimary)
-        } ?: errorWithAttachment("Value class must have primary constructor") {
-            withFirEntry("class", klass)
-        }
-    }
+@OptIn(KtImplementationDetail::class)
+private fun KotlinClassStubImpl.deserializeValueClassRepresentation(
+    klass: FirRegularClass,
+    typeDeserializer: StubBasedFirTypeDeserializer,
+): ValueClassRepresentation<ConeRigidType>? = when (val representation = valueClassRepresentation) {
+    null -> null
 
-    if (valueClassRepresentation == KotlinValueClassRepresentation.INLINE_CLASS) {
-        val parameter = constructor.valueParameters.single()
-        return InlineClassRepresentation(parameter.name, parameter.coneRigidType())
-    }
+    is KotlinInlineClassRepresentation -> InlineClassRepresentation(
+        underlyingPropertyName = representation.underlyingPropertyName,
+        underlyingType = typeDeserializer.underlyingType(representation.underlyingType, klass),
+    )
 
-    return null
+    is KotlinFullValueClassRepresentation -> FullValueClassRepresentation(
+        underlyingPropertyNamesToTypes = representation.underlyingPropertyNamesToTypes
+            ?.map { [name, type] -> name to typeDeserializer.underlyingType(type, klass) }
+    )
 }
 
-private fun FirValueParameter.coneRigidType(): ConeRigidType {
-    val type = returnTypeRef.coneType
-    requireWithAttachment(type is ConeRigidType, { "Underlying type must be rigid type" }) {
+private fun StubBasedFirTypeDeserializer.underlyingType(bean: KotlinRigidTypeBean, klass: FirRegularClass): ConeRigidType {
+    val type = type(bean) ?: errorWithAttachment("Cannot determine the underlying type of a value class") {
+        withEntry("underlyingType", bean.toString())
+        withFirEntry("class", klass)
+    }
+
+    requireWithAttachment(type is ConeRigidType, { "Underlying type must be a rigid type" }) {
         withConeTypeEntry("type", type)
-        withFirEntry("valueParameter", this@coneRigidType)
+        withFirEntry("class", klass)
     }
 
     return type

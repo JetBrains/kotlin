@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtProjectionKind
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import java.lang.reflect.Modifier
@@ -56,6 +57,7 @@ private fun IndentedTextBuilder.extractAdditionInfo(stub: StubElement<*>) {
     }
 }
 
+@OptIn(KtImplementationDetail::class)
 private fun IndentedTextBuilder.appendValue(value: Any?) {
     when (value) {
         is Map<*, *> -> appendValue(value.entries)
@@ -83,6 +85,7 @@ private fun IndentedTextBuilder.appendValue(value: Any?) {
         }
 
         is KotlinTypeBean -> appendTypeInfo(value)
+        is KotlinValueClassRepresentation -> appendValueClassRepresentation(value)
         is Name -> append(value.asString())
         is Enum<*> -> append(value.name)
         is String -> append("\"").append(value).append("\"")
@@ -97,6 +100,17 @@ private fun IndentedTextBuilder.appendValue(value: Any?) {
         is ConstantValue<*>, is KotlinStubOrigin -> append(value.toString())
         else -> error("Unsupported type: ${value::class}")
     }
+}
+
+@OptIn(KtImplementationDetail::class)
+private fun IndentedTextBuilder.appendValueClassRepresentation(representation: KotlinValueClassRepresentation) {
+    val kind = when (representation) {
+        is KotlinInlineClassRepresentation -> "inline"
+        is KotlinFullValueClassRepresentation -> "full"
+    }
+
+    append(kind).append(" ")
+    appendValue(representation.underlyingPropertyNamesToTypes?.toMap())
 }
 
 private fun IndentedTextBuilder.appendTypeInfo(typeBean: KotlinTypeBean) {

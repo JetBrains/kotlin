@@ -48,6 +48,11 @@ sealed interface KotlinTypeBean : KotlinTypeMarker {
     val nullable: Boolean
 }
 
+/**
+ * A [KotlinTypeBean] which is not a [flexible type][KotlinFlexibleTypeBean].
+ */
+sealed interface KotlinRigidTypeBean : KotlinTypeBean
+
 data class KotlinFlexibleTypeBean(val lowerBound: KotlinTypeBean, val upperBound: KotlinTypeBean) : KotlinTypeBean, FlexibleTypeMarker {
     override val nullable: Boolean
         get() = lowerBound.nullable
@@ -99,7 +104,7 @@ data class KotlinClassTypeBean(
     val arguments: List<KotlinTypeArgumentBean>,
     override val nullable: Boolean,
     val abbreviatedType: KotlinClassTypeBean?,
-) : KotlinTypeBean, SimpleTypeMarker
+) : KotlinRigidTypeBean, SimpleTypeMarker
 
 data class KotlinTypeArgumentBean(val projectionKind: KtProjectionKind, val type: KotlinTypeBean?) : TypeArgumentMarker
 
@@ -107,4 +112,4 @@ data class KotlinTypeParameterTypeBean(
     val typeParameterName: String,
     override val nullable: Boolean,
     val definitelyNotNull: Boolean
-) : KotlinTypeBean, SimpleTypeMarker
+) : KotlinRigidTypeBean, SimpleTypeMarker
