@@ -89,7 +89,7 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
 
 @KaPlatformInterface
 @OptIn(KaExperimentalApi::class)
-@Deprecated("Use 'explicitModule' instead.")
+@Deprecated("Use 'explicitModule' instead.", level = DeprecationLevel.ERROR)
 public var KtCodeFragment.forcedSpecialModule: KaDanglingFileModule?
     get() = explicitModule as? KaDanglingFileModule
     set(value) {
