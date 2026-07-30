@@ -71,8 +71,9 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
         packagePartProvider: PackagePartProvider,
         languageVersionSettings: LanguageVersionSettings,
         predefinedJavaComponents: FirSharableJavaComponents?,
+        jvmTarget: JvmTarget?,
     ): FirSession {
-        val context = Context(predefinedJavaComponents, projectEnvironment, packagePartProvider)
+        val context = Context(predefinedJavaComponents, projectEnvironment, packagePartProvider, jvmTarget)
         return createSharedLibrarySession(
             mainModuleName,
             context,
@@ -96,9 +97,10 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
         packagePartProvider: PackagePartProvider,
         languageVersionSettings: LanguageVersionSettings,
         predefinedJavaComponents: FirSharableJavaComponents?,
+        jvmTarget: JvmTarget?,
     ): FirSession {
         val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(scope)
-        val context = Context(predefinedJavaComponents, projectEnvironment, packagePartProvider)
+        val context = Context(predefinedJavaComponents, projectEnvironment, packagePartProvider, jvmTarget)
         return createLibrarySession(
             context,
             sharedLibrarySession,
@@ -150,7 +152,12 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
         kmpModuleKind: KmpModuleKind,
         init: FirSessionConfigurator.() -> Unit,
     ): FirSession {
-        val context = Context(predefinedJavaComponents, projectEnvironment, packagePartProvider)
+        val context = Context(
+            predefinedJavaComponents,
+            projectEnvironment,
+            packagePartProvider,
+            jvmTarget = configuration.jvmTarget,
+        )
         return createSourceSession(
             moduleData,
             context = context,
@@ -210,7 +217,7 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
 
     override fun FirSession.registerSourceSessionComponents(c: Context) {
         registerLibrarySessionComponents(c)
-        register(FirJvmTargetProvider::class, FirJvmTargetProvider(JvmTarget.DEFAULT))
+        register(FirJvmTargetProvider::class, FirJvmTargetProvider(c.jvmTarget ?: JvmTarget.DEFAULT))
     }
 
     override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
@@ -226,6 +233,7 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
         val predefinedJavaComponents: FirSharableJavaComponents?,
         val projectEnvironment: AbstractProjectEnvironment,
         val packagePartProvider: PackagePartProvider,
+        val jvmTarget: JvmTarget?,
     )
 
     private fun initializeForStdlibIfNeeded(
@@ -290,6 +298,7 @@ internal fun <F> prepareJKlibSessions(
                 packagePartProviderForLibraries,
                 configuration.languageVersionSettings,
                 predefinedJavaComponents = predefinedJavaComponents,
+                jvmTarget = configuration.jvmTarget,
             )
         },
         createLibrarySession = { sharedLibrarySession ->
@@ -303,6 +312,7 @@ internal fun <F> prepareJKlibSessions(
                 packagePartProviderForLibraries,
                 configuration.languageVersionSettings,
                 predefinedJavaComponents = predefinedJavaComponents,
+                jvmTarget = configuration.jvmTarget,
             )
         },
         createSourceSession = { moduleData, kmpModuleKind, sessionConfigurator ->
