@@ -117,10 +117,15 @@ private class KaFirJvmLibraryRestrictionScope(project: Project) : GlobalSearchSc
             return true
         }
 
+        // Fast path: Excluded binary file types.
+        if (extension == METADATA_FILE_EXTENSION || extension == KLIB_METADATA_FILE_EXTENSION) {
+            return false
+        }
+
         // `getFileTypeByExtension` classifies by extension only and never reads file content, unlike `VirtualFile.getFileType`.
         val fileType = FileTypeRegistry.getInstance().getFileTypeByExtension(extension)
 
-        return fileType.isBinary && extension != METADATA_FILE_EXTENSION && extension != KLIB_METADATA_FILE_EXTENSION
+        return fileType.isBinary
     }
 
     override fun isSearchInModuleContent(module: Module): Boolean = false
