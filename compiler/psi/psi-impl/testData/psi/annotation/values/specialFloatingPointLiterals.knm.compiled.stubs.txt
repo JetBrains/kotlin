@@ -1,0 +1,127 @@
+0_.knm:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Special, fqName=Special, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Special, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Special]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=d]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Double]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=f]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Float]
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+      CLASS_BODY
+        PROPERTY[fqName=Special.d, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=d]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Double]
+        PROPERTY[fqName=Special.f, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=f]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Float]
+
+
+1_.knm:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithNaN, fqName=WithNaN, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNaN, superNames=[]]
+      MODIFIER_LIST[public final]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Special]
+          valueArguments: [
+            d -> NaN.toDouble()
+            f -> NaN.toFloat()
+          ]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Special]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithNaN]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY
+
+
+2_.knm:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithNegativeInfinity, fqName=WithNegativeInfinity, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNegativeInfinity, superNames=[]]
+      MODIFIER_LIST[public final]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Special]
+          valueArguments: [
+            d -> -Infinity.toDouble()
+            f -> -Infinity.toFloat()
+          ]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Special]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithNegativeInfinity]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY
+
+
+3_.knm:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithNegativeZero, fqName=WithNegativeZero, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNegativeZero, superNames=[]]
+      MODIFIER_LIST[public final]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Special]
+          valueArguments: [
+            d -> -0.0.toDouble()
+            f -> -0.0.toFloat()
+          ]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Special]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithNegativeZero]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY
+
+
+4_.knm:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithPositiveInfinity, fqName=WithPositiveInfinity, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithPositiveInfinity, superNames=[]]
+      MODIFIER_LIST[public final]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Special]
+          valueArguments: [
+            d -> Infinity.toDouble()
+            f -> Infinity.toFloat()
+          ]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Special]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithPositiveInfinity]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY

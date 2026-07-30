@@ -1,0 +1,243 @@
+KtFile: negativeLiterals.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiComment(EOL_COMMENT)('// Negative values require a prefix expression as there are no negative literals in Kotlin')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// FILE: Negative.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(annotation)('annotation')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Negative')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('i')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('l')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Long')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('b')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Byte')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('s')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Short')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('d')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Double')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('f')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Float')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: WithNegativeLiterals.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Negative')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(MINUS)('-')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(MINUS)('-')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1L')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(MINUS)('-')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(MINUS)('-')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n\n    ')
+          VALUE_ARGUMENT
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(MINUS)('-')
+              FLOAT_CONSTANT
+                PsiElement(FLOAT_CONSTANT)('1.0')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(MINUS)('-')
+              FLOAT_CONSTANT
+                PsiElement(FLOAT_CONSTANT)('1.0F')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n')
+          PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('WithNegativeLiterals')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: WithMinValues.kt')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// The minimal values are the trickiest ones as their absolute value doesn't fit into the corresponding type')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Negative')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('MIN_VALUE')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Long')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('MIN_VALUE')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Byte')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('MIN_VALUE')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Short')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('MIN_VALUE')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n\n    ')
+          VALUE_ARGUMENT
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(MINUS)('-')
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Double')
+                PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('MAX_VALUE')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n    ')
+          VALUE_ARGUMENT
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(MINUS)('-')
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Float')
+                PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('MAX_VALUE')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n')
+          PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('WithMinValues')

@@ -2055,6 +2055,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
       }
 
       @Test
+      @TestMetadata("arrayClassLiterals.kt")
+      public void testArrayClassLiterals() {
+        run("arrayClassLiterals.kt");
+      }
+
+      @Test
       @TestMetadata("arrays.kt")
       public void testArrays() {
         run("arrays.kt");
@@ -2103,6 +2109,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
       }
 
       @Test
+      @TestMetadata("escapedLiterals.kt")
+      public void testEscapedLiterals() {
+        run("escapedLiterals.kt");
+      }
+
+      @Test
       @TestMetadata("intVarargLiterals.kt")
       public void testIntVarargLiterals() {
         run("intVarargLiterals.kt");
@@ -2112,6 +2124,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
       @TestMetadata("longStringTemplateEntryWithTwoExpressions.kt")
       public void testLongStringTemplateEntryWithTwoExpressions() {
         run("longStringTemplateEntryWithTwoExpressions.kt");
+      }
+
+      @Test
+      @TestMetadata("negativeLiterals.kt")
+      public void testNegativeLiterals() {
+        run("negativeLiterals.kt");
       }
 
       @Test
@@ -2151,6 +2169,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
       }
 
       @Test
+      @TestMetadata("specialFloatingPointLiterals.kt")
+      public void testSpecialFloatingPointLiterals() {
+        run("specialFloatingPointLiterals.kt");
+      }
+
+      @Test
       @TestMetadata("stringLiterals.kt")
       public void testStringLiterals() {
         run("stringLiterals.kt");
@@ -2160,6 +2184,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
       @TestMetadata("unaryOperators.kt")
       public void testUnaryOperators() {
         run("unaryOperators.kt");
+      }
+
+      @Test
+      @TestMetadata("unsignedLiterals.kt")
+      public void testUnsignedLiterals() {
+        run("unsignedLiterals.kt");
       }
     }
   }

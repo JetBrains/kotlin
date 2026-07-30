@@ -1,0 +1,145 @@
+Negative.class:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Negative, fqName=Negative, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Negative, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Negative]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Int]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=l]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Long]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Byte]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Short]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=d]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Double]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=f]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Float]
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+      CLASS_BODY
+        PROPERTY[fqName=Negative.i, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Int]
+        PROPERTY[fqName=Negative.l, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=l]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Long]
+        PROPERTY[fqName=Negative.b, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=b]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Byte]
+        PROPERTY[fqName=Negative.s, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Short]
+        PROPERTY[fqName=Negative.d, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=d]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Double]
+        PROPERTY[fqName=Negative.f, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=f]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Float]
+
+
+WithMinValues.class:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithMinValues, fqName=WithMinValues, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithMinValues, superNames=[]]
+      MODIFIER_LIST[public final]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Negative]
+          valueArguments: [
+            i -> -2147483648
+            l -> -9223372036854775808.toLong()
+            b -> -128.toByte()
+            s -> -32768.toShort()
+            d -> -1.7976931348623157E308.toDouble()
+            f -> -3.4028235E38.toFloat()
+          ]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Negative]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithMinValues]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY
+
+
+WithNegativeLiterals.class:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/WithNegativeLiterals, fqName=WithNegativeLiterals, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNegativeLiterals, superNames=[]]
+      MODIFIER_LIST[public final]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Negative]
+          valueArguments: [
+            i -> -1
+            l -> -1.toLong()
+            b -> -1.toByte()
+            s -> -1.toShort()
+            d -> -1.0.toDouble()
+            f -> -1.0.toFloat()
+          ]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Negative]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithNegativeLiterals]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY

@@ -1,0 +1,183 @@
+KtFile: specialFloatingPointLiterals.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiComment(EOL_COMMENT)('// Not-a-number, infinities and the negative zero have no literal form')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// FILE: Special.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(annotation)('annotation')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Special')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('d')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Double')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('f')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Float')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: WithNaN.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Special')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Double')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('NaN')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Float')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('NaN')
+          PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('WithNaN')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: WithPositiveInfinity.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Special')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Double')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('POSITIVE_INFINITY')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Float')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('POSITIVE_INFINITY')
+          PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('WithPositiveInfinity')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: WithNegativeInfinity.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Special')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Double')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('NEGATIVE_INFINITY')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Float')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('NEGATIVE_INFINITY')
+          PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('WithNegativeInfinity')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: WithNegativeZero.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Special')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(MINUS)('-')
+              FLOAT_CONSTANT
+                PsiElement(FLOAT_CONSTANT)('0.0')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(MINUS)('-')
+              FLOAT_CONSTANT
+                PsiElement(FLOAT_CONSTANT)('0.0F')
+          PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('WithNegativeZero')
