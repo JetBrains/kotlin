@@ -58,7 +58,7 @@ internal class GradleNodeModuleBuilder(
         if (files.isEmpty() && srcPackageJsonFile == null) return null
 
         val packageJson = fromSrcPackageJson(srcPackageJsonFile)?.apply {
-            // Gson set nulls reflectively no matter on default values and non-null types
+            // see the note on PackageJson: Java deserialization can leave a non-null property null
             @Suppress("USELESS_ELVIS")
             version = version ?: moduleVersion
         } ?: PackageJson(moduleName, moduleVersion)
