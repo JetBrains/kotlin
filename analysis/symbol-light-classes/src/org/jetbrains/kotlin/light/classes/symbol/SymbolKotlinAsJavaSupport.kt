@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightMethodForDecompiledDeclaration
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
@@ -59,6 +60,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.time.Duration
@@ -463,7 +465,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
         val methods = enclosingDeclaration.asPsiMethods()
 
         val parameterSymbolPointer = parameterSymbol.createPointer()
-        val parameterSymbolPsi = parameterSymbol.sourcePsiSafe<KtElement>()
+        val parameterSymbolPsi = parameterSymbol.getPsiForMatching()
         return methods.mapNotNull { method ->
             method.parameterList.parameters.firstOrNull { parameter ->
                 parameter.isCreatedFrom(parameterSymbolPsi, parameterSymbolPointer)
@@ -500,7 +502,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
         } ?: return null
 
         val declarationSymbolPointer = declarationSymbol.createPointer()
-        val declarationSymbolPsi = declarationSymbol.sourcePsiSafe<KtElement>()
+        val declarationSymbolPsi = declarationSymbol.getPsiForMatching()
 
         return psiClass.fields.find { psiField: PsiField ->
             psiField.isCreatedFrom(declarationSymbolPsi, declarationSymbolPointer)
@@ -512,13 +514,34 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
         functionSymbol: KaFunctionSymbol,
     ): List<PsiMethod> {
         val functionSymbolPointer = functionSymbol.createPointer()
-        val functionSymbolPsi = functionSymbol.sourcePsiSafe<KtElement>()
+        val functionSymbolPsi = functionSymbol.getPsiForMatching()
 
         return getWrappingClasses(functionSymbol)
             .flatMap { it.methods.asSequence() }
             .filterIsInstance<KtLightMethod>()
             .filter { lightMethod ->
-                lightMethod.isCreatedFrom(functionSymbolPsi, functionSymbolPointer)
+                when {
+                    lightMethod.isCreatedFrom(functionSymbolPsi, functionSymbolPointer) -> {
+                        if (functionSymbol is KaPropertyAccessorSymbol && lightMethod is KtLightMethodForDecompiledDeclaration) {
+                            /**
+                             * Decompiled accessors don't have any pointers and always have the corresponding property as their `kotlinOrigin`.
+                             * Hence, an additional check is needed to properly match decompiled accessors
+                             */
+                            val hasVoidReturnType = lightMethod.returnType == PsiTypes.voidType()
+                            when (functionSymbol) {
+                                is KaPropertyGetterSymbol -> !hasVoidReturnType
+                                is KaPropertySetterSymbol -> hasVoidReturnType
+                            }
+                        } else {
+                            true
+                        }
+                    }
+                    functionSymbol is KaConstructorSymbol && functionSymbol.isPrimary && lightMethod.isConstructor -> {
+                        // no-arg constructors have the containing class as their origin
+                        lightMethod.kotlinOrigin === functionSymbolPsi?.containingClass()
+                    }
+                    else -> false
+                }
             }
     }
 
@@ -528,7 +551,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
             KaSymbolLocation.TOP_LEVEL -> when (declaration) {
                 is KaFileSymbol -> declaration.asFacadePsiClass()
                 is KaScriptSymbol -> declaration.asFacadePsiClass()
-                else -> declaration.containingFile?.asFacadePsiClass()
+                else -> (declaration.containingFile ?: (declaration.psi?.containingFile as? KtFile)?.symbol)?.asFacadePsiClass()
             }
             KaSymbolLocation.CLASS -> (declaration.containingDeclaration as? KaClassSymbol)?.asPsiClass()
             KaSymbolLocation.PROPERTY -> declaration.containingDeclaration?.let { property -> getWrappingClass(property) }
@@ -555,8 +578,12 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
             return false
         }
 
-        return otherPsi != null && kotlinOrigin == otherPsi ||
-                (this as? KaSymbolJavaView<*>)?.symbolPointer?.pointsToTheSameSymbolAs(otherSymbolPointer) == true
+        val thisSymbolPointer = (this as? KaSymbolJavaView<*>)?.symbolPointer
+        if (thisSymbolPointer != null) {
+            return thisSymbolPointer.pointsToTheSameSymbolAs(otherSymbolPointer)
+        }
+
+        return otherPsi != null && kotlinOrigin == otherPsi
     }
 
     private fun PsiClass.isCreatedFromCompanion(): Boolean {
@@ -570,6 +597,22 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
             }
             else -> (kotlinOrigin as? KtObjectDeclaration)?.isCompanion()
         } == true
+    }
+
+    /**
+     * Returns [KtElement] which should be used for matching [this] against produced light elements.
+     *
+     * It is needed to handle various inconsistencies in LC `kotlinOrigin`s.
+     * E.g., all accessors in LCs have the corresponding property as their origin, even when the accessor is explicit.
+     * The default option is [KaSymbol.anchorPsi].
+     * It's used instead of [KaSymbol.realPsi] to match synthetic declarations.
+     */
+    context(_: KaSession)
+    private fun KaSymbol.getPsiForMatching(): KtElement? {
+        return when (this) {
+            is KaPropertyAccessorSymbol -> (containingDeclaration as? KaKotlinPropertySymbol)?.anchorPsi ?: anchorPsi
+            else -> anchorPsi
+        }?.originalElement as? KtElement
     }
 
     //endregion
