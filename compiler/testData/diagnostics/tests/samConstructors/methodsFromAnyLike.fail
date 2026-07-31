@@ -1,0 +1,7 @@
+CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB INTERFACE name:J modality:ABSTRACT visibility:public [fun] superTypes:[<root>.I] should have a single abstract method to be a type of function reference
+java.lang.IllegalStateException: CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB INTERFACE name:J modality:ABSTRACT visibility:public [fun] superTypes:[<root>.I] should have a single abstract method to be a type of function reference
+	at org.jetbrains.kotlin.ir.util.AdditionalIrUtilsKt.selectSAMOverriddenFunction(AdditionalIrUtils.kt:399)
+	at org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences$UpgradeTransformer.visitTypeOperator(UpgradeCallableReferences.kt:208)
+	at org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences$UpgradeTransformer.visitTypeOperator(UpgradeCallableReferences.kt:61)
+	at org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall.accept(IrTypeOperatorCall.kt:26)
+	at org.jetbrains.kotlin.ir.expressions.IrExpression.transform(IrExpression.kt:23)
