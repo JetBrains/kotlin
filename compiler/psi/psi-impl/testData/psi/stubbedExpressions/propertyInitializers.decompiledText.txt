@@ -8,6 +8,8 @@ Holder.class:
       public const val inObject: kotlin.Int = 10
 
       public final val inferred: kotlin.Int /* compiled code */
+
+      public const val infinityInObject: kotlin.Double = kotlin.Double.POSITIVE_INFINITY
   }
 
 PropertyInitializersKt.class:
@@ -45,6 +47,10 @@ PropertyInitializersKt.class:
   public const val reference: kotlin.Int = 3
 
   public const val qualified: kotlin.Int = 3
+
+  public const val infinity: kotlin.Double = kotlin.Double.POSITIVE_INFINITY
+
+  public const val nan: kotlin.Float = kotlin.Float.NaN
 
   public const val intrinsicCall: kotlin.String = "12"
 

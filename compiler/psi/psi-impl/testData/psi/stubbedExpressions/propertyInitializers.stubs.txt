@@ -108,6 +108,22 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.PropertyInitializersKt]]
     DOT_QUALIFIED_EXPRESSION
       REFERENCE_EXPRESSION[referencedName=test]
       REFERENCE_EXPRESSION[referencedName=int]
+  PROPERTY[fqName=test.infinity, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=infinity]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Double]
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=Double]
+      REFERENCE_EXPRESSION[referencedName=POSITIVE_INFINITY]
+  PROPERTY[fqName=test.nan, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=nan]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Float]
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=Float]
+      REFERENCE_EXPRESSION[referencedName=NaN]
   PROPERTY[fqName=test.intrinsicCall, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=intrinsicCall]
     MODIFIER_LIST[const]
     TYPE_REFERENCE
@@ -148,6 +164,14 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.PropertyInitializersKt]]
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
       PROPERTY[fqName=test.Holder.inferred, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=inferred]
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=11]
+      PROPERTY[fqName=test.Holder.infinityInObject, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=infinityInObject]
+        MODIFIER_LIST[const]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Double]
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=Double]
+          REFERENCE_EXPRESSION[referencedName=POSITIVE_INFINITY]
   CLASS[classId=test/WithMember, fqName=test.WithMember, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithMember, superNames=[]]
     CLASS_BODY
       PROPERTY[fqName=test.WithMember.member, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=member]
