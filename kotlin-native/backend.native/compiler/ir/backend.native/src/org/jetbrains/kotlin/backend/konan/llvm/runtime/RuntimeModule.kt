@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.llvm.runtime
 // NOTE: The list of modules is duplicated in kotlin-native/runtime/build.gradle.kts
 enum class RuntimeModule(val filename: String) {
     COMPILER_INTERFACE("compiler_interface.bc"),
-    MAIN("runtime.bc"),
+    RUNTIME("runtime.bc"),
     DEBUG("debug.bc"),
     ALLOC_LEGACY("legacy_alloc.bc"),
     ALLOC_CUSTOM("custom_alloc.bc"),

@@ -129,7 +129,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
 
     val runtimeBitcodeFiles = buildList<String> {
         if (runtimeModulesConfig.containsDebuggingRuntime) add(RuntimeModule.DEBUG)
-        add(RuntimeModule.MAIN)
+        add(RuntimeModule.RUNTIME)
 
         if (config.target.family == Family.OSX && config.minidumpLocation != null) {
             add(RuntimeModule.BREAKPAD)
