@@ -760,7 +760,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("prefix")
         }
         val VALUE_CLASS_CANNOT_BE_CLONEABLE by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
-        val VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS by error<KtDeclaration>(PositioningStrategy.CONTEXT_KEYWORD)
     }
 
     val APPLICABILITY by object : DiagnosticGroup("Applicability") {

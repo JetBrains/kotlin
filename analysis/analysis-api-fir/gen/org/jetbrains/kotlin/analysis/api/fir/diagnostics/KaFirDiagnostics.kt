@@ -1690,10 +1690,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ValueClassCannotBeCloneable::class
     }
 
-    interface ValueClassCannotHaveContextReceivers : KaFirDiagnostic<KtDeclaration> {
-        override val diagnosticClass get() = ValueClassCannotHaveContextReceivers::class
-    }
-
     interface NoneApplicable : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = NoneApplicable::class
         val candidates: List<Pair<KaSymbol, List<String>>>
