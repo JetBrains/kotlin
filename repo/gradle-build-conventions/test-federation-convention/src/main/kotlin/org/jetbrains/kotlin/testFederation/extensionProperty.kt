@@ -10,7 +10,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.jvmName
 
-inline fun <R : ExtensionAware, reified T> extensionProperty(
+internal inline fun <R : ExtensionAware, reified T> extensionProperty(
     crossinline default: R.() -> T,
 ): ReadWriteProperty<R, T> {
     return object : ReadWriteProperty<R, T> {

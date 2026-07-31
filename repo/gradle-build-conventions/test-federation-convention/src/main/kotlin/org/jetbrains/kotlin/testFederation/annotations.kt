@@ -9,4 +9,10 @@ package org.jetbrains.kotlin.testFederation
     level = RequiresOptIn.Level.ERROR,
     message = "This API is temporary/transitional and will be removed/replaced in the future"
 )
-annotation class TemporaryTestFederationApi()
+annotation class TemporaryTestFederationApi
+
+@RequiresOptIn(
+    level = RequiresOptIn.Level.WARNING,
+    message = "This API is delicate: Use only deliberately with consent of the Kotlin Infrastructure Team"
+)
+annotation class DelicateTestFederationApi

@@ -20,6 +20,8 @@ kotlin {
     jvmToolchain(17)
 
     compilerOptions {
+        optIn.add("org.jetbrains.kotlin.testFederation.DelicateTestFederationApi")
+
         allWarningsAsErrors.set(true)
         freeCompilerArgs.add("-Xsuppress-version-warnings")
 
