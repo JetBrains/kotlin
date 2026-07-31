@@ -9,7 +9,7 @@ fun foo(bar: String = "20") = buildList {
     add(30)
     <!ARGUMENT_TYPE_MISMATCH!>this<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>f<!>() // `UNRESOLVED_REFERENCE_WRONG_RECEIVER` here prevents the fixation of `TypeVariable(K)` of `if (true) 10 else "20"`.
 
-    <!ARGUMENT_TYPE_MISMATCH!>bar<!> == <!ARGUMENT_TYPE_MISMATCH!>if (true) <!ARGUMENT_TYPE_MISMATCH!>10<!> else <!ARGUMENT_TYPE_MISMATCH!>"20"<!><!>
+    bar == if (true) <!ARGUMENT_TYPE_MISMATCH!>10<!> else <!ARGUMENT_TYPE_MISMATCH!>"20"<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,

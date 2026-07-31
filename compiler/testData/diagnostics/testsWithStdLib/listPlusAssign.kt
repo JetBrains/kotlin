@@ -8,7 +8,7 @@ fun List<String>.modify() {
 }
 
 fun Any.modify() {
-    <!CANNOT_INFER_PARAMETER_TYPE!>(this <!UNCHECKED_CAST!>as List<Int><!>) <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> 42<!>
+    (this <!UNCHECKED_CAST!>as List<Int><!>) <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> 42
 }
 
 operator fun <T> Set<T>.plusAssign(x: T) {}
