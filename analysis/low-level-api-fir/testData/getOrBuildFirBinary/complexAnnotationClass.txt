@@ -1,0 +1,70 @@
+KT element: KtClass
+KT element text:
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS])
+@kotlin.SinceKotlin(version = "1.3")
+public final annotation class MyMetadata public constructor(kind: kotlin.Int = COMPILED_CODE, metadataVersion: kotlin.IntArray = COMPILED_CODE, bytecodeVersion: kotlin.IntArray = COMPILED_CODE, data1: kotlin.Array<kotlin.String> = COMPILED_CODE, data2: kotlin.Array<kotlin.String> = COMPILED_CODE, extraString: kotlin.String = COMPILED_CODE, packageName: kotlin.String = COMPILED_CODE, extraInt: kotlin.Int = COMPILED_CODE) : kotlin.Annotation {
+    public final val kind: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.jvm.JvmName(name = "k")
+        public final get
+
+    public final val metadataVersion: kotlin.IntArray = COMPILED_CODE /* compiled code */
+        @kotlin.jvm.JvmName(name = "mv")
+        public final get
+
+    public final val bytecodeVersion: kotlin.IntArray = COMPILED_CODE /* compiled code */
+        @kotlin.jvm.JvmName(name = "bv")
+        public final get
+
+    public final val data1: kotlin.Array<kotlin.String> = COMPILED_CODE /* compiled code */
+        @kotlin.jvm.JvmName(name = "d1")
+        public final get
+
+    public final val data2: kotlin.Array<kotlin.String> = COMPILED_CODE /* compiled code */
+        @kotlin.jvm.JvmName(name = "d2")
+        public final get
+
+    public final val extraString: kotlin.String = COMPILED_CODE /* compiled code */
+        @kotlin.jvm.JvmName(name = "xs")
+        public final get
+
+    public final val packageName: kotlin.String = COMPILED_CODE /* compiled code */
+        @kotlin.jvm.JvmName(name = "pn")
+        public final get
+
+    public final val extraInt: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.jvm.JvmName(name = "xi")
+        public final get
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+@R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.RUNTIME) @R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.CLASS)) @R|kotlin/SinceKotlin|(version = String(1.3)) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyMetadata : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false, IsDeserializedPropertyFromAnnotation=true] val bytecodeVersion: R|kotlin/IntArray| = <collectionLiteralCall>(Int(1), Int(0), Int(3))
+        @R|kotlin/jvm/JvmName|(name = String(bv)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyMetadata] get(): R|kotlin/IntArray|
+
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false, IsDeserializedPropertyFromAnnotation=true] val data1: R|kotlin/Array<kotlin/String>| = <collectionLiteralCall>()
+        @R|kotlin/jvm/JvmName|(name = String(d1)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyMetadata] get(): R|kotlin/Array<kotlin/String>|
+
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false, IsDeserializedPropertyFromAnnotation=true] val data2: R|kotlin/Array<kotlin/String>| = <collectionLiteralCall>()
+        @R|kotlin/jvm/JvmName|(name = String(d2)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyMetadata] get(): R|kotlin/Array<kotlin/String>|
+
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false, IsDeserializedPropertyFromAnnotation=true] val extraInt: R|kotlin/Int| = Int(0)
+        @R|kotlin/jvm/JvmName|(name = String(xi)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyMetadata] get(): R|kotlin/Int|
+
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false, IsDeserializedPropertyFromAnnotation=true] val extraString: R|kotlin/String| = String()
+        @R|kotlin/jvm/JvmName|(name = String(xs)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyMetadata] get(): R|kotlin/String|
+
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false, IsDeserializedPropertyFromAnnotation=true] val kind: R|kotlin/Int| = Int(1)
+        @R|kotlin/jvm/JvmName|(name = String(k)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyMetadata] get(): R|kotlin/Int|
+
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false, IsDeserializedPropertyFromAnnotation=true] val metadataVersion: R|kotlin/IntArray| = <collectionLiteralCall>()
+        @R|kotlin/jvm/JvmName|(name = String(mv)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyMetadata] get(): R|kotlin/IntArray|
+
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false, IsDeserializedPropertyFromAnnotation=true] val packageName: R|kotlin/String| = String()
+        @R|kotlin/jvm/JvmName|(name = String(pn)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyMetadata] get(): R|kotlin/String|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyMetadata] constructor([ResolvedTo(BODY_RESOLVE)] kind: R|kotlin/Int| = STUB, [ResolvedTo(BODY_RESOLVE)] metadataVersion: R|kotlin/IntArray| = STUB, [ResolvedTo(BODY_RESOLVE)] bytecodeVersion: R|kotlin/IntArray| = STUB, [ResolvedTo(BODY_RESOLVE)] data1: R|kotlin/Array<kotlin/String>| = STUB, [ResolvedTo(BODY_RESOLVE)] data2: R|kotlin/Array<kotlin/String>| = STUB, [ResolvedTo(BODY_RESOLVE)] extraString: R|kotlin/String| = STUB, [ResolvedTo(BODY_RESOLVE)] packageName: R|kotlin/String| = STUB, [ResolvedTo(BODY_RESOLVE)] extraInt: R|kotlin/Int| = STUB): R|myPack/MyMetadata|
+
+}

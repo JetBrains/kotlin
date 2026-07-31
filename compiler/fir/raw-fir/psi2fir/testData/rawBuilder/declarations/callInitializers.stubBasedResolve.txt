@@ -1,0 +1,36 @@
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] callInitializers.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun compute(): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun sum([ResolvedTo(ANNOTATION_ARGUMENTS)] left: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] right: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val call: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val callWithArguments: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val callWithNamedArguments: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val nestedCall: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val qualifiedCall: R|kotlin/String| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val parenthesizedCall: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val doublyParenthesizedCall: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val callWithParenthesizedArguments: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+    public final [ResolvedTo(CONTRACTS)] val inferredCall: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(CONTRACTS)] get(): <implicit>
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expressionBodyCall(): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(CONTRACTS)] fun inferredExpressionBodyCall(): <implicit> { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expressionBodyParenthesizedCall(): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val getterCall: R|kotlin/Int|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withCallDefault([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class WithConstructorCallDefault : R|kotlin/Any| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=WithConstructorCallDefault] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/WithConstructorCallDefault.value] value: R|kotlin/Int| = LAZY_EXPRESSION): R|WithConstructorCallDefault| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithConstructorCallDefault] get(): R|kotlin/Int|
+
+    }

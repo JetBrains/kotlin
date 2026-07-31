@@ -1,0 +1,23 @@
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] nonStubbedInitializers.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun compute(): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun evaluate([ResolvedTo(ANNOTATION_ARGUMENTS)] block: R|() -> kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun combine([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] block: R|() -> kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val trailingLambda: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val positionalLambdaArgument: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val namedLambdaArgument: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val mixedArguments: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val parenthesizedLambdaArgument: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val conditional: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val objectLiteral: R|kotlin/Any| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Any|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val callableReference: R|() -> kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|() -> kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val interpolation: R|kotlin/String| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expressionBodyWithLambda(): R|kotlin/Int| { LAZY_BLOCK }

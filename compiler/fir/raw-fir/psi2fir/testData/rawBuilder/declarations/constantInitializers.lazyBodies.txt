@@ -1,0 +1,29 @@
+FILE: constantInitializers.kt
+    public? final? const val constant: Int = LAZY_EXPRESSION
+        public? get(): Int
+    public? final? const val negative: Int = LAZY_EXPRESSION
+        public? get(): Int
+    public? final? const val string: String = LAZY_EXPRESSION
+        public? get(): String
+    public? final? const val reference: Int = LAZY_EXPRESSION
+        public? get(): Int
+    public? final? val nonConst: Int = LAZY_EXPRESSION
+        public? get(): Int
+    public? final? val inferred: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
+    public? final? fun expressionBody(): Int { LAZY_BLOCK }
+    public? final? fun inferredExpressionBody(): <implicit> { LAZY_BLOCK }
+    public? final? val getterBody: Int
+        public? get(): Int { LAZY_BLOCK }
+    public? final? fun withDefaults(int: Int = LAZY_EXPRESSION, string: String = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+    public final? class WithMembers : R|kotlin/Any| {
+        public? [ContainingClassKey=WithMembers] constructor(): R|WithMembers| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? val member: Int = LAZY_EXPRESSION
+            public? [ContainingClassKey=WithMembers] get(): Int
+
+        public? final? fun memberBody(): Int { LAZY_BLOCK }
+
+    }

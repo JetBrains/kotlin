@@ -1,0 +1,36 @@
+FILE: callInitializers.kt
+    public? final? fun compute(): Int { LAZY_BLOCK }
+    public? final? fun sum(left: Int, right: Int): Int { LAZY_BLOCK }
+    public? final? val call: Int = LAZY_EXPRESSION
+        public? get(): Int
+    public? final? val callWithArguments: Int = LAZY_EXPRESSION
+        public? get(): Int
+    public? final? val callWithNamedArguments: Int = LAZY_EXPRESSION
+        public? get(): Int
+    public? final? val nestedCall: Int = LAZY_EXPRESSION
+        public? get(): Int
+    public? final? val qualifiedCall: String = LAZY_EXPRESSION
+        public? get(): String
+    public? final? val parenthesizedCall: Int = LAZY_EXPRESSION
+        public? get(): Int
+    public? final? val doublyParenthesizedCall: Int = LAZY_EXPRESSION
+        public? get(): Int
+    public? final? val callWithParenthesizedArguments: Int = LAZY_EXPRESSION
+        public? get(): Int
+    public? final? val inferredCall: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
+    public? final? fun expressionBodyCall(): Int { LAZY_BLOCK }
+    public? final? fun inferredExpressionBodyCall(): <implicit> { LAZY_BLOCK }
+    public? final? fun expressionBodyParenthesizedCall(): Int { LAZY_BLOCK }
+    public? final? val getterCall: Int
+        public? get(): Int { LAZY_BLOCK }
+    public? final? fun withCallDefault(value: Int = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+    public final? class WithConstructorCallDefault : R|kotlin/Any| {
+        public? [ContainingClassKey=WithConstructorCallDefault] constructor([CorrespondingProperty=/WithConstructorCallDefault.value] value: Int = LAZY_EXPRESSION): R|WithConstructorCallDefault| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ContainingClassKey=WithConstructorCallDefault] get(): Int
+
+    }

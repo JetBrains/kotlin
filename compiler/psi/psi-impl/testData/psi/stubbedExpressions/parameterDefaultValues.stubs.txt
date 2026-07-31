@@ -1,0 +1,55 @@
+FILE[kind=Facade[packageFqName=test, facadeFqName=test.ParameterDefaultValuesKt]]
+  facadeFqName: test.ParameterDefaultValuesKt
+  partSimpleName: "ParameterDefaultValuesKt"
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=test]
+  IMPORT_LIST
+  PROPERTY[fqName=test.constant, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=constant]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+  FUN[fqName=test.withDefaults, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=withDefaults]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=int]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=string]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=String]
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=negative]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=reference]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+        REFERENCE_EXPRESSION[referencedName=constant]
+  CLASS[classId=test/WithArrayDefaults, fqName=test.WithArrayDefaults, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithArrayDefaults, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithArrayDefaults]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.WithArrayDefaults.empty, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=empty]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=IntArray]
+          COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
+        VALUE_PARAMETER[fqName=test.WithArrayDefaults.filled, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=filled]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=IntArray]
+          COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
+  CLASS[classId=test/WithConstructorDefaults, fqName=test.WithConstructorDefaults, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithConstructorDefaults, superNames=[]]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithConstructorDefaults]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.WithConstructorDefaults.value, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=value]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=text]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]

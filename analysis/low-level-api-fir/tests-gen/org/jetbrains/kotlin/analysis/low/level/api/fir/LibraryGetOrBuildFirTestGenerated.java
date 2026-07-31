@@ -47,6 +47,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("complexAnnotationClass.kt")
+  public void testComplexAnnotationClass() {
+    run("complexAnnotationClass.kt");
+  }
+
+  @Test
   @TestMetadata("composeAnnotation.kt")
   public void testComposeAnnotation() {
     run("composeAnnotation.kt");

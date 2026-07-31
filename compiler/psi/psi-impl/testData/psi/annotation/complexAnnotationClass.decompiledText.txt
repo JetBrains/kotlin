@@ -1,0 +1,41 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+package myPack
+
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS])
+@kotlin.SinceKotlin(version = "1.3")
+public final annotation class MyMetadata public constructor(kind: kotlin.Int = COMPILED_CODE, metadataVersion: kotlin.IntArray = COMPILED_CODE, bytecodeVersion: kotlin.IntArray = COMPILED_CODE, data1: kotlin.Array<kotlin.String> = COMPILED_CODE, data2: kotlin.Array<kotlin.String> = COMPILED_CODE, extraString: kotlin.String = COMPILED_CODE, packageName: kotlin.String = COMPILED_CODE, extraInt: kotlin.Int = COMPILED_CODE) : kotlin.Annotation {
+    public final val kind: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.jvm.JvmName(name = "k")
+        public final get
+
+    public final val metadataVersion: kotlin.IntArray = COMPILED_CODE /* compiled code */
+        @kotlin.jvm.JvmName(name = "mv")
+        public final get
+
+    public final val bytecodeVersion: kotlin.IntArray = COMPILED_CODE /* compiled code */
+        @kotlin.jvm.JvmName(name = "bv")
+        public final get
+
+    public final val data1: kotlin.Array<kotlin.String> = COMPILED_CODE /* compiled code */
+        @kotlin.jvm.JvmName(name = "d1")
+        public final get
+
+    public final val data2: kotlin.Array<kotlin.String> = COMPILED_CODE /* compiled code */
+        @kotlin.jvm.JvmName(name = "d2")
+        public final get
+
+    public final val extraString: kotlin.String = COMPILED_CODE /* compiled code */
+        @kotlin.jvm.JvmName(name = "xs")
+        public final get
+
+    public final val packageName: kotlin.String = COMPILED_CODE /* compiled code */
+        @kotlin.jvm.JvmName(name = "pn")
+        public final get
+
+    public final val extraInt: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.jvm.JvmName(name = "xi")
+        public final get
+}

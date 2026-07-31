@@ -1,0 +1,52 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+package test
+
+public const val boolean: kotlin.Boolean = COMPILED_CODE /* compiled code */
+
+public const val byte: kotlin.Byte = COMPILED_CODE /* compiled code */
+
+public const val short: kotlin.Short = COMPILED_CODE /* compiled code */
+
+public const val int: kotlin.Int = COMPILED_CODE /* compiled code */
+
+public const val long: kotlin.Long = COMPILED_CODE /* compiled code */
+
+public const val float: kotlin.Float = COMPILED_CODE /* compiled code */
+
+public const val double: kotlin.Double = COMPILED_CODE /* compiled code */
+
+public const val char: kotlin.Char = COMPILED_CODE /* compiled code */
+
+public const val string: kotlin.String = COMPILED_CODE /* compiled code */
+
+public const val negative: kotlin.Int = COMPILED_CODE /* compiled code */
+
+public const val sum: kotlin.Int = COMPILED_CODE /* compiled code */
+
+public const val parenthesized: kotlin.Int = COMPILED_CODE /* compiled code */
+
+public const val concatenation: kotlin.String = COMPILED_CODE /* compiled code */
+
+public const val reference: kotlin.Int = COMPILED_CODE /* compiled code */
+
+public const val qualified: kotlin.Int = COMPILED_CODE /* compiled code */
+
+public const val intrinsicCall: kotlin.String = COMPILED_CODE /* compiled code */
+
+public const val intrinsicProperty: kotlin.Int = COMPILED_CODE /* compiled code */
+
+public val nonConst: kotlin.Int /* compiled code */
+
+public var mutable: kotlin.String /* compiled code */
+
+public object Holder {
+    public const val inObject: kotlin.Int = COMPILED_CODE /* compiled code */
+
+    public final val inferred: kotlin.Int /* compiled code */
+}
+
+public final class WithMember public constructor() {
+    public final val member: kotlin.Char /* compiled code */
+}

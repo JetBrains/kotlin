@@ -1,0 +1,31 @@
+ParameterDefaultValuesKt.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public const val constant: kotlin.Int = COMPILED_CODE /* compiled code */
+
+  public fun withDefaults(int: kotlin.Int = COMPILED_CODE, string: kotlin.String = COMPILED_CODE, negative: kotlin.Int = COMPILED_CODE, reference: kotlin.Int = COMPILED_CODE): kotlin.Unit { /* compiled code */ }
+
+WithArrayDefaults.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public final annotation class WithArrayDefaults public constructor(empty: kotlin.IntArray = COMPILED_CODE, filled: kotlin.IntArray = COMPILED_CODE) : kotlin.Annotation {
+      public final val empty: kotlin.IntArray = COMPILED_CODE /* compiled code */
+
+      public final val filled: kotlin.IntArray = COMPILED_CODE /* compiled code */
+  }
+
+WithConstructorDefaults.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public final class WithConstructorDefaults public constructor(value: kotlin.Int = COMPILED_CODE, text: kotlin.String = COMPILED_CODE) {
+      public final val value: kotlin.Int /* compiled code */
+  }

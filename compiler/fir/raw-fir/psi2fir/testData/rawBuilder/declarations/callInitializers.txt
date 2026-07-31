@@ -1,0 +1,49 @@
+FILE: callInitializers.kt
+    public? final? fun compute(): Int {
+        ^compute IntegerLiteral(0)
+    }
+    public? final? fun sum(left: Int, right: Int): Int {
+        ^sum left#.plus#(right#)
+    }
+    public? final? val call: Int = compute#()
+        public? get(): Int
+    public? final? val callWithArguments: Int = sum#(IntegerLiteral(1), IntegerLiteral(2))
+        public? get(): Int
+    public? final? val callWithNamedArguments: Int = sum#(left = IntegerLiteral(3), right = IntegerLiteral(4))
+        public? get(): Int
+    public? final? val nestedCall: Int = sum#(compute#(), sum#(IntegerLiteral(5), IntegerLiteral(6)))
+        public? get(): Int
+    public? final? val qualifiedCall: String = IntegerLiteral(7).toString#()
+        public? get(): String
+    public? final? val parenthesizedCall: Int = compute#()
+        public? get(): Int
+    public? final? val doublyParenthesizedCall: Int = compute#()
+        public? get(): Int
+    public? final? val callWithParenthesizedArguments: Int = sum#(IntegerLiteral(11), IntegerLiteral(12))
+        public? get(): Int
+    public? final? val inferredCall: <implicit> = compute#()
+        public? get(): <implicit>
+    public? final? fun expressionBodyCall(): Int {
+        ^expressionBodyCall compute#()
+    }
+    public? final? fun inferredExpressionBodyCall(): <implicit> {
+        ^inferredExpressionBodyCall sum#(compute#(), IntegerLiteral(8))
+    }
+    public? final? fun expressionBodyParenthesizedCall(): Int {
+        ^expressionBodyParenthesizedCall compute#()
+    }
+    public? final? val getterCall: Int
+        public? get(): Int {
+            ^ compute#()
+        }
+    public? final? fun withCallDefault(value: Int = compute#()): R|kotlin/Unit| {
+    }
+    public final? class WithConstructorCallDefault : R|kotlin/Any| {
+        public? [ContainingClassKey=WithConstructorCallDefault] constructor([CorrespondingProperty=/WithConstructorCallDefault.value] value: Int = sum#(IntegerLiteral(9), IntegerLiteral(10))): R|WithConstructorCallDefault| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ContainingClassKey=WithConstructorCallDefault] get(): Int
+
+    }

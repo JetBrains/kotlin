@@ -1,0 +1,374 @@
+FILE[kind=File[packageFqName=myPack]]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=myPack]
+  IMPORT_LIST
+  CLASS[classId=myPack/MyMetadata, fqName=myPack.MyMetadata, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyMetadata, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
+        valueArguments: [ value -> AnnotationRetention.RUNTIME ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Retention]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=value]
+            DOT_QUALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=annotation]
+                REFERENCE_EXPRESSION[referencedName=AnnotationRetention]
+              REFERENCE_EXPRESSION[referencedName=RUNTIME]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
+        valueArguments: [ allowedTargets -> [AnnotationTarget.CLASS] ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=allowedTargets]
+            COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=annotation]
+                  REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                REFERENCE_EXPRESSION[referencedName=CLASS]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
+        valueArguments: [ version -> "1.3" ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=version]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=1.3]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MyMetadata]
+      MODIFIER_LIST[public]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=kind]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Int]
+          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=metadataVersion]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=IntArray]
+          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=bytecodeVersion]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=IntArray]
+          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=data1]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Array]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=NONE]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=String]
+          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=data2]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Array]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=NONE]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=String]
+          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=extraString]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=packageName]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=extraInt]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Int]
+          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
+      PROPERTY[fqName=myPack.MyMetadata.kind, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=kind]
+        constantInitializer: 1
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+        REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+          MODIFIER_LIST[public final]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+              valueArguments: [ name -> "k" ]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=jvm]
+                    REFERENCE_EXPRESSION[referencedName=JvmName]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=name]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=k]
+      PROPERTY[fqName=myPack.MyMetadata.metadataVersion, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=metadataVersion]
+        constantInitializer: []
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=IntArray]
+        REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+          MODIFIER_LIST[public final]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+              valueArguments: [ name -> "mv" ]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=jvm]
+                    REFERENCE_EXPRESSION[referencedName=JvmName]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=name]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=mv]
+      PROPERTY[fqName=myPack.MyMetadata.bytecodeVersion, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=bytecodeVersion]
+        constantInitializer: [1, 0, 3]
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=IntArray]
+        REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+          MODIFIER_LIST[public final]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+              valueArguments: [ name -> "bv" ]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=jvm]
+                    REFERENCE_EXPRESSION[referencedName=JvmName]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=name]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=bv]
+      PROPERTY[fqName=myPack.MyMetadata.data1, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=data1]
+        constantInitializer: []
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Array]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=String]
+        REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+          MODIFIER_LIST[public final]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+              valueArguments: [ name -> "d1" ]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=jvm]
+                    REFERENCE_EXPRESSION[referencedName=JvmName]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=name]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=d1]
+      PROPERTY[fqName=myPack.MyMetadata.data2, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=data2]
+        constantInitializer: []
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Array]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=String]
+        REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+          MODIFIER_LIST[public final]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+              valueArguments: [ name -> "d2" ]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=jvm]
+                    REFERENCE_EXPRESSION[referencedName=JvmName]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=name]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=d2]
+      PROPERTY[fqName=myPack.MyMetadata.extraString, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=extraString]
+        constantInitializer: ""
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=String]
+        REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+          MODIFIER_LIST[public final]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+              valueArguments: [ name -> "xs" ]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=jvm]
+                    REFERENCE_EXPRESSION[referencedName=JvmName]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=name]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=xs]
+      PROPERTY[fqName=myPack.MyMetadata.packageName, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=packageName]
+        constantInitializer: ""
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=String]
+        REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+          MODIFIER_LIST[public final]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+              valueArguments: [ name -> "pn" ]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=jvm]
+                    REFERENCE_EXPRESSION[referencedName=JvmName]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=name]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=pn]
+      PROPERTY[fqName=myPack.MyMetadata.extraInt, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=extraInt]
+        constantInitializer: 0
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+        REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+          MODIFIER_LIST[public final]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+              valueArguments: [ name -> "xi" ]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=jvm]
+                    REFERENCE_EXPRESSION[referencedName=JvmName]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=name]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=xi]

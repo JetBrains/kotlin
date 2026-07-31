@@ -1,0 +1,58 @@
+FILE[kind=Facade[packageFqName=test, facadeFqName=test.FunctionExpressionBodiesKt]]
+  facadeFqName: test.FunctionExpressionBodiesKt
+  partSimpleName: "FunctionExpressionBodiesKt"
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=test]
+  IMPORT_LIST
+  PROPERTY[fqName=test.constant, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=constant]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+  FUN[fqName=test.int, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=int]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+  FUN[fqName=test.string, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=string]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=String]
+  FUN[fqName=test.negative, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=negative]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+  FUN[fqName=test.reference, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=reference]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+    REFERENCE_EXPRESSION[referencedName=constant]
+  FUN[fqName=test.qualified, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=qualified]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+  FUN[fqName=test.inferred, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=inferred]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=test.generic, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=generic]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=T]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=T]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=T]
+    REFERENCE_EXPRESSION[referencedName=value]
+  CLASS[classId=test/WithMember, fqName=test.WithMember, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithMember, superNames=[]]
+    CLASS_BODY
+      FUN[fqName=test.WithMember.member, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=member]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
