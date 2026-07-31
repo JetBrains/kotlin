@@ -1,13 +1,13 @@
 FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] callableReferences.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONTRACTS)] val bar: <implicit> = LAZY_EXPRESSION
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val bar: R|kotlin/Int| = Int(0)
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|A|.qux(): R|kotlin/Unit| { LAZY_BLOCK }

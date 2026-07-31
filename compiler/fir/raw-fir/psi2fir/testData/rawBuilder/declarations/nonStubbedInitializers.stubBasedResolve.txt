@@ -18,6 +18,6 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] nonStubbedInitializers.kt
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Any|
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val callableReference: R|() -> kotlin/Int| = LAZY_EXPRESSION
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|() -> kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val interpolation: R|kotlin/String| = LAZY_EXPRESSION
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String|
+    public final [ResolvedTo(BODY_RESOLVE)] val interpolation: R|kotlin/String| = <strcat>(R|/compute|())
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expressionBodyWithLambda(): R|kotlin/Int| { LAZY_BLOCK }

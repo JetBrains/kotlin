@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] setterWithNoBodyAndDifferentValueParameterType.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var prop: R|kotlin/String| = LAZY_EXPRESSION
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/CharSequence|): R|kotlin/Unit|
+FILE: [ResolvedTo(BODY_RESOLVE)] setterWithNoBodyAndDifferentValueParameterType.kt
+    public final [ResolvedTo(BODY_RESOLVE)] var prop: R|kotlin/String| = String()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/CharSequence|): R|kotlin/Unit|

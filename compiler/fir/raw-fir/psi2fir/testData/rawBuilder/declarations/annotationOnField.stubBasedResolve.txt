@@ -18,11 +18,11 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnField.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        field:@FIELD:R|Ann|[Types]() protected final [ResolvedTo(ANNOTATION_ARGUMENTS)] val simpleProperty: R|kotlin/String| = LAZY_EXPRESSION
-            protected [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SomeClass] get(): R|kotlin/String|
+        field:@FIELD:R|Ann|[Types]() protected final [ResolvedTo(BODY_RESOLVE)] val simpleProperty: R|kotlin/String| = String(text)
+            protected [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SomeClass] get(): R|kotlin/String|
 
-        field:@FIELD:R|Ann|[Types]() protected final [ResolvedTo(ANNOTATION_ARGUMENTS)] val simplePropertyWithAnnotationList: R|kotlin/String| = LAZY_EXPRESSION
-            protected [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SomeClass] get(): R|kotlin/String|
+        field:@FIELD:R|Ann|[Types]() protected final [ResolvedTo(BODY_RESOLVE)] val simplePropertyWithAnnotationList: R|kotlin/String| = String(text)
+            protected [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SomeClass] get(): R|kotlin/String|
 
         field:@FIELD:R|Ann|[Types]() protected final [ResolvedTo(ANNOTATION_ARGUMENTS)] val delegatedProperty: R|kotlin/String|by LAZY_EXPRESSION
             protected [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SomeClass] get(): R|kotlin/String| { LAZY_BLOCK }

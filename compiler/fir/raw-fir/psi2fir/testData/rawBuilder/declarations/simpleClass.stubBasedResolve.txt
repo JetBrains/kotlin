@@ -6,13 +6,13 @@ FILE: [ResolvedTo(BODY_RESOLVE)] simpleClass.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SomeInterface] get(): R|kotlin/Boolean|
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class SomeClass : R|SomeInterface| {
+    public final [ResolvedTo(BODY_RESOLVE)] class SomeClass : R|SomeInterface| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SomeClass] constructor(): R|SomeClass| {
             super<R|kotlin/Any|>()
         }
 
-        private final [ResolvedTo(CONTRACTS)] val baz: <implicit> = LAZY_EXPRESSION
-            private [ResolvedTo(CONTRACTS)] [ContainingClassKey=SomeClass] get(): <implicit>
+        private final [ResolvedTo(BODY_RESOLVE)] val baz: R|kotlin/Int| = Int(42)
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SomeClass] get(): R|kotlin/Int|
 
         public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] x: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] y: R|kotlin/String|): R|kotlin/String| { LAZY_BLOCK }
 
