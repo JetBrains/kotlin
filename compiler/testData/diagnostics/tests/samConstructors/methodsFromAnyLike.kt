@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: J.java
 public interface J extends I {
     @Override
@@ -20,8 +20,8 @@ interface I {
 }
 
 fun main() {
-    val j = J {}
-    j.toString(s = "")
+    val j = <!INTERFACE_AS_FUNCTION!>J<!> {}
+    j.toString(<!NAMED_PARAMETER_NOT_FOUND!>s<!> = "")
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, interfaceDeclaration, javaFunction, javaType,
