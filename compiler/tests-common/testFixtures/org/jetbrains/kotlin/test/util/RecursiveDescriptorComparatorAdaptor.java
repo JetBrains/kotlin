@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.test.util;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.test.Assertions;
 import org.jetbrains.kotlin.test.services.JUnit5Assertions;
@@ -27,29 +26,11 @@ import java.io.File;
 public class RecursiveDescriptorComparatorAdaptor {
     private static final Assertions assertions = JUnit5Assertions.INSTANCE;
 
-    public static void compareDescriptors(
-            @NotNull DeclarationDescriptor expected,
-            @NotNull DeclarationDescriptor actual,
-            @NotNull RecursiveDescriptorComparator.Configuration configuration,
-            @Nullable File txtFile
-    ) {
-        RecursiveDescriptorComparator.compareDescriptors(expected, actual, configuration, txtFile, assertions);
-    }
-
     public static void validateAndCompareDescriptorWithFile(
             @NotNull DeclarationDescriptor actual,
             @NotNull RecursiveDescriptorComparator.Configuration configuration,
             @NotNull File txtFile
     ) {
         RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(actual, configuration, txtFile, assertions);
-    }
-
-    public static void validateAndCompareDescriptors(
-            @NotNull DeclarationDescriptor expected,
-            @NotNull DeclarationDescriptor actual,
-            @NotNull RecursiveDescriptorComparator.Configuration configuration,
-            @Nullable File txtFile
-    ) {
-        RecursiveDescriptorComparator.validateAndCompareDescriptors(expected, actual, configuration, txtFile, assertions);
     }
 }
