@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 interface PostponedResolvedAtomMarker {
     /**
@@ -31,6 +32,12 @@ interface PostponedResolvedAtomMarker {
 }
 
 interface CollectionLiteralAtomMarker : PostponedResolvedAtomMarker
+
+// TODO: Merge with PostponedAtomWithRevisableExpectedType once K1 is dropped (KT-88318)
+interface PostponedAtomWithRevisableExpectedTypeAndRegisteredTypeVariables : PostponedAtomWithRevisableExpectedType {
+    val registeredTypeVariables: List<TypeVariableMarker>
+    fun addRegisteredTypeVariables(typeVariables: Collection<TypeVariableMarker>)
+}
 
 interface PostponedAtomWithRevisableExpectedType : PostponedResolvedAtomMarker {
     val revisedExpectedType: KotlinTypeMarker?
