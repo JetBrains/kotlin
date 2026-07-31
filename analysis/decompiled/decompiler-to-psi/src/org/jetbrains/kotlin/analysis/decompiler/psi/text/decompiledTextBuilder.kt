@@ -468,10 +468,13 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = buildIn
             }
 
             if (hasInitializerOrDelegate) {
-                append(COMPILED_DEFAULT_INITIALIZER)
-            }
-
-            if (!property.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
+                // A delegate has no stub to print from, unlike an initializer, whose value the metadata holds
+                if (property.hasDelegate()) {
+                    append(COMPILED_DEFAULT_INITIALIZER)
+                } else {
+                    process(property.initializer)
+                }
+            } else if (!property.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
                 append(" $DECOMPILED_CODE_COMMENT")
             }
 

@@ -45,4 +45,5 @@ FILE[kind=File[packageFqName=test.a]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
-        REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        STRING_TEMPLATE
+          LITERAL_STRING_TEMPLATE_ENTRY[text=a]

@@ -10,7 +10,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Boolean]
-    REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
   PROPERTY[fqName=test.byte, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=byte]
     constantInitializer: 1.toByte()
     MODIFIER_LIST[public const]
@@ -19,7 +19,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Byte]
-    REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
   PROPERTY[fqName=test.short, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=short]
     constantInitializer: 2.toShort()
     MODIFIER_LIST[public const]
@@ -28,7 +28,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Short]
-    REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
   PROPERTY[fqName=test.int, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=int]
     constantInitializer: 3
     MODIFIER_LIST[public const]
@@ -37,7 +37,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-    REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
   PROPERTY[fqName=test.long, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=long]
     constantInitializer: 4.toLong()
     MODIFIER_LIST[public const]
@@ -46,7 +46,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Long]
-    REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4L]
   PROPERTY[fqName=test.float, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=float]
     constantInitializer: 5.0.toFloat()
     MODIFIER_LIST[public const]
@@ -55,7 +55,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Float]
-    REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=5.0F]
   PROPERTY[fqName=test.double, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=double]
     constantInitializer: 6.6.toDouble()
     MODIFIER_LIST[public const]
@@ -64,7 +64,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Double]
-    REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=6.6]
   PROPERTY[fqName=test.char, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=char]
     constantInitializer: \u0063 ('c')
     MODIFIER_LIST[public const]
@@ -73,7 +73,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Char]
-    REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='c']
   PROPERTY[fqName=test.string, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=string]
     constantInitializer: "s"
     MODIFIER_LIST[public const]
@@ -82,7 +82,8 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
-    REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    STRING_TEMPLATE
+      LITERAL_STRING_TEMPLATE_ENTRY[text=s]
   PROPERTY[fqName=test.negative, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=negative]
     constantInitializer: -7
     MODIFIER_LIST[public const]
@@ -91,7 +92,9 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-    REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    PREFIX_EXPRESSION
+      OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=7]
   PROPERTY[fqName=test.sum, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=sum]
     constantInitializer: 3
     MODIFIER_LIST[public const]
@@ -100,7 +103,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-    REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
   PROPERTY[fqName=test.parenthesized, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=parenthesized]
     constantInitializer: 8
     MODIFIER_LIST[public const]
@@ -109,7 +112,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-    REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=8]
   PROPERTY[fqName=test.concatenation, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=concatenation]
     constantInitializer: "ab"
     MODIFIER_LIST[public const]
@@ -118,7 +121,8 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
-    REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    STRING_TEMPLATE
+      LITERAL_STRING_TEMPLATE_ENTRY[text=ab]
   PROPERTY[fqName=test.reference, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=reference]
     constantInitializer: 3
     MODIFIER_LIST[public const]
@@ -127,7 +131,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-    REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
   PROPERTY[fqName=test.qualified, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=qualified]
     constantInitializer: 3
     MODIFIER_LIST[public const]
@@ -136,7 +140,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-    REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
   PROPERTY[fqName=test.intrinsicCall, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=intrinsicCall]
     constantInitializer: "12"
     MODIFIER_LIST[public const]
@@ -145,7 +149,8 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
-    REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    STRING_TEMPLATE
+      LITERAL_STRING_TEMPLATE_ENTRY[text=12]
   PROPERTY[fqName=test.intrinsicProperty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=intrinsicProperty]
     constantInitializer: 3
     MODIFIER_LIST[public const]
@@ -154,7 +159,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-    REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
   PROPERTY[fqName=test.nonConst, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=nonConst]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
@@ -180,7 +185,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-        REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
       PROPERTY[fqName=test.Holder.inferred, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=inferred]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE

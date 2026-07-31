@@ -60,7 +60,7 @@
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
-              REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
             PROPERTY[fqName=test.Simple.Companion.CONST2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST2]
               constantInitializer: 2
               MODIFIER_LIST[public const]
@@ -69,7 +69,7 @@
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
-              REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
         PROPERTY[fqName=test.Simple.i, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
@@ -41,7 +40,6 @@ fun createPackageDeclarationsStubs(
     createTypeAliasesStubs(parentStub, outerContext, protoContainer, packageProto.typeAliasList)
 }
 
-@OptIn(KtExperimentalApi::class)
 fun createDeclarationsStubs(
     parentStub: StubElement<out PsiElement>,
     outerContext: ClsStubBuilderContext,
@@ -430,17 +428,32 @@ private class PropertyClsStubBuilder(
     }
 
     override fun createCallableSpecialParts() {
-        val propertyStub = callableStub as KotlinPropertyStub
+        val propertyStub = callableStub as KotlinPropertyStubImpl
         if (propertyStub.hasInitializer && !propertyStub.hasDelegate) {
-            KotlinNameReferenceExpressionStubImpl(
-                callableStub,
-                StringRef.fromString(COMPILED_DEFAULT_INITIALIZER),
-                false,
-            )
+            createInitializerStub(propertyStub)
         }
 
         createGetterStubsIfNeeded(callableStub)
         createSetterStubsIfNeeded(callableStub)
+    }
+
+    /**
+     * The initializer of a compiled property is the value the metadata holds, and an initializer is a stubbed position,
+     * so the very same subtree an annotation argument gets is built here and printed from by the decompiler.
+     *
+     * A value with no source form keeps the [COMPILED_DEFAULT_INITIALIZER] placeholder, a plain reference.
+     */
+    private fun createInitializerStub(propertyStub: KotlinPropertyStubImpl) {
+        val value = propertyStub.constantInitializer
+        if (value != null && value.isRepresentableAsStub()) {
+            createValueStub(propertyStub, value)
+        } else {
+            KotlinNameReferenceExpressionStubImpl(
+                propertyStub,
+                StringRef.fromString(COMPILED_DEFAULT_INITIALIZER),
+                false,
+            )
+        }
     }
 
     private fun createGetterStubsIfNeeded(callableStub: StubElement<*>) {

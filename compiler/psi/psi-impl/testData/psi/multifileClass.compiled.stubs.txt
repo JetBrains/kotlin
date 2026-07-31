@@ -63,7 +63,7 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
     FUN[fqName=test.p1Fun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1Fun]
       origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass)
       MODIFIER_LIST[public]

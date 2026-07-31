@@ -4,7 +4,7 @@ ParameterDefaultValuesKt.class:
 
   package test
 
-  public const val constant: kotlin.Int = COMPILED_CODE /* compiled code */
+  public const val constant: kotlin.Int = 1
 
   public fun withDefaults(int: kotlin.Int = COMPILED_CODE, string: kotlin.String = COMPILED_CODE, negative: kotlin.Int = COMPILED_CODE, reference: kotlin.Int = COMPILED_CODE): kotlin.Unit { /* compiled code */ }
 
@@ -15,9 +15,9 @@ WithArrayDefaults.class:
   package test
 
   public final annotation class WithArrayDefaults public constructor(empty: kotlin.IntArray = COMPILED_CODE, filled: kotlin.IntArray = COMPILED_CODE) : kotlin.Annotation {
-      public final val empty: kotlin.IntArray = COMPILED_CODE /* compiled code */
+      public final val empty: kotlin.IntArray = []
 
-      public final val filled: kotlin.IntArray = COMPILED_CODE /* compiled code */
+      public final val filled: kotlin.IntArray = [4, 5]
   }
 
 WithConstructorDefaults.class:

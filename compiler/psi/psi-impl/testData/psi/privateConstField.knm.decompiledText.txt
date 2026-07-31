@@ -9,10 +9,10 @@ public final annotation class A public constructor() : kotlin.Annotation {
 
 public final class PrivateConstField public constructor() {
     private companion object {
-        public const val CONST: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val CONST: kotlin.Int = 10
 
         @test.A
-        public const val CONST_WITH_ANNOTATION: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val CONST_WITH_ANNOTATION: kotlin.Int = 10
 
         public final val field: kotlin.Int /* compiled code */
 

@@ -2,7 +2,7 @@
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  public const val CONSTANT: kotlin.Int = COMPILED_CODE /* compiled code */
+  public const val CONSTANT: kotlin.Int = 0
 
   public final annotation class StringLiteral public constructor(s1: kotlin.String, s2: kotlin.String, s3: kotlin.String) : kotlin.Annotation {
       public final val s1: kotlin.String /* compiled code */

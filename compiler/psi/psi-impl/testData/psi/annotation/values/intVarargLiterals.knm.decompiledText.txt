@@ -36,7 +36,7 @@
 
   public final annotation class VarArg public constructor(vararg v: kotlin.Int) : kotlin.Annotation {
       public companion object {
-          public const val CONSTANT: kotlin.Int = COMPILED_CODE /* compiled code */
+          public const val CONSTANT: kotlin.Int = 3
       }
 
       public final val v: kotlin.IntArray /* compiled code */

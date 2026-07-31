@@ -3,9 +3,9 @@ Binary.class:
   // Implementation of methods is not available
 
   public final annotation class Binary public constructor(i: kotlin.Int = COMPILED_CODE, b: kotlin.Boolean = COMPILED_CODE) : kotlin.Annotation {
-      public final val i: kotlin.Int = COMPILED_CODE /* compiled code */
+      public final val i: kotlin.Int = 0
 
-      public final val b: kotlin.Boolean = COMPILED_CODE /* compiled code */
+      public final val b: kotlin.Boolean = false
   }
 
 WithComparison.class:

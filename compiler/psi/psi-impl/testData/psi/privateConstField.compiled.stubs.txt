@@ -61,7 +61,7 @@ PrivateConstField.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
-              REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
             PROPERTY[fqName=test.PrivateConstField.Companion.CONST_WITH_ANNOTATION, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST_WITH_ANNOTATION]
               constantInitializer: 10
               MODIFIER_LIST[public const]
@@ -89,7 +89,7 @@ PrivateConstField.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
-              REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
             PROPERTY[fqName=test.PrivateConstField.Companion.field, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=field]
               MODIFIER_LIST[public final]
               TYPE_REFERENCE

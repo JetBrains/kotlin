@@ -101,15 +101,15 @@ public final class BooleanArray public constructor(size: kotlin.Int) {
 
 public final class Byte private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public companion object {
-        public const val MIN_VALUE: kotlin.Byte = COMPILED_CODE /* compiled code */
+        public const val MIN_VALUE: kotlin.Byte = -128
 
-        public const val MAX_VALUE: kotlin.Byte = COMPILED_CODE /* compiled code */
-
-        @kotlin.SinceKotlin(version = "1.3")
-        public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val MAX_VALUE: kotlin.Byte = 127
 
         @kotlin.SinceKotlin(version = "1.3")
-        public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val SIZE_BYTES: kotlin.Int = 1
+
+        @kotlin.SinceKotlin(version = "1.3")
+        public const val SIZE_BITS: kotlin.Int = 8
     }
 
     @kotlin.internal.IntrinsicConstEvaluation
@@ -305,28 +305,28 @@ public final class ByteArray public constructor(size: kotlin.Int) {
 public final class Char private constructor() : kotlin.Comparable<kotlin.Char> {
     public companion object {
         @kotlin.SinceKotlin(version = "1.3")
-        public const val MIN_VALUE: kotlin.Char = COMPILED_CODE /* compiled code */
+        public const val MIN_VALUE: kotlin.Char = '\u0000'
 
         @kotlin.SinceKotlin(version = "1.3")
-        public const val MAX_VALUE: kotlin.Char = COMPILED_CODE /* compiled code */
+        public const val MAX_VALUE: kotlin.Char = '\uFFFF'
 
-        public const val MIN_HIGH_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
+        public const val MIN_HIGH_SURROGATE: kotlin.Char = '\uD800'
 
-        public const val MAX_HIGH_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
+        public const val MAX_HIGH_SURROGATE: kotlin.Char = '\uDBFF'
 
-        public const val MIN_LOW_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
+        public const val MIN_LOW_SURROGATE: kotlin.Char = '\uDC00'
 
-        public const val MAX_LOW_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
+        public const val MAX_LOW_SURROGATE: kotlin.Char = '\uDFFF'
 
-        public const val MIN_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
+        public const val MIN_SURROGATE: kotlin.Char = '\uD800'
 
-        public const val MAX_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
-
-        @kotlin.SinceKotlin(version = "1.3")
-        public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val MAX_SURROGATE: kotlin.Char = '\uDFFF'
 
         @kotlin.SinceKotlin(version = "1.3")
-        public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val SIZE_BYTES: kotlin.Int = 2
+
+        @kotlin.SinceKotlin(version = "1.3")
+        public const val SIZE_BITS: kotlin.Int = 16
     }
 
     @kotlin.internal.IntrinsicConstEvaluation
@@ -455,21 +455,21 @@ public final enum class DeprecationLevel private constructor() : kotlin.Enum<kot
 
 public final class Double private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public companion object {
-        public const val MIN_VALUE: kotlin.Double = COMPILED_CODE /* compiled code */
+        public const val MIN_VALUE: kotlin.Double = 4.9E-324
 
-        public const val MAX_VALUE: kotlin.Double = COMPILED_CODE /* compiled code */
+        public const val MAX_VALUE: kotlin.Double = 1.7976931348623157E308
 
-        public const val POSITIVE_INFINITY: kotlin.Double = COMPILED_CODE /* compiled code */
+        public const val POSITIVE_INFINITY: kotlin.Double = kotlin.Double.POSITIVE_INFINITY
 
-        public const val NEGATIVE_INFINITY: kotlin.Double = COMPILED_CODE /* compiled code */
+        public const val NEGATIVE_INFINITY: kotlin.Double = kotlin.Double.NEGATIVE_INFINITY
 
-        public const val NaN: kotlin.Double = COMPILED_CODE /* compiled code */
-
-        @kotlin.SinceKotlin(version = "1.4")
-        public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val NaN: kotlin.Double = kotlin.Double.NaN
 
         @kotlin.SinceKotlin(version = "1.4")
-        public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val SIZE_BYTES: kotlin.Int = 8
+
+        @kotlin.SinceKotlin(version = "1.4")
+        public const val SIZE_BITS: kotlin.Int = 64
     }
 
     @kotlin.internal.IntrinsicConstEvaluation
@@ -698,21 +698,21 @@ public final annotation class ExtensionFunctionType public constructor() : kotli
 
 public final class Float private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public companion object {
-        public const val MIN_VALUE: kotlin.Float = COMPILED_CODE /* compiled code */
+        public const val MIN_VALUE: kotlin.Float = 1.4E-45F
 
-        public const val MAX_VALUE: kotlin.Float = COMPILED_CODE /* compiled code */
+        public const val MAX_VALUE: kotlin.Float = 3.4028235E38F
 
-        public const val POSITIVE_INFINITY: kotlin.Float = COMPILED_CODE /* compiled code */
+        public const val POSITIVE_INFINITY: kotlin.Float = kotlin.Float.POSITIVE_INFINITY
 
-        public const val NEGATIVE_INFINITY: kotlin.Float = COMPILED_CODE /* compiled code */
+        public const val NEGATIVE_INFINITY: kotlin.Float = kotlin.Float.NEGATIVE_INFINITY
 
-        public const val NaN: kotlin.Float = COMPILED_CODE /* compiled code */
-
-        @kotlin.SinceKotlin(version = "1.4")
-        public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val NaN: kotlin.Float = kotlin.Float.NaN
 
         @kotlin.SinceKotlin(version = "1.4")
-        public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val SIZE_BYTES: kotlin.Int = 4
+
+        @kotlin.SinceKotlin(version = "1.4")
+        public const val SIZE_BITS: kotlin.Int = 32
     }
 
     @kotlin.internal.IntrinsicConstEvaluation
@@ -896,15 +896,15 @@ public final annotation class IgnorableReturnValue public constructor() : kotlin
 
 public final class Int private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public companion object {
-        public const val MIN_VALUE: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val MIN_VALUE: kotlin.Int = -2147483648
 
-        public const val MAX_VALUE: kotlin.Int = COMPILED_CODE /* compiled code */
-
-        @kotlin.SinceKotlin(version = "1.3")
-        public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val MAX_VALUE: kotlin.Int = 2147483647
 
         @kotlin.SinceKotlin(version = "1.3")
-        public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val SIZE_BYTES: kotlin.Int = 4
+
+        @kotlin.SinceKotlin(version = "1.3")
+        public const val SIZE_BITS: kotlin.Int = 32
     }
 
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1118,15 +1118,15 @@ public final class IntArray public constructor(size: kotlin.Int) {
 
 public final class Long private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public companion object {
-        public const val MIN_VALUE: kotlin.Long = COMPILED_CODE /* compiled code */
+        public const val MIN_VALUE: kotlin.Long = -9223372036854775808L
 
-        public const val MAX_VALUE: kotlin.Long = COMPILED_CODE /* compiled code */
-
-        @kotlin.SinceKotlin(version = "1.3")
-        public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val MAX_VALUE: kotlin.Long = 9223372036854775807L
 
         @kotlin.SinceKotlin(version = "1.3")
-        public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val SIZE_BYTES: kotlin.Int = 8
+
+        @kotlin.SinceKotlin(version = "1.3")
+        public const val SIZE_BITS: kotlin.Int = 64
     }
 
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1414,15 +1414,15 @@ public final annotation class RequiresOptIn public constructor(message: kotlin.S
 
 public final class Short private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public companion object {
-        public const val MIN_VALUE: kotlin.Short = COMPILED_CODE /* compiled code */
+        public const val MIN_VALUE: kotlin.Short = -32768
 
-        public const val MAX_VALUE: kotlin.Short = COMPILED_CODE /* compiled code */
-
-        @kotlin.SinceKotlin(version = "1.3")
-        public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val MAX_VALUE: kotlin.Short = 32767
 
         @kotlin.SinceKotlin(version = "1.3")
-        public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val SIZE_BYTES: kotlin.Int = 2
+
+        @kotlin.SinceKotlin(version = "1.3")
+        public const val SIZE_BITS: kotlin.Int = 16
     }
 
     @kotlin.internal.IntrinsicConstEvaluation
