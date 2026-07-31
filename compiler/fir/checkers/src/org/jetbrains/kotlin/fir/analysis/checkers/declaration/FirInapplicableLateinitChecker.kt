@@ -71,7 +71,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
         }
 
         if (declaration.contextParameters.isNotEmpty()) {
-            reporter.reportError(declaration.source, "is not allowed on properties with context receivers")
+            reporter.reportError(declaration.source, "is not allowed on properties with context parameters")
         }
 
         if (declaration.isAbstract) {
