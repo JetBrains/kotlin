@@ -101,7 +101,8 @@ open class KotlinxBenchmarkingPlugin : BenchmarkingPlugin() {
                             ),
                             engineArguments = providers.provider {
                                 // FIXME: Host specific biniding, see KTI-886
-                                //  shold be set dynamically
+                                //  It should be set dynamically according to the host
+                                //  available CPUs and their types.
                                 listOf("--cpu-list", "0-11")
                             }
                     )
