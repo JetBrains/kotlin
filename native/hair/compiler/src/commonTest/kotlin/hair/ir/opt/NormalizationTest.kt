@@ -690,9 +690,6 @@ class NormalizationTest : IrTest {
         assertEquals(value, (ret.result as Const).value)
     }
 
-    context(cfb: ControlFlowBuilder)
-    val lastControl get() = cfb.lastControl
-
 //    @Test
 //    fun testPhiFromUnreachable() = withTestSession {
 //        lateinit var value1: Node
