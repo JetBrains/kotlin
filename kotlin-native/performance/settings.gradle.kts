@@ -7,6 +7,7 @@ pluginManagement {
     includeBuild("../../repo/gradle-settings-conventions")
 
     repositories {
+        mavenLocal()
         maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
         mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
         gradlePluginPortal()
@@ -35,6 +36,7 @@ val knownGroups = buildList {
 
 dependencyResolutionManagement {
     repositories {
+        mavenLocal()
         mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
     }
 }

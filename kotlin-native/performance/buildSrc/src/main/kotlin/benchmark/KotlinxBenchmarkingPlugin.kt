@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.benchmark
 
+import kotlinx.benchmark.gradle.CustomEngine
+import kotlinx.benchmark.gradle.KotlinxBenchmarkPluginExperimentalApi
 import kotlinx.benchmark.gradle.NativeBenchmarkExec
 import kotlinx.benchmark.gradle.NativeBenchmarkTarget
 import org.gradle.api.Project
@@ -25,6 +27,8 @@ import org.jetbrains.kotlin.hostTarget
 import org.jetbrains.kotlin.kotlin
 import org.jetbrains.kotlin.kotlinxBenchmark
 import org.jetbrains.kotlin.nativeWarmup
+import org.jetbrains.kotlin.useCSet
+import java.io.File
 import javax.inject.Inject
 
 private val EXTENSION_NAME = "kotlinxBenchmark"
@@ -62,6 +66,7 @@ open class KotlinxBenchmarkingPlugin : BenchmarkingPlugin() {
 
     override fun Project.createExtension() = extensions.create<KotlinxBenchmarkExtension>(EXTENSION_NAME, this)
 
+    @OptIn(KotlinxBenchmarkPluginExperimentalApi::class)
     override fun Project.configureTasks() {
         pluginManager.apply("org.jetbrains.kotlinx.benchmark")
         kotlin.apply {
@@ -88,6 +93,19 @@ open class KotlinxBenchmarkingPlugin : BenchmarkingPlugin() {
                     BenchmarkRepeatingType.EXTERNAL -> "perIteration"
                     BenchmarkRepeatingType.INTERNAL -> "perBenchmark"
                 })
+                if (project.useCSet) {
+                    customEngine = CustomEngine(
+                            name = "Taskset",
+                            enginePath = project.layout.file(
+                                    project.provider { File("/usr/bin/taskset") }
+                            ),
+                            engineArguments = providers.provider {
+                                // FIXME: Host specific biniding, see KTI-886
+                                //  shold be set dynamically
+                                listOf("--cpu-list", "0-11")
+                            }
+                    )
+                }
                 if (project.dryRun) {
                     exclude(".*")
                 } else {
