@@ -1,5 +1,4 @@
-// A call is stub-based only inside a value argument as well, so the whole call subtree is currently absent.
-// Once calls are stubbed in these positions, their own arguments become stubbed too, recursively
+// A call in an initializer or an expression body is stubbed with its own arguments, recursively
 package test
 
 fun compute(): Int = 0

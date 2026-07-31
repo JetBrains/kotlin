@@ -1,7 +1,5 @@
 KtFile: propertyInitializers.kt
-  PsiComment(EOL_COMMENT)('// Almost every expression element type is stub-based only inside a value argument, so a property initializer')
-  PsiWhiteSpace('\n')
-  PsiComment(EOL_COMMENT)('// is currently absent from the stub tree; only `hasInitializer` is recorded')
+  PsiComment(EOL_COMMENT)('// A property initializer is stubbed as long as the expression itself is stub-based')
   PsiWhiteSpace('\n')
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')

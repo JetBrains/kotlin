@@ -1,4 +1,4 @@
-// The expression body of a function is absent from the stub tree; only `hasNoExpressionBody` is recorded
+// The expression body of a function is stubbed as long as the expression itself is stub-based
 package test
 
 const val constant: Int = 1

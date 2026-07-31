@@ -1,5 +1,4 @@
-// Almost every expression element type is stub-based only inside a value argument, so a property initializer
-// is currently absent from the stub tree; only `hasInitializer` is recorded
+// A property initializer is stubbed as long as the expression itself is stub-based
 package test
 
 const val boolean: Boolean = true
