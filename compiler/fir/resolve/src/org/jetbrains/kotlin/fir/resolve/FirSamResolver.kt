@@ -428,6 +428,7 @@ private fun FirNamedFunction.isPublicInObject(checkOnlyName: Boolean): Boolean {
     if (!isJavaOrEnhancement) return false
     if (name.asString() !in PUBLIC_METHOD_NAMES_IN_OBJECT) return false
     if (checkOnlyName) return true
+    if (receiverParameter != null || contextParameters.isNotEmpty()) return false
 
     return when (name.asString()) {
         "hashCode", "getClass", "notify", "notifyAll", "toString" -> valueParameters.isEmpty()
