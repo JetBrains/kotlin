@@ -36,6 +36,22 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-31 — Unit tests use JUnit asserters; lightweight scan of malformed package names
+- **Change**: reviewer follow-up on `JavaParsingLightweightScannerTest`. Every raw Kotlin
+  `assert(...)` in the module's unit tests (a no-op without `-ea`) is now a JUnit assertion —
+  `assertEquals`/`assertTrue`/`assertFalse`/`assertNull`/`assertSame` and the contract-carrying
+  `org.junit.jupiter.api.assertNotNull`, which let the following `!!` go. Messages that only
+  restated expected/actual are dropped. New scanner tests: a package name split across a line
+  and a block comment (`package builder // c \n . /* c */ subpackage;`), `package com.123;`, and
+  `class 456 {}` with and without a well-formed sibling. `extractFileInfoLightweight` now joins
+  identifier segments instead of appending identifiers and dots verbatim, so a malformed name
+  degrades to its valid prefix (`com`) rather than the stray-dot `com.`.
+- **Files**: `util/JavaSourceIndex.kt` (+3/−3); all 10 unit test files under `test/` (~440
+  assertions rewritten), `JavaParsingLightweightScannerTest.kt` +4 tests.
+- **Tests**: unit tests 121/121 green (12 classes); box + phased green (2795 executed, 0
+  failures, 0 errors).
+- **Result**: green.
+
 ### 2026-07-31 — Lazy enum-entry annotations without the fragile mutable list
 - **Change**: the previous schema let `FirLazyJavaAnnotationMutableList` sit in
   `FirEnumEntryImpl`'s `MutableOrEmptyList` slot, and depended on nothing but `isEmpty` being

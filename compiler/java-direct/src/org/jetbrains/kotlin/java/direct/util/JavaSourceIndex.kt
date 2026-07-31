@@ -63,17 +63,17 @@ internal fun extractFileInfoLightweight(file: File): LightweightFileInfo? {
 
     var packageName: String? = null
     if (at(JavaSyntaxTokenType.PACKAGE_KEYWORD)) {
-        val name = StringBuilder()
+        val segments = mutableListOf<String>()
         advance()
         loop@ while (!end() && !at(JavaSyntaxTokenType.SEMICOLON)) {
             when (lexer.getTokenType()) {
-                JavaSyntaxTokenType.IDENTIFIER, JavaSyntaxTokenType.DOT -> name.append(lexer.getTokenText())
-                SyntaxTokenTypes.WHITE_SPACE, in JavaSyntaxDefinition.comments -> Unit
+                JavaSyntaxTokenType.IDENTIFIER -> segments.add(lexer.getTokenText())
+                JavaSyntaxTokenType.DOT, SyntaxTokenTypes.WHITE_SPACE, in JavaSyntaxDefinition.comments -> Unit
                 else -> break@loop
             }
             advance()
         }
-        packageName = name.toString().takeIf { it.isNotEmpty() }
+        packageName = segments.takeIf { it.isNotEmpty() }?.joinToString(".")
     }
 
     val classNames = mutableSetOf<String>()

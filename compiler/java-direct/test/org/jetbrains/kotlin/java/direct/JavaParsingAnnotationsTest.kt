@@ -12,7 +12,12 @@ import org.jetbrains.kotlin.java.direct.resolution.getFirstStarImportCandidate
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaEnumValueAnnotationArgument
 import org.jetbrains.kotlin.name.FqName
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertNotNull
 
 class JavaParsingAnnotationsTest : JavaParsingTestBase() {
 
@@ -24,10 +29,10 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         """.trimIndent()
         val javaClass = parseFirstClass(source)
 
-        assert(javaClass.annotations.size == 1)
+        assertEquals(1, javaClass.annotations.size)
         // Unit test parses without FIR, so annotation is unresolved (just "Deprecated")
         // FIR will resolve it to java.lang.Deprecated via resolveAnnotation
-        assert(javaClass.annotations.first().classId?.asSingleFqName()?.asString() == "Deprecated")
+        assertEquals("Deprecated", javaClass.annotations.first().classId?.asSingleFqName()?.asString())
     }
 
     @Test
@@ -37,11 +42,11 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
             public class Foo {}
         """.trimIndent()
         val javaClass = parseFirstClass(source)
-        assert(javaClass.annotations.isNotEmpty()) { "Should have annotations" }
+        assertTrue(javaClass.annotations.isNotEmpty()) { "Should have annotations" }
         val found = javaClass.findAnnotation(FqName("Deprecated"))
-        assert(found != null) { "findAnnotation should find @Deprecated on class, got null" }
+        assertNotNull(found) { "findAnnotation should find @Deprecated on class" }
         val notFound = javaClass.findAnnotation(FqName("Override"))
-        assert(notFound == null) { "findAnnotation should return null for missing annotation" }
+        assertNull(notFound) { "findAnnotation should return null for missing annotation" }
     }
 
     @Test
@@ -60,26 +65,16 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val field = javaClass.fields.first { it.name.asString() == "items" }
         val fieldType = field.type as JavaClassifierType
 
-        assert(fieldType.classifierQualifiedName == "List") {
-            "Expected 'List', got ${fieldType.classifierQualifiedName}"
-        }
-        assert(fieldType.typeArguments.size == 1) {
-            "Expected 1 type argument, got ${fieldType.typeArguments.size}"
-        }
+        assertEquals("List", fieldType.classifierQualifiedName)
+        assertEquals(1, fieldType.typeArguments.size)
 
         val typeArg = fieldType.typeArguments[0] as JavaClassifierType
-        assert(typeArg.classifierQualifiedName == "Integer") {
-            "Expected 'Integer', got ${typeArg.classifierQualifiedName}"
-        }
+        assertEquals("Integer", typeArg.classifierQualifiedName)
 
         // TYPE_USE annotation @NotNull should be on the type argument
-        assert(typeArg.annotations.size == 1) {
-            "Expected 1 annotation on type argument, got ${typeArg.annotations.size}: ${typeArg.annotations.map { it.classId }}"
-        }
+        assertEquals(1, typeArg.annotations.size) { "Annotations on type argument: ${typeArg.annotations.map { it.classId }}" }
         val annotation = typeArg.annotations.first()
-        assert(annotation.classId?.shortClassName?.asString() == "NotNull") {
-            "Expected @NotNull annotation, got ${annotation.classId}"
-        }
+        assertEquals("NotNull", annotation.classId?.shortClassName?.asString())
     }
 
     @Test
@@ -99,36 +94,20 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val field = javaClass.fields.first { it.name.asString() == "map" }
         val fieldType = field.type as JavaClassifierType
 
-        assert(fieldType.classifierQualifiedName == "Map") {
-            "Expected 'Map', got ${fieldType.classifierQualifiedName}"
-        }
-        assert(fieldType.typeArguments.size == 2) {
-            "Expected 2 type arguments, got ${fieldType.typeArguments.size}"
-        }
+        assertEquals("Map", fieldType.classifierQualifiedName)
+        assertEquals(2, fieldType.typeArguments.size)
 
         // First type argument: @NotNull String
         val keyArg = fieldType.typeArguments[0] as JavaClassifierType
-        assert(keyArg.classifierQualifiedName == "String") {
-            "Expected 'String', got ${keyArg.classifierQualifiedName}"
-        }
-        assert(keyArg.annotations.size == 1) {
-            "Expected 1 annotation on key type argument, got ${keyArg.annotations.size}"
-        }
-        assert(keyArg.annotations.first().classId?.shortClassName?.asString() == "NotNull") {
-            "Expected @NotNull annotation on key"
-        }
+        assertEquals("String", keyArg.classifierQualifiedName)
+        assertEquals(1, keyArg.annotations.size) { "Annotations on key type argument: ${keyArg.annotations.map { it.classId }}" }
+        assertEquals("NotNull", keyArg.annotations.first().classId?.shortClassName?.asString())
 
         // Second type argument: @Nullable Integer
         val valueArg = fieldType.typeArguments[1] as JavaClassifierType
-        assert(valueArg.classifierQualifiedName == "Integer") {
-            "Expected 'Integer', got ${valueArg.classifierQualifiedName}"
-        }
-        assert(valueArg.annotations.size == 1) {
-            "Expected 1 annotation on value type argument, got ${valueArg.annotations.size}"
-        }
-        assert(valueArg.annotations.first().classId?.shortClassName?.asString() == "Nullable") {
-            "Expected @Nullable annotation on value"
-        }
+        assertEquals("Integer", valueArg.classifierQualifiedName)
+        assertEquals(1, valueArg.annotations.size) { "Annotations on value type argument: ${valueArg.annotations.map { it.classId }}" }
+        assertEquals("Nullable", valueArg.annotations.first().classId?.shortClassName?.asString())
     }
 
     @Test
@@ -147,20 +126,12 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val method = javaClass.methods.first { it.name.asString() == "getItems" }
         val returnType = method.returnType as JavaClassifierType
 
-        assert(returnType.classifierQualifiedName == "List") {
-            "Expected 'List', got ${returnType.classifierQualifiedName}"
-        }
-        assert(returnType.typeArguments.size == 1) {
-            "Expected 1 type argument, got ${returnType.typeArguments.size}"
-        }
+        assertEquals("List", returnType.classifierQualifiedName)
+        assertEquals(1, returnType.typeArguments.size)
 
         val typeArg = returnType.typeArguments[0] as JavaClassifierType
-        assert(typeArg.annotations.size == 1) {
-            "Expected 1 annotation on type argument, got ${typeArg.annotations.size}"
-        }
-        assert(typeArg.annotations.first().classId?.shortClassName?.asString() == "NotNull") {
-            "Expected @NotNull annotation"
-        }
+        assertEquals(1, typeArg.annotations.size) { "Annotations on type argument: ${typeArg.annotations.map { it.classId }}" }
+        assertEquals("NotNull", typeArg.annotations.first().classId?.shortClassName?.asString())
     }
 
     @Test
@@ -180,20 +151,12 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val param = method.valueParameters.first()
         val paramType = param.type as JavaClassifierType
 
-        assert(paramType.classifierQualifiedName == "List") {
-            "Expected 'List', got ${paramType.classifierQualifiedName}"
-        }
-        assert(paramType.typeArguments.size == 1) {
-            "Expected 1 type argument, got ${paramType.typeArguments.size}"
-        }
+        assertEquals("List", paramType.classifierQualifiedName)
+        assertEquals(1, paramType.typeArguments.size)
 
         val typeArg = paramType.typeArguments[0] as JavaClassifierType
-        assert(typeArg.annotations.size == 1) {
-            "Expected 1 annotation on type argument, got ${typeArg.annotations.size}"
-        }
-        assert(typeArg.annotations.first().classId?.shortClassName?.asString() == "NotNull") {
-            "Expected @NotNull annotation"
-        }
+        assertEquals(1, typeArg.annotations.size) { "Annotations on type argument: ${typeArg.annotations.map { it.classId }}" }
+        assertEquals("NotNull", typeArg.annotations.first().classId?.shortClassName?.asString())
     }
 
     @Test
@@ -212,8 +175,8 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val fieldType = field.type as JavaClassifierType
 
         val typeArg = fieldType.typeArguments[0] as JavaClassifierType
-        assert(typeArg.annotations.isEmpty()) {
-            "Expected no annotations on type argument, got ${typeArg.annotations.size}"
+        assertTrue(typeArg.annotations.isEmpty()) {
+            "Expected no annotations on type argument, got ${typeArg.annotations.map { it.classId }}"
         }
     }
 
@@ -235,28 +198,24 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val classNode = tree.getChildren(root).first { tree.getType(it).toString() == "CLASS" }
         val javaClass = JavaClassOverAst(classNode, tree, parsed.context)
 
-        assert(javaClass.typeParameters.size == 2) { "Expected 2 type parameters, got ${javaClass.typeParameters.size}" }
+        assertEquals(2, javaClass.typeParameters.size)
 
         val paramT = javaClass.typeParameters.first { it.name.asString() == "T" }
-        assert(paramT.upperBounds.size == 1) { "T should have 1 upper bound, got ${paramT.upperBounds.size}" }
+        assertEquals(1, paramT.upperBounds.size)
         val boundT = paramT.upperBounds.first()
-        assert(boundT.classifierQualifiedName == "Object") { "T's bound should be Object, got ${boundT.classifierQualifiedName}" }
+        assertEquals("Object", boundT.classifierQualifiedName)
 
         // Check annotations on the bound type
-        assert(boundT.annotations.size == 1) { "T's bound should have 1 annotation (@NotNull), got ${boundT.annotations.size}" }
-        assert(boundT.annotations.first().classId?.shortClassName?.asString() == "NotNull") {
-            "Expected @NotNull annotation on T's bound"
-        }
+        assertEquals(1, boundT.annotations.size) { "Annotations on T's bound: ${boundT.annotations.map { it.classId }}" }
+        assertEquals("NotNull", boundT.annotations.first().classId?.shortClassName?.asString())
 
         val paramU = javaClass.typeParameters.first { it.name.asString() == "U" }
-        assert(paramU.upperBounds.size == 1) { "U should have 1 upper bound" }
+        assertEquals(1, paramU.upperBounds.size)
         val boundU = paramU.upperBounds.first()
-        assert(boundU.classifierQualifiedName == "Number") { "U's bound should be Number" }
+        assertEquals("Number", boundU.classifierQualifiedName)
 
-        assert(boundU.annotations.size == 1) { "U's bound should have 1 annotation (@Nullable), got ${boundU.annotations.size}" }
-        assert(boundU.annotations.first().classId?.shortClassName?.asString() == "Nullable") {
-            "Expected @Nullable annotation on U's bound"
-        }
+        assertEquals(1, boundU.annotations.size) { "Annotations on U's bound: ${boundU.annotations.map { it.classId }}" }
+        assertEquals("Nullable", boundU.annotations.first().classId?.shortClassName?.asString())
     }
 
     @Test
@@ -281,19 +240,15 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
 
         val fooMethod = javaClass.methods.first { it.name.asString() == "foo" }
         val fooReturnType = fooMethod.returnType as JavaClassifierType
-        assert(fooReturnType.classifierQualifiedName == "T") { "foo's return type should be T" }
-        assert(fooReturnType.annotations.size == 1) { "foo's return type should have 1 annotation (@NotNull), got ${fooReturnType.annotations.size}" }
-        assert(fooReturnType.annotations.first().classId?.shortClassName?.asString() == "NotNull") {
-            "Expected @NotNull annotation on foo's return type"
-        }
+        assertEquals("T", fooReturnType.classifierQualifiedName)
+        assertEquals(1, fooReturnType.annotations.size) { "Annotations on foo's return type: ${fooReturnType.annotations.map { it.classId }}" }
+        assertEquals("NotNull", fooReturnType.annotations.first().classId?.shortClassName?.asString())
 
         val barMethod = javaClass.methods.first { it.name.asString() == "bar" }
         val barReturnType = barMethod.returnType as JavaClassifierType
-        assert(barReturnType.classifierQualifiedName == "T") { "bar's return type should be T" }
-        assert(barReturnType.annotations.size == 1) { "bar's return type should have 1 annotation (@Nullable), got ${barReturnType.annotations.size}" }
-        assert(barReturnType.annotations.first().classId?.shortClassName?.asString() == "Nullable") {
-            "Expected @Nullable annotation on bar's return type"
-        }
+        assertEquals("T", barReturnType.classifierQualifiedName)
+        assertEquals(1, barReturnType.annotations.size) { "Annotations on bar's return type: ${barReturnType.annotations.map { it.classId }}" }
+        assertEquals("Nullable", barReturnType.annotations.first().classId?.shortClassName?.asString())
     }
 
     @Test
@@ -315,10 +270,8 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
 
         // Check that star import is extracted
         val starCandidate = with(context) { getFirstStarImportCandidate("NotNull") }
-        assert(starCandidate != null) { "Expected star import candidate for NotNull" }
-        assert(starCandidate?.packageFqName?.asString() == "org.jetbrains.annotations") {
-            "Expected package org.jetbrains.annotations, got ${starCandidate?.packageFqName}"
-        }
+        assertNotNull(starCandidate) { "Expected star import candidate for NotNull" }
+        assertEquals("org.jetbrains.annotations", starCandidate.packageFqName.asString())
 
         // Find the class and method
         val classNode = tree.getChildren(root).first { tree.getType(it).toString() == "CLASS" }
@@ -328,13 +281,13 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
 
         // Get the type argument (Integer with @NotNull)
         val typeArg = returnType.typeArguments.firstOrNull() as? JavaClassifierType
-        assert(typeArg != null) { "Expected type argument on Iterator" }
+        assertNotNull(typeArg) { "Expected type argument on Iterator" }
 
-        val allAnnotations = typeArg!!.annotations.toList()
-        assert(allAnnotations.size == 1) { "Expected 1 annotation on type argument, got ${allAnnotations.size}: ${allAnnotations.map { it.classId }}" }
+        val allAnnotations = typeArg.annotations.toList()
+        assertEquals(1, allAnnotations.size) { "Annotations on type argument: ${allAnnotations.map { it.classId }}" }
 
         val ann = allAnnotations.first()
-        assert(ann.classId?.shortClassName?.asString() == "NotNull") { "Expected NotNull annotation, got ${ann.classId}" }
+        assertEquals("NotNull", ann.classId?.shortClassName?.asString())
         // Type-position annotations (`@NotNull` on a type argument) flow through the
         // `typePositionAnnotations` path of `JavaTypeOverAst.annotations`, which is returned
         // unconditionally — no `@Target` callback needed.
@@ -362,9 +315,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
 
         // Verify star imports are extracted
         val starCandidate1 = with(context) { getFirstStarImportCandidate("Iterator") }
-        assert(starCandidate1?.packageFqName?.asString() == "java.util") {
-            "First star import should be java.util, got ${starCandidate1?.packageFqName}"
-        }
+        assertEquals("java.util", starCandidate1?.packageFqName?.asString())
 
         // Find the class and method
         val classNode = tree.getChildren(root).first { tree.getType(it).toString() == "CLASS" }
@@ -373,14 +324,14 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val returnType = method.returnType as JavaClassifierType
 
         // Get the type argument (Integer with @NotNull)
-        assert(returnType.typeArguments.size == 1) { "Expected 1 type arg, got ${returnType.typeArguments.size}" }
+        assertEquals(1, returnType.typeArguments.size)
         val typeArg = returnType.typeArguments.first() as JavaClassifierType
 
         val allAnnotations = typeArg.annotations.toList()
-        assert(allAnnotations.size == 1) { "Expected 1 annotation on type argument, got ${allAnnotations.size}" }
+        assertEquals(1, allAnnotations.size) { "Annotations on type argument: ${allAnnotations.map { it.classId }}" }
 
         val ann = allAnnotations.first()
-        assert(ann.classId?.shortClassName?.asString() == "NotNull") { "Expected NotNull, got ${ann.classId}" }
+        assertEquals("NotNull", ann.classId?.shortClassName?.asString())
         // See sibling test above — type-position annotations are exposed via the
         // unconditional `typePositionAnnotations` path of `JavaTypeOverAst.annotations`.
     }
@@ -403,10 +354,8 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val retention = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "Retention" }
         val arg = retention.arguments.first() as JavaEnumValueAnnotationArgument
 
-        assert(arg.enumClassId?.asSingleFqName()?.asString() == "java.lang.annotation.RetentionPolicy") {
-            "Expected enumClassId java.lang.annotation.RetentionPolicy, got ${arg.enumClassId}"
-        }
-        assert(arg.entryName?.asString() == "RUNTIME") { "Expected entry RUNTIME, got ${arg.entryName}" }
+        assertEquals("java.lang.annotation.RetentionPolicy", arg.enumClassId?.asSingleFqName()?.asString())
+        assertEquals("RUNTIME", arg.entryName?.asString())
     }
 
     @Test
@@ -428,10 +377,8 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
 
         // the assertion below covered the model-internal heuristic gate. Surrounding `enumClassId` /
         // `entryName` checks cover the user-visible invariants.
-        assert(arg.enumClassId?.asSingleFqName()?.asString() == "com.example.MyEnum") {
-            "Expected enumClassId com.example.MyEnum (same-package heuristic), got ${arg.enumClassId}"
-        }
-        assert(arg.entryName?.asString() == "A") { "Expected entry A, got ${arg.entryName}" }
+        assertEquals("com.example.MyEnum", arg.enumClassId?.asSingleFqName()?.asString()) { "Expected the same-package heuristic to kick in" }
+        assertEquals("A", arg.entryName?.asString())
     }
 
     @Test
@@ -455,10 +402,8 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val retention = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "Retention" }
         val arg = retention.arguments.first() as JavaEnumValueAnnotationArgument
 
-        assert(arg.entryName?.asString() == "RUNTIME") { "Expected entry RUNTIME, got ${arg.entryName}" }
-        assert(arg.enumClassId?.asSingleFqName()?.asString() == "java.lang.annotation.RetentionPolicy") {
-            "Expected enumClassId java.lang.annotation.RetentionPolicy, got ${arg.enumClassId}"
-        }
+        assertEquals("RUNTIME", arg.entryName?.asString())
+        assertEquals("java.lang.annotation.RetentionPolicy", arg.enumClassId?.asSingleFqName()?.asString())
     }
 
     @Test
@@ -479,8 +424,8 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val retention = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "Retention" }
         val arg = retention.arguments.first() as JavaEnumValueAnnotationArgument
 
-        assert(arg.enumClassId == null) { "Without any import hint, enumClassId must be null, got ${arg.enumClassId}" }
-        assert(arg.entryName?.asString() == "RUNTIME") { "Expected entry RUNTIME, got ${arg.entryName}" }
+        assertNull(arg.enumClassId) { "Without any import hint, enumClassId must be null" }
+        assertEquals("RUNTIME", arg.entryName?.asString())
     }
 
     @Test
@@ -498,15 +443,15 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
             }
         """.trimIndent()
         val javaClass = parseFirstClass(source)
-        assert(javaClass.isDeprecatedInJavaDoc) { "Class Foo should be deprecated via JavaDoc" }
+        assertTrue(javaClass.isDeprecatedInJavaDoc) { "Class Foo should be deprecated via JavaDoc" }
 
         val oldMethod = javaClass.methods.first { it.name.asString() == "oldMethod" }
-        assert(oldMethod.isDeprecatedInJavaDoc) { "oldMethod should be deprecated via JavaDoc" }
+        assertTrue(oldMethod.isDeprecatedInJavaDoc) { "oldMethod should be deprecated via JavaDoc" }
 
         val newMethod = javaClass.methods.first { it.name.asString() == "newMethod" }
-        assert(!newMethod.isDeprecatedInJavaDoc) { "newMethod should NOT be deprecated" }
+        assertFalse(newMethod.isDeprecatedInJavaDoc) { "newMethod should NOT be deprecated" }
 
         val oldField = javaClass.fields.first { it.name.asString() == "oldField" }
-        assert(oldField.isDeprecatedInJavaDoc) { "oldField should be deprecated via JavaDoc" }
+        assertTrue(oldField.isDeprecatedInJavaDoc) { "oldField should be deprecated via JavaDoc" }
     }
 }
