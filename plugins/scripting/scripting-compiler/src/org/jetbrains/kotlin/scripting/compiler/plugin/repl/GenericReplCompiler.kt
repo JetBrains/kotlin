@@ -114,7 +114,9 @@ open class GenericReplCompiler(
                 psiFile.project,
                 compilerState.analyzerEngine.module,
                 compilerConfiguration,
-                jvmBackendClassResolver = K1JvmBackendClassResolverForModuleWithDependencies(compilerState.analyzerEngine.module),
+                jvmBackendClassResolver = K1JvmBackendClassResolverForModuleWithDependencies(
+                    compilerState.analyzerEngine.module, lazyOf(compilerState.symbolTable),
+                ),
             )
 
             val generatorExtensions =
