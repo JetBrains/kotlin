@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-88141
 interface A {
     context(s: String)
@@ -12,7 +12,7 @@ interface C : A
 
 class Adapter : B, C
 
-class D(adapter: Adapter) : B by adapter, C by adapter
+<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class D<!>(adapter: Adapter) : B by adapter, C by adapter
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration, javaType,
 primaryConstructor, propertyDeclaration */

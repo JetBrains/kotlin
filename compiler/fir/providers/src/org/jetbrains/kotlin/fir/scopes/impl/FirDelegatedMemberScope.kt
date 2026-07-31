@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class FirDelegatedMemberScope(
     override val session: FirSession,
@@ -70,7 +68,7 @@ class FirDelegatedMemberScope(
             //   interface IBase { override fun toString(): String }
             //   object BaseImpl : IBase { override fun toString(): String = ... }
             //   class Test : IBase by BaseImpl
-            if (original.isPublicInAny() && original.modality != Modality.ABSTRACT) {
+            if (original.isMethodOfAny && original.modality != Modality.ABSTRACT) {
                 return@processor
             }
 
@@ -237,22 +235,6 @@ val FirCallableSymbol<*>.multipleDelegatesWithTheSameSignature: Boolean?
     get() = fir.multipleDelegatesWithTheSameSignature
 
 
-// From the definition of function interfaces in the Java specification (pt. 9.8):
-// "methods that are members of I that do not have the same signature as any public instance method of the class Object"
-// It means that if an interface declares `int hashCode()` then the method won't be taken into account when
-// checking if the interface is SAM.
-fun FirNamedFunction.isPublicInAny(): Boolean {
-    if (name.asString() !in PUBLIC_METHOD_NAMES_IN_ANY) return false
-
-    return when (name.asString()) {
-        "hashCode", "toString" -> valueParameters.isEmpty()
-        "equals" -> valueParameters.singleOrNull()?.hasTypeOf(StandardClassIds.Any, allowNullable = true) == true
-        else -> errorWithAttachment("Unexpected method name") {
-            withEntry("methodName", name) { name.asString() }
-        }
-    }
-}
-
 fun FirValueParameter.hasTypeOf(classId: ClassId, allowNullable: Boolean): Boolean {
     val classLike = when (val type = returnTypeRef.coneType) {
         is ConeClassLikeType -> type
@@ -263,8 +245,6 @@ fun FirValueParameter.hasTypeOf(classId: ClassId, allowNullable: Boolean): Boole
     if (classLike.isMarkedNullable && !allowNullable) return false
     return classLike.lookupTag.classId == classId
 }
-
-private val PUBLIC_METHOD_NAMES_IN_ANY = setOf("equals", "hashCode", "toString")
 
 abstract class FirDelegatedMembersFilter : FirComposableSessionComponent<FirDelegatedMembersFilter> {
     abstract fun shouldNotGenerateDelegatedMember(memberSymbolFromSuperInterface: FirCallableSymbol<*>): Boolean
