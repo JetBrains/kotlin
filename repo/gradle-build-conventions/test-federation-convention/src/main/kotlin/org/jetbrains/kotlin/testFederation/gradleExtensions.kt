@@ -29,7 +29,7 @@ val Project.testFederationEnabled: Boolean
  * Provides the [Domain]s to which this project belongs.
  */
 @DelicateTestFederationApi
-val Project.testFederationDomain: Provider<List<Domain>> by extensionProperty {
+val Project.testFederationDomains: Provider<List<Domain>> by extensionProperty {
     project.provider { repositoryPath(this.projectDir.toPath()).domains }
 }
 
@@ -52,7 +52,7 @@ val Project.testFederationMode: Provider<TestFederationMode> by extensionPropert
     (providers.gradleProperty(TEST_FEDERATION_MODE_KEY)
         .orElse(providers.environmentVariable(TEST_FEDERATION_MODE_ENV_KEY)))
         .map(TestFederationMode::valueOf)
-        .orElse(project.testFederationAffectedDomains.zip(testFederationDomain) { affectedTestSystems, domain ->
+        .orElse(project.testFederationAffectedDomains.zip(testFederationDomains) { affectedTestSystems, domain ->
             if (domain.intersect(affectedTestSystems).isNotEmpty()) TestFederationMode.Full
             else TestFederationMode.Smoke
         })

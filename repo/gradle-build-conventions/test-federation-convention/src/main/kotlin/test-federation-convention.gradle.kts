@@ -12,7 +12,7 @@ val testFederationRuntime = configurations.detachedConfiguration(dependencies.pr
 }.incoming.files
 
 tasks.withType<Test>().configureEach {
-    val currentDomain = project.testFederationDomain
+    val currentDomain = project.testFederationDomains
     val affectedDomains = project.testFederationAffectedDomains
     val areNightlyTestsEnabled = project.areNightlyTestsEnabled
 
