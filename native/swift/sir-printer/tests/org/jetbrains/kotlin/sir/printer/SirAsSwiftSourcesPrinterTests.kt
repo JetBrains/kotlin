@@ -1133,7 +1133,6 @@ class SirAsSwiftSourcesPrinterTests {
         val actualSwiftSrc = SirAsSwiftSourcesPrinter.print(
             module,
             stableDeclarationsOrder = false,
-            renderDocComments = true,
             renderDeclarationOrigins = false,
             emptyBodyStub = SirFunctionBody(listOf("stub()"))
         )

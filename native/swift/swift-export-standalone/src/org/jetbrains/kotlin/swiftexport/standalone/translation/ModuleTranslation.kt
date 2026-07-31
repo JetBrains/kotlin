@@ -176,7 +176,6 @@ private fun createTranslationResult(
 
     val printer = SirPrinter(
         config.stableDeclarationsOrder,
-        config.renderDocComments,
     )
     val bridgeSources = generateModuleBridges(printer, sirModule, bridgeModuleName)
     // Serialize SirModule to sources to avoid leakage of SirSession (and KaSession, likely) outside the analyze call.

@@ -21,7 +21,6 @@ import kotlin.io.path.Path
 public data class SwiftExportConfig(
     val outputPath: Path,
     val stableDeclarationsOrder: Boolean = false,
-    val renderDocComments: Boolean = false,
     val enableCoroutinesSupport: Boolean = false,
     val distribution: Distribution = Distribution(KotlinNativePaths.homePath.absolutePath),
     val konanTarget: KonanTarget,
