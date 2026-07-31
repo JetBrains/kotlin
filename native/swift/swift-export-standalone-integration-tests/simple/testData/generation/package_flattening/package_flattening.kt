@@ -18,6 +18,8 @@ class Clazz
 
 fun function(arg: Int) = arg
 
+fun fun_with_keywoards(repeat: Int) = repeat
+
 val Int.x: String
     get() = "test"
 
