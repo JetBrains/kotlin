@@ -60,11 +60,18 @@ internal fun createValueArgumentListStub(parent: StubElement<*>, args: Map<Name,
         val argument = KotlinValueArgumentStubImpl(argumentList, KtStubElementTypes.VALUE_ARGUMENT, isSpread = false)
         val argumentName = KotlinPlaceHolderStubImpl<KtValueArgumentName>(argument, KtStubElementTypes.VALUE_ARGUMENT_NAME)
         createNameReferenceStub(argumentName, name)
-        createValueStub(argument, value)
+
+        // An annotation argument is never the declaration of the constant it refers to
+        createValueStub(argument, value, containerClassId = null)
     }
 }
 
-internal fun createValueStub(parent: StubElement<*>, value: ConstantValue<*>) {
+/**
+ * Creates a stub for [value] in the form it has in the sources.
+ *
+ * [containerClassId] is the class the value is declared in, if any; see [createFloatingPointStub] for its meaning.
+ */
+internal fun createValueStub(parent: StubElement<*>, value: ConstantValue<*>, containerClassId: ClassId?) {
     when (value) {
         is BooleanValue -> createConstantStub(parent, ConstantValueKind.BOOLEAN_CONSTANT, value.value.toString())
         is ByteValue -> createNumberStub(parent, ConstantValueKind.INTEGER_CONSTANT, value.value.toString())
@@ -75,15 +82,22 @@ internal fun createValueStub(parent: StubElement<*>, value: ConstantValue<*>) {
         is UShortValue -> createConstantStub(parent, ConstantValueKind.INTEGER_CONSTANT, value.stringTemplateValue() + "u")
         is UIntValue -> createConstantStub(parent, ConstantValueKind.INTEGER_CONSTANT, value.stringTemplateValue() + "u")
         is ULongValue -> createConstantStub(parent, ConstantValueKind.INTEGER_CONSTANT, value.stringTemplateValue() + "uL")
-        is DoubleValue -> createFloatingPointStub(parent, StandardClassIds.Double, value.value, value.value.toString())
-        is FloatValue -> createFloatingPointStub(parent, StandardClassIds.Float, value.value.toDouble(), value.value.toString() + "F")
+        is DoubleValue -> createFloatingPointStub(parent, StandardClassIds.Double, value.value, value.value.toString(), containerClassId)
+        is FloatValue -> createFloatingPointStub(
+            parent,
+            StandardClassIds.Float,
+            value.value.toDouble(),
+            value.value.toString() + FLOAT_SUFFIX,
+            containerClassId,
+        )
+
         is CharValue -> createConstantStub(parent, ConstantValueKind.CHARACTER_CONSTANT, renderCharacterLiteral(value.value))
         is NullValue -> createConstantStub(parent, ConstantValueKind.NULL, "null")
         is StringValue -> createStringTemplateStub(parent, value.value)
         is EnumValue -> createReferenceChainStub(parent, value.enumClassId.segments() + value.enumEntryName)
         is KClassValue -> createClassLiteralStub(parent, value.value as KClassValue.Value.NormalClass)
         is AnnotationValue -> createNestedAnnotationStub(parent, value.value)
-        is ArrayValue -> createCollectionLiteralStub(parent, value.value)
+        is ArrayValue -> createCollectionLiteralStub(parent, value.value, containerClassId)
         else -> error("Unexpected value: ${value::class}")
     }
 }
@@ -109,8 +123,17 @@ private fun createNumberStub(parent: StubElement<*>, kind: ConstantValueKind, te
 
 /**
  * [Double.NaN] and the infinities have no literal form, so they are rendered as references to the corresponding constants.
+ *
+ * Those constants are declared in [classId] itself, where a reference would point at the very declaration being built,
+ * so the expression the standard library defines them by is rendered instead.
  */
-private fun createFloatingPointStub(parent: StubElement<*>, classId: ClassId, value: Double, text: String) {
+private fun createFloatingPointStub(
+    parent: StubElement<*>,
+    classId: ClassId,
+    value: Double,
+    text: String,
+    containerClassId: ClassId?,
+) {
     val constantName = when {
         value.isNaN() -> NAN_NAME
         value == Double.POSITIVE_INFINITY -> POSITIVE_INFINITY_NAME
@@ -118,7 +141,46 @@ private fun createFloatingPointStub(parent: StubElement<*>, classId: ClassId, va
         else -> return createNumberStub(parent, ConstantValueKind.FLOAT_CONSTANT, text)
     }
 
-    createReferenceChainStub(parent, classId.segments() + constantName)
+    if (containerClassId?.outerClassId == classId) {
+        createFloatingPointDefinitionStub(parent, constantName, isFloat = classId == StandardClassIds.Float)
+    } else {
+        createReferenceChainStub(parent, classId.segments() + constantName)
+    }
+}
+
+/**
+ * Creates a stub for the expression [constantName] is defined by, e.g., `1.0/0.0` for [Double.POSITIVE_INFINITY].
+ */
+@OptIn(KtImplementationDetail::class)
+private fun createFloatingPointDefinitionStub(parent: StubElement<*>, constantName: Name, isFloat: Boolean) {
+    val suffix = if (isFloat) FLOAT_SUFFIX else ""
+    val zero = "0.0$suffix"
+    when (constantName) {
+        POSITIVE_INFINITY_NAME -> createDivisionStub(parent, "1.0$suffix", zero)
+        NEGATIVE_INFINITY_NAME -> createDivisionStub(parent, "-1.0$suffix", zero)
+        // The division alone is already a NaN, but the negation is a part of the declaration
+        NAN_NAME -> {
+            val prefixExpression = KotlinPlaceHolderStubImpl<KtPrefixExpression>(parent, KtStubElementTypes.PREFIX_EXPRESSION)
+            KotlinOperationReferenceExpressionStubImpl(prefixExpression, KtTokens.MINUS.value.ref(), KtTokens.MINUS)
+
+            val parenthesized = KotlinPlaceHolderStubImpl<KtParenthesizedExpression>(
+                prefixExpression,
+                KtStubElementTypes.PARENTHESIZED,
+            )
+
+            createDivisionStub(parenthesized, zero, zero)
+        }
+
+        else -> error("Unexpected constant: $constantName, isFloat: $isFloat")
+    }
+}
+
+@OptIn(KtImplementationDetail::class)
+private fun createDivisionStub(parent: StubElement<*>, dividend: String, divisor: String) {
+    val binaryExpression = KotlinPlaceHolderStubImpl<KtBinaryExpression>(parent, KtStubElementTypes.BINARY_EXPRESSION)
+    createNumberStub(binaryExpression, ConstantValueKind.FLOAT_CONSTANT, dividend)
+    KotlinOperationReferenceExpressionStubImpl(binaryExpression, KtTokens.DIV.value.ref(), KtTokens.DIV)
+    createConstantStub(binaryExpression, ConstantValueKind.FLOAT_CONSTANT, divisor)
 }
 
 private fun createStringTemplateStub(parent: StubElement<*>, value: String) {
@@ -205,10 +267,10 @@ private fun createNestedAnnotationStub(parent: StubElement<*>, value: Annotation
     }
 }
 
-private fun createCollectionLiteralStub(parent: StubElement<*>, values: List<ConstantValue<*>>) {
+private fun createCollectionLiteralStub(parent: StubElement<*>, values: List<ConstantValue<*>>, containerClassId: ClassId?) {
     val collectionLiteral = KotlinCollectionLiteralExpressionStubImpl(parent, innerExpressionCount = values.size)
     for (value in values) {
-        createValueStub(collectionLiteral, value)
+        createValueStub(collectionLiteral, value, containerClassId)
     }
 }
 
@@ -298,5 +360,6 @@ private val NAN_NAME = Name.identifier("NaN")
 private val POSITIVE_INFINITY_NAME = Name.identifier("POSITIVE_INFINITY")
 private val NEGATIVE_INFINITY_NAME = Name.identifier("NEGATIVE_INFINITY")
 
+private const val FLOAT_SUFFIX = "F"
 private const val ESCAPE = "\\"
 private const val UNICODE_ESCAPE_MARKER = 'u'

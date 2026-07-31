@@ -459,11 +459,11 @@ public final class Double private constructor() : kotlin.Number, kotlin.Comparab
 
         public const val MAX_VALUE: kotlin.Double = 1.7976931348623157E308
 
-        public const val POSITIVE_INFINITY: kotlin.Double = kotlin.Double.POSITIVE_INFINITY
+        public const val POSITIVE_INFINITY: kotlin.Double = 1.0 / 0.0
 
-        public const val NEGATIVE_INFINITY: kotlin.Double = kotlin.Double.NEGATIVE_INFINITY
+        public const val NEGATIVE_INFINITY: kotlin.Double = -1.0 / 0.0
 
-        public const val NaN: kotlin.Double = kotlin.Double.NaN
+        public const val NaN: kotlin.Double = -(0.0 / 0.0)
 
         @kotlin.SinceKotlin(version = "1.4")
         public const val SIZE_BYTES: kotlin.Int = 8
@@ -702,11 +702,11 @@ public final class Float private constructor() : kotlin.Number, kotlin.Comparabl
 
         public const val MAX_VALUE: kotlin.Float = 3.4028235E38F
 
-        public const val POSITIVE_INFINITY: kotlin.Float = kotlin.Float.POSITIVE_INFINITY
+        public const val POSITIVE_INFINITY: kotlin.Float = 1.0F / 0.0F
 
-        public const val NEGATIVE_INFINITY: kotlin.Float = kotlin.Float.NEGATIVE_INFINITY
+        public const val NEGATIVE_INFINITY: kotlin.Float = -1.0F / 0.0F
 
-        public const val NaN: kotlin.Float = kotlin.Float.NaN
+        public const val NaN: kotlin.Float = -(0.0F / 0.0F)
 
         @kotlin.SinceKotlin(version = "1.4")
         public const val SIZE_BYTES: kotlin.Int = 4
