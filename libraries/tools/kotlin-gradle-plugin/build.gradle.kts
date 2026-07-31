@@ -317,6 +317,33 @@ configurations.all {
     }
 }
 
+val asmDeprecationExclusions = listOf(
+    "org.jetbrains.kotlin.gradle.**", // part of the plugin
+    "org.jetbrains.kotlin.statistics.**", // part of the plugin
+    "org.jetbrains.kotlin.tooling.**", // part of the plugin
+    "org.jetbrains.kotlin.org.**", // already shadowed dependencies
+    "org.jetbrains.kotlin.com.**", // already shadowed dependencies
+    "org.jetbrains.kotlin.it.unimi.**", // already shadowed dependencies
+    "org.jetbrains.kotlin.internal.**", // already internal package
+)
+val asmDeprecationMessage = """
+    You're using a Kotlin compiler class bundled into KGP for its internal needs.
+    This is discouraged and will not be supported in future releases.
+    The class in this artifact is scheduled for removal in a future Kotlin release. Please define dependency on it in an alternative way.
+    See https://kotl.in/gradle/internal-compiler-symbols for more details
+""".trimIndent()
+asmDeprecation {
+    val embeddedConfigurations = listOf(configurations.getByName("embedded")) + GradlePluginVariant.values().map { variant ->
+        configurations.getByName("${sourceSets.getByName(variant.sourceSetName).name}Embedded")
+    }
+    deprecateClassesByPattern(
+        inputConfigurations = embeddedConfigurations,
+        pattern = "org.jetbrains.kotlin.**",
+        deprecationMessage = asmDeprecationMessage,
+        exclusions = asmDeprecationExclusions,
+    )
+}
+
 tasks {
     named<ProcessResources>("processCommonResources") {
         val propertiesToExpand = mapOf(
@@ -398,24 +425,6 @@ tasks {
              * Hack for not limiting LV to 1.8 for those modules. To be removed after KT-70247
              */
             pivotVersion = KotlinMetadataPivotVersion(1, 9, 0)
-        }
-        asmDeprecation {
-            val exclusions = listOf(
-                "org.jetbrains.kotlin.gradle.**", // part of the plugin
-                "org.jetbrains.kotlin.statistics.**", // part of the plugin
-                "org.jetbrains.kotlin.tooling.**", // part of the plugin
-                "org.jetbrains.kotlin.org.**", // already shadowed dependencies
-                "org.jetbrains.kotlin.com.**", // already shadowed dependencies
-                "org.jetbrains.kotlin.it.unimi.**", // already shadowed dependencies
-                "org.jetbrains.kotlin.internal.**", // already internal package
-            )
-            val deprecationMessage = """
-                You're using a Kotlin compiler class bundled into KGP for its internal needs.
-                This is discouraged and will not be supported in future releases.
-                The class in this artifact is scheduled for removal in Kotlin 2.2. Please define dependency on it in an alternative way.
-                See https://kotl.in/gradle/internal-compiler-symbols for more details
-            """.trimIndent()
-            deprecateClassesByPattern("org.jetbrains.kotlin.**", deprecationMessage, exclusions)
         }
     }
     GradlePluginVariant.values().forEach { variant ->

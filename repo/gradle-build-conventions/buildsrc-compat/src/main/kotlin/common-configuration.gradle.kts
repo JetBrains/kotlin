@@ -3,13 +3,13 @@ import org.gradle.api.internal.file.collections.DefaultConfigurableFileCollectio
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.internal.config.MavenComparableVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 // Contains common configuration that should be applied to all projects
 plugins {
@@ -222,7 +222,7 @@ fun Project.configureKotlinCompilationOptions() {
 private fun Project.shouldUseOldJvmDefaultArgument(): Boolean {
     @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
     val isOldCompilerVersion =
-        MavenComparableVersion(kotlinExtension.compilerVersion.get()) < MavenComparableVersion("2.2")
+        KotlinToolingVersion(kotlinExtension.compilerVersion.get()) < KotlinToolingVersion("2.2")
 
     return isOldCompilerVersion
 }
@@ -232,7 +232,7 @@ private val kotlinCompilerVersionForGradle = libs.versions.kotlin.`for`.gradle.p
 
 private fun Project.skipArgumentForOlderKotlinCompilerVersion(): Boolean {
     @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
-    return MavenComparableVersion(kotlinExtension.compilerVersion.get()) <= MavenComparableVersion(kotlinCompilerVersionForGradle)
+    return KotlinToolingVersion(kotlinExtension.compilerVersion.get()) <= KotlinToolingVersion(kotlinCompilerVersionForGradle)
 }
 
 fun Project.configureArtifacts() {
