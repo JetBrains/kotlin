@@ -60,6 +60,11 @@ open class PsiRawFirBuilder(
     val baseScopeProvider: FirScopeProvider,
     bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL,
 ) : AbstractRawFirBuilder<PsiElement>(session) {
+    init {
+        @OptIn(SessionConfiguration::class)
+        session.register(KtSourceToDiagnosticInstanceMapperComponent::class, PsiSourceToDiagnosticInstanceMapperComponent())
+    }
+
     protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) {
         target.bind(function)
     }
