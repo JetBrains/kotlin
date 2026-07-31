@@ -1,5 +1,6 @@
 // ISSUE: KT-65195, KT-87887
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// DUMP_IR
 
 fun jso(): dynamic = js("{}")
 
