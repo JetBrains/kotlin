@@ -1,7 +1,7 @@
 // ISSUE: KT-87290
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ContextParameters
+// LANGUAGE: +ContextParameters +CompanionBlocks
 
 // MODULE: lib
 // FILE: lib.kt
@@ -10,6 +10,10 @@ value class Wrapper(val value: Int) {
     context(prefix: String)
     val value: String
         get() = prefix
+
+    companion {
+        val value get() = 1
+    }
 }
 
 OPTIONAL_JVM_INLINE_ANNOTATION
