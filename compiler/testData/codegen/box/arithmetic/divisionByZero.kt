@@ -8,6 +8,16 @@ fun shortDivByZero(a: Short, b: Short): Int = a / b
 fun shortRemByZero(a: Short, b: Short): Int = a % b
 fun longDivByZero(a: Long, b: Long): Long = a / b
 fun longRemByZero(a: Long, b: Long): Long = a % b
+
+fun uintDivByZero(a: UInt, b: UInt): UInt = a / b
+fun uintRemByZero(a: UInt, b: UInt): UInt = a % b
+fun ubyteDivByZero(a: UByte, b: UByte): UInt = a / b
+fun ubyteRemByZero(a: UByte, b: UByte): UInt = a % b
+fun ushortDivByZero(a: UShort, b: UShort): UInt = a / b
+fun ushortRemByZero(a: UShort, b: UShort): UInt = a % b
+fun ulongDivByZero(a: ULong, b: ULong): ULong = a / b
+fun ulongRemByZero(a: ULong, b: ULong): ULong = a % b
+
 fun floatDivByZero(a: Float, b: Float): Float = a / b
 fun floatRemByZero(a: Float, b: Float): Float = a % b
 fun doubleDivByZero(a: Double, b: Double): Double = a / b
@@ -47,6 +57,23 @@ fun box(): String {
     if (!assertThrowsArithmeticException { longRemByZero(-1L, 0L) }) return "fail: Long rem by zero should throw ArithmeticException"
     if (!assertThrowsArithmeticException { longRemByZero(0L, 0L) }) return "fail: Long rem by zero should throw ArithmeticException"
     if (!assertThrowsArithmeticException { longRemByZero(1L, 0L) }) return "fail: Long rem by zero should throw ArithmeticException"
+
+    if (!assertThrowsArithmeticException { uintDivByZero(0u, 0u) }) return "fail: UInt div by zero should throw ArithmeticException"
+    if (!assertThrowsArithmeticException { uintDivByZero(1u, 0u) }) return "fail: UInt div by zero should throw ArithmeticException"
+    if (!assertThrowsArithmeticException { uintRemByZero(0u, 0u) }) return "fail: UInt rem by zero should throw ArithmeticException"
+    if (!assertThrowsArithmeticException { uintRemByZero(1u, 0u) }) return "fail: UInt rem by zero should throw ArithmeticException"
+    if (!assertThrowsArithmeticException { ubyteDivByZero(0u, 0u) }) return "fail: UByte div by zero should throw ArithmeticException"
+    if (!assertThrowsArithmeticException { ubyteDivByZero(1u, 0u) }) return "fail: UByte div by zero should throw ArithmeticException"
+    if (!assertThrowsArithmeticException { ubyteRemByZero(0u, 0u) }) return "fail: UByte rem by zero should throw ArithmeticException"
+    if (!assertThrowsArithmeticException { ubyteRemByZero(1u, 0u) }) return "fail: UByte rem by zero should throw ArithmeticException"
+    if (!assertThrowsArithmeticException { ushortDivByZero(0u, 0u) }) return "fail: UShort div by zero should throw ArithmeticException"
+    if (!assertThrowsArithmeticException { ushortDivByZero(1u, 0u) }) return "fail: UShort div by zero should throw ArithmeticException"
+    if (!assertThrowsArithmeticException { ushortRemByZero(0u, 0u) }) return "fail: UShort rem by zero should throw ArithmeticException"
+    if (!assertThrowsArithmeticException { ushortRemByZero(1u, 0u) }) return "fail: UShort rem by zero should throw ArithmeticException"
+    if (!assertThrowsArithmeticException { ulongDivByZero(0UL, 0UL) }) return "fail: ULong div by zero should throw ArithmeticException"
+    if (!assertThrowsArithmeticException { ulongDivByZero(1UL, 0UL) }) return "fail: ULong div by zero should throw ArithmeticException"
+    if (!assertThrowsArithmeticException { ulongRemByZero(0UL, 0UL) }) return "fail: ULong rem by zero should throw ArithmeticException"
+    if (!assertThrowsArithmeticException { ulongRemByZero(1UL, 0UL) }) return "fail: ULong rem by zero should throw ArithmeticException"
 
 
     if (floatDivByZero(-1f, 0f) != Float.NEGATIVE_INFINITY) return "fail: Float div of negative numbers by zero should equals to Float.NEGATIVE_INFINITY"
