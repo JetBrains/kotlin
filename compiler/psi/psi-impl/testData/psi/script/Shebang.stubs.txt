@@ -3,3 +3,8 @@ FILE[kind=Script[packageFqName=<root>]]
   IMPORT_LIST
   SCRIPT[fqName=Shebang, fqName=Shebang, isReplSnippet=false, name=Shebang]
     SCRIPT_INITIALIZER
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=println]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            REFERENCE_EXPRESSION[referencedName=args]

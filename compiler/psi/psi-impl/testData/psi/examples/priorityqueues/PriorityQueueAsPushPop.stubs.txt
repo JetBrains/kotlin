@@ -29,6 +29,11 @@ FILE[kind=File[packageFqName=<root>]]
       FUN[fqName=PriorityQueueAsPushPop.pop, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=pop]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=wrapped]
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=extract]
+            VALUE_ARGUMENT_LIST
       FUN[fqName=PriorityQueueAsPushPop.push, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=push]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
@@ -36,7 +41,17 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=wrapped]
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=add]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                REFERENCE_EXPRESSION[referencedName=item]
       PROPERTY[fqName=PriorityQueueAsPushPop.isEmpty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=isEmpty]
         MODIFIER_LIST[override]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=wrapped]
+            REFERENCE_EXPRESSION[referencedName=isEmpty]

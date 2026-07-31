@@ -7,6 +7,7 @@ FILE[kind=Script[packageFqName=<root>]]
         FUN[fqName=ReplSnippet_repl.B.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
           VALUE_PARAMETER_LIST
         PROPERTY[fqName=ReplSnippet_repl.B.foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=foo]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
         OBJECT_DECLARATION[classId=/ReplSnippet_repl.B.Nested, fqName=ReplSnippet_repl.B.Nested, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Nested, superNames=[]]
           CLASS_BODY
             FUN[fqName=ReplSnippet_repl.B.Nested.member, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=member]
@@ -18,6 +19,8 @@ FILE[kind=Script[packageFqName=<root>]]
                   REFERENCE_EXPRESSION[referencedName=String]
               PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
                 VALUE_PARAMETER_LIST
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=str]
     FUN[fqName=ReplSnippet_repl.topLevel, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=topLevel]
       VALUE_PARAMETER_LIST
     SCRIPT_INITIALIZER
@@ -26,5 +29,10 @@ FILE[kind=Script[packageFqName=<root>]]
           FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=localMember]
             VALUE_PARAMETER_LIST
     PROPERTY[fqName=ReplSnippet_repl.topLevelVar, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=topLevelVar]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
     SCRIPT_INITIALIZER
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=topLevel]
+        VALUE_ARGUMENT_LIST
     SCRIPT_INITIALIZER
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=123]

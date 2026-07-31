@@ -97,6 +97,7 @@ Foo.kt:
                         REFERENCE_EXPRESSION[referencedName=Int]
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
             VALUE_PARAMETER_LIST
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
         FUN[fqName=Foo.dnnF, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=dnnF]
           MODIFIER_LIST[]
             CONTEXT_PARAMETER_LIST
@@ -178,6 +179,7 @@ Foo.kt:
                   REFERENCE_EXPRESSION[referencedName=Any]
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
             VALUE_PARAMETER_LIST
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
         PROPERTY[fqName=Foo.contextParameter3, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=contextParameter3]
           MODIFIER_LIST[]
             CONTEXT_PARAMETER_LIST
@@ -220,6 +222,7 @@ Foo.kt:
                         REFERENCE_EXPRESSION[referencedName=Boolean]
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
             VALUE_PARAMETER_LIST
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
         FUN[fqName=Foo.contextParameter4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contextParameter4]
           MODIFIER_LIST[]
             CONTEXT_PARAMETER_LIST

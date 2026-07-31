@@ -73,6 +73,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BinaryHeapKt]]
             REFERENCE_EXPRESSION[referencedName=Int]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          BINARY_EXPRESSION
+            PARENTHESIZED
+              BINARY_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            OPERATION_REFERENCE[operationToken=DIV, referencedName=/]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
       PROPERTY[fqName=BinaryHeap.left, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=left]
         TYPE_REFERENCE
           USER_TYPE
@@ -82,6 +89,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BinaryHeapKt]]
             REFERENCE_EXPRESSION[referencedName=Int]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          BINARY_EXPRESSION
+            BINARY_EXPRESSION
+              OPERATION_REFERENCE[operationToken=MUL, referencedName=*]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+            OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       PROPERTY[fqName=BinaryHeap.right, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=right]
         TYPE_REFERENCE
           USER_TYPE
@@ -91,6 +104,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BinaryHeapKt]]
             REFERENCE_EXPRESSION[referencedName=Int]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          BINARY_EXPRESSION
+            BINARY_EXPRESSION
+              OPERATION_REFERENCE[operationToken=MUL, referencedName=*]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+            OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
       PROPERTY[fqName=BinaryHeap.value, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=value]
         TYPE_REFERENCE
           USER_TYPE
@@ -98,6 +117,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BinaryHeapKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=foo]
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=bar]
+            VALUE_ARGUMENT_LIST
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
@@ -112,6 +136,18 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BinaryHeapKt]]
             REFERENCE_EXPRESSION[referencedName=Boolean]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          BINARY_EXPRESSION
+            PARENTHESIZED
+              BINARY_EXPRESSION
+                OPERATION_REFERENCE[operationToken=LT, referencedName=<]
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=data]
+                  REFERENCE_EXPRESSION[referencedName=size]
+            OPERATION_REFERENCE[operationToken=ANDAND, referencedName=&&]
+            PARENTHESIZED
+              BINARY_EXPRESSION
+                OPERATION_REFERENCE[operationToken=GTEQ, referencedName=>=]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
       FUN[fqName=BinaryHeap.compareTo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=compareTo]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=T]
@@ -126,6 +162,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BinaryHeapKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=compare]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT[isSpread=false]
+              REFERENCE_EXPRESSION[referencedName=other]
   FUN[fqName=swap, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=swap]
     TYPE_REFERENCE
       USER_TYPE
@@ -158,3 +200,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BinaryHeapKt]]
         REFERENCE_EXPRESSION[referencedName=Int]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      BINARY_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=size]
+        OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]

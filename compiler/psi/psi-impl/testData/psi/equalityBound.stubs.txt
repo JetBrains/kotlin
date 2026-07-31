@@ -44,6 +44,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EqualityBoundKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Boolean]
+        BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
   CLASS[classId=/Generic, fqName=Generic, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Generic, superNames=[]]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -69,6 +70,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EqualityBoundKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Boolean]
+        BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
   TYPEALIAS[classId=/BaseAlias, fqName=BaseAlias, isTopLevel=true, name=BaseAlias]
     TYPE_REFERENCE
       USER_TYPE
@@ -101,6 +103,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EqualityBoundKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Boolean]
+        BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
   CLASS[classId=/Data, fqName=Data, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Data, superNames=[]]
     MODIFIER_LIST[data]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Data]

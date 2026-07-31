@@ -11,10 +11,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ShortAnnotationsKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
   PROPERTY[fqName=v, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=v]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
   CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=/Foo.Companion, fqName=Foo.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
@@ -28,10 +30,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ShortAnnotationsKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
       PROPERTY[fqName=Foo.v, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=v]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
       CLASS_INITIALIZER
   FUN[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]
     VALUE_PARAMETER_LIST

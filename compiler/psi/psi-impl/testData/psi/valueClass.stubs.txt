@@ -28,6 +28,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ValueClassKt]]
     MODIFIER_LIST[value]
     CLASS_BODY
       PROPERTY[fqName=Foo.l, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=l]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       FUN[fqName=Foo.invoke, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invoke]
         VALUE_PARAMETER_LIST
   CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]

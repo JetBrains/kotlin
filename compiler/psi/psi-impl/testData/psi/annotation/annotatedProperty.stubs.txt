@@ -19,6 +19,8 @@ Properties.kt:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Anno]
+      STRING_TEMPLATE
+        LITERAL_STRING_TEMPLATE_ENTRY[text=OK]
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -29,8 +31,12 @@ Properties.kt:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Anno]
+      STRING_TEMPLATE
+        LITERAL_STRING_TEMPLATE_ENTRY[text=OK]
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
+        STRING_TEMPLATE
+          LITERAL_STRING_TEMPLATE_ENTRY[text=KO]
     PROPERTY[fqName=custom, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=true, name=custom]
       MODIFIER_LIST[internal]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -38,6 +44,8 @@ Properties.kt:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Anno]
+      STRING_TEMPLATE
+        LITERAL_STRING_TEMPLATE_ENTRY[text=OK]
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
         REFERENCE_EXPRESSION[referencedName=field]
@@ -51,3 +59,5 @@ Properties.kt:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Anno]
+      STRING_TEMPLATE
+        LITERAL_STRING_TEMPLATE_ENTRY[text=OK]

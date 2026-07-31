@@ -7,6 +7,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyNameKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
   FUN[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
     VALUE_PARAMETER_LIST
   CLASS[classId=/<no name provided>, fqName=<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=null, superNames=[]]

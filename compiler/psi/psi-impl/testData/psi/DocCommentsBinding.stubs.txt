@@ -20,6 +20,7 @@ FILE[kind=File[packageFqName=<root>]]
             REFERENCE_EXPRESSION[referencedName=Int]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]

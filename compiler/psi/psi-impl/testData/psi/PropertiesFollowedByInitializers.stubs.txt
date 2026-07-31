@@ -13,12 +13,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesFollowedByInitiali
             REFERENCE_EXPRESSION[referencedName=Int]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       PROPERTY[fqName=Foo.b, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=b]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
         PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
       PROPERTY[fqName=Foo.b1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=b1]
         TYPE_REFERENCE
@@ -26,6 +28,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesFollowedByInitiali
             REFERENCE_EXPRESSION[referencedName=Int]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
@@ -97,12 +100,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesFollowedByInitiali
     CLASS_BODY
       PROPERTY[fqName=PublicVar.foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=foo]
         MODIFIER_LIST[public]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
   CLASS[classId=/PublicVar, fqName=PublicVar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PublicVar, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PublicVar]
       VALUE_PARAMETER_LIST
     CLASS_BODY
       PROPERTY[fqName=PublicVar.foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=foo]
         MODIFIER_LIST[public]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
       PROPERTY[fqName=PublicVar.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=x]
         TYPE_REFERENCE
           USER_TYPE
@@ -113,6 +118,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesFollowedByInitiali
     CLASS_BODY
       PROPERTY[fqName=PublicVar.foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=foo]
         MODIFIER_LIST[public]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
   CLASS[classId=/PublicVar, fqName=PublicVar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PublicVar, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PublicVar]
       VALUE_PARAMETER_LIST
@@ -135,6 +141,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesFollowedByInitiali
         REFERENCE_EXPRESSION[referencedName=Long]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=System]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=currentTimeMillis]
+          VALUE_ARGUMENT_LIST
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
     REFERENCE_EXPRESSION[referencedName=now]

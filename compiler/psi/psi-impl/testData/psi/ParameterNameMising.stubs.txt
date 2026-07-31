@@ -28,6 +28,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParameterNameMisingKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=String]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=array]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Unit]

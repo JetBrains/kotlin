@@ -27,6 +27,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ComparisonKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=a]
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=compareTo]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            REFERENCE_EXPRESSION[referencedName=b]
   FUN[fqName=castingNaturalOrder, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=castingNaturalOrder]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
@@ -40,6 +47,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ComparisonKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    DOT_QUALIFIED_EXPRESSION
+      PARENTHESIZED
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=compareTo]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
   CLASS[classId=/ComparisonResult, fqName=ComparisonResult, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ComparisonResult, superNames=[]]
     MODIFIER_LIST[enum]
     CLASS_BODY

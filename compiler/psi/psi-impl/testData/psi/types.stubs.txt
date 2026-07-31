@@ -10,6 +10,7 @@ FILE[kind=File[packageFqName=test]]
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=test.Types.list, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=list]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE

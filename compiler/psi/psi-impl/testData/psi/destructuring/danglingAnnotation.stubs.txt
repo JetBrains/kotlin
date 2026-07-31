@@ -15,3 +15,4 @@ FILE[kind=File[packageFqName=<root>]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]

@@ -7,4 +7,7 @@ FILE[kind=File[packageFqName=<root>]]
       CLASS_INITIALIZER
         MODIFIER_LIST[private]
       PROPERTY[fqName=A.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=f]
+          VALUE_ARGUMENT_LIST
       CLASS_INITIALIZER

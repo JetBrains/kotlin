@@ -4,3 +4,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=MissingCommaInValueArgumentL
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=x]
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=foo]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          REFERENCE_EXPRESSION[referencedName=a]
+        VALUE_ARGUMENT[isSpread=false]
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=b]
+            OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=c]

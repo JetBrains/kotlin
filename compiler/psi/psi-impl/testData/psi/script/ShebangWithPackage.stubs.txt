@@ -4,3 +4,8 @@ FILE[kind=Script[packageFqName=test]]
   IMPORT_LIST
   SCRIPT[fqName=test.ShebangWithPackage, fqName=test.ShebangWithPackage, isReplSnippet=false, name=ShebangWithPackage]
     SCRIPT_INITIALIZER
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=println]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            REFERENCE_EXPRESSION[referencedName=args]

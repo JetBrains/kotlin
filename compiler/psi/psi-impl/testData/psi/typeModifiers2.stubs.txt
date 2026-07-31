@@ -11,6 +11,9 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unit]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
       PROPERTY[fqName=TypeModifiers.suspendFunction, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=suspendFunction]
         TYPE_REFERENCE
           MODIFIER_LIST[suspend]
@@ -19,6 +22,9 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unit]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
       PROPERTY[fqName=TypeModifiers.suspendExtFunction, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=suspendExtFunction]
         TYPE_REFERENCE
           MODIFIER_LIST[suspend]
@@ -31,6 +37,9 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unit]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
       PROPERTY[fqName=TypeModifiers.functionOnSuspendFunction, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=functionOnSuspendFunction]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -46,3 +55,6 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unit]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]

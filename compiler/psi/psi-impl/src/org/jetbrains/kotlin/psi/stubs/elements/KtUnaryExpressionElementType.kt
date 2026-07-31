@@ -5,16 +5,9 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements
 
-import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.psi.KtUnaryExpression
-import org.jetbrains.kotlin.psi.stubs.StubUtils
 
 internal class KtUnaryExpressionElementType<T : KtUnaryExpression>(
     debugName: String,
     psiClass: Class<T>,
-) : KtPlaceHolderStubElementType<T>(debugName, psiClass) {
-    override fun shouldCreateStub(node: ASTNode): Boolean {
-        // Unary expressions are stubbed only in the argument position
-        return StubUtils.isDeclaredInsideValueArgument(node) && super.shouldCreateStub(node)
-    }
-}
+) : KtPlaceHolderStubElementType<T>(debugName, psiClass)

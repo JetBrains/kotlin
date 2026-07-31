@@ -22,6 +22,7 @@ WithIncrement.kt:
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
     CLASS[classId=/WithIncrement, fqName=WithIncrement, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithIncrement, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Unary]
@@ -47,6 +48,7 @@ WithNotNullAssertion.kt:
         NULLABLE_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+      NULL[kind=NULL, value=null]
     CLASS[classId=/WithNotNullAssertion, fqName=WithNotNullAssertion, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNotNullAssertion, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Unary]

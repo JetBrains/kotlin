@@ -22,6 +22,7 @@ FILE[kind=File[packageFqName=test]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
         PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[external]
         PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
@@ -70,6 +71,7 @@ FILE[kind=File[packageFqName=test]]
               NULLABLE_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Any]
+        BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
       CLASS[classId=test/Modifiers.Ann, fqName=test.Modifiers.Ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Ann, superNames=[]]
         MODIFIER_LIST[annotation]
       FUN[fqName=test.Modifiers.suspend, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=suspend]

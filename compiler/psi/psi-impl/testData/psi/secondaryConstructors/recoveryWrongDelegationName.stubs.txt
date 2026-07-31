@@ -15,3 +15,4 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=RecoveryWrongDelegationNameK
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]

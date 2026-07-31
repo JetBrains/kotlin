@@ -142,6 +142,9 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasExpansionKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=StringAlias]
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=entry]
+          REFERENCE_EXPRESSION[referencedName=key]
       PROPERTY[fqName=test.TypeAliasExpansion.functionAlias, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=functionAlias]
         TYPE_REFERENCE
           USER_TYPE
@@ -150,6 +153,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasExpansionKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=NestedStringAlias]
+        STRING_TEMPLATE
       PROPERTY[fqName=test.TypeAliasExpansion.nestedFunctionAlias, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedFunctionAlias]
         TYPE_REFERENCE
           USER_TYPE
@@ -163,6 +167,9 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasExpansionKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=String]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=emptyList]
+          VALUE_ARGUMENT_LIST
       PROPERTY[fqName=test.TypeAliasExpansion.parameterizedListAliasWithStringAlias, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=parameterizedListAliasWithStringAlias]
         TYPE_REFERENCE
           USER_TYPE
@@ -172,6 +179,9 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasExpansionKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=StringAlias]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=emptyList]
+          VALUE_ARGUMENT_LIST
       PROPERTY[fqName=test.TypeAliasExpansion.parameterizedListAliasWithNestedStringAlias, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=parameterizedListAliasWithNestedStringAlias]
         TYPE_REFERENCE
           USER_TYPE
@@ -181,6 +191,9 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasExpansionKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=NestedStringAlias]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=emptyList]
+          VALUE_ARGUMENT_LIST
       PROPERTY[fqName=test.TypeAliasExpansion.parameterizedListAliasWithParameterizedListAliasWithStringAlias, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=parameterizedListAliasWithParameterizedListAliasWithStringAlias]
         TYPE_REFERENCE
           USER_TYPE
@@ -195,18 +208,30 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasExpansionKt]]
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=StringAlias]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=emptyList]
+          VALUE_ARGUMENT_LIST
       PROPERTY[fqName=test.TypeAliasExpansion.nestedListAliasWithTypeArgument, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedListAliasWithTypeArgument]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=NestedListAliasWithTypeArgument]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=emptyList]
+          VALUE_ARGUMENT_LIST
       PROPERTY[fqName=test.TypeAliasExpansion.nestedListAliasWithAliasTypeArgument, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedListAliasWithAliasTypeArgument]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=NestedListAliasWithAliasTypeArgument]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=emptyList]
+          VALUE_ARGUMENT_LIST
       PROPERTY[fqName=test.TypeAliasExpansion.nestedListAliasWithNestedAliasTypeArgument, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedListAliasWithNestedAliasTypeArgument]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=NestedListAliasWithNestedAliasTypeArgument]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=emptyList]
+          VALUE_ARGUMENT_LIST
       PROPERTY[fqName=test.TypeAliasExpansion.nestedParameterizedListAliasWithString, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedParameterizedListAliasWithString]
         TYPE_REFERENCE
           USER_TYPE
@@ -216,6 +241,9 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasExpansionKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=String]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=emptyList]
+          VALUE_ARGUMENT_LIST
       PROPERTY[fqName=test.TypeAliasExpansion.nestedParameterizedListAliasWithStringAlias, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedParameterizedListAliasWithStringAlias]
         TYPE_REFERENCE
           USER_TYPE
@@ -225,6 +253,9 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasExpansionKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=StringAlias]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=emptyList]
+          VALUE_ARGUMENT_LIST
       PROPERTY[fqName=test.TypeAliasExpansion.nestedParameterizedListAliasWithNestedStringAlias, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedParameterizedListAliasWithNestedStringAlias]
         TYPE_REFERENCE
           USER_TYPE
@@ -234,77 +265,96 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasExpansionKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=NestedStringAlias]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=emptyList]
+          VALUE_ARGUMENT_LIST
       PROPERTY[fqName=test.TypeAliasExpansion.stringAliasNullable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=stringAliasNullable]
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=StringAlias]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=test.TypeAliasExpansion.nestedStringAliasNullable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedStringAliasNullable]
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=NestedStringAlias]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=test.TypeAliasExpansion.nullableStringAlias, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableStringAlias]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=NullableStringAlias]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=test.TypeAliasExpansion.nullableStringAliasNullable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableStringAliasNullable]
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=NullableStringAlias]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=test.TypeAliasExpansion.nestedNullableStringAlias, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedNullableStringAlias]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=NestedNullableStringAlias]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=test.TypeAliasExpansion.nestedNullableStringAliasNullable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedNullableStringAliasNullable]
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=NestedNullableStringAlias]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=test.TypeAliasExpansion.nullableNestedStringAlias, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableNestedStringAlias]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=NullableNestedStringAlias]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=test.TypeAliasExpansion.nullableNestedStringAliasNullable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableNestedStringAliasNullable]
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=NullableNestedStringAlias]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=test.TypeAliasExpansion.functionAliasNullable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=functionAliasNullable]
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=FunctionAlias]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=test.TypeAliasExpansion.nestedFunctionAliasNullable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedFunctionAliasNullable]
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=NestedFunctionAlias]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=test.TypeAliasExpansion.nullableFunctionAlias, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableFunctionAlias]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=NullableFunctionAlias]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=test.TypeAliasExpansion.nullableFunctionAliasNullable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableFunctionAliasNullable]
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=NullableFunctionAlias]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=test.TypeAliasExpansion.nestedNullableFunctionAlias, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedNullableFunctionAlias]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=NestedNullableFunctionAlias]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=test.TypeAliasExpansion.nestedNullableFunctionAliasNullable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedNullableFunctionAliasNullable]
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=NestedNullableFunctionAlias]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=test.TypeAliasExpansion.nullableNestedFunctionAlias, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableNestedFunctionAlias]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=NullableNestedFunctionAlias]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=test.TypeAliasExpansion.nullableNestedFunctionAliasNullable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableNestedFunctionAliasNullable]
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=NullableNestedFunctionAlias]
+        NULL[kind=NULL, value=null]

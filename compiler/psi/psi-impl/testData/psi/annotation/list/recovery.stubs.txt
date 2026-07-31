@@ -8,6 +8,7 @@ FILE[kind=File[packageFqName=<root>]]
       PROPERTY[fqName=A.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
         MODIFIER_LIST[]
           ANNOTATION
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       FUN[fqName=A.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         MODIFIER_LIST[]
           ANNOTATION

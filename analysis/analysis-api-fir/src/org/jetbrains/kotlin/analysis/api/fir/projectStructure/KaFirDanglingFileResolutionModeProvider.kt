@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.psi.psiUtil.textRangeWithoutComments
 import org.jetbrains.kotlin.psi.stubs.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 
 /**
  * Calculates [KaDanglingFileResolutionMode] for the given [KtFile] based purely on its content.
@@ -52,7 +53,6 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
  * Otherwise, returns [KaDanglingFileResolutionMode.IGNORE_SELF].
  */
 internal class KaFirDanglingFileResolutionModeProvider : KaDanglingFileResolutionModeProvider {
-    @OptIn(KtImplementationDetail::class)
     override fun calculateMode(file: KtFile): KaDanglingFileResolutionMode {
         return file.getOrComputeMode {
             computeModeNonCached(file)
@@ -130,16 +130,18 @@ internal class KaFirDanglingFileResolutionModeProvider : KaDanglingFileResolutio
      *
      * @see getFlatTopLevelStubList
      */
-    private fun StubElement<*>.shouldAddChild(child: StubElement<*>): Boolean {
-        return when (this) {
-            // Ignore everything in accessors, this will be handled by the PSI check
-            is KotlinPropertyAccessorStub -> false
+    private fun StubElement<*>.shouldAddChild(child: StubElement<*>): Boolean = when (this) {
+        // Ignore everything in accessors, this will be handled by the PSI check
+        is KotlinPropertyAccessorStub -> false
+        is KotlinCallableStubBase<*> ->
             // Ignore nested classes / callables in callable stubs
-            is KotlinCallableStubBase<*> -> child !is KotlinCallableStubBase<*> && child !is KotlinClassifierStub
-            // Ignore everything in class initializers
-            is KotlinPlaceHolderStub<*> if elementType == KtStubElementTypes.CLASS_INITIALIZER -> false
-            else -> true
-        }
+            child !is KotlinCallableStubBase<*> && child !is KotlinClassifierStub &&
+                    // Ignore expressions since they hold initializers/body expressions
+                    child.elementType !in KtTokenSets.CONSTANT_EXPRESSIONS
+
+        // Ignore everything in class initializers
+        is KotlinPlaceHolderStub<*> if elementType == KtStubElementTypes.CLASS_INITIALIZER -> false
+        else -> true
     }
 
     @OptIn(KtImplementationDetail::class)

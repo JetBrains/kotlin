@@ -105,6 +105,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=XXX.a12, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a12]
         TYPE_REFERENCE
           NULLABLE_TYPE
@@ -117,6 +118,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=XXX.a13, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a13]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE
@@ -333,6 +335,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=YYY.a12, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a12]
         TYPE_REFERENCE
           NULLABLE_TYPE
@@ -345,6 +348,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=YYY.a13, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a13]
         MODIFIER_LIST[abstract]
         TYPE_REFERENCE

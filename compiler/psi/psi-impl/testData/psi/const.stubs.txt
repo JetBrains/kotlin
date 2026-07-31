@@ -6,3 +6,4 @@ FILE[kind=File[packageFqName=test]]
     CLASS_BODY
       PROPERTY[fqName=test.Const.inObject, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=inObject]
         MODIFIER_LIST[private const]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]

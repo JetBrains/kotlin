@@ -34,6 +34,7 @@ MultifileClass.kt:
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
     FUN[fqName=test.p1FunWithParams, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1FunWithParams]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -47,6 +48,7 @@ MultifileClass.kt:
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
     PROPERTY[fqName=test.p1ExtVal, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p1ExtVal]
       TYPE_REFERENCE
         USER_TYPE
@@ -56,10 +58,12 @@ MultifileClass.kt:
           REFERENCE_EXPRESSION[referencedName=Int]
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
     PROPERTY[fqName=test.p1Var, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=p1Var]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
     PROPERTY[fqName=test.annotatedConstVal, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=annotatedConstVal]
       MODIFIER_LIST[const]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Deprecated]
@@ -71,6 +75,7 @@ MultifileClass.kt:
             VALUE_ARGUMENT[isSpread=false]
               STRING_TEMPLATE
                 LITERAL_STRING_TEMPLATE_ENTRY[text=deprecated]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
 
 
 MultifileClass__Part.kt:
@@ -108,6 +113,7 @@ MultifileClass__Part.kt:
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
     PROPERTY[fqName=test.p3ExtVal, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p3ExtVal]
       TYPE_REFERENCE
         USER_TYPE
@@ -117,6 +123,7 @@ MultifileClass__Part.kt:
           REFERENCE_EXPRESSION[referencedName=Int]
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
 
 
 part.kt:
@@ -154,6 +161,7 @@ part.kt:
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
     PROPERTY[fqName=test.p2ExtVal, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p2ExtVal]
       TYPE_REFERENCE
         USER_TYPE
@@ -163,3 +171,4 @@ part.kt:
           REFERENCE_EXPRESSION[referencedName=Int]
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]

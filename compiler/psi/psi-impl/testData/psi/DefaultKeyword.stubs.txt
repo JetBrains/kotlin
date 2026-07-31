@@ -16,6 +16,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DefaultKeywordKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
   CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=/B.A, fqName=B.A, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=A, superNames=[]]
