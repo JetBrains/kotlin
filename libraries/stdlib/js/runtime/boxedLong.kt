@@ -255,7 +255,6 @@ internal fun Long.multiply(other: Long): Long {
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
 internal fun Long.divide(other: Long): Long {
-    if (other.isZero()) throw ArithmeticException("/ by zero")
     // JS Long paper, Section VI, Algorithm 7, specialized to get the quotient
 
     val thisHigh = this.high
