@@ -15,6 +15,7 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.Param
 import org.jetbrains.dokka.model.doc.See
 import org.jetbrains.dokka.model.doc.Text
+import utils.OnlyJavaPsi
 import utils.OnlyJavaSymbols
 import utils.assertContains
 import utils.assertNotNull
@@ -849,6 +850,36 @@ class JavaTest : BaseAbstractTest() {
                     )
                     assertEquals(expectedDRI, this.type.driOrNull)
                 }
+            }
+        }
+    }
+
+    @Test
+    @OnlyJavaPsi("Experimental Java analysis by symbols intentionally displays unmapped Java types, see #4564")
+    fun `java members inherited into a kotlin class should have kotlin types`() {
+        testInline(
+            """
+            |/src/test/Parent.java
+            |package test;
+            |public class Parent {
+            |    public String s = null;
+            |    public int i = 0;
+            |    public Integer integer = null;
+            |    public Integer method() { return null; }
+            |}
+            |
+            |/src/test/Child.kt 
+            |package test
+            |class Child : Parent()
+            """.trimIndent(), configuration
+        ) {
+            documentablesTransformationStage = { module ->
+                val child = module / "test" / "Child"
+
+                (child / "s").cast<DProperty>().type.driOrNull equals DRI("kotlin", "String")
+                (child / "i").cast<DProperty>().type.driOrNull equals DRI("kotlin", "Int")
+                (child / "integer").cast<DProperty>().type.driOrNull equals DRI("kotlin", "Int")
+                (child / "method").cast<DFunction>().type.driOrNull equals DRI("kotlin", "Int")
             }
         }
     }
