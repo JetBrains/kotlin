@@ -208,7 +208,7 @@ internal class HairToBitcode(
             else LLVMBuildFRem(builder, node.lhs.value(), node.rhs.value(), "")!!
         }
 
-        override fun visitNeg(node: Neg): LLVMValueRef = emit { LLVMBuildNeg(builder, node.value(), "")!! }
+        override fun visitNeg(node: Neg): LLVMValueRef = emit { LLVMBuildNeg(builder, node.operand.value(), "")!! }
 
         override fun visitAnd(node: And): LLVMValueRef = emit { and(node.lhs.value(), node.rhs.value()) }
         override fun visitOr(node: Or): LLVMValueRef = emit { or(node.lhs.value(), node.rhs.value()) }

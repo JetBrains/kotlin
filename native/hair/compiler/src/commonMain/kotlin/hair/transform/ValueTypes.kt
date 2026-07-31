@@ -58,7 +58,7 @@ private fun ValueNode.typeRule(): HairType? = when (this) {
 
     is AnyNew -> HairType.REFERENCE
 
-    is IsInstanceOf -> HairType.INT
+    is IsInstanceOf -> HairType.BOOLEAN
     is CheckCast -> HairType.REFERENCE
 
     is TypeInfo -> HairType.REFERENCE

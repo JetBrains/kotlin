@@ -46,9 +46,6 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.isUnsignedArray
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-
-internal fun IrSimpleFunction.shouldGenerateBody(): Boolean = modality != Modality.ABSTRACT && !isExternal
-
 private fun IrCall.isVirtual(): Boolean = superQualifierSymbol?.owner == null && symbol.owner.isOverridable
 
 internal val GenerateHairPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment, Map<IrFunction, FunctionCompilation>>(
