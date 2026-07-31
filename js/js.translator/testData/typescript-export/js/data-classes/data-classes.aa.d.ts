@@ -145,6 +145,19 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => WithIgnoredPrimaryAndHiddenCopyWithoutSecondary;
             }
         }
+        class OnlyExportSupported {
+            private constructor();
+            equals(other: Nullable<any>): boolean;
+            hashCode(): number;
+            toString(): string;
+            get text(): string;
+        }
+        namespace OnlyExportSupported {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => OnlyExportSupported;
+            }
+        }
     }
 }
 
