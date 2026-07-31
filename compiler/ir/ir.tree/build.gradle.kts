@@ -12,6 +12,7 @@ plugins {
 dependencies {
     implementation(project(":core:descriptors"))
     api(project(":compiler:frontend.common"))
+    implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:util"))
     testFixturesImplementation(project(":core:descriptors"))
 

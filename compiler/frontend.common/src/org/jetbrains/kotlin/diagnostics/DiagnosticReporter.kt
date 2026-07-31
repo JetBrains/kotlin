@@ -19,6 +19,61 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
  */
 interface DiagnosticBaseContext {
     val languageVersionSettings: LanguageVersionSettings
+
+    val extraSourceToDiagnosticInstanceMapper: KtSourceToDiagnosticInstanceMapper?
+        get() = null
+}
+
+interface KtSourceToDiagnosticInstanceMapper {
+    fun createDiagnostic0(
+        element: AbstractKtSourceElement,
+        severity: Severity,
+        factory: KtDiagnosticFactory0,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext,
+    ): KtSimpleDiagnostic
+
+    fun <A> createDiagnostic1(
+        element: AbstractKtSourceElement,
+        severity: Severity,
+        factory: KtDiagnosticFactory1<A>,
+        a: A,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext,
+    ): KtDiagnosticWithParameters1<A>
+
+    fun <A, B> createDiagnostic2(
+        element: AbstractKtSourceElement,
+        severity: Severity,
+        factory: KtDiagnosticFactory2<A, B>,
+        a: A,
+        b: B,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext,
+    ): KtDiagnosticWithParameters2<A, B>
+
+    fun <A, B, C> createDiagnostic3(
+        element: AbstractKtSourceElement,
+        severity: Severity,
+        factory: KtDiagnosticFactory3<A, B, C>,
+        a: A,
+        b: B,
+        c: C,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext,
+    ): KtDiagnosticWithParameters3<A, B, C>
+
+    fun <A, B, C, D> createDiagnostic4(
+        element: AbstractKtSourceElement,
+        severity: Severity,
+        factory: KtDiagnosticFactory4<A, B, C, D>,
+        a: A,
+        b: B,
+        c: C,
+        d: D,
+        positioningStrategy: AbstractSourceElementPositioningStrategy,
+        context: DiagnosticBaseContext,
+    ): KtDiagnosticWithParameters4<A, B, C, D>
 }
 
 interface DiagnosticContext : DiagnosticBaseContext {

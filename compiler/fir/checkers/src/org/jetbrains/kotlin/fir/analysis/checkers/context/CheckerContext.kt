@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtSourceToDiagnosticInstanceMapper
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirInlineBodyResolvableExpressionChecker
+import org.jetbrains.kotlin.fir.builder.sourceToDiagnosticInstanceMapper
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
@@ -87,6 +89,9 @@ abstract class CheckerContext : DiagnosticContext, SessionAndScopeSessionHolder 
 
     override val containingFile: KtSourceFile?
         get() = containingFileSymbol?.sourceFile
+
+    override val extraSourceToDiagnosticInstanceMapper: KtSourceToDiagnosticInstanceMapper?
+        get() = session.sourceToDiagnosticInstanceMapper
 }
 
 /**

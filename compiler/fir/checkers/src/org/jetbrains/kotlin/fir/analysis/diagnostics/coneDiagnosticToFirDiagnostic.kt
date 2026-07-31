@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.projectionKindAsString
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirDynamicUnsupportedChecker
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
+import org.jetbrains.kotlin.fir.builder.sourceToDiagnosticInstanceMapper
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -1155,6 +1156,9 @@ private fun FirSession.toDiagnosticContext(): DiagnosticBaseContext {
     ) : DiagnosticBaseContext, SessionHolder {
         override val languageVersionSettings: LanguageVersionSettings
             get() = session.languageVersionSettings
+
+        override val extraSourceToDiagnosticInstanceMapper: KtSourceToDiagnosticInstanceMapper?
+            get() = session.sourceToDiagnosticInstanceMapper
     }
 
     return SessionWrapper(this)
