@@ -22,7 +22,7 @@ abstract class Flow {
      * Collects all smartcast information available for [variable],
      * including smart casts from one-way aliases to it.
      *
-     * Avoid readding this information back into the [Flow] as it
+     * Avoid reading this information back into the [Flow] as it
      * will produce redundant smart casts on [variable] itself.
      * To merge flows or update the existing information, use [getTypeStatement].
      */
@@ -48,7 +48,7 @@ class PersistentFlow internal constructor(
     // in `directAliasMap`. `backwardsAliasMap` maps each representative to the rest of the set.
     internal val directAliasMap: PersistentMap<RealVariable, RealVariable>,
     private val backwardsAliasMap: PersistentMap<RealVariable, PersistentSet<RealVariable>>,
-    private val oneWayAliasMap: PersistentMap<RealVariable, PersistentSet<RealVariable>>,
+    internal val oneWayAliasMap: PersistentMap<RealVariable, PersistentSet<RealVariable>>,
 ) : Flow() {
     private val level: Int = if (previousFlow != null) previousFlow.level + 1 else 0
 

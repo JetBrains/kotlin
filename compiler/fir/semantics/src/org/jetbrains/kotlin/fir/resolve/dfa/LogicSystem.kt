@@ -172,6 +172,13 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
                 addLocalVariableAlias(this, from, to)
             }
         }
+        for ([to, froms] in flows.first().oneWayAliasMap) {
+            for (from in froms) {
+                if (flows.all { it.oneWayAliasMap[to]?.contains(from) == true }) {
+                    addOneWayAlias(this, from, to)
+                }
+            }
+        }
     }
 
     private fun MutableFlow.copyNonConflictingAliases(flows: Collection<PersistentFlow>, commonFlow: PersistentFlow) {
@@ -281,6 +288,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
                     when {
                         replacementOrNext != null -> oneWayAliasMap[anotherVariable] = withoutSelf.adding(replacementOrNext)
                         withoutSelf.isNotEmpty() -> oneWayAliasMap[anotherVariable] = withoutSelf
+                        else -> oneWayAliasMap.remove(anotherVariable)
                     }
                 }
             }
