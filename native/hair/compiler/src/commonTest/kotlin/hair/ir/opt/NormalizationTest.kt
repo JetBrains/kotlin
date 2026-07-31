@@ -682,8 +682,8 @@ class NormalizationTest : IrTest {
         buildInitialIR {
             val thr = Throw(Const(value)) as Throw
             val unwind = Unwind(thr)
-            BlockEntry(unwind)
-            val catch = Catch(unwind)
+            val handler = BlockEntry(unwind) as BlockEntry
+            val catch = Catch(handler)
             Return(catch)
         }
         val ret = allNodes<Return>().single()

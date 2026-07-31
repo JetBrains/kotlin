@@ -8,7 +8,7 @@ abstract class NodeVisitor<R> {
     open fun visitUse(node: Use): R = visitBlockBody(node)
     open fun visitNoValue(node: NoValue): R = visitNode(node)
     open fun visitUnitValue(node: UnitValue): R = visitNode(node)
-    open fun visitStaticInit(node: StaticInit): R = visitBlockBody(node)
+    open fun visitStaticInit(node: StaticInit): R = visitBlockBodyWithException(node)
     open fun visitGlobalInit(node: GlobalInit): R = visitStaticInit(node)
     open fun visitThreadLocalInit(node: ThreadLocalInit): R = visitStaticInit(node)
     open fun visitStandaloneThreadLocalInit(node: StandaloneThreadLocalInit): R = visitStaticInit(node)

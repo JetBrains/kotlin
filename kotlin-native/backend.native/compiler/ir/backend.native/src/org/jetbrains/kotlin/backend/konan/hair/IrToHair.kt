@@ -461,11 +461,26 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                     }
 
                     override fun visitTry(aTry: IrTry, data: Unit): Node {
-                        notImplemented(HairTODO.EXCEPTIONS)
+                        require(aTry.finallyExpression == null) { "HaIR: finally blocks must be lowered before HaIR generation" }
+
+                        return tryCatch(tryBody = {
+                            aTry.tryResult.accept(this, Unit)
+                        }, catches = aTry.catches.map { irCatch ->
+                            // FIXME can the type be null?
+                            val catchType = irCatch.catchParameter.type.getClass()!!.let { HairClassImpl(it) }
+                            val catchBuilder: CatchBuilder = { exception ->
+                                AssignVar(irCatch.catchParameter.symbol)(exception)
+                                irCatch.accept(this, Unit)
+                            }
+                            catchType to catchBuilder
+                        })
                     }
 
                     override fun visitThrow(expression: IrThrow, data: Unit): Node {
-                        notImplemented(HairTODO.EXCEPTIONS)
+                        val exceptionValue = expression.value.accept(this, Unit)
+                        Throw(exceptionValue) as Throw
+                        unreachable()
+                        return NoValue()
                     }
                 }, Unit)
             }

@@ -107,8 +107,20 @@ internal class HairToBitcode(
                 deferredPhies += phi
                 nodeValues[phi] = fgc.phi(phi.valueType.asLLVMType(), "phi_${phi.id}")
             }
+            // Landing pad: handler blocks have Unwind predecessors. Emit landingpad + extract exception.
+            if (node.preds.any { it is Unwind }) {
+                val exception = fgc.catchKotlinException()
+                for (catch in node.uses.filterIsInstance<Catch>()) {
+                    nodeValues[catch] = exception
+                }
+            }
             return null
         }
+
+        override fun visitCatch(node: Catch): LLVMValueRef =
+                nodeValues[node]!! // value set by visitBlockEntry when the handler block is entered
+
+        override fun visitUnwind(node: Unwind): LLVMValueRef? = null
 
         override fun visitGoto(node: Goto): LLVMValueRef? = emit {
             val bb = basicBlock("blockExit_${node.id}", null)
@@ -156,6 +168,23 @@ internal class HairToBitcode(
 
         override fun visitUnreachable(node: Unreachable): LLVMValueRef? = emit { unreachable() }
         override fun visitHalt(node: Halt): LLVMValueRef? = emit { unreachable() }
+
+        private fun <T> emitThrowing(node: Throwing, block: FunctionGenerationContext.(ExceptionHandler) -> T): T {
+            val invokeBlock = fgc.currentBlock
+            val unwind = node.unwind
+            val handler = if (unwind != null) {
+                val handlerLLVMBlock = blocks[unwind.handler] ?: error("No LLVM block for HaIR unwind handler of $node")
+                object : ExceptionHandler.Local() { override val unwind = handlerLLVMBlock }
+            } else ExceptionHandler.Caller
+            return fgc.block(handler).also {
+                if (unwind != null) blockExitBlocks[unwind] = invokeBlock
+            }
+        }
+
+        override fun visitThrow(node: Throw): LLVMValueRef? = emitThrowing(node) { handler ->
+            handler.genThrow(fgc, node.exception.value())
+            null
+        }
 
         // ---------------------------------------------------------------
         // Values
@@ -289,16 +318,16 @@ internal class HairToBitcode(
                 RuntimeInterface.throwArrayIndexOutOfBounds -> emptyList()
                 else -> error("Unexpected function $hairTarget")
             }
-            // TODO there are more things to do around the function call (EH, thread-state, …)
-            val args = node.callArgs.zip(llvmParamTypes).map { [arg, paramType] ->
-                arg.value()
-            }
-            val res = emit {
+            // TODO there are more things to do around the function call (thread-state, ...)
+            val res = emitThrowing(node) { handler ->
+                val args = node.callArgs.zip(llvmParamTypes).map { [arg, paramType] ->
+                    arg.value()
+                }
                 call(
                         llvmCallable = llvmTarget,
                         args = args,
                         resultLifetime = Lifetime.GLOBAL,
-                        exceptionHandler = ExceptionHandler.Caller, // FIXME proper exception handling
+                        exceptionHandler = handler,
                 )
             }
             // TODO what about Unit returns?
@@ -410,19 +439,16 @@ internal class HairToBitcode(
         // ---------------------------------------------------------------
         // Static initializers
 
-        override fun visitGlobalInit(node: GlobalInit): LLVMValueRef = emit {
-            // TODO proper exception handler
-            genFileGlobalInitializerCall((node.initRoutine as HairStaticInitializerImpl).irFunction, ExceptionHandler.Caller)
+        override fun visitGlobalInit(node: GlobalInit): LLVMValueRef = emitThrowing(node) { handler ->
+            genFileGlobalInitializerCall((node.initRoutine as HairStaticInitializerImpl).irFunction, handler)
         }
 
-        override fun visitThreadLocalInit(node: ThreadLocalInit): LLVMValueRef = emit {
-            // TODO proper exception handler
-            genFileThreadLocalInitializerCall((node.initRoutine as HairStaticInitializerImpl).irFunction, ExceptionHandler.Caller)
+        override fun visitThreadLocalInit(node: ThreadLocalInit): LLVMValueRef = emitThrowing(node) { handler ->
+            genFileThreadLocalInitializerCall((node.initRoutine as HairStaticInitializerImpl).irFunction, handler)
         }
 
-        override fun visitStandaloneThreadLocalInit(node: StandaloneThreadLocalInit): LLVMValueRef = emit {
-            // TODO proper exception handler
-            genFileStandaloneThreadLocalInitializerCall((node.initRoutine as HairStaticInitializerImpl).irFunction, ExceptionHandler.Caller)
+        override fun visitStandaloneThreadLocalInit(node: StandaloneThreadLocalInit): LLVMValueRef = emitThrowing(node) { handler ->
+            genFileStandaloneThreadLocalInitializerCall((node.initRoutine as HairStaticInitializerImpl).irFunction, handler)
         }
     }
 

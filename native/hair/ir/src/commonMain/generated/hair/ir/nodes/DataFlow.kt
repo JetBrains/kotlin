@@ -115,11 +115,11 @@ class Param internal constructor(form: Form) : NodeBase(form, listOf()), ValueNo
 }
 
 
-class Catch internal constructor(form: Form, unwind: Node?) : NodeBase(form, listOf(unwind)) {
-    val unwindIndex: Int = 0
+class Catch internal constructor(form: Form, block: BlockEntry?) : NodeBase(form, listOf(block)), ValueNode {
+    val blockIndex: Int = 0
     
     override fun paramName(index: Int): String = when (index) {
-        0 -> "unwind"
+        0 -> "block"
         else -> error("Unexpected arg index: $index")
     }
     

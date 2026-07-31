@@ -103,4 +103,8 @@ class HairCodegenTest : AbstractNativeSimpleTest() {
     @Test fun intArrayGetSet() = runHairTest("arrays/intArrayGetSet.kt")
     @Test fun longArrayGetSet() = runHairTest("arrays/longArrayGetSet.kt")
     @Test fun referenceArrayGetSet() = runHairTest("arrays/referenceArrayGetSet.kt")
+
+    // Exceptions
+    @Test fun tryCatch() = runHairTest("exceptions/tryCatch.kt")
+    @Test fun tryCatchExpression() = runHairTest("exceptions/tryCatchExpression.kt")
 }

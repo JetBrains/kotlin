@@ -162,7 +162,7 @@ context(nodeBuilder: NodeBuilder)
 fun Param(index: Int): Param = ParamForm(index)()
 
 context(nodeBuilder: NodeBuilder)
-fun Catch(unwind: Node?): Node = nodeBuilder.onNodeBuilt(Catch(nodeBuilder.session.catchForm, unwind))
+fun Catch(block: BlockEntry?): Node = nodeBuilder.onNodeBuilt(Catch(nodeBuilder.session.catchForm, block))
 
 context(nodeBuilder: NodeBuilder)
 private fun ConstForm(value: Number): Const.Form = Const.Form(nodeBuilder.session.constMetaForm, value).ensureFormUniq()

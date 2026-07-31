@@ -37,6 +37,7 @@ object DataFlow : ModelDSL() {
     }
 
     val catch by node {
-        param("unwind")
+        interfaces(valueNode)
+        param("block", ControlFlow.blockEntry)
     }
 }
