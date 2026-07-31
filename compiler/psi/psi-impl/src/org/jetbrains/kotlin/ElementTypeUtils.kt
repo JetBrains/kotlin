@@ -12,10 +12,6 @@ import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.stubs.elements.KtClassLiteralExpressionElementType
-import org.jetbrains.kotlin.psi.stubs.elements.KtCollectionLiteralExpressionElementType
-import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
-import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.util.getSingleChildOrNull
 
@@ -52,10 +48,6 @@ object ElementTypeUtils {
     fun LighterASTNode.isExpression(): Boolean {
         return when (val tokenType = this.tokenType) {
             is KtNodeType,
-            is KtConstantExpressionElementType,
-            is KtStringTemplateExpressionElementType,
-            is KtClassLiteralExpressionElementType,
-            is KtCollectionLiteralExpressionElementType,
             LAMBDA_EXPRESSION,
                 -> true
             is KtStubElementType<*, *> -> tokenType.isExpression

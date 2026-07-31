@@ -94,16 +94,20 @@ public interface KtStubElementTypes {
             new KtPlaceHolderStubElementType<>("FUNCTION_TYPE_RECEIVER", KtFunctionTypeReceiver.class);
 
     @NotNull KtNameReferenceExpressionElementType REFERENCE_EXPRESSION = new KtNameReferenceExpressionElementType("REFERENCE_EXPRESSION");
-    @NotNull KtDotQualifiedExpressionElementType DOT_QUALIFIED_EXPRESSION = new KtDotQualifiedExpressionElementType("DOT_QUALIFIED_EXPRESSION");
-    @NotNull KtPlaceHolderStubElementType<KtCallExpression> CALL_EXPRESSION = KtCallExpressionElementType.INSTANCE;
+    @NotNull KtPlaceHolderStubElementType<KtDotQualifiedExpression> DOT_QUALIFIED_EXPRESSION =
+            new KtPlaceHolderStubElementType<>("DOT_QUALIFIED_EXPRESSION", KtDotQualifiedExpression.class);
+    @NotNull KtPlaceHolderStubElementType<KtCallExpression> CALL_EXPRESSION =
+            new KtPlaceHolderStubElementType<>("CALL_EXPRESSION", KtCallExpression.class);
     @NotNull KtOperationReferenceExpressionElementType OPERATION_REFERENCE = KtOperationReferenceExpressionElementType.INSTANCE;
 
-    @NotNull KtUnaryExpressionElementType<KtPrefixExpression> PREFIX_EXPRESSION =
-            new KtUnaryExpressionElementType<>("PREFIX_EXPRESSION", KtPrefixExpression.class);
-    @NotNull KtUnaryExpressionElementType<KtPostfixExpression> POSTFIX_EXPRESSION =
-            new KtUnaryExpressionElementType<>("POSTFIX_EXPRESSION", KtPostfixExpression.class);
-    @NotNull KtPlaceHolderStubElementType<KtBinaryExpression> BINARY_EXPRESSION = KtBinaryExpressionElementType.INSTANCE;
-    @NotNull KtPlaceHolderStubElementType<KtParenthesizedExpression> PARENTHESIZED = KtParenthesizedExpressionElementType.INSTANCE;
+    @NotNull KtPlaceHolderStubElementType<KtPrefixExpression> PREFIX_EXPRESSION =
+            new KtPlaceHolderStubElementType<>("PREFIX_EXPRESSION", KtPrefixExpression.class);
+    @NotNull KtPlaceHolderStubElementType<KtPostfixExpression> POSTFIX_EXPRESSION =
+            new KtPlaceHolderStubElementType<>("POSTFIX_EXPRESSION", KtPostfixExpression.class);
+    @NotNull KtPlaceHolderStubElementType<KtBinaryExpression> BINARY_EXPRESSION =
+            new KtPlaceHolderStubElementType<>("BINARY_EXPRESSION", KtBinaryExpression.class);
+    @NotNull KtPlaceHolderStubElementType<KtParenthesizedExpression> PARENTHESIZED =
+            new KtPlaceHolderStubElementType<>("PARENTHESIZED", KtParenthesizedExpression.class);
 
     @NotNull KtEnumEntrySuperClassReferenceExpressionElementType ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION =
             new KtEnumEntrySuperClassReferenceExpressionElementType("ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION");
@@ -159,7 +163,7 @@ public interface KtStubElementTypes {
     @NotNull KtCollectionLiteralExpressionElementType COLLECTION_LITERAL_EXPRESSION = new KtCollectionLiteralExpressionElementType("COLLECTION_LITERAL_EXPRESSION");
 
     @NotNull KtPlaceHolderStubElementType<KtStringTemplateExpression> STRING_TEMPLATE =
-            new KtStringTemplateExpressionElementType("STRING_TEMPLATE");
+            new KtPlaceHolderStubElementType<>("STRING_TEMPLATE", KtStringTemplateExpression.class);
 
     @NotNull KtBlockStringTemplateEntryElementType LONG_STRING_TEMPLATE_ENTRY =
             new KtBlockStringTemplateEntryElementType("LONG_STRING_TEMPLATE_ENTRY");
