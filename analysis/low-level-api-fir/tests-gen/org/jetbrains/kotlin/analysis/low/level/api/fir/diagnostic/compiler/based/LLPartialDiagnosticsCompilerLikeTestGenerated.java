@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/low-level-api-fir/testData/compilerLikeAnalysis")
 @TestDataPath("$PROJECT_ROOT")
-public class LLPartialDiagnosticsTestGenerated extends AbstractLLPartialDiagnosticsTest {
+public class LLPartialDiagnosticsCompilerLikeTestGenerated extends AbstractLLPartialDiagnosticsTest {
   private void run(String fileName) {
     runTest("analysis/low-level-api-fir/testData/compilerLikeAnalysis/" + fileName);
   }
