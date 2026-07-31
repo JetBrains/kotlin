@@ -74,6 +74,8 @@ AnalysisApi:
     - "analysis/**"
     - "compiler/psi/**"
     - "prepare/analysis-api/**"
+    - "plugins/plugin-sandbox/**"
+    - "plugins/scripting/**"
   exclude:
     - "compiler/psi/parser/**"
   fullyAffectedBy:
@@ -125,6 +127,7 @@ IntelliJ:
     - AnalysisApi
     - CoreLibs
     - BuildToolsApi # small set of BTA tests, opportunity for optimizations.
+    - CompilerPlugins
 
 BuildInfrastructure:
   include:
