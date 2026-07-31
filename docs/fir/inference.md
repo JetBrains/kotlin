@@ -238,8 +238,7 @@ If the new constraint has a form of `Tv <: SomeType`, for each other type variab
 for each such constraint `Fv <: OtherType<..Tv..>`, we make a tricky substitution of `Tv` inside `OtherType<..>` with some approximation of
 `SomeType` which would give a new **correct** initial constraint.
 
-- In a simple case of `Fv <: Tv`, we would add `Fv <: SomeType`.
-- In more complex `Fv <: Inv<Tv>`, it would be `Fv <: Inv<out SomeType>`.
+For example, `Fv <: Inv<Tv>`, it would be `Fv <: Inv<out SomeType>`.
 
 For more details, see `org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintIncorporator.insideOtherConstraint`
 
