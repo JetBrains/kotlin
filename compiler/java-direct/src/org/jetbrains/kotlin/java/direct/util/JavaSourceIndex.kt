@@ -66,10 +66,9 @@ internal fun extractFileInfoLightweight(file: File): LightweightFileInfo? {
         val name = StringBuilder()
         advance()
         loop@ while (!end() && !at(JavaSyntaxTokenType.SEMICOLON)) {
-            val type = lexer.getTokenType()
-            when {
-                type == JavaSyntaxTokenType.IDENTIFIER || type == JavaSyntaxTokenType.DOT -> name.append(lexer.getTokenText())
-                type == SyntaxTokenTypes.WHITE_SPACE || type in JavaSyntaxDefinition.comments -> Unit
+            when (lexer.getTokenType()) {
+                JavaSyntaxTokenType.IDENTIFIER, JavaSyntaxTokenType.DOT -> name.append(lexer.getTokenText())
+                SyntaxTokenTypes.WHITE_SPACE, in JavaSyntaxDefinition.comments -> Unit
                 else -> break@loop
             }
             advance()
