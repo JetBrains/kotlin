@@ -2,5 +2,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] companionExtensions.kt
     public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/String|.foo(): R|kotlin/Unit| { LAZY_BLOCK }
     public final static [ResolvedTo(BODY_RESOLVE)] val [ResolvedTo(BODY_RESOLVE)] R|kotlin/Int|.bar: R|kotlin/Int| = Int(1)
         public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final static [ResolvedTo(CONTRACTS)] val [ResolvedTo(CONTRACTS)] R|kotlin/Int|.baz: <implicit>
-        public static [ResolvedTo(CONTRACTS)] get(): <implicit> { LAZY_BLOCK }
+    public final static [ResolvedTo(BODY_RESOLVE)] val [ResolvedTo(BODY_RESOLVE)] R|kotlin/Int|.baz: R|kotlin/Int|
+        public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+            ^ Int(1)
+        }

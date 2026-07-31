@@ -13,8 +13,10 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] companionBlocks.kt
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] val bar: R|kotlin/Int| = Int(1)
             public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|kotlin/Int|
 
-        public final static [ResolvedTo(CONTRACTS)] [ContainingClassKey=C] val baz: <implicit>
-            public static [ResolvedTo(CONTRACTS)] [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] val baz: R|kotlin/Int|
+            public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|kotlin/Int| {
+                ^ Int(2)
+            }
 
         public final [ResolvedTo(BODY_RESOLVE)] val member2: R|kotlin/Int| = Int(1)
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|kotlin/Int|

@@ -32,8 +32,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] callInitializers.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun expressionBodyParenthesizedCall(): R|kotlin/Int| {
         ^expressionBodyParenthesizedCall R|/compute|()
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val getterCall: R|kotlin/Int|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] val getterCall: R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+            ^ R|/compute|()
+        }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withCallDefault([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class WithConstructorCallDefault : R|kotlin/Any| {
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=WithConstructorCallDefault] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/WithConstructorCallDefault.value] value: R|kotlin/Int| = LAZY_EXPRESSION): R|WithConstructorCallDefault| {
