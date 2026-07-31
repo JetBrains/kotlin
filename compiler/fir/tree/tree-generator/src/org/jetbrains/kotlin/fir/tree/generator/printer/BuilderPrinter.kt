@@ -31,7 +31,7 @@ internal class BuilderPrinter(
 
     override fun ImportCollectingPrinter.printFieldReferenceInImplementationConstructorCall(field: Field) {
         print(field.name)
-        if (field is ListField && field.isMutableOrEmptyList) {
+        if (field is ListField && field.isMutableOrEmptyList && !field.isAssignableList) {
             addImport(toMutableOrEmptyImport)
             print(".toMutableOrEmpty()")
         }

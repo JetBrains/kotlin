@@ -36,6 +36,24 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-31 — Lazy enum-entry annotations without the fragile mutable list
+- **Change**: the previous schema let `FirLazyJavaAnnotationMutableList` sit in
+  `FirEnumEntryImpl`'s `MutableOrEmptyList` slot, and depended on nothing but `isEmpty` being
+  called before the list materialised. Instead `FirEnumEntryImpl.annotations` is now a plain
+  `var annotations: List<FirAnnotation>` whose `replace` installs the given list as is, so
+  `FirJavaFacade` can install a `FirLazyJavaAnnotationList` (same class the members use) via
+  `replaceAnnotations` after `buildEnumEntry`. The only cost is `transformAnnotations`, which
+  maps into a new list instead of transforming in place.
+- **Files**: `fir-jvm/.../FirJavaFacade.kt`, `fir-jvm/.../enhancement/FirJavaAnnotationList.kt`
+  (−29, `FirLazyJavaAnnotationMutableList` deleted); FIR tree generator: new
+  `ListField.isAssignableList` + `useAssignableList("annotations")` on `impl(enumEntry)`;
+  `FirEnumEntryImpl`/`FirEnumEntryBuilder` regenerated. The builder-side `var`-list support in
+  `generators/tree-generator-common` is reverted — those files are identical to master again.
+- **Tests**: box + phased green (2795 executed, 0 failures, 0 errors); `JavaParsingTest` and
+  `JavaCycleBreakerTest` green; both regression gates green
+  (`PhasedJvmDiagnosticLightTreeTestGenerated.*`, `*CompileKotlinAgainstKotlin*`).
+- **Result**: green; enum entries and members now share one lazy annotation list class.
+
 ### 2026-07-31 — Delete `JavaSupertypeGraph`: the duplicated supertype-reference resolver was test-only
 - **Change**: answers the reviewer's standing objection to `resolveSupertypeReference` ("we partly
   repeat type resolution logic here"). `JavaSupertypeGraph` re-derived import lookup, star-import

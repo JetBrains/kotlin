@@ -70,35 +70,6 @@ class FirLazyJavaAnnotationList(
     val isInitialized: Boolean get() = lazyFirAnnotations.isInitialized()
 }
 
-/**
- * A lazy annotation list for FIR nodes that store annotations in a [org.jetbrains.kotlin.fir.MutableOrEmptyList] slot
- * (e.g. Java enum entries, KT-74097). [isEmpty] is cheap, so `toMutableOrEmpty()` in builders can probe it
- * without forcing the conversion.
- */
-class FirLazyJavaAnnotationMutableList(
-    annotationOwner: JavaAnnotationOwner,
-    ownerModuleData: FirModuleData,
-) : AbstractMutableList<FirAnnotation>(), FirJavaAnnotationList {
-    private val lazyList = FirLazyJavaAnnotationList(annotationOwner, ownerModuleData)
-
-    private val lazyMutableList: Lazy<MutableList<FirAnnotation>> = lazy(LazyThreadSafetyMode.PUBLICATION) {
-        lazyList.toMutableList()
-    }
-
-    private val delegate: MutableList<FirAnnotation> by lazyMutableList
-
-    override fun isEmpty(): Boolean = if (lazyMutableList.isInitialized()) delegate.isEmpty() else lazyList.isEmpty()
-
-    override val size: Int get() = delegate.size
-    override fun get(index: Int): FirAnnotation = delegate[index]
-    override fun set(index: Int, element: FirAnnotation): FirAnnotation = delegate.set(index, element)
-    override fun add(index: Int, element: FirAnnotation) {
-        delegate.add(index, element)
-    }
-
-    override fun removeAt(index: Int): FirAnnotation = delegate.removeAt(index)
-}
-
 object FirEmptyJavaAnnotationList : FirJavaAnnotationList, AbstractList<FirAnnotation>() {
     override val size: Int get() = 0
     override fun isEmpty(): Boolean = true

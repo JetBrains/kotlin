@@ -217,8 +217,8 @@ test regresses:
   class-existence probe `tryResolve` in `JavaTypeResolver.kt` is layered directly on top of it).
   - **Why the guard survives lazy annotations (reviewer Q on `JavaCycleBreakerTest`, KT-74097).**
     All Java annotations reachable while `FirJavaClass.declarations` is materialised are now
-    deferred — members via `FirLazyJavaAnnotationList`, enum entries via
-    `FirLazyJavaAnnotationMutableList` + `FirJavaLazyDeprecationsProvider` (`FirJavaFacade.kt`).
+    deferred — members and enum entries via `FirLazyJavaAnnotationList`, enum-entry deprecations
+    additionally via `FirJavaLazyDeprecationsProvider` (`FirJavaFacade.kt`).
     That removed the only known crashing trigger (the `@Deprecated` enum constant in
     `IntelliJFullPipelineTestsGenerated.testIntellij_vcs_git`), so the guard is now genuine
     defense-in-depth — but it is **not** dead code, and the cycle class is still reachable:

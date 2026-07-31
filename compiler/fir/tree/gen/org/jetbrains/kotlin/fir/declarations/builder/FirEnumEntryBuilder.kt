@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -37,7 +36,7 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     lateinit var name: Name
     var initializer: FirExpression? = null
-    override var annotations: MutableList<FirAnnotation> = []
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var symbol: FirEnumEntrySymbol
 
     override fun build(): FirEnumEntry {
@@ -53,7 +52,7 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
             deprecationsProvider,
             name,
             initializer,
-            annotations.toMutableOrEmpty(),
+            annotations,
             symbol,
         )
     }
