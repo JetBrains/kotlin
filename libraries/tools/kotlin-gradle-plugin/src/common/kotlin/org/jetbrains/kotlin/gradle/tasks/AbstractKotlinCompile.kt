@@ -234,6 +234,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         val buildMetrics = metrics.get()
         buildMetrics.addTimeMetric(START_TASK_ACTION_EXECUTION)
         buildMetrics.measure(OUT_OF_WORKER_TASK_ACTION) {
+            val kmpJvmCompile = (this as? KotlinCompile)?.takeIf { it.multiPlatformEnabled.get() }
             buildFusService.orNull?.reportFusMetrics {
                 CompileKotlinTaskMetrics.collectMetrics(
                     name,
@@ -241,6 +242,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                     separateKmpCompilation.get(),
                     firRunnerEnabled = (this as? KotlinCompile)?.useFirRunner?.get() == true,
                     executionPolicy = compilerExecutionStrategy.get(),
+                    kmpJvmClasspathMetadataEnabled = kmpJvmCompile?.enableJvmClasspathMetadata?.get(),
+                    kmpJvmUnsafeOptimizationsEnabled = kmpJvmCompile?.enableUnsafeIncrementalCompilationForMultiplatform?.get(),
                     it
                 )
             }

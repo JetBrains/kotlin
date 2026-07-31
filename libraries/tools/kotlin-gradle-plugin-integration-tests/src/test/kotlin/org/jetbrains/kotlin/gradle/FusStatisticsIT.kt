@@ -384,6 +384,43 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @MppGradlePluginTests
+    @DisplayName("fus metrics for KMP JVM incremental compilation flags")
+    @GradleTest
+    fun testKmpJvmIncrementalCompilationFlagsMetrics(gradleVersion: GradleVersion) {
+        project("jvm-with-common", gradleVersion) {
+            assertNoErrorFilesCreated {
+                build(
+                    "compileKotlinJvm", "-Pkotlin.session.logger.root.path=$projectPath",
+                    buildOptions = defaultBuildOptions.copy(
+                        jvmClasspathMetadata = true,
+                        enableJvmUnsafeIncrementalCompilationForMultiplatform = true,
+                    ),
+                ) {
+                    assertOutputDoesNotContainFusErrors()
+                    fusStatisticsDirectory.assertFusReportContains(
+                        "KMP_JVM_CLASSPATH_METADATA_ENABLED=true",
+                        "KMP_JVM_UNSAFE_OPTIMIZATIONS_ENABLED=true",
+                    )
+                }
+
+                build(
+                    "clean", "compileKotlinJvm", "-Pkotlin.session.logger.root.path=$projectPath",
+                    buildOptions = defaultBuildOptions.copy(
+                        jvmClasspathMetadata = false,
+                        enableJvmUnsafeIncrementalCompilationForMultiplatform = false,
+                    ),
+                ) {
+                    assertOutputDoesNotContainFusErrors()
+                    fusStatisticsDirectory.assertFusReportContains(
+                        "KMP_JVM_CLASSPATH_METADATA_ENABLED=false",
+                        "KMP_JVM_UNSAFE_OPTIMIZATIONS_ENABLED=false",
+                    )
+                }
+            }
+        }
+    }
+
     @JvmGradlePluginTests
     @DisplayName("general fields with configuration cache")
     @GradleTest
