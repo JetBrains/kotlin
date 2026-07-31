@@ -1,0 +1,7 @@
+StringBox:
+  [SubstitutionOverride(DeclarationSite)]: public open override operator fun equals([EqualityBoundType=Box<*>] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /StringBox [id: 0]
+    [SubstitutionOverride(DeclarationSite)]: public open override operator fun equals([EqualityBoundType=Box<*>] other: R|kotlin/Any?|): R|kotlin/Boolean| from Substitution scope for [Use site scope of /AbstractBox] for type StringBox [id: 0]
+      [Source]: public open override operator fun equals([EqualityBoundType=Box<*>] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /AbstractBox [id: 1]
+        [SubstitutionOverride(DeclarationSite)]: public abstract override operator fun equals([EqualityBoundType=Box<*>] other: R|kotlin/Any?|): R|kotlin/Boolean| from Substitution scope for [Use site scope of /Box] for type AbstractBox<T> [id: 2]
+          [Source]: public abstract override operator fun equals([EqualityBoundType=Box<*>] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /Box [id: 3]
+            [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 4]

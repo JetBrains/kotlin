@@ -1,0 +1,21 @@
+p.S:
+  [IntersectionOverride]: public open override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/S [id: 0]
+    [IntersectionOverride]: public open override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/JavaWithWrongInheritedImpl [id: 0]
+      [Source]: public open override operator fun equals([EqualityBoundType=p/KotlinSuperIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinClassWithSuperEB [id: 1]
+        [Source]: public abstract override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinSuperIF [id: 2]
+          [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 3]
+      [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinIF [id: 4]
+        [Source]: public abstract override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinSuperIF [id: 2]
+          [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 3]
+
+p.T:
+  [SubstitutionOverride(DeclarationSite)]: public open override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/T [id: 0]
+    [SubstitutionOverride(DeclarationSite)]: public open override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Substitution scope for [Java enhancement scope for p/JavaWithWrongInheritedImplGeneric] for type p/T [id: 0]
+      [IntersectionOverride]: public open override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Java enhancement scope for p/JavaWithWrongInheritedImplGeneric [id: 1]
+        [Source]: public open override operator fun equals([EqualityBoundType=p/KotlinSuperIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinClassWithSuperEB [id: 2]
+          [Source]: public abstract override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinSuperIF [id: 3]
+            [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 4]
+        [Source]: public abstract override operator fun equals([EqualityBoundType=p/KotlinIF] other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinIF [id: 5]
+          [Source]: public abstract override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of p/KotlinSuperIF [id: 3]
+            [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 4]
+

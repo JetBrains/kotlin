@@ -1256,6 +1256,24 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val expandedType: KaType
     }
 
+    interface EqualityBoundMismatchOnInheritance : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = EqualityBoundMismatchOnInheritance::class
+        val overridingDeclaration: KaCallableSymbol
+        val overriddenDeclaration: KaCallableSymbol
+    }
+
+    interface EqualityBoundMismatchByDelegation : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = EqualityBoundMismatchByDelegation::class
+        val delegateDeclaration: KaCallableSymbol
+        val baseDeclaration: KaCallableSymbol
+    }
+
+    interface InheritedIntersectionEqualityBound : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = InheritedIntersectionEqualityBound::class
+        val declaration: KaCallableSymbol
+        val candidates: KaType
+    }
+
     interface OptInUsage : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OptInUsage::class
         val optInMarkerClassId: ClassId

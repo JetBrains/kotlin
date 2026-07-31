@@ -4349,6 +4349,14 @@ private fun KaDiagnosticConverterBuilder.addConversions97() {
             token,
         )
     }
+    add(FirErrors.EQUALITY_BOUND_MISMATCH_ON_INHERITANCE) { firDiagnostic ->
+        EqualityBoundMismatchOnInheritanceImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.CONFLICTING_UPPER_BOUNDS) { firDiagnostic ->
         ConflictingUpperBoundsImpl(
             firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a),
@@ -5792,6 +5800,14 @@ private fun KaDiagnosticConverterBuilder.addConversions126() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions127() {
+    add(FirErrors.INHERITED_INTERSECTION_EQUALITY_BOUND) { firDiagnostic ->
+        InheritedIntersectionEqualityBoundImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.OPT_IN_TO_INHERITANCE) { firDiagnostic ->
         OptInToInheritanceImpl(
             firDiagnostic.a,
@@ -5883,6 +5899,14 @@ private fun KaDiagnosticConverterBuilder.addConversions128() {
 private fun KaDiagnosticConverterBuilder.addConversions129() {
     add(FirErrors.NO_THIS) { firDiagnostic ->
         NoThisImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EQUALITY_BOUND_MISMATCH_BY_DELEGATION) { firDiagnostic ->
+        EqualityBoundMismatchByDelegationImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

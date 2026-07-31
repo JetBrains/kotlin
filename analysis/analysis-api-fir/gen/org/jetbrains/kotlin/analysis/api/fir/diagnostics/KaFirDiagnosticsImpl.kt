@@ -1511,6 +1511,27 @@ internal class EqualityBoundArgumentExpandsToNonStarProjectedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.EqualityBoundArgumentExpandsToNonStarProjected
 
+internal class EqualityBoundMismatchOnInheritanceImpl(
+    override val overridingDeclaration: KaCallableSymbol,
+    override val overriddenDeclaration: KaCallableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.EqualityBoundMismatchOnInheritance
+
+internal class EqualityBoundMismatchByDelegationImpl(
+    override val delegateDeclaration: KaCallableSymbol,
+    override val baseDeclaration: KaCallableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.EqualityBoundMismatchByDelegation
+
+internal class InheritedIntersectionEqualityBoundImpl(
+    override val declaration: KaCallableSymbol,
+    override val candidates: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.InheritedIntersectionEqualityBound
+
 internal class OptInUsageImpl(
     override val optInMarkerClassId: ClassId,
     override val message: String,

@@ -114,6 +114,8 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirNotImplementedOverrideChecker,
         FirNotImplementedOverrideSimpleEnumEntryChecker.Regular,
         FirNotImplementedOverrideSimpleEnumEntryChecker.ForExpectClass,
+        FirEqualityBoundOverrideChecker.Regular,
+        FirEqualityBoundOverrideChecker.ForExpect,
         FirThrowableSubclassChecker,
         FirOpenMemberChecker,
         FirClassVarianceChecker,

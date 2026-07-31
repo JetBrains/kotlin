@@ -543,6 +543,18 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val EQUALITY_BOUND_ARGUMENT_EXPANDS_TO_NON_STAR_PROJECTED by error<KtExpression> {
             parameter<ConeKotlinType>("expandedType")
         }
+        val EQUALITY_BOUND_MISMATCH_ON_INHERITANCE by error<KtDeclaration> {
+            parameter<FirCallableSymbol<*>>("overridingDeclaration")
+            parameter<FirCallableSymbol<*>>("overriddenDeclaration")
+        }
+        val EQUALITY_BOUND_MISMATCH_BY_DELEGATION by error<KtDeclaration> {
+            parameter<FirCallableSymbol<*>>("delegateDeclaration")
+            parameter<FirCallableSymbol<*>>("baseDeclaration")
+        }
+        val INHERITED_INTERSECTION_EQUALITY_BOUND by error<KtDeclaration> {
+            parameter<FirCallableSymbol<*>>("declaration")
+            parameter<ConeKotlinType>("candidates")
+        }
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {
