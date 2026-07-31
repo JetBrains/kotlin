@@ -20,6 +20,7 @@ import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.attributes.java.TargetJvmVersion
 import org.gradle.api.attributes.plugin.GradlePluginApiVersion
 import org.gradle.api.component.AdhocComponentWithVariants
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.JavaBasePlugin
@@ -725,27 +726,50 @@ fun Project.configureBuildToolsApiVersionForGradleCompatibility() {
     project.extra["kotlin.compiler.runViaBuildToolsApi"] = true
 }
 
-// Will allow combining outputs of multiple SourceSets
+// Shares expensive shadowing of common inputs while allowing final jars to combine multiple SourceSet outputs.
 fun Project.publishShadowedJar(
     sourceSet: SourceSet,
     commonSourceSet: SourceSet,
 ) {
     val jarTask = tasks.named<Jar>(sourceSet.jarTaskName)
+    val embeddableJarTaskName = "embeddable${sourceSet.jarTaskName.replaceFirstChar { it.uppercase() }}"
+    val internalJarsDirectory = project.layout.buildDirectory.dir("intermediates/embeddableJars")
+    val baselineShadowJarTask = if (EMBEDDABLE_BASELINE_TASK_NAME in tasks.names) {
+        tasks.named<ShadowJar>(EMBEDDABLE_BASELINE_TASK_NAME)
+    } else {
+        tasks.register<ShadowJar>(EMBEDDABLE_BASELINE_TASK_NAME) {
+            destinationDirectory.set(internalJarsDirectory)
+            archiveBaseName.set("${project.name}-embeddable-baseline")
+            addEmbeddedRuntime()
+            from(commonSourceSet.output)
 
-    val shadowJarTask = tasks.register<ShadowJar>(
-        "$EMBEDDABLE_COMPILER_TASK_NAME${sourceSet.jarTaskName.replaceFirstChar { it.uppercase() }}"
-    ) {
-        destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
-        setupPublicJar(
-            jarTask.flatMap { it.archiveBaseName },
-            jarTask.flatMap { it.archiveClassifier }
-        )
-        addEmbeddedRuntime()
+            configureEmbeddableCompilerRelocation(withJavaxInject = false)
+        }
+    }
+    val specificShadowJarTask = tasks.register<ShadowJar>("${embeddableJarTaskName}Specific") {
+        destinationDirectory.set(internalJarsDirectory)
+        archiveBaseName.set("${project.name}-${sourceSet.name}-embeddable-specific")
         addEmbeddedRuntime(sourceSet.embeddedConfigurationName)
         from(sourceSet.output)
-        from(commonSourceSet.output)
 
         configureEmbeddableCompilerRelocation(withJavaxInject = false)
+    }
+    val embeddableJarTask = tasks.register<Jar>(embeddableJarTaskName) {
+        duplicatesStrategy = DuplicatesStrategy.FAIL
+        destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
+
+        setupPublicJar(
+            baseName = jarTask.flatMap { it.archiveBaseName },
+            classifier = jarTask.flatMap { it.archiveClassifier }
+        )
+
+        from(baselineShadowJarTask.map { task -> zipTree(task.archiveFile.get()) }) {
+            exclude("META-INF/MANIFEST.MF")
+        }
+
+        from(specificShadowJarTask.map { task -> zipTree(task.archiveFile.get()) }) {
+            exclude("META-INF/MANIFEST.MF")
+        }
     }
 
     // Removing artifact produced by Jar task
@@ -761,19 +785,21 @@ fun Project.publishShadowedJar(
             .artifacts.removeAll { true }
     }
 
-    // Adding instead artifact from shadow jar task
+    // Adding instead artifact from embeddable jar task
     configurations {
         artifacts {
             if (sourceSet.name == SourceSet.MAIN_SOURCE_SET_NAME) {
-                add("${sourceSet.runtimeElementsConfigurationName}$FIXED_CONFIGURATION_SUFFIX", shadowJarTask)
-                add("${sourceSet.apiElementsConfigurationName}$FIXED_CONFIGURATION_SUFFIX", shadowJarTask)
+                add("${sourceSet.runtimeElementsConfigurationName}$FIXED_CONFIGURATION_SUFFIX", embeddableJarTask)
+                add("${sourceSet.apiElementsConfigurationName}$FIXED_CONFIGURATION_SUFFIX", embeddableJarTask)
             } else {
-                add(sourceSet.apiElementsConfigurationName, shadowJarTask)
-                add(sourceSet.runtimeElementsConfigurationName, shadowJarTask)
+                add(sourceSet.apiElementsConfigurationName, embeddableJarTask)
+                add(sourceSet.runtimeElementsConfigurationName, embeddableJarTask)
             }
         }
     }
 }
+
+private const val EMBEDDABLE_BASELINE_TASK_NAME = "embeddableBaselineJar"
 
 fun Project.addBomCheckTask() {
     val checkBomTask = tasks.register("checkGradlePluginsBom") {
@@ -913,7 +939,8 @@ fun Project.excludeGradleEmbeddedStdlibFromTestTasksRuntimeClasspath() {
     }
 }
 
-private fun Project.gradleEmbeddedStdlib(): File = (dependencies.gradleApi() as FileCollectionDependency).files.single { it.name.startsWith("kotlin-stdlib") }
+private fun Project.gradleEmbeddedStdlib(): File =
+    (dependencies.gradleApi() as FileCollectionDependency).files.single { it.name.startsWith("kotlin-stdlib") }
 
 fun Project.createGradlePluginVariants(
     commonSourceSet: SourceSet,
