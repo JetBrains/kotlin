@@ -20,6 +20,10 @@ const val concatenation: String = "a" + "b"
 const val reference: Int = int
 const val qualified: Int = test.int
 
+// A special floating point value has no literal form, so it stays a reference outside the class that declares it
+const val infinity: Double = Double.POSITIVE_INFINITY
+const val nan: Float = Float.NaN
+
 // A constant may be computed by an intrinsic call, so the source has a call where the metadata has a value
 const val intrinsicCall: String = 12.toString()
 const val intrinsicProperty: Int = "abc".length
@@ -30,6 +34,7 @@ var mutable: String = "m"
 object Holder {
     const val inObject: Int = 10
     val inferred = 11
+    const val infinityInObject: Double = Double.POSITIVE_INFINITY
 }
 
 class WithMember {
