@@ -6,6 +6,7 @@ package org.jetbrains.dokka.base.transformers.documentables
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.*
+import org.jetbrains.dokka.ExperimentalDokkaApi
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.DriOfAny
 import org.jetbrains.dokka.model.*
@@ -119,13 +120,27 @@ public class ExtensionExtractorTransformer : DocumentableTransformer {
     ): CallableExtensions? {
         val resultSet = mutableSetOf<Callable>()
 
-        fun collectFrom(element: DRI) {
-            extensionMap[element]?.let { resultSet.addAll(it) }
-            sourceSets.forEach { sourceSet -> classGraph[sourceSet]?.get(element)?.forEach { collectFrom(it) } }
+        fun collectFrom(element: DRI, isSupertype: Boolean) {
+            extensionMap[element]?.forEach { extension ->
+                // A companion extension belongs to the companion scope of its receiver type only.
+                // Such a scope is not inherited: it cannot be accessed through the name of a subtype
+                // (see KEEP-0449 §2.5), so companion extensions of supertypes are not collected here.
+                if (!isSupertype || !extension.isCompanionExtension()) resultSet.add(extension)
+            }
+            sourceSets.forEach { sourceSet ->
+                classGraph[sourceSet]?.get(element)?.forEach { collectFrom(it, isSupertype = true) }
+            }
         }
-        collectFrom(dri)
+        collectFrom(dri, isSupertype = false)
 
         return if (resultSet.isEmpty()) null else CallableExtensions(resultSet)
+    }
+
+    @OptIn(ExperimentalDokkaApi::class)
+    private fun Callable.isCompanionExtension(): Boolean = when (this) {
+        is DFunction -> extra[IsCompanion] != null
+        is DProperty -> extra[IsCompanion] != null
+        else -> false
     }
 
     private fun Callable.asPairsWithReceiverDRIs(): Sequence<Pair<DRI, Callable>> =
