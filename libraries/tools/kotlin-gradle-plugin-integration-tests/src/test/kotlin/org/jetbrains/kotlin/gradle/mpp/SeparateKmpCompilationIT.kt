@@ -14,7 +14,6 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.gradle.util.capitalize
@@ -25,7 +24,6 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.util.zip.ZipFile
 import kotlin.io.path.absolutePathString
-import kotlin.io.path.appendText
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -179,7 +177,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
             gradleVersion,
             localRepoDir = localRepository,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899().copy(separateCompilation = true),
         ) {
             plugins {
                 kotlin("multiplatform")
@@ -224,8 +222,6 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 }
             }
 
-            enableSeparateCompilation()
-
             val librarySubproject = project("empty", gradleVersion) {
                 buildScriptInjection {
                     project.applyMultiplatform {
@@ -258,7 +254,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
 
             buildAndFail(
                 ":assemble",
-                buildOptions = defaultBuildOptions.copy(continueAfterFailure = true)
+                buildOptions = defaultBuildOptions.copy(continueAfterFailure = true, separateCompilation = true)
             ) {
                 // ensures no unexpected task dependencies are added
                 val libraryTasks = setOf(
@@ -403,7 +399,12 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
     }
 
     private fun doTestSingleTargetMetadata(gradleVersion: GradleVersion, localRepoDir: Path, enableSeparateCompilation: Boolean) {
-        project("empty", gradleVersion, localRepoDir = localRepoDir) {
+        project(
+            "empty",
+            gradleVersion,
+            localRepoDir = localRepoDir,
+            buildOptions = defaultBuildOptions.copy(separateCompilation = enableSeparateCompilation),
+        ) {
             plugins {
                 kotlin("multiplatform")
             }
@@ -425,9 +426,6 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 }
             }
 
-            if (enableSeparateCompilation) {
-                enableSeparateCompilation()
-            }
             build(":publish") {
                 val metadataJar = localRepoDir.resolveRepoArtifactPath(PUBLISHED_DEP_GROUP, projectName, PUBLISHED_DEP_VERSION)
                 assertFileExists(metadataJar)
@@ -448,15 +446,6 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
         }
     }
 
-    private fun GradleProject.enableSeparateCompilation() {
-        gradleProperties.appendText(
-            """
-                |${PropertiesProvider.PropertyNames.KOTLIN_KMP_SEPARATE_COMPILATION}=true
-                |
-                """.trimMargin()
-        )
-    }
-
     @DisplayName("Enabling new KMP compilation scheme should emit event KOTLIN_SEPARATE_KMP_COMPILATION_ENABLED")
     @GradleTest
     fun fusEvent(gradleVersion: GradleVersion) {
@@ -472,21 +461,21 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 collectFusEvents(":compileKotlinJs", ":compileKotlinJvm", ":compileKotlinLinuxX64").count {
                     it.startsWith(eventPrefix)
                 })
-            enableSeparateCompilation()
+            val separateCompilationOptions: TestProject.() -> BuildOptions = { buildOptions.copy(separateCompilation = true) }
             // the event is global, so check each task emits it
             assertEquals(
                 1,
-                collectFusEvents(*rerunTask(":compileKotlinJvm")).count {
+                collectFusEvents(*rerunTask(":compileKotlinJvm"), deriveBuildOptions = separateCompilationOptions).count {
                     it.startsWith(eventPrefix)
                 })
             assertEquals(
                 1,
-                collectFusEvents(*rerunTask(":compileKotlinLinuxX64")).count {
+                collectFusEvents(*rerunTask(":compileKotlinLinuxX64"), deriveBuildOptions = separateCompilationOptions).count {
                     it.startsWith(eventPrefix)
                 })
             assertEquals(
                 1,
-                collectFusEvents(*rerunTask(":compileKotlinJs")).count {
+                collectFusEvents(*rerunTask(":compileKotlinJs"), deriveBuildOptions = separateCompilationOptions).count {
                     it.startsWith(eventPrefix)
                 })
         }
@@ -500,12 +489,13 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
         buildOptions: BuildOptions = defaultBuildOptions,
         sourceStubs: Boolean = true,
         test: TestProject.() -> Unit,
-    ): GradleProject = project("empty", gradleVersion, buildOptions = buildOptions) {
+    ): GradleProject = project(
+        "empty",
+        gradleVersion,
+        buildOptions = if (autoEnableSeparateKmpCompilation) buildOptions.copy(separateCompilation = true) else buildOptions,
+    ) {
         plugins {
             kotlin("multiplatform")
-        }
-        if (autoEnableSeparateKmpCompilation) {
-            enableSeparateCompilation()
         }
         buildScriptInjection {
             with(project) {
