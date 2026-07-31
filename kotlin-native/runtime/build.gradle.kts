@@ -186,54 +186,44 @@ bitcode {
             sourceSets {}
         }
 
-        if (!project.providers.gradleProperty("disableBreakpad").isPresent) {
-            module("breakpad") {
-                srcRoot.fileProvider(unpackBreakpad.map { it.destinationDir })
-                val sources = listOf(
-                        "client/mac/crash_generation/crash_generation_client.cc",
-                        "client/mac/handler/breakpad_nlist_64.cc",
-                        "client/mac/handler/dynamic_images.cc",
-                        "client/mac/handler/exception_handler.cc",
-                        "client/mac/handler/minidump_generator.cc",
-                        "client/mac/handler/protected_memory_allocator.cc",
-                        "client/minidump_file_writer.cc",
-                        "common/mac/MachIPC.mm",
-                        "common/mac/arch_utilities.cc",
-                        "common/mac/file_id.cc",
-                        "common/mac/macho_id.cc",
-                        "common/mac/macho_utilities.cc",
-                        "common/mac/macho_walker.cc",
-                        "common/mac/string_utilities.cc",
-                        "common/mac/bootstrap_compat.cc",
-                        "common/convert_UTF.cc",
-                        "common/md5.cc",
-                        "common/string_conversion.cc",
-                )
-                sourceSets {
-                    main {
-                        inputFiles.from(srcRoot.dir("src"))
-                        inputFiles.setIncludes(sources)
-                        headersDirs.setFrom(project.layout.projectDirectory.dir("src/breakpad/cpp"))
-                    }
+        module("breakpad") {
+            srcRoot.fileProvider(unpackBreakpad.map { it.destinationDir })
+            val sources = listOf(
+                    "client/mac/crash_generation/crash_generation_client.cc",
+                    "client/mac/handler/breakpad_nlist_64.cc",
+                    "client/mac/handler/dynamic_images.cc",
+                    "client/mac/handler/exception_handler.cc",
+                    "client/mac/handler/minidump_generator.cc",
+                    "client/mac/handler/protected_memory_allocator.cc",
+                    "client/minidump_file_writer.cc",
+                    "common/mac/MachIPC.mm",
+                    "common/mac/arch_utilities.cc",
+                    "common/mac/file_id.cc",
+                    "common/mac/macho_id.cc",
+                    "common/mac/macho_utilities.cc",
+                    "common/mac/macho_walker.cc",
+                    "common/mac/string_utilities.cc",
+                    "common/mac/bootstrap_compat.cc",
+                    "common/convert_UTF.cc",
+                    "common/md5.cc",
+                    "common/string_conversion.cc",
+            )
+            sourceSets {
+                main {
+                    inputFiles.from(srcRoot.dir("src"))
+                    inputFiles.setIncludes(sources)
+                    headersDirs.setFrom(project.layout.projectDirectory.dir("src/breakpad/cpp"))
                 }
-                // Make sure breakpad sources are downloaded when building the corresponding compilation database entry
-                dependencies.add(unpackBreakpad)
-                compilerArgs.set(listOf(
-                        "-std=c++17",
-                        "-DHAVE_MACH_O_NLIST_H",
-                        "-DHAVE_CONFIG_H",
-                ))
+            }
+            // Make sure breakpad sources are downloaded when building the corresponding compilation database entry
+            dependencies.add(unpackBreakpad)
+            compilerArgs.set(listOf(
+                    "-std=c++17",
+                    "-DHAVE_MACH_O_NLIST_H",
+                    "-DHAVE_CONFIG_H",
+            ))
 
-                onlyIf { it.family == Family.OSX }
-            }
-        } else {
-            // Compiler expects breakpad.bc file. Let's give it an empty one.
-            module("breakpad") {
-                srcRoot.set(project.layout.projectDirectory.dir("src/breakpad_stubs"))
-                sourceSets {
-                    main {}
-                }
-            }
+            onlyIf { it.family == Family.OSX }
         }
 
         module("libbacktrace") {
@@ -558,30 +548,20 @@ bitcode {
             }
         }
 
-        if (!project.providers.gradleProperty("disableBreakpad").isPresent) {
-            module("impl_crashHandler") {
-                srcRoot.set(layout.projectDirectory.dir("src/crashHandler/impl"))
-                // Cannot use output of `unpackBreakpad` to support Gradle Configuration Cache working before `unpackBreakpad`
-                // actually had a chance to run.
-                headersDirs.from("src/main/cpp", "src/breakpad/cpp", breakpadLocationNoDependency.get().dir("src"))
-                sourceSets {
-                    main {
-                        // This task depends on breakpad headers being present.
-                        compileTask.configure {
-                            dependsOn(unpackBreakpad)
-                        }
+        module("impl_crashHandler") {
+            srcRoot.set(layout.projectDirectory.dir("src/crashHandler/impl"))
+            // Cannot use output of `unpackBreakpad` to support Gradle Configuration Cache working before `unpackBreakpad`
+            // actually had a chance to run.
+            headersDirs.from("src/main/cpp", "src/breakpad/cpp", breakpadLocationNoDependency.get().dir("src"))
+            sourceSets {
+                main {
+                    // This task depends on breakpad headers being present.
+                    compileTask.configure {
+                        dependsOn(unpackBreakpad)
                     }
                 }
-                onlyIf { it.family == Family.OSX }
             }
-        } else {
-            module("impl_crashHandler") {
-                srcRoot.set(layout.projectDirectory.dir("src/crashHandler/noop"))
-                headersDirs.from("src/main/cpp")
-                sourceSets {
-                    main {}
-                }
-            }
+            onlyIf { it.family == Family.OSX }
         }
 
         module("noop_crashHandler") {
