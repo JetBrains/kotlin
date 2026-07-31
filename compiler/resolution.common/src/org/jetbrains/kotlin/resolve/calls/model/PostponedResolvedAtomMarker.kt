@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 interface PostponedResolvedAtomMarker {
     /**
@@ -31,6 +32,11 @@ interface PostponedResolvedAtomMarker {
 }
 
 interface CollectionLiteralAtomMarker : PostponedResolvedAtomMarker
+
+interface PostponedAtomWithRevisableExpectedTypeAndRegisteredTypeVariables : PostponedAtomWithRevisableExpectedType {
+    val registeredTypeVariables: List<TypeVariableMarker>
+    fun addRegisteredTypeVariables(typeVariables: Collection<TypeVariableMarker>)
+}
 
 interface PostponedAtomWithRevisableExpectedType : PostponedResolvedAtomMarker {
     val revisedExpectedType: KotlinTypeMarker?
