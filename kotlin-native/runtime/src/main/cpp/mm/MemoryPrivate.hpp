@@ -26,7 +26,7 @@ ALWAYS_INLINE inline ThreadRegistry::Node* FromMemoryState(MemoryState* state) {
 }
 
 } // namespace mm
-} // namepace kotlin
+} // namespace kotlin
 
 // Delete all means of creating this type directly as it only serves
 // as a typedef for `mm::ThreadRegistry::Node`.
@@ -34,9 +34,7 @@ extern "C" struct MemoryState : kotlin::Pinned {
     MemoryState() = delete;
     ~MemoryState() = delete;
 
-    ALWAYS_INLINE mm::ThreadData* GetThreadData() {
-        return mm::FromMemoryState(this)->Get();
-    }
+    ALWAYS_INLINE mm::ThreadData* GetThreadData() { return mm::FromMemoryState(this)->Get(); }
 };
 
-#endif //RUNTIME_MEMORYPRIVATE_HPP
+#endif // RUNTIME_MEMORYPRIVATE_HPP

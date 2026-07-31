@@ -61,8 +61,9 @@ public:
         } else {
             targetHeapBytes_ = config_.targetHeapBytes.load(std::memory_order_relaxed);
         }
-        RuntimeLogInfo({logging::Tag::kGCScheduler},
-                       "Updated heap boundaries: alive %zu, target %zu, trigger %zu", aliveBytes, targetHeapBytes_, triggerHeapBytes_);
+        RuntimeLogInfo(
+                {logging::Tag::kGCScheduler}, "Updated heap boundaries: alive %zu, target %zu, trigger %zu", aliveBytes, targetHeapBytes_,
+                triggerHeapBytes_);
     }
 
     size_t targetHeapBytes() const noexcept { return targetHeapBytes_; }

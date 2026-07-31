@@ -89,9 +89,7 @@ public:
 
     const std::unordered_set<ObjHeader*>& marked() const { return marked_; }
 
-    static void clear(MarkQueue& queue) noexcept {
-        queue.clear();
-    }
+    static void clear(MarkQueue& queue) noexcept { queue.clear(); }
 
     static ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
         if (queue.empty()) return nullptr;

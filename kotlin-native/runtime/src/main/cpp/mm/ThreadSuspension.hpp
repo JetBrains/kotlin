@@ -36,6 +36,7 @@ private:
         explicit MutatorPauseHandle(const char* reason, ThreadData& threadData) noexcept;
         ~MutatorPauseHandle() noexcept;
         void resume() noexcept;
+
     private:
         const char* reason_;
         ThreadData& threadData_;
@@ -44,7 +45,8 @@ private:
     };
 
 public:
-    explicit ThreadSuspensionData(ThreadState initialState, mm::ThreadData& threadData) noexcept : state_(initialState), threadData_(threadData) {}
+    explicit ThreadSuspensionData(ThreadState initialState, mm::ThreadData& threadData) noexcept :
+        state_(initialState), threadData_(threadData) {}
 
     ~ThreadSuspensionData() = default;
 

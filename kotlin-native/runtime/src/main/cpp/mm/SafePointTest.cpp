@@ -152,6 +152,7 @@ public:
     class ActivatorImpl : public mm::ExtraSafePointActionActivator<ActivatorImpl> {};
 
     auto& mockAction() noexcept { return mockAction_; }
+
 private:
     testing::StrictMock<testing::MockFunction<void()>> mockAction_;
 };

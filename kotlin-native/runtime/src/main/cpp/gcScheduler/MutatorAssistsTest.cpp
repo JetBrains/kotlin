@@ -175,9 +175,7 @@ TEST_F(MutatorAssistsTest, Assist) {
             }
         }
 
-        void finish() noexcept {
-            finished.fetch_add(1, std::memory_order_release);
-        }
+        void finish() noexcept { finished.fetch_add(1, std::memory_order_release); }
 
         void waitFinished(size_t expectedCount) noexcept {
             while (finished.load(std::memory_order_acquire) < expectedCount) {

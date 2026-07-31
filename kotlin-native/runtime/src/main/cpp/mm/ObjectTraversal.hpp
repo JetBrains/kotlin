@@ -19,7 +19,8 @@ namespace kotlin {
 // TODO: Consider an iterator/ranges based approaches for traversals.
 
 template <typename F>
-PERFORMANCE_INLINE void traverseClassObjectFields(ObjHeader* object, F process) noexcept(noexcept(process(std::declval<mm::RefFieldAccessor>()))) {
+PERFORMANCE_INLINE void traverseClassObjectFields(ObjHeader* object, F process) noexcept(
+        noexcept(process(std::declval<mm::RefFieldAccessor>()))) {
     const TypeInfo* typeInfo = object->type_info();
     RuntimeAssert(typeInfo != theArrayTypeInfo, "Must not be an array of objects");
     for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
@@ -29,7 +30,8 @@ PERFORMANCE_INLINE void traverseClassObjectFields(ObjHeader* object, F process) 
 }
 
 template <typename F>
-PERFORMANCE_INLINE void traverseArrayOfObjectsElements(ArrayHeader* array, F process) noexcept(noexcept(process(std::declval<mm::RefFieldAccessor>()))) {
+PERFORMANCE_INLINE void traverseArrayOfObjectsElements(ArrayHeader* array, F process) noexcept(
+        noexcept(process(std::declval<mm::RefFieldAccessor>()))) {
     RuntimeAssert(array->type_info() == theArrayTypeInfo, "Must be an array of objects");
     for (uint32_t index = 0; index < array->count_; index++) {
         process(mm::RefFieldAccessor(ArrayAddressOfElementAt(array, index)));
@@ -37,7 +39,8 @@ PERFORMANCE_INLINE void traverseArrayOfObjectsElements(ArrayHeader* array, F pro
 }
 
 template <typename F>
-PERFORMANCE_INLINE void traverseObjectFields(ObjHeader* object, F process) noexcept(noexcept(process(std::declval<mm::RefFieldAccessor>()))) {
+PERFORMANCE_INLINE void traverseObjectFields(ObjHeader* object, F process) noexcept(
+        noexcept(process(std::declval<mm::RefFieldAccessor>()))) {
     const TypeInfo* typeInfo = object->type_info();
     // Only consider arrays of objects, not arrays of primitives.
     if (typeInfo != theArrayTypeInfo) {

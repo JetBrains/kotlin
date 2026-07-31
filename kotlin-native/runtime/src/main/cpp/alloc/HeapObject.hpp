@@ -66,8 +66,7 @@ template <typename HeapHeader>
 size_t HeapObject<HeapHeader>::size() noexcept {
     const auto* obj = object();
     const auto* typeInfo = obj->type_info();
-    if (!typeInfo->IsArray())
-        return descriptorFrom(typeInfo).size();
+    if (!typeInfo->IsArray()) return descriptorFrom(typeInfo).size();
     return HeapArray<HeapHeader>::descriptorFrom(typeInfo, obj->array()->count_).size();
 }
 

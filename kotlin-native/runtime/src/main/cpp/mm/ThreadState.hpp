@@ -16,7 +16,7 @@ namespace kotlin {
 
 namespace internal {
 
-ALWAYS_INLINE inline bool isStateSwitchAllowed(ThreadState oldState, ThreadState newState, bool reentrant) noexcept  {
+ALWAYS_INLINE inline bool isStateSwitchAllowed(ThreadState oldState, ThreadState newState, bool reentrant) noexcept {
     return oldState != newState || reentrant;
 }
 
@@ -31,9 +31,9 @@ PERFORMANCE_INLINE inline ThreadState SwitchThreadState(mm::ThreadData* threadDa
     RuntimeAssert(threadData != nullptr, "threadData must not be nullptr");
     auto oldState = threadData->setState(newState);
     // TODO(perf): Mesaure the impact of this assert in debug and opt modes.
-    RuntimeAssert(internal::isStateSwitchAllowed(oldState, newState, reentrant),
-                  "Illegal thread state switch. Old state: %s. New state: %s.",
-                  ThreadStateName(oldState), ThreadStateName(newState));
+    RuntimeAssert(
+            internal::isStateSwitchAllowed(oldState, newState, reentrant), "Illegal thread state switch. Old state: %s. New state: %s.",
+            ThreadStateName(oldState), ThreadStateName(newState));
     return oldState;
 }
 

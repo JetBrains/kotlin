@@ -26,8 +26,8 @@ namespace {
 std::atomic<mm::internal::SuspensionReason> mm::internal::gSuspensionRequestReason = nullptr;
 
 PERFORMANCE_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::MutatorPauseHandle(const char* reason, mm::ThreadData& threadData) noexcept
-    : reason_(reason), threadData_(threadData), pauseStartTimeMicros_(konan::getTimeMicros())
-{
+    :
+    reason_(reason), threadData_(threadData), pauseStartTimeMicros_(konan::getTimeMicros()) {
     auto prevState = threadData_.suspensionData().setStateNoSafePoint(ThreadState::kNative);
     // no special reason, fill free to implement pause from native if needed
     RuntimeAssert(prevState == ThreadState::kRunnable, "Expected runnable state");
@@ -84,13 +84,15 @@ void mm::ThreadSuspensionData::requestThreadsSuspension(const char* reason) noex
     }
 }
 
-PERFORMANCE_INLINE mm::ThreadSuspensionData::MutatorPauseHandle mm::ThreadSuspensionData::pauseMutationInScope(const char* reason) noexcept {
+PERFORMANCE_INLINE mm::ThreadSuspensionData::MutatorPauseHandle mm::ThreadSuspensionData::pauseMutationInScope(
+        const char* reason) noexcept {
     return MutatorPauseHandle(reason, threadData_);
 }
 
 void kotlin::mm::RequestThreadsSuspension(internal::SuspensionReason reason) noexcept {
-    RuntimeAssert(!mm::ThreadRegistry::Instance().IsCurrentThreadRegistered(),
-                  "Registered thread must properly handle concurrent suspension requests (suspend if requested)");
+    RuntimeAssert(
+            !mm::ThreadRegistry::Instance().IsCurrentThreadRegistered(),
+            "Registered thread must properly handle concurrent suspension requests (suspend if requested)");
 
     while (!TryRequestThreadsSuspension(reason)) {
         std::unique_lock lock(gSuspensionRequestMutex);

@@ -30,9 +30,8 @@ void Kotlin_Internal_GC_GCInfoBuilder_setSecondPauseRequestTime(KRef thiz, KLong
 void Kotlin_Internal_GC_GCInfoBuilder_setSecondPauseStartTime(KRef thiz, KLong value);
 void Kotlin_Internal_GC_GCInfoBuilder_setSecondPauseEndTime(KRef thiz, KLong value);
 void Kotlin_Internal_GC_GCInfoBuilder_setPostGcCleanupTime(KRef thiz, KLong value);
-void Kotlin_Internal_GC_GCInfoBuilder_setRootSet(KRef thiz,
-                                                 KLong threadLocalReferences, KLong stackReferences,
-                                                 KLong globalReferences, KLong stableReferences);
+void Kotlin_Internal_GC_GCInfoBuilder_setRootSet(
+        KRef thiz, KLong threadLocalReferences, KLong stackReferences, KLong globalReferences, KLong stableReferences);
 void Kotlin_Internal_GC_GCInfoBuilder_setMarkStats(KRef thiz, KLong markedCount);
 void Kotlin_Internal_GC_GCInfoBuilder_setSweepStats(KRef thiz, KNativePtr name, KLong sweptCount, KLong keptCount);
 void Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageBefore(KRef thiz, KNativePtr name, KLong sizeBytes);
@@ -118,8 +117,7 @@ struct GCInfo {
             Kotlin_Internal_GC_GCInfoBuilder_setRootSet(
                     builder, rootSet->threadLocalReferences, rootSet->stackReferences, rootSet->globalReferences,
                     rootSet->stableReferences);
-        if (markStats)
-            Kotlin_Internal_GC_GCInfoBuilder_setMarkStats(builder, markStats->markedCount);
+        if (markStats) Kotlin_Internal_GC_GCInfoBuilder_setMarkStats(builder, markStats->markedCount);
         sweepStats.build(builder, Kotlin_Internal_GC_GCInfoBuilder_setSweepStats);
         memoryUsageBefore.build(builder, Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageBefore);
         memoryUsageAfter.build(builder, Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageAfter);
@@ -182,7 +180,9 @@ GCHandle GCHandle::create(uint64_t epoch) {
     current.memoryUsageBefore.heap = currentHeapUsage();
     return getByEpoch(epoch);
 }
-GCHandle GCHandle::createFakeForTests() { return getByEpoch(kInvalidEpoch - 1); }
+GCHandle GCHandle::createFakeForTests() {
+    return getByEpoch(kInvalidEpoch - 1);
+}
 GCHandle GCHandle::getByEpoch(uint64_t epoch) {
     GCHandle handle{epoch};
     RuntimeAssert(handle.isValid(), "Must be valid");
@@ -217,9 +217,10 @@ void GCHandle::finished() {
         stat->endTime = static_cast<KLong>(konan::getTimeNanos());
         stat->memoryUsageAfter.heap = currentHeapUsage();
         if (stat->markStats && stat->sweepStats.heap) {
-            RuntimeAssert(stat->markStats->markedCount == stat->sweepStats.heap->keptCount,
-                          "Mismatch in statistics: marked %" PRId64 " objects, while %" PRId64 " are alive after sweep",
-                          stat->markStats->markedCount, stat->sweepStats.heap->keptCount);
+            RuntimeAssert(
+                    stat->markStats->markedCount == stat->sweepStats.heap->keptCount,
+                    "Mismatch in statistics: marked %" PRId64 " objects, while %" PRId64 " are alive after sweep",
+                    stat->markStats->markedCount, stat->sweepStats.heap->keptCount);
         }
         if (stat->rootSet) {
             GCLogInfo(
@@ -238,13 +239,11 @@ void GCHandle::finished() {
         }
         if (auto stats = stat->sweepStats.extra) {
             GCLogInfo(
-                    epoch_, "Sweep extra objects: swept %" PRIu64 " objects, kept %" PRIu64 " objects",
-                    stats->sweptCount, stats->keptCount);
+                    epoch_, "Sweep extra objects: swept %" PRIu64 " objects, kept %" PRIu64 " objects", stats->sweptCount,
+                    stats->keptCount);
         }
         if (auto stats = stat->sweepStats.heap) {
-            GCLogInfo(
-                    epoch_, "Sweep: swept %" PRIu64 " objects, kept %" PRIu64 " objects", stats->sweptCount,
-                    stats->keptCount);
+            GCLogInfo(epoch_, "Sweep: swept %" PRIu64 " objects, kept %" PRIu64 " objects", stats->sweptCount, stats->keptCount);
         }
         if (stat->memoryUsageBefore.heap && stat->memoryUsageAfter.heap) {
             GCLogInfo(
@@ -269,7 +268,7 @@ void GCHandle::finished() {
         }
         if (stat->startTime) {
             auto time = (*current.endTime - *current.startTime) / 1000;
-            GCLogInfo(epoch_, "Finished. Total GC epoch time is %" PRId64" microseconds.", time);
+            GCLogInfo(epoch_, "Finished. Total GC epoch time is %" PRId64 " microseconds.", time);
         }
 
         if (stat == &current) {
@@ -344,7 +343,7 @@ void GCHandle::finalizersDone() {
 void GCHandle::finalizersScheduled(uint64_t finalizersCount) {
     GCLogDebug(epoch_, "Finalization is scheduled for %" PRIu64 " objects.", finalizersCount);
 }
-void GCHandle::threadRootSetCollected(mm::ThreadData &threadData, uint64_t threadLocalReferences, uint64_t stackReferences) {
+void GCHandle::threadRootSetCollected(mm::ThreadData& threadData, uint64_t threadLocalReferences, uint64_t stackReferences) {
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
         if (!stat->rootSet) {
@@ -432,12 +431,24 @@ void GCHandle::sweptExtraObjects(gc::SweepStats stats) noexcept {
     }
 }
 
-GCHandle::GCSweepScope GCHandle::sweep() { return GCSweepScope(*this); }
-GCHandle::GCSweepExtraObjectsScope GCHandle::sweepExtraObjects() { return GCSweepExtraObjectsScope(*this); }
-GCHandle::GCGlobalRootSetScope GCHandle::collectGlobalRoots() { return GCGlobalRootSetScope(*this); }
-GCHandle::GCThreadRootSetScope GCHandle::collectThreadRoots(mm::ThreadData& threadData) { return GCThreadRootSetScope(*this, threadData); }
-GCHandle::GCMarkScope GCHandle::mark() { return GCMarkScope(*this); }
-GCHandle::GCProcessWeaksScope GCHandle::processWeaks() noexcept { return GCProcessWeaksScope(*this); }
+GCHandle::GCSweepScope GCHandle::sweep() {
+    return GCSweepScope(*this);
+}
+GCHandle::GCSweepExtraObjectsScope GCHandle::sweepExtraObjects() {
+    return GCSweepExtraObjectsScope(*this);
+}
+GCHandle::GCGlobalRootSetScope GCHandle::collectGlobalRoots() {
+    return GCGlobalRootSetScope(*this);
+}
+GCHandle::GCThreadRootSetScope GCHandle::collectThreadRoots(mm::ThreadData& threadData) {
+    return GCThreadRootSetScope(*this, threadData);
+}
+GCHandle::GCMarkScope GCHandle::mark() {
+    return GCMarkScope(*this);
+}
+GCHandle::GCProcessWeaksScope GCHandle::processWeaks() noexcept {
+    return GCProcessWeaksScope(*this);
+}
 
 GCHandle::GCSweepScope::GCSweepScope(kotlin::gc::GCHandle handle) : GCStageScopeBase(handle) {}
 
@@ -465,7 +476,7 @@ GCHandle::GCSweepExtraObjectsScope::~GCSweepExtraObjectsScope() {
 
 GCHandle::GCGlobalRootSetScope::GCGlobalRootSetScope(kotlin::gc::GCHandle handle) : GCStageScopeBase(handle) {}
 
-GCHandle::GCGlobalRootSetScope::~GCGlobalRootSetScope(){
+GCHandle::GCGlobalRootSetScope::~GCGlobalRootSetScope() {
     if (!handle_.isValid()) return;
     handle_.globalRootSetCollected(globalRoots_, stableRoots_);
     GCLogDebug(
@@ -474,13 +485,14 @@ GCHandle::GCGlobalRootSetScope::~GCGlobalRootSetScope(){
 }
 
 GCHandle::GCThreadRootSetScope::GCThreadRootSetScope(kotlin::gc::GCHandle handle, mm::ThreadData& threadData) :
-        GCStageScopeBase(handle), threadData_(threadData) {}
+    GCStageScopeBase(handle), threadData_(threadData) {}
 
-GCHandle::GCThreadRootSetScope::~GCThreadRootSetScope(){
+GCHandle::GCThreadRootSetScope::~GCThreadRootSetScope() {
     if (!handle_.isValid()) return;
     handle_.threadRootSetCollected(threadData_, threadLocalRoots_, stackRoots_);
     GCLogDebug(
-            handle_.getEpoch(), "Collected root set for thread #%" PRIuPTR ": stack=%" PRIu64 " tls=%" PRIu64 " in %" PRIu64 " microseconds.",
+            handle_.getEpoch(),
+            "Collected root set for thread #%" PRIuPTR ": stack=%" PRIu64 " tls=%" PRIu64 " in %" PRIu64 " microseconds.",
             threadData_.threadId(), stackRoots_, threadLocalRoots_, getStageTime());
 }
 

@@ -59,7 +59,7 @@ public:
 private:
     template <typename T>
     struct ValueWithCondVar : kotlin::Pinned {
-        explicit ValueWithCondVar(T initializer, std::mutex& mutex) noexcept : value_(initializer), mutex_(mutex){};
+        explicit ValueWithCondVar(T initializer, std::mutex& mutex) noexcept : value_(initializer), mutex_(mutex) {};
 
         const T& operator*() const { return value_; }
 

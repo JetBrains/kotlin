@@ -31,7 +31,7 @@ public:
     // Dumps the memory and returns the success flag.
     void Dump() {
         RuntimeLogInfo({kTagMemDump}, "Starting to dump memory into %p", file_);
-        
+
         DumpStr("Kotlin/Native dump 1.0.8");
         DumpBool(konan::isLittleEndian());
         DumpU8(sizeof(void*));
@@ -57,7 +57,7 @@ public:
 
         RuntimeLogInfo({kTagMemDump}, "Dumping enqueued objects");
         DumpEnqueuedObjects();
-        
+
         RuntimeLogInfo({kTagMemDump}, "Dumping finished");
     }
 

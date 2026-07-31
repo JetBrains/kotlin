@@ -46,6 +46,7 @@ public:
         std::unique_ptr<Object> obj(&Object::FromObjHeader(location_));
         location_ = nullptr;
     }
+
 private:
     ObjHeader* location_ = nullptr;
 };
@@ -151,7 +152,9 @@ TEST(GlobalRootSetTest, Basic) {
         }
 
         auto asGlobal = [](Global& global) -> mm::GlobalRootSet::Value { return {*global, mm::GlobalRootSet::Source::kGlobal}; };
-        auto asStableRef = [](std::unique_ptr<Object>& object) -> mm::GlobalRootSet::Value { return {object->header(), mm::GlobalRootSet::Source::kStableRef}; };
+        auto asStableRef = [](std::unique_ptr<Object>& object) -> mm::GlobalRootSet::Value {
+            return {object->header(), mm::GlobalRootSet::Source::kStableRef};
+        };
         EXPECT_THAT(
                 actual,
                 testing::UnorderedElementsAre(
