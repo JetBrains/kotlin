@@ -34,7 +34,7 @@ fun <T2 : Any> foo(
 
 fun bar() {
     <!TYPE_MISMATCH!>foo(
-        <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>OtherFactory<!>(),
+        <!UPPER_BOUND_VIOLATED!>OtherFactory<!>(),
         string1("C_1"),
         string2("C_2"),
         string3("C_3"),
