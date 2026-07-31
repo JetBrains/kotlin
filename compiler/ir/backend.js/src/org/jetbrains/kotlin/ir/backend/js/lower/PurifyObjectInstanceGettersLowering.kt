@@ -67,22 +67,25 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
  * Currently, the effect checker for regular objects only checks the constructor:
  * - It has no superclass (only extends `Any`)
  * - Every statement in its constructor is pure:
- *      - the delegating `super()` call goes to `Any`
- *      - expressions are effect-free
- *      - field reads/writes only touch this object's own fields
- *      - the `instance = this` self-assignment is ignored as an effect
+ *     - the delegating `super()` call goes to `Any`
+ *     - expressions are effect-free
+ *     - field reads/writes only touch this object's own fields
+ *     - the `instance = this` self-assignment is ignored as an effect
+ *
  * More details of pure checking logic can be found at [isPureStatementForObjectInitialization] and at [isPure].
  *
  * For companion objects, the `static_init` static initializer comes into play.
+ *
  * We check `static_init` for incompatible expressions:
- *   - Super `static_init` calls are not compatible
- *   - Static initializers coming from `companion` blocks are not compatible
+ * - Super `static_init` calls are not compatible
+ * - Static initializers coming from `companion` blocks are not compatible
  *
  * In case `companion object`'s `static_init` is compatible with purification, it's declaration is marked
  * using `isLeftoverAfterObjectPurification` attribute and later, depending on the backend:
- *   - in JS, specialized [JsCleanupPurifiedLeftoverDeclarationsLowering] runs a dumb declaration removal phase. DCE has been already run
- *     at that moment, so we can't rely on it
- *   - in Wasm, the declaration is removed by the regular DCE
+ * - in JS, specialized [JsCleanupPurifiedLeftoverDeclarationsLowering] runs a dumb declaration removal phase. DCE has been already run
+ *   at that moment, so we can't rely on it
+ * - in Wasm, the declaration is removed by the regular DCE
+ *
  * Leftover usages of such `static_init` for both backends are removed by [CleanupPurifiedLeftoverUsagesLowering].
  *
  * For both `object`s and `companion object`s, [InlineObjectsWithPureInitializationLowering] as the next step will replace
@@ -165,9 +168,11 @@ open class PurifyObjectInstanceGettersLowering(val context: JsCommonBackendConte
 
     /**
      * As `static_init` has a synthetic well known structure, we assume that `static_init` function is pure.
+     *
      * There are 2 cases when body of static_init can be impure:
      * - Static initializers from companion blocks are presented (`IrSetField` with the corresponding origin)
      * - Calls to super `static_init` functions are presented (`IrCall` with the corresponding origin)
+     *
      * Otherwise, the `static_init` is safe and the corresponding companion object can be purified.
      */
     private fun IrBody.isPureStaticInitFunctionBody(): Boolean {
@@ -180,7 +185,7 @@ open class PurifyObjectInstanceGettersLowering(val context: JsCommonBackendConte
             }
 
             override fun visitCall(expression: IrCall) {
-                // Calls to static_init coming from super types are also not suitable in purification at the moment.
+                // Calls to `static_init` coming from super types are also not suitable in purification at the moment.
                 if (expression.symbol.owner.origin == WebStaticInitializersDeclarationLowering.STATIC_CLASS_INITIALIZER) {
                     isPureStaticInitFunction = false
                     return
@@ -189,7 +194,7 @@ open class PurifyObjectInstanceGettersLowering(val context: JsCommonBackendConte
             }
 
             override fun visitSetField(expression: IrSetField) {
-                // Any IrSetField for a companion block-related initializer, which means we can't purify.
+                // Any `IrSetField` for a companion block-related initializer, which means we can't purify.
                 if (expression.origin == WebStaticInitializersDeclarationLowering.STATIC_FIELD_INITIALIZER) {
                     isPureStaticInitFunction = false
                     return
