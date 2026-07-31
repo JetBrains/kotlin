@@ -129,6 +129,11 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
             if (!stub.getHasDefaultValue()) {
                 return null;
             }
+
+            KtExpression fromStub = getExpressionFromStub();
+            if (fromStub != null) {
+                return fromStub;
+            }
         }
 
         PsiElement equalsToken = getEqualsToken();
