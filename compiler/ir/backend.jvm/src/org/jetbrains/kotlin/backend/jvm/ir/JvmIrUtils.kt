@@ -479,10 +479,6 @@ val DeclarationDescriptorWithSource.psiElement: PsiElement?
 val IrDeclaration.psiElement: PsiElement?
     get() = (descriptor as? DeclarationDescriptorWithSource)?.psiElement
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-val IrMemberAccessExpression<*>.psiElement: PsiElement?
-    get() = (symbol.descriptor.original as? DeclarationDescriptorWithSource)?.psiElement
-
 fun IrFunction.extensionReceiverName(config: JvmBackendConfig): String {
     if (!config.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
         return AsmUtil.RECEIVER_PARAMETER_NAME

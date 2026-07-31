@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.backend.jvm.mapping.IrCallableMethod
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.AsmUtil.genThrow
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.coroutines.withInstructionAdapter
 import org.jetbrains.kotlin.codegen.inline.*
@@ -86,11 +85,6 @@ class IrInlineCodegen(
                 e, sourceCompiler.callElement as? PsiElement
             )
         }
-    }
-
-    override fun genCycleStub(text: String, codegen: ExpressionCodegen) {
-        leaveTemps()
-        genThrow(codegen.visitor, "java/lang/UnsupportedOperationException", "Call is part of inline cycle: $text")
     }
 
     override fun beforeCallStart() {
@@ -434,7 +428,7 @@ class IrInlineCodegen(
         processor.substituteLocalVarTable(intoNode)
     }
 
-    private fun leaveTemps() {
+    override fun leaveTemps() {
         invocationParamBuilder.listAllParams().asReversed().forEach { param ->
             if (!param.isSkippedOrRemapped || CapturedParamInfo.isSynthetic(param)) {
                 codegen.frameMap.leaveTemp(param.type)

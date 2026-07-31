@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
-import org.jetbrains.kotlin.backend.jvm.ir.psiElement
 import org.jetbrains.kotlin.backend.jvm.ir.suspendFunctionOriginal
 import org.jetbrains.kotlin.backend.jvm.mapping.IrCallableMethod
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -28,7 +27,8 @@ interface IrInlineCallGenerator : IrCallGenerator {
                 codegen.context.diagnosticReporter.at((reportOn as IrInlineFunctionSource).ir, codegen.irFunction.fileParent)
                     .report(JvmBackendErrors.INLINE_CALL_CYCLE, callee.name)
             }) {
-            genCycleStub(expression.psiElement?.text ?: "<no source>", codegen)
+            leaveTemps()
+            AsmUtil.genThrow(codegen.visitor, "java/lang/UnsupportedOperationException", "Call is a part of inline call cycle")
             return
         }
         try {
@@ -45,9 +45,7 @@ interface IrInlineCallGenerator : IrCallGenerator {
         isInsideIfCondition: Boolean,
     )
 
-    fun genCycleStub(text: String, codegen: ExpressionCodegen) {
-        AsmUtil.genThrow(codegen.visitor, "java/lang/UnsupportedOperationException", "Call is a part of inline call cycle: $text")
-    }
+    fun leaveTemps() {}
 
     private class IrInlineFunctionSource(val ir: IrElement) : GlobalInlineContext.InlineFunctionSource()
 }
