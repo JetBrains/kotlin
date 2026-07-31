@@ -167,7 +167,6 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
         when (config.allocationMode) {
             AllocationMode.STD -> {
                 add(RuntimeModule.ALLOC_LEGACY)
-                add(RuntimeModule.ALLOC_STD)
             }
             AllocationMode.CUSTOM -> {
                 add(RuntimeModule.ALLOC_CUSTOM)
