@@ -9,7 +9,6 @@ import jetbrains.buildServer.messages.serviceMessages.BaseTestSuiteMessage
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
@@ -22,6 +21,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.internal.logging.progress.ProgressLogger
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
+import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -782,15 +782,4 @@ private fun KarmaConfig.toJsonElement() = buildJsonObject {
     put("proxies", buildJsonObject { proxies.forEach { (k, v) -> put(k, JsonPrimitive(v)) } })
     port?.let { put("port", JsonPrimitive(it)) }
     put("webpackCopy", buildJsonArray { webpackCopy.forEach { add(JsonPrimitive(it)) } })
-}
-
-private fun anyToJsonElement(value: Any?): JsonElement = when (value) {
-    null -> JsonNull
-    is Boolean -> JsonPrimitive(value)
-    is Number -> JsonPrimitive(value)
-    is String -> JsonPrimitive(value)
-    is Map<*, *> -> buildJsonObject { value.forEach { (k, v) -> put(k.toString(), anyToJsonElement(v)) } }
-    is Iterable<*> -> buildJsonArray { value.forEach { add(anyToJsonElement(it)) } }
-    is Array<*> -> buildJsonArray { value.forEach { add(anyToJsonElement(it)) } }
-    else -> JsonPrimitive(value.toString())
 }
