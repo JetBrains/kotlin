@@ -47,6 +47,18 @@ class KotlinProjectStructureMetadataSerializationTest {
         assertEquals(sampleMetadata, deserialized)
     }
 
+    /**
+     * The emitted JSON is published inside metadata jars as `META-INF/kotlin-project-structure-metadata.json`
+     * and is compared with exact string equality against checked-in expectations by the `libraries/stdlib` and
+     * `libraries/kotlin.test` build scripts. Guard the exact bytes, not just the round trip.
+     */
+    @Test
+    fun `json output format is stable`() {
+        val expected = File("src/functionalTest/resources/kotlin-project-structure-metadata.golden.json")
+            .absoluteFile.readText()
+        assertEquals(expected.trim(), sampleMetadata.toJson().trim())
+    }
+
     @Test
     fun `serialize and deserialize - xml`() {
         val xml = sampleMetadata.toXmlDocument()
