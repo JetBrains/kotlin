@@ -26,7 +26,7 @@ fun <E3 : Enum<E3>> funB() {
         defaultB(),
     )
 
-    <!TYPE_MISMATCH("Enum<CapturedType(*)!>; CapturedType(*) & Any")!>funA(
+    <!TYPE_MISMATCH("Enum<CapturedType(*)!>!; CapturedType(*) & Any")!>funA(
         JavaHelper.createInterfaceA(),
         defaultB(),
     )<!>
