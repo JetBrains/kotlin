@@ -1,3 +1,48 @@
+class A<Z : Any?> {
+  class N<T : Any?> {
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    var <X : Any?, Y : Any?> ctx: X
+      context(x: X, y: Y)
+      get(): X {
+        return x
+      }
+      context(x: X, y: Y)
+      set(value: X) {
+      }
+
+  }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class B<Z : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var <X : Any?, Y : Any?> ctx: X
+    context(x: X, y: Map<X, Y>)
+    get(): X {
+      return x
+    }
+    context(x: X, y: Map<X, Y>)
+    set(value: X) {
+    }
+
+}
+
 class C<Z : Any?> {
   constructor() /* primary */ {
     super/*Any*/()
@@ -15,3 +60,4 @@ class C<Z : Any?> {
     }
 
 }
+
