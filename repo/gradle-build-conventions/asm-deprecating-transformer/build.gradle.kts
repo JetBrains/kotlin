@@ -14,7 +14,6 @@ kotlin {
     compilerOptions {
         allWarningsAsErrors.set(true)
         optIn.add("kotlin.ExperimentalStdlibApi")
-        freeCompilerArgs.add("-Xsuppress-version-warnings")
     }
 }
 
@@ -24,12 +23,27 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:${libs.versions.kotlin.`for`.gradle.plugins.compilation.get()}")
     implementation(libs.diff.utils)
     compileOnly(libs.shadow.gradlePlugin)
+
+    testImplementation(kotlin("test", libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
+    testImplementation(gradleTestKit())
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
-project.configurations.named(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main") {
-    resolutionStrategy {
-        eachDependency {
-            if (this.requested.group == "org.jetbrains.kotlin") useVersion(libs.versions.kotlin.`for`.gradle.plugins.compilation.get())
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+}
+
+/*
+In scope of: https://youtrack.jetbrains.com/issue/KT-81629
+ */
+project.configurations.configureEach {
+    if (name.startsWith(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME)) {
+        resolutionStrategy {
+            eachDependency {
+                if (this.requested.group == "org.jetbrains.kotlin") useVersion(libs.versions.kotlin.`for`.gradle.plugins.compilation.get())
+            }
         }
     }
 }
