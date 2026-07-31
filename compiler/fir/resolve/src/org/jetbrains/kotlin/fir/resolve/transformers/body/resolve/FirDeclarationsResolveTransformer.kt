@@ -631,7 +631,14 @@ open class FirDeclarationsResolveTransformer(
         // Temporary declare all the "outer" variables as proper (i.e., all inner variables as improper)
         // Without that, all variables (both inner and outer ones) would be considered as improper,
         // while we want to fix to assume `Delegate<Tv>` as proper because `Tv` belongs to the outer system
-        candidateSystem.withTypeVariablesThatAreCountedAsProperTypes(candidateSystem.outerTypeVariables.orEmpty()) {
+        // testData/diagnostics/tests/delegatedProperty/inference/provideDelegateFixationResultContainsOtherInnerVariable.kt
+        val typeVariablesCountedAsProperTypes =
+            if (session.languageVersionSettings.supportsFeature(LanguageFeature.RestrictSecondKindIncorporationToFixation)) {
+                candidateSystem.notFixedTypeVariables.keys
+            } else {
+                candidateSystem.outerTypeVariables.orEmpty()
+            }
+        candidateSystem.withTypeVariablesThatAreCountedAsProperTypes(typeVariablesCountedAsProperTypes) {
             // TODO: reconsider the approach here (KT-61781 for tracking)
             // Actually, this code might fail with an exception in some rare cases (see KT-61781)
             // The problem is that in the issue example, when fixing T type variable, it has two upper bounds: X and Delegate<Y>
