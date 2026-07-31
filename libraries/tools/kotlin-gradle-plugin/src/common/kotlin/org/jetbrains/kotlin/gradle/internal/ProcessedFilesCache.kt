@@ -45,8 +45,11 @@ internal open class ProcessedFilesCache(
             val entry = entryElement.jsonObject
             val src = entry["src"]?.jsonPrimitive?.content ?: continue
             val targetElement = entry["target"]
-            val target = if (targetElement == null || targetElement is JsonNull) null
-                         else targetElement.jsonPrimitive.content
+            val target = if (targetElement == null || targetElement is JsonNull) {
+                null
+            } else {
+                targetElement.jsonPrimitive.content
+            }
             result[decodeHexString(key)] = Element(src, target)
         }
 

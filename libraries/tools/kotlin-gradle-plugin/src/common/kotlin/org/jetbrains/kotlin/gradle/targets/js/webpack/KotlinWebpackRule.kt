@@ -8,16 +8,13 @@ package org.jetbrains.kotlin.gradle.targets.js.webpack
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.buildJsonArray
-import kotlinx.serialization.json.buildJsonObject
 import org.gradle.api.Named
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
+import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import javax.inject.Inject
@@ -187,15 +184,4 @@ constructor(
 private val prettyJson = Json {
     prettyPrint = true
     prettyPrintIndent = "  "
-}
-
-private fun anyToJsonElement(value: Any?): JsonElement = when (value) {
-    null -> JsonNull
-    is Boolean -> JsonPrimitive(value)
-    is Number -> JsonPrimitive(value)
-    is String -> JsonPrimitive(value)
-    is Map<*, *> -> buildJsonObject { value.forEach { (k, v) -> put(k.toString(), anyToJsonElement(v)) } }
-    is Iterable<*> -> buildJsonArray { value.forEach { add(anyToJsonElement(it)) } }
-    is Array<*> -> buildJsonArray { value.forEach { add(anyToJsonElement(it)) } }
-    else -> JsonPrimitive(value.toString())
 }
