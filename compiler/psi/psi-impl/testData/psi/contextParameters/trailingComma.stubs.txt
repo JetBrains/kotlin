@@ -35,6 +35,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaKt]]
         REFERENCE_EXPRESSION[referencedName=String]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      STRING_TEMPLATE
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=foo]
     MODIFIER_LIST[]
       CONTEXT_PARAMETER_LIST
@@ -51,3 +52,4 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaKt]]
         REFERENCE_EXPRESSION[referencedName=String]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      STRING_TEMPLATE

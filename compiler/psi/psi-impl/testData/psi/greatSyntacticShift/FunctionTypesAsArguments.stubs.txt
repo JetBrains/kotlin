@@ -4,6 +4,36 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesAsArgumentsKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=commands, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=commands]
+    DOT_QUALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=java]
+        REFERENCE_EXPRESSION[referencedName=util]
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=HashMap]
+        TYPE_ARGUMENT_LIST
+          TYPE_PROJECTION[projectionKind=NONE]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=String]
+          TYPE_PROJECTION[projectionKind=NONE]
+            TYPE_REFERENCE
+              FUNCTION_TYPE
+                VALUE_PARAMETER_LIST
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Unit]
+        VALUE_ARGUMENT_LIST
   CLASS[classId=/Lifetime, fqName=Lifetime, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Lifetime, superNames=[]]
     CLASS_BODY
       PROPERTY[fqName=Lifetime.attached, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=attached]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=ArrayList]
+          TYPE_ARGUMENT_LIST
+            TYPE_PROJECTION[projectionKind=NONE]
+              TYPE_REFERENCE
+                FUNCTION_TYPE
+                  VALUE_PARAMETER_LIST
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=Unit]
+          VALUE_ARGUMENT_LIST

@@ -5,32 +5,12 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression;
-import org.jetbrains.kotlin.psi.stubs.StubUtils;
 
 public class KtDotQualifiedExpressionElementType extends KtPlaceHolderStubElementType<KtDotQualifiedExpression> {
     public KtDotQualifiedExpressionElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtDotQualifiedExpression.class);
-    }
-
-    @Override
-    public boolean shouldCreateStub(ASTNode node) {
-        ASTNode treeParent = node.getTreeParent();
-        if (treeParent == null) return false;
-
-        IElementType parentElementType = treeParent.getElementType();
-        if (parentElementType == KtStubElementTypes.IMPORT_DIRECTIVE ||
-            parentElementType == KtStubElementTypes.PACKAGE_DIRECTIVE ||
-            parentElementType == KtStubElementTypes.DOT_QUALIFIED_EXPRESSION ||
-            StubUtils.isDeclaredInsideValueArgument$org_jetbrains_kotlin_psi_impl(node)
-        ) {
-            return super.shouldCreateStub(node);
-        }
-
-        return false;
     }
 }

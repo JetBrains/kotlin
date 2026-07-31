@@ -10,10 +10,12 @@ Binary.kt:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
           VALUE_PARAMETER[fqName=Binary.b, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=b]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Boolean]
+            BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
 
 
 WithComparison.kt:

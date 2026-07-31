@@ -12,3 +12,4 @@ FILE[kind=Script[packageFqName=<root>]]
   SCRIPT[fqName=Import, fqName=Import, isReplSnippet=false, name=Import]
     FUN[fqName=Import.foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
       VALUE_PARAMETER_LIST
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]

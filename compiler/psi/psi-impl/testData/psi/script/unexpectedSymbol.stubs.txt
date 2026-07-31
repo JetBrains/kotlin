@@ -3,3 +3,8 @@ FILE[kind=Script[packageFqName=<root>]]
   IMPORT_LIST
   SCRIPT[fqName=UnexpectedSymbol, fqName=UnexpectedSymbol, isReplSnippet=false, name=UnexpectedSymbol]
     SCRIPT_INITIALIZER
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=println]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]

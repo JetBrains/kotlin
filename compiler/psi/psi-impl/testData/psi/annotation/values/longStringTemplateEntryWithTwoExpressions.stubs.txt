@@ -5,6 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=LongStringTemplateEntryWithT
   IMPORT_LIST
   PROPERTY[fqName=CONSTANT, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=CONSTANT]
     MODIFIER_LIST[const]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
   FUN[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=InvalidAnno]

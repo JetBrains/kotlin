@@ -9,6 +9,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.CallInitializersKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
   FUN[fqName=test.sum, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=sum]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=left]
@@ -22,65 +23,150 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.CallInitializersKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    BINARY_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=left]
+      OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+      REFERENCE_EXPRESSION[referencedName=right]
   PROPERTY[fqName=test.call, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=call]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=compute]
+      VALUE_ARGUMENT_LIST
   PROPERTY[fqName=test.callWithArguments, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=callWithArguments]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=sum]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+        VALUE_ARGUMENT[isSpread=false]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
   PROPERTY[fqName=test.callWithNamedArguments, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=callWithNamedArguments]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=sum]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          VALUE_ARGUMENT_NAME
+            REFERENCE_EXPRESSION[referencedName=left]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
+        VALUE_ARGUMENT[isSpread=false]
+          VALUE_ARGUMENT_NAME
+            REFERENCE_EXPRESSION[referencedName=right]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
   PROPERTY[fqName=test.nestedCall, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=nestedCall]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=sum]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=compute]
+            VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=sum]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=6]
   PROPERTY[fqName=test.qualifiedCall, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=qualifiedCall]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=String]
+    DOT_QUALIFIED_EXPRESSION
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=7]
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=toString]
+        VALUE_ARGUMENT_LIST
   PROPERTY[fqName=test.parenthesizedCall, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=parenthesizedCall]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    PARENTHESIZED
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=compute]
+        VALUE_ARGUMENT_LIST
   PROPERTY[fqName=test.doublyParenthesizedCall, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=doublyParenthesizedCall]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    PARENTHESIZED
+      PARENTHESIZED
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=compute]
+          VALUE_ARGUMENT_LIST
   PROPERTY[fqName=test.callWithParenthesizedArguments, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=callWithParenthesizedArguments]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=sum]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          PARENTHESIZED
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=11]
+        VALUE_ARGUMENT[isSpread=false]
+          PARENTHESIZED
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
   FUN[fqName=test.expressionBodyCall, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyCall]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=compute]
+      VALUE_ARGUMENT_LIST
   FUN[fqName=test.expressionBodyNestedCall, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyNestedCall]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=sum]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=compute]
+            VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=8]
   FUN[fqName=test.expressionBodyParenthesizedCall, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyParenthesizedCall]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    PARENTHESIZED
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=compute]
+        VALUE_ARGUMENT_LIST
   PROPERTY[fqName=test.getterCall, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=getterCall]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=compute]
+        VALUE_ARGUMENT_LIST
   FUN[fqName=test.withCallDefault, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=withCallDefault]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=value]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=compute]
+          VALUE_ARGUMENT_LIST
   CLASS[classId=test/WithConstructorCallDefault, fqName=test.WithConstructorCallDefault, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithConstructorCallDefault, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithConstructorCallDefault]
       VALUE_PARAMETER_LIST
@@ -88,3 +174,10 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.CallInitializersKt]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=sum]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=9]
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]

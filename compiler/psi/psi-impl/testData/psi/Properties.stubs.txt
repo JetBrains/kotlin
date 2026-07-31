@@ -4,6 +4,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=foo]
+    DOT_QUALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=bar]
+        REFERENCE_EXPRESSION[referencedName=foo]
+      REFERENCE_EXPRESSION[referencedName=bar]
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=foo]
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=foo]
   PROPERTY[fqName=bar, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=true, isTopLevel=true, isVar=false, name=bar]
@@ -51,11 +56,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesKt]]
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=sad]
       REFERENCE_EXPRESSION[referencedName=foo]
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=foo]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
     PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=foo]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
     PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
     PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=true, name=foo]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
     PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
     PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
       MODIFIER_LIST[private]
@@ -63,6 +71,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=foo]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
     PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
@@ -70,6 +79,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=foo]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
     PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=false, mayHaveContract=false]
       VALUE_PARAMETER_LIST
@@ -91,6 +101,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesKt]]
         REFERENCE_EXPRESSION[referencedName=Int]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      BINARY_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=size]
+        OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
   PROPERTY[fqName=opt, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=opt]
     TYPE_REFERENCE
       NULLABLE_TYPE

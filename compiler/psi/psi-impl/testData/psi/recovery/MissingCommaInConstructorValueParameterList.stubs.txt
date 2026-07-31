@@ -22,3 +22,9 @@ FILE[kind=File[packageFqName=<root>]]
       FUN[fqName=Test.toString, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
+        STRING_TEMPLATE
+          SHORT_STRING_TEMPLATE_ENTRY[text=$a]
+            REFERENCE_EXPRESSION[referencedName=a]
+          LITERAL_STRING_TEMPLATE_ENTRY[text= ]
+          SHORT_STRING_TEMPLATE_ENTRY[text=$c]
+            REFERENCE_EXPRESSION[referencedName=c]

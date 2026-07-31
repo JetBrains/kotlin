@@ -17,6 +17,14 @@ FILE[kind=File[packageFqName=<root>]]
     CLASS_BODY
       PROPERTY[fqName=Stack.data, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=data]
         MODIFIER_LIST[private]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=ArrayList]
+          TYPE_ARGUMENT_LIST
+            TYPE_PROJECTION[projectionKind=NONE]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=T]
+          VALUE_ARGUMENT_LIST
       FUN[fqName=Stack.push, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=push]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
@@ -27,7 +35,15 @@ FILE[kind=File[packageFqName=<root>]]
       FUN[fqName=Stack.pop, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=pop]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=data]
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=removeLast]
+            VALUE_ARGUMENT_LIST
       PROPERTY[fqName=Stack.isEmpty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=isEmpty]
         MODIFIER_LIST[override]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=data]
+            REFERENCE_EXPRESSION[referencedName=isEmpty]

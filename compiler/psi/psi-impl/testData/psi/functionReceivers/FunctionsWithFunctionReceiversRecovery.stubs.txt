@@ -51,6 +51,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithFunctionReceive
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=G]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo]
     TYPE_REFERENCE
       NULLABLE_TYPE

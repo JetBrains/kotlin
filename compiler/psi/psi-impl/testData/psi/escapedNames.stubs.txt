@@ -92,6 +92,7 @@ FILE[kind=Facade[packageFqName=one two.three four, facadeFqName=one two.three fo
                       REFERENCE_EXPRESSION[referencedName=Type Parameter]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          NULL[kind=NULL, value=null]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]

@@ -9,20 +9,27 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.ParameterDefaultValuesKt]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
   FUN[fqName=test.withDefaults, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=withDefaults]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=int]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
       VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=string]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=String]
+        STRING_TEMPLATE
+          LITERAL_STRING_TEMPLATE_ENTRY[text=s]
       VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=negative]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+        PREFIX_EXPRESSION
+          OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
       VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=reference]
         TYPE_REFERENCE
           USER_TYPE
@@ -42,6 +49,8 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.ParameterDefaultValuesKt]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=IntArray]
           COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
   CLASS[classId=test/WithConstructorDefaults, fqName=test.WithConstructorDefaults, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithConstructorDefaults, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithConstructorDefaults]
       VALUE_PARAMETER_LIST
@@ -49,7 +58,10 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.ParameterDefaultValuesKt]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=6]
         VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=text]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+          STRING_TEMPLATE
+            LITERAL_STRING_TEMPLATE_ENTRY[text=t]

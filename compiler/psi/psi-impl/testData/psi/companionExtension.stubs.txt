@@ -26,11 +26,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CompanionExtensionKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=String]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
   PROPERTY[fqName=bar2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=true, isTopLevel=true, isVar=false, name=bar2]
     MODIFIER_LIST[private companion]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=String]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
   PROPERTY[fqName=bar3, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=true, isTopLevel=true, isVar=false, name=bar3]
     MODIFIER_LIST[companion inline]
     TYPE_REFERENCE
@@ -38,3 +40,4 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CompanionExtensionKt]]
         REFERENCE_EXPRESSION[referencedName=String]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]

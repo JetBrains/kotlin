@@ -37,11 +37,13 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Item]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=LinkedList.tail, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=tail]
         MODIFIER_LIST[private]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Item]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=LinkedList.size, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=size]
         MODIFIER_LIST[override]
         PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]

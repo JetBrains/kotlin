@@ -22,6 +22,7 @@ StringLiteral.kt:
                 REFERENCE_EXPRESSION[referencedName=String]
     PROPERTY[fqName=CONSTANT, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=CONSTANT]
       MODIFIER_LIST[const]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
 
 
 WithStringConstant.kt:

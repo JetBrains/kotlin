@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements
 
-import com.intellij.lang.ASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
 import org.jetbrains.kotlin.psi.stubs.KotlinOperationReferenceExpressionStub
-import org.jetbrains.kotlin.psi.stubs.StubUtils
 import org.jetbrains.kotlin.psi.stubs.elements.KtOperationReferenceExpressionElementType.deserializeOperationToken
 import org.jetbrains.kotlin.psi.stubs.elements.KtOperationReferenceExpressionElementType.serializeOperationToken
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinOperationReferenceExpressionStubImpl
@@ -54,10 +52,6 @@ internal object KtOperationReferenceExpressionElementType
                 }
             }
         }
-    }
-
-    override fun shouldCreateStub(node: ASTNode): Boolean {
-        return StubUtils.isDeclaredInsideValueArgument(node) && super.shouldCreateStub(node)
     }
 
     override fun createStub(

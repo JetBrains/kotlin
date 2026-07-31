@@ -4,11 +4,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SoftModifierAsInfixFunctionK
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=x]
-    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=C, superNames=[]]
-      MODIFIER_LIST[]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=Ann]
-          VALUE_ARGUMENT_LIST
+    BINARY_EXPRESSION
+      CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=C, superNames=[]]
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Ann]
+            VALUE_ARGUMENT_LIST
+      OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=annotation]
+      REFERENCE_EXPRESSION[referencedName=y]

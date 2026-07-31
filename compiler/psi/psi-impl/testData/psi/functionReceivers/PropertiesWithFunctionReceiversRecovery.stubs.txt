@@ -51,6 +51,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesWithFunctionReceiv
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=G]
     TYPE_REFERENCE
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=true, isTopLevel=true, isVar=false, name=foo]
     TYPE_REFERENCE
       NULLABLE_TYPE

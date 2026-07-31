@@ -134,8 +134,10 @@ Simple.kt:
           CLASS_BODY
             PROPERTY[fqName=test.Simple.Companion.CONST1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=CONST1]
               MODIFIER_LIST[const]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
             PROPERTY[fqName=test.Simple.Companion.CONST2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=CONST2]
               MODIFIER_LIST[const]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
 
 
 Sum.kt:

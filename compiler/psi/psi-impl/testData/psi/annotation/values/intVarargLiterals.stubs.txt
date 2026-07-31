@@ -95,3 +95,4 @@ VarArg.kt:
           CLASS_BODY
             PROPERTY[fqName=VarArg.Companion.CONSTANT, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=CONSTANT]
               MODIFIER_LIST[const]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]

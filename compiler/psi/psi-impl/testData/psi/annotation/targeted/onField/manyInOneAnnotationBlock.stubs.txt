@@ -22,3 +22,5 @@ FILE[kind=File[packageFqName=<root>]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=third]
+        STRING_TEMPLATE
+          LITERAL_STRING_TEMPLATE_ENTRY[text=String]

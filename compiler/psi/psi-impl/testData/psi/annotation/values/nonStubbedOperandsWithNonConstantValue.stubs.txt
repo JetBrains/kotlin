@@ -22,6 +22,11 @@ WithArrayAccess.kt:
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=IntArray]
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=intArrayOf]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
     CLASS[classId=/WithArrayAccess, fqName=WithArrayAccess, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithArrayAccess, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]
@@ -46,6 +51,7 @@ WithSafeCall.kt:
         NULLABLE_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+      NULL[kind=NULL, value=null]
     CLASS[classId=/WithSafeCall, fqName=WithSafeCall, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithSafeCall, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]

@@ -9,6 +9,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BitArithKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+    BINARY_EXPRESSION
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+      OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=shl]
+      REFERENCE_EXPRESSION[referencedName=index]
   FUN[fqName=setBit, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=setBit]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -19,6 +23,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BitArithKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+    BINARY_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=x]
+      OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=or]
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=oneBit]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            REFERENCE_EXPRESSION[referencedName=index]
   FUN[fqName=unsetBit, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=unsetBit]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -29,6 +41,18 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BitArithKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+    BINARY_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=x]
+      OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=and]
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=not]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=oneBit]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  REFERENCE_EXPRESSION[referencedName=index]
   FUN[fqName=getBit, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=getBit]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -39,6 +63,17 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BitArithKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+    BINARY_EXPRESSION
+      BINARY_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=x]
+        OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=and]
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=oneBit]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              REFERENCE_EXPRESSION[referencedName=index]
+      OPERATION_REFERENCE[operationToken=EXCLEQ, referencedName=!=]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
   FUN[fqName=getBit, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=getBit]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -49,6 +84,17 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BitArithKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+    BINARY_EXPRESSION
+      BINARY_EXPRESSION
+        PARENTHESIZED
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=x]
+            OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=shr]
+            REFERENCE_EXPRESSION[referencedName=index]
+        OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=shl]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=31]
+      OPERATION_REFERENCE[operationToken=EXCLEQ, referencedName=!=]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
   FUN[fqName=countOnes, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=countOnes]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -76,6 +122,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BitArithKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+    BINARY_EXPRESSION
+      BINARY_EXPRESSION
+        OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=and]
+        REFERENCE_EXPRESSION[referencedName=mask]
+      OPERATION_REFERENCE[operationToken=EQEQ, referencedName===]
+      REFERENCE_EXPRESSION[referencedName=mask]
   CLASS[classId=/INumber, fqName=INumber, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=INumber, superNames=[IComparable]]
     MODIFIER_LIST[open]
     SUPER_TYPE_LIST

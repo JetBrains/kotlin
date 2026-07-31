@@ -73,6 +73,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InapplicableKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=String]
+    STRING_TEMPLATE
   FUN[fqName=nullableReturn, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=nullableReturn]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]

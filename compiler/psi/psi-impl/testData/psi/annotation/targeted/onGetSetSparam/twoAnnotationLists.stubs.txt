@@ -40,6 +40,7 @@ FILE[kind=File[packageFqName=<root>]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=e]
           VALUE_PARAMETER_LIST
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=f]

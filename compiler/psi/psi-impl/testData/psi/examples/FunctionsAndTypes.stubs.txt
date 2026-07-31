@@ -12,6 +12,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsAndTypesKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=X]
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=something]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          REFERENCE_EXPRESSION[referencedName=t]
   PROPERTY[fqName=f1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=f1]
   PROPERTY[fqName=f1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=f1]
   PROPERTY[fqName=f1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=f1]

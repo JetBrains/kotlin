@@ -6,6 +6,7 @@ FILE[kind=File[packageFqName=<root>]]
       SECONDARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
         VALUE_PARAMETER_LIST
       PROPERTY[fqName=A.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       SECONDARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
         VALUE_PARAMETER_LIST
       SECONDARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]

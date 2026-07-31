@@ -9,6 +9,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationAsArgComplexKt]]
         VALUE_PARAMETER_LIST
       FUN[fqName=Annotation.getQuickFixes, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=getQuickFixes]
         VALUE_PARAMETER_LIST
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
   FUN[fqName=registerQuickFix, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=registerQuickFix]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=annotation]

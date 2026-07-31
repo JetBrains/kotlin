@@ -24,6 +24,8 @@ AnnoWithCustomNameAndDefaultValue.kt:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=String]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=str]
 
 
 AnnoWithDefaultName.kt:
@@ -52,6 +54,7 @@ AnnoWithDefaultNameAndDefaultValue.kt:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
 
 
 AnnoWithVararg.kt:
@@ -83,3 +86,4 @@ AnnoWithVarargAndDefaultVakue.kt:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
             COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
