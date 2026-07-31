@@ -22,8 +22,8 @@ fun main() {
         v<!UNNECESSARY_SAFE_CALL!>?.<!>plus(2)
         v.minus(2)
     }
-    map.replaceIfPresent("", <!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA!>null<!>)
-    map.replaceIfPresent(<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA!>null<!>, 0)
+    map.replaceIfPresent("", <!NULL_FOR_NONNULL_TYPE!>null<!>)
+    map.replaceIfPresent(<!NULL_FOR_NONNULL_TYPE!>null<!>, 0)
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType, javaFunction,

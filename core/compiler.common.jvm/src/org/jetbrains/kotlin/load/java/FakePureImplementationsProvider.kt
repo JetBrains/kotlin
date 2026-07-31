@@ -15,7 +15,10 @@ object FakePureImplementationsProvider {
 
     private val pureImplementationsClassIds = mutableMapOf<ClassId, ClassId>()
     private infix fun ClassId.implementedWith(implementations: List<ClassId>) {
-        implementations.associateWithTo(pureImplementationsClassIds) { this }
+        implementations.forEach {
+            require(it !in pureImplementationsClassIds)
+            pureImplementationsClassIds[it] = this
+        }
     }
 
     init {
