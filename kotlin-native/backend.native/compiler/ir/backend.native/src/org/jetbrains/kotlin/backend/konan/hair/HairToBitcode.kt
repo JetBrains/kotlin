@@ -471,8 +471,8 @@ internal class HairToBitcode(
 
                     for (phi in deferredPhies) {
                         val llvmPhi = nodeValues[phi]!!
-                        val incoming = phi.inputs.map { [value, blockExit] ->
-                            val inBlock = blockExitBlocks[blockExit] ?: error("No LLVM block for Hair block-exit $blockExit")
+                        val incoming = phi.valuesAtExits.map { (value, exit) ->
+                            val inBlock = blockExitBlocks[exit] ?: error("No LLVM block for Hair block-exit $exit")
                             val inValue = nodeValues[value] ?: error("No value generated for input $value of $phi")
                             inBlock to inValue
                         }
