@@ -173,7 +173,8 @@ object FirExpressionEvaluator {
 
         // Convert literal expression to the variable's type
         val expectedType = variable?.returnTypeRef?.coneType ?: return evaluated
-        return expression.value?.adjustTypeAndConvertToLiteral(expression, expectedType)?.wrap() ?: evaluated
+        val resultWithAdjustedType = expression.value.adjustTypeAndConvertToResult(expression, expectedType)
+        return resultWithAdjustedType as? Evaluated ?: evaluated
     }
 
     private inline fun <T> FirCallableSymbol<*>.visit(block: () -> T): T {
@@ -394,7 +395,7 @@ object FirExpressionEvaluator {
                                 val unaryArg = evaluateOr<FirExpression>(propertyAccessExpression.explicitReceiver) { return it }
                                 val argType = propertySymbol.receiverType(session) ?: return NotConst
                                 evaluateUnary(unaryArg, argType, propertySymbol.callableId!!)
-                                    .adjustTypeAndConvertToLiteral(propertyAccessExpression)
+                                    .adjustTypeAndConvertToResult(propertyAccessExpression)
                             }
 
                             // The `name` property will be evaluated only for `Enum` and `KCallable` objects.
@@ -404,14 +405,14 @@ object FirExpressionEvaluator {
                                 when (result) {
                                     is FirPropertyAccessExpression -> {
                                         val name = result.calleeReference.name.asString()
-                                        name.adjustTypeAndConvertToLiteral(propertyAccessExpression)
+                                        name.toConstExpression(ConstantValueKind.String, propertyAccessExpression).wrap()
                                     }
                                     is FirResolvedCallableReference -> {
                                         val name = when (result.resolvedSymbol) {
                                             is FirConstructorSymbol -> SpecialNames.INIT.asString()
                                             else -> result.name.asString()
                                         }
-                                        name.adjustTypeAndConvertToLiteral(propertyAccessExpression)
+                                        name.toConstExpression(ConstantValueKind.String, propertyAccessExpression).wrap()
                                     }
                                     else -> NotConst
                                 }
@@ -511,15 +512,13 @@ object FirExpressionEvaluator {
                         ?: symbol.firstValueParameterType(session)
                         ?: return NotConst
                     evaluateUnary(evaluatedArgs[0], argType, symbol.callableId)
-                        ?.adjustTypeAndConvertToLiteral(functionCall)
-                        ?: NotConst
+                        .adjustTypeAndConvertToResult(functionCall)
                 }
                 2 -> {
                     val leftType = symbol.receiverType(session) ?: return NotConst
                     val rightType = symbol.firstValueParameterType(session) ?: return NotConst
                     evaluateBinary(evaluatedArgs[0], leftType, symbol.callableId, evaluatedArgs[1], rightType)
-                        ?.adjustTypeAndConvertToLiteral(functionCall)
-                        ?: NotConst
+                        .adjustTypeAndConvertToResult(functionCall)
                 }
                 else -> NotConst
             }
@@ -544,7 +543,7 @@ object FirExpressionEvaluator {
                 }
                 type.isUnsignedType -> {
                     val argument = (evaluateOr<FirLiteralExpression>(constructorCall.argument) { return it }).value
-                    return argument.adjustTypeAndConvertToLiteral(constructorCall)
+                    return argument.adjustTypeAndConvertToResult(constructorCall)
                 }
                 else -> return NotConst
             }
@@ -565,9 +564,9 @@ object FirExpressionEvaluator {
                 FirOperation.LT_EQ -> intResult <= 0
                 FirOperation.GT -> intResult > 0
                 FirOperation.GT_EQ -> intResult >= 0
-                else -> NotConst
+                else -> return NotConst
             }
-            return compareToResult.adjustTypeAndConvertToLiteral(comparisonExpression)
+            return compareToResult.toConstExpression(ConstantValueKind.Boolean, comparisonExpression).wrap()
         }
 
         override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Nothing?): FirEvaluatorResult {
@@ -588,7 +587,7 @@ object FirExpressionEvaluator {
             val result = when (equalityOperatorCall.operation) {
                 FirOperation.EQ -> opr1.value == opr2.value
                 FirOperation.NOT_EQ -> opr1.value != opr2.value
-                else -> NotConst
+                else -> return NotConst
             }
 
             return result.toConstExpression(ConstantValueKind.Boolean, equalityOperatorCall).wrap()
@@ -845,16 +844,12 @@ private fun evaluateBinary(
     )
 }
 
-private fun Any?.adjustTypeAndConvertToLiteral(original: FirExpression): FirEvaluatorResult {
+private fun Any?.adjustTypeAndConvertToResult(original: FirExpression, expectedType: ConeKotlinType = original.resolvedType): FirEvaluatorResult {
     if (this == null) return NotConst
     if (this is FirEvaluatorResult) return this
-    return adjustTypeAndConvertToLiteral(original, original.resolvedType)?.wrap() ?: NotConst
-}
-
-private fun Any.adjustTypeAndConvertToLiteral(original: FirExpression, expectedType: ConeKotlinType): FirLiteralExpression? {
-    val expectedKind = expectedType.toConstantValueKind() ?: return null
-    val typeAdjustedValue = expectedKind.convertToGivenKind(this) ?: return null
-    return typeAdjustedValue.toConstExpression(expectedKind, original)
+    val expectedKind = expectedType.toConstantValueKind() ?: return NotConst
+    val typeAdjustedValue = expectedKind.convertToGivenKind(this) ?: return NotConst
+    return typeAdjustedValue.toConstExpression(expectedKind, original).wrap()
 }
 
 private val CallableId.isStringLength: Boolean
