@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
-import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -76,22 +75,15 @@ class KtDiagnosticFactory0(
         context: DiagnosticBaseContext,
     ): KtSimpleDiagnostic? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
-        return when (element) {
-            is KtPsiSourceElement -> KtPsiSimpleDiagnostic(
-                element,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            else -> KtRegularSimpleDiagnostic(
-                element,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-        }
+        return context.extraSourceToDiagnosticInstanceMapper?.createDiagnostic0(
+            element, effectiveSeverity, this, positioningStrategy ?: defaultPositioningStrategy, context
+        ) ?: KtRegularSimpleDiagnostic(
+            element,
+            effectiveSeverity,
+            this,
+            positioningStrategy ?: defaultPositioningStrategy,
+            context,
+        )
     }
 }
 
@@ -110,24 +102,16 @@ class KtDiagnosticFactory1<A>(
         context: DiagnosticBaseContext,
     ): KtDiagnosticWithParameters1<A>? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
-        return when (element) {
-            is KtPsiSourceElement -> KtPsiDiagnosticWithParameters1(
-                element,
-                a,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            else -> KtRegularDiagnosticWithParameters1(
-                element,
-                a,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-        }
+        return context.extraSourceToDiagnosticInstanceMapper?.createDiagnostic1(
+            element, effectiveSeverity, this, a, positioningStrategy ?: defaultPositioningStrategy, context
+        ) ?: KtRegularDiagnosticWithParameters1(
+            element,
+            a,
+            effectiveSeverity,
+            this,
+            positioningStrategy ?: defaultPositioningStrategy,
+            context,
+        )
     }
 }
 
@@ -147,26 +131,17 @@ class KtDiagnosticFactory2<A, B>(
         context: DiagnosticBaseContext,
     ): KtDiagnosticWithParameters2<A, B>? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
-        return when (element) {
-            is KtPsiSourceElement -> KtPsiDiagnosticWithParameters2(
-                element,
-                a,
-                b,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            else -> KtRegularDiagnosticWithParameters2(
-                element,
-                a,
-                b,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-        }
+        return context.extraSourceToDiagnosticInstanceMapper?.createDiagnostic2(
+            element, effectiveSeverity, this, a, b, positioningStrategy ?: defaultPositioningStrategy, context
+        ) ?: KtRegularDiagnosticWithParameters2(
+            element,
+            a,
+            b,
+            effectiveSeverity,
+            this,
+            positioningStrategy ?: defaultPositioningStrategy,
+            context,
+        )
     }
 }
 
@@ -187,28 +162,18 @@ class KtDiagnosticFactory3<A, B, C>(
         context: DiagnosticBaseContext,
     ): KtDiagnosticWithParameters3<A, B, C>? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
-        return when (element) {
-            is KtPsiSourceElement -> KtPsiDiagnosticWithParameters3(
-                element,
-                a,
-                b,
-                c,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            else -> KtRegularDiagnosticWithParameters3(
-                element,
-                a,
-                b,
-                c,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-        }
+        return context.extraSourceToDiagnosticInstanceMapper?.createDiagnostic3(
+            element, effectiveSeverity, this, a, b, c, positioningStrategy ?: defaultPositioningStrategy, context
+        ) ?: KtRegularDiagnosticWithParameters3(
+            element,
+            a,
+            b,
+            c,
+            effectiveSeverity,
+            this,
+            positioningStrategy ?: defaultPositioningStrategy,
+            context,
+        )
     }
 }
 
@@ -230,30 +195,19 @@ class KtDiagnosticFactory4<A, B, C, D>(
         context: DiagnosticBaseContext,
     ): KtDiagnosticWithParameters4<A, B, C, D>? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
-        return when (element) {
-            is KtPsiSourceElement -> KtPsiDiagnosticWithParameters4(
-                element,
-                a,
-                b,
-                c,
-                d,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            else -> KtRegularDiagnosticWithParameters4(
-                element,
-                a,
-                b,
-                c,
-                d,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-        }
+        return context.extraSourceToDiagnosticInstanceMapper?.createDiagnostic4(
+            element, effectiveSeverity, this, a, b, c, d, positioningStrategy ?: defaultPositioningStrategy, context
+        ) ?: KtRegularDiagnosticWithParameters4(
+            element,
+            a,
+            b,
+            c,
+            d,
+            effectiveSeverity,
+            this,
+            positioningStrategy ?: defaultPositioningStrategy,
+            context,
+        )
     }
 }
 
