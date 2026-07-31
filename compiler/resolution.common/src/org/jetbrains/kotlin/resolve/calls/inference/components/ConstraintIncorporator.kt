@@ -178,7 +178,7 @@ class ConstraintIncorporator(
         // [AbstractVariableReadinessCalculator.hasDependencyToOtherTypeVariablesViaSecondKindIncorporation],
         // and readers of not-yet-derived constraints emulate the substitution themselves
         // (see `FirDeclarationsResolveTransformer.findResultTypeForInnerVariableIfNeeded`) (KT-86022).
-        if (secondIncorporationKindRestrictedToFixation && !isCausedByFixation) return
+        if (secondIncorporationKindRestrictedToFixation) return
 
         if (typeVariable in constraint.derivedFrom) return
         val freshTypeConstructor = typeVariable.freshTypeConstructor()

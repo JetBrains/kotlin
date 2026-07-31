@@ -694,6 +694,8 @@ class NewConstraintSystemImpl(
         constraintInjector.addInitialEqualityConstraint(variable.defaultType(), resultType, position)
 
         val freshTypeConstructor = variable.freshTypeConstructor()
+        addConstraintsWithSubstitutedResultType(freshTypeConstructor, resultType, position)
+
         val variableWithConstraints =
             notFixedTypeVariables.remove(freshTypeConstructor) ?: error("Seems that $variable is being fixed second time")
 
@@ -713,6 +715,37 @@ class NewConstraintSystemImpl(
         postponeOnlyInputTypesCheck(variableWithConstraints, resultType)
 
         doPostponedComputationsIfAllVariablesAreFixed()
+    }
+
+    private fun addConstraintsWithSubstitutedResultType(
+        freshTypeConstructor: TypeVariableTypeConstructorMarker,
+        resultType: KotlinTypeMarker,
+        position: FixVariableConstraintPosition<*>,
+    ) {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.RestrictSecondKindIncorporationToFixation)) return
+        if (resultType.isError()) return
+        val substitutor = typeSubstitutorByTypeConstructor(mapOf(freshTypeConstructor to resultType))
+
+        val newEqualityConstraints = mutableListOf<Triple<TypeVariableMarker, KotlinTypeMarker, Constraint>>()
+
+        for ([otherVariableConstructor, otherVariableWithConstraints] in notFixedTypeVariables.entries) {
+            if (freshTypeConstructor == otherVariableConstructor) continue
+            val otherVariable = allTypeVariables[otherVariableConstructor] ?: error("No type variable found for $otherVariableConstructor")
+            for (constraint in otherVariableWithConstraints.constraints) {
+                substitutor.substituteOrNull(constraint.type)?.let {
+                    newEqualityConstraints += Triple(otherVariable, it, constraint)
+                }
+            }
+        }
+
+        for ([otherVariable, newConstraintType, existingConstraint] in newEqualityConstraints) {
+            constraintInjector.addSubstitutedConstraintReplacement(
+                otherVariable,
+                existingConstraint,
+                newConstraintType,
+                position,
+            )
+        }
     }
 
     override fun getEmptyIntersectionTypeKind(types: Collection<KotlinTypeMarker>): EmptyIntersectionTypeInfo? {
