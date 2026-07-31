@@ -1,0 +1,64 @@
+{
+  "projectStructure": {
+    "formatVersion": "0.3.3",
+    "isPublishedAsRoot": "true",
+    "variants": [
+      {
+        "name": "variant1",
+        "sourceSet": [
+          "commonMain",
+          "sourceSetA",
+          "sourceSetB"
+        ]
+      },
+      {
+        "name": "variant2",
+        "sourceSet": [
+          "commonMain",
+          "sourceSetC"
+        ]
+      }
+    ],
+    "sourceSets": [
+      {
+        "name": "commonMain",
+        "dependsOn": [],
+        "moduleDependency": []
+      },
+      {
+        "name": "sourceSetA",
+        "dependsOn": [
+          "commonMain"
+        ],
+        "moduleDependency": [
+          "aa:bb"
+        ],
+        "binaryLayout": "metadata"
+      },
+      {
+        "name": "sourceSetB",
+        "dependsOn": [
+          "commonMain",
+          "sourceSetA"
+        ],
+        "moduleDependency": [
+          "cc:dd",
+          "ee:ff"
+        ],
+        "sourceSetCInteropMetadataDirectory": "xx/cinterop/",
+        "binaryLayout": "klib"
+      },
+      {
+        "name": "sourceSetC",
+        "dependsOn": [
+          "commonMain",
+          "sourceSetB"
+        ],
+        "moduleDependency": [],
+        "sourceSetCInteropMetadataDirectory": "cinterops/C",
+        "binaryLayout": "klib",
+        "hostSpecific": "true"
+      }
+    ]
+  }
+}
