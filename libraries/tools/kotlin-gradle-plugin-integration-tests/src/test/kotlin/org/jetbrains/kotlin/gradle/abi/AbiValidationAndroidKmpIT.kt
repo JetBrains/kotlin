@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.testbase.assertTasksFailed
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.buildAndFail
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
+import org.jetbrains.kotlin.gradle.testbase.makeSnapshotTo
 import org.jetbrains.kotlin.gradle.testbase.source
 
 @AndroidGradlePluginTests
@@ -273,4 +274,5 @@ class AbiValidationAndroidKmpIT : KGPBaseTest() {
             assertDumpsEqual(expectedDump, dumpFile)
         }
     }
+
 }
