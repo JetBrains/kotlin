@@ -59,7 +59,7 @@ internal object CoreLibsDomainInfo : DomainInfo {
 
 internal object AnalysisApiDomainInfo : DomainInfo {
     override val domain = Domain.AnalysisApi
-    override val include: List<String> = listOf("analysis/**", "compiler/psi/**", "prepare/analysis-api/**")
+    override val include: List<String> = listOf("analysis/**", "compiler/psi/**", "prepare/analysis-api/**", "plugins/plugin-sandbox/**", "plugins/scripting/**")
     override val exclude: List<String> = listOf("compiler/psi/parser/**")
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
 }
@@ -103,7 +103,7 @@ internal object IntelliJDomainInfo : DomainInfo {
     override val domain = Domain.IntelliJ
     override val include: List<String> = listOf("prepare/ide-plugin-dependencies/**")
     override val exclude: List<String> = listOf()
-    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, AnalysisApiDomainInfo, CoreLibsDomainInfo, BuildToolsApiDomainInfo) }
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, AnalysisApiDomainInfo, CoreLibsDomainInfo, BuildToolsApiDomainInfo, CompilerPluginsDomainInfo) }
 }
 
 internal object BuildInfrastructureDomainInfo : DomainInfo {

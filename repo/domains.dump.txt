@@ -183,7 +183,22 @@ SwiftExport:
 
 CompilerPlugins:
  - compiler/plugin-api
- - plugins
+ - plugins/allopen
+ - plugins/assign-plugin
+ - plugins/atomicfu
+ - plugins/compose
+ - plugins/js-plain-objects
+ - plugins/jvm-abi-gen
+ - plugins/kapt
+ - plugins/kotlin-dataframe
+ - plugins/kotlinx-serialization
+ - plugins/lombok
+ - plugins/noarg
+ - plugins/parcelize
+ - plugins/plugins-interactions-testing
+ - plugins/power-assert
+ - plugins/sam-with-receiver
+ - plugins/test-plugins
 
 Js, SwiftExport:
  - libraries/tools/analysis-api-based-klib-reader
@@ -318,6 +333,10 @@ Unknown:
  - test-instrumenter
  - tests
  - third-party
+
+AnalysisApi, CompilerPlugins:
+ - plugins/plugin-sandbox
+ - plugins/scripting
 
 BuildToolsApi, Compiler, Gradle:
  - build-common
