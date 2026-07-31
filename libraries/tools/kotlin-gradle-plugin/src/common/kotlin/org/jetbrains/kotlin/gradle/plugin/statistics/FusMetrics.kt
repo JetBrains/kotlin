@@ -279,6 +279,9 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
         separateKmpCompilationEnabled: Boolean,
         firRunnerEnabled: Boolean, // jvm only as of 2.2.20
         executionPolicy: KotlinCompilerExecutionStrategy,
+        // both are null for anything that is not a multiplatform Kotlin/JVM compilation
+        kmpJvmClasspathMetadataEnabled: Boolean?,
+        kmpJvmUnsafeOptimizationsEnabled: Boolean?,
         metricsContainer: StatisticsValuesConsumer,
     ) {
         metricsContainer.report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
@@ -297,6 +300,12 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
         }
         if (firRunnerEnabled) {
             metricsContainer.report(BooleanMetrics.KOTLIN_INCREMENTAL_FIR_RUNNER_ENABLED, true)
+        }
+        kmpJvmClasspathMetadataEnabled?.also {
+            metricsContainer.report(BooleanMetrics.KMP_JVM_CLASSPATH_METADATA_ENABLED, it)
+        }
+        kmpJvmUnsafeOptimizationsEnabled?.also {
+            metricsContainer.report(BooleanMetrics.KMP_JVM_UNSAFE_OPTIMIZATIONS_ENABLED, it)
         }
         metricsContainer.report(StringListMetrics.KOTLIN_COMPILER_EXECUTION_POLICY, executionPolicy.propertyValue)
     }
