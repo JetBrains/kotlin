@@ -2560,13 +2560,13 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
             public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Double(1.7976931348623157E308)] val MAX_VALUE: R|kotlin/Double| = Double(1.7976931348623157E308)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Double|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=RecursionInInitializer] val POSITIVE_INFINITY: R|kotlin/Double| = Q|kotlin/Double|.R|kotlin/Double.Companion.POSITIVE_INFINITY|
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Double(Infinity)] val POSITIVE_INFINITY: R|kotlin/Double| = Double(1.0).R|kotlin/Double.div|(Double(0.0))
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Double|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=RecursionInInitializer] val NEGATIVE_INFINITY: R|kotlin/Double| = Q|kotlin/Double|.R|kotlin/Double.Companion.NEGATIVE_INFINITY|
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Double(-Infinity)] val NEGATIVE_INFINITY: R|kotlin/Double| = Double(1.0).R|kotlin/Double.unaryMinus|().R|kotlin/Double.div|(Double(0.0))
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Double|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=RecursionInInitializer] val NaN: R|kotlin/Double| = Q|kotlin/Double|.R|kotlin/Double.Companion.NaN|
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Double(NaN)] val NaN: R|kotlin/Double| = Double(0.0).R|kotlin/Double.div|(Double(0.0)).R|kotlin/Double.unaryMinus|()
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Double|
 
             @R|kotlin/SinceKotlin|[Types](version = String(1.4) [evaluated = String(1.4)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(8)] val SIZE_BYTES: R|kotlin/Int| = Int(8)
@@ -2830,13 +2830,13 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
             public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Float(3.4028235E38)] val MAX_VALUE: R|kotlin/Float| = Float(3.4028235E38)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Float|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=RecursionInInitializer] val POSITIVE_INFINITY: R|kotlin/Float| = Q|kotlin/Float|.R|kotlin/Float.Companion.POSITIVE_INFINITY|
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Float(Infinity)] val POSITIVE_INFINITY: R|kotlin/Float| = Float(1.0).R|kotlin/Float.div|(Float(0.0))
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Float|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=RecursionInInitializer] val NEGATIVE_INFINITY: R|kotlin/Float| = Q|kotlin/Float|.R|kotlin/Float.Companion.NEGATIVE_INFINITY|
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Float(-Infinity)] val NEGATIVE_INFINITY: R|kotlin/Float| = Float(1.0).R|kotlin/Float.unaryMinus|().R|kotlin/Float.div|(Float(0.0))
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Float|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=RecursionInInitializer] val NaN: R|kotlin/Float| = Q|kotlin/Float|.R|kotlin/Float.Companion.NaN|
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Float(NaN)] val NaN: R|kotlin/Float| = Float(0.0).R|kotlin/Float.div|(Float(0.0)).R|kotlin/Float.unaryMinus|()
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Float|
 
             @R|kotlin/SinceKotlin|[Types](version = String(1.4) [evaluated = String(1.4)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(4)] val SIZE_BYTES: R|kotlin/Int| = Int(4)

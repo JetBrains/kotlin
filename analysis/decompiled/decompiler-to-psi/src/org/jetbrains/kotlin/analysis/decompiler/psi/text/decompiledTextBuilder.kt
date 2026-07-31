@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.decompiler.psi.text
 
-import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_INITIALIZER
 import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_PARAMETER_VALUE
@@ -25,7 +24,7 @@ private const val DECOMPILED_CODE_COMMENT = "/* compiled code */"
 private const val FLEXIBLE_TYPE_COMMENT = "/* platform type */"
 private const val DECOMPILED_CONTRACT_STUB = "contract { /* compiled contract */ }"
 
-@OptIn(IntellijInternalApi::class, KtImplementationDetail::class, KtExperimentalApi::class)
+@OptIn(KtExperimentalApi::class)
 internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = buildIndentedText {
     (fileStub.kind as? KotlinFileStubKind.Invalid)?.errorMessage?.let {
         return it
@@ -653,6 +652,20 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = buildIn
         override fun visitPrefixExpression(expression: KtPrefixExpression) {
             append(expression.operationReference.getReferencedName())
             process(expression.baseExpression)
+        }
+
+        override fun visitBinaryExpression(expression: KtBinaryExpression) {
+            process(expression.left)
+            append(' ')
+            append(expression.operationReference.getReferencedName())
+            append(' ')
+            process(expression.right)
+        }
+
+        override fun visitParenthesizedExpression(expression: KtParenthesizedExpression) {
+            append('(')
+            process(expression.expression)
+            append(')')
         }
 
         override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {

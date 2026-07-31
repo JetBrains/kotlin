@@ -3771,11 +3771,10 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Double]
-            DOT_QUALIFIED_EXPRESSION
-              DOT_QUALIFIED_EXPRESSION
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=Double]
-              REFERENCE_EXPRESSION[referencedName=POSITIVE_INFINITY]
+            BINARY_EXPRESSION
+              FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.0]
+              OPERATION_REFERENCE[operationToken=DIV, referencedName=/]
+              FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=0.0]
           PROPERTY[fqName=kotlin.Double.Companion.NEGATIVE_INFINITY, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=NEGATIVE_INFINITY]
             constantInitializer: -Infinity.toDouble()
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -3784,11 +3783,12 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Double]
-            DOT_QUALIFIED_EXPRESSION
-              DOT_QUALIFIED_EXPRESSION
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=Double]
-              REFERENCE_EXPRESSION[referencedName=NEGATIVE_INFINITY]
+            BINARY_EXPRESSION
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.0]
+              OPERATION_REFERENCE[operationToken=DIV, referencedName=/]
+              FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=0.0]
           PROPERTY[fqName=kotlin.Double.Companion.NaN, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=NaN]
             constantInitializer: NaN.toDouble()
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -3797,11 +3797,13 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Double]
-            DOT_QUALIFIED_EXPRESSION
-              DOT_QUALIFIED_EXPRESSION
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=Double]
-              REFERENCE_EXPRESSION[referencedName=NaN]
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+              PARENTHESIZED
+                BINARY_EXPRESSION
+                  FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=0.0]
+                  OPERATION_REFERENCE[operationToken=DIV, referencedName=/]
+                  FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=0.0]
           PROPERTY[fqName=kotlin.Double.Companion.SIZE_BYTES, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BYTES]
             constantInitializer: 8
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -5910,11 +5912,10 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Float]
-            DOT_QUALIFIED_EXPRESSION
-              DOT_QUALIFIED_EXPRESSION
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=Float]
-              REFERENCE_EXPRESSION[referencedName=POSITIVE_INFINITY]
+            BINARY_EXPRESSION
+              FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.0F]
+              OPERATION_REFERENCE[operationToken=DIV, referencedName=/]
+              FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=0.0F]
           PROPERTY[fqName=kotlin.Float.Companion.NEGATIVE_INFINITY, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=NEGATIVE_INFINITY]
             constantInitializer: -Infinity.toFloat()
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -5923,11 +5924,12 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Float]
-            DOT_QUALIFIED_EXPRESSION
-              DOT_QUALIFIED_EXPRESSION
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=Float]
-              REFERENCE_EXPRESSION[referencedName=NEGATIVE_INFINITY]
+            BINARY_EXPRESSION
+              PREFIX_EXPRESSION
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.0F]
+              OPERATION_REFERENCE[operationToken=DIV, referencedName=/]
+              FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=0.0F]
           PROPERTY[fqName=kotlin.Float.Companion.NaN, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=NaN]
             constantInitializer: NaN.toFloat()
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -5936,11 +5938,13 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Float]
-            DOT_QUALIFIED_EXPRESSION
-              DOT_QUALIFIED_EXPRESSION
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=Float]
-              REFERENCE_EXPRESSION[referencedName=NaN]
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+              PARENTHESIZED
+                BINARY_EXPRESSION
+                  FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=0.0F]
+                  OPERATION_REFERENCE[operationToken=DIV, referencedName=/]
+                  FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=0.0F]
           PROPERTY[fqName=kotlin.Float.Companion.SIZE_BYTES, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BYTES]
             constantInitializer: 4
             MODIFIER_LIST[public const MustUseReturnValue]

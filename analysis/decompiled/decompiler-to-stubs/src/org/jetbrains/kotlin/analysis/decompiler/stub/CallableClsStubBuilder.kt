@@ -446,7 +446,7 @@ private class PropertyClsStubBuilder(
     private fun createInitializerStub(propertyStub: KotlinPropertyStubImpl) {
         val value = propertyStub.constantInitializer
         if (value != null && value.isRepresentableAsStub()) {
-            createValueStub(propertyStub, value)
+            createValueStub(propertyStub, value, containerClassId = (protoContainer as? ProtoContainer.Class)?.classId)
         } else {
             KotlinNameReferenceExpressionStubImpl(
                 propertyStub,
