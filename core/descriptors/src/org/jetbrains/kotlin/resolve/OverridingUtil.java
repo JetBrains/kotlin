@@ -26,6 +26,7 @@ import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI;
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
@@ -505,6 +506,7 @@ public class OverridingUtil {
         createAndBindFakeOverrides(current, notOverridden, strategy);
     }
 
+    @ObsoleteDescriptorBasedAPI
     public static boolean isVisibleForOverride(
             @NotNull MemberDescriptor overriding,
             @NotNull MemberDescriptor fromSuper,
@@ -805,6 +807,7 @@ public class OverridingUtil {
         return result;
     }
 
+    @ObsoleteDescriptorBasedAPI
     @NotNull
     public static Collection<CallableMemberDescriptor> filterVisibleFakeOverrides(
             @NotNull final ClassDescriptor current,

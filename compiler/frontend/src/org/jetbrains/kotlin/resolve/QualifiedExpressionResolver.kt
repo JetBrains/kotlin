@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -830,6 +831,7 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
     }
 }
 
+@ObsoleteDescriptorBasedAPI
 internal fun isVisible(
     descriptor: DeclarationDescriptor,
     shouldBeVisibleFrom: DeclarationDescriptor?,
