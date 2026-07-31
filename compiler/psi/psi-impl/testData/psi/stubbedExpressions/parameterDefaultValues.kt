@@ -1,5 +1,4 @@
-// The default value of a value parameter is absent from the stub tree; only `hasDefaultValue` is recorded.
-// A collection literal is the exception, as it is stub-based regardless of the position
+// The default value of a value parameter is stubbed as long as the expression itself is stub-based
 package test
 
 const val constant: Int = 1

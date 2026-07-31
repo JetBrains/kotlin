@@ -1,5 +1,5 @@
 KtFile: accessorExpressionBodies.kt
-  PsiComment(EOL_COMMENT)('// The expression body of a property accessor is absent from the stub tree')
+  PsiComment(EOL_COMMENT)('// The expression body of a property accessor is stubbed as long as the expression itself is stub-based')
   PsiWhiteSpace('\n')
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')

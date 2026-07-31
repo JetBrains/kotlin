@@ -1,4 +1,4 @@
-// The expression body of a property accessor is absent from the stub tree
+// The expression body of a property accessor is stubbed as long as the expression itself is stub-based
 package test
 
 val getter: Int

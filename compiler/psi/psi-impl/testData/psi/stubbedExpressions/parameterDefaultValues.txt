@@ -1,7 +1,5 @@
 KtFile: parameterDefaultValues.kt
-  PsiComment(EOL_COMMENT)('// The default value of a value parameter is absent from the stub tree; only `hasDefaultValue` is recorded.')
-  PsiWhiteSpace('\n')
-  PsiComment(EOL_COMMENT)('// A collection literal is the exception, as it is stub-based regardless of the position')
+  PsiComment(EOL_COMMENT)('// The default value of a value parameter is stubbed as long as the expression itself is stub-based')
   PsiWhiteSpace('\n')
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
