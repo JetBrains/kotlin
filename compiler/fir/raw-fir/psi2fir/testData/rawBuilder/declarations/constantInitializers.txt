@@ -1,0 +1,38 @@
+FILE: constantInitializers.kt
+    public? final? const val constant: Int = IntegerLiteral(1)
+        public? get(): Int
+    public? final? const val negative: Int = IntegerLiteral(-2)
+        public? get(): Int
+    public? final? const val string: String = String(s)
+        public? get(): String
+    public? final? const val reference: Int = constant#
+        public? get(): Int
+    public? final? val nonConst: Int = IntegerLiteral(3)
+        public? get(): Int
+    public? final? val inferred: <implicit> = IntegerLiteral(4)
+        public? get(): <implicit>
+    public? final? fun expressionBody(): Int {
+        ^expressionBody IntegerLiteral(5)
+    }
+    public? final? fun inferredExpressionBody(): <implicit> {
+        ^inferredExpressionBody IntegerLiteral(6)
+    }
+    public? final? val getterBody: Int
+        public? get(): Int {
+            ^ IntegerLiteral(7)
+        }
+    public? final? fun withDefaults(int: Int = IntegerLiteral(8), string: String = String(s)): R|kotlin/Unit| {
+    }
+    public final? class WithMembers : R|kotlin/Any| {
+        public? [ContainingClassKey=WithMembers] constructor(): R|WithMembers| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? val member: Int = IntegerLiteral(9)
+            public? [ContainingClassKey=WithMembers] get(): Int
+
+        public? final? fun memberBody(): Int {
+            ^memberBody IntegerLiteral(10)
+        }
+
+    }

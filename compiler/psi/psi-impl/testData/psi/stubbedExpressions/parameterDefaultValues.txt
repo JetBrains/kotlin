@@ -1,0 +1,208 @@
+KtFile: parameterDefaultValues.kt
+  PsiComment(EOL_COMMENT)('// The default value of a value parameter is absent from the stub tree; only `hasDefaultValue` is recorded.')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// A collection literal is the exception, as it is stub-based regardless of the position')
+  PsiWhiteSpace('\n')
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('test')
+  IMPORT_LIST
+    <empty list>
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    MODIFIER_LIST
+      PsiElement(const)('const')
+    PsiWhiteSpace(' ')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('constant')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('1')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('withDefaults')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiWhiteSpace('\n    ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('int')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('2')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('string')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('String')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('s')
+          PsiElement(CLOSING_QUOTE)('"')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('negative')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        PREFIX_EXPRESSION
+          OPERATION_REFERENCE
+            PsiElement(MINUS)('-')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('3')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('reference')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('constant')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(annotation)('annotation')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('WithArrayDefaults')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('empty')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('IntArray')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          COLLECTION_LITERAL_EXPRESSION
+            PsiElement(LBRACKET)('[')
+            PsiElement(RBRACKET)(']')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('filled')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('IntArray')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          COLLECTION_LITERAL_EXPRESSION
+            PsiElement(LBRACKET)('[')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('4')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('5')
+            PsiElement(RBRACKET)(']')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('WithConstructorDefaults')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('value')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('6')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('text')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          STRING_TEMPLATE
+            PsiElement(OPEN_QUOTE)('"')
+            LITERAL_STRING_TEMPLATE_ENTRY
+              PsiElement(REGULAR_STRING_PART)('t')
+            PsiElement(CLOSING_QUOTE)('"')
+        PsiElement(RPAR)(')')

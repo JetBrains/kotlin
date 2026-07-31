@@ -1494,6 +1494,12 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
     }
 
     @Test
+    @TestMetadata("complexAnnotationClass.kt")
+    public void testComplexAnnotationClass() {
+      run("complexAnnotationClass.kt");
+    }
+
+    @Test
     @TestMetadata("forParameters.kt")
     public void testForParameters() {
       run("forParameters.kt");
@@ -3320,6 +3326,12 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
     }
 
     @Test
+    @TestMetadata("complexAnnotationClassNonJvm.kt")
+    public void testComplexAnnotationClassNonJvm() {
+      run("complexAnnotationClassNonJvm.kt");
+    }
+
+    @Test
     @TestMetadata("DocCommentAtBeginningOfFile1.kt")
     public void testDocCommentAtBeginningOfFile1() {
       run("DocCommentAtBeginningOfFile1.kt");
@@ -4829,6 +4841,56 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
     @TestMetadata("StringTemplateWithTryWithoutBlockInShortEntry.kt")
     public void testStringTemplateWithTryWithoutBlockInShortEntry() {
       run("StringTemplateWithTryWithoutBlockInShortEntry.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/psi/psi-impl/testData/psi/stubbedExpressions")
+  @TestDataPath("$PROJECT_ROOT")
+  public class StubbedExpressions {
+    private void run(String fileName) {
+      runTest("compiler/psi/psi-impl/testData/psi/stubbedExpressions/" + fileName);
+    }
+
+    @Test
+    @TestMetadata("accessorExpressionBodies.kt")
+    public void testAccessorExpressionBodies() {
+      run("accessorExpressionBodies.kt");
+    }
+
+    @Test
+    public void testAllFilesPresentInStubbedExpressions() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/stubbedExpressions"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("callInitializers.kt")
+    public void testCallInitializers() {
+      run("callInitializers.kt");
+    }
+
+    @Test
+    @TestMetadata("functionExpressionBodies.kt")
+    public void testFunctionExpressionBodies() {
+      run("functionExpressionBodies.kt");
+    }
+
+    @Test
+    @TestMetadata("nonStubbedInitializers.kt")
+    public void testNonStubbedInitializers() {
+      run("nonStubbedInitializers.kt");
+    }
+
+    @Test
+    @TestMetadata("parameterDefaultValues.kt")
+    public void testParameterDefaultValues() {
+      run("parameterDefaultValues.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyInitializers.kt")
+    public void testPropertyInitializers() {
+      run("propertyInitializers.kt");
     }
   }
 }

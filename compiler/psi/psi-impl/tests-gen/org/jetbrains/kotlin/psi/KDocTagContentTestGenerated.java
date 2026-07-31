@@ -46,6 +46,12 @@ public class KDocTagContentTestGenerated extends AbstractKDocTagContentTest {
   }
 
   @Test
+  @TestMetadata("complexAnnotationClassNonJvm.kt")
+  public void testComplexAnnotationClassNonJvm() {
+    run("complexAnnotationClassNonJvm.kt");
+  }
+
+  @Test
   @TestMetadata("DocCommentAtBeginningOfFile1.kt")
   public void testDocCommentAtBeginningOfFile1() {
     run("DocCommentAtBeginningOfFile1.kt");

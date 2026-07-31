@@ -132,6 +132,12 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
     }
 
     @Test
+    @TestMetadata("callInitializers.kt")
+    public void testCallInitializers() {
+      run("callInitializers.kt");
+    }
+
+    @Test
     @TestMetadata("classLevelDestructuringWithAnnotation.kt")
     public void testClassLevelDestructuringWithAnnotation() {
       run("classLevelDestructuringWithAnnotation.kt");
@@ -159,6 +165,12 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
     @TestMetadata("complexTypes.kt")
     public void testComplexTypes() {
       run("complexTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("constantInitializers.kt")
+    public void testConstantInitializers() {
+      run("constantInitializers.kt");
     }
 
     @Test
@@ -501,6 +513,12 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
     @TestMetadata("noPrimaryConstructor.kt")
     public void testNoPrimaryConstructor() {
       run("noPrimaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("nonStubbedInitializers.kt")
+    public void testNonStubbedInitializers() {
+      run("nonStubbedInitializers.kt");
     }
 
     @Test

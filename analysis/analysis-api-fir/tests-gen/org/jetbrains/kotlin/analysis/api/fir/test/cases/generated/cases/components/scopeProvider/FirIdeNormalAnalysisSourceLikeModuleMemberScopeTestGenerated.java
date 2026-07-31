@@ -147,6 +147,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleMemberScopeTestGenerated extend
   }
 
   @Test
+  @TestMetadata("Metadata.kt")
+  public void testMetadata() {
+    run("Metadata.kt");
+  }
+
+  @Test
   @TestMetadata("MutableList.kt")
   public void testMutableList() {
     run("MutableList.kt");

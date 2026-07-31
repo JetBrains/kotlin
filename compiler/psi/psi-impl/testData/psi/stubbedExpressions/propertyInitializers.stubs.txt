@@ -1,0 +1,114 @@
+FILE[kind=Facade[packageFqName=test, facadeFqName=test.PropertyInitializersKt]]
+  facadeFqName: test.PropertyInitializersKt
+  partSimpleName: "PropertyInitializersKt"
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=test]
+  IMPORT_LIST
+  PROPERTY[fqName=test.boolean, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=boolean]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Boolean]
+  PROPERTY[fqName=test.byte, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=byte]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Byte]
+  PROPERTY[fqName=test.short, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=short]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Short]
+  PROPERTY[fqName=test.int, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=int]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+  PROPERTY[fqName=test.long, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=long]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Long]
+  PROPERTY[fqName=test.float, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=float]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Float]
+  PROPERTY[fqName=test.double, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=double]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Double]
+  PROPERTY[fqName=test.char, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=char]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Char]
+  PROPERTY[fqName=test.string, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=string]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=String]
+  PROPERTY[fqName=test.negative, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=negative]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+  PROPERTY[fqName=test.sum, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=sum]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+  PROPERTY[fqName=test.parenthesized, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=parenthesized]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+  PROPERTY[fqName=test.concatenation, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=concatenation]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=String]
+  PROPERTY[fqName=test.reference, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=reference]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+    REFERENCE_EXPRESSION[referencedName=int]
+  PROPERTY[fqName=test.qualified, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=qualified]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+  PROPERTY[fqName=test.intrinsicCall, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=intrinsicCall]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=String]
+  PROPERTY[fqName=test.intrinsicProperty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=intrinsicProperty]
+    MODIFIER_LIST[const]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+  PROPERTY[fqName=test.nonConst, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=nonConst]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+  PROPERTY[fqName=test.mutable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=mutable]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=String]
+  OBJECT_DECLARATION[classId=test/Holder, fqName=test.Holder, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Holder, superNames=[]]
+    CLASS_BODY
+      PROPERTY[fqName=test.Holder.inObject, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=inObject]
+        MODIFIER_LIST[const]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+      PROPERTY[fqName=test.Holder.inferred, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=inferred]
+  CLASS[classId=test/WithMember, fqName=test.WithMember, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithMember, superNames=[]]
+    CLASS_BODY
+      PROPERTY[fqName=test.WithMember.member, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=member]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Char]

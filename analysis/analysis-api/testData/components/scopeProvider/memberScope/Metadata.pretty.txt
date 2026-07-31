@@ -1,0 +1,39 @@
+val bytecodeVersion: kotlin.IntArray
+  @kotlin.jvm.JvmName(name = "bv")
+  get()
+
+val data1: kotlin.Array<kotlin.String>
+  @kotlin.jvm.JvmName(name = "d1")
+  get()
+
+val data2: kotlin.Array<kotlin.String>
+  @kotlin.jvm.JvmName(name = "d2")
+  get()
+
+val extraInt: kotlin.Int
+  @kotlin.jvm.JvmName(name = "xi")
+  get()
+
+val extraString: kotlin.String
+  @kotlin.jvm.JvmName(name = "xs")
+  get()
+
+val kind: kotlin.Int
+  @kotlin.jvm.JvmName(name = "k")
+  get()
+
+val metadataVersion: kotlin.IntArray
+  @kotlin.jvm.JvmName(name = "mv")
+  get()
+
+val packageName: kotlin.String
+  @kotlin.jvm.JvmName(name = "pn")
+  get()
+
+open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+open fun hashCode(): kotlin.Int
+
+open fun toString(): kotlin.String
+
+constructor(kind: kotlin.Int, metadataVersion: kotlin.IntArray, bytecodeVersion: kotlin.IntArray, data1: kotlin.Array<kotlin.String>, data2: kotlin.Array<kotlin.String>, extraString: kotlin.String, packageName: kotlin.String, extraInt: kotlin.Int)

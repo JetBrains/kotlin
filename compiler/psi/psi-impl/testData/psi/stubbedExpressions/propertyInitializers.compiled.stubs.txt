@@ -1,0 +1,239 @@
+Holder.class:
+  FILE[kind=File[packageFqName=test]]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    OBJECT_DECLARATION[classId=test/Holder, fqName=test.Holder, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Holder, superNames=[]]
+      MODIFIER_LIST[public]
+      CLASS_BODY
+        PROPERTY[fqName=test.Holder.inObject, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=inObject]
+          constantInitializer: 10
+          MODIFIER_LIST[public const]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Int]
+          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        PROPERTY[fqName=test.Holder.inferred, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=inferred]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Int]
+
+
+PropertyInitializersKt.class:
+  FILE[kind=Facade[packageFqName=test, facadeFqName=test.PropertyInitializersKt]]
+    facadeFqName: test.PropertyInitializersKt
+    partSimpleName: "PropertyInitializersKt"
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    PROPERTY[fqName=test.boolean, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=boolean]
+      constantInitializer: 1
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Boolean]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    PROPERTY[fqName=test.byte, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=byte]
+      constantInitializer: 1
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Byte]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    PROPERTY[fqName=test.short, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=short]
+      constantInitializer: 2
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Short]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    PROPERTY[fqName=test.int, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=int]
+      constantInitializer: 3
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Int]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    PROPERTY[fqName=test.long, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=long]
+      constantInitializer: 4.toLong()
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Long]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    PROPERTY[fqName=test.float, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=float]
+      constantInitializer: 5.0.toFloat()
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Float]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    PROPERTY[fqName=test.double, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=double]
+      constantInitializer: 6.6.toDouble()
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Double]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    PROPERTY[fqName=test.char, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=char]
+      constantInitializer: 99
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Char]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    PROPERTY[fqName=test.string, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=string]
+      constantInitializer: "s"
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=String]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    PROPERTY[fqName=test.negative, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=negative]
+      constantInitializer: -7
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Int]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    PROPERTY[fqName=test.sum, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=sum]
+      constantInitializer: 3
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Int]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    PROPERTY[fqName=test.parenthesized, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=parenthesized]
+      constantInitializer: 8
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Int]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    PROPERTY[fqName=test.concatenation, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=concatenation]
+      constantInitializer: "ab"
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=String]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    PROPERTY[fqName=test.reference, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=reference]
+      constantInitializer: 3
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Int]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    PROPERTY[fqName=test.qualified, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=qualified]
+      constantInitializer: 3
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Int]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    PROPERTY[fqName=test.intrinsicCall, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=intrinsicCall]
+      constantInitializer: "12"
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=String]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    PROPERTY[fqName=test.intrinsicProperty, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=intrinsicProperty]
+      constantInitializer: 3
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Int]
+      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    PROPERTY[fqName=test.nonConst, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=nonConst]
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY[fqName=test.mutable, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=mutable]
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=String]
+
+
+WithMember.class:
+  FILE[kind=File[packageFqName=test]]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    CLASS[classId=test/WithMember, fqName=test.WithMember, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithMember, superNames=[]]
+      MODIFIER_LIST[public final]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithMember]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY
+        PROPERTY[fqName=test.WithMember.member, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=member]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Char]

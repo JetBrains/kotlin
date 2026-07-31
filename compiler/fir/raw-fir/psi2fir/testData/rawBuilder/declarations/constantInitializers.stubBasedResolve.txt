@@ -1,0 +1,29 @@
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] constantInitializers.kt
+    public final const [ResolvedTo(CONTRACTS)] val constant: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
+    public final const [ResolvedTo(CONTRACTS)] val negative: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
+    public final const [ResolvedTo(CONTRACTS)] val string: R|kotlin/String| = LAZY_EXPRESSION
+        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/String|
+    public final const [ResolvedTo(CONTRACTS)] val reference: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val nonConst: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+    public final [ResolvedTo(CONTRACTS)] val inferred: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(CONTRACTS)] get(): <implicit>
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expressionBody(): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(CONTRACTS)] fun inferredExpressionBody(): <implicit> { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val getterBody: R|kotlin/Int|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withDefaults([ResolvedTo(ANNOTATION_ARGUMENTS)] int: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] string: R|kotlin/String| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class WithMembers : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithMembers] constructor(): R|WithMembers| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val member: R|kotlin/Int| = LAZY_EXPRESSION
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=WithMembers] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun memberBody(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }

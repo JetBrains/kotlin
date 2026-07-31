@@ -1,0 +1,490 @@
+KtFile: callInitializers.kt
+  PsiComment(EOL_COMMENT)('// A call is stub-based only inside a value argument as well, so the whole call subtree is currently absent.')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// Once calls are stubbed in these positions, their own arguments become stubbed too, recursively')
+  PsiWhiteSpace('\n')
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('test')
+  IMPORT_LIST
+    <empty list>
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('compute')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('0')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('sum')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('left')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('right')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiElement(RPAR)(')')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('left')
+      PsiWhiteSpace(' ')
+      OPERATION_REFERENCE
+        PsiElement(PLUS)('+')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('right')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('call')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('compute')
+      VALUE_ARGUMENT_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('callWithArguments')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('sum')
+      VALUE_ARGUMENT_LIST
+        PsiElement(LPAR)('(')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('2')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('callWithNamedArguments')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('sum')
+      VALUE_ARGUMENT_LIST
+        PsiElement(LPAR)('(')
+        VALUE_ARGUMENT
+          VALUE_ARGUMENT_NAME
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('left')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('3')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        VALUE_ARGUMENT
+          VALUE_ARGUMENT_NAME
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('right')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('4')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('nestedCall')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('sum')
+      VALUE_ARGUMENT_LIST
+        PsiElement(LPAR)('(')
+        VALUE_ARGUMENT
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('compute')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        VALUE_ARGUMENT
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('sum')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              VALUE_ARGUMENT
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('5')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              VALUE_ARGUMENT
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('6')
+              PsiElement(RPAR)(')')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('qualifiedCall')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('String')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('7')
+      PsiElement(DOT)('.')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('toString')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('parenthesizedCall')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    PARENTHESIZED
+      PsiElement(LPAR)('(')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('compute')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+      PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('doublyParenthesizedCall')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    PARENTHESIZED
+      PsiElement(LPAR)('(')
+      PARENTHESIZED
+        PsiElement(LPAR)('(')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('compute')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+        PsiElement(RPAR)(')')
+      PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('callWithParenthesizedArguments')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('sum')
+      VALUE_ARGUMENT_LIST
+        PsiElement(LPAR)('(')
+        VALUE_ARGUMENT
+          PARENTHESIZED
+            PsiElement(LPAR)('(')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('11')
+            PsiElement(RPAR)(')')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        VALUE_ARGUMENT
+          PARENTHESIZED
+            PsiElement(LPAR)('(')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('12')
+            PsiElement(RPAR)(')')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('expressionBodyCall')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('compute')
+      VALUE_ARGUMENT_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('expressionBodyNestedCall')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('sum')
+      VALUE_ARGUMENT_LIST
+        PsiElement(LPAR)('(')
+        VALUE_ARGUMENT
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('compute')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('8')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('expressionBodyParenthesizedCall')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    PARENTHESIZED
+      PsiElement(LPAR)('(')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('compute')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+      PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('getterCall')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace('\n    ')
+    PROPERTY_ACCESSOR
+      PsiElement(get)('get')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('compute')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('withCallDefault')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('value')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('compute')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('WithConstructorCallDefault')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('value')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('sum')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              VALUE_ARGUMENT
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('9')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              VALUE_ARGUMENT
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('10')
+              PsiElement(RPAR)(')')
+        PsiElement(RPAR)(')')
