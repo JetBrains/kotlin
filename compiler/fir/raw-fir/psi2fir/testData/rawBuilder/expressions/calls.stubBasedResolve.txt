@@ -11,11 +11,15 @@ FILE: [ResolvedTo(BODY_RESOLVE)] calls.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My] get(): R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
-        public final operator [ResolvedTo(CONTRACTS)] fun invoke(): <implicit> { LAZY_BLOCK }
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun invoke(): R|kotlin/Int| {
+            ^invoke this@R|/My|.R|/My.x|
+        }
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONTRACTS)] fun copy(): <implicit> { LAZY_BLOCK }
+        public final [ResolvedTo(BODY_RESOLVE)] fun copy(): R|My| {
+            ^copy R|/My.My|(this@R|/My|.R|/My.x|)
+        }
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun testInvoke(): R|kotlin/Int| { LAZY_BLOCK }

@@ -1,4 +1,6 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] lambdaAndAnonymousFunction.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T> run([ResolvedTo(ANNOTATION_ARGUMENTS)] block: R|() -> T|): R|T| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> run([ResolvedTo(BODY_RESOLVE)] block: R|() -> T|): R|T| {
+        ^run R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
+    }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test_1(): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test_2(): R|kotlin/Unit| { LAZY_BLOCK }
