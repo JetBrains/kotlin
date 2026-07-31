@@ -505,7 +505,7 @@ private class DebugDiagnosticConsumer(
                 factory.defaultPositioningStrategy,
                 DiagnosticContext.Default,
             )
-            is KtLightSourceElement -> KtLightSimpleDiagnostic(
+            is KtLightSourceElement -> KtRegularSimpleDiagnostic(
                 sourceElement,
                 factory.severity,
                 factory,
@@ -542,7 +542,7 @@ private class DebugDiagnosticConsumer(
                 factory.defaultPositioningStrategy,
                 DiagnosticContext.Default,
             )
-            is KtLightSourceElement -> KtLightDiagnosticWithParameters1(
+            is KtLightSourceElement -> KtRegularDiagnosticWithParameters1(
                 positionedElement,
                 argumentFactory(),
                 factory.severity,

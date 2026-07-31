@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
-import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.config.AnalysisFlags
@@ -85,14 +84,7 @@ class KtDiagnosticFactory0(
                 positioningStrategy ?: defaultPositioningStrategy,
                 context,
             )
-            is KtLightSourceElement -> KtLightSimpleDiagnostic(
-                element,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            else -> KtOffsetsOnlySimpleDiagnostic(
+            else -> KtRegularSimpleDiagnostic(
                 element,
                 effectiveSeverity,
                 this,
@@ -127,15 +119,7 @@ class KtDiagnosticFactory1<A>(
                 positioningStrategy ?: defaultPositioningStrategy,
                 context,
             )
-            is KtLightSourceElement -> KtLightDiagnosticWithParameters1(
-                element,
-                a,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            else -> KtOffsetsOnlyDiagnosticWithParameters1(
+            else -> KtRegularDiagnosticWithParameters1(
                 element,
                 a,
                 effectiveSeverity,
@@ -173,16 +157,7 @@ class KtDiagnosticFactory2<A, B>(
                 positioningStrategy ?: defaultPositioningStrategy,
                 context,
             )
-            is KtLightSourceElement -> KtLightDiagnosticWithParameters2(
-                element,
-                a,
-                b,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            else -> KtOffsetsOnlyDiagnosticWithParameters2(
+            else -> KtRegularDiagnosticWithParameters2(
                 element,
                 a,
                 b,
@@ -223,17 +198,7 @@ class KtDiagnosticFactory3<A, B, C>(
                 positioningStrategy ?: defaultPositioningStrategy,
                 context,
             )
-            is KtLightSourceElement -> KtLightDiagnosticWithParameters3(
-                element,
-                a,
-                b,
-                c,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            else -> KtOffsetsOnlyDiagnosticWithParameters3(
+            else -> KtRegularDiagnosticWithParameters3(
                 element,
                 a,
                 b,
@@ -277,18 +242,7 @@ class KtDiagnosticFactory4<A, B, C, D>(
                 positioningStrategy ?: defaultPositioningStrategy,
                 context,
             )
-            is KtLightSourceElement -> KtLightDiagnosticWithParameters4(
-                element,
-                a,
-                b,
-                c,
-                d,
-                effectiveSeverity,
-                this,
-                positioningStrategy ?: defaultPositioningStrategy,
-                context,
-            )
-            else -> KtOffsetsOnlyDiagnosticWithParameters4(
+            else -> KtRegularDiagnosticWithParameters4(
                 element,
                 a,
                 b,
