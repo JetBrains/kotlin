@@ -93,17 +93,8 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
             errorTypesForbidden(), renderer
         )
 
-        val differentResultFile = KotlinTestUtils.replaceExtension(file, "runtime.txt")
-        if (differentResultFile.exists()) {
-            RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile(actual, comparatorConfiguration, differentResultFile)
-            return
-        }
-
-        val expected = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
-            tmpdir, testRootDisposable, jdkKind, ConfigurationKind.ALL, true, false, false, null
-        ).first
-
-        RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptors(expected, actual, comparatorConfiguration, null)
+        val expectedFile = KotlinTestUtils.replaceExtension(file, "runtime.txt")
+        RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile(actual, comparatorConfiguration, expectedFile)
     }
 
     private fun DeclarationDescriptor.isJavaAnnotationConstructor() =

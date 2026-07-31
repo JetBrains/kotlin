@@ -10,8 +10,6 @@ import com.google.common.collect.Lists;
 import kotlin.Unit;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.contracts.description.*;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SubpackagesScope;
@@ -55,30 +53,19 @@ public class RecursiveDescriptorComparator {
             }
     );
 
-    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, false, false,
-                                                                                         false, descriptor -> true, errorTypesForbidden(), DEFAULT_RENDERER);
-    public static final Configuration RECURSIVE = new Configuration(false, false, true, false,
-                                                                    false, descriptor -> true, errorTypesForbidden(), DEFAULT_RENDERER);
-
-    public static final Configuration RECURSIVE_ALL = new Configuration(true, true, true, false,
-                                                                        true, descriptor -> true, errorTypesForbidden(), DEFAULT_RENDERER);
-
-    public static final Predicate<DeclarationDescriptor> SKIP_BUILT_INS_PACKAGES = descriptor -> {
-        if (descriptor instanceof PackageViewDescriptor) {
-            return !StandardNames.BUILT_INS_PACKAGE_FQ_NAME.equals(((PackageViewDescriptor) descriptor).getFqName());
-        }
-        return true;
-    };
+    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(
+            false, false, false, false, false, descriptor -> true, errorTypesForbidden(), DEFAULT_RENDERER
+    );
 
     private static final ImmutableSet<String> KOTLIN_ANY_METHOD_NAMES = ImmutableSet.of("equals", "hashCode", "toString");
 
     private final Configuration conf;
 
-    public RecursiveDescriptorComparator(@NotNull Configuration conf) {
+    private RecursiveDescriptorComparator(@NotNull Configuration conf) {
         this.conf = conf;
     }
 
-    public String serializeRecursively(@NotNull DeclarationDescriptor declarationDescriptor) {
+    private String serializeRecursively(@NotNull DeclarationDescriptor declarationDescriptor) {
         StringBuilder result = new StringBuilder();
         appendDeclarationRecursively(declarationDescriptor, DescriptorUtils.getContainingModule(declarationDescriptor),
                                      new Printer(result, 1), true);
@@ -291,21 +278,9 @@ public class RecursiveDescriptorComparator {
             @NotNull File txtFile,
             @NotNull Assertions assertions
     ) {
-        doCompareDescriptors(null, actual, configuration, txtFile, assertions);
-    }
-
-    public static void compareDescriptors(
-            @NotNull DeclarationDescriptor expected,
-            @NotNull DeclarationDescriptor actual,
-            @NotNull Configuration configuration,
-            @Nullable File txtFile,
-            @NotNull Assertions assertions
-    ) {
-        if (expected == actual) {
-            throw new IllegalArgumentException("Don't invoke this method with expected == actual." +
-                                               "Invoke compareDescriptorWithFile() instead.");
-        }
-        doCompareDescriptors(expected, actual, configuration, txtFile, assertions);
+        RecursiveDescriptorComparator comparator = new RecursiveDescriptorComparator(configuration);
+        String actualSerialized = comparator.serializeRecursively(actual);
+        assertions.assertEqualsToFile(txtFile, actualSerialized, (s) -> s);
     }
 
     public static void validateAndCompareDescriptorWithFile(
@@ -316,40 +291,6 @@ public class RecursiveDescriptorComparator {
     ) {
         DescriptorValidator.validate(configuration.validationStrategy, actual);
         compareDescriptorWithFile(actual, configuration, txtFile, assertions);
-    }
-
-    public static void validateAndCompareDescriptors(
-            @NotNull DeclarationDescriptor expected,
-            @NotNull DeclarationDescriptor actual,
-            @NotNull Configuration configuration,
-            @Nullable File txtFile,
-            @NotNull Assertions assertions
-    ) {
-        DescriptorValidator.validate(configuration.validationStrategy, expected);
-        DescriptorValidator.validate(configuration.validationStrategy, actual);
-        compareDescriptors(expected, actual, configuration, txtFile, assertions);
-    }
-
-    private static void doCompareDescriptors(
-            @Nullable DeclarationDescriptor expected,
-            @NotNull DeclarationDescriptor actual,
-            @NotNull Configuration configuration,
-            @Nullable File txtFile,
-            @NotNull Assertions assertions
-    ) {
-        RecursiveDescriptorComparator comparator = new RecursiveDescriptorComparator(configuration);
-
-        String actualSerialized = comparator.serializeRecursively(actual);
-
-        if (expected != null) {
-            String expectedSerialized = comparator.serializeRecursively(expected);
-
-            assertions.assertEquals(expectedSerialized, actualSerialized, () -> "Expected and actual descriptors differ");
-        }
-
-        if (txtFile != null) {
-            assertions.assertEqualsToFile(txtFile, actualSerialized, (s) -> s);
-        }
     }
 
     public static class Configuration {
