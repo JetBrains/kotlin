@@ -110,15 +110,16 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.NonStubbedInitializersKt]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Any]
-    OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Any]]
-      SUPER_TYPE_LIST
-        SUPER_TYPE_CALL_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=Any]
-          VALUE_ARGUMENT_LIST
-      CLASS_BODY
+    OBJECT_LITERAL
+      OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Any]]
+        SUPER_TYPE_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Any]
+            VALUE_ARGUMENT_LIST
+        CLASS_BODY
   PROPERTY[fqName=test.callableReference, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=callableReference]
     TYPE_REFERENCE
       FUNCTION_TYPE

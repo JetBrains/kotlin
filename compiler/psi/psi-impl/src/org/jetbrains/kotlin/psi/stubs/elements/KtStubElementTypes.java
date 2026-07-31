@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -108,6 +108,8 @@ public interface KtStubElementTypes {
             new KtPlaceHolderStubElementType<>("BINARY_EXPRESSION", KtBinaryExpression.class);
     @NotNull KtPlaceHolderStubElementType<KtParenthesizedExpression> PARENTHESIZED =
             new KtPlaceHolderStubElementType<>("PARENTHESIZED", KtParenthesizedExpression.class);
+    @NotNull KtPlaceHolderStubElementType<KtObjectLiteralExpression> OBJECT_LITERAL =
+            new KtPlaceHolderStubElementType<>("OBJECT_LITERAL", KtObjectLiteralExpression.class);
 
     @NotNull KtEnumEntrySuperClassReferenceExpressionElementType ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION =
             new KtEnumEntrySuperClassReferenceExpressionElementType("ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION");

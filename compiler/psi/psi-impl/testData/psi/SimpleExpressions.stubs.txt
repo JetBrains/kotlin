@@ -159,13 +159,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SimpleExpressionsKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=foo]
-        OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Foo]]
-          SUPER_TYPE_LIST
-            SUPER_TYPE_ENTRY
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=Foo]
-          CLASS_BODY
+        OBJECT_LITERAL
+          OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Foo]]
+            SUPER_TYPE_LIST
+              SUPER_TYPE_ENTRY
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Foo]
+            CLASS_BODY
       VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=a]
         TYPE_REFERENCE
           USER_TYPE

@@ -20,8 +20,14 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] nonStubbedInitializers.kt
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val conditional: R|kotlin/Int| = LAZY_EXPRESSION
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val objectLiteral: R|kotlin/Any| = LAZY_EXPRESSION
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Any|
+    public final [ResolvedTo(BODY_RESOLVE)] val objectLiteral: R|kotlin/Any| = object : R|kotlin/Any| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Any|
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val callableReference: R|() -> kotlin/Int| = LAZY_EXPRESSION
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|() -> kotlin/Int|
     public final [ResolvedTo(BODY_RESOLVE)] val interpolation: R|kotlin/String| = <strcat>(R|/compute|())

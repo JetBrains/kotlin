@@ -49,6 +49,8 @@ public interface KtTokenSets {
 
             CLASS_LITERAL_EXPRESSION,
 
-            COLLECTION_LITERAL_EXPRESSION
+            COLLECTION_LITERAL_EXPRESSION,
+
+            OBJECT_LITERAL
     );
 }
