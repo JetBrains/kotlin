@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.ALWAYS_SUITABLE_RECEIVER
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -370,6 +371,7 @@ private class KJvmReplCompleter(
     private class VisibilityFilter(
         private val inDescriptor: DeclarationDescriptor
     ) : (DeclarationDescriptor) -> Boolean {
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
         override fun invoke(descriptor: DeclarationDescriptor): Boolean {
             if (descriptor is TypeParameterDescriptor) return isTypeParameterVisible(descriptor)
 
