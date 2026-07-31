@@ -61,8 +61,11 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
         listOfNotNull(parameter)
 
     override fun getBodyExpression(): KtExpression? {
-        greenStub?.let {
-            if (!it.hasBody) return null
+        val stub = greenStub
+        if (stub != null) {
+            if (!stub.hasBody) return null
+
+            expressionFromStub?.let { return it }
         }
 
         return findChildByClass(KtExpression::class.java)

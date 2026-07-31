@@ -2,5 +2,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] genericProperty.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> genericFoo(): R|T| {
         ^genericFoo R|kotlin/TODO|()
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <[ResolvedTo(ANNOTATION_ARGUMENTS)] T> [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.generic: R|T|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|T| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(BODY_RESOLVE)] R|T|.generic: R|T|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|T| {
+            ^ R|/genericFoo|<R|T|>()
+        }
