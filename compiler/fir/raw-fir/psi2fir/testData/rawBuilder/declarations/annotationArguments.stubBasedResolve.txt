@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotationArguments.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationArguments.kt
     @R|test/Arrays|[Types](ia = <collectionLiteralCall>(Int(1), Int(2), Int(3)) [evaluated = <collectionLiteralCall>(Int(1), Int(2), Int(3))], la = <collectionLiteralCall>(Long(1)) [evaluated = <collectionLiteralCall>(Long(1))], fa = <collectionLiteralCall>() [evaluated = <collectionLiteralCall>()], da = <collectionLiteralCall>(Double(2.2)) [evaluated = <collectionLiteralCall>(Double(2.2))], ca = <collectionLiteralCall>(Char(a)) [evaluated = <collectionLiteralCall>(Char(a))], ba = <collectionLiteralCall>(Boolean(true), Boolean(false)) [evaluated = <collectionLiteralCall>(Boolean(true), Boolean(false))]) public final [ResolvedTo(BODY_RESOLVE)] class WithArrays : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithArrays] constructor(): R|test/WithArrays| {
             super<R|kotlin/Any|>()
@@ -35,15 +35,15 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotationArguments.kt
         }
 
     }
-    @R|test/VarArg|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class ThreeVararg : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=ThreeVararg] constructor(): R|test/ThreeVararg| {
-            LAZY_super<R|kotlin/Any|>
+    @R|test/VarArg|[Types](v = vararg(Int(1), Int(2), Q|test/VarArg|.R|test/VarArg.Companion.CONSTANT|) [evaluated = vararg(Int(1), Int(2), Int(3))]) public final [ResolvedTo(BODY_RESOLVE)] class ThreeVararg : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ThreeVararg] constructor(): R|test/ThreeVararg| {
+            super<R|kotlin/Any|>()
         }
 
     }
-    @R|test/VarArg|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class SpreadVararg : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=SpreadVararg] constructor(): R|test/SpreadVararg| {
-            LAZY_super<R|kotlin/Any|>
+    @R|test/VarArg|[Types](v = vararg(*<collectionLiteralCall>(Int(1), Int(2), Q|test/VarArg|.R|test/VarArg.Companion.CONSTANT|, Int(4))) [evaluated = vararg(Int(1), Int(2), Int(3), Int(4))]) public final [ResolvedTo(BODY_RESOLVE)] class SpreadVararg : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SpreadVararg] constructor(): R|test/SpreadVararg| {
+            super<R|kotlin/Any|>()
         }
 
     }
@@ -59,33 +59,33 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotationArguments.kt
         }
 
     }
-    @R|test/Simple|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class Qualified : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Qualified] constructor(): R|test/Qualified| {
-            LAZY_super<R|kotlin/Any|>
+    @R|test/Simple|[Types](i = Q|test/Simple.Companion|.R|test/Simple.Companion.CONST1| [evaluated = Int(1)]) public final [ResolvedTo(BODY_RESOLVE)] class Qualified : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Qualified] constructor(): R|test/Qualified| {
+            super<R|kotlin/Any|>()
         }
 
     }
-    @R|test/Simple|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class Sum : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Sum] constructor(): R|test/Sum| {
-            LAZY_super<R|kotlin/Any|>
+    @R|test/Simple|[Types](i = Q|test/Simple.Companion|.R|test/Simple.Companion.CONST1|.R|kotlin/Int.plus|(Q|test/Simple|.R|test/Simple.Companion.CONST2|) [evaluated = Int(3)]) public final [ResolvedTo(BODY_RESOLVE)] class Sum : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sum] constructor(): R|test/Sum| {
+            super<R|kotlin/Any|>()
         }
 
     }
-    @R|test/Simple|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class Negative : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Negative] constructor(): R|test/Negative| {
-            LAZY_super<R|kotlin/Any|>
+    @R|test/Simple|[Types](i = Q|test/Simple.Companion|.R|test/Simple.Companion.CONST1|.R|kotlin/Int.unaryMinus|() [evaluated = Int(-1)]) public final [ResolvedTo(BODY_RESOLVE)] class Negative : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Negative] constructor(): R|test/Negative| {
+            super<R|kotlin/Any|>()
         }
 
     }
-    @R|test/Simple|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class Negative2 : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Negative2] constructor(): R|test/Negative2| {
-            LAZY_super<R|kotlin/Any|>
+    @R|test/Simple|[Types](i = Q|test/Simple.Companion|.R|test/Simple.Companion.CONST1|.R|kotlin/Int.unaryMinus|().R|kotlin/Int.unaryMinus|().R|kotlin/Int.unaryMinus|() [evaluated = Int(-1)]) public final [ResolvedTo(BODY_RESOLVE)] class Negative2 : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Negative2] constructor(): R|test/Negative2| {
+            super<R|kotlin/Any|>()
         }
 
     }
-    @R|test/Simple|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class Positive : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Positive] constructor(): R|test/Positive| {
-            LAZY_super<R|kotlin/Any|>
+    @R|test/Simple|[Types](i = Q|test/Simple.Companion|.R|test/Simple.Companion.CONST1|.R|kotlin/Int.unaryMinus|().R|kotlin/Int.unaryMinus|() [evaluated = Int(1)]) public final [ResolvedTo(BODY_RESOLVE)] class Positive : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Positive] constructor(): R|test/Positive| {
+            super<R|kotlin/Any|>()
         }
 
     }
@@ -128,21 +128,21 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotationArguments.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ConversionCallConsumer] get(): R|kotlin/Byte|
 
     }
-    @R|test/StringLiteral|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class WithStringLiteral : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithStringLiteral] constructor(): R|test/WithStringLiteral| {
-            LAZY_super<R|kotlin/Any|>
+    @R|test/StringLiteral|[Types](s1 = String(some) [evaluated = String(some)], s2 = String() [evaluated = String()], s3 = <strcat>(String(H), R|test/CONSTANT|) [evaluated = String(H0)]) public final [ResolvedTo(BODY_RESOLVE)] class WithStringLiteral : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithStringLiteral] constructor(): R|test/WithStringLiteral| {
+            super<R|kotlin/Any|>()
         }
 
     }
-    @R|test/StringLiteral|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class WithStringLiteralConcat : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithStringLiteralConcat] constructor(): R|test/WithStringLiteralConcat| {
-            LAZY_super<R|kotlin/Any|>
+    @R|test/StringLiteral|[Types](s1 = <strcat>(String(some), String(1)) [evaluated = String(some1)], s2 = String().R|kotlin/String.plus|(R|test/CONSTANT|).R|kotlin/String.plus|(String(2)) [evaluated = String(02)], s3 = <strcat>(<strcat>(R|test/CONSTANT|), String(3)) [evaluated = String(03)]) public final [ResolvedTo(BODY_RESOLVE)] class WithStringLiteralConcat : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithStringLiteralConcat] constructor(): R|test/WithStringLiteralConcat| {
+            super<R|kotlin/Any|>()
         }
 
     }
-    @R|test/StringLiteral|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class WithStringInterpolationPrefix : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithStringInterpolationPrefix] constructor(): R|test/WithStringInterpolationPrefix| {
-            LAZY_super<R|kotlin/Any|>
+    @R|test/StringLiteral|[Types](s1 = <strcat>(R|test/CONSTANT|) [evaluated = String(0)], s2 = <strcat>(R|test/CONSTANT|) [evaluated = String(0)], s3 = <strcat>(R|test/CONSTANT|) [evaluated = String(0)]) public final [ResolvedTo(BODY_RESOLVE)] class WithStringInterpolationPrefix : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithStringInterpolationPrefix] constructor(): R|test/WithStringInterpolationPrefix| {
+            super<R|kotlin/Any|>()
         }
 
     }
@@ -238,7 +238,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotationArguments.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumLiteral] get(): R|test/E|
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class VarArg : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class VarArg : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=VarArg] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/VarArg.v] vararg v: R|kotlin/IntArray|): R|test/VarArg| {
             super<R|kotlin/Any|>()
         }
@@ -246,13 +246,13 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotationArguments.kt
         public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val v: R|kotlin/IntArray| = R|<local>/v|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=VarArg] get(): R|kotlin/IntArray|
 
-        public final companion [ResolvedTo(ANNOTATION_ARGUMENTS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|test/VarArg.Companion| {
                 super<R|kotlin/Any|>()
             }
 
-            public final const [ResolvedTo(CONTRACTS)] val CONSTANT: <implicit> = LAZY_EXPRESSION
-                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Companion] get(): <implicit>
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(3)] val CONSTANT: R|kotlin/Int| = Int(3)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
         }
 
@@ -310,16 +310,16 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotationArguments.kt
         public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val b2: R|kotlin/Boolean| = R|<local>/b2|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Simple] get(): R|kotlin/Boolean|
 
-        public final companion [ResolvedTo(ANNOTATION_ARGUMENTS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|test/Simple.Companion| {
                 super<R|kotlin/Any|>()
             }
 
-            public final const [ResolvedTo(CONTRACTS)] val CONST1: <implicit> = LAZY_EXPRESSION
-                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Companion] get(): <implicit>
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(1)] val CONST1: R|kotlin/Int| = Int(1)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-            public final const [ResolvedTo(CONTRACTS)] val CONST2: <implicit> = LAZY_EXPRESSION
-                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Companion] get(): <implicit>
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(2)] val CONST2: R|kotlin/Int| = Int(2)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
         }
 
@@ -348,5 +348,5 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotationArguments.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=InvalidArguments] get(): R|kotlin/String|
 
     }
-    public final const [ResolvedTo(CONTRACTS)] val CONSTANT: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(CONTRACTS)] get(): <implicit>
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val CONSTANT: R|kotlin/Int| = Int(0)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

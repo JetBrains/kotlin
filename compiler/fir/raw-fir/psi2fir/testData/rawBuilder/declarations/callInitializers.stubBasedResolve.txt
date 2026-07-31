@@ -1,24 +1,24 @@
-FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] callInitializers.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] callInitializers.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun compute(): R|kotlin/Int| { LAZY_BLOCK }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun sum([ResolvedTo(ANNOTATION_ARGUMENTS)] left: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] right: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val call: R|kotlin/Int| = LAZY_EXPRESSION
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val callWithArguments: R|kotlin/Int| = LAZY_EXPRESSION
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val callWithNamedArguments: R|kotlin/Int| = LAZY_EXPRESSION
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val nestedCall: R|kotlin/Int| = LAZY_EXPRESSION
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val qualifiedCall: R|kotlin/String| = LAZY_EXPRESSION
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val parenthesizedCall: R|kotlin/Int| = LAZY_EXPRESSION
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val doublyParenthesizedCall: R|kotlin/Int| = LAZY_EXPRESSION
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val callWithParenthesizedArguments: R|kotlin/Int| = LAZY_EXPRESSION
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
-    public final [ResolvedTo(CONTRACTS)] val inferredCall: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(CONTRACTS)] get(): <implicit>
+    public final [ResolvedTo(BODY_RESOLVE)] val call: R|kotlin/Int| = R|/compute|()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val callWithArguments: R|kotlin/Int| = R|/sum|(Int(1), Int(2))
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val callWithNamedArguments: R|kotlin/Int| = R|/sum|(Int(3), Int(4))
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val nestedCall: R|kotlin/Int| = R|/sum|(R|/compute|(), R|/sum|(Int(5), Int(6)))
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val qualifiedCall: R|kotlin/String| = Int(7).R|kotlin/Int.toString|()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+    public final [ResolvedTo(BODY_RESOLVE)] val parenthesizedCall: R|kotlin/Int| = R|/compute|()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val doublyParenthesizedCall: R|kotlin/Int| = R|/compute|()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val callWithParenthesizedArguments: R|kotlin/Int| = R|/sum|(Int(11), Int(12))
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val inferredCall: R|kotlin/Int| = R|/compute|()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expressionBodyCall(): R|kotlin/Int| { LAZY_BLOCK }
     public final [ResolvedTo(CONTRACTS)] fun inferredExpressionBodyCall(): <implicit> { LAZY_BLOCK }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expressionBodyParenthesizedCall(): R|kotlin/Int| { LAZY_BLOCK }

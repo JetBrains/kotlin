@@ -268,6 +268,11 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
             if (!stub.getHasInitializer()) {
                 return null;
             }
+
+            KtExpression fromStub = getExpressionFromStub();
+            if (fromStub != null) {
+                return fromStub;
+            }
         }
 
         return PsiTreeUtil.getNextSiblingOfType(findChildByType(EQ), KtExpression.class);
