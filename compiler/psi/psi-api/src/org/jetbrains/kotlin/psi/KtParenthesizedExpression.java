@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
 /**
  * Represents an expression enclosed in parentheses.
@@ -38,12 +37,9 @@ public class KtParenthesizedExpression extends KtExpressionImplStub<KotlinPlaceH
 
     @Nullable @IfNotParsed
     public KtExpression getExpression() {
-        KotlinPlaceHolderStub<KtParenthesizedExpression> stub = getStub();
-        if (stub != null) {
-            KtExpression[] expressions = stub.getChildrenByType(KtTokenSets.CONSTANT_EXPRESSIONS, KtExpression.EMPTY_ARRAY);
-            if (expressions.length != 0) {
-                return expressions[0];
-            }
+        KtExpression fromStub = getExpressionFromStub();
+        if (fromStub != null) {
+            return fromStub;
         }
 
         return findChildByClass(KtExpression.class);

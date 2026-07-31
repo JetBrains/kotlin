@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
 /**
  * Represents a value argument in a function call.
@@ -53,13 +52,9 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
     @Nullable
     @IfNotParsed
     public KtExpression getArgumentExpression() {
-        KotlinPlaceHolderStub<? extends KtValueArgument> stub = getStub();
-        if (stub != null) {
-            KtExpression[] constantExpressions =
-                    stub.getChildrenByType(KtTokenSets.CONSTANT_EXPRESSIONS, KtExpression.EMPTY_ARRAY);
-            if (constantExpressions.length != 0) {
-                return constantExpressions[0];
-            }
+        KtExpression fromStub = getExpressionFromStub();
+        if (fromStub != null) {
+            return fromStub;
         }
 
         return findChildByClass(KtExpression.class);
