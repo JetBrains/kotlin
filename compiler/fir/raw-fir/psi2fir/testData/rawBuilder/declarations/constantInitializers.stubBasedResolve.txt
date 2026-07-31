@@ -11,8 +11,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] constantInitializers.kt
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final [ResolvedTo(BODY_RESOLVE)] val inferred: R|kotlin/Int| = Int(4)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expressionBody(): R|kotlin/Int| { LAZY_BLOCK }
-    public final [ResolvedTo(CONTRACTS)] fun inferredExpressionBody(): <implicit> { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun expressionBody(): R|kotlin/Int| {
+        ^expressionBody Int(5)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun inferredExpressionBody(): R|kotlin/Int| {
+        ^inferredExpressionBody Int(6)
+    }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val getterBody: R|kotlin/Int|
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withDefaults([ResolvedTo(ANNOTATION_ARGUMENTS)] int: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] string: R|kotlin/String| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
@@ -24,6 +28,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] constantInitializers.kt
         public final [ResolvedTo(BODY_RESOLVE)] val member: R|kotlin/Int| = Int(9)
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithMembers] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun memberBody(): R|kotlin/Int| { LAZY_BLOCK }
+        public final [ResolvedTo(BODY_RESOLVE)] fun memberBody(): R|kotlin/Int| {
+            ^memberBody Int(10)
+        }
 
     }

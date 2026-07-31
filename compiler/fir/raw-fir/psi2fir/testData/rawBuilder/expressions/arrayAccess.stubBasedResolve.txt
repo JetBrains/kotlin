@@ -1,7 +1,9 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] arrayAccess.kt
     public final [ResolvedTo(BODY_RESOLVE)] val p: R|kotlin/Int| = Int(0)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(CONTRACTS)] fun foo(): <implicit> { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
+        ^foo Int(1)
+    }
     public final [ResolvedTo(BODY_RESOLVE)] class Wrapper : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Wrapper] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Wrapper.v] v: R|kotlin/IntArray|): R|Wrapper| {
             super<R|kotlin/Any|>()

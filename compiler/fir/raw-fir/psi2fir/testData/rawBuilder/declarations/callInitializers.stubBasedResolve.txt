@@ -1,6 +1,10 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] callInitializers.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun compute(): R|kotlin/Int| { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun sum([ResolvedTo(ANNOTATION_ARGUMENTS)] left: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] right: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun compute(): R|kotlin/Int| {
+        ^compute Int(0)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun sum([ResolvedTo(BODY_RESOLVE)] left: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] right: R|kotlin/Int|): R|kotlin/Int| {
+        ^sum R|<local>/left|.R|kotlin/Int.plus|(R|<local>/right|)
+    }
     public final [ResolvedTo(BODY_RESOLVE)] val call: R|kotlin/Int| = R|/compute|()
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final [ResolvedTo(BODY_RESOLVE)] val callWithArguments: R|kotlin/Int| = R|/sum|(Int(1), Int(2))
@@ -19,9 +23,15 @@ FILE: [ResolvedTo(BODY_RESOLVE)] callInitializers.kt
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final [ResolvedTo(BODY_RESOLVE)] val inferredCall: R|kotlin/Int| = R|/compute|()
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expressionBodyCall(): R|kotlin/Int| { LAZY_BLOCK }
-    public final [ResolvedTo(CONTRACTS)] fun inferredExpressionBodyCall(): <implicit> { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expressionBodyParenthesizedCall(): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun expressionBodyCall(): R|kotlin/Int| {
+        ^expressionBodyCall R|/compute|()
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun inferredExpressionBodyCall(): R|kotlin/Int| {
+        ^inferredExpressionBodyCall R|/sum|(R|/compute|(), Int(8))
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun expressionBodyParenthesizedCall(): R|kotlin/Int| {
+        ^expressionBodyParenthesizedCall R|/compute|()
+    }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val getterCall: R|kotlin/Int|
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withCallDefault([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }

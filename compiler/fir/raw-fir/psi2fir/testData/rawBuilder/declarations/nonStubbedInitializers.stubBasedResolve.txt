@@ -1,7 +1,13 @@
 FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] nonStubbedInitializers.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun compute(): R|kotlin/Int| { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun evaluate([ResolvedTo(ANNOTATION_ARGUMENTS)] block: R|() -> kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun combine([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] block: R|() -> kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun compute(): R|kotlin/Int| {
+        ^compute Int(0)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun evaluate([ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Int|): R|kotlin/Int| {
+        ^evaluate R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Int|>|()
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun combine([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Int|): R|kotlin/Int| {
+        ^combine R|<local>/value|.R|kotlin/Int.plus|(R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Int|>|())
+    }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val trailingLambda: R|kotlin/Int| = LAZY_EXPRESSION
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val positionalLambdaArgument: R|kotlin/Int| = LAZY_EXPRESSION

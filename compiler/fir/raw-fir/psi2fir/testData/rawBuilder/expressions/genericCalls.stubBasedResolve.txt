@@ -1,3 +1,5 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] genericCalls.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T> nullableValue(): R|T?| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> nullableValue(): R|T?| {
+        ^nullableValue Null(null)
+    }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }

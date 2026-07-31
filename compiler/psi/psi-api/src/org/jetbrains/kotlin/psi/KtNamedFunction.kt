@@ -81,8 +81,12 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
 
     override fun getBodyExpression(): KtExpression? {
         val stub = greenStub
-        if (stub != null && !stub.hasBody) {
-            return null
+        if (stub != null) {
+            if (!stub.hasBody) {
+                return null
+            }
+
+            expressionFromStub?.let { return it }
         }
 
         return findChildByClass(KtExpression::class.java)
