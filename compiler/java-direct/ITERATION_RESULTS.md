@@ -36,6 +36,44 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-31 — Box guards for the JLS accessibility check, incl. a genuinely *binary* Java supertype
+- **Change**: complements the phased guard below with two box tests. Unlike diagnostics tests
+  (which hard-code `DependencyKind.Source`), a codegen `// MODULE: lib` dependency is really
+  compiled: `JavaCompilerFacade.compileJavaFiles` javac-compiles `lib`'s `.java` into `lib`'s output
+  dir, and `JvmEnvironmentConfigurator.registerModuleDependencies` puts that dir on `main`'s
+  classpath — so `main` reads `a.Base` as a **binary** Java class through
+  `FirBackedJavaClassAdapter`, i.e. the exact shape of the IJ-FP `testIntellij_exceptionAnalyzer`
+  regression. So a box test *can* express what a phased test cannot.
+- **Files**: `testData/codegen/box/javaDirect/packagePrivateInheritedNestedClassNotVisibleAcrossPackages.kt`
+  (source arm, single module) and
+  `testData/codegen/boxJvm/javaDirect/packagePrivateInheritedNestedClassFromBinaryModule.kt`
+  (adapter arm, `lib` → `main`) — both new; no generator change needed.
+- **Tests**: full `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated` green
+  (2795 executed, 0 failures, 0 errors); shared-data gate green in
+  `Fir{LightTree,Psi}BlackBoxCodegenTestGenerated$Box{,Jvm}$JavaDirect`.
+- **Result**: green; non-vacuity verified with two probes — forcing
+  `FirBackedJavaClassAdapter.visibility` to `Visibilities.Public` fails *only* the binary-module
+  test, while short-circuiting `isInheritedNestedClassAccessible` to `true` fails *both*. Both
+  probes reverted (`git diff` on `src` empty). Box data needs no golden file, so rule 5/6 concerns
+  about shared diagnostic data do not apply.
+
+### 2026-07-31 — Phased guard for the adapter's JLS accessibility check (via `// MODULE`)
+- **Change**: the `FirBackedJavaClassAdapter.visibility` arm of `isInheritedNestedClassAccessible`
+  (2026-07-14, IJ-FP `testIntellij_exceptionAnalyzer`) had no small-test guard: the adapter is only
+  consulted for classes outside the module's own Java source index, and a phased test always gets
+  Java as sources. `// MODULE: lib` / `// MODULE: main(lib)` closes that gap — a dependency module's
+  Java class is not in `main`'s `JavaSourceRoot` set (`JavaDirectFacadeBuilder.kt:40`), so
+  `classifierAdapterFor` returns the adapter exactly as it does for binary Java.
+- **Files**: `testData/diagnostics/tests/jvm/javaDirect/packagePrivateInheritedNestedClassFromOtherModule.kt` (new).
+- **Tests**: new test green in `JavaUsingAstPhasedTestGenerated` and in both PSI gates
+  (`PhasedJvmDiagnostic{LightTree,Psi}TestGenerated`); full `JavaUsingAstPhasedTestGenerated`
+  re-run green, 0 FAILED.
+- **Result**: green; non-vacuity verified — forcing `visibility` back to `Visibilities.Public`
+  makes it fail ("Actual data differs"). Note: diagnostics tests hard-code
+  `DependencyKind.Source`, so this is *not* a compiled-jar dependency; a genuinely binary
+  Java dependency still needs `PROVIDE_JAVA_AS_BINARIES` (foreign-annotations roots only) or a
+  box test.
+
 ### 2026-07-30 — Binary index remeasured on `KotlinFullPipelineTestsGenerated`; not the M1 0.5%
 - **Change**: `JavaClassFinderOverBinaryIndex` no longer builds an `FqName` per lookup: the top-level
   cache is now two-level, keyed by the `classId`'s own `packageFqName` + outermost class `Name`
