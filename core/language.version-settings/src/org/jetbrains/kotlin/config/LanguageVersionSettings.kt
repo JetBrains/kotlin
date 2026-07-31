@@ -562,13 +562,13 @@ enum class LanguageFeature(
     IrCrossModuleInlinerBeforeKlibSerialization(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_3, forcesPreReleaseBinaries = true, issue = "KT-71896"),
     JvmSupportRecursiveTypeOf(sinceVersion = KOTLIN_2_5, issue = "KT-87339"),
     JsAllowExportTypealiases(sinceVersion = KOTLIN_2_5, "KT-49795"),
+    ConcurrentMapPurelyImplemented(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KT-8761"),
 
     // 2.6
 
     ReportReificationProblemsInDnnAndFlexible(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-399"),
     ForbidJavaClassPropertyReferences(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-375"),
     ReportSubclassCantCallCompanionProtectedNonStaticWithGenerics(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-412"),
-    ConcurrentMapPurelyImplemented(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KT-8761"),
     JsIntegerDivisionCheck(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-17719"),
 
     // End of 2.* language features --------------------------------------------------
