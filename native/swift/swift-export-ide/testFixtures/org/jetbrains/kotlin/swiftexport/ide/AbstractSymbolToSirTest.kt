@@ -43,7 +43,6 @@ abstract class AbstractSymbolToSirTest : AbstractAnalysisApiBasedTest() {
 
 private fun SirDeclaration.print(into: SirModule): String = SirPrinter(
     stableDeclarationsOrder = true,
-    renderDocComments = false,
 ).print(
     into.also {
         val parent = parent as? SirMutableDeclarationContainer

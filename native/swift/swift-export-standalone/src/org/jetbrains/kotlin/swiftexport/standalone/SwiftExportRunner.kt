@@ -206,7 +206,6 @@ private fun writeKotlinPackagesModule(
 ): SwiftExportModule.SwiftOnly {
     val swiftSources = SirPrinter(
         stableDeclarationsOrder = true,
-        renderDocComments = false,
     ).print(
         sirModule
     ).swiftSource

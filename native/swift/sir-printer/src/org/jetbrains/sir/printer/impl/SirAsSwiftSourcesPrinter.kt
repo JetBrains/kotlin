@@ -18,7 +18,6 @@ private data class Context(val declaration: SirDeclarationParent)
 internal class SirAsSwiftSourcesPrinter private constructor(
     private val printer: ContextualizedPrinter<Context>,
     private val stableDeclarationsOrder: Boolean,
-    private val renderDocComments: Boolean,
     private val renderDeclarationOrigins: Boolean,
     private val emptyBodyStub: SirFunctionBody
 ) : ContextualizedPrinter<Context> by printer {
@@ -27,14 +26,12 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         public fun print(
             module: SirModule,
             stableDeclarationsOrder: Boolean,
-            renderDocComments: Boolean,
             renderDeclarationOrigins: Boolean,
             emptyBodyStub: SirFunctionBody
         ): String {
             val childrenPrinter = SirAsSwiftSourcesPrinter(
                 ContextualizedPrinterImpl(SmartPrinter(StringBuilder()), Context(module)),
                 stableDeclarationsOrder = stableDeclarationsOrder,
-                renderDocComments = renderDocComments,
                 renderDeclarationOrigins = renderDeclarationOrigins,
                 emptyBodyStub = emptyBodyStub,
             )
@@ -47,7 +44,6 @@ internal class SirAsSwiftSourcesPrinter private constructor(
                 val importsPrinter = SirAsSwiftSourcesPrinter(
                     ContextualizedPrinterImpl(SmartPrinter(StringBuilder()), Context(module)),
                     stableDeclarationsOrder = stableDeclarationsOrder,
-                    renderDocComments = renderDocComments,
                     renderDeclarationOrigins = renderDeclarationOrigins,
                     emptyBodyStub = emptyBodyStub,
                 )
@@ -315,7 +311,6 @@ internal class SirAsSwiftSourcesPrinter private constructor(
     }
 
     private fun SirDeclaration.printDocumentation() {
-        if (!renderDocComments) return
         documentation?.trimIndent()?.prependIndent("/// ")?.let { printlnMultiLine(it) }
     }
 
