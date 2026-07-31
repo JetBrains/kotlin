@@ -577,6 +577,8 @@ enum class LanguageFeature(
 
     DataClassCopyRespectsConstructorVisibility(sinceVersion = null, issue = "KT-11914", enabledInLatestLVTests = true), // KT-11914 Deprecation phase 3
 
+    RestrictSecondKindIncorporationToFixation(sinceVersion = KOTLIN_2_3, issue = "KT-86022", enabledInLatestLVTests = false),
+
     // Disabled for an indefinite time as we've moved it forward a version twice already, and
     // it's probably better to go the other way around, and only enable it once we're ready.
     ForbidParenthesizedLhsInAssignments(null, enabledInProgressiveMode = true, issue = "KT-70507", enabledInLatestLVTests = false),

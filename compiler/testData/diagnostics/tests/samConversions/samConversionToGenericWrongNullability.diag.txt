@@ -12,11 +12,7 @@
 
 /test.kt:110:9: error: Return type mismatch: expected 'String!', actual '() -> String'.
 
-/test.kt:110:9: error: Return type mismatch: expected 'String!', actual '() -> String'.
-
 /test.kt:111:30: error: Return type mismatch: expected 'String', actual 'String?'.
-
-/test.kt:124:9: error: Return type mismatch: expected 'String!', actual '() -> String?'.
 
 /test.kt:124:9: error: Return type mismatch: expected 'String!', actual '() -> String?'.
 
