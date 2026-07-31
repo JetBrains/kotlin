@@ -61,6 +61,8 @@ sealed class ExpectActualIncompatibility<out D>(open val reason: String) {
         override val reason: Nothing get() = error("This incompatibility should be reported with ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT diagnostic")
     }
 
+    object EqualityBoundsAreDifferent : ExpectActualIncompatibility<Nothing>("the equality bounds are different")
+
     // Functions
     object FunctionModifiersDifferent : ExpectActualIncompatibility<Nothing>("the modifiers are different (suspend)")
     object FunctionModifiersNotSubset :

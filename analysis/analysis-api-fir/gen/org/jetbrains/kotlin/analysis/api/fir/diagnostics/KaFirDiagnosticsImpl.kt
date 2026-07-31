@@ -4214,6 +4214,14 @@ internal class ExpectActualIncompatibleReturnTypeImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleReturnType
 
+internal class ExpectActualIncompatibleEqualityBoundsImpl(
+    override val expectDeclaration: KaSymbol,
+    override val actualDeclaration: KaSymbol,
+    override val reason: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectActualIncompatibleEqualityBounds
+
 internal class ExpectActualIncompatibleParameterNamesImpl(
     override val expectDeclaration: KaSymbol,
     override val actualDeclaration: KaSymbol,
