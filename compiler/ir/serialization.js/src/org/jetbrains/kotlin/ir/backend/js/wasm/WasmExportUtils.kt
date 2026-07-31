@@ -11,15 +11,17 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.isJsExportDecla
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.isJsExportIgnoreDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isExpect
+import org.jetbrains.kotlin.ir.util.kotlinFqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.WasmStandardClassIds
-import kotlin.sequences.filter
 
 enum class ExportKind(
     val clashError: KtDiagnosticFactory3<String, String, List<WasmKlibExportingDeclaration>>,
@@ -37,6 +39,13 @@ enum class ExportKind(
 
 fun IrAnnotationContainer.isWasmExportDeclaration(): Boolean {
     return hasAnnotation(WasmStandardClassIds.Annotations.WasmExport.asSingleFqName())
+}
+
+fun IrAnnotationContainer.isWasmCanonicalABIReallocExport(): Boolean {
+    return (this is IrFunction &&
+            isWasmExportDeclaration() &&
+            getWasmExportName() == "cabi_realloc" &&
+            kotlinFqName == FqName("kotlin.wasm.unsafe.cabi_realloc"))
 }
 
 fun IrDeclarationWithName.getWasmExportName(): String {
