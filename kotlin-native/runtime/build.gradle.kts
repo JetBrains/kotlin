@@ -308,14 +308,6 @@ bitcode {
             }
         }
 
-        module("std_alloc") {
-            srcRoot.set(layout.projectDirectory.dir("src/alloc/std"))
-            headersDirs.from(files("src/alloc/legacy/cpp", "src/main/cpp"))
-            sourceSets {
-                main {}
-            }
-        }
-
         module("custom_alloc") {
             srcRoot.set(layout.projectDirectory.dir("src/alloc/custom"))
             headersDirs.from(files("src/main/cpp"))
@@ -341,9 +333,9 @@ bitcode {
             }
         }
 
-        testsGroup("std_legacy_alloc_test") {
+        testsGroup("legacy_alloc_test") {
             testedModules.addAll("legacy_alloc")
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "std_alloc", "noop_gc", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("main", "noop_externalCallsChecker", "noop_gc", "manual_gcScheduler", "objc", "noop_crashHandler")
         }
 
         module("exceptionsSupport") {
@@ -466,7 +458,7 @@ bitcode {
 
         testsGroup("stms_gc_test") {
             testedModules.addAll("same_thread_ms_gc")
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "legacy_alloc", "std_alloc", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("main", "noop_externalCallsChecker", "legacy_alloc", "manual_gcScheduler", "objc", "noop_crashHandler")
         }
 
         testsGroup("stms_gc_custom_test") {
@@ -486,7 +478,7 @@ bitcode {
 
         testsGroup("pmcs_gc_test") {
             testedModules.addAll("pmcs_gc")
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "legacy_alloc", "std_alloc", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("main", "noop_externalCallsChecker", "legacy_alloc", "manual_gcScheduler", "objc", "noop_crashHandler")
         }
 
         testsGroup("pmcs_gc_custom_test") {
@@ -506,7 +498,7 @@ bitcode {
 
         testsGroup("cms_gc_test") {
             testedModules.addAll("concurrent_ms_gc")
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "legacy_alloc", "std_alloc", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("main", "noop_externalCallsChecker", "legacy_alloc", "manual_gcScheduler", "objc", "noop_crashHandler")
         }
 
         testsGroup("cms_gc_custom_test") {

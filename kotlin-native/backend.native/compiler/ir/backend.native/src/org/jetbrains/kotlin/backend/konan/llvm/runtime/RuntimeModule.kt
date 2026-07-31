@@ -11,7 +11,6 @@ enum class RuntimeModule(val filename: String) {
     MAIN("runtime.bc"),
     DEBUG("debug.bc"),
     ALLOC_LEGACY("legacy_alloc.bc"),
-    ALLOC_STD("std_alloc.bc"),
     ALLOC_CUSTOM("custom_alloc.bc"),
     GC_NOOP("noop_gc.bc"),
     GC_STOP_THE_WORLD_MARK_AND_SWEEP("same_thread_ms_gc.bc"),
