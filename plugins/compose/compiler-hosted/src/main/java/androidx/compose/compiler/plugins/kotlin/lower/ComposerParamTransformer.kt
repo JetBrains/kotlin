@@ -697,9 +697,12 @@ class ComposerParamTransformer(
         val stubs = makeStubsForDefaultValueClassIfNeeded()
 
         // update parameter types so they are ready to accept the default values
-        parameters.fastForEach { param ->
-            if (hasDefaultForParam(param.indexInParameters)) {
-                param.type = param.type.defaultParameterType()
+        // only functions that accept a $default mask may be called with a default placeholder for a missing arg
+        if (requiresDefaultParameter()) {
+            parameters.fastForEach { param ->
+                if (hasDefaultForParam(param.indexInParameters)) {
+                    param.type = param.type.defaultParameterType()
+                }
             }
         }
         fixDefaultParamGet()
