@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.*;
+import com.intellij.psi.ContributedReferenceHost;
+import com.intellij.psi.LiteralTextEscaper;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.tree.TokenSet;
-import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
@@ -24,8 +26,8 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
  * //             ^_____________^
  * }</pre>
  */
-public class KtStringTemplateExpression extends KtElementImplStub<KotlinPlaceHolderStub<KtStringTemplateExpression>>
-        implements KtExpression, PsiLanguageInjectionHost, ContributedReferenceHost {
+public class KtStringTemplateExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<KtStringTemplateExpression>>
+        implements PsiLanguageInjectionHost, ContributedReferenceHost {
     private static final TokenSet CLOSE_QUOTE_TOKEN_SET = TokenSet.create(KtTokens.CLOSING_QUOTE);
 
     public KtStringTemplateExpression(@NotNull ASTNode node) {
@@ -34,11 +36,6 @@ public class KtStringTemplateExpression extends KtElementImplStub<KotlinPlaceHol
 
     public KtStringTemplateExpression(@NotNull KotlinPlaceHolderStub<KtStringTemplateExpression> stub) {
         super(stub, KtStubBasedElementTypes.STRING_TEMPLATE);
-    }
-
-    @Override
-    public PsiElement replace(@NotNull PsiElement newElement) throws IncorrectOperationException {
-        return KtPsiMutationService.getInstance().replaceExpression(this, newElement, true, super::replace);
     }
 
     @Override

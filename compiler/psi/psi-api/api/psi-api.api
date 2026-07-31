@@ -1200,12 +1200,11 @@ public class org/jetbrains/kotlin/psi/KtCommonFile : com/intellij/extapi/psi/Psi
 	public fun toString ()Ljava/lang/String;
 }
 
-public class org/jetbrains/kotlin/psi/KtConstantExpression : org/jetbrains/kotlin/psi/KtElementImplStub, org/jetbrains/kotlin/psi/KtExpression {
+public class org/jetbrains/kotlin/psi/KtConstantExpression : org/jetbrains/kotlin/psi/KtExpressionImplStub {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinConstantExpressionStub;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getText ()Ljava/lang/String;
-	public fun replace (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
 }
 
 public abstract class org/jetbrains/kotlin/psi/KtConstructor : org/jetbrains/kotlin/psi/KtDeclarationStub, org/jetbrains/kotlin/psi/KtFunction {
@@ -2667,7 +2666,7 @@ public abstract class org/jetbrains/kotlin/psi/KtStringTemplateEntryWithExpressi
 	public fun getExpressions ()Ljava/util/List;
 }
 
-public class org/jetbrains/kotlin/psi/KtStringTemplateExpression : org/jetbrains/kotlin/psi/KtElementImplStub, com/intellij/psi/ContributedReferenceHost, com/intellij/psi/PsiLanguageInjectionHost, org/jetbrains/kotlin/psi/KtExpression {
+public class org/jetbrains/kotlin/psi/KtStringTemplateExpression : org/jetbrains/kotlin/psi/KtExpressionImplStub, com/intellij/psi/ContributedReferenceHost, com/intellij/psi/PsiLanguageInjectionHost {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderStub;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
@@ -2676,7 +2675,6 @@ public class org/jetbrains/kotlin/psi/KtStringTemplateExpression : org/jetbrains
 	public fun getInterpolationPrefix ()Lorg/jetbrains/kotlin/psi/KtStringInterpolationPrefix;
 	public fun hasInterpolation ()Z
 	public fun isValidHost ()Z
-	public fun replace (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
 	public fun updateText (Ljava/lang/String;)Lcom/intellij/psi/PsiLanguageInjectionHost;
 }
 
