@@ -147,6 +147,7 @@ CoreLibs:
  - libraries/kotlinx-metadata
  - libraries/reflect
  - libraries/stdlib
+ - libraries/tools/jdk-api-validator
  - libraries/tools/kotlin-annotations-jvm
 
 AnalysisApi:
@@ -286,7 +287,6 @@ Unknown:
  - libraries/tools/binary-compatibility-validator
  - libraries/tools/dukat
  - libraries/tools/ide-plugin-dependencies-validator
- - libraries/tools/jdk-api-validator
  - libraries/tools/js-plain-objects
  - libraries/tools/klib-abi-reader
  - libraries/tools/kotlin-allopen

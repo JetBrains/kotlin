@@ -3,125 +3,125 @@ $schema: domains.schema.json
 # CLI + Frontend + JVM backend
 Compiler:
   include:
-    - "compiler/**"
-    - "core/**"
-    - "build-common/**"
-    - "compiler/psi/parser/**"
-    - "jps/**"
+    - "compiler"
+    - "core"
+    - "build-common"
+    - "compiler/psi/parser"
+    - "jps"
   exclude:
-    - "compiler/psi/**"
-    - "compiler/build-tools/**"
-    - "compiler/incremental-compilation-*/**"
-    - "compiler/daemon/**"
-    - "compiler/compiler-runner/**"
-    - "compiler/compiler-runner-unshaded/**"
-    - "compiler/plugin-api/**"
-    - "compiler/ir/backend.wasm/**"
-    - "compiler/ir/backend.js/**"
-    - "compiler/ir/serialization.js/**"
-    - "compiler/ir/backend.native/**"
-    - "compiler/ir/ir.objcinterop/**"
-    - "compiler/ir/serialization.native/**"
+    - "compiler/psi"
+    - "compiler/build-tools"
+    - "compiler/incremental-compilation-*"
+    - "compiler/daemon"
+    - "compiler/compiler-runner"
+    - "compiler/compiler-runner-unshaded"
+    - "compiler/plugin-api"
+    - "compiler/ir/backend.wasm"
+    - "compiler/ir/backend.js"
+    - "compiler/ir/serialization.js"
+    - "compiler/ir/backend.native"
+    - "compiler/ir/ir.objcinterop"
+    - "compiler/ir/serialization.native"
   fullyAffectedBy:
     - CoreLibs
 
 Wasm:
   include:
-    - "compiler/ir/backend.wasm/**"
-    - "wasm/**"
-    - "js/js.translator/testData/**"
+    - "compiler/ir/backend.wasm"
+    - "wasm"
+    - "js/js.translator/testData"
   fullyAffectedBy:
     - Compiler
     - CoreLibs
 Js:
   include:
-    - "js/**"
-    - "compiler/ir/backend.js/**"
-    - "compiler/ir/serialization.js/**"
-    - "libraries/tools/analysis-api-based-klib-reader/**"
+    - "js"
+    - "compiler/ir/backend.js"
+    - "compiler/ir/serialization.js"
+    - "libraries/tools/analysis-api-based-klib-reader"
   fullyAffectedBy:
     - Compiler
     - CoreLibs
 
 Native:
   include:
-    - "compiler/ir/backend.native/**"
-    - "compiler/ir/ir.objcinterop/**"
-    - "compiler/ir/serialization.native/**"
-    - "native/**"
-    - "kotlin-native/**"
+    - "compiler/ir/backend.native"
+    - "compiler/ir/ir.objcinterop"
+    - "compiler/ir/serialization.native"
+    - "native"
+    - "kotlin-native"
   exclude:
-    - "native/swift/**"
+    - "native/swift"
   fullyAffectedBy:
     - Compiler
     - CoreLibs
 
 CoreLibs:
   include:
-    - "libraries/stdlib/**"
-    - "libraries/tools/kotlin-annotations-jvm/**"
-    - "core/metadata*/**"
-    - "core/reflect*/**"
+    - "libraries/stdlib"
+    - "libraries/tools/kotlin-annotations-jvm"
+    - "core/metadata*"
+    - "core/reflect*"
     # Old reflect
-    - "core/descriptors.runtime/**"
-    - "libraries/kotlinx-metadata/**"
-    - "libraries/reflect/**"
-    - "libraries/kotlin.test/**"
+    - "core/descriptors.runtime"
+    - "libraries/kotlinx-metadata"
+    - "libraries/reflect"
+    - "libraries/kotlin.test"
     - "libraries/tools/jdk-api-validator"
 
 AnalysisApi:
   include:
-    - "analysis/**"
-    - "compiler/psi/**"
-    - "prepare/analysis-api/**"
-    - "plugins/plugin-sandbox/**"
-    - "plugins/scripting/**"
+    - "analysis"
+    - "compiler/psi"
+    - "prepare/analysis-api"
+    - "plugins/plugin-sandbox"
+    - "plugins/scripting"
   exclude:
-    - "compiler/psi/parser/**"
+    - "compiler/psi/parser"
   fullyAffectedBy:
     - Compiler
     - CoreLibs
 
 BuildToolsApi:
   include:
-    - "build-common/**"
-    - "compiler/build-tools/**"
-    - "compiler/incremental-compilation-*/**"
-    - "compiler/daemon/**"
-    - "compiler/compiler-runner/**"
-    - "compiler/compiler-runner-unshaded/**"
+    - "build-common"
+    - "compiler/build-tools"
+    - "compiler/incremental-compilation-*"
+    - "compiler/daemon"
+    - "compiler/compiler-runner"
+    - "compiler/compiler-runner-unshaded"
   fullyAffectedBy:
     - Compiler
 
 SwiftExport:
   include:
-    - "native/swift/**"
-    - "libraries/tools/analysis-api-based-klib-reader/**"
+    - "native/swift"
+    - "libraries/tools/analysis-api-based-klib-reader"
   fullyAffectedBy:
     - AnalysisApi # todo: Replace this dependency with a reviewed set of @AffectedByAnalysisApi tests
 
 CompilerPlugins:
   include:
-    - "compiler/plugin-api/**"
-    - "plugins/**"
+    - "compiler/plugin-api"
+    - "plugins"
   fullyAffectedBy:
     - Compiler
 
 Gradle:
   include:
-    - "build-common/**"
-    - "libraries/tools/*gradle*/**"
-    - "compiler/build-tools/kotlin-build-statistics/**"
+    - "build-common"
+    - "libraries/tools/*gradle*"
+    - "compiler/build-tools/kotlin-build-statistics"
 
 Maven:
   include:
-    - "libraries/tools/*maven*/**"
+    - "libraries/tools/*maven*"
 
 # The IntelliJ domain has no owned files in this repository.
 # It is used to declare which domains will affect IntelliJ and to infer when to run tests against kt-master
 IntelliJ:
   include:
-    - "prepare/ide-plugin-dependencies/**"
+    - "prepare/ide-plugin-dependencies"
   fullyAffectedBy:
     - Compiler
     - AnalysisApi
@@ -131,14 +131,14 @@ IntelliJ:
 
 BuildInfrastructure:
   include:
-    - "repo/**"
-    - "gradle/**"
+    - "repo"
+    - "gradle"
     - "build.gradle.kts"
     - "settings.gradle.kts"
     - "gradle.properties"
-    - "scripts/**"
-    - ".space/**"
-    - ".idea/**"
+    - "scripts"
+    - ".space"
+    - ".idea"
 
 Unknown:
   # Files not matching other domains will be sorted into 'Unknown' by default.
