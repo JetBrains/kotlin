@@ -36,6 +36,30 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-07-31 — Delete `JavaSupertypeGraph`: the duplicated supertype-reference resolver was test-only
+- **Change**: answers the reviewer's standing objection to `resolveSupertypeReference` ("we partly
+  repeat type resolution logic here"). `JavaSupertypeGraph` re-derived import lookup, star-import
+  candidates and package/class splits from the AST, and returned an empty list for any dotted
+  supertype — an unspecified under-approximation. Repo-wide, its two entry points
+  (`LeanJavaClassFinder.getDirectSupertypes` / `collectInheritedInnerClasses`) had **no production
+  callers**: the test fake in `JavaParsingTestBase` implemented both as empty, and only
+  `JavaParsingClassFinderTest` invoked the real ones. Production already resolves the first
+  supertype level through the class's own `JavaResolutionContext`
+  (`resolveInheritedInnerClassToClassId`) and deeper levels through `directSupertypeClassIds`.
+- **Files**: `util/JavaSupertypeGraph.kt` (−270, deleted), `JavaClassFinderOverAstImpl.kt`,
+  `resolution/LeanJavaClassFinder.kt`, `resolution/JavaModelSessionAccess.kt` (KDoc),
+  `implDocs/ARCHITECTURE.md`, `test/JavaParsingTestBase.kt`, `test/JavaParsingClassFinderTest.kt`.
+- **Test rework**: `JavaParsingClassFinderTest` re-pointed at the real path — the `B<String>.C` case is
+  now a *positive* assertion (the inherited `a.B.C.N` must resolve; it previously only asserted the
+  wrongly-truncated `a.B` was absent), plus a new same-level multi-supertype test covering the
+  single-match and ambiguous-decline arms of `walkSupertypeClassIds`. Two graph-only tests
+  (`testGetDirectSupertypesUsesCache`, `testDiamondInheritanceInnerClasses`) were dropped: they
+  asserted the deleted cache, and the transitive/grandparent case they gestured at is already
+  covered end-to-end by `qualifiedInheritedNestedClassInOwnImplementsClause.kt`.
+- **Tests**: `JavaParsing*` unit tests green (`JavaParsingClassFinderTest` 12/12); full box +
+  phased green (2795 executed, 0 failures, 0 errors).
+- **Result**: green; per-representation duplicate removed, one supertype walk remains.
+
 ### 2026-07-31 — Box guards for the JLS accessibility check, incl. a genuinely *binary* Java supertype
 - **Change**: complements the phased guard below with two box tests. Unlike diagnostics tests
   (which hard-code `DependencyKind.Source`), a codegen `// MODULE: lib` dependency is really

@@ -73,10 +73,6 @@ private class SameFileOnlyClassFinder(private val context: () -> JavaResolutionC
         }
         return current
     }
-
-    override fun collectInheritedInnerClasses(classId: ClassId): Map<String, Set<ClassId>> = emptyMap()
-
-    override fun getDirectSupertypes(classId: ClassId): List<ClassId> = emptyList()
 }
 
 /**
