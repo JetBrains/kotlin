@@ -11,22 +11,17 @@ import org.jetbrains.kotlin.codegen.inline.GENERATE_SMAP
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SMAP
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.NO_SMAP_DUMP
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SEPARATE_SMAP_DUMPS
 import org.jetbrains.kotlin.test.directives.assertEqualsToDump
-import org.jetbrains.kotlin.test.directives.getClassifiedDumpFile
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import java.io.File
 
 class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     companion object {
         const val SMAP_EXT = "smap"
-        const val SMAP_SEP_EXT = "smap-separate-compilation"
-        const val SMAP_NON_SEP_EXT = "smap-nonseparate-compilation"
     }
 
     override val directiveContainers: List<DirectivesContainer>
@@ -67,45 +62,7 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val separateDumpEnabled = separateDumpsEnabled()
-        val isSeparateCompilation = isSeparateCompilation()
-
-        val extension = when {
-            !separateDumpEnabled -> SMAP_EXT
-            isSeparateCompilation -> SMAP_SEP_EXT
-            else -> SMAP_NON_SEP_EXT
-        }
-
         val actualDump = if (dumper.isEmpty()) null else dumper.generateResultingDump()
-        assertEqualsToDump(extension, actualDump)
-        if (actualDump == null) return
-
-        if (separateDumpEnabled && isSeparateCompilation) {
-            val otherFile = testServices.moduleStructure.getClassifiedDumpFile(SMAP_NON_SEP_EXT).fullyClassifiedFile
-            if (!otherFile.exists()) return
-
-            val expectedFile = testServices.moduleStructure.getClassifiedDumpFile(SMAP_SEP_EXT).fullyClassifiedFile
-            val expectedText = expectedFile.readText()
-            if (expectedText == otherFile.readText()) {
-                val smapFile = testServices.moduleStructure.getClassifiedDumpFile(SMAP_EXT).fullyClassifiedFile
-                smapFile.writeText(expectedText)
-                expectedFile.delete()
-                otherFile.delete()
-                assertions.fail {
-                    """
-                    Contents of ${expectedFile.name} and ${otherFile.name} are equals, so they were deleted and joined to ${smapFile.name}.
-                    Please remove $SEPARATE_SMAP_DUMPS directive from ${testServices.moduleStructure.originalTestDataFiles.first().name} and rerun test
-                    """.trimIndent()
-                }
-            }
-        }
-    }
-
-    private fun isSeparateCompilation(): Boolean {
-        return testServices.moduleStructure.modules.size > 1
-    }
-
-    private fun separateDumpsEnabled(): Boolean {
-        return SEPARATE_SMAP_DUMPS in testServices.moduleStructure.allDirectives
+        assertEqualsToDump(SMAP_EXT, actualDump)
     }
 }
