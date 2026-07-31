@@ -1,0 +1,41 @@
+FILE fqName:<root> fileName:/prefixIncrementDynamicArrayAccess.kt
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:obj type:dynamic [val]
+        CALL 'public final fun jso (): dynamic declared in <root>' type=dynamic origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        DYN_OP operator=EQ type=dynamic
+          receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+            receiver: GET_VAR 'val obj: dynamic declared in <root>.box' type=dynamic origin=null
+            0: CONST String type=kotlin.String value="a"
+          0: CONST Int type=kotlin.Int value=2
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        DYN_OP operator=PREFIX_INCREMENT type=dynamic
+          receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+            receiver: GET_VAR 'val obj: dynamic declared in <root>.box' type=dynamic origin=IMPLICIT_ARGUMENT
+            0: CONST String type=kotlin.String value="a"
+      VAR name:b type:dynamic [val]
+        DYN_OP operator=PREFIX_INCREMENT type=dynamic
+          receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+            receiver: GET_VAR 'val obj: dynamic declared in <root>.box' type=dynamic origin=IMPLICIT_ARGUMENT
+            0: CONST String type=kotlin.String value="a"
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: DYN_OP operator=EXCLEQ type=kotlin.Boolean
+            receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+              receiver: GET_VAR 'val obj: dynamic declared in <root>.box' type=dynamic origin=null
+              0: CONST String type=kotlin.String value="a"
+            0: CONST Int type=kotlin.Int value=4
+          then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            STRING_CONCATENATION type=kotlin.String
+              CONST String type=kotlin.String value="Fail: "
+              DYN_OP operator=ARRAY_ACCESS type=dynamic
+                receiver: GET_VAR 'val obj: dynamic declared in <root>.box' type=dynamic origin=null
+                0: CONST String type=kotlin.String value="a"
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:jso visibility:public modality:FINAL returnType:dynamic
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun jso (): dynamic declared in <root>'
+        CALL 'public final fun js (code: kotlin.String): dynamic declared in kotlin.js' type=dynamic origin=null
+          ARG code: CONST String type=kotlin.String value="{}"

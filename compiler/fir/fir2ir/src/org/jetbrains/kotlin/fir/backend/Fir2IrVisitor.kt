@@ -708,19 +708,14 @@ class Fir2IrVisitor(
         val arraySetAsGenericDynamicAccess = convertToIrCall(functionCall, IrDynamicOperator.ARRAY_ACCESS) as? IrDynamicOperatorExpression
             ?: error("Converting dynamic array access should have resulted in IrDynamicOperatorExpression: ${functionCall.render()}")
         val arraySetNewValue = arraySetAsGenericDynamicAccess.arguments.removeLast()
-        val dynamicOperator = (arraySetNewValue as? IrDynamicOperatorExpression)?.operator
-            ?.takeIf { functionCall.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement }
-            ?: IrDynamicOperator.EQ
         return IrDynamicOperatorExpressionImpl(
             arraySetAsGenericDynamicAccess.startOffset,
             arraySetAsGenericDynamicAccess.endOffset,
             arraySetAsGenericDynamicAccess.type,
-            dynamicOperator,
+            IrDynamicOperator.EQ,
         ).apply {
             receiver = arraySetAsGenericDynamicAccess
-            if (dynamicOperator == IrDynamicOperator.EQ) {
-                arguments.add(arraySetNewValue)
-            }
+            arguments.add(arraySetNewValue)
         }
     }
 
@@ -1018,6 +1013,20 @@ class Fir2IrVisitor(
         }
     }
 
+    private val FirProperty.isDesugaredBlockProperty: Boolean
+        get() = source?.kind is KtFakeSourceElementKind.ArrayAccessNameReference
+                || source?.kind is KtFakeSourceElementKind.ArrayIndexExpressionReference
+
+    private val FirStatement.isDesugaredBlockLastStatement: Boolean
+        get() = this is FirFunctionCall && isDesugaredBlockLastCall || this is FirPropertyAccessExpression && isDesugaredBlockLastPropertyAccess
+
+    private val FirFunctionCall.isDesugaredBlockLastCall: Boolean
+        get() = (source?.kind as? KtFakeSourceElementKind.DesugaredIncrementOrDecrement)?.generatedElementKind ==
+                KtFakeSourceElementKind.DesugaredIncrementOrDecrement.GeneratedElementKind.SecondGetReference
+
+    private val FirPropertyAccessExpression.isDesugaredBlockLastPropertyAccess: Boolean
+        get() = calleeReference.symbol?.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement
+
     private val FirProperty.isUnnamedLocalVariable: Boolean
         get() = initializer.let { it != null && it.source?.kind !is KtFakeSourceElementKind.DesugaredComponentFunctionCall }
 
@@ -1161,7 +1170,28 @@ class Fir2IrVisitor(
         prologueStatements: List<IrStatement>? = null,
     ): IrBlockBody {
         return block.convertWithOffsets { startOffset, endOffset ->
-            val realStatements = block.statements.mapNotNull { it.toIrStatement() }
+            val realStatements = mutableListOf<IrStatement>()
+            val inlinedBlockStatements = mutableListOf<FirStatement>()
+
+            fun isReadingInlinedBlock(): Boolean = inlinedBlockStatements.isNotEmpty()
+
+            for (statement in block.statements) {
+                if (statement is FirProperty && statement.isDesugaredBlockProperty && statement.returnTypeRef.coneType is ConeDynamicType) {
+                    inlinedBlockStatements.add(statement)
+                    continue
+                }
+
+                when {
+                    !isReadingInlinedBlock() -> statement.toIrStatement()?.let(realStatements::add)
+                    else -> inlinedBlockStatements.add(statement)
+                }
+
+                if (statement.isDesugaredBlockLastStatement) {
+                    tryConvertDynamicIncrementOrDecrementToIr(inlinedBlockStatements)?.let(realStatements::add)
+                    inlinedBlockStatements.clear()
+                }
+            }
+
             IrFactoryImpl.createBlockBody(
                 startOffset, endOffset,
                 if (prologueStatements != null) prologueStatements + realStatements else realStatements
@@ -1182,7 +1212,7 @@ class Fir2IrVisitor(
      * [org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder.generateIncrementOrDecrementBlockForArrayAccess] and
      * [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer.transformIncrementDecrementExpression]
      */
-    private fun FirBlock.tryConvertDynamicIncrementOrDecrementToIr(): IrExpression? {
+    private fun tryConvertDynamicIncrementOrDecrementToIr(statements: List<FirStatement>): IrExpression? {
         // Key observations:
         // 1. For postfix operations `<unary>` is always present and is returned in referenced as the last statement
         // 2. The second to last statement is always either a `set()` call or an assignment
@@ -1248,7 +1278,7 @@ class Fir2IrVisitor(
         val coerceToUnit = expectedType?.isUnit == true
 
         if (this.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
-            tryConvertDynamicIncrementOrDecrementToIr()?.let {
+            tryConvertDynamicIncrementOrDecrementToIr(statements)?.let {
                 return it.applyIf(coerceToUnit) {
                     coerceToUnitHandlingSpecialBlocks()
                 }
