@@ -37,9 +37,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] callInitializers.kt
             ^ R|/compute|()
         }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withCallDefault([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class WithConstructorCallDefault : R|kotlin/Any| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=WithConstructorCallDefault] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/WithConstructorCallDefault.value] value: R|kotlin/Int| = LAZY_EXPRESSION): R|WithConstructorCallDefault| {
-            LAZY_super<R|kotlin/Any|>
+    public final [ResolvedTo(BODY_RESOLVE)] class WithConstructorCallDefault : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithConstructorCallDefault] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithConstructorCallDefault.value] value: R|kotlin/Int| = R|/sum|(Int(9), Int(10))): R|WithConstructorCallDefault| {
+            super<R|kotlin/Any|>()
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|

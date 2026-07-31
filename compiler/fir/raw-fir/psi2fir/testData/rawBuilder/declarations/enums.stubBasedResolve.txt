@@ -56,9 +56,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enums.kt
             public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Planet>|
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class PseudoInsn : R|kotlin/Enum<PseudoInsn>| {
-        private [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=PseudoInsn] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/PseudoInsn.signature] signature: R|kotlin/String| = LAZY_EXPRESSION): R|PseudoInsn| {
-            LAZY_super<R|kotlin/Enum<PseudoInsn>|>
+    public final [ResolvedTo(BODY_RESOLVE)] enum class PseudoInsn : R|kotlin/Enum<PseudoInsn>| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PseudoInsn] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/PseudoInsn.signature] signature: R|kotlin/String| = String(()V)): R|PseudoInsn| {
+            super<R|kotlin/Enum<PseudoInsn>|>()
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val signature: R|kotlin/String| = R|<local>/signature|
