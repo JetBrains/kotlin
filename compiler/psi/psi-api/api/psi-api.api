@@ -1524,6 +1524,8 @@ public class org/jetbrains/kotlin/psi/KtElementImplStub : com/intellij/extapi/ps
 	public fun acceptChildren (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)V
 	public fun delete ()V
 	public fun getContainingKtFile ()Lorg/jetbrains/kotlin/psi/KtFile;
+	protected final fun getExpressionFromStub ()Lorg/jetbrains/kotlin/psi/KtExpression;
+	protected final fun getExpressionsFromStub ()[Lorg/jetbrains/kotlin/psi/KtExpression;
 	public fun getLanguage ()Lcom/intellij/lang/Language;
 	public fun getPsiOrParent ()Lorg/jetbrains/kotlin/psi/KtElement;
 	public fun getReference ()Lcom/intellij/psi/PsiReference;

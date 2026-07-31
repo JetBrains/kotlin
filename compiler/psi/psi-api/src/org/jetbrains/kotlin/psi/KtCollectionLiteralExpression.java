@@ -13,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinCollectionLiteralExpressionStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
 import java.util.Arrays;
@@ -78,9 +77,9 @@ public class KtCollectionLiteralExpression extends KtElementImplStub<KotlinColle
                 return Collections.emptyList();
             }
 
-            KtExpression[] constantExpressions = stub.getChildrenByType(KtTokenSets.CONSTANT_EXPRESSIONS, KtExpression.EMPTY_ARRAY);
-            if (constantExpressions.length == expressionsCount) {
-                return Arrays.asList(constantExpressions);
+            KtExpression[] expressions = getExpressionsFromStub();
+            if (expressions.length == expressionsCount) {
+                return Arrays.asList(expressions);
             }
         }
 
