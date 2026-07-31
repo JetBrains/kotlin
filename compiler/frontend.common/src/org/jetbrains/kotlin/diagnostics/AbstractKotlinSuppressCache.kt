@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.diagnostics
 import com.google.common.collect.ImmutableSet
 import com.intellij.util.containers.ContainerUtil
 
-abstract class AbstractKotlinSuppressCache<Element> {
+abstract class AbstractKotlinSuppressCache<Element : Any> {
     // The cache is weak: we're OK with losing it
     protected val suppressors = ContainerUtil.createConcurrentWeakValueMap<Element, Suppressor<Element>>()
 
