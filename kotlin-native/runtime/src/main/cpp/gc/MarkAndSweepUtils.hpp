@@ -40,7 +40,7 @@ void processFieldInMark(void* state, ObjHeader* object, ObjHeader* field) noexce
 
 template <typename Traits>
 void processObjectInMark(void* state, ObjHeader* object) noexcept {
-    traverseClassObjectFields(object, [=] (auto fieldAccessor) noexcept {
+    traverseClassObjectFields(object, [=](auto fieldAccessor) noexcept {
         if (ObjHeader* field = fieldAccessor.direct()) {
             processFieldInMark<Traits>(state, object, field);
         }
@@ -49,7 +49,7 @@ void processObjectInMark(void* state, ObjHeader* object) noexcept {
 
 template <typename Traits>
 void processArrayInMark(void* state, ArrayHeader* array) noexcept {
-    traverseArrayOfObjectsElements(array, [=] (auto elemAccessor) noexcept {
+    traverseArrayOfObjectsElements(array, [=](auto elemAccessor) noexcept {
         if (ObjHeader* elem = elemAccessor.direct()) {
             processFieldInMark<Traits>(state, array->obj(), elem);
         }
@@ -58,8 +58,7 @@ void processArrayInMark(void* state, ArrayHeader* array) noexcept {
 
 template <typename Traits>
 bool collectRoot(typename Traits::MarkQueue& markQueue, ObjHeader* object) noexcept {
-    if (isNullOrMarker(object))
-        return false;
+    if (isNullOrMarker(object)) return false;
 
     if (object->heap()) {
         Traits::tryEnqueue(markQueue, object);
@@ -73,7 +72,11 @@ bool collectRoot(typename Traits::MarkQueue& markQueue, ObjHeader* object) noexc
 
 // TODO: Consider making it noinline to keep loop in `Mark` small.
 template <typename Traits>
-void processExtraObjectData(GCHandle::GCMarkScope& markHandle, typename Traits::MarkQueue& markQueue, mm::ExtraObjectData& extraObjectData, ObjHeader* object) noexcept {
+void processExtraObjectData(
+        GCHandle::GCMarkScope& markHandle,
+        typename Traits::MarkQueue& markQueue,
+        mm::ExtraObjectData& extraObjectData,
+        ObjHeader* object) noexcept {
     if (auto weakReference = extraObjectData.GetRegularWeakReferenceImpl()) {
         RuntimeAssert(
                 weakReference->heap(), "Weak reference must be a heap object. object=%p weak=%p permanent=%d stack=%d", object,
@@ -151,8 +154,7 @@ template <typename Traits, typename F>
 void collectRootSet(GCHandle handle, typename Traits::MarkQueue& markQueue, F&& filter) noexcept {
     Traits::clear(markQueue);
     for (auto& thread : mm::GlobalData::Instance().threadRegistry().LockForIter()) {
-        if (!filter(thread))
-            continue;
+        if (!filter(thread)) continue;
         thread.Publish();
         collectRootSetForThread<Traits>(handle, markQueue, thread);
     }

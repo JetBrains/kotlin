@@ -52,13 +52,12 @@ std::vector<T> collectFromThreadData(F extractFunction) {
 }
 
 std::vector<bool> collectSuspended() {
-    return collectFromThreadData<bool>(
-            [](mm::ThreadData* threadData) { return threadData->suspensionData().suspendedOrNative(); });
+    return collectFromThreadData<bool>([](mm::ThreadData* threadData) { return threadData->suspensionData().suspendedOrNative(); });
 }
 
 void reportProgress(size_t currentIteration, size_t totalIterations) {
     if (currentIteration % kDefaultReportingStep == 0) {
-       std::cout << "Iteration: " << currentIteration << " of " << totalIterations << std::endl;
+        std::cout << "Iteration: " << currentIteration << " of " << totalIterations << std::endl;
     }
 }
 
@@ -92,7 +91,7 @@ public:
 
     void waitUntilCanStart(size_t threadNumber) {
         ready[threadNumber] = true;
-        while(!canStart) {
+        while (!canStart) {
             std::this_thread::yield();
         }
         ready[threadNumber] = false;
@@ -114,13 +113,13 @@ TEST_F(ThreadSuspensionTest, SimpleStartStop) {
             auto& suspensionData = init.memoryState()->GetThreadData()->suspensionData();
             EXPECT_EQ(mm::IsThreadSuspensionRequested(), false);
 
-            while(!shouldStop) {
+            while (!shouldStop) {
                 waitUntilCanStart(i);
 
                 EXPECT_FALSE(suspensionData.suspendedOrNative());
                 suspensionData.suspendIfRequested();
                 EXPECT_FALSE(suspensionData.suspendedOrNative());
-           }
+            }
         });
     }
     waitUntilThreadsAreReady();
@@ -146,7 +145,6 @@ TEST_F(ThreadSuspensionTest, SimpleStartStop) {
     }
 }
 
-
 TEST_F(ThreadSuspensionTest, SwitchStateToNative) {
     ASSERT_THAT(collectThreadData(), testing::IsEmpty());
 
@@ -156,7 +154,7 @@ TEST_F(ThreadSuspensionTest, SwitchStateToNative) {
             auto* threadData = init.memoryState()->GetThreadData();
             EXPECT_EQ(mm::IsThreadSuspensionRequested(), false);
 
-            while(!shouldStop) {
+            while (!shouldStop) {
                 waitUntilCanStart(i);
 
                 EXPECT_EQ(threadData->state(), ThreadState::kRunnable);
@@ -266,9 +264,9 @@ TEST_F(ThreadSuspensionTest, ConcurrentSuspendSeries) {
 }
 
 TEST_F(ThreadSuspensionTest, FileInitializationWithSuspend) {
-    #if KONAN_LINUX
+#if KONAN_LINUX
     GTEST_SKIP() << "KT-83220: fails on Linux";
-    #endif
+#endif
     ASSERT_THAT(collectThreadData(), testing::IsEmpty());
     ASSERT_FALSE(mm::IsThreadSuspensionRequested());
 
@@ -302,7 +300,7 @@ TEST_F(ThreadSuspensionTest, FileInitializationWithSuspend) {
         mm::WaitForThreadsSuspension();
         mm::ResumeThreads();
     });
-    while(!mm::IsThreadSuspensionRequested()) {
+    while (!mm::IsThreadSuspensionRequested()) {
     }
     canStart = true;
 

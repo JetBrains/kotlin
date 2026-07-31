@@ -44,9 +44,7 @@ struct Mode {
     using HeapObject = alloc::HeapObject<HeapHeader>;
 
     static const TypeInfo* arrayTypeInfo() { return ArrayOps::arrayTypeInfo(); }
-    static uint8_t* addressOfElementAt(ArrayHeader* arr, uint32_t index) {
-        return ArrayOps::addressOfElementAt(arr, index);
-    }
+    static uint8_t* addressOfElementAt(ArrayHeader* arr, uint32_t index) { return ArrayOps::addressOfElementAt(arr, index); }
 };
 
 } // namespace
@@ -55,15 +53,15 @@ template <typename T>
 class HeapObjectTest : public testing::Test {};
 
 using TestModes = testing::Types<
-    Mode<uint8_t, ObjectArrayOps>,
-    Mode<uint8_t, ByteArrayOps>,
-    Mode<uint8_t, LongArrayOps>,
-    Mode<uint32_t, ObjectArrayOps>,
-    Mode<uint32_t, ByteArrayOps>,
-    Mode<uint32_t, LongArrayOps>,
-    Mode<uint64_t, ObjectArrayOps>,
-    Mode<uint64_t, ByteArrayOps>,
-    Mode<uint64_t, LongArrayOps>>;
+        Mode<uint8_t, ObjectArrayOps>,
+        Mode<uint8_t, ByteArrayOps>,
+        Mode<uint8_t, LongArrayOps>,
+        Mode<uint32_t, ObjectArrayOps>,
+        Mode<uint32_t, ByteArrayOps>,
+        Mode<uint32_t, LongArrayOps>,
+        Mode<uint64_t, ObjectArrayOps>,
+        Mode<uint64_t, ByteArrayOps>,
+        Mode<uint64_t, LongArrayOps>>;
 
 TYPED_TEST_SUITE(HeapObjectTest, TestModes);
 

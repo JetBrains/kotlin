@@ -73,7 +73,7 @@ bool mm::ExtraObjectData::HasAssociatedObject() noexcept {
 }
 
 void mm::ExtraObjectData::ClearRegularWeakReferenceImpl() noexcept {
-    auto *object = GetBaseObject();
+    auto* object = GetBaseObject();
     // Not using `mm::SetHeapRef here`, because this code is called during sweep phase by the GC thread,
     // and so cannot affect marking.
     // TODO: Asserts on the above?

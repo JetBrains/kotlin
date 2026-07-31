@@ -84,4 +84,4 @@ size_t allocatedHeapSize(ObjHeader* object) noexcept;
 size_t allocatedBytes() noexcept;
 
 void destroyExtraObjectData(mm::ExtraObjectData& extraObject) noexcept;
-}
+} // namespace kotlin::alloc

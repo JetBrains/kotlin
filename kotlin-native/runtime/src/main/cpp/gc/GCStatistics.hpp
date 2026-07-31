@@ -87,9 +87,7 @@ private:
 
 class GCHandle::GCStageScopeBase : private MoveOnly {
 public:
-    ALWAYS_INLINE void requireValid() const {
-        RuntimeAssert(handle_.isValid(), "Invalid GC handle accessed");
-    }
+    ALWAYS_INLINE void requireValid() const { RuntimeAssert(handle_.isValid(), "Invalid GC handle accessed"); }
 
 protected:
     explicit GCStageScopeBase(GCHandle gcHandle) : handle_(gcHandle) {}
@@ -99,9 +97,7 @@ protected:
         swap(first.handle_, second.handle_);
         swap(first.startTime_, second.startTime_);
     }
-    GCStageScopeBase(GCStageScopeBase&& that) noexcept : GCStageScopeBase(GCHandle::invalid()) {
-        swap(*this, that);
-    }
+    GCStageScopeBase(GCStageScopeBase&& that) noexcept : GCStageScopeBase(GCHandle::invalid()) { swap(*this, that); }
     GCStageScopeBase& operator=(GCStageScopeBase&& that) noexcept {
         auto tmp = std::move(that);
         swap(*this, tmp);
@@ -120,9 +116,7 @@ class GCHandle::GCSweepScope : public GCStageScopeBase {
 
 public:
     explicit GCSweepScope(GCHandle handle);
-    GCSweepScope(GCSweepScope&& that) noexcept : GCSweepScope(GCHandle::invalid()) {
-        swap(*this, that);
-    }
+    GCSweepScope(GCSweepScope&& that) noexcept : GCSweepScope(GCHandle::invalid()) { swap(*this, that); }
     GCSweepScope& operator=(GCSweepScope&& that) noexcept {
         auto tmp = std::move(that);
         swap(*this, tmp);
@@ -189,9 +183,7 @@ class GCHandle::GCGlobalRootSetScope : public GCStageScopeBase {
 
 public:
     explicit GCGlobalRootSetScope(GCHandle handle);
-    GCGlobalRootSetScope(GCGlobalRootSetScope&& that) noexcept : GCGlobalRootSetScope(GCHandle::invalid()) {
-        swap(*this, that);
-    }
+    GCGlobalRootSetScope(GCGlobalRootSetScope&& that) noexcept : GCGlobalRootSetScope(GCHandle::invalid()) { swap(*this, that); }
     GCGlobalRootSetScope& operator=(GCGlobalRootSetScope&& that) noexcept {
         auto tmp = std::move(that);
         swap(*this, tmp);
@@ -239,9 +231,7 @@ class GCHandle::GCMarkScope : public GCStageScopeBase {
 
 public:
     explicit GCMarkScope(GCHandle handle);
-    GCMarkScope(GCMarkScope&& that) noexcept : GCMarkScope(GCHandle::invalid()) {
-        swap(*this, that);
-    }
+    GCMarkScope(GCMarkScope&& that) noexcept : GCMarkScope(GCHandle::invalid()) { swap(*this, that); }
     GCMarkScope& operator=(GCMarkScope&& that) noexcept {
         auto tmp = std::move(that);
         swap(*this, tmp);
@@ -267,9 +257,7 @@ class GCHandle::GCProcessWeaksScope : public GCStageScopeBase {
 
 public:
     explicit GCProcessWeaksScope(GCHandle handle) noexcept;
-    GCProcessWeaksScope(GCProcessWeaksScope&& that) noexcept : GCProcessWeaksScope(GCHandle::invalid()) {
-        swap(*this, that);
-    }
+    GCProcessWeaksScope(GCProcessWeaksScope&& that) noexcept : GCProcessWeaksScope(GCHandle::invalid()) { swap(*this, that); }
     GCProcessWeaksScope& operator=(GCProcessWeaksScope&& that) noexcept {
         auto tmp = std::move(that);
         swap(*this, tmp);
@@ -298,4 +286,4 @@ public:
     }
 };
 
-}
+} // namespace kotlin::gc

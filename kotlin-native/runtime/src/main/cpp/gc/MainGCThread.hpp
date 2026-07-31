@@ -19,17 +19,18 @@ namespace kotlin::gc::internal {
 template <typename GCTraits>
 class MainGCThread : private MoveOnly {
 public:
-    MainGCThread(GCStateHolder& state, alloc::Allocator& allocator,
-                 gcScheduler::GCScheduler& gcScheduler, typename GCTraits::Mark& mark) noexcept :
-            state_(state),
-            allocator_(allocator),
-            gcScheduler_(gcScheduler),
-            mark_(mark),
-            thread_(std::string_view("Main GC thread"), [this] { body(); }) {}
+    MainGCThread(
+            GCStateHolder& state,
+            alloc::Allocator& allocator,
+            gcScheduler::GCScheduler& gcScheduler,
+            typename GCTraits::Mark& mark) noexcept :
+        state_(state), allocator_(allocator), gcScheduler_(gcScheduler), mark_(mark), thread_(std::string_view("Main GC thread"), [this] {
+            body();
+        }) {}
 
 private:
     void body() noexcept {
-        RuntimeLogInfo({ kTagGC }, "Initializing %s GC.", GCTraits::kName);
+        RuntimeLogInfo({kTagGC}, "Initializing %s GC.", GCTraits::kName);
         while (true) {
             if (auto epoch = state_.waitScheduled()) {
                 PerformFullGC(*epoch);

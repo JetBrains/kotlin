@@ -39,7 +39,7 @@ using namespace kotlin;
 
 @interface NSObject (KotlinBaseExtensions)
 // Implemented for KotlinBase
-+ (instancetype)createRetainedWrapper:(struct ObjHeader *)obj;
++ (instancetype)createRetainedWrapper:(struct ObjHeader*)obj;
 @end
 
 namespace {

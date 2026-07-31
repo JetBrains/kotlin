@@ -185,15 +185,13 @@ std::vector<ObjHeader*> Alive(mm::ThreadData& threadData) {
     return alloc::test_support::allocatedObjects(threadData);
 }
 
-
 template <typename FixtureImpl>
 class TracingGCTest : public testing::Test {
 public:
-    void SetUp() override {
-        impl_.SetUp();
-    }
+    void SetUp() override { impl_.SetUp(); }
 
     testing::MockFunction<void(ObjHeader*)>& finalizerHook() { return finalizerHooks_.finalizerHook(); }
+
 private:
     FixtureImpl impl_{};
     FinalizerHooksTestSupport finalizerHooks_;
@@ -576,8 +574,7 @@ TYPED_TEST_P(TracingGCTest, PermanentObjects) {
         GlobalPermanentObjectHolder global1{threadData};
         GlobalObjectHolder global2{threadData};
         test_support::Object<Payload> permanentObject{typeHolder.typeInfo()};
-        permanentObject.header()->typeInfoOrMeta_ =
-                setPointerBits(permanentObject.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
+        permanentObject.header()->typeInfoOrMeta_ = setPointerBits(permanentObject.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT);
         RuntimeAssert(permanentObject.header()->permanent(), "Must be permanent");
 
         global1->field1 = permanentObject.header();
@@ -620,8 +617,7 @@ class Mutator : private Pinned {
 public:
     template <typename F>
     [[nodiscard]] std::future<void> Execute(F&& f) {
-        return executor_.execute(
-                [this, f = std::forward<F>(f)] { f(*executor_.context().threadData_, *this); });
+        return executor_.execute([this, f = std::forward<F>(f)] { f(*executor_.context().threadData_, *this); });
     }
 
     StackObjectHolder& AddStackRoot() {
@@ -1048,8 +1044,7 @@ TYPED_TEST_P(TracingGCTest, FreeObjectWithFreeWeakReversedOrder) {
         auto& object1_local = AllocateObject(threadData);
         object1 = &object1_local;
         global1->field1 = object1_local.header();
-        while (weak.load() == nullptr)
-            ;
+        while (weak.load() == nullptr);
         mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(object1_local.header(), weak.load()->header(), global1.header()));
@@ -1093,7 +1088,8 @@ TYPED_TEST_P(TracingGCTest, MutateBetweenSafePoints) {
 
     Mutator scheduler;
     std::future<void> schedulerFuture = scheduler.Execute([&](mm::ThreadData& threadData, Mutator& mutator) {
-        while (initializedMutators < kDefaultThreadCount) { /* wait */ }
+        while (initializedMutators < kDefaultThreadCount) { /* wait */
+        }
         startMutation = true;
         for (int i = 0; i < kGcNumber; ++i) {
             gcEpoch = i;
@@ -1133,7 +1129,8 @@ TYPED_TEST_P(TracingGCTest, MutateBetweenSafePoints) {
             // Initialize
             append(kQuant * 2);
             ++initializedMutators;
-            while (!startMutation.load()) { /* wait */ };
+            while (!startMutation.load()) { /* wait */
+            };
 
             int iter = 0;
             while (!stopMutation.load()) {
@@ -1190,31 +1187,34 @@ TYPED_TEST_P(TracingGCTest, WeakResurrectionInMark) {
 
     // initialize threads
     for (int i = 0; i < kDefaultThreadCount; ++i) {
-        mutators[i].Execute([&, i](mm::ThreadData& threadData, Mutator& mutator) {
-            // make sure GC will have somthing to do whil we play with weak references
-            for (int j = 0; j < kObjectsPerThread; ++j) {
-                auto& object = AllocateObject(threadData);
-                object->field1 = roots[i]->header();
-                roots[i] = &object;
-            }
-            mutator.AddGlobalRoot(roots[i]->header());
+        mutators[i]
+                .Execute([&, i](mm::ThreadData& threadData, Mutator& mutator) {
+                    // make sure GC will have somthing to do whil we play with weak references
+                    for (int j = 0; j < kObjectsPerThread; ++j) {
+                        auto& object = AllocateObject(threadData);
+                        object->field1 = roots[i]->header();
+                        roots[i] = &object;
+                    }
+                    mutator.AddGlobalRoot(roots[i]->header());
 
-            auto& weakReferee = AllocateObject(threadData);
-            auto& weakRef = [&threadData, &weakReferee]() -> test_support::RegularWeakReferenceImpl& {
-                ObjHolder holder;
-                return test_support::InstallWeakReference(threadData, weakReferee.header(), holder.slot());
-            }();
-            EXPECT_NE(weakRef.get(), nullptr);
-            weaks[i] = &weakRef;
-            mutator.AddGlobalRoot(weakRef.header());
-        }).wait();
+                    auto& weakReferee = AllocateObject(threadData);
+                    auto& weakRef = [&threadData, &weakReferee]() -> test_support::RegularWeakReferenceImpl& {
+                        ObjHolder holder;
+                        return test_support::InstallWeakReference(threadData, weakReferee.header(), holder.slot());
+                    }();
+                    EXPECT_NE(weakRef.get(), nullptr);
+                    weaks[i] = &weakRef;
+                    mutator.AddGlobalRoot(weakRef.header());
+                })
+                .wait();
     }
 
     auto epoch = mm::GlobalData::Instance().gc().Schedule();
     std::atomic gcDone = false;
 
     // Spin until thread suspension is requested.
-    while (!mm::IsThreadSuspensionRequested()) {}
+    while (!mm::IsThreadSuspensionRequested()) {
+    }
 
     std::vector<std::future<void>> mutatorFutures;
     for (int i = 0; i < kDefaultThreadCount; ++i) {

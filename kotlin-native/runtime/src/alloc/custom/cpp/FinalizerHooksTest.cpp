@@ -28,9 +28,7 @@ class FinalizerHooksTest : public testing::Test {
 public:
     testing::MockFunction<void(ObjHeader*)>& finalizerHook() { return finalizerHooks_.finalizerHook(); }
 
-    void TearDown() override {
-        mm::GlobalData::Instance().allocator().clearForTests();
-    }
+    void TearDown() override { mm::GlobalData::Instance().allocator().clearForTests(); }
 
 private:
     FinalizerHooksTestSupport finalizerHooks_;
@@ -39,7 +37,7 @@ private:
 } // namespace
 
 TEST_F(FinalizerHooksTest, TypeWithFinalizerHook) {
-    RunInNewThread([this](mm::ThreadData& thread){
+    RunInNewThread([this](mm::ThreadData& thread) {
         test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>().addFlag(TF_HAS_FINALIZER)};
         ObjHolder resultHolder;
         ObjHeader* obj = mm::AllocateObject(&thread, type.typeInfo(), resultHolder.slot());
@@ -51,7 +49,7 @@ TEST_F(FinalizerHooksTest, TypeWithFinalizerHook) {
 }
 
 TEST_F(FinalizerHooksTest, TypeWithoutFinalizerHookWithExtra) {
-    RunInNewThread([this](mm::ThreadData& thread){
+    RunInNewThread([this](mm::ThreadData& thread) {
         test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
         test_support::Object<EmptyPayload> object(type.typeInfo());
         ObjHolder resultHolder;
@@ -65,7 +63,7 @@ TEST_F(FinalizerHooksTest, TypeWithoutFinalizerHookWithExtra) {
 }
 
 TEST_F(FinalizerHooksTest, TypeWithoutFinalizerHookWithoutExtra) {
-    RunInNewThread([this](mm::ThreadData& thread){
+    RunInNewThread([this](mm::ThreadData& thread) {
         test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
         test_support::Object<EmptyPayload> object(type.typeInfo());
         ObjHolder resultHolder;

@@ -40,9 +40,12 @@ enum class InitState {
 
 const char* initStateToString(InitState state) noexcept {
     switch (state) {
-        case InitState::kUninitialized: return "uninitialized";
-        case InitState::kInitializing: return "initializing";
-        case InitState::kInitialized: return "initialized";
+        case InitState::kUninitialized:
+            return "uninitialized";
+        case InitState::kInitializing:
+            return "initializing";
+        case InitState::kInitialized:
+            return "initialized";
     }
 }
 
@@ -64,7 +67,7 @@ SpinLock globalDataInitMutex;
 [[clang::no_destroy]] std::condition_variable globalDataInitCV;
 #endif
 
-}
+} // namespace
 
 // static
 mm::GlobalData& mm::GlobalData::Instance() noexcept {

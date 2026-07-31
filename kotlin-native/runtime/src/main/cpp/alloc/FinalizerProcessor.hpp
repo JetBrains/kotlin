@@ -172,8 +172,7 @@ private:
 
         void notify() override { owner_.finalizerQueueCondVar_.notify_all(); }
 
-        void initThreadData() override { /* noop */
-        }
+        void initThreadData() override { /* noop */ }
 
         void body() override {
             int64_t finishedEpoch = 0;

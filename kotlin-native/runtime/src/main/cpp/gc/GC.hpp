@@ -77,9 +77,7 @@ public:
     void WaitFinished(int64_t epoch) noexcept;
     void WaitFinalizers(int64_t epoch) noexcept;
 
-    auto gcLock() noexcept {
-        return std::unique_lock{gcLock_};
-    }
+    auto gcLock() noexcept { return std::unique_lock{gcLock_}; }
 
     void onEpochFinalized(int64_t epoch) noexcept;
 
@@ -101,6 +99,7 @@ namespace barriers {
 
 class ExternalRCRefReleaseGuard : MoveOnly {
     class Impl;
+
 public:
     static bool isNoop();
 

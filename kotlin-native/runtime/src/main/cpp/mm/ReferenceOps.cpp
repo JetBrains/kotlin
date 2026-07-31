@@ -10,18 +10,26 @@
 using namespace kotlin;
 
 // on stack
-template<> ALWAYS_INLINE void mm::RefAccessor<true>::beforeStore(ObjHeader*) noexcept {}
-template<> ALWAYS_INLINE void mm::RefAccessor<true>::afterStore(ObjHeader*) noexcept {}
-template<> ALWAYS_INLINE void mm::RefAccessor<true>::beforeLoad() noexcept {}
-template<> ALWAYS_INLINE void mm::RefAccessor<true>::afterLoad() noexcept {}
+template <>
+ALWAYS_INLINE void mm::RefAccessor<true>::beforeStore(ObjHeader*) noexcept {}
+template <>
+ALWAYS_INLINE void mm::RefAccessor<true>::afterStore(ObjHeader*) noexcept {}
+template <>
+ALWAYS_INLINE void mm::RefAccessor<true>::beforeLoad() noexcept {}
+template <>
+ALWAYS_INLINE void mm::RefAccessor<true>::afterLoad() noexcept {}
 
 // on heap
-template<> ALWAYS_INLINE void mm::RefAccessor<false>::beforeStore(ObjHeader* value) noexcept {
+template <>
+ALWAYS_INLINE void mm::RefAccessor<false>::beforeStore(ObjHeader* value) noexcept {
     gc::beforeHeapRefUpdate(direct(), value, false);
 }
-template<> ALWAYS_INLINE void mm::RefAccessor<false>::afterStore(ObjHeader*) noexcept {}
-template<> ALWAYS_INLINE void mm::RefAccessor<false>::beforeLoad() noexcept {}
-template<> ALWAYS_INLINE void mm::RefAccessor<false>::afterLoad() noexcept {}
+template <>
+ALWAYS_INLINE void mm::RefAccessor<false>::afterStore(ObjHeader*) noexcept {}
+template <>
+ALWAYS_INLINE void mm::RefAccessor<false>::beforeLoad() noexcept {}
+template <>
+ALWAYS_INLINE void mm::RefAccessor<false>::afterLoad() noexcept {}
 
 ALWAYS_INLINE OBJ_GETTER(mm::weakRefReadBarrier, std_support::atomic_ref<ObjHeader*> weakReferee) noexcept {
     RETURN_RESULT_OF(gc::weakRefReadBarrier, weakReferee);

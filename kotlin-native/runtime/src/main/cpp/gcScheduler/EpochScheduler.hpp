@@ -20,6 +20,7 @@ class ScheduleReason {
     static constexpr auto kBySafePoint = kByTimer - 1;
 
     explicit ScheduleReason(std::size_t data) noexcept : data_(data) {}
+
 public:
     static auto manually() noexcept { return ScheduleReason{kManually}; }
     static auto byTimer() noexcept { return ScheduleReason{kByTimer}; }
@@ -38,6 +39,7 @@ public:
             RuntimeLogInfo({tag}, "Scheduling GC by allocation: total allocated %zu bytes", data_);
         }
     }
+
 private:
     std::size_t data_;
 };
@@ -74,4 +76,4 @@ private:
 };
 
 } // namespace internal
-} // namespace kotlin::gcScheduler::internal
+} // namespace kotlin::gcScheduler
