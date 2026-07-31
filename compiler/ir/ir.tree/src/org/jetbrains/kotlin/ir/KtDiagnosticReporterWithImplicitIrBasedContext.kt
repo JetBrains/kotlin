@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtIoFileSourceFile
+import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
@@ -88,6 +89,8 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
         override val languageVersionSettings: LanguageVersionSettings
             get() = this@KtDiagnosticReporterWithImplicitIrBasedContext.languageVersionSettings
 
+        override val extraSourceToDiagnosticInstanceMapper: KtSourceToDiagnosticInstanceMapper? =
+            if (sourceElement is KtPsiSourceElement) PsiSourceToDiagnosticInstanceMapper() else null
 
         override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean =
             suppressCache.isSuppressed(
