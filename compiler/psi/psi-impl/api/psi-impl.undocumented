@@ -108,6 +108,7 @@ org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:MODIFIER_LIST
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:NULL
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:NULLABLE_TYPE
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:OBJECT_DECLARATION
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:OBJECT_LITERAL
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:OPERATION_REFERENCE
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:PACKAGE_DIRECTIVE
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:PARENTHESIZED

@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
+
+import java.util.Objects;
 
 /**
  * Represents an {@code object} literal expression that creates an anonymous object.
@@ -21,9 +24,14 @@ import org.jetbrains.kotlin.KtNodeTypes;
  * // The entire block from 'object :' to the closing curly brace
  * }</pre>
  */
-public class KtObjectLiteralExpression extends KtExpressionImpl {
+public class KtObjectLiteralExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<KtObjectLiteralExpression>> {
     public KtObjectLiteralExpression(@NotNull ASTNode node) {
         super(node);
+    }
+
+    @KtImplementationDetail
+    public KtObjectLiteralExpression(@NotNull KotlinPlaceHolderStub<KtObjectLiteralExpression> stub) {
+        super(stub, KtStubBasedElementTypes.OBJECT_LITERAL);
     }
 
     @Override
@@ -32,7 +40,8 @@ public class KtObjectLiteralExpression extends KtExpressionImpl {
     }
 
     @NotNull
+    @SuppressWarnings("deprecation") // KT-78356
     public KtObjectDeclaration getObjectDeclaration() {
-        return (KtObjectDeclaration) findChildByType(KtNodeTypes.OBJECT_DECLARATION);
+        return Objects.requireNonNull(getStubOrPsiChild(KtStubBasedElementTypes.OBJECT_DECLARATION));
     }
 }

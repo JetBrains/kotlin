@@ -50,6 +50,7 @@ org.jetbrains.kotlin.KotlinElementTypeProvider.longStringTemplateEntryType
 org.jetbrains.kotlin.KotlinElementTypeProvider.modifierListType
 org.jetbrains.kotlin.KotlinElementTypeProvider.nullType
 org.jetbrains.kotlin.KotlinElementTypeProvider.nullableTypeType
+org.jetbrains.kotlin.KotlinElementTypeProvider.objectLiteralType
 org.jetbrains.kotlin.KotlinElementTypeProvider.objectType
 org.jetbrains.kotlin.KotlinElementTypeProvider.operationReferenceType
 org.jetbrains.kotlin.KotlinElementTypeProvider.packageDirectiveType
@@ -728,6 +729,7 @@ org.jetbrains.kotlin.psi.KtObjectDeclaration.isObjectLiteral()
 org.jetbrains.kotlin.psi.KtObjectDeclaration:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtObjectDeclaration:constructor(KotlinObjectStub)
 org.jetbrains.kotlin.psi.KtObjectLiteralExpression:constructor(ASTNode)
+org.jetbrains.kotlin.psi.KtObjectLiteralExpression:constructor(KotlinPlaceHolderStub<KtObjectLiteralExpression>)
 org.jetbrains.kotlin.psi.KtObjectLiteralExpression:getObjectDeclaration()
 org.jetbrains.kotlin.psi.KtOperationExpression
 org.jetbrains.kotlin.psi.KtOperationExpression:getOperationReference()

@@ -2029,7 +2029,7 @@ public final class org/jetbrains/kotlin/psi/KtObjectDeclaration : org/jetbrains/
 	public fun setName (Ljava/lang/String;)Lcom/intellij/psi/PsiElement;
 }
 
-public class org/jetbrains/kotlin/psi/KtObjectLiteralExpression : org/jetbrains/kotlin/psi/KtExpressionImpl {
+public class org/jetbrains/kotlin/psi/KtObjectLiteralExpression : org/jetbrains/kotlin/psi/KtExpressionImplStub {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getObjectDeclaration ()Lorg/jetbrains/kotlin/psi/KtObjectDeclaration;
