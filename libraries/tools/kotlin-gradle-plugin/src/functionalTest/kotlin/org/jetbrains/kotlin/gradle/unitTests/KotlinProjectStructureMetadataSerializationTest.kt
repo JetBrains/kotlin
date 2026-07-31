@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetMetadataLayout.METADATA
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -47,6 +48,22 @@ class KotlinProjectStructureMetadataSerializationTest {
         assertEquals(sampleMetadata, deserialized)
     }
 
+    /**
+     * The emitted JSON is published inside metadata jars as `META-INF/kotlin-project-structure-metadata.json`
+     * and is compared with exact string equality against checked-in expectations by the `libraries/stdlib` and
+     * `libraries/kotlin.test` build scripts. Guard the exact bytes, not just the round trip.
+     *
+     * This classpath resolves `kotlinx-serialization-json-jvm` to a newer version than the plugin embeds, because
+     * `com.jetbrains.intellij.platform:util` wins over the `strictly`, which only pins the umbrella `-json` module.
+     * The two used to disagree on empty arrays; `encodeToString` normalizes that, so the golden holds for both.
+     */
+    @Test
+    fun `json output format is stable`() {
+        val expected = File("src/functionalTest/resources/kotlin-project-structure-metadata.golden.json")
+            .absoluteFile.readText()
+        assertEquals(expected.trim(), sampleMetadata.toJson().trim())
+    }
+
     @Test
     fun `serialize and deserialize - xml`() {
         val xml = sampleMetadata.toXmlDocument()
@@ -69,6 +86,33 @@ class KotlinProjectStructureMetadataSerializationTest {
         assertEquals(
             setOf("commonMain", "concurrentMain", "nativeDarwinMain", "nativeMain", "nativeOtherMain"),
             deserialized.sourceSetNames
+        )
+    }
+
+    /** An entry without a separator used to fail with an `IndexOutOfBoundsException` naming nothing. */
+    @Test
+    fun `deserialize - malformed module dependency is reported`() {
+        val json = """
+            {
+              "projectStructure": {
+                "formatVersion": "0.3.3",
+                "isPublishedAsRoot": "false",
+                "variants": [],
+                "sourceSets": [
+                  {
+                    "name": "commonMain",
+                    "dependsOn": [],
+                    "moduleDependency": ["no-separator-here"]
+                  }
+                ]
+              }
+            }
+        """.trimIndent()
+
+        val message = assertFailsWith<IllegalStateException> { parseKotlinSourceSetMetadataFromJson(json) }.message
+        assertEquals(
+            "Malformed module dependency 'no-separator-here' in project structure metadata, expected '<groupId>:<moduleId>'",
+            message
         )
     }
 
