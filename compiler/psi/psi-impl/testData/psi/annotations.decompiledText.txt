@@ -43,7 +43,7 @@ Annotations.class:
           public final set(@a value: kotlin.String?) { /* compiled code */ }
 
       @delegate:a
-      public final val deleage: kotlin.Int by COMPILED_CODE /* compiled code */
+      public final val deleage: kotlin.Int by COMPILED_CODE
           public final get() { /* compiled code */ }
 
       @a

@@ -14,7 +14,7 @@ FunctionExpressionBodiesKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
     FUN[fqName=test.int, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=int]
       origin: Facade(className=test/FunctionExpressionBodiesKt, jvmClassName=null)
       MODIFIER_LIST[public]

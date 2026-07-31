@@ -4,7 +4,7 @@ FunctionExpressionBodiesKt.class:
 
   package test
 
-  public const val constant: kotlin.Int = COMPILED_CODE /* compiled code */
+  public const val constant: kotlin.Int = 1
 
   public fun int(): kotlin.Int { /* compiled code */ }
 

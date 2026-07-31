@@ -30,7 +30,7 @@ Ann.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          STRING_TEMPLATE
 
 
 AnnotationOnFullNameBasedDestructuringKt.class:

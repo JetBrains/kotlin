@@ -3,7 +3,7 @@
 
 package test
 
-public const val CONSTANT: kotlin.Int = COMPILED_CODE /* compiled code */
+public const val CONSTANT: kotlin.Int = 12
 
 public final class AnnotationValues public constructor() {
     @test.Simple(i = 12, l = 12L, b = 12, b2 = 12, d = 3.3, f = 3.3F, c = 'a', bool1 = true, bool2 = false)

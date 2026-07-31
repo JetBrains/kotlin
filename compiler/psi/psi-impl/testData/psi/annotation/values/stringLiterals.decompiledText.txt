@@ -14,7 +14,7 @@ StringLiteralKt.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  public const val CONSTANT: kotlin.Int = COMPILED_CODE /* compiled code */
+  public const val CONSTANT: kotlin.Int = 0
 
 WithStringConstant.class:
   // IntelliJ API Decompiler stub source generated from a class file

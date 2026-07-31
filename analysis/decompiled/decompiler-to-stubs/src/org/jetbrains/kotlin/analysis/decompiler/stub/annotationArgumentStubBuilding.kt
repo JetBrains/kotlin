@@ -29,7 +29,7 @@ internal fun Map<Name, ConstantValue<*>>.areRepresentableAsStubs(): Boolean = al
     !name.isSpecial && value.isRepresentableAsStub()
 }
 
-private fun ConstantValue<*>.isRepresentableAsStub(): Boolean = when (this) {
+internal fun ConstantValue<*>.isRepresentableAsStub(): Boolean = when (this) {
     is ArrayValue -> value.all { it.isRepresentableAsStub() }
     is AnnotationValue -> value.classId.isRepresentableAsStub && value.argumentsMapping.areRepresentableAsStubs()
     is EnumValue -> enumClassId.isRepresentableAsStub
@@ -64,7 +64,7 @@ internal fun createValueArgumentListStub(parent: StubElement<*>, args: Map<Name,
     }
 }
 
-private fun createValueStub(parent: StubElement<*>, value: ConstantValue<*>) {
+internal fun createValueStub(parent: StubElement<*>, value: ConstantValue<*>) {
     when (value) {
         is BooleanValue -> createConstantStub(parent, ConstantValueKind.BOOLEAN_CONSTANT, value.value.toString())
         is ByteValue -> createNumberStub(parent, ConstantValueKind.INTEGER_CONSTANT, value.value.toString())

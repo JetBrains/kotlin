@@ -135,7 +135,7 @@ VarArg.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
-              REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
         PROPERTY[fqName=VarArg.v, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=v]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE

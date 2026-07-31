@@ -40,7 +40,7 @@ AnnotationValuesKt.class:
 
   package test
 
-  public const val CONSTANT: kotlin.Int = COMPILED_CODE /* compiled code */
+  public const val CONSTANT: kotlin.Int = 12
 
 Arrays.class:
   // IntelliJ API Decompiler stub source generated from a class file

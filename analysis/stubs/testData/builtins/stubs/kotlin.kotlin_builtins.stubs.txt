@@ -756,7 +756,9 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Byte]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=128]
           PROPERTY[fqName=kotlin.Byte.Companion.MAX_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_VALUE]
             constantInitializer: 127.toByte()
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -765,7 +767,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Byte]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=127]
           PROPERTY[fqName=kotlin.Byte.Companion.SIZE_BYTES, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BYTES]
             constantInitializer: 1
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -788,7 +790,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
           PROPERTY[fqName=kotlin.Byte.Companion.SIZE_BITS, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BITS]
             constantInitializer: 8
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -811,7 +813,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=8]
       FUN[fqName=kotlin.Byte.compareTo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareTo]
         MODIFIER_LIST[public open operator MustUseReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IntrinsicConstEvaluation]
@@ -2421,7 +2423,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Char]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='\u0000']
           PROPERTY[fqName=kotlin.Char.Companion.MAX_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_VALUE]
             constantInitializer: \uFFFF ('?')
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -2444,7 +2446,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Char]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='\uFFFF']
           PROPERTY[fqName=kotlin.Char.Companion.MIN_HIGH_SURROGATE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_HIGH_SURROGATE]
             constantInitializer: \uD800 ('?')
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -2453,7 +2455,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Char]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='\uD800']
           PROPERTY[fqName=kotlin.Char.Companion.MAX_HIGH_SURROGATE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_HIGH_SURROGATE]
             constantInitializer: \uDBFF ('?')
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -2462,7 +2464,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Char]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='\uDBFF']
           PROPERTY[fqName=kotlin.Char.Companion.MIN_LOW_SURROGATE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_LOW_SURROGATE]
             constantInitializer: \uDC00 ('?')
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -2471,7 +2473,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Char]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='\uDC00']
           PROPERTY[fqName=kotlin.Char.Companion.MAX_LOW_SURROGATE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_LOW_SURROGATE]
             constantInitializer: \uDFFF ('?')
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -2480,7 +2482,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Char]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='\uDFFF']
           PROPERTY[fqName=kotlin.Char.Companion.MIN_SURROGATE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_SURROGATE]
             constantInitializer: \uD800 ('?')
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -2489,7 +2491,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Char]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='\uD800']
           PROPERTY[fqName=kotlin.Char.Companion.MAX_SURROGATE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_SURROGATE]
             constantInitializer: \uDFFF ('?')
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -2498,7 +2500,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Char]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='\uDFFF']
           PROPERTY[fqName=kotlin.Char.Companion.SIZE_BYTES, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BYTES]
             constantInitializer: 2
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -2521,7 +2523,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
           PROPERTY[fqName=kotlin.Char.Companion.SIZE_BITS, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BITS]
             constantInitializer: 16
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -2544,7 +2546,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=16]
       FUN[fqName=kotlin.Char.compareTo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareTo]
         MODIFIER_LIST[public open operator MustUseReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IntrinsicConstEvaluation]
@@ -3751,7 +3753,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Double]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=4.9E-324]
           PROPERTY[fqName=kotlin.Double.Companion.MAX_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_VALUE]
             constantInitializer: 1.7976931348623157E308.toDouble()
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -3760,7 +3762,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Double]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.7976931348623157E308]
           PROPERTY[fqName=kotlin.Double.Companion.POSITIVE_INFINITY, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=POSITIVE_INFINITY]
             constantInitializer: Infinity.toDouble()
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -3769,7 +3771,11 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Double]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            DOT_QUALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Double]
+              REFERENCE_EXPRESSION[referencedName=POSITIVE_INFINITY]
           PROPERTY[fqName=kotlin.Double.Companion.NEGATIVE_INFINITY, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=NEGATIVE_INFINITY]
             constantInitializer: -Infinity.toDouble()
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -3778,7 +3784,11 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Double]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            DOT_QUALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Double]
+              REFERENCE_EXPRESSION[referencedName=NEGATIVE_INFINITY]
           PROPERTY[fqName=kotlin.Double.Companion.NaN, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=NaN]
             constantInitializer: NaN.toDouble()
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -3787,7 +3797,11 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Double]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            DOT_QUALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Double]
+              REFERENCE_EXPRESSION[referencedName=NaN]
           PROPERTY[fqName=kotlin.Double.Companion.SIZE_BYTES, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BYTES]
             constantInitializer: 8
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -3810,7 +3824,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=8]
           PROPERTY[fqName=kotlin.Double.Companion.SIZE_BITS, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BITS]
             constantInitializer: 64
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -3833,7 +3847,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=64]
       FUN[fqName=kotlin.Double.compareTo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareTo]
         MODIFIER_LIST[public final operator MustUseReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IntrinsicConstEvaluation]
@@ -5878,7 +5892,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Float]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=1.4E-45F]
           PROPERTY[fqName=kotlin.Float.Companion.MAX_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_VALUE]
             constantInitializer: 3.4028235E38.toFloat()
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -5887,7 +5901,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Float]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.4028235E38F]
           PROPERTY[fqName=kotlin.Float.Companion.POSITIVE_INFINITY, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=POSITIVE_INFINITY]
             constantInitializer: Infinity.toFloat()
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -5896,7 +5910,11 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Float]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            DOT_QUALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Float]
+              REFERENCE_EXPRESSION[referencedName=POSITIVE_INFINITY]
           PROPERTY[fqName=kotlin.Float.Companion.NEGATIVE_INFINITY, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=NEGATIVE_INFINITY]
             constantInitializer: -Infinity.toFloat()
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -5905,7 +5923,11 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Float]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            DOT_QUALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Float]
+              REFERENCE_EXPRESSION[referencedName=NEGATIVE_INFINITY]
           PROPERTY[fqName=kotlin.Float.Companion.NaN, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=NaN]
             constantInitializer: NaN.toFloat()
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -5914,7 +5936,11 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Float]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            DOT_QUALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Float]
+              REFERENCE_EXPRESSION[referencedName=NaN]
           PROPERTY[fqName=kotlin.Float.Companion.SIZE_BYTES, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BYTES]
             constantInitializer: 4
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -5937,7 +5963,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
           PROPERTY[fqName=kotlin.Float.Companion.SIZE_BITS, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BITS]
             constantInitializer: 32
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -5960,7 +5986,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=32]
       FUN[fqName=kotlin.Float.compareTo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareTo]
         MODIFIER_LIST[public final operator MustUseReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IntrinsicConstEvaluation]
@@ -7487,7 +7513,9 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2147483648]
           PROPERTY[fqName=kotlin.Int.Companion.MAX_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_VALUE]
             constantInitializer: 2147483647
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -7496,7 +7524,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2147483647]
           PROPERTY[fqName=kotlin.Int.Companion.SIZE_BYTES, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BYTES]
             constantInitializer: 4
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -7519,7 +7547,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
           PROPERTY[fqName=kotlin.Int.Companion.SIZE_BITS, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BITS]
             constantInitializer: 32
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -7542,7 +7570,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=32]
       FUN[fqName=kotlin.Int.compareTo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareTo]
         MODIFIER_LIST[public final operator MustUseReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IntrinsicConstEvaluation]
@@ -9250,7 +9278,9 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Long]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=9223372036854775808L]
           PROPERTY[fqName=kotlin.Long.Companion.MAX_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_VALUE]
             constantInitializer: 9223372036854775807.toLong()
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -9259,7 +9289,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Long]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=9223372036854775807L]
           PROPERTY[fqName=kotlin.Long.Companion.SIZE_BYTES, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BYTES]
             constantInitializer: 8
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -9282,7 +9312,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=8]
           PROPERTY[fqName=kotlin.Long.Companion.SIZE_BITS, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BITS]
             constantInitializer: 64
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -9305,7 +9335,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=64]
       FUN[fqName=kotlin.Long.compareTo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareTo]
         MODIFIER_LIST[public final operator MustUseReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IntrinsicConstEvaluation]
@@ -11840,7 +11870,9 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Short]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=32768]
           PROPERTY[fqName=kotlin.Short.Companion.MAX_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_VALUE]
             constantInitializer: 32767.toShort()
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -11849,7 +11881,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Short]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=32767]
           PROPERTY[fqName=kotlin.Short.Companion.SIZE_BYTES, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BYTES]
             constantInitializer: 2
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -11872,7 +11904,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
           PROPERTY[fqName=kotlin.Short.Companion.SIZE_BITS, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BITS]
             constantInitializer: 16
             MODIFIER_LIST[public const MustUseReturnValue]
@@ -11895,7 +11927,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=16]
       FUN[fqName=kotlin.Short.compareTo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareTo]
         MODIFIER_LIST[public final operator MustUseReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IntrinsicConstEvaluation]

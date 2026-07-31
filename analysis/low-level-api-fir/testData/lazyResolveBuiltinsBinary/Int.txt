@@ -1869,16 +1869,16 @@ TARGET: public final [ResolvedTo(BODY_RESOLVE)] class Int : R|kotlin/Number|, R|
             super<R|kotlin/Any|>()
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MIN_VALUE: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(-2147483648)] val MIN_VALUE: R|kotlin/Int| = Int(-2147483648)
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MAX_VALUE: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(2147483647)] val MAX_VALUE: R|kotlin/Int| = Int(2147483647)
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-        @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val SIZE_BYTES: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+        @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(4)] val SIZE_BYTES: R|kotlin/Int| = Int(4)
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-        @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val SIZE_BITS: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+        @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(32)] val SIZE_BITS: R|kotlin/Int| = Int(32)
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
     }
@@ -2147,16 +2147,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
                 super<R|kotlin/Any|>()
             }
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MIN_VALUE: R|kotlin/Byte| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Byte(-128)] val MIN_VALUE: R|kotlin/Byte| = Byte(-128)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Byte|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MAX_VALUE: R|kotlin/Byte| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Byte(127)] val MAX_VALUE: R|kotlin/Byte| = Byte(127)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Byte|
 
-            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val SIZE_BYTES: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(1)] val SIZE_BYTES: R|kotlin/Int| = Int(1)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val SIZE_BITS: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(8)] val SIZE_BITS: R|kotlin/Int| = Int(8)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
         }
@@ -2365,34 +2365,34 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MIN_VALUE: R|kotlin/Char| = <Unresolved name: COMPILED_CODE>#
+            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Char(0)] val MIN_VALUE: R|kotlin/Char| = Char(0)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Char|
 
-            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MAX_VALUE: R|kotlin/Char| = <Unresolved name: COMPILED_CODE>#
+            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Char(65535)] val MAX_VALUE: R|kotlin/Char| = Char(65535)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Char|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MIN_HIGH_SURROGATE: R|kotlin/Char| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Char(55296)] val MIN_HIGH_SURROGATE: R|kotlin/Char| = Char(55296)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Char|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MAX_HIGH_SURROGATE: R|kotlin/Char| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Char(56319)] val MAX_HIGH_SURROGATE: R|kotlin/Char| = Char(56319)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Char|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MIN_LOW_SURROGATE: R|kotlin/Char| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Char(56320)] val MIN_LOW_SURROGATE: R|kotlin/Char| = Char(56320)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Char|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MAX_LOW_SURROGATE: R|kotlin/Char| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Char(57343)] val MAX_LOW_SURROGATE: R|kotlin/Char| = Char(57343)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Char|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MIN_SURROGATE: R|kotlin/Char| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Char(55296)] val MIN_SURROGATE: R|kotlin/Char| = Char(55296)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Char|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MAX_SURROGATE: R|kotlin/Char| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Char(57343)] val MAX_SURROGATE: R|kotlin/Char| = Char(57343)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Char|
 
-            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val SIZE_BYTES: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(2)] val SIZE_BYTES: R|kotlin/Int| = Int(2)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val SIZE_BITS: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(16)] val SIZE_BITS: R|kotlin/Int| = Int(16)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
         }
@@ -2554,25 +2554,25 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
                 super<R|kotlin/Any|>()
             }
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MIN_VALUE: R|kotlin/Double| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Double(4.9E-324)] val MIN_VALUE: R|kotlin/Double| = Double(4.9E-324)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Double|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MAX_VALUE: R|kotlin/Double| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Double(1.7976931348623157E308)] val MAX_VALUE: R|kotlin/Double| = Double(1.7976931348623157E308)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Double|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val POSITIVE_INFINITY: R|kotlin/Double| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=RecursionInInitializer] val POSITIVE_INFINITY: R|kotlin/Double| = Q|kotlin/Double|.R|kotlin/Double.Companion.POSITIVE_INFINITY|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Double|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val NEGATIVE_INFINITY: R|kotlin/Double| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=RecursionInInitializer] val NEGATIVE_INFINITY: R|kotlin/Double| = Q|kotlin/Double|.R|kotlin/Double.Companion.NEGATIVE_INFINITY|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Double|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val NaN: R|kotlin/Double| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=RecursionInInitializer] val NaN: R|kotlin/Double| = Q|kotlin/Double|.R|kotlin/Double.Companion.NaN|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Double|
 
-            @R|kotlin/SinceKotlin|[Types](version = String(1.4) [evaluated = String(1.4)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val SIZE_BYTES: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+            @R|kotlin/SinceKotlin|[Types](version = String(1.4) [evaluated = String(1.4)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(8)] val SIZE_BYTES: R|kotlin/Int| = Int(8)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-            @R|kotlin/SinceKotlin|[Types](version = String(1.4) [evaluated = String(1.4)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val SIZE_BITS: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+            @R|kotlin/SinceKotlin|[Types](version = String(1.4) [evaluated = String(1.4)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(64)] val SIZE_BITS: R|kotlin/Int| = Int(64)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
         }
@@ -2824,25 +2824,25 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
                 super<R|kotlin/Any|>()
             }
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MIN_VALUE: R|kotlin/Float| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Float(1.4E-45)] val MIN_VALUE: R|kotlin/Float| = Float(1.4E-45)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Float|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MAX_VALUE: R|kotlin/Float| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Float(3.4028235E38)] val MAX_VALUE: R|kotlin/Float| = Float(3.4028235E38)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Float|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val POSITIVE_INFINITY: R|kotlin/Float| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=RecursionInInitializer] val POSITIVE_INFINITY: R|kotlin/Float| = Q|kotlin/Float|.R|kotlin/Float.Companion.POSITIVE_INFINITY|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Float|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val NEGATIVE_INFINITY: R|kotlin/Float| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=RecursionInInitializer] val NEGATIVE_INFINITY: R|kotlin/Float| = Q|kotlin/Float|.R|kotlin/Float.Companion.NEGATIVE_INFINITY|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Float|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val NaN: R|kotlin/Float| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=RecursionInInitializer] val NaN: R|kotlin/Float| = Q|kotlin/Float|.R|kotlin/Float.Companion.NaN|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Float|
 
-            @R|kotlin/SinceKotlin|[Types](version = String(1.4) [evaluated = String(1.4)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val SIZE_BYTES: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+            @R|kotlin/SinceKotlin|[Types](version = String(1.4) [evaluated = String(1.4)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(4)] val SIZE_BYTES: R|kotlin/Int| = Int(4)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-            @R|kotlin/SinceKotlin|[Types](version = String(1.4) [evaluated = String(1.4)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val SIZE_BITS: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+            @R|kotlin/SinceKotlin|[Types](version = String(1.4) [evaluated = String(1.4)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(32)] val SIZE_BITS: R|kotlin/Int| = Int(32)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
         }
@@ -3035,16 +3035,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
                 super<R|kotlin/Any|>()
             }
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MIN_VALUE: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(-2147483648)] val MIN_VALUE: R|kotlin/Int| = Int(-2147483648)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MAX_VALUE: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(2147483647)] val MAX_VALUE: R|kotlin/Int| = Int(2147483647)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val SIZE_BYTES: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(4)] val SIZE_BYTES: R|kotlin/Int| = Int(4)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val SIZE_BITS: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(32)] val SIZE_BITS: R|kotlin/Int| = Int(32)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
         }
@@ -3274,16 +3274,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
                 super<R|kotlin/Any|>()
             }
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MIN_VALUE: R|kotlin/Long| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=NotConst] val MIN_VALUE: R|kotlin/Long| = ERROR_EXPR(Incorrect integer: 9223372036854775808L).<Unresolved name: unaryMinus (-)>#()
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Long|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MAX_VALUE: R|kotlin/Long| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Long(9223372036854775807)] val MAX_VALUE: R|kotlin/Long| = Long(9223372036854775807)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Long|
 
-            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val SIZE_BYTES: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(8)] val SIZE_BYTES: R|kotlin/Int| = Int(8)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val SIZE_BITS: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(64)] val SIZE_BITS: R|kotlin/Int| = Int(64)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
         }
@@ -3616,16 +3616,16 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
                 super<R|kotlin/Any|>()
             }
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MIN_VALUE: R|kotlin/Short| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Short(-32768)] val MIN_VALUE: R|kotlin/Short| = Short(-32768)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Short|
 
-            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val MAX_VALUE: R|kotlin/Short| = <Unresolved name: COMPILED_CODE>#
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Short(32767)] val MAX_VALUE: R|kotlin/Short| = Short(32767)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Short|
 
-            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val SIZE_BYTES: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(2)] val SIZE_BYTES: R|kotlin/Int| = Int(2)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=ResolutionError] val SIZE_BITS: R|kotlin/Int| = <Unresolved name: COMPILED_CODE>#
+            @R|kotlin/SinceKotlin|[Types](version = String(1.3) [evaluated = String(1.3)]) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(16)] val SIZE_BITS: R|kotlin/Int| = Int(16)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
         }

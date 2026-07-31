@@ -62,7 +62,8 @@ AnnoWithCustomNameAndDefaultValue.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          STRING_TEMPLATE
+            LITERAL_STRING_TEMPLATE_ENTRY[text=str]
 
 
 AnnoWithDefaultName.class:
@@ -129,7 +130,7 @@ AnnoWithDefaultNameAndDefaultValue.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
-          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
 
 
 AnnoWithVararg.class:
@@ -198,4 +199,5 @@ AnnoWithVarargAndDefaultVakue.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=IntArray]
-          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]

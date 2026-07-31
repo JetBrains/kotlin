@@ -3,7 +3,7 @@ Ann.class:
   // Implementation of methods is not available
 
   public final annotation class Ann public constructor(x: kotlin.String = COMPILED_CODE) : kotlin.Annotation {
-      public final val x: kotlin.String = COMPILED_CODE /* compiled code */
+      public final val x: kotlin.String = ""
   }
 
 AnnotationOnFullNameBasedDestructuringKt.class:

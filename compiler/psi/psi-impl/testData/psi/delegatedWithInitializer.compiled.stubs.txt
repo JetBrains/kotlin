@@ -18,7 +18,8 @@ FILE[kind=File[packageFqName=<root>]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=token]
       PROPERTY[fqName=MyClass.token, hasBackingField=true, hasDelegate=true, hasDelegateExpression=true, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=token]
         constantInitializer: "token"
         MODIFIER_LIST[public final]

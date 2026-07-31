@@ -14,7 +14,7 @@ ParameterDefaultValuesKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
     FUN[fqName=test.withDefaults, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=withDefaults]
       origin: Facade(className=test/ParameterDefaultValuesKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -94,7 +94,7 @@ WithArrayDefaults.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=IntArray]
-          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
         PROPERTY[fqName=test.WithArrayDefaults.filled, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=filled]
           constantInitializer: [4, 5]
           MODIFIER_LIST[public final]
@@ -103,7 +103,9 @@ WithArrayDefaults.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=IntArray]
-          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
 
 
 WithConstructorDefaults.class:

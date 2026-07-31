@@ -11,7 +11,7 @@ AnnoWithCustomNameAndDefaultValue.class:
   // Implementation of methods is not available
 
   public final annotation class AnnoWithCustomNameAndDefaultValue public constructor(string: kotlin.String = COMPILED_CODE) : kotlin.Annotation {
-      public final val string: kotlin.String = COMPILED_CODE /* compiled code */
+      public final val string: kotlin.String = "str"
   }
 
 AnnoWithDefaultName.class:
@@ -27,7 +27,7 @@ AnnoWithDefaultNameAndDefaultValue.class:
   // Implementation of methods is not available
 
   public final annotation class AnnoWithDefaultNameAndDefaultValue public constructor(value: kotlin.Int = COMPILED_CODE) : kotlin.Annotation {
-      public final val value: kotlin.Int = COMPILED_CODE /* compiled code */
+      public final val value: kotlin.Int = 1
   }
 
 AnnoWithVararg.class:
@@ -43,5 +43,5 @@ AnnoWithVarargAndDefaultVakue.class:
   // Implementation of methods is not available
 
   public final annotation class AnnoWithVarargAndDefaultVakue public constructor(vararg value: kotlin.Int = COMPILED_CODE) : kotlin.Annotation {
-      public final val value: kotlin.IntArray = COMPILED_CODE /* compiled code */
+      public final val value: kotlin.IntArray = [0]
   }
