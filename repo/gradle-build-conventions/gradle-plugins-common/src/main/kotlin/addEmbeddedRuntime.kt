@@ -51,6 +51,8 @@ fun Jar.addEmbeddedSources(configurationName: String = "embedded") {
                 it is ProjectComponentIdentifier
             }
         }.files
-        from({ allSources })
+        dependsOn(allSources)
+        val archiveOperations = project.serviceOf<ArchiveOperations>()
+        from({ allSources.map { archiveOperations.zipTree(it) } })
     }
 }
