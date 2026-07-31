@@ -2033,12 +2033,6 @@ private fun KaDiagnosticConverterBuilder.addConversions41() {
             token,
         )
     }
-    add(FirErrors.VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS) { firDiagnostic ->
-        ValueClassCannotHaveContextReceiversImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.CANNOT_INFER_VISIBILITY_WARNING) { firDiagnostic ->
         CannotInferVisibilityWarningImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),

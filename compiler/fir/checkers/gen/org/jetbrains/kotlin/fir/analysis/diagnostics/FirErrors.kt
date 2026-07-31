@@ -473,7 +473,6 @@ object FirErrors : KtDiagnosticsContainer() {
     val TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS: KtDiagnosticFactory0 = KtDiagnosticFactory0("TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val INNER_CLASS_INSIDE_VALUE_CLASS: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INNER_CLASS_INSIDE_VALUE_CLASS", ERROR, SourceElementPositioningStrategies.INNER_MODIFIER, KtDeclaration::class, getRendererFactory())
     val VALUE_CLASS_CANNOT_BE_CLONEABLE: KtDiagnosticFactory0 = KtDiagnosticFactory0("VALUE_CLASS_CANNOT_BE_CLONEABLE", ERROR, SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER, KtDeclaration::class, getRendererFactory())
-    val VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS: KtDiagnosticFactory0 = KtDiagnosticFactory0("VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS", ERROR, SourceElementPositioningStrategies.CONTEXT_KEYWORD, KtDeclaration::class, getRendererFactory())
 
     // Applicability
     val NONE_APPLICABLE: KtDiagnosticFactory1<Collection<Pair<FirBasedSymbol<*>, List<String>>>> = KtDiagnosticFactory1("NONE_APPLICABLE", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())

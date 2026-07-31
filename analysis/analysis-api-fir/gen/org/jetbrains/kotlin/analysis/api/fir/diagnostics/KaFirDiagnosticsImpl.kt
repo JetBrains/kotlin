@@ -2028,11 +2028,6 @@ internal class ValueClassCannotBeCloneableImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.ValueClassCannotBeCloneable
 
-internal class ValueClassCannotHaveContextReceiversImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.ValueClassCannotHaveContextReceivers
-
 internal class NoneApplicableImpl(
     override val candidates: List<Pair<KaSymbol, List<String>>>,
     firDiagnostic: KtPsiDiagnostic,

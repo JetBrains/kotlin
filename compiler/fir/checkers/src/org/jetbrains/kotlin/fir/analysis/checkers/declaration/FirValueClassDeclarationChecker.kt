@@ -93,11 +93,6 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             )
         }
 
-        if (declaration.contextParameters.isNotEmpty() && LanguageFeature.ContextReceivers.isEnabled()) {
-            reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS)
-        }
-
-
         for (supertypeEntry in declaration.superTypeRefs) {
             if (supertypeEntry is FirImplicitAnyTypeRef || supertypeEntry is FirErrorTypeRef) continue
             val supertypeSymbol = supertypeEntry.toRegularClassSymbol(context.session) ?: continue
