@@ -636,11 +636,14 @@ private class JvmSignatureSerializerImpl(stringTable: StringTable) : JvmSignatur
     }
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun KotlinTypeMapperBase.mapClass(classifier: ClassifierDescriptor): Type {
     this as IrTypeMapper
     return when (classifier) {
-        is ClassDescriptor -> mapClass(context.referenceClass(classifier).owner)
-        is TypeParameterDescriptor -> mapType(context.referenceTypeParameter(classifier).defaultType)
+        is ClassDescriptor ->
+            mapClass(context.symbolTable.lazyWrapper.descriptorExtension.referenceClass(classifier).owner)
+        is TypeParameterDescriptor ->
+            mapType(context.symbolTable.lazyWrapper.descriptorExtension.referenceTypeParameter(classifier).defaultType)
         else -> error("Unknown descriptor: $classifier")
     }
 }

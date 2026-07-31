@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.incrementalCompilationComponents
 import org.jetbrains.kotlin.config.moduleName
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -91,7 +90,7 @@ class GenerationState(
         configuration.getCompilerExtensions(ClassFileFactoryFinalizerExtension),
     )
 
-    lateinit var mapInlineClass: (ClassDescriptor) -> Type
+    lateinit var mapInlineClass: (IrClass) -> Type
 
     lateinit var reportDuplicateClassNameError: (IrClass, String, IrClass) -> Unit
 
