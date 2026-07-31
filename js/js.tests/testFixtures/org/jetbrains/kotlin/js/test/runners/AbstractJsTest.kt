@@ -73,6 +73,9 @@ abstract class AbstractJsTest(
                     "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
                 )
             }
+            configureIrHandlersStep {
+                setupIrTextDumpHandlers()
+            }
 
             configureJsArtifactsHandlersStep {
                 useHandlers(
@@ -118,7 +121,6 @@ abstract class AbstractJsCodegenBoxTestBase(
 
         builder.configureIrHandlersStep {
             commonIrHandlersForCodegenTest()
-            setupIrTextDumpHandlers()
         }
     }
 }
