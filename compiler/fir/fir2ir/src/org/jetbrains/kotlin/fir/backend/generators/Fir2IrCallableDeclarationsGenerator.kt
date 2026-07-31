@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -966,10 +967,8 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         }
 
         private fun computeContainingClass(parent: IrDeclarationParent?): IrClass? {
-            return if (parent is IrClass && !parent.isNonCachedSourceFileFacade) {
+            return runIf(parent is IrClass && !parent.isNonCachedSourceFileFacade) {
                 parent
-            } else {
-                null
             }
         }
     }

@@ -935,7 +935,7 @@ class FirElementSerializer private constructor(
         if (parameter.isVararg) {
             val delegatedTypeAttrs = (parameter.returnTypeRef as? FirResolvedTypeRef)?.delegatedTypeRef?.coneTypeOrNull?.attributes
             val varargElementType = parameter.returnTypeRef.coneType.varargElementType().applyIf(delegatedTypeAttrs != null) {
-                withAttributes(delegatedTypeAttrs!!)
+                withAttributes(delegatedTypeAttrs)
             }
 
             if (useTypeTable()) {

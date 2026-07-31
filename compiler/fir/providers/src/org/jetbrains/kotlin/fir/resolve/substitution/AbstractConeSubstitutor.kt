@@ -52,7 +52,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
             substitutedType?.attributes?.add(it) ?: it
         }
 
-        return if (substitutedType != null || substitutedAttributes != null) {
+        return runIf(substitutedType != null || substitutedAttributes != null) {
             var result = substitutedType ?: type
 
             if (substitutedAttributes != null) {
@@ -60,8 +60,6 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
             }
 
             result
-        } else {
-            null
         }
     }
 
