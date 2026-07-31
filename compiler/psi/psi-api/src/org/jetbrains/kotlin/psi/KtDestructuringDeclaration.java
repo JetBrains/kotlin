@@ -15,8 +15,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
+import org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,8 +74,15 @@ public class KtDestructuringDeclaration extends KtDeclarationStub<KotlinDestruct
     @Override
     public KtExpression getInitializer() {
         KotlinDestructuringDeclarationStub stub = getGreenStub();
-        if (stub != null && !stub.getHasInitializer()) {
-            return null;
+        if (stub != null) {
+            if (!stub.getHasInitializer()) {
+                return null;
+            }
+
+            KtExpression fromStub = getExpressionFromStub();
+            if (fromStub != null) {
+                return fromStub;
+            }
         }
 
         ASTNode eqNode = getNode().findChildByType(EQ);
