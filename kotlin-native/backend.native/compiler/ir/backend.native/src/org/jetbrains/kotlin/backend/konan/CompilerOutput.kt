@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.linkRuntimeModules
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
+import org.jetbrains.kotlin.backend.konan.util.absoluteNormalizedPathString
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CCallMode
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.konan.target.supportsLibBacktrace
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import java.io.File
+import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.pathString
 
@@ -228,7 +229,7 @@ internal fun insertAliasToEntryPoint(module: LLVMModuleRef, entryPointName: Stri
 }
 
 internal fun linkBitcodeDependencies(generationState: NativeGenerationState,
-                                     generatedBitcodeFiles: List<File>) {
+                                     generatedBitcodePaths: List<Path>) {
     val config = generationState.config
     val produce = config.produce
 
@@ -238,8 +239,7 @@ internal fun linkBitcodeDependencies(generationState: NativeGenerationState,
     if (staticFramework || swiftExport) {
         embedAppleLinkerOptionsToBitcode(generationState.llvm, config)
     }
-    linkAllDependencies(generationState, generatedBitcodeFiles.map { it.absoluteFile.normalize().path })
-
+    linkAllDependencies(generationState, generatedBitcodePaths.map { it.absoluteNormalizedPathString() })
 }
 
 private fun parseAndLinkBitcodeFile(generationState: NativeGenerationState, llvmModule: LLVMModuleRef, path: String) {
