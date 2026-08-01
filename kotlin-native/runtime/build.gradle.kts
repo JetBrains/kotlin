@@ -132,6 +132,8 @@ bitcode {
                     "REPORT_BACKTRACE_TO_IOS_CRASH_LOG".takeIf { target.supportsIosCrashLog() },
                     "SUPPORTS_GRAND_CENTRAL_DISPATCH".takeIf { target.supportsGrandCentralDispatch },
                     "SUPPORTS_SIGNPOSTS".takeIf { target.supportsSignposts },
+                    "HOT_RELOAD".takeIf { target.family.isAppleFamily },
+
             ).map { "KONAN_$it=1" }
             val otherOptions = listOfNotNull(
                     "USE_ELF_SYMBOLS=1".takeIf { target.binaryFormat() == BinaryFormat.ELF },
@@ -158,7 +160,18 @@ bitcode {
         ) + clangArgsSpecificForKonanSources)
 
         module("main") {
-            headersDirs.from("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/breakpad/cpp", "src/crashHandler/common/cpp", "src/utfcpp/cpp", "src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp",  "src/mm/cpp")
+            headersDirs.from(
+                    "src/externalCallsChecker/common/cpp",
+                    "src/objcExport/cpp",
+                    "src/breakpad/cpp",
+                    "src/crashHandler/common/cpp",
+                    "src/utfcpp/cpp",
+                    "src/alloc/common/cpp",
+                    "src/gcScheduler/common/cpp",
+                    "src/gc/common/cpp",
+                    "src/mm/cpp",
+                    "src/hot_reload/common/cpp"
+            )
             sourceSets {
                 main {
                     // TODO: Split out out `base` module and merge it together with `main` into `runtime.bc`
@@ -301,6 +314,24 @@ bitcode {
             sourceSets {
                 main {}
             }
+        }
+
+        module("hot_reload_launcher") {
+            srcRoot.set(layout.projectDirectory.dir("src/hot_reload_launcher"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/hot_reload/common/cpp"))
+            sourceSets {
+                main {}
+            }
+            onlyIf { it.family.isAppleFamily }
+        }
+
+        module("hot_reload") {
+            srcRoot.set(layout.projectDirectory.dir("src/hot_reload/impl"))
+            headersDirs.from("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/hot_reload/common/cpp", "src/main/cpp")
+            sourceSets {
+                main { }
+            }
+            onlyIf { it.family.isAppleFamily }
         }
 
         module("debug") {

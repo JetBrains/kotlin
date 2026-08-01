@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,11 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.phases.split.HostModuleSplitCompilationOutput
+import org.jetbrains.kotlin.backend.konan.driver.phases.split.compileAndLinkForSplitHost
+import org.jetbrains.kotlin.backend.konan.driver.phases.split.compileAndLinkSplitFramework
+import org.jetbrains.kotlin.backend.konan.driver.phases.split.generateGuestBitcode
+import org.jetbrains.kotlin.backend.konan.driver.phases.split.generateHostBitcode
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportPaths
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
@@ -49,7 +54,9 @@ import kotlin.io.path.createFile
 import kotlin.io.path.name
 import kotlin.io.path.writeLines
 
-fun TempFiles.createBitcodeFile(fileName: String) = create(fileName, ".bc")
+internal data class BackendCodegenOutput(val generatedBitcodePaths: List<Path>)
+
+internal fun TempFiles.createBitcodeFile(fileName: String) = create(fileName, ".bc")
 
 internal fun PhaseEngine<NativeBackendPhaseContext>.runFrontend(config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
     val languageVersion = config.languageVersionSettings.languageVersion
@@ -199,7 +206,59 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             try {
                 fragment.performanceManager?.notifyPhaseStarted(PhaseType.Backend)
                 backendEngine.useContext(generationState, copyState = true) { generationStateEngine ->
-                    val bitcodeFile = tempFiles.createBitcodeFile(generationState.llvmModuleName)
+
+                    fun PhaseEngine<NativeGenerationState>.runSplitHostBackendForProgram(cExportPaths: CExportPaths?) {
+                        val hostBitcodePath = tempFiles.createBitcodeFile("host")
+                        val bootstrapBitcodePath = tempFiles.createBitcodeFile("bootstrap")
+
+                        // Here the guest code is the bootstrap object
+                        generationStateEngine.generateGuestBitcode(fragment.irModule, backendContext.irBuiltIns, bootstrapBitcodePath, cExportPaths)
+                        generationStateEngine.generateHostBitcode(hostBitcodePath)
+
+                        // Collect dependencies after split compilation
+                        val dependenciesTrackingResult = collectAndMaybeSerializeDependencies()
+                        val hotReloadOutput = HostModuleSplitCompilationOutput(
+                                hostBitcodePath,
+                                bootstrapBitcodePath,
+                                dependenciesTrackingResult
+                        )
+                        generationStateEngine.compileAndLinkForSplitHost(hotReloadOutput, outputFiles, tempFiles)
+                    }
+
+                    fun PhaseEngine<NativeGenerationState>.runSplitHostBackendForFramework(cExportPaths: CExportPaths?) {
+                        // Framework compilation is harder to split at the moment, because we would need to modify the
+                        // Objective-C part quite heavily. So, in we decided to embed the user code within the final
+                        // framework plus the bootstrap (to fix linking issues with Swift compilation).
+                        // At runtime, the code actually used is the bootstrap's one.
+                        val bitcodePath = tempFiles.createBitcodeFile(generationState.llvmModuleName)
+                        generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodePath, cExportPaths)
+
+                        val dependenciesTrackingResult = collectAndMaybeSerializeDependencies()
+                        val moduleCompilationOutput = ModuleCompilationOutput(bitcodePath, dependenciesTrackingResult)
+                        generationStateEngine.compileAndLinkSplitFramework(
+                                moduleCompilationOutput,
+                                outputFiles,
+                                tempFiles,
+                        )
+                    }
+
+                    fun PhaseEngine<NativeGenerationState>.runClosedBackend(cExportPaths: CExportPaths?) {
+                        val bitcodePath = tempFiles.createBitcodeFile(generationState.llvmModuleName)
+
+                        // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
+                        generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodePath, cExportPaths)
+
+                        val dependenciesTrackingResult = collectAndMaybeSerializeDependencies()
+                        // Split here
+                        val moduleCompilationOutput = ModuleCompilationOutput(bitcodePath, dependenciesTrackingResult)
+                        generationStateEngine.compileAndLink(
+                                moduleCompilationOutput,
+                                outputFiles.mainFileName,
+                                outputFiles,
+                                tempFiles,
+                        )
+                    }
+
                     val cExportPaths = if (config.produceCInterface) {
                         CExportPaths(
                                 cppAdapter = tempFiles.create("api", ".cpp"),
@@ -208,17 +267,14 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                                 def = if (config.target.family == Family.MINGW) outputFiles.cAdapterDef else null,
                         )
                     } else null
-                    // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
-                    generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, cExportPaths)
-                    // Split here
-                    val dependenciesTrackingResult = generationStateEngine.collectAndMaybeSerializeDependencies()
-                    val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult)
-                    generationStateEngine.compileAndLink(
-                            moduleCompilationOutput,
-                            outputFiles.mainFileName,
-                            outputFiles,
-                            tempFiles,
-                    )
+
+                    when (config.compilationScheme) {
+                        CompilationScheme.SPLIT_HOST if config.produce == CompilerOutputKind.PROGRAM ->
+                            generationStateEngine.runSplitHostBackendForProgram(cExportPaths)
+                        CompilationScheme.SPLIT_HOST if config.produce == CompilerOutputKind.FRAMEWORK ->
+                            generationStateEngine.runSplitHostBackendForFramework(cExportPaths)
+                        else -> generationStateEngine.runClosedBackend(cExportPaths)
+                    }
                 }
             } finally {
                 tempFiles.dispose()
@@ -278,13 +334,13 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBitcodeBackend(
 ) {
     useContext(context) { bitcodeEngine ->
         val tempFiles = createTempFiles(context.config, null)
-        val bitcodeFile = tempFiles.createBitcodeFile(context.config.shortModuleName ?: "out")
+        val bitcodePath = tempFiles.createBitcodeFile(context.config.shortModuleName ?: "out")
         val outputPath = context.config.outputPath
         val outputFiles = OutputFiles(outputPath, context.config.target, context.config.produce)
         bitcodeEngine.runBitcodePostProcessing()
         runInsertEntryPointAliasPhaseIfNeededTo(context.llvm.module)
-        runAndMeasurePhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
-        val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependencies)
+        runAndMeasurePhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodePath))
+        val moduleCompilationOutput = ModuleCompilationOutput(bitcodePath, dependencies)
         compileAndLink(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles)
     }
 }
@@ -384,7 +440,7 @@ private fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runInsertEntryPointAl
 }
 
 internal data class ModuleCompilationOutput(
-        val bitcodeFile: Path,
+        val bitcodePath: Path,
         val dependenciesTrackingResult: DependenciesTrackingResult,
 )
 
@@ -425,7 +481,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
         temporaryFiles: TempFiles,
 ) {
     val compilationResult = temporaryFiles.create(Path(outputFiles.nativeBinaryFile).name, ".o")
-    runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, compilationResult))
+    runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodePath, compilationResult))
     val linkerOutputKind = determineLinkerOutput(context)
     val [linkerInput, cacheBinaries] = run {
         val resolvedCacheBinaries by lazy { resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult) }
@@ -485,7 +541,11 @@ internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependen
     runModuleWisePhase(lowering, allModulesToLower, performanceManager)
 }
 
-internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns, cExportPaths: CExportPaths?) {
+internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(
+        module: IrModuleFragment,
+        irBuiltIns: IrBuiltIns,
+        cExportPaths: CExportPaths?
+): BackendCodegenOutput {
     runCodegen(module, irBuiltIns)
     val generatedBitcodePaths = if (context.config.produceCInterface) {
         require(cExportPaths != null)
@@ -513,6 +573,7 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
         runAndMeasurePhase(PrintBitcodePhase, llvmModule)
     }
     runAndMeasurePhase(LinkBitcodeDependenciesPhase, generatedBitcodePaths)
+    return BackendCodegenOutput(generatedBitcodePaths)
 }
 
 internal fun <Context, Input, Output, P> PhaseEngine<Context>.runAndMeasurePhase(phase: P, input: Input, disable: Boolean = false): Output
