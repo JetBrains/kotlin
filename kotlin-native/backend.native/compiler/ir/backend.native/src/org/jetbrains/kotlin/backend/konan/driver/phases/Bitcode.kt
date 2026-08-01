@@ -28,14 +28,15 @@ import org.jetbrains.kotlin.backend.konan.llvm.valueName
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
+import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.util.PerformanceManager
-import java.io.File
+import java.nio.file.Path
 import kotlin.sequences.forEach
 
 
 internal data class WriteBitcodeFileInput(
         override val llvmModule: LLVMModuleRef,
-        val outputFile: File,
+        val outputFile: Path,
 ) : LlvmIrHolder
 
 internal data class InsertEntryPointAliasInput(
@@ -57,7 +58,7 @@ internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<NativeBacken
         "WriteBitcodeFile",
         postactions = getDefaultLlvmModuleActions(),
 ) { _, (llvmModule, outputFile) ->
-    LLVMWriteBitcodeToFile(llvmModule, outputFile.canonicalPath)
+    LLVMWriteBitcodeToFile(llvmModule, outputFile.canonicalPathString())
 }
 
 internal val ModuleCallsChecker = optimizationPipelinePass(
@@ -151,7 +152,7 @@ internal val CStubsPhase = createSimpleNamedCompilerPhase<NativeGenerationState,
         op = { context, _ -> produceCStubs(context) }
 )
 
-internal val LinkBitcodeDependenciesPhase = createSimpleNamedCompilerPhase<NativeGenerationState, List<File>>(
+internal val LinkBitcodeDependenciesPhase = createSimpleNamedCompilerPhase<NativeGenerationState, List<Path>>(
         name = "LinkBitcodeDependencies",
         postactions = getDefaultLlvmModuleActions(),
         op = { context, input -> linkBitcodeDependencies(context, input) }

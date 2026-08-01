@@ -5,19 +5,20 @@
 
 package org.jetbrains.kotlin.backend.konan.cexport
 
+import org.jetbrains.kotlin.backend.konan.util.absoluteNormalizedPathString
 import org.jetbrains.kotlin.konan.exec.*
 import org.jetbrains.kotlin.konan.target.*
-import java.io.File
+import java.nio.file.Path
 
 /**
  * Fourth phase of C export: compile runtime bindings to bitcode.
  */
-fun produceCAdapterBitcode(clang: ClangArgs, cppFile: File, bitcodeFile: File) {
+fun produceCAdapterBitcode(clang: ClangArgs, cppFile: Path, bitcodeFile: Path) {
     val clangCommand = clang.clangCXX(
             "-std=c++17",
-            cppFile.absoluteFile.normalize().path,
+            cppFile.absoluteNormalizedPathString(),
             "-emit-llvm", "-c",
-            "-o", bitcodeFile.absoluteFile.normalize().path
+            "-o", bitcodeFile.absoluteNormalizedPathString()
     )
     Command(clangCommand).execute()
 }
