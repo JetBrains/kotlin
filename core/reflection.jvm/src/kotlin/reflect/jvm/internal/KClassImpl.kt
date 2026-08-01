@@ -419,6 +419,7 @@ internal class KClassImpl<T : Any>(
             result as List<KClass<out T>>
         }
 
+        @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
         internal val inlineClassUnderlyingType: KType? by lazy(PUBLICATION) {
             val kmClass = kmClass
             when {
@@ -429,7 +430,8 @@ internal class KClassImpl<T : Any>(
                 else -> {
                     val underlyingProperty = kmClass.properties.single {
                         it.name == kmClass.inlineClassUnderlyingPropertyName &&
-                                it.contextParameters.isEmpty() && it.receiverParameterType == null
+                                it.contextParameters.isEmpty() && it.receiverParameterType == null &&
+                                !it.isStatic
                     }
                     underlyingProperty.returnType.toKType(jClass.safeClassLoader, typeParameterTable)
                 }
