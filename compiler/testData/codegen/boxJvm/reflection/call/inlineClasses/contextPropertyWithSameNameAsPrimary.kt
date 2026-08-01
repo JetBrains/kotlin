@@ -15,7 +15,13 @@ value class Z(val value: String) {
     }
 }
 
+fun boxZ(z: Z): Z? = z
+fun unboxZ(z: Z?): Z = z!!
+
 fun box(): String {
+    if ((::boxZ).call(Z("ok")) != Z("ok")) return "fail: boxZ"
+    if ((::unboxZ).call(Z("ok")) != Z("ok")) return "fail: unboxZ"
+
     val withContext = Z::class.members.single { p ->
         p.name == "value" && p.parameters.any { it.kind == KParameter.Kind.CONTEXT }
     }
