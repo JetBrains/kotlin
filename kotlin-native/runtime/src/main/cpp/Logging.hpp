@@ -143,6 +143,7 @@ inline constexpr auto kTagGC = logging::Tag::kGC;
 inline constexpr auto kTagMM = logging::Tag::kMM;
 inline constexpr auto kTagTLS = logging::Tag::kTLS;
 inline constexpr auto kTagBalancing = logging::Tag::kBalancing;
+inline constexpr auto kTagHotReload = logging::Tag::kHotReload;
 
 } // namespace kotlin
 

@@ -120,20 +120,24 @@ internal class Linker(
                 Family.OSX -> "Versions/A/$dylibName"
                 else -> error("Unsupported target family for Framework: $target")
             }
-
+            val flags = buildList {
+                if (!config.isUsingSplitCompilationScheme) add("-dead_strip")
+                add("-install_name")
+                add( "@rpath/${framework.name}/$dylibRelativePath")
+            }
             ExecutableTarget(
                     path = framework.resolve(dylibRelativePath).absolutePathString(),
-                    flags = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath")
+                    flags = flags
             )
         }
         else -> {
             val flags = if (target.family.isAppleFamily) {
                 when (config.produce) {
                     CompilerOutputKind.DYNAMIC_CACHE -> listOf("-install_name", outputFiles.dynamicCacheInstallName)
+                    CompilerOutputKind.PROGRAM if config.isUsingSplitCompilationScheme -> []
                     else -> listOf("-dead_strip")
                 }
             } else emptyList()
-
             ExecutableTarget(outputFiles.nativeBinaryFile, flags)
         }
     }

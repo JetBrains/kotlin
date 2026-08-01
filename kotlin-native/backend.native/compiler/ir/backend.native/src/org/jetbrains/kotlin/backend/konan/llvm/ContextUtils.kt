@@ -168,7 +168,7 @@ internal interface ContextUtils : RuntimeAware {
 
     fun linkageOf(irFunction: IrSimpleFunction): LLVMLinkage {
         // In split compilation builds (targeting native hot-reload), it is a good idea to have external linkage
-        // for Kotlin functions. The reason lies on possible passed made by LLVM (like internalize/DCE).
+        // for Kotlin functions. The reason lies on possible passes made by LLVM (like internalize/DCE).
         if (context.config.isUsingSplitCompilationScheme || isExternal(irFunction) || irFunction.isExported())
             return LLVMLinkage.LLVMExternalLinkage
         if (context.config.producePerFileCache) {
