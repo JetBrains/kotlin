@@ -597,6 +597,8 @@ class NativeSecondStageCompilationConfig(
             append("-with_crash_dumps")
         if (runtimeLogsEnabled)
             append("-runtime_logs_enabled")
+        if (isUsingSplitCompilationScheme)
+            append("-hot_reload_enabled")
     }
 
     private val userCacheFlavorString = buildString {

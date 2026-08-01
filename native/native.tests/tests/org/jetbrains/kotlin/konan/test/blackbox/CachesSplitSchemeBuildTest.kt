@@ -59,7 +59,7 @@ class CachesSplitSchemeBuildTest : AbstractNativeSimpleTest() {
         ).executableFile
 
         assertTrue(main.exists())
-        // Since the dump cache list exist, we can be sure that caches were built in split mode!
+        // Since the dump cache list exists, we can be sure that caches were built in split mode!
         assertTrue(
             builtCachesDump.exists(),
             "expected the split scheme to trigger cache building (no dump file at $builtCachesDump)"
