@@ -18,10 +18,11 @@ import kotlin.reflect.KClass
  *  - Body of such `equals` is implicitly modified with preliminary guard checking this subtype relation;
  *  - On use-sites, compilation error is reported if left-hand side is definitely incompatible with [bound]'s argument.
  *
- * Please note that this annotation is experimental and can only be used when the corresponding language feature is enabled.
+ * Please note that this annotation is currently experimental and can only be used with the corresponding '-Xequality-bounds'
+ * compiler argument.
  */
 @Target(AnnotationTarget.VALUE_PARAMETER)
-@Retention(AnnotationRetention.BINARY)
+@Retention(AnnotationRetention.SOURCE)
 @SinceKotlin("2.5")
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+@MustBeDocumented
 public annotation class EqualityBound(val bound: KClass<*>)
