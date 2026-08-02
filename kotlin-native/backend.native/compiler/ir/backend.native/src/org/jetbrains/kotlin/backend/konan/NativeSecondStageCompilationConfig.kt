@@ -253,10 +253,10 @@ class NativeSecondStageCompilationConfig(
                         "Mutators cooperation is not supported during single threaded mark")
             }
             false
-        } else if (gc == GC.CONCURRENT_MARK_AND_SWEEP) {
+        } else if (gc == GC.CONCURRENT_MARK_AND_SWEEP || gc == GC.GENERATIONAL_MARK_AND_SWEEP) {
             if (mutatorsCooperate == true) {
                 configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
-                        "Mutators cooperation is not yet supported in CMS GC")
+                        "Mutators cooperation is not yet supported in CMS/GMS GC")
             }
             false
         } else {
@@ -467,9 +467,7 @@ class NativeSecondStageCompilationConfig(
     // KT-69731 Kotlin/Native: handle heap-allocated non-escaping objects with CMS
     val escapeAnalysisPropagateExiledToHeapObjects by lazy {
         configuration.get(BinaryOptions.escapeAnalysisPropagateExiledToHeapObjects)?.also {
-            if (it && gc == GC.CONCURRENT_MARK_AND_SWEEP) {
-                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "CMS GC requires escapeAnalysisPropagateExiledToHeapObjects=true")
-            }
+            configuration.reportDisabledEscapeAnalysisPropagateExiledToHeapObjectsIfNeeded(it, gc)
         } ?: true
     }
 
@@ -718,6 +716,15 @@ class NativeSecondStageCompilationConfig(
 
     val isInteropStubs: Boolean
         get() = manifestProperties?.getProperty("interop") == "true"
+}
+
+internal const val CMS_GMS_ESCAPE_ANALYSIS_PROPAGATE_EXILED_TO_HEAP_OBJECTS_WARNING =
+        "CMS/GMS GC requires escapeAnalysisPropagateExiledToHeapObjects=true"
+
+internal fun CompilerConfiguration.reportDisabledEscapeAnalysisPropagateExiledToHeapObjectsIfNeeded(value: Boolean, gc: GC) {
+    if (!value && (gc == GC.CONCURRENT_MARK_AND_SWEEP || gc == GC.GENERATIONAL_MARK_AND_SWEEP)) {
+        report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, CMS_GMS_ESCAPE_ANALYSIS_PROPAGATE_EXILED_TO_HEAP_OBJECTS_WARNING)
+    }
 }
 
 private fun String.isRelease(): Boolean {

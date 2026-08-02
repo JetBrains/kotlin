@@ -418,6 +418,9 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val allocArrayFunction = importRtFunction("AllocArrayInstance", true)
     val registerGlobalFunction = importRtFunction("RegisterGlobal", false)
     val updateHeapRefFunction = importRtFunction("UpdateHeapRef", false)
+    // Owner-carrying heap-ref store: passes the container object so the generational GC can filter
+    // old->young edges. Emitted for instance-field stores; other GCs ignore the owner.
+    val updateHeapRefWithOwnerFunction = importRtFunction("UpdateHeapRefWithOwner", false)
     val updateStackRefFunction = importRtFunction("UpdateStackRef", false)
     val updateReturnRefFunction = importRtFunction("UpdateReturnRef", false)
     val zeroHeapRefFunction = importRtFunction("ZeroHeapRef", false)
@@ -496,6 +499,13 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val CompareAndSetVolatileHeapRef by lazy { importRtFunction("CompareAndSetVolatileHeapRef", false) }
     val CompareAndSwapVolatileHeapRef by lazy { importRtFunction("CompareAndSwapVolatileHeapRef", true) }
     val GetAndSetVolatileHeapRef by lazy { importRtFunction("GetAndSetVolatileHeapRef", true) }
+    // Owner-carrying variants: pass the container object so the generational GC can filter old->young
+    // edges on volatile/atomic reference stores. Emitted for instance-field and reference-array stores;
+    // other GCs ignore the owner. Second arg is isObjectReturn (matches the OBJ_GETTER ABI).
+    val UpdateVolatileHeapRefWithOwner by lazy { importRtFunction("UpdateVolatileHeapRefWithOwner", false) }
+    val CompareAndSetVolatileHeapRefWithOwner by lazy { importRtFunction("CompareAndSetVolatileHeapRefWithOwner", false) }
+    val CompareAndSwapVolatileHeapRefWithOwner by lazy { importRtFunction("CompareAndSwapVolatileHeapRefWithOwner", true) }
+    val GetAndSetVolatileHeapRefWithOwner by lazy { importRtFunction("GetAndSetVolatileHeapRefWithOwner", true) }
 
     // TODO: Consider implementing them directly in the code generator.
     val Kotlin_arrayGetElementAddress by lazy { importRtFunction("Kotlin_arrayGetElementAddress", false) }

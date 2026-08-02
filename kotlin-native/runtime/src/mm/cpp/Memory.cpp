@@ -72,7 +72,7 @@ MetaObjHeader* ObjHeader::createMetaObject(ObjHeader* object) {
 // static
 void ObjHeader::destroyMetaObject(ObjHeader* object) {
     RuntimeAssert(object->has_meta_object(), "Object must have a meta object set");
-    auto &extraObject = *mm::ExtraObjectData::Get(object);
+    auto& extraObject = *mm::ExtraObjectData::Get(object);
     alloc::destroyExtraObjectData(extraObject);
 }
 
@@ -144,22 +144,62 @@ extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateHeapRef(ObjHeader** loc
     mm::RefAccessor<false>{location} = const_cast<ObjHeader*>(object);
 }
 
+// Same as UpdateHeapRef, but `owner` is the heap container of `location`. Threaded to the
+// generational (gms) write barrier so it can record only genuine old->young edges; ignored by other
+// collectors. Emitted by the backend for instance-field stores and used by array stores.
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateHeapRefWithOwner(ObjHeader* owner, ObjHeader** location, const ObjHeader* object) {
+    mm::RefAccessor<false>{owner, location} = const_cast<ObjHeader*>(object);
+}
+
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateVolatileHeapRef(ObjHeader** location, const ObjHeader* object) {
     mm::RefAccessor<false>{location}.storeAtomic(const_cast<ObjHeader*>(object), std::memory_order_seq_cst);
 }
 
-extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(CompareAndSwapVolatileHeapRef, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW
+        OBJ_GETTER(CompareAndSwapVolatileHeapRef, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
     ObjHeader* actual = expectedValue;
     mm::RefAccessor<false>{location}.compareAndExchange(actual, newValue, std::memory_order_seq_cst);
     RETURN_OBJ(actual);
 }
 
-extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW bool CompareAndSetVolatileHeapRef(ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW bool CompareAndSetVolatileHeapRef(
+        ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
     return mm::RefAccessor<false>{location}.compareAndExchange(expectedValue, newValue, std::memory_order_seq_cst);
 }
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(GetAndSetVolatileHeapRef, ObjHeader** location, ObjHeader* newValue) {
     RETURN_OBJ(mm::RefAccessor<false>{location}.exchange(newValue, std::memory_order_seq_cst));
+}
+
+// Owner-carrying variants of the volatile/atomic reference-store operations above. `owner` is the heap
+// container of `location`; threaded to the generational (gms) write barrier so it records only genuine
+// old->young edges (an @Volatile/atomic store into a young owner is filtered out instead of flooding
+// the remembered set). Other collectors ignore the owner. Emitted by the backend for instance-field
+// and reference-array-element volatile/atomic stores; static-field stores keep using the variants above
+// (owner unknown). Mirrors UpdateHeapRef / UpdateHeapRefWithOwner.
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateVolatileHeapRefWithOwner(
+        ObjHeader* owner, ObjHeader** location, const ObjHeader* object) {
+    mm::RefAccessor<false>{owner, location}.storeAtomic(const_cast<ObjHeader*>(object), std::memory_order_seq_cst);
+}
+
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(
+        CompareAndSwapVolatileHeapRefWithOwner, ObjHeader* owner, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
+    ObjHeader* actual = expectedValue;
+    mm::RefAccessor<false>{owner, location}.compareAndExchange(actual, newValue, std::memory_order_seq_cst);
+    RETURN_OBJ(actual);
+}
+
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW bool CompareAndSetVolatileHeapRefWithOwner(
+        ObjHeader* owner, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
+    return mm::RefAccessor<false>{owner, location}.compareAndExchange(expectedValue, newValue, std::memory_order_seq_cst);
+}
+
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW
+        OBJ_GETTER(GetAndSetVolatileHeapRefWithOwner, ObjHeader* owner, ObjHeader** location, ObjHeader* newValue) {
+    // A local avoids passing the braced init list `{owner, location}` (with its comma) straight into the
+    // RETURN_OBJ macro, which would misparse the comma as a macro-argument separator.
+    mm::RefAccessor<false> accessor{owner, location};
+    RETURN_OBJ(accessor.exchange(newValue, std::memory_order_seq_cst));
 }
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
@@ -221,11 +261,37 @@ extern "C" RUNTIME_NOTHROW ObjHeader** LookupTLS(void** key, int index) {
 }
 
 extern "C" void Kotlin_native_internal_GC_collect(ObjHeader*) {
+    // Explicit collect should reclaim the whole heap; ask generational collectors for a full (major)
+    // collection (no-op for others).
+    mm::GlobalData::Instance().gc().requestFullCollection();
     mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 }
 
 extern "C" void Kotlin_native_internal_GC_schedule(ObjHeader*) {
     mm::GlobalData::Instance().gcScheduler().schedule();
+}
+
+// Generational (gms) observability + tuning. All return 0 / are no-ops for non-generational
+// collectors (which only ever run Full collections). Surfaced to Kotlin via GC.kt.
+extern "C" KLong Kotlin_native_internal_GC_getEdenCollectionsCount(ObjHeader*) {
+    return static_cast<KLong>(mm::GlobalData::Instance().gc().generationalStats().edenCollectionCount);
+}
+
+extern "C" KLong Kotlin_native_internal_GC_getFullCollectionsCount(ObjHeader*) {
+    return static_cast<KLong>(mm::GlobalData::Instance().gc().generationalStats().fullCollectionCount);
+}
+
+extern "C" KLong Kotlin_native_internal_GC_getOldGenerationSizeBytes(ObjHeader*) {
+    return static_cast<KLong>(mm::GlobalData::Instance().gc().generationalStats().oldGenerationBaselineBytes);
+}
+
+extern "C" KLong Kotlin_native_internal_GC_getFullGrowthTriggerPercent(ObjHeader*) {
+    return static_cast<KLong>(mm::GlobalData::Instance().gc().generationalStats().fullGrowthTriggerPercent);
+}
+
+extern "C" void Kotlin_native_internal_GC_setFullGrowthTriggerPercent(ObjHeader*, KLong value) {
+    RuntimeAssert(value >= 0, "Must be handled by the caller");
+    mm::GlobalData::Instance().gc().setFullGrowthTriggerPercent(static_cast<uint64_t>(value));
 }
 
 extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemory(ObjHeader*, int fd) {
@@ -355,6 +421,7 @@ extern "C" void Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_setBatchSi
 }
 
 extern "C" RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
+    mm::GlobalData::Instance().gc().requestFullCollection();
     mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 }
 

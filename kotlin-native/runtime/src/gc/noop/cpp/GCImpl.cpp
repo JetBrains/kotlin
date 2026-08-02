@@ -17,11 +17,13 @@ gc::GC::ThreadData::ThreadData(GC& gc, mm::ThreadData& threadData) noexcept {}
 
 gc::GC::ThreadData::~ThreadData() = default;
 
-void gc::GC::ThreadData::OnSuspendForGC() noexcept { }
+void gc::GC::ThreadData::OnSuspendForGC() noexcept {}
 
 void gc::GC::ThreadData::safePoint() noexcept {}
 
 void gc::GC::ThreadData::onThreadRegistration() noexcept {}
+
+void gc::GC::ThreadData::onThreadUnregistration() noexcept {}
 
 ALWAYS_INLINE void gc::GC::ThreadData::onAllocation(ObjHeader* object) noexcept {}
 
@@ -41,6 +43,19 @@ ALWAYS_INLINE void gc::GC::processObjectInMark(void* state, ObjHeader* object) n
 // static
 ALWAYS_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) noexcept {}
 
+void gc::GC::requestFullCollection() noexcept {}
+
+gc::GC::GenerationalStats gc::GC::generationalStats() noexcept {
+    return {};
+}
+
+void gc::GC::setFullGrowthTriggerPercent(uint64_t) noexcept {}
+
+// Non-generational: the sweep must visit every page.
+bool gc::sweepSkipsCleanOldPages() noexcept {
+    return false;
+}
+
 int64_t gc::GC::Schedule() noexcept {
     return 0;
 }
@@ -49,7 +64,7 @@ void gc::GC::WaitFinished(int64_t epoch) noexcept {}
 
 void gc::GC::WaitFinalizers(int64_t epoch) noexcept {}
 
-ALWAYS_INLINE void gc::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept {}
+ALWAYS_INLINE void gc::beforeHeapRefUpdate(ObjHeader* owner, mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept {}
 
 ALWAYS_INLINE OBJ_GETTER(gc::weakRefReadBarrier, std_support::atomic_ref<ObjHeader*> weakReferee) noexcept {
     RETURN_OBJ(weakReferee.load(std::memory_order_relaxed));

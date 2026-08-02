@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <optional>
 
+#include "CollectionScope.hpp"
 #include "Logging.hpp"
 #include "Porting.h"
 #include "Utils.hpp"
@@ -23,6 +24,12 @@ class ThreadData;
 namespace kotlin::gc {
 
 class GCHandle;
+
+// True when the running collection is a generational minor (Eden) collection whose sweep may skip
+// pages that contain only old survivors and were not allocated into since the last collection (the
+// custom allocator's FixedBlockPage/NextFitPage consult this). Always false for non-generational
+// collectors, so their sweep visits every page exactly as before. Defined per GC variant.
+bool sweepSkipsCleanOldPages() noexcept;
 
 struct SweepStats {
     uint64_t sweptCount = 0;
@@ -57,7 +64,10 @@ public:
         return epoch_;
     }
     bool isValid() const;
-    void finished();
+    // `scope` reports whether this collection built a complete mark closure. A Full (or any
+    // non-generational) collection marks everything it keeps, so marked==kept is asserted exactly.
+    // An Eden collection additionally keeps old survivors it never marked, so only marked<=kept holds.
+    void finished(CollectionScope scope = CollectionScope::Full);
     void finalizersDone();
     void finalizersScheduled(uint64_t finalizersCount);
     void suspensionRequested();
@@ -150,6 +160,21 @@ public:
         requireValid();
         markedCount_ += 1;
     }
+
+    // Running totals for this scope so far. The custom allocator captures the delta across a single
+    // page's sweep to cache that page's kept (count, bytes), so it can re-report them via
+    // addKeptObjects() when it later skips that page as a clean-old page during an Eden collection.
+    uint64_t keptCountSoFar() const noexcept { return stats_.keptCount; }
+    size_t keptSizeBytesSoFar() const noexcept { return stats_.keptSizeBytes; }
+    uint64_t markedCountSoFar() const noexcept { return markedCount_; }
+
+    // Bulk re-report of a skipped clean-old page's cached kept objects. Equivalent to calling
+    // addKeptObject() once per object, so getKeptSizeBytes() stays byte-identical to a full sweep.
+    void addKeptObjects(uint64_t count, size_t sizeBytes) noexcept {
+        requireValid();
+        stats_.keptCount += count;
+        stats_.keptSizeBytes += sizeBytes;
+    }
 };
 
 class GCHandle::GCSweepExtraObjectsScope : public GCStageScopeBase {
@@ -179,6 +204,19 @@ public:
     void addKeptObject(size_t sizeBytes) noexcept {
         requireValid();
         stats_.keptCount += 1;
+        stats_.keptSizeBytes += sizeBytes;
+    }
+
+    // Mirrors GCSweepScope's re-report interface so the shared page Sweep template compiles for the
+    // extra-object sweep too. The clean-old-page skip is never enabled for extra-object pages (they
+    // are always fully swept), so these are present for compilation only. Extra-object sweeps have no
+    // "marked" notion, so markedCountSoFar() is constant 0.
+    uint64_t keptCountSoFar() const noexcept { return stats_.keptCount; }
+    size_t keptSizeBytesSoFar() const noexcept { return stats_.keptSizeBytes; }
+    uint64_t markedCountSoFar() const noexcept { return 0; }
+    void addKeptObjects(uint64_t count, size_t sizeBytes) noexcept {
+        requireValid();
+        stats_.keptCount += count;
         stats_.keptSizeBytes += sizeBytes;
     }
 };

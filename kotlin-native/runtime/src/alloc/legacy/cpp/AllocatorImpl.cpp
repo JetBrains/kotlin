@@ -140,6 +140,23 @@ ObjHeader* alloc::objectForObjectData(gc::GC::ObjectData& objectData) noexcept {
     return ObjectFactoryImpl::NodeRef::From(objectData)->GetObjHeader();
 }
 
+// The legacy allocator has no page/address index, so it cannot resolve an interior pointer to its
+// container. `containerOf` always returns nullptr; the generational GC treats that as "unknown" and
+// keeps the referent conservatively.
+class alloc::HeapLayoutSnapshot::Impl {};
+alloc::HeapLayoutSnapshot::HeapLayoutSnapshot() noexcept = default;
+alloc::HeapLayoutSnapshot::~HeapLayoutSnapshot() = default;
+ObjHeader* alloc::HeapLayoutSnapshot::containerOf(void*) const noexcept {
+    return nullptr;
+}
+bool alloc::HeapLayoutSnapshot::resolvesInteriorPointers() const noexcept {
+    return false;
+}
+
+bool alloc::heapLayoutResolvesInteriorPointers() noexcept {
+    return false;
+}
+
 size_t alloc::allocatedHeapSize(ObjHeader* object) noexcept {
     return ObjectFactoryImpl::GetAllocatedHeapSize(object);
 }

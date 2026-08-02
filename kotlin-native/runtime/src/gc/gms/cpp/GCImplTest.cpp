@@ -1,0 +1,228 @@
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
+ */
+
+#include "GCImpl.hpp"
+
+#include <mutex>
+#include <atomic>
+
+#include "gtest/gtest.h"
+
+#include "ExternalRCRef.hpp"
+#include "GlobalData.hpp"
+#include "TestSupport.hpp"
+#include "TracingGCTest.hpp"
+
+using namespace kotlin;
+
+namespace {
+
+class ConcurrentMarkAndSweepTest {
+public:
+    ~ConcurrentMarkAndSweepTest() {
+        gc::gms::setForcedScopeForTests(false, gc::CollectionScope::Full);
+        mm::GlobalsRegistry::Instance().ClearForTests();
+        mm::ExternalRCRefRegistry::instance().clearForTests();
+        mm::GlobalData::Instance().gc().ClearForTests();
+        mm::GlobalData::Instance().allocator().clearForTests();
+    }
+
+    // The shared TracingGCTest suite validates full-collection tracing correctness and assumes every
+    // collection reclaims all unreachable objects. For the generational gms collector that holds only
+    // for a Full collection -- an Eden (minor) collection intentionally retains unreachable old objects
+    // as floating garbage -- so pin the scope to Full here. Eden-specific behavior is covered by
+    // GmsGenerationalTest.
+    void SetUp() { gc::gms::setForcedScopeForTests(true, gc::CollectionScope::Full); }
+};
+
+} // namespace
+
+TYPED_TEST_P(TracingGCTest, WeakResurrectionAtMarkTermination) {
+    std::vector<Mutator> mutators(kDefaultThreadCount);
+    std::vector<test_support::RegularWeakReferenceImpl*> weaks(kDefaultThreadCount);
+    std::vector<test_support::Object<Payload>*> roots(kDefaultThreadCount);
+
+    // initialize threads
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        mutators[i]
+                .Execute([&, i](mm::ThreadData& threadData, Mutator& mutator) {
+                    roots[i] = &AllocateObject(threadData);
+                    mutator.AddGlobalRoot(roots[i]->header());
+
+                    auto& weakReferee = AllocateObject(threadData);
+                    auto& weakRef = [&threadData, &weakReferee]() -> test_support::RegularWeakReferenceImpl& {
+                        ObjHolder holder;
+                        return test_support::InstallWeakReference(threadData, weakReferee.header(), holder.slot());
+                    }();
+                    EXPECT_NE(weakRef.get(), nullptr);
+                    weaks[i] = &weakRef;
+                    mutator.AddGlobalRoot(weakRef.header());
+                })
+                .wait();
+    }
+
+    auto epoch = mm::GlobalData::Instance().gc().Schedule();
+    std::atomic gcDone = false;
+
+    // Spin until thread suspension is requested.
+    while (!mm::IsThreadSuspensionRequested()) {
+    }
+
+    std::vector<std::future<void>> mutatorFutures;
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        mutatorFutures.emplace_back(mutators[i].Execute([&, i](mm::ThreadData& threadData, Mutator& mutator) noexcept {
+            while (!gc::mark::test_support::flushActionRequested() && !gcDone.load(std::memory_order_relaxed)) {
+                safePoint(threadData);
+            }
+
+            threadData.gc().impl().mark_.onSafePoint();
+
+            auto weakReferee = weaks[i]->get();
+            (*roots[i])->field2 = weakReferee;
+            bool resurrected = weakReferee != nullptr;
+
+            while (!gcDone.load(std::memory_order_relaxed)) {
+                safePoint(threadData);
+            }
+
+            if (resurrected) {
+                EXPECT_NE(weaks[i]->get(), nullptr);
+            } else {
+                EXPECT_EQ(weaks[i]->get(), nullptr);
+            }
+        }));
+    }
+
+    mm::GlobalData::Instance().gc().WaitFinalizers(epoch);
+    gcDone = true;
+
+    for (auto& future : mutatorFutures) {
+        future.wait();
+    }
+
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        mutators[i]
+                .Execute([&, i](mm::ThreadData&, Mutator&) noexcept {
+                    if (auto weakReferee = weaks[i]->get()) {
+                        auto& extraObj = *mm::ExtraObjectData::Get(weakReferee);
+                        extraObj.ClearRegularWeakReferenceImpl();
+                        extraObj.Uninstall();
+                        alloc::destroyExtraObjectData(extraObj);
+                    }
+                })
+                .wait();
+    }
+}
+
+TYPED_TEST_P(TracingGCTest, ReleaseStableRefDuringRSCollection) {
+    std::vector<Mutator> mutators(kDefaultThreadCount);
+
+    std::atomic<size_t> readyThreads = 0;
+    std::atomic<bool> gcDone = false;
+
+    std::vector<std::future<void>> mutatorFutures;
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        mutatorFutures.push_back(mutators[i].Execute([&](mm::ThreadData& threadData, Mutator& mutator) {
+            auto& obj = AllocateObject(threadData);
+            mm::OwningExternalRCRef stableRef(obj.header());
+
+            ++readyThreads;
+            while (!mm::IsThreadSuspensionRequested()) {
+            }
+
+            mm::safePoint();
+
+            mutator.AddStackRoot(obj.header());
+            stableRef.reset();
+
+            while (!gcDone) {
+                mm::safePoint();
+            }
+
+            EXPECT_THAT(mutator.Alive(), testing::Contains(obj.header()));
+        }));
+    }
+
+    while (readyThreads < kDefaultThreadCount) {
+    }
+
+    mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
+    gcDone = true;
+
+    for (auto& future : mutatorFutures) {
+        future.wait();
+    }
+}
+
+TYPED_TEST_P(TracingGCTest, TerminateInSTW) {
+    // Try to drive the concurrent mark to terminate in STW (after several unsuccessful concurrent attempts).
+    // Construct a linked list of arrays and continuously steal from the list just one step ahead of the GC's mark front.
+
+    constexpr int kListLength = 1000;
+    constexpr int kArraySize = 200;
+    // too many threads over-pace the GC
+    constexpr int kMutatorsCount = 2;
+
+    std::atomic gcDone = false;
+    std::atomic ready = 0;
+
+    std::vector<Mutator> mutators{kMutatorsCount};
+    std::vector<std::future<void>> futures{};
+    for (auto& mutator : mutators) {
+        futures.emplace_back(mutator.Execute([&ready, &gcDone](mm::ThreadData& threadData, Mutator& mutator) {
+            // prepare
+            auto& global = mutator.AddGlobalRoot();
+            auto& local = mutator.AddStackRoot();
+
+            for (int i = 0; i < kListLength; ++i) {
+                auto& next = AllocateArray<kArraySize>(threadData);
+                next.elements()[kArraySize - 1] = global->field1.accessor().load();
+                global->field1 = next.header();
+            }
+            local->field1 = global->field1.accessor().load();
+
+            ++ready;
+
+            // wait for GC
+            while (!mm::IsThreadSuspensionRequested()) {
+            }
+            mm::safePoint(threadData);
+
+            // run
+            while (!gcDone.load(std::memory_order_relaxed)) {
+                auto* nextPtr = local->field1.accessor().load()->array();
+                if (nextPtr == nullptr) break;
+
+                auto& next = test_support::ObjectArray<kArraySize>::FromArrayHeader(nextPtr);
+                auto lastAccessor = next.elements()[kArraySize - 1].accessor();
+                local->field1 = lastAccessor.load();
+                lastAccessor.store(nullptr);
+
+                while (!mm::test_support::safePointsAreActive() && !gcDone.load(std::memory_order_relaxed)) {
+                }
+                mm::safePoint(threadData);
+            }
+
+            // let the GC catch up if we were too fast
+            while (!gcDone) {
+                mm::safePoint(threadData);
+            }
+        }));
+    }
+
+    while (ready < kMutatorsCount) {
+    }
+
+    mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
+    gcDone = true;
+
+    for (auto& future : futures) {
+        future.wait();
+    }
+}
+
+REGISTER_TYPED_TEST_SUITE_WITH_LISTS(
+        TracingGCTest, TRACING_GC_TEST_LIST, WeakResurrectionAtMarkTermination, ReleaseStableRefDuringRSCollection, TerminateInSTW);
+INSTANTIATE_TYPED_TEST_SUITE_P(GMS, TracingGCTest, ConcurrentMarkAndSweepTest);

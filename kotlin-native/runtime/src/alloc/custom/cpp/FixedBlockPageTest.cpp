@@ -151,6 +151,53 @@ TEST_F(CustomAllocatorTest, FixedBlockPageRandomExercise) {
     }
 }
 
+// Regression for the generational remembered-set drain (gms Finding #4). The drain resolves a
+// recorded slot back to its containing object via FixedBlockPage::objectContainingInteriorPointer; a
+// slot can outlive its object (the object was freed since the slot was recorded), so the resolver
+// MUST reject a pointer into a free cell. Without the free-list guard it would hand back the freed
+// cell as a "container", and the drain would then read that cell's first word -- a FixedCellRange
+// free-list link whose low bits can spoof isOld() -- and dereference the stale slot. Every allocated
+// block must resolve to a stable non-null object (identical for any interior byte); every freed block
+// and every out-of-range pointer must resolve to nullptr.
+TEST_F(CustomAllocatorTest, FixedBlockPageInteriorPointerRejectsFreeCells) {
+    for (uint32_t size = 2; size <= 6; ++size) {
+        FixedBlockPage* page = FixedBlockPage::Create(size);
+        const size_t blockBytes = AllocationSize::cells(size).inBytes();
+
+        std::vector<uint8_t*> blocks;
+        while (FakeObjectHeader* obj = alloc(page, size)) blocks.push_back(reinterpret_cast<uint8_t*>(obj));
+        ASSERT_GT(blocks.size(), 2u);
+
+        // Every allocated block resolves to a non-null object, and every interior byte of a block
+        // resolves to the same object as its first byte.
+        for (uint8_t* block : blocks) {
+            ObjHeader* fromStart = page->objectContainingInteriorPointer(block);
+            EXPECT_NE(fromStart, nullptr) << "size=" << size;
+            EXPECT_EQ(page->objectContainingInteriorPointer(block + blockBytes - 1), fromStart) << "size=" << size;
+        }
+
+        // Keep the even blocks, free the odd ones.
+        for (size_t i = 0; i < blocks.size(); i += 2) FakeObjectHeader::at(blocks[i])->mark();
+        page->Sweep<FakeSweepTraits>(sweepHandle(), finalizerQueue());
+
+        // Live blocks still resolve; freed blocks must resolve to nullptr -- this is the free-cell guard.
+        for (size_t i = 0; i < blocks.size(); ++i) {
+            ObjHeader* resolved = page->objectContainingInteriorPointer(blocks[i]);
+            if (i % 2 == 0) {
+                EXPECT_NE(resolved, nullptr) << "size=" << size << " live block " << i << " lost";
+            } else {
+                EXPECT_EQ(resolved, nullptr) << "size=" << size << " freed block " << i << " spoofed a container";
+            }
+        }
+
+        // Pointers outside the page's cell range resolve to nullptr (below and at/above the limit).
+        EXPECT_EQ(page->objectContainingInteriorPointer(blocks.front() - blockBytes), nullptr) << "size=" << size;
+        EXPECT_EQ(page->objectContainingInteriorPointer(blocks.back() + blockBytes), nullptr) << "size=" << size;
+
+        page->Destroy();
+    }
+}
+
 TEST(CustomAllocTest, FixedBlockPageSchedulerNotification) {
     for (uint32_t size = 2; size <= FixedBlockPage::MAX_BLOCK_SIZE; ++size) {
         kotlin::alloc::test_support::WithSchedulerNotificationHook hookHandle;

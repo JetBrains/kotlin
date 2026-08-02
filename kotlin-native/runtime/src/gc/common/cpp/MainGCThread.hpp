@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Allocator.hpp"
+#include "CollectionScope.hpp"
 #include "GCScheduler.hpp"
 #include "GCState.hpp"
 #include "Utils.hpp"
@@ -19,20 +20,21 @@ namespace kotlin::gc::internal {
 template <typename GCTraits>
 class MainGCThread : private MoveOnly {
 public:
-    MainGCThread(GCStateHolder& state, alloc::Allocator& allocator,
-                 gcScheduler::GCScheduler& gcScheduler, typename GCTraits::Mark& mark) noexcept :
-            state_(state),
-            allocator_(allocator),
-            gcScheduler_(gcScheduler),
-            mark_(mark),
-            thread_(std::string_view("Main GC thread"), [this] { body(); }) {}
+    MainGCThread(
+            GCStateHolder& state,
+            alloc::Allocator& allocator,
+            gcScheduler::GCScheduler& gcScheduler,
+            typename GCTraits::Mark& mark) noexcept :
+        state_(state), allocator_(allocator), gcScheduler_(gcScheduler), mark_(mark), thread_(std::string_view("Main GC thread"), [this] {
+            body();
+        }) {}
 
 private:
     void body() noexcept {
-        RuntimeLogInfo({ kTagGC }, "Initializing %s GC.", GCTraits::kName);
+        RuntimeLogInfo({kTagGC}, "Initializing %s GC.", GCTraits::kName);
         while (true) {
-            if (auto epoch = state_.waitScheduled()) {
-                PerformFullGC(*epoch);
+            if (auto collection = state_.waitScheduled()) {
+                PerformCollection(collection->epoch, collection->scope);
             } else {
                 break;
             }
@@ -40,7 +42,16 @@ private:
         mark_.requestShutdown();
     }
 
-    void PerformFullGC(int64_t epoch) noexcept {
+    // Runs a single collection cycle. For generational collectors `scope` selects an Eden (minor)
+    // or Full (major) collection; for non-generational collectors it is always Full. The generational
+    // behavior (sticky "old" marks, remembered-set roots, eden-scoped sweep and promotion) is applied
+    // through the GCTraits::onCollectionStart/onCollectionFinish hooks below and the scope-aware
+    // gc::tryResetMark, so an Eden collection genuinely skips the old generation -- it does not run a
+    // full-heap collection like CMS.
+    void PerformCollection(int64_t epoch, gc::CollectionScope scope) noexcept {
+        if constexpr (!GCTraits::kGenerational) {
+            RuntimeAssert(scope == gc::CollectionScope::Full, "Non-generational GC only performs Full collections");
+        }
         auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
 
         auto gcHandle = GCHandle::create(epoch);
@@ -51,7 +62,9 @@ private:
 
         gcScheduler_.onGCStart();
 
-        state_.start(epoch);
+        // Select Eden/Full behavior for the mark & sweep phases (no-op for non-generational GCs).
+        auto actualScope = GCTraits::onCollectionStart(scope);
+        RuntimeLogInfo({kTagGC}, "Performing %s collection", gc::toString(actualScope));
 
         mark_.markInSTW();
 
@@ -69,14 +82,17 @@ private:
         }
 
         allocator_.sweep(gcHandle);
-        gcScheduler_.onGCFinish(epoch, gcHandle.getKeptSizeBytes());
+        auto keptBytes = gcHandle.getKeptSizeBytes();
+        gcScheduler_.onGCFinish(epoch, keptBytes);
+        // Feed the live-byte result into the generational policy/statistics (no-op for others).
+        GCTraits::onCollectionFinish(actualScope, keptBytes);
 
         if (!GCTraits::kConcurrentSweep) {
             resumeTheWorld(gcHandle);
         }
 
         state_.finish(epoch);
-        gcHandle.finished();
+        gcHandle.finished(actualScope);
 
         // This may start a new thread. On some pthreads implementations, this may block waiting for concurrent thread
         // destructors running. So, it must ensured that no locks are held by this point.

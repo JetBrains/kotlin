@@ -23,14 +23,13 @@ class SingleObjectPage;
 
 class alignas(kPageAlignment) SingleObjectPage : public AnyPage<SingleObjectPage> {
 public:
-
     static SingleObjectPage* Create(uint64_t cellCount) noexcept;
 
     uint8_t* Data() noexcept;
 
     uint8_t* Allocate() noexcept;
 
-    template<typename SweepTraits>
+    template <typename SweepTraits>
     bool SweepAndDestroy(typename SweepTraits::GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
         CustomAllocDebug("SingleObjectPage@%p::SweepAndDestroy()", this);
         if (!SweepTraits::trySweepElement(Data(), finalizerQueue, sweepHandle)) {
@@ -42,7 +41,7 @@ public:
         return false;
     }
 
-    template<typename SweepTraits>
+    template <typename SweepTraits>
     void Destroy() noexcept {
         auto objectSize = SweepTraits::elementSize(data_);
         destroyImpl(objectSize);
@@ -52,6 +51,14 @@ public:
     void TraverseAllocatedBlocks(F process) noexcept(noexcept(process(std::declval<uint8_t*>()))) {
         process(data_);
     }
+
+    // End address of this page's object (exclusive). Used to build the interior-pointer index.
+    uint8_t* pageEnd() noexcept;
+
+    // Maps an interior pointer within this page (e.g. a reference-field slot) to the single heap object
+    // it holds, or nullptr if it precedes the object. Valid only while the world is stopped. See
+    // HeapLayoutSnapshot.
+    ObjHeader* objectContainingInteriorPointer(void* interiorPointer) noexcept;
 
 private:
     friend class Heap;

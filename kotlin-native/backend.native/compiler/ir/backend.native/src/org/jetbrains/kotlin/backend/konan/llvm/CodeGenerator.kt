@@ -745,9 +745,9 @@ internal abstract class FunctionGenerationContext(
         updateRef(value, ptr, onStack = true)
     }
 
-    fun storeAny(value: LLVMValueRef, ptr: LLVMValueRef, isObjectRef: Boolean, onStack: Boolean, isVolatile: Boolean = false, alignment: Int? = null) {
+    fun storeAny(value: LLVMValueRef, ptr: LLVMValueRef, isObjectRef: Boolean, onStack: Boolean, isVolatile: Boolean = false, alignment: Int? = null, owner: LLVMValueRef? = null) {
         when {
-            isObjectRef -> updateRef(value, ptr, onStack, isVolatile, alignment)
+            isObjectRef -> updateRef(value, ptr, onStack, isVolatile, alignment, owner)
             else -> store(value, ptr, if (isVolatile) LLVMAtomicOrdering.LLVMAtomicOrderingSequentiallyConsistent else null, alignment)
         }
     }
@@ -757,14 +757,23 @@ internal abstract class FunctionGenerationContext(
     }
 
     private fun updateRef(value: LLVMValueRef, address: LLVMValueRef, onStack: Boolean,
-                          isVolatile: Boolean = false, alignment: Int? = null) {
+                          isVolatile: Boolean = false, alignment: Int? = null, owner: LLVMValueRef? = null) {
         require(alignment == null || alignment % runtime.pointerAlignment == 0)
         if (onStack) {
             require(!isVolatile) { "Stack ref update can't be volatile"}
             call(llvm.updateStackRefFunction, listOf(address, value))
         } else {
             if (isVolatile) {
-                call(llvm.UpdateVolatileHeapRef, listOf(address, value))
+                if (owner != null) {
+                    // Owner known (instance-field / array-element store): let the generational GC filter
+                    // old->young so a volatile store into a young owner does not flood the remembered set.
+                    call(llvm.UpdateVolatileHeapRefWithOwner, listOf(owner, address, value))
+                } else {
+                    call(llvm.UpdateVolatileHeapRef, listOf(address, value))
+                }
+            } else if (owner != null) {
+                // Owner known (instance-field store): let the generational GC filter old->young.
+                call(llvm.updateHeapRefWithOwnerFunction, listOf(owner, address, value))
             } else {
                 call(llvm.updateHeapRefFunction, listOf(address, value))
             }

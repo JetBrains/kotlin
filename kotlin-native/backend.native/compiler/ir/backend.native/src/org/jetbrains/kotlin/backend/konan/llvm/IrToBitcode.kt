@@ -1721,6 +1721,8 @@ internal class CodeGeneratorVisitor(
                 valueToAssign, address, field.type.binaryTypeIsReference(), false,
                 isVolatile = field.hasAnnotation(KonanFqNames.volatile),
                 alignment = alignment,
+                // Instance-field owner (null for static fields) -> generational old->young barrier filter.
+                owner = thisPtr,
         )
 
         assert (value.type.isUnit())

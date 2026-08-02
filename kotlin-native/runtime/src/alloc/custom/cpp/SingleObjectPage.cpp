@@ -39,11 +39,19 @@ AllocationSize SingleObjectPage::pageSize(AllocationSize objectSize) noexcept {
     return objectSize + AllocationSize::bytesAtLeast(sizeof(SingleObjectPage));
 }
 
+uint8_t* SingleObjectPage::pageEnd() noexcept {
+    return data_ + reinterpret_cast<CustomHeapObject*>(data_)->size();
+}
+
+ObjHeader* SingleObjectPage::objectContainingInteriorPointer(void* interiorPointer) noexcept {
+    auto* p = reinterpret_cast<uint8_t*>(interiorPointer);
+    if (p < data_) return nullptr;
+    return reinterpret_cast<CustomHeapObject*>(data_)->object();
+}
+
 std::vector<uint8_t*> SingleObjectPage::GetAllocatedBlocks() noexcept {
     std::vector<uint8_t*> allocated;
-    TraverseAllocatedBlocks([&allocated](uint8_t* block) {
-        allocated.push_back(block);
-    });
+    TraverseAllocatedBlocks([&allocated](uint8_t* block) { allocated.push_back(block); });
     return allocated;
 }
 
