@@ -5,26 +5,16 @@
 
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
-import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
-import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.KotlinLogger
-import org.jetbrains.kotlin.buildtools.api.ProjectId
+import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsModuleKind
 import org.jetbrains.kotlin.buildtools.api.js.JsDtsCompilationStrategy
 import org.jetbrains.kotlin.buildtools.api.js.JsDtsGranularity
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
-import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
-import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
-import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
-import org.jetbrains.kotlin.buildtools.internal.Options
-import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
+import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
-import org.jetbrains.kotlin.buildtools.internal.checkOptionIsAvailableForVersion
-import org.jetbrains.kotlin.buildtools.internal.initializeOptions
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.ir.backend.js.jsOutputName
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
@@ -39,7 +29,6 @@ import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.metadata.KlibInputModule
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.platform.js.JsPlatforms
-import java.io.File
 import java.nio.file.Path
 
 internal class JsDtsGenerationOperationImpl private constructor(
@@ -61,7 +50,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        sessionIsAliveFlagFile: Lazy<File>,
+        executionContext: ExecutionContext,
     ): CompilationResult {
         val inputModules = transformKlibsIntoKlibInputModule(klibs, logger)
         // The main KLIB is the last one in the list; its manifest drives the merged artifact naming.

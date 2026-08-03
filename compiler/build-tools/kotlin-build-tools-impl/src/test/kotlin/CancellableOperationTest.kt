@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
+import org.jetbrains.kotlin.buildtools.internal.ExecutionContext
 import org.jetbrains.kotlin.buildtools.internal.CancellableBuildOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.KotlinToolchainsImpl
 import org.jetbrains.kotlin.buildtools.internal.Options
@@ -25,7 +26,7 @@ private class ExampleCancellableOperation(override val options: Options = Option
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        sessionIsAliveFlagFile: Lazy<File>,
+        executionContext: ExecutionContext,
     ) {
         repeat(10) {
             Thread.sleep(100)
@@ -54,7 +55,7 @@ class CancellableOperationTest {
                         operation.execute(
                             ProjectId.RandomProjectUUID(),
                             KotlinToolchainsImpl().createInProcessExecutionPolicy(),
-                            sessionIsAliveFlagFile = lazy { File.createTempFile("session", "alive").apply { deleteOnExit() } }
+                            executionContext = ExecutionContext(lazy { File(".") }, null),
                         )
                     )
                 } catch (_: CompilationCanceledException) {

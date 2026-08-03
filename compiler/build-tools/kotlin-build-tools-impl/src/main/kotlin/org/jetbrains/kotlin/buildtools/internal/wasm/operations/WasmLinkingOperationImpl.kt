@@ -104,6 +104,7 @@ internal class WasmLinkingOperationImpl private constructor(
     override fun compileIncrementallyInProcess(
         arguments: KotlinWasmCompilerArguments,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        executionContext: ExecutionContext
     ): CompilationResult {
         error("Linking doesn't support incremental compilation")
     }

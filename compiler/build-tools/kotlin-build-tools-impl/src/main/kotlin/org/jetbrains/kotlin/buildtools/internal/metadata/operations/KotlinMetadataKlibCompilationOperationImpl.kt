@@ -110,6 +110,7 @@ internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
     override fun compileIncrementallyInProcess(
         arguments: K2MetadataCompilerArguments,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        executionContext: ExecutionContext
     ): CompilationResult {
         error("Metadata compiler doesn't support incremental compilation")
     }

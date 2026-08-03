@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetId
 import org.jetbrains.kotlin.buildtools.api.abi.operations.DumpKlibAbiToStringOperation
 import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.ExecutionContext
 import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
 import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.internal.abi.AbiFiltersImpl
 import org.jetbrains.kotlin.buildtools.internal.abi.AbiValidationUtils
 import org.jetbrains.kotlin.buildtools.internal.initializeOptions
-import java.io.File
 import java.nio.file.Path
 
 internal class DumpKlibAbiToStringOperationImpl private constructor(
@@ -47,7 +47,7 @@ internal class DumpKlibAbiToStringOperationImpl private constructor(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        sessionIsAliveFlagFile: Lazy<File>
+        executionContext: ExecutionContext
     ) {
         val filters = options[PATTERN_FILTERS]?.let { AbiValidationUtils.convert(it) } ?: org.jetbrains.kotlin.abi.tools.AbiFilters.EMPTY
 
