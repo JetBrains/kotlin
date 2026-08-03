@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.testFederation
 
 import org.gradle.api.Project
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
@@ -114,6 +115,13 @@ val Project.testFederationAffectedDomains: Provider<Set<Domain>> by extensionPro
  */
 val Test.smokeTestConfig: Property<SmokeTestConfig> by extensionProperty {
     project.objects.property(SmokeTestConfig::class.java).convention(SmokeTestConfig.Default)
+}
+
+/**
+ * Returns the list of domains that we can pass to this task when in Smoke mode
+ */
+val Test.domainsEnabled: ListProperty<Domain> by extensionProperty {
+    project.objects.listProperty(Domain::class.java)
 }
 
 /**

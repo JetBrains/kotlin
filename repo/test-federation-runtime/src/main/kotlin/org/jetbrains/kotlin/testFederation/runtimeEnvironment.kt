@@ -9,6 +9,8 @@ internal const val TEST_FEDERATION_ENABLED_KEY = "test.federation.enabled"
 internal const val TEST_FEDERATION_ENABLED_ENV_KEY = "TEST_FEDERATION_ENABLED"
 internal const val TEST_FEDERATION_MODE_KEY = "test.federation.mode"
 internal const val TEST_FEDERATION_MODE_ENV_KEY = "TEST_FEDERATION_MODE"
+internal const val TEST_FEDERATION_DOMAINS_ENABLED_KEY = "test.federation.domains.enabled"
+internal const val TEST_FEDERATION_DOMAINS_ENABLED_ENV_KEY = "TEST_FEDERATION_DOMAINS_ENABLED"
 internal const val TEST_FEDERATION_AFFECTED_DOMAINS_KEY = "test.federation.affected.domains"
 internal const val TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY = "TEST_FEDERATION_AFFECTED_DOMAINS"
 internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_KEY = "test.federation.auto.smoke.test.percentage"
@@ -31,6 +33,16 @@ val testFederationMode: TestFederationMode?
         val raw = resolve(TEST_FEDERATION_MODE_KEY, TEST_FEDERATION_MODE_ENV_KEY) ?: return null
         return TestFederationMode.valueOf(raw)
     }
+
+/**
+ * @return List of [Domain]s enabled for this test task
+ */
+val enabledContracts: Set<Domain>
+    get() = resolve(TEST_FEDERATION_DOMAINS_ENABLED_KEY, TEST_FEDERATION_DOMAINS_ENABLED_ENV_KEY)?.split(";")?.filterNot { it.isBlank() }
+        ?.map { value ->
+            Domain.valueOf(value)
+        }?.toSet() ?: emptySet()
+
 
 /**
  * @return All affected [Domain]s. Only relevant if the [testFederationEnabled] returns true
