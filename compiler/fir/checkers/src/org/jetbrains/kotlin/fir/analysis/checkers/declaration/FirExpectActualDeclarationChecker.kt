@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.containsErrorTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
@@ -166,12 +167,14 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             declaration.hasActualModifier() &&
             expectedSingleCandidate.isFakeOverride(expectContainingClass, expectActualMatchingContext)
         ) {
-            reporter.reportOn(
-                source,
-                FirErrors.ACTUAL_WITHOUT_EXPECT,
-                symbol,
-                matchingCompatibilityToMembersMap
-            )
+            if (!declaration.containsErrorTypes()) {
+                reporter.reportOn(
+                    source,
+                    FirErrors.ACTUAL_WITHOUT_EXPECT,
+                    symbol,
+                    matchingCompatibilityToMembersMap
+                )
+            }
             return
         }
 
