@@ -243,16 +243,6 @@ This library must be one of the ones passed with '-library'.""",
         }
 
     @Argument(
-        value = "-Xfake-override-validator",
-        description = "Enable the IR fake override validator.",
-    )
-    var fakeOverrideValidator: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xfile-to-cache",
         valueDescription = "<path>",
         description = "Path to the file to cache.",

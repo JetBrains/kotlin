@@ -215,7 +215,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     parseShortModuleName(arguments, this@setupFromArguments, outputKind)?.let {
         konanShortModuleName = it
     }
-    put(FAKE_OVERRIDE_VALIDATOR, arguments.fakeOverrideValidator)
     putIfNotNull(PRE_LINK_CACHES, parsePreLinkCachesValue(this@setupFromArguments, arguments.preLinkCaches))
     putIfNotNull(OVERRIDE_KONAN_PROPERTIES, parseOverrideKonanProperties(arguments, this@setupFromArguments))
 

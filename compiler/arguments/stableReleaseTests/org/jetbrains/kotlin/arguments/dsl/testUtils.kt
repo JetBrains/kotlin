@@ -26,6 +26,7 @@ private val temporaryExceptions: Set<String> = setOf(
     "Xdestroy-runtime-mode",
     "Xsuppress-api-version-greater-than-language-version-error",
     "Xbundle-id",
+    "Xfake-override-validator",
 )
 
 internal fun Set<StableKotlinCompilerArgument>.filterNonDeprecated() = filter {

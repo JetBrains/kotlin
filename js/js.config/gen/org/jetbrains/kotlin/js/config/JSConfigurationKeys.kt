@@ -126,9 +126,6 @@ object JSConfigurationKeys {
     val DUMP_REACHABILITY_INFO_TO_FILE = CompilerConfigurationKey.create<String>("DUMP_REACHABILITY_INFO_TO_FILE")
 
     @JvmField
-    val FAKE_OVERRIDE_VALIDATOR = CompilerConfigurationKey.create<Boolean>("FAKE_OVERRIDE_VALIDATOR")
-
-    @JvmField
     val PROPERTY_LAZY_INITIALIZATION = CompilerConfigurationKey.create<Boolean>("PROPERTY_LAZY_INITIALIZATION")
 
     // Translate lambdas into inline anonymous functions.
@@ -317,10 +314,6 @@ var CompilerConfiguration.printReachabilityInfo: Boolean
 var CompilerConfiguration.dumpReachabilityInfoToFile: String?
     get() = get(JSConfigurationKeys.DUMP_REACHABILITY_INFO_TO_FILE)
     set(value) { putIfNotNull(JSConfigurationKeys.DUMP_REACHABILITY_INFO_TO_FILE, value) }
-
-var CompilerConfiguration.fakeOverrideValidator: Boolean
-    get() = getBoolean(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)
-    set(value) { put(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR, value) }
 
 var CompilerConfiguration.propertyLazyInitialization: Boolean
     get() = getBoolean(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION)

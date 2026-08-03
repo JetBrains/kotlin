@@ -459,16 +459,6 @@ This library must be one of the ones passed with '-library'.""".asReleaseDepende
     }
 
     compilerArgument {
-        name = "Xfake-override-validator"
-        description = "Enable the IR fake override validator.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    }
-
-    compilerArgument {
         name = "Xframework-import-header"
         compilerName = "frameworkImportHeaders"
         description = "Add an additional header import to the framework header.".asReleaseDependent()

@@ -325,16 +325,6 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
-    compilerArgument {
-        name = "Xfake-override-validator"
-        description = "Enable the IR fake override validator.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_4_30,
-        )
-    }
-
     @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xir-dce-runtime-diagnostic"

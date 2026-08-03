@@ -29,9 +29,6 @@ object NativeConfigurationKeys {
     val DEBUG = CompilerConfigurationKey.create<Boolean>("DEBUG")
 
     @JvmField
-    val FAKE_OVERRIDE_VALIDATOR = CompilerConfigurationKey.create<Boolean>("FAKE_OVERRIDE_VALIDATOR")
-
-    @JvmField
     val EMIT_LAZY_OBJC_HEADER_FILE = CompilerConfigurationKey.create<String>("EMIT_LAZY_OBJC_HEADER_FILE")
 
     @JvmField
@@ -287,10 +284,6 @@ var CompilerConfiguration.checkDependencies: Boolean
 var CompilerConfiguration.debug: Boolean
     get() = getBoolean(NativeConfigurationKeys.DEBUG)
     set(value) { put(NativeConfigurationKeys.DEBUG, value) }
-
-var CompilerConfiguration.fakeOverrideValidator: Boolean
-    get() = getBoolean(NativeConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)
-    set(value) { put(NativeConfigurationKeys.FAKE_OVERRIDE_VALIDATOR, value) }
 
 var CompilerConfiguration.emitLazyObjcHeaderFile: String?
     get() = get(NativeConfigurationKeys.EMIT_LAZY_OBJC_HEADER_FILE)

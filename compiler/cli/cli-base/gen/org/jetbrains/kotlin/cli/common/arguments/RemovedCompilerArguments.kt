@@ -249,6 +249,20 @@ It has no effect when -language-version is 2.0 or higher.""",
         level = DeprecationLevel.ERROR,
     )
     @Argument(
+        value = "-Xfake-override-validator",
+        description = "Enable the IR fake override validator.",
+        removedVersion = "2.5.0",
+    )
+    var fakeOverrideValidator: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
         value = "-Xklib-normalize-absolute-path",
         description = "Normalize absolute paths in klibs.",
         deprecatedVersion = "2.4.20",
