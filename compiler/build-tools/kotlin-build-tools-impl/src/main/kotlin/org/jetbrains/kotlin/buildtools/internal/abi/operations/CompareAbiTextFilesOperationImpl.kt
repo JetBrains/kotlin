@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.abi.operations.CompareAbiTextFilesOperation
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.ExecutionContext
 import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
 import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.buildtools.internal.initializeOptions
-import java.io.File
 import java.nio.file.Path
 
 internal class CompareAbiTextFilesOperationImpl private constructor(
@@ -43,7 +43,7 @@ internal class CompareAbiTextFilesOperationImpl private constructor(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        sessionIsAliveFlagFile: Lazy<File>
+        executionContext: ExecutionContext
     ) {
         val diff = abiTools.filesDiff(
             expectedDumpFile.toFile(),
