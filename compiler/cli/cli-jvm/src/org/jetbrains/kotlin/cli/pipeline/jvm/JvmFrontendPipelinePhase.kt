@@ -673,6 +673,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 it.packagePartProviders,
                 SingleJavaFileRootsIndex(singleJavaFileRoots),
                 configuration.usePsiClassFilesReading,
+                javaModuleFinder,
                 perfManager,
             )
         }

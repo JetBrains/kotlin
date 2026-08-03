@@ -276,6 +276,7 @@ class KotlinCoreEnvironment private constructor(
             packagePartProviders,
             SingleJavaFileRootsIndex(singleJavaFileRoots),
             configuration.getBoolean(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING),
+            javaModuleFinder,
             perfManager,
         )
 

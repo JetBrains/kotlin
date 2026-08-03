@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -240,6 +242,10 @@ class KotlinCliJavaFileManagerTest {
             emptyList(),
             SingleJavaFileRootsIndex(emptyList()),
             usePsiClassFilesReading = false,
+            javaModuleFinder = object : JavaModuleFinder {
+                // Should not matter for those tests
+                override fun findModule(name: String): JavaModule? = null
+            },
             perfManager = null, // Don't care about performance measurements in these custom tests
         )
 

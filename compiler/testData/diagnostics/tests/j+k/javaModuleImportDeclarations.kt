@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-84499
 // WITH_STDLIB
 // JDK_KIND: FULL_JDK_25
@@ -14,7 +14,7 @@ public class ExampleParent {
 
 // FILE: main.kt
 class ExampleChild : ExampleParent() {
-    override fun examples(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Set<String><!> {
+    override fun examples(): Set<String> {
         return setOf("hello", "kotlin")
     }
 }

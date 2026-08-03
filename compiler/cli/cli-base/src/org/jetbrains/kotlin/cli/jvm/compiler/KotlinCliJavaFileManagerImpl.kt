@@ -31,16 +31,17 @@ import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
-import org.jetbrains.kotlin.load.java.structure.impl.source.SingleFileRootPsiPackage
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.ClassifierResolutionContext
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.isNotTopLevelClass
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
+import org.jetbrains.kotlin.load.java.structure.impl.source.SingleFileRootPsiPackage
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseSideType
 import org.jetbrains.kotlin.util.tryMeasureSideTime
@@ -57,6 +58,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     private lateinit var index: JvmDependenciesIndex
     private lateinit var singleJavaFileRootsIndex: SingleJavaFileRootsIndex
     private lateinit var packagePartProviders: List<PackagePartProvider>
+    private lateinit var javaModuleFinder: JavaModuleFinder
 
     /**
      * Caches the [VirtualFile]s found in [index] for the key [FqName].
@@ -78,12 +80,14 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         packagePartProviders: List<PackagePartProvider>,
         singleJavaFileRootsIndex: SingleJavaFileRootsIndex,
         usePsiClassFilesReading: Boolean,
+        javaModuleFinder: JavaModuleFinder,
         perfManager: PerformanceManager?,
     ) {
         this.index = index
         this.packagePartProviders = packagePartProviders
         this.singleJavaFileRootsIndex = singleJavaFileRootsIndex
         this.usePsiClassFilesReading = usePsiClassFilesReading
+        this.javaModuleFinder = javaModuleFinder
         this.perfManager = perfManager
     }
 
@@ -280,8 +284,12 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     }
 
     override fun findModules(moduleName: String, scope: GlobalSearchScope): Collection<PsiJavaModule> {
-        // TODO
-        return emptySet()
+        // Module import declarations (`import module M;` in Java sources, JEP 511) are resolved by the platform via
+        // `JavaPsiFacade.findModules`, which delegates here.
+        val moduleInfoFile = javaModuleFinder.findModule(moduleName)?.moduleInfoFile ?: return emptySet()
+        if (moduleInfoFile !in scope) return emptySet()
+        val moduleDeclaration = (myPsiManager.findFile(moduleInfoFile) as? PsiJavaFile)?.moduleDeclaration ?: return emptySet()
+        return listOf(moduleDeclaration)
     }
 
     override fun getNonTrivialPackagePrefixes(): Collection<String> = emptyList()
