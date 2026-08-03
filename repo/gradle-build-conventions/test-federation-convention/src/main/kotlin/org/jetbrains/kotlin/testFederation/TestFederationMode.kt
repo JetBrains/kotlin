@@ -15,8 +15,8 @@ package org.jetbrains.kotlin.testFederation
  * All tests marked as '@SmokeTest' will be executed.
  * All contracts to affected [Domain]s will be executed.
  * For example,
- * If the current domain is [Domain.Gradle], but changes identified the [Domain.Compiler] as 'affected', then all tests marked as
- * `@CompilerContract` will be executed in addition to all smoke tests.
+ * If the current domain is [Domain.Gradle], but changes identified the [Domain.CompilerInfrastructure] as 'affected', then all tests marked as
+ * `@AffectedByCompilerInfrastructure` will be executed in addition to all smoke tests.
  */
 enum class TestFederationMode {
     Full, Smoke;

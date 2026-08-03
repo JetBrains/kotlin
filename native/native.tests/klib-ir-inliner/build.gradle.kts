@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
 
 plugins {
     id("common-configuration")
@@ -69,6 +71,7 @@ projectTests {
         enableGroupingTestEngine = true,
         maxHeapSize = testMaxHeapSizeLarge
     ) {
+        testFederationAllowAffectedBy = setOf(Domain.CompilerInfrastructure)
         val testTargetName = providers.gradleProperty("kotlin.internal.native.test.target")
             .orElse(providers.gradleProperty("kn.target"))
             .getOrElse(HostManager.hostName)

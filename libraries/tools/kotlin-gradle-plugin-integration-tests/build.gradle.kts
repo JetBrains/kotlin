@@ -3,6 +3,8 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
 import java.nio.file.Paths
 
 plugins {
@@ -238,51 +240,11 @@ enum class JunitTag {
     SwiftPMImportKGP
 }
 
-/*
-Running those integration tests is resource intensive
-We use this service as semaphore, allowing only one test task to be executed at once.
-This approach allows calling multiple tests tasks at once without having to pass the --no-parallel flag
-*/
-abstract class TestSemaphoreService : BuildService<BuildServiceParameters.None>
-val testSemaphore = gradle.sharedServices.registerIfAbsent("$path.testSemaphore", TestSemaphoreService::class.java) {
-    maxParallelUsages = 1
-}
-
-if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
-    val junitTags = JunitTag.values().filter { it !in setOf(JunitTag.SwiftExportKGP, JunitTag.SwiftPMImportKGP) }.map { it.name }
-    val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
-
-    junitTags.forEach { junitTag ->
-        val taskPrefix = "kgp${junitTag.substringBefore("KGP")}"
-        val tasksByGradleVersion = gradleVersions.map { gradleVersion ->
-            tasks.register<Test>("${taskPrefix}TestsForGradle_${gradleVersion.replace(".", "_")}") {
-                group = gradleVersionTaskGroup
-                description = "Runs all tests for Kotlin Gradle plugins against Gradle $gradleVersion"
-                maxParallelForks = maxParallelTestForks
-
-                classpath = sourceSets["test"].runtimeClasspath
-                testClassesDirs = sourceSets["test"].output.classesDirs
-                systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
-                systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
-
-                useJUnitPlatform {
-                    includeTags(junitTag)
-                    excludeTags(*(junitTags - junitTag).toTypedArray())
-                }
-            }
-        }
-
-        tasks.register("${taskPrefix}TestsGroupedByGradleVersion") {
-            group = gradleVersionTaskGroup
-            dependsOn(tasksByGradleVersion)
-        }
-    }
-}
-
 tasks.register<Test>("kgpAllParallelTests") {
     group = KGP_TEST_TASKS_GROUP
     description = "Runs all tests for Kotlin Gradle plugins except daemon ones"
     maxParallelForks = maxParallelTestForks
+    testFederationAllowAffectedBy = setOf(Domain.CompilerInfrastructure, Domain.BuildToolsApi, Domain.Native, Domain.Js, Domain.CompilerPlugins, Domain.SwiftExport)
 
     classpath = sourceSets["test"].runtimeClasspath
     testClassesDirs = sourceSets["test"].output.classesDirs
@@ -296,23 +258,27 @@ class TaskConfiguration(
     val taskName: String,
     val junitTag: JunitTag,
     val maxParallelForks: Int,
+    val domains: Set<Domain>,
 )
 
 fun JunitTag.taskConfiguration(
     description: String,
     taskName: String,
     maxParallelForks: Int = maxParallelTestForks,
-) = TaskConfiguration(description, taskName, this, maxParallelForks)
+    allowAffectedBy: Set<Domain> = emptySet(),
+) = TaskConfiguration(description, taskName, this, maxParallelForks, allowAffectedBy)
 
 val perTagJunitTasks = JunitTag.values().map { junitTag ->
     when (junitTag) {
         JunitTag.JvmKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/JVM part of Gradle plugin",
             "kgpJvmTests",
+            allowAffectedBy = setOf(Domain.CompilerInfrastructure, Domain.BuildToolsApi)
         )
         JunitTag.SwiftExportKGP -> junitTag.taskConfiguration(
             "Run Swift Export Kotlin Gradle plugin tests",
             "kgpSwiftExportTests",
+            allowAffectedBy = setOf(Domain.SwiftExport)
         )
         JunitTag.SwiftPMImportKGP -> junitTag.taskConfiguration(
             "Run SwiftPM import Kotlin Gradle plugin tests",
@@ -321,43 +287,84 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
         JunitTag.JsKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/JS part of Gradle plugin",
             "kgpJsTests",
+            allowAffectedBy = setOf(Domain.Js, Domain.BuildToolsApi, Domain.CompilerInfrastructure)
         )
 
         JunitTag.JsBrowserKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/JS part of Gradle plugin",
             "kgpJsBrowserTests",
+            allowAffectedBy = setOf(Domain.Js)
         )
         JunitTag.NativeKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/Native part of Gradle plugin",
             "kgpNativeTests",
+            allowAffectedBy = setOf(Domain.Native, Domain.BuildToolsApi, Domain.CompilerInfrastructure)
         )
         JunitTag.MppKGP -> junitTag.taskConfiguration(
             "Run Multiplatform Kotlin Gradle plugin tests",
             "kgpMppTests",
+            allowAffectedBy = setOf(Domain.BuildToolsApi, Domain.CompilerInfrastructure)
         )
         JunitTag.AndroidKGP -> junitTag.taskConfiguration(
             "Run Android Kotlin Gradle plugin tests",
             "kgpAndroidTests",
+            allowAffectedBy = setOf(Domain.CompilerPlugins)
         )
         JunitTag.OtherKGP -> junitTag.taskConfiguration(
             "Run tests for all support plugins, such as kapt, allopen, etc",
             "kgpOtherTests",
+            allowAffectedBy = setOf(Domain.CompilerPlugins, Domain.CompilerInfrastructure, Domain.BuildToolsApi)
         )
         JunitTag.DaemonsKGP -> junitTag.taskConfiguration(
             "Run only Gradle and Kotlin daemon tests for Kotlin Gradle Plugin",
             "kgpDaemonTests",
             maxParallelForks = 1,
+            allowAffectedBy = setOf(Domain.BuildToolsApi)
         )
     }
 }.map { junitTask ->
+    if (project.kotlinBuildProperties.isTeamcityBuild.get() && junitTask.junitTag !in setOf(
+            JunitTag.SwiftExportKGP,
+            JunitTag.SwiftPMImportKGP
+        )
+    ) {
+        val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
+
+        val taskPrefix = "kgp${junitTask.junitTag.name.substringBefore("KGP")}"
+        val tasksByGradleVersion = gradleVersions.map { gradleVersion ->
+            tasks.register<Test>("${taskPrefix}TestsForGradle_${gradleVersion.replace(".", "_")}") {
+                group = gradleVersionTaskGroup
+                description = junitTask.description + " against Gradle $gradleVersion"
+                maxParallelForks = maxParallelTestForks
+                testFederationAllowAffectedBy = junitTask.domains
+
+                classpath = sourceSets["test"].runtimeClasspath
+                testClassesDirs = sourceSets["test"].output.classesDirs
+                systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
+                systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
+
+                useJUnitPlatform {
+                    includeTags(junitTask.junitTag.name)
+                    excludeTags(*JunitTag.entries.filterNot { it == junitTask.junitTag }.map { it.name }.toTypedArray())
+                }
+            }
+        }
+
+        tasks.register("${taskPrefix}TestsGroupedByGradleVersion") {
+            group = gradleVersionTaskGroup
+            dependsOn(tasksByGradleVersion)
+        }
+    }
+
     tasks.register<Test>(junitTask.taskName) {
         group = KGP_TEST_TASKS_GROUP
         description = junitTask.description
         maxParallelForks = junitTask.maxParallelForks
 
+        testFederationAllowAffectedBy = junitTask.domains
         useJUnitPlatform {
             includeTags(junitTask.junitTag.name)
-            excludeTags(*JunitTag.values().filterNot { it == junitTask.junitTag }.map { it.name }.toTypedArray())
+            excludeTags(*JunitTag.entries.filterNot { it == junitTask.junitTag }.map { it.name }.toTypedArray())
         }
     }
 }
@@ -422,7 +429,7 @@ tasks.withType<Test>().configureEach {
 
     // Keep in sync with the default value for [enableGradleDaemonMemoryLimitInMb] in testDsl.kt for runs withDebug to not OOM
     maxHeapSize = testMaxHeapSizeSmall.toJvmArg()
-    usesService(testSemaphore)
+    //    usesService(testSemaphore)
 
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()

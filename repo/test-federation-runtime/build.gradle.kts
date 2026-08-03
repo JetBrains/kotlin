@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
 import org.jetbrains.kotlin.testFederation.fromArgumentStringOrThrow
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
 import org.jetbrains.kotlin.testFederation.testFederationDomains
 
 plugins {
@@ -47,6 +48,7 @@ tasks.withType<Test>().configureEach {
             else -> error("Unknown _PSEUDO_TEST_ configuration")
         }
     }
+    testFederationAllowAffectedBy = setOf(Domain.Js, Domain.Wasm, Domain.Gradle)
 
     @OptIn(DelicateTestFederationApi::class)
     providers.environmentVariable("_DOMAINS_OVERRIDE_").orNull?.let { value ->

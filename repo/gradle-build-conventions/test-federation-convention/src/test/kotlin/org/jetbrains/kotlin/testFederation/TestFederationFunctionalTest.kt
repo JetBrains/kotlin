@@ -80,6 +80,37 @@ class TestFederationFunctionalTest {
     }
 
     @Test
+    fun `test - smoke - unused contract`() {
+        val result = runTestBuild(TestFederationMode.Smoke, Domain.Maven)
+        assertEquals(
+            setOf("<none>"),
+            result.affectedDomains
+        )
+        assertEquals(
+            setOf(
+                TestResult("PseudoTest", "smoke test"),
+            ),
+            result.executedTests
+        )
+    }
+
+    @Test
+    fun `test - smoke - js and unused contract`() {
+        val result = runTestBuild(TestFederationMode.Smoke, Domain.Maven, Domain.Js)
+        assertEquals(
+            setOf("Js"),
+            result.affectedDomains
+        )
+        assertEquals(
+            setOf(
+                TestResult("PseudoTest", "smoke test"),
+                TestResult("PseudoTest", "js contract test"),
+            ),
+            result.executedTests
+        )
+    }
+
+    @Test
     fun `test - smoke - executes contracts of changed domains only`() {
         val result = runTestBuild(
             TestFederationMode.Smoke,
@@ -362,6 +393,31 @@ class TestFederationFunctionalTest {
     }
 
     @Test
+    fun `test - build cache can be reused in smoke mode - even if unnused domains are added`(@TempDir cache: Path) {
+        val buildCacheArgs = buildCacheArgs(cache)
+        cleanTest()
+        runTestBuild(
+            mode = TestFederationMode.Smoke,
+            affected = listOf(Domain.Js),
+            additionalCliArgs = buildCacheArgs,
+            rerun = false,
+        ).apply {
+            assertEquals(TaskOutcome.SUCCESS, buildResult.requireTask(":repo:test-federation-runtime:test").outcome)
+            assertEquals(setOf(TestResult("PseudoTest", "smoke test"), TestResult("PseudoTest", "js contract test")), executedTests)
+        }
+
+        cleanTest()
+        runTestBuild(
+            mode = TestFederationMode.Smoke,
+            affected = listOf(Domain.Js, Domain.Maven),
+            additionalCliArgs = buildCacheArgs,
+            rerun = false,
+        ).apply {
+            assertEquals(TaskOutcome.FROM_CACHE, buildResult.requireTask(":repo:test-federation-runtime:test").outcome)
+        }
+    }
+
+    @Test
     fun `infer affected domains reports changed domains to TeamCity`() {
         val result = createGradleRunner().withArguments(
             "inferAffectedDomains",
@@ -395,6 +451,7 @@ private val allTests = setOf(
 
 private data class TestBuildResult(
     val buildResult: BuildResult,
+    val affectedDomains: Set<String>,
     val executedTests: Set<TestResult>,
 ) {
     data class TestResult(val className: String, val methodName: String, val status: String = "PASSED") {
@@ -472,6 +529,9 @@ private fun runTestBuild(
 
     val output = buildResult.output.lineSequence().toList()
 
+    val affectedDomainsRegex = Regex("Affected Domains: '(.*)'")
+    val affectedDomains: List<String> = output
+        .flatMap { affectedDomainsRegex.matchEntire(it)?.groupValues?.get(1)?.split(";") ?: emptyList() }
     val testResultRegex = Regex("(?<testClass>.*) > (?<testName>.*)\\(\\) (?<status>.*)")
     val tests = output.mapNotNull { line ->
         val match = testResultRegex.matchEntire(line) ?: return@mapNotNull null
@@ -484,7 +544,7 @@ private fun runTestBuild(
          */
         .filterNot { it.status == "SKIPPED" }.toSet()
 
-    return TestBuildResult(buildResult, tests)
+    return TestBuildResult(buildResult, affectedDomains.toSet(), tests)
 }
 
 private fun cleanTest(): BuildResult {
