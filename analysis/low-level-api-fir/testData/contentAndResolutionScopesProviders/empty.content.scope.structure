@@ -1,0 +1,6 @@
+Resulting Content Scope Structure:
+Module MAIN:
+IntersectionScope
+    FileScope: module_MAIN_empty.kt
+    NotScope
+        EmptyScope

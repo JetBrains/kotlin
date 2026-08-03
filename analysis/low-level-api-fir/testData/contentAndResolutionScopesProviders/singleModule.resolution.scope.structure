@@ -1,0 +1,38 @@
+Resulting Resolution Scope Structure:
+Module MAIN:
+UnionScope
+    IntersectionScope
+        KaFirJvmLibraryRestrictionScope
+        ParentTraversalLibrarySearchScope
+    IntersectionScope
+        KaFirJvmLibraryRestrictionScope
+        ParentTraversalLibrarySearchScope
+    IntersectionScope
+        KaFirJvmLibraryRestrictionScope
+        ParentTraversalLibrarySearchScope
+    IntersectionScope
+        KaFirJvmLibraryRestrictionScope
+        ParentTraversalLibrarySearchScope
+    IntersectionScope
+        NotScope
+            FilesScope
+                files:
+                    a.kt
+                    b.kt
+        UnionScope
+            FileScope: a.kt
+            FilesScope
+                files:
+                    c.kt
+                    d.kt
+    KotlinBuiltinsFileScope
+        FilesScope
+            files:
+                annotation.kotlin_builtins
+                atomics.kotlin_builtins
+                collections.kotlin_builtins
+                coroutines.kotlin_builtins
+                internal.kotlin_builtins
+                kotlin.kotlin_builtins
+                ranges.kotlin_builtins
+                reflect.kotlin_builtins
