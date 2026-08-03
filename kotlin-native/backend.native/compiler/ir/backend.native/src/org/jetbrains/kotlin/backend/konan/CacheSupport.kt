@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.LegacyKlibDependencies
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer
@@ -73,10 +72,10 @@ class CacheSupport(
         target: KonanTarget,
         val produce: CompilerOutputKind
 ) {
-    private val allLibraries = resolvedLibraries.getFullList()
+    private val allKlibs by lazy { CachedKlibs(resolvedLibraries.getFullList()) }
 
     // TODO: consider using [FeaturedLibraries.kt].
-    private val pathToLibrary = allLibraries.associateBy { it.path }
+    private val pathToLibrary = allKlibs.allLibraries.associateBy { it.path }
 
     private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!
             .map {
@@ -132,7 +131,7 @@ class CacheSupport(
         CachedLibraries(
                 configuration = configuration,
                 target = target,
-                allLibraries = allLibraries,
+                allKlibs = allKlibs,
                 explicitCaches = if (ignoreCachedLibraries) emptyMap() else explicitCaches,
                 implicitCacheDirectories = if (ignoreCachedLibraries) emptyList() else implicitCacheDirectories,
                 autoCacheDirectory = autoCacheDirectory,
@@ -145,7 +144,7 @@ class CacheSupport(
             pathToLibrary[path] ?: error("library to cache\n" +
                     "  ${path.absolutePathString()}\n" +
                     "not found among resolved libraries:\n  " +
-                    allLibraries.joinToString("\n  ") { it.path.absolutePathString() })
+                    allKlibs.allLibraries.joinToString("\n  ") { it.path.absolutePathString() })
 
     internal val libraryToCache = configuration.konanLibraryToAddToCache?.let {
         val libraryToAddToCacheFile = Path(it)
@@ -174,13 +173,10 @@ class CacheSupport(
 
     fun checkConsistency() {
         // Ensure dependencies of every cached library are cached too:
-        val libraries = resolvedLibraries.getFullList()
-        val dependenciesMap = LegacyKlibDependencies(libraries)
-
-        for (library in libraries) {
+        for (library in allKlibs.allLibraries) {
             val cache = cachedLibraries.getLibraryCache(library)
             if (cache != null || library == libraryToCache?.klib) {
-                val dependencies = dependenciesMap.getDependenciesFor(library)
+                val dependencies = allKlibs.getAllTransitiveDependencies(library)
                 for (dependency in dependencies) {
                     if (!cachedLibraries.isLibraryCached(dependency) && dependency != libraryToCache?.klib) {
                         val description = if (cache != null) "cached (in ${cache.path})" else "going to be cached"
