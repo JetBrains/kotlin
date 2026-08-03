@@ -1,0 +1,51 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-86022
+
+// FILE: secondKindIncorporationExponentialSimplified.kt
+interface Factory<T>
+interface ExtendedEntity<T : ExtendedEntity<T>>
+
+class OtherFactory<T1 : ExtendedEntity<T1>> : Factory<T1>
+
+class Column<T>
+
+fun <X1> string1(name: String): Column<X1> = TODO()
+fun <X2> string2(name: String): Column<X2> = TODO()
+fun <X3> string3(name: String): Column<X3> = TODO()
+fun <X4> string4(name: String): Column<X4> = TODO()
+fun <X5> string5(name: String): Column<X5> = TODO()
+fun <X6> string6(name: String): Column<X6> = TODO()
+fun <X7> string7(name: String): Column<X7> = TODO()
+fun <X8> string8(name: String): Column<X8> = TODO()
+fun <X9> string9(name: String): Column<X9> = TODO()
+
+fun <T2 : Any> foo(
+    factory: Factory<T2>,
+    x1: Column<T2>,
+    x2: Column<T2>,
+    x3: Column<T2>,
+    x4: Column<T2>,
+    x5: Column<T2>,
+    x6: Column<T2>,
+    x7: Column<T2>,
+    x8: Column<T2>,
+    x9: Column<T2>,
+) {}
+
+fun bar() {
+    <!TYPE_MISMATCH!>foo(
+        <!UPPER_BOUND_VIOLATED!>OtherFactory<!>(),
+        string1("C_1"),
+        string2("C_2"),
+        string3("C_3"),
+        string4("C_4"),
+        string5("C_5"),
+        string6("C_6"),
+        string7("C_7"),
+        string8("C_8"),
+        string9("C_9"),
+    )<!>
+}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, stringLiteral,
+typeConstraint, typeParameter */
