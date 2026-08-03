@@ -1,60 +1,61 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package hair.ir.nodes
 
 import hair.sym.*
 import hair.ir.*
-import hair.sym.Type.*
 
-sealed interface AnyCall : ValueNode {
-    
-    
-}
-
+sealed interface AnyCall : ValueNode
 
 sealed class AnyInvoke(form: Form, args: List<Node?>) : BlockBodyWithException(form, args), AnyCall {
     abstract val function: HairFunction
-    val callArgsIndex: Int = 1
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitAnyInvoke(this)
-}
 
+    val callArgsIndex: Int = 1
+
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitAnyInvoke(this)
+
+}
 
 class InvokeStatic internal constructor(form: Form, control: Controlling?, vararg callArgs: Node?) : AnyInvoke(form, listOf(control, *callArgs)) {
     class Form internal constructor(metaForm: MetaForm, val function: HairFunction) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
         override val args = listOf<Any>(function)
+
     }
-    
+
     override val function: HairFunction by form::function
-    
-    
+
     override fun paramName(index: Int): String = when (index) {
         0 -> "control"
         else -> "callArgs"
     }
-    
+
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitInvokeStatic(this)
+
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "InvokeStatic")
     }
 }
 
-
 class InvokeVirtual internal constructor(form: Form, control: Controlling?, vararg callArgs: Node?) : AnyInvoke(form, listOf(control, *callArgs)) {
     class Form internal constructor(metaForm: MetaForm, val function: HairFunction) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
         override val args = listOf<Any>(function)
+
     }
-    
+
     override val function: HairFunction by form::function
-    
-    
+
     override fun paramName(index: Int): String = when (index) {
         0 -> "control"
         else -> "callArgs"
     }
-    
+
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitInvokeVirtual(this)
+
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "InvokeVirtual")
     }
 }
-
 
