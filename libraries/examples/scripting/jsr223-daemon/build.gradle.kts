@@ -42,7 +42,7 @@ dependencies {
 // picks the scripting K2 compiler plugin registrar up automatically - this module never needs to
 // synthesize a `-Xplugin` services jar, because it never runs through a shaded/relocated compiler
 // artifact.
-val daemonCompilerClasspath by configurations.creating
+val daemonCompilerClasspath = configurations.create("daemonCompilerClasspath")
 
 dependencies {
     add(daemonCompilerClasspath.name, project(":kotlin-compiler"))
