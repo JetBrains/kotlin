@@ -56,18 +56,20 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         if (explicitApiState == null && explicitReturnTypesState == null) return
         // Enum entries do not have visibilities
         if (element is FirEnumEntry) return
-        if (!element.effectiveVisibility.publicApi && element.publishedApiEffectiveVisibility == null) return
-
         val containerEffectiveVisibility = when (val lastContainingDeclaration = context.containingDeclarations.lastOrNull()) {
             is FirClassSymbol<*> -> lastContainingDeclaration.effectiveVisibility
             is FirCallableSymbol<*> -> lastContainingDeclaration.effectiveVisibility
             else -> null
         }
-        if (containerEffectiveVisibility?.publicApi == false) {
+
+        val shouldReportExplicitApi = (element.effectiveVisibility.publicApi || element.publishedApiEffectiveVisibility != null)
+                && containerEffectiveVisibility?.publicApi != false
+        val shouldReportNonLocalFunction = explicitReturnTypesState != null && element is FirNamedFunction && !element.isLocal
+        if (!shouldReportExplicitApi && !shouldReportNonLocalFunction) {
             return
         }
 
-        if (explicitApiState != null) {
+        if (explicitApiState != null && shouldReportExplicitApi) {
             checkVisibilityModifier(explicitApiState, element, source)
         }
 
