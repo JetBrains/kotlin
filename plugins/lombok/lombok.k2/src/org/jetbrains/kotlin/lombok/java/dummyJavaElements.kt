@@ -7,27 +7,26 @@ package org.jetbrains.kotlin.lombok.java
 
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.load.java.structure.*
-import org.jetbrains.kotlin.lombok.LombokNames
+import org.jetbrains.kotlin.lombok.LombokNames.JAVA_COLLECTION_ID
+import org.jetbrains.kotlin.lombok.LombokNames.JAVA_ITERABLE_ID
+import org.jetbrains.kotlin.lombok.LombokNames.JAVA_MAP_ID
+import org.jetbrains.kotlin.lombok.LombokNames.JAVA_OBJECT_ID
+import org.jetbrains.kotlin.lombok.LombokNames.TABLE_ID
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 object JavaClasses {
-    val Object = DummyJavaClass(javaLangName("Object"), numberOfTypeParameters = 0)
-    val Iterable = DummyJavaClass(javaLangName("Iterable"), numberOfTypeParameters = 1)
-    val Collection = DummyJavaClass(javaUtilName("Collection"), numberOfTypeParameters = 1)
-    val Map = DummyJavaClass(javaUtilName("Map"), numberOfTypeParameters = 2)
-    val Table = DummyJavaClass(LombokNames.TABLE, numberOfTypeParameters = 3)
-
-    private fun javaUtilName(name: String): FqName {
-        return FqName.fromSegments(listOf("java", "util", name))
-    }
-
-    private fun javaLangName(name: String): FqName {
-        return FqName.fromSegments(listOf("java", "lang", name))
-    }
+    val Object = DummyJavaClass(JAVA_OBJECT_ID, numberOfTypeParameters = 0)
+    val Iterable = DummyJavaClass(JAVA_ITERABLE_ID, numberOfTypeParameters = 1)
+    val Collection = DummyJavaClass(JAVA_COLLECTION_ID, numberOfTypeParameters = 1)
+    val Map = DummyJavaClass(JAVA_MAP_ID, numberOfTypeParameters = 2)
+    val Table = DummyJavaClass(TABLE_ID, numberOfTypeParameters = 3)
 }
 
-class DummyJavaClass(override val fqName: FqName, numberOfTypeParameters: Int) : JavaClass {
+class DummyJavaClass(val classId: ClassId, numberOfTypeParameters: Int) : JavaClass {
+    override val fqName: FqName = classId.asSingleFqName()
     override val name: Name = fqName.shortName()
 
     override val isFromSource: Boolean
@@ -78,7 +77,7 @@ class DummyJavaClass(override val fqName: FqName, numberOfTypeParameters: Int) :
         get() = shouldNotBeCalled()
     override val permittedTypes: Sequence<JavaClassifierType>
         get() = shouldNotBeCalled()
-    override val lightClassOriginKind: LightClassOriginKind?
+    override val lightClassOriginKind: LightClassOriginKind
         get() = shouldNotBeCalled()
     override val methods: Collection<JavaMethod>
         get() = shouldNotBeCalled()
@@ -109,5 +108,3 @@ class DummyJavaTypeParameter(override val name: Name) : JavaTypeParameter {
     override val upperBounds: Collection<JavaClassifierType>
         get() = emptyList()
 }
-
-private fun shouldNotBeCalled(): Nothing = error("should not be called")
