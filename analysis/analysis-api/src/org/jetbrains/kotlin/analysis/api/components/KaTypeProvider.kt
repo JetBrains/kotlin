@@ -282,6 +282,12 @@ public interface KaTypeProvider : KaSessionComponent {
      * Collects all the implicit receiver types available at the given [position]. The resulting list is ordered from the outermost to the
      * innermost receiver type.
      */
+    @Deprecated(
+        message = "The API is obsolete. Use `scopeContext` instead.",
+        replaceWith = ReplaceWith(
+            expression = "position.containingKtFile.scopeContext(position).implicitReceivers.map { it.type }",
+        )
+    )
     public fun collectImplicitReceiverTypes(position: KtElement): List<KaType>
 
     /**
@@ -910,8 +916,16 @@ public fun KaType.hasCommonSubtypeWith(that: KaType): Boolean {
  * Collects all the implicit receiver types available at the given [position]. The resulting list is ordered from the outermost to the
  * innermost receiver type.
  */
+@Deprecated(
+    message = "The API is obsolete. Use `scopeContext` instead.",
+    replaceWith = ReplaceWith(
+        expression = "position.containingKtFile.scopeContext(position).implicitReceivers.map { it.type }",
+        imports = ["org.jetbrains.kotlin.analysis.api.components.scopeContext"],
+    )
+)
 context(session: KaSession)
 public fun collectImplicitReceiverTypes(position: KtElement): List<KaType> {
+    @Suppress("DEPRECATION")
     return with(session) {
         collectImplicitReceiverTypes(
             position = position,

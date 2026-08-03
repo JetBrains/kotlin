@@ -105,6 +105,13 @@ internal class KaTypeProviderBridge(
     override val KaType.arrayElementType: KaType?
         get() = context(analysisSession) { arrayElementTypeEndpoint }
 
+    @Deprecated(
+        message = "The API is obsolete. Use `scopeContext` instead.",
+        replaceWith = ReplaceWith(
+            expression = "position.containingKtFile.scopeContext(position).implicitReceivers.map { it.type }",
+            imports = ["org.jetbrains.kotlin.analysis.api.components.scopeContext"],
+        )
+    )
     override fun collectImplicitReceiverTypes(position: KtElement): List<KaType> =
         analysisSession.typeProvider.collectImplicitReceiverTypes(position)
 
