@@ -1,0 +1,14 @@
+// RUN_PIPELINE_TILL: BACKEND
+// ISSUE: KT-85899
+
+interface Inv<E>
+
+operator fun <T : (A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23, A24, A25, A26, A27, A28, A29, A30, A31, A32) -> R, R, A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23, A24, A25, A26, A27, A28, A29, A30, A31, A32> Inv<T>.invoke(
+    arg1: A1, arg2: A2, arg3: A3, arg4: A4, arg5: A5, arg6: A6, arg7: A7, arg8: A8, arg9: A9, arg10: A10, arg11: A11, arg12: A12, arg13: A13, arg14: A14, arg15: A15, arg16: A16, arg17: A17, arg18: A18, arg19: A19, arg20: A20, arg21: A21, arg22: A22, arg23: A23, arg24: A24, arg25: A25, arg26: A26, arg27: A27, arg28: A28, arg29: A29, arg30: A30, arg31: A31, arg32: A32,
+) {}
+
+fun main(
+    x: Inv<(CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence) -> String>,
+) {
+    x("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+}
