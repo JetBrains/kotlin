@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,22 +13,17 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.scripting.compiler.plugin.KOTLIN_SCRIPTING_PLUGIN_ID
-import org.jetbrains.kotlin.scripting.compiler.plugin.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactSidecarProtoCodec
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactSidecar
-import org.jetbrains.kotlin.scripting.compiler.plugin.runWithK2JVMCompiler
-import org.jetbrains.kotlin.scripting.compiler.plugin.withTempDir
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactSidecarProtoCodec
+import org.jetbrains.kotlin.scripting.test.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
+import org.jetbrains.kotlin.scripting.test.runWithK2JVMCompiler
+import org.jetbrains.kotlin.scripting.test.withTempDir
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Files
-import kotlin.script.experimental.api.CompiledSnippet
-import kotlin.script.experimental.api.KotlinType
-import kotlin.script.experimental.api.ResultValue
-import kotlin.script.experimental.api.ResultWithDiagnostics
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.ScriptEvaluationConfiguration
+import kotlin.script.experimental.api.*
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.KJvmEvaluatedSnippet
 import kotlin.script.experimental.jvm.impl.KJvmCompiledModuleFromClassPath
@@ -36,11 +31,7 @@ import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.util.LinkedSnippetImpl
 import kotlin.script.experimental.util.add
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
-import kotlin.test.fail
+import kotlin.test.*
 
 /**
  * Tests exercising REPL-snippet chaining on the **regular** JVM frontend/backend, driven directly
