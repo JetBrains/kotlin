@@ -256,6 +256,7 @@ tasks {
         dependsOnAll("publish", coreLibsPublishable)
     }
 
+    // === Build: BootstrapTest ===
     val coreLibsTest = testLifecycleTask("coreLibsTest") {
         dependsOnAll(
             task = "check",
@@ -268,16 +269,19 @@ tasks {
         )
     }
 
+    // === Build: GradlePluginTests ===
     val gradlePluginTest = testLifecycleTask("gradlePluginTest") {
         gradlePluginProjects.forEach {
             dependsOn("$it:check")
         }
     }
 
+    // === Build: CheckBuildTest (used only in `configurationCacheSmokeTests`) ===
     testLifecycleTask("gradlePluginIntegrationTest") {
         dependsOn(":kotlin-gradle-plugin-integration-tests:check")
     }
 
+    // === Build: JVMCompilerTests ===
     val jvmCompilerTest = testLifecycleTask("jvmCompilerTest") {
         dependsOn(
             ":compiler:tests-common-new:test",
@@ -287,10 +291,12 @@ tasks {
         )
     }
 
+    // === could be dropped ===
     testLifecycleTask("testsForBootstrapBuildTest") {
         dependsOn(":compiler:tests-common-new:test")
     }
 
+    // === intermediate task ===
     val jvmCompilerIntegrationTest = testLifecycleTask("jvmCompilerIntegrationTest") {
         dependsOn(
             ":kotlin-compiler-embeddable:test",
@@ -298,16 +304,19 @@ tasks {
         )
     }
 
+    // === Used by Native Image builds (in a separate TC project) ===
     testLifecycleTask("nativeImageCompilerTest") {
         dependsOn(":kotlin-compiler-native-image:nativeImageBoxTest")
         dependsOn(":kotlin-compiler-native-image:nativeImageSmokeTest")
     }
 
+    // === Build: JSCompilerTestsES5 ===
     testLifecycleTask("jsCompilerTest") {
         dependsOn(":js:js.tests:jsTest")
         dependsOn(":compiler:ir.serialization.js:test")
     }
 
+    // === Build: WasmCompilerSmokeTestsK2_LINUX ===
     testLifecycleTask("wasmFirCompilerTest") {
         dependsOn(":wasm:wasm.tests:test")
         // Windows WABT release requires Visual C++ Redistributable
@@ -321,6 +330,7 @@ tasks {
     // - different cache policies
     // - different GCs
     // ...
+    // === Build: NativeCompilerTest ===
     testLifecycleTask("nativeCompilerTest") {
         dependsOn(":compiler:ir.serialization.native:test")
         dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
@@ -337,6 +347,7 @@ tasks {
 
     // Similar to nativeCompilerTest, but should be executed only on macOS host as these tests
     // technically or semantically depend on Xcode SDK.
+    // === Build: NativeCompilerTest ===
     testLifecycleTask("nativeAppleSpecificTests") {
         dependsOn(":native:objcexport-header-generator:check")
         dependsOn(":native:swift:swift-export-embeddable:check")
@@ -346,6 +357,7 @@ tasks {
     }
 
     // These are unit tests of Native compiler
+    // === Build: NativeCompilerUnitTest ===
     testLifecycleTask("nativeCompilerUnitTest") {
         dependsOn(":native:kotlin-native-utils:check")
         dependsOn(":native:unsafe-mem:check")
@@ -362,11 +374,13 @@ tasks {
         }
     }
 
+    // === Build: KlibIrInlinerTest ===
     testLifecycleTask("klibIrTest") {
         dependsOn(":tools:binary-compatibility-validator:check")
         dependsOn(":native:native.tests:klib-ir-inliner:check")
     }
 
+    // === Build: FirCompilerTests ===
     testLifecycleTask("firCompilerTest") {
         dependsOn(":compiler:fir:raw-fir:psi2fir:test")
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
@@ -375,11 +389,13 @@ tasks {
         dependsOn(":compiler:fir:fir2ir:aggregateTests")
     }
 
+    // === Build: FirCompilerNightlyTests ===
     testLifecycleTask("nightlyFirCompilerTest") {
         dependsOn(":compiler:fir:fir2ir:nightlyTests")
         dependsOn(":compiler:fastJarFSLongTests")
     }
 
+    // === Build: CheckBuildTest (used only in `configurationCacheSmokeTests`) ===
     val scriptingTest = testLifecycleTask("scriptingJvmTest") {
         dependsOn(":kotlin-scripting-compiler:test")
         dependsOn(":kotlin-scripting-common:test")
@@ -395,11 +411,13 @@ tasks {
         dependsOn(":kotlin-scripting-jsr223-test:test")
     }
 
+    // === intermediate task ===
     val incrementalCompilationTest = testLifecycleTask("incrementalCompilationTest") {
         dependsOn(":compiler:incremental-compilation-impl:test")
         dependsOn(":compiler:incremental-compilation-impl:testJvmICWithJdk11")
     }
 
+    // === intermediate task ===
     val compilerPluginTest = testLifecycleTask("compilerPluginTest") {
         dependsOn(":kotlin-allopen-compiler-plugin:test")
         dependsOn(":kotlin-assignment-compiler-plugin:test")
@@ -418,6 +436,8 @@ tasks {
         dependsOn(scriptingTest)
     }
 
+    // === Build: CheckBuildTest (used only in `configurationCacheSmokeTests`) ===
+    // === Build: MiscCompilerTests ===
     val miscCompilerTest = testLifecycleTask("miscCompilerTest") {
         dependsOn(":compiler:test")
         dependsOn(":compiler:tests-integration:test")
@@ -439,11 +459,13 @@ tasks {
         dependsOn(":core:language.version-settings:test")
     }
 
+    // === intermediate task ===
     val compilerTest = testLifecycleTask("compilerTest") {
         dependsOn(jvmCompilerTest)
         dependsOn(miscCompilerTest)
     }
 
+    // === intermediate task ===
     val toolsTest = testLifecycleTask("toolsTest") {
         dependsOn(":tools:kotlinp-jvm:test")
         dependsOn(":native:kotlin-klib-commonizer:test")
@@ -458,6 +480,7 @@ tasks {
         dependsOn(":libraries:tools:abi-validation:abi-tools-tests:check")
     }
 
+    // === intermediate task ===
     val examplesTest = testLifecycleTask("examplesTest") {
         dependsOn(dist)
         project(":examples").subprojects.forEach { p ->
@@ -465,6 +488,7 @@ tasks {
         }
     }
 
+    // === Build: MiscTests ===
     testLifecycleTask("miscTest") {
         dependsOn(coreLibsTest)
         dependsOn(toolsTest)
@@ -480,16 +504,19 @@ tasks {
         dependsOn(":kotlin-gradle-plugin-dsl-codegen:test")
     }
 
+    // === Build: BuildToolsApiTests ===
     val buildToolsApiTest = testLifecycleTask("buildToolsApiTest") {
         dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-api-forward-tests:check")
     }
 
+    // === Build: AnalysisApiTests ===
     val frontendApiTests = testLifecycleTask("frontendApiTests") {
         dependsOn(":analysis:analysisAllTests")
     }
 
+    // === unused ===
     testLifecycleTask("distTest") {
         dependsOn(compilerTest)
         dependsOn(frontendApiTests)
@@ -499,20 +526,25 @@ tasks {
         dependsOn(buildToolsApiTest)
     }
 
+    // === could be dropped ===
     testLifecycleTask("specTest") {
         dependsOn(dist)
         dependsOn(":compiler:tests-spec:test")
     }
 
+    // === could be dropped ===
     testLifecycleTask("androidCodegenTest") {
         dependsOn(":compiler:android-tests:test")
     }
 
+    // === Build: CheckBuildTest (used only in `configurationCacheSmokeTests`) ===
+    // === Build: JpsTests ===
     testLifecycleTask("jps-tests") {
         dependsOn(dist)
         dependsOn(":jps:jps-plugin:test")
     }
 
+    // === Build: KaptCompilerTests ===
     testLifecycleTask("kaptTests") {
         dependsOn(":kotlin-annotation-processing:test")
         dependsOn(":kotlin-annotation-processing:testJdk11")
@@ -520,15 +552,18 @@ tasks {
         dependsOn(":kotlin-annotation-processing-cli:test")
     }
 
+    // === Build: ParcelizeTests ===
     testLifecycleTask("parcelizeTests") {
         dependsOn(":plugins:parcelize:parcelize-compiler:test")
     }
 
+    // === Build: CodebaseTests ===
     testLifecycleTask("codebaseTests") {
         dependsOn(":repo:auto-code-review:test")
         dependsOn(":repo:codebase-tests:test")
     }
 
+    // === Build: StatisticsPluginTests ===
     testLifecycleTask("statisticsTests") {
         dependsOn(":kotlin-gradle-statistics:test")
     }
