@@ -184,6 +184,9 @@ fun <T> buildTree(
                 } else if (expression.isWhenSubjectAccess()) {
                     // Do not diagram implicit when-subjects.
                     data.addChild(HiddenNode(expression))
+                } else if (expression.startOffset < 0) {
+                    // Do not diagram expressions without source.
+                    data.addChild(HiddenNode(expression))
                 } else {
                     val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
                     expression.acceptChildren(this, chainNode)
