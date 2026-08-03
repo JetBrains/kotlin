@@ -19,15 +19,12 @@
 
 package org.jetbrains.kotlin.powerassert.diagram
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.powerassert.earliestStartOffset
 import org.jetbrains.kotlin.powerassert.getExplicitReceiver
 
 class SourceFile private constructor(
@@ -54,7 +51,8 @@ class SourceFile private constructor(
                 if (explicitReceiver != null) {
                     // When a function is called *not* with infix notation, the startOffset will not include the receiver.
                     // Force the range to include the receiver, so it is visible.
-                    range = element.earliestStartOffset..element.endOffset
+                    val sourceRange = element.sourceRange
+                    range = sourceRange.start..element.endOffset
 
                     // The offsets of the receiver will *not* include surrounding parentheses,
                     // so these need to be checked for manually.
@@ -73,18 +71,13 @@ class SourceFile private constructor(
     }
 
     fun getText(start: Int, end: Int): String {
+        if (start < 0 || end < 0) return ""
         return source.substring(maxOf(start, 0), minOf(end, source.length))
     }
 
     fun getRedactedTextBlock(info: SourceRangeInfo): String {
         val block = getText(info.startOffset - info.startColumnNumber, info.endOffset)
         return block.clearSourcePrefix(info.startColumnNumber)
-    }
-
-    fun getCompilerMessageLocation(element: IrElement): CompilerMessageLocation {
-        val info = getSourceRangeInfo(element)
-        val lineContent = getText(info)
-        return CompilerMessageLocation.create(irFile.path, info.startLineNumber, info.startColumnNumber, lineContent)!!
     }
 }
 
