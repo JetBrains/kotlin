@@ -1,0 +1,18 @@
+Resulting Content Scope Structure:
+Module LIBRARY:
+IntersectionScope
+    KaFirJvmLibraryRestrictionScope
+    NotScope
+        FileScope: b.class
+    UnionScope
+        FileScope: x.class
+        ParentTraversalLibrarySearchScope
+
+Module MAIN:
+IntersectionScope
+    FilesScope
+        files:
+            MANIFEST.MF
+            main.kt
+    NotScope
+        EmptyScope

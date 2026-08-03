@@ -1,0 +1,8 @@
+Resulting Content Scope Structure:
+Module MAIN:
+IntersectionScope
+    NotScope
+        FileScope: a.kt
+    UnionScope
+        FileScope: a.kt
+        FileScope: a.kt
