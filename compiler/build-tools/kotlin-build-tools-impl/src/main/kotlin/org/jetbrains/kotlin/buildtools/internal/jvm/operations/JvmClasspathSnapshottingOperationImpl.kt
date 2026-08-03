@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshotti
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
-import java.io.File
 import java.nio.file.Path
 
 internal class JvmClasspathSnapshottingOperationImpl private constructor(
@@ -53,7 +52,7 @@ internal class JvmClasspathSnapshottingOperationImpl private constructor(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        sessionIsAliveFlagFile: Lazy<File>
+        executionContext: ExecutionContext
     ): ClasspathEntrySnapshot {
         val granularity: ClassSnapshotGranularity = get(GRANULARITY)
         val parseInlinedLocalClasses: Boolean = get(PARSE_INLINED_LOCAL_CLASSES)

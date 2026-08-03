@@ -208,9 +208,12 @@ internal class JvmCompilationOperationImpl private constructor(
         return getIcOptionsAccessorOrNull()?.let { true } ?: false
     }
 
-    override fun compileInProcess(loggerAdapter: KotlinLoggerMessageCollectorAdapter): CompilationResult {
+    override fun compileInProcess(
+        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        executionContext: ExecutionContext
+    ): CompilationResult {
         setupIdeaStandaloneExecution()
-        return super.compileInProcess(loggerAdapter)
+        return super.compileInProcess(loggerAdapter, executionContext)
     }
 
     override fun createCompiler(): CLICompiler<K2JVMCompilerArguments> {
@@ -224,6 +227,7 @@ internal class JvmCompilationOperationImpl private constructor(
     override fun compileIncrementallyInProcess(
         arguments: K2JVMCompilerArguments,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        executionContext: ExecutionContext
     ): CompilationResult {
         val snapshotBasedIcOptionsAccessor = getIcOptionsAccessorOrNull() ?: error("Missing INCREMENTAL_COMPILATION option.")
         arguments.freeArgs += sources.filter { it.toFile().isJavaFile() }.map { it.absolutePathStringOrThrow() }

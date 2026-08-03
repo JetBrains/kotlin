@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.net.URLClassLoader
@@ -79,7 +78,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        sessionIsAliveFlagFile: Lazy<File>
+        executionContext: ExecutionContext
     ): CompilationResult {
         val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER]
         val kotlinLogger = logger ?: DefaultKotlinLogger
@@ -92,10 +91,10 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
         return when (executionPolicy) {
             InProcessExecutionPolicyImpl -> {
-                compileInProcess(loggerAdapter)
+                compileInProcess(loggerAdapter, executionContext)
             }
             is DaemonExecutionPolicyImpl -> {
-                compileWithDaemon(executionPolicy, loggerAdapter, sessionIsAliveFlagFile)
+                compileWithDaemon(executionPolicy, loggerAdapter, executionContext)
             }
             else -> {
                 CompilationResult.COMPILATION_ERROR.also {
@@ -152,7 +151,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     private fun compileWithDaemon(
         executionPolicy: DaemonExecutionPolicyImpl,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
-        sessionIsAliveFlagFile: Lazy<File>,
+        executionContext: ExecutionContext,
     ): CompilationResult {
         loggerAdapter.kotlinLogger.debug("Compiling using the daemon strategy")
         val compilerId = CompilerId.makeCompilerId(getCurrentClasspath())
@@ -192,7 +191,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             KotlinCompilerRunnerUtils.newDaemonConnection(
                 compilerId,
                 clientIsAliveFile,
-                sessionIsAliveFlagFile.value,
+                executionContext.sessionIsAliveFlagFile.value,
                 loggerAdapter,
                 loggerAdapter.kotlinLogger.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")?.toBooleanStrictOrNull() ?: true,
                 daemonJVMOptions = jvmOptions,
@@ -260,20 +259,21 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     abstract fun shouldCompileIncrementally(): Boolean
 
-    protected open fun compileInProcess(loggerAdapter: KotlinLoggerMessageCollectorAdapter): CompilationResult {
+    protected open fun compileInProcess(loggerAdapter: KotlinLoggerMessageCollectorAdapter, executionContext: ExecutionContext): CompilationResult {
         loggerAdapter.kotlinLogger.debug("Compiling using the in-process strategy")
         val arguments = createAndPrepareCompilerArguments()
 
         return if (shouldCompileIncrementally()) {
-            compileIncrementallyInProcess(arguments, loggerAdapter)
+            compileIncrementallyInProcess(arguments, loggerAdapter, executionContext)
         } else {
-            compileInProcessWithoutIc(arguments, loggerAdapter)
+            compileInProcessWithoutIc(arguments, loggerAdapter, executionContext)
         }
     }
 
     abstract fun compileIncrementallyInProcess(
         arguments: CompilerArgs,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        executionContext: ExecutionContext,
     ): CompilationResult
 
     abstract fun createCompiler(): CLICompiler<CompilerArgs>
@@ -283,6 +283,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     private fun compileInProcessWithoutIc(
         arguments: CompilerArgs,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        executionContext: ExecutionContext,
     ): CompilationResult {
         val compiler = createCompiler()
         arguments.addSources()

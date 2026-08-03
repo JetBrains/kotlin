@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.js.tsexport.createTypeScriptExportInputModule
 import org.jetbrains.kotlin.js.tsexport.runTypeScriptExport
 import org.jetbrains.kotlin.library.metadata.KlibInputModule
 import org.jetbrains.kotlin.platform.js.JsPlatforms
-import java.io.File
 import java.nio.file.Path
 
 internal class JsDtsGenerationOperationImpl private constructor(
@@ -48,7 +47,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        sessionIsAliveFlagFile: Lazy<File>,
+        executionContext: ExecutionContext,
     ): CompilationResult {
         val inputModules = transformKlibsIntoKlibInputModule(klibs, logger)
         // The main KLIB is the last one in the list; its manifest drives the merged artifact naming.
