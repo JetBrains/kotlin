@@ -191,6 +191,15 @@ class ConstraintInjector(
                 wasAdded && !constraint.isNullabilityConstraint -> addedOrNonRedundantExistedConstraint
                 positionFrom is FixVariableConstraintPosition<*> && positionFrom.variable == typeVariable && constraint.kind == EQUALITY ->
                     addedOrNonRedundantExistedConstraint
+                // With the feature enabled, an equality added by a semi-fixation might duplicate an already existing derived
+                // constraint (e.g. `Kv == Tv` from `provideDelegate` semi-fixation when the receiver check has already derived it).
+                // The existing copy has not been incorporated by the second kind (only fixation-caused constraints are),
+                // so the semi-fixation must (re-)incorporate it to substitute the result into the constraints containing
+                // the variable, the same way an actual fixation would (KT-86022).
+                (positionFrom is ProvideDelegateFixationPosition || positionFrom is SemiFixVariableConstraintPosition) &&
+                        constraint.kind == EQUALITY &&
+                        languageVersionSettings.supportsFeature(LanguageFeature.EliminateSecondKindIncorporation) ->
+                    addedOrNonRedundantExistedConstraint
                 else -> null
             }
 

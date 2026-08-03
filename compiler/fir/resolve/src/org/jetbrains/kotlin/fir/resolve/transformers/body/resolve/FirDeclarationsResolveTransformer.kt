@@ -653,6 +653,9 @@ open class FirDeclarationsResolveTransformer(
             candidateSystem.addEqualityConstraint(returnTypeBasedOnVariable, resultType, ProvideDelegateFixationPosition)
 
             check(!candidateStorage.hasContradiction) {
+                // With EliminateSecondKindIncorporation, the equality constraint triggers the postponed second-kind
+                // incorporation (see the re-incorporation case in ConstraintInjector.processGivenConstraints), which may surface
+                // a conflict that eager incorporation used to derive before this point, so a contradiction is a valid outcome.
                 "Currently, we see no cases when contradiction might happen after adding equality constraint like that." +
                         "But if you see the message, please report your case to https://youtrack.jetbrains.com/newIssue?project=KT"
             }
