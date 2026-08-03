@@ -14,6 +14,12 @@ fun Name.render(stipSpecialMarkers: Boolean = false): String {
     return if ((!stipSpecialMarkers || !isSpecial) && shouldBeEscaped(string)) '`' + string + '`' else string
 }
 
+fun Name.renderForSource(stripSpecialMarker: Boolean = false): String {
+    if (this == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) return "_"
+
+    return render(stripSpecialMarker)
+}
+
 private fun shouldBeEscaped(string: String): Boolean {
     return string in KeywordStringsGenerated.KEYWORDS ||
             string.any { !Character.isLetterOrDigit(it) && it != '_' } ||

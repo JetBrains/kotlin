@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames.NO_NAME_PROVIDED
 import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 import org.jetbrains.kotlin.name.render
+import org.jetbrains.kotlin.name.renderForSource
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -28,6 +29,28 @@ class RenderingUtilsTest {
 
         assertEquals("unused var", UNDERSCORE_FOR_UNUSED_VAR.render(stipSpecialMarkers = true))
         assertEquals("`<unused var>`", UNDERSCORE_FOR_UNUSED_VAR.render(stipSpecialMarkers = false))
+
+        // Check a keyword
+        val keywordIdentifier = Name.identifier("return")
+        assertEquals("`return`", keywordIdentifier.render(stipSpecialMarkers = true))
+        assertEquals("`return`", keywordIdentifier.render(stipSpecialMarkers = false))
+    }
+
+    @Test
+    fun testRenderForSource() {
+        assertEquals("_", UNDERSCORE_FOR_UNUSED_VAR.renderForSource())
+        assertEquals("_", UNDERSCORE_FOR_UNUSED_VAR.renderForSource(stripSpecialMarker = true))
+
+        val normalIdentifier = Name.identifier("normal")
+        assertEquals("normal", normalIdentifier.render(stipSpecialMarkers = true))
+        assertEquals("normal", normalIdentifier.render(stipSpecialMarkers = false))
+
+        val escapedIdentifier = Name.identifier("`escaped`")
+        assertEquals("``escaped``", escapedIdentifier.render(stipSpecialMarkers = true))
+        assertEquals("``escaped``", escapedIdentifier.render(stipSpecialMarkers = false))
+
+        assertEquals("no name provided", NO_NAME_PROVIDED.render(stipSpecialMarkers = true))
+        assertEquals("`<no name provided>`", NO_NAME_PROVIDED.render(stipSpecialMarkers = false))
 
         // Check a keyword
         val keywordIdentifier = Name.identifier("return")
