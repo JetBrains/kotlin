@@ -12,6 +12,10 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommo
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.TestSourceFile
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassFile
+import org.jetbrains.kotlin.incremental.storage.fromByteArray
+import org.jetbrains.kotlin.incremental.storage.toByteArray
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -91,6 +95,52 @@ class KotlinOnlyClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
             "propertyInMultifileClass2",
             "functionInMultifileClass2"
         )
+    }
+}
+
+/** Tests snapshotting of top-level type aliases, enabled by [ClasspathEntrySnapshotter.Settings.expandTypeAliases]. */
+class TypeAliasExpansionClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
+
+    private val aliasesSourceFile by lazy {
+        TestSourceFile(
+            KotlinSourceFile(
+                baseDir = File("$testDataDir/kotlin/testTypeAliasExpansion/src"), relativePath = "com/example/aliases.kt",
+                preCompiledClassFile = ClassFile(
+                    File("$testDataDir/kotlin/testTypeAliasExpansion/classes"), "com/example/AliasesKt.class"
+                )
+            ), tmpDir
+        )
+    }
+
+    private fun classId(packageName: String, relativeClassName: String) =
+        ClassId(FqName(packageName), FqName(relativeClassName), false)
+
+    /** `PrivateAlias` is deliberately absent from the expected value: private type aliases are not part of the ABI. */
+    private val expectedTypeAliases = listOf(
+        TypeAliasSnapshot(classId("com.example", "PublicAlias"), classId("com.example", "B")),
+        TypeAliasSnapshot(classId("com.example", "NestedAlias"), classId("com.example", "B.Nested")),
+    )
+
+    @Test
+    fun testTypeAliasExpansionsAreRecordedWhenEnabled() {
+        val snapshot = aliasesSourceFile.compileSingle().snapshot(expandTypeAliases = true)
+
+        assertEquals(expectedTypeAliases, (snapshot as PackageFacadeKotlinClassSnapshot).typeAliases)
+    }
+
+    @Test
+    fun testTypeAliasExpansionsSurviveSerialization() {
+        val snapshot = aliasesSourceFile.compileSingle().snapshot(expandTypeAliases = true)
+        val deserialized = ClassSnapshotExternalizer.fromByteArray(ClassSnapshotExternalizer.toByteArray(snapshot))
+
+        assertEquals(expectedTypeAliases, (deserialized as PackageFacadeKotlinClassSnapshot).typeAliases)
+    }
+
+    @Test
+    fun testTypeAliasExpansionsAreNotRecordedWhenDisabled() {
+        val snapshot = aliasesSourceFile.compileSingle().snapshot()
+
+        assertNull((snapshot as PackageFacadeKotlinClassSnapshot).typeAliases)
     }
 }
 
