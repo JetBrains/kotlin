@@ -67,9 +67,6 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.taskOutputsBackupExcludes.add(task.destinationDirectory.asFile)
             task.taskOutputsBackupExcludes.add(task.taskBuildLocalStateDirectory.asFile)
             task.taskOutputsBackupExcludes.add(task.taskBuildCacheableOutputDirectory.asFile)
-            task.enableUnsafeIncrementalCompilationForMultiplatform
-                .convention(propertiesProvider.enableUnsafeOptimizationsForMultiplatform)
-                .finalizeValueOnRead()
             task.enableMonotonousIncrementalCompileSetExpansion
                 .convention(propertiesProvider.enableMonotonousIncrementalCompileSetExpansion)
                 .finalizeValueOnRead()

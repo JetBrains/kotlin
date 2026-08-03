@@ -24,7 +24,7 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
         get() = super.defaultBuildOptions.copy(
             logLevel = LogLevel.DEBUG,
             languageVersion = "2.0",
-            enableUnsafeIncrementalCompilationForMultiplatform = true,
+            enableJvmUnsafeIncrementalCompilationForMultiplatform = true,
         )
 
     @GradleTest

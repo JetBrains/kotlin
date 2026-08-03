@@ -62,6 +62,15 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
                 KotlinPlatformType.wasm -> task.runViaBuildToolsApi.convention(propertiesProvider.runKotlinWasmCompilerViaBuildToolsApi)
                 else -> task.runViaBuildToolsApi.value(false).disallowChanges()
             }
+            task.enableUnsafeIncrementalCompilationForMultiplatform
+                .convention(
+                    when (compilation.platformType) {
+                        KotlinPlatformType.js -> propertiesProvider.enableJsUnsafeOptimizationsForMultiplatform
+                        KotlinPlatformType.wasm -> propertiesProvider.enableWasmUnsafeOptimizationsForMultiplatform
+                        else -> project.providers.provider { false }
+                    }
+                )
+                .finalizeValueOnRead()
             task.generateCompilerRefIndex.value(false).disallowChanges()
             task.getIsWasmPlatform.value(compilation.platformType == KotlinPlatformType.wasm).disallowChanges()
         }

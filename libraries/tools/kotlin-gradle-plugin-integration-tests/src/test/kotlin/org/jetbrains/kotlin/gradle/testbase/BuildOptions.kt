@@ -61,7 +61,9 @@ data class BuildOptions(
     val languageApiVersion: String? = null,
     val freeArgs: List<String> = emptyList(),
     val statisticsForceValidation: Boolean = true,
-    val enableUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
+    val enableJvmUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
+    val enableJsUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
+    val enableWasmUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
     val enableMonotonousIncrementalCompileSetExpansion: Boolean? = null,
     val useDaemonFallbackStrategy: Boolean = false,
     val useParsableDiagnosticsFormatting: Boolean = true,
@@ -303,8 +305,16 @@ data class BuildOptions(
             arguments.add("-Pkotlin.test.languageVersion=$languageVersion")
         }
 
-        if (enableUnsafeIncrementalCompilationForMultiplatform != null) {
-            arguments.add("-Pkotlin.internal.incremental.enableUnsafeOptimizationsForMultiplatform=$enableUnsafeIncrementalCompilationForMultiplatform")
+        if (enableJvmUnsafeIncrementalCompilationForMultiplatform != null) {
+            arguments.add("-Pkotlin.internal.jvm.enableUnsafeOptimizationsForMultiplatform=$enableJvmUnsafeIncrementalCompilationForMultiplatform")
+        }
+
+        if (enableJsUnsafeIncrementalCompilationForMultiplatform != null) {
+            arguments.add("-Pkotlin.internal.js.enableUnsafeOptimizationsForMultiplatform=$enableJsUnsafeIncrementalCompilationForMultiplatform")
+        }
+
+        if (enableWasmUnsafeIncrementalCompilationForMultiplatform != null) {
+            arguments.add("-Pkotlin.internal.wasm.enableUnsafeOptimizationsForMultiplatform=$enableWasmUnsafeIncrementalCompilationForMultiplatform")
         }
 
         if (enableMonotonousIncrementalCompileSetExpansion != null) {
