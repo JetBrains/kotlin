@@ -143,6 +143,7 @@ class Constraint(
     // Can only be true in K2
     val isNoInfer: Boolean,
     val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null,
+    val isFromFlexibleUpperDuringIncorporation: Boolean = false,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
