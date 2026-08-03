@@ -126,6 +126,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.StringConcatMo
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.ValhallaSupportMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.WhenExpressionsMode
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305
@@ -473,6 +474,7 @@ internal class JvmCompilerArgumentsImpl(
     applyCompilerArguments(compilerArgs)
   }
 
+  @DelicateBuildToolsApi
   override fun applyCommandLineArguments(arguments: List<String>) {
     val compilerArgs = toCompilerArguments()
     parseCommandLineArguments(arguments, compilerArgs, false)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.compilerRunner.btapi.wasm
 
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain.Companion.wasm
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation
@@ -36,6 +37,7 @@ internal class WasmKlibBuildOperationFactory(private val compilerArgs: List<Stri
         @Suppress("DEPRECATION")
         args.irProduceKlibFile = null
 
+        @OptIn(DelicateBuildToolsApi::class)
         compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false
@@ -62,6 +64,7 @@ internal class WasmLinkingBuildOperationFactory(private val compilerArgs: List<S
         args.irProduceJs = K2JSCompilerArguments().irProduceJs
         args.includes = null
 
+        @OptIn(DelicateBuildToolsApi::class)
         compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false

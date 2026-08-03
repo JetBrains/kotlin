@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.MetadataArgumentsImp
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.MetadataArgumentsImpl.Companion.X_TARGET_PLATFORM
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.MetadataTargetPlatform
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments
@@ -158,6 +159,7 @@ internal class MetadataArgumentsImpl(
     applyCompilerArguments(compilerArgs)
   }
 
+  @DelicateBuildToolsApi
   override fun applyCommandLineArguments(arguments: List<String>) {
     val compilerArgs = toCompilerArguments()
     parseCommandLineArguments(arguments, compilerArgs, false)
