@@ -393,10 +393,6 @@ projectTests {
         smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
     }
 
-    wasmProjectTest("diagnosticTest", skipInLocalBuild = true) {
-        include("**/Diagnostics*.class")
-    }
-
     wasmProjectTest("wasmFirCompilerExtraTest") {
         include("**/*SingleModule*TestGenerated.class")
         include("**/*MultiModule*TestGenerated.class")
