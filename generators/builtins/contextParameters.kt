@@ -46,6 +46,7 @@ class GenerateContextFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) 
 public inline fun <$types, $resultType> context($parameters, block: context($types) () -> $resultType): $resultType {
     kotlin.contracts.contract {
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        returnsResultOf(block)
     }
     return block($arguments)
 }
