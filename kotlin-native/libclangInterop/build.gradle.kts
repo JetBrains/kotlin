@@ -72,6 +72,8 @@ nativeInteropPlugin {
             ).mapTo(this) { "-Wl,-U,$it" }
             addAll(listOf("-lpthread", "-lz", "-lm", "-lcurses"))
         } else if (PlatformInfo.isLinux()) {
+            // Linux linkers (ld/lld) allow unresolved symbols by default when producing shared libraries, so '-Wl,-U' flags are not
+            // needed here.
             add("-Wl,-z,noexecstack")
             addAll(listOf("-lrt", "-ldl", "-lpthread", "-lz", "-lm"))
         }
