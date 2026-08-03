@@ -212,6 +212,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
     override fun compileIncrementallyInProcess(
         arguments: K2JSCompilerArguments,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        executionContext: ExecutionContext
     ): CompilationResult {
         val icConfiguration = get(INCREMENTAL_COMPILATION)
         requireNotNull(icConfiguration) { "Missing INCREMENTAL_COMPILATION option." }

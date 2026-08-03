@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.buildtools.internal.metadata.KotlinMetadataPlatformT
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmPlatformToolchainImpl
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import java.io.File
 import java.util.concurrent.*
 
 internal class KotlinToolchainsImpl() : KotlinToolchains {
@@ -89,7 +90,14 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
             logger: KotlinLogger?,
         ): R {
             check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
-            val operationBody: Callable<R> = { operation.execute(projectId, executionPolicy, logger, sessionIsAliveFlagFile) }
+            val operationBody: Callable<R> = {
+                operation.execute(
+                    projectId,
+                    executionPolicy,
+                    logger,
+                    ExecutionContext(sessionIsAliveFlagFile)
+                )
+            }
             return if (executionPolicy is ExecutionPolicy.InProcess) {
                 // For an operation that uses the shared application environment, pin it just before, so that it is kept
                 // alive for reuse by subsequent operations and only disposed when the session ends.
@@ -140,3 +148,7 @@ internal sealed interface BtaApiVersion {
     object Before2_4_20 : BtaApiVersion
     class Exact(val version: KotlinToolingVersion) : BtaApiVersion
 }
+
+internal class ExecutionContext(
+    val sessionIsAliveFlagFile: Lazy<File>,
+)
