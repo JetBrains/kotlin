@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.IrBuiltInsForLinker
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
@@ -104,10 +103,6 @@ internal fun LinkKlibsContext.linkKlibs(
 
     val modules = irLinker.modules
 
-    if (false) {
-        val fakeOverrideChecker = FakeOverrideChecker(KonanManglerIr, KonanManglerDesc)
-        modules.values.forEach { fakeOverrideChecker.check(it) }
-    }
     // IR linker deserializes files in the order they lie on the disk, which might be inconvenient,
     // so to make the pipeline more deterministic, the files are to be sorted.
     // This concerns in the first place global initializers order for the eager initialization strategy,
