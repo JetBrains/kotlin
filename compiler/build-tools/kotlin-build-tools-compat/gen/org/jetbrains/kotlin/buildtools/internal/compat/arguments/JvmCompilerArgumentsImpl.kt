@@ -107,6 +107,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerAr
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.X_VALUE_CLASSES
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.X_WHEN_EXPRESSIONS
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305
@@ -355,6 +356,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     applyCompilerArguments(compilerArgs)
   }
 
+  @DelicateBuildToolsApi
   override fun applyCommandLineArguments(arguments: List<String>) {
     val compilerArgs = toCompilerArguments()
     parseCommandLineArguments(arguments, compilerArgs, false)
