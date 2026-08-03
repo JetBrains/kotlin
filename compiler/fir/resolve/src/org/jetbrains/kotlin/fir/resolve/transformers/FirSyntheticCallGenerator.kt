@@ -610,7 +610,7 @@ class FirSyntheticCallGenerator(
         argumentList: FirArgumentList,
         callKind: CallKind,
         resolutionMode: ResolutionMode,
-    ) = CallInfo(
+    ): CallInfo = CallInfo(
         callSite = callSite,
         callKind = callKind,
         name = name,

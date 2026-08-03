@@ -119,7 +119,8 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             ClassId(FqName("edu.umd.cs.findbugs.annotations"), Name.identifier("CheckReturnValue")),
         )
 
-        private fun List<ClassId>?.hasMustUseReturnValueLikeAnnotation() = this.orEmpty().any { it in mustUseReturnValueLikeAnnotations }
+        private fun List<ClassId>?.hasMustUseReturnValueLikeAnnotation(): Boolean =
+            this.orEmpty().any { it in mustUseReturnValueLikeAnnotations }
 
         override fun computeMustUseReturnValueForJavaCallable(
             session: FirSession,

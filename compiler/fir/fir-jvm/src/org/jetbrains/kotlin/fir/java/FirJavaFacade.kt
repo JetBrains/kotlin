@@ -739,7 +739,7 @@ private fun isCanonicalRecordConstructorForSource(constructor: JavaConstructor, 
     return params.zip(components).all { [param, component] -> param.name == component.name }
 }
 
-private fun FqName.topLevelName() = asString().substringBefore(".")
+private fun FqName.topLevelName(): String = asString().substringBefore(".")
 
 internal fun JavaElement.toSourceElement(sourceElementKind: KtSourceElementKind = KtRealSourceElementKind): KtSourceElement? {
     return (this as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement(sourceElementKind)

@@ -592,7 +592,7 @@ open class FirSupertypeResolverVisitor(
     }
 }
 
-private fun createErrorTypeRef(sourceElement: KtSourceElement?, message: String, kind: DiagnosticKind) = buildErrorTypeRef {
+private fun createErrorTypeRef(sourceElement: KtSourceElement?, message: String, kind: DiagnosticKind): FirErrorTypeRef = buildErrorTypeRef {
     source = sourceElement
     diagnostic = ConeSimpleDiagnostic(message, kind)
 }

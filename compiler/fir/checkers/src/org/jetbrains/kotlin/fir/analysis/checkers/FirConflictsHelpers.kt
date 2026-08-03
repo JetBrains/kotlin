@@ -514,7 +514,7 @@ private fun areCompatibleMainFunctions(
     declaration1: FirBasedSymbol<*>, file1: FirFile,
     declaration2: FirBasedSymbol<*>, file2: FirFile?,
     session: FirSession,
-) = file1 != file2
+): Boolean = file1 != file2
         && declaration1 is FirNamedFunctionSymbol
         && declaration2 is FirNamedFunctionSymbol
         && declaration1.representsMainFunctionAllowingConflictingOverloads(session)

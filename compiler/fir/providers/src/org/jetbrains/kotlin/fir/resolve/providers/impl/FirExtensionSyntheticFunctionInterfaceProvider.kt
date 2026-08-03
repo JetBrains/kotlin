@@ -297,7 +297,7 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
         }
     }
 
-    private fun FunctionTypeKind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))
+    private fun FunctionTypeKind.classId(arity: Int): ClassId = ClassId(packageFqName, numberedClassName(arity))
 
     companion object {
         @FirSymbolProviderInternals

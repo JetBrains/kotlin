@@ -91,19 +91,21 @@ private fun FirAnnotation.constStringArgument(argumentName: String): String =
 private fun FirAnnotation.constBooleanArgumentOrNull(argumentName: String): Boolean? =
         constArgument(argumentName) as Boolean?
 
-private fun FirAnnotation.constArgument(argumentName: String) =
+private fun FirAnnotation.constArgument(argumentName: String): Any? =
         (argumentMapping.mapping[Name.identifier(argumentName)] as? FirLiteralExpression)?.value
 
-internal fun FirFunction.hasObjCFactoryAnnotation(session: FirSession) = this.annotations.hasAnnotation(NativeStandardInteropNames.objCFactoryClassId, session)
+internal fun FirFunction.hasObjCFactoryAnnotation(session: FirSession): Boolean =
+    this.annotations.hasAnnotation(NativeStandardInteropNames.objCFactoryClassId, session)
 
-internal fun FirFunction.hasObjCMethodAnnotation(session: FirSession) = this.annotations.hasAnnotation(NativeStandardInteropNames.objCMethodClassId, session)
+internal fun FirFunction.hasObjCMethodAnnotation(session: FirSession): Boolean =
+    this.annotations.hasAnnotation(NativeStandardInteropNames.objCMethodClassId, session)
 
 /**
  * Almost mimics FunctionDescriptor.isObjCClassMethod(), apart from `it.isObjCClass()`
  * changed to `it.symbol.isObjCClass(session)` for simplicity.
  * The containing symbol is resolved using the declaration-site session.
  */
-internal fun FirFunction.isObjCClassMethod(session: FirSession) =
+internal fun FirFunction.isObjCClassMethod(session: FirSession): Boolean =
         getContainingClass().let { it is FirClass && it.symbol.isObjCClass(session) }
 
 /**

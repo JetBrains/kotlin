@@ -94,8 +94,8 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
         }
     }
 
-    private fun FirProperty.hasGetter() = getter != null && getter !is FirDefaultPropertyGetter
-    private fun FirProperty.hasSetter() = setter != null && setter !is FirDefaultPropertySetter
+    private fun FirProperty.hasGetter(): Boolean = getter != null && getter !is FirDefaultPropertyGetter
+    private fun FirProperty.hasSetter(): Boolean = setter != null && setter !is FirDefaultPropertySetter
 
     context(context: CheckerContext)
     private fun DiagnosticReporter.reportError(source: KtSourceElement?, target: String) {

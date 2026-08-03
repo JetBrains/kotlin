@@ -939,7 +939,7 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.enterWhenBranchCondition(whenBranch).mergeWhenBranchEntryFlow()
     }
 
-    private fun CFGNode<*>.mergeWhenBranchEntryFlow() = mergeIncomingFlow { _, flow ->
+    private fun CFGNode<*>.mergeWhenBranchEntryFlow(): Unit = mergeIncomingFlow { _, flow ->
         val previousConditionExitNode = previousNodes.singleOrNull() as? WhenBranchConditionExitNode ?: return@mergeIncomingFlow
         val previousCondition = previousConditionExitNode.fir.condition
         if (!previousCondition.resolvedType.isBoolean) return@mergeIncomingFlow
@@ -1599,7 +1599,7 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.exitBooleanOperatorExpression(booleanOperatorExpression).mergeBooleanLogicOperatorFlow()
     }
 
-    private fun BooleanOperatorExitNode.mergeBooleanLogicOperatorFlow() = mergeIncomingFlow { path, flow ->
+    private fun BooleanOperatorExitNode.mergeBooleanLogicOperatorFlow(): Unit = mergeIncomingFlow { path, flow ->
         val inferMoreImplications =
             LanguageFeature.InferMoreImplicationsFromBooleanExpressions.isEnabled()
 

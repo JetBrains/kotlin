@@ -571,7 +571,7 @@ private class InvokeFunctionResolveTask(
         callInfo: CallInfo,
         group: TowerGroup,
         explicitReceiverKind: ExplicitReceiverKind
-    ) = processLevel(
+    ): Unit = processLevel(
         towerLevel, callInfo,
         group.withGivenInvokeReceiverGroup(InvokeResolvePriority.COMMON_INVOKE),
         explicitReceiverKind

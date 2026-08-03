@@ -163,7 +163,7 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(Mpp
             }
         }
 
-        fun isEdgeInCycle(edge: ExpansiveEdge<T>) = edge.from in collectReachable(edge.to)
+        fun isEdgeInCycle(edge: ExpansiveEdge<T>): Boolean = edge.from in collectReachable(edge.to)
 
         private fun collectReachable(from: T): List<T> {
             val handler = object : DFS.NodeHandlerWithListResult<T, T>() {

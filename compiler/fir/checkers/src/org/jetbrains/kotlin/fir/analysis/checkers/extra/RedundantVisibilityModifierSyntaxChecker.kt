@@ -91,7 +91,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
     private fun checkElementAndReport(
         element: FirDeclaration,
         defaultVisibility: Visibility,
-    ) = checkElementAndReport(
+    ): Unit = checkElementAndReport(
         element,
         defaultVisibility,
         context.findClosest()
@@ -102,7 +102,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         element: FirDeclaration,
         defaultVisibility: Visibility,
         containingDeclarationSymbol: FirBasedSymbol<*>?,
-    ) = checkElementWithImplicitVisibilityAndReport(
+    ): Unit = checkElementWithImplicitVisibilityAndReport(
         element,
         element.implicitVisibility(defaultVisibility),
         containingDeclarationSymbol

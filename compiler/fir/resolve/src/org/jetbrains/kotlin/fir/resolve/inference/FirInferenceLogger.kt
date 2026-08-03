@@ -121,11 +121,11 @@ open class FirInferenceLogger : InferenceLogger(), FirSessionComponent {
     private val initialConstraintToKnownElement = mutableMapOf<InitialConstraint, ConstraintElement>()
     private val variableConstraintToKnownElement = mutableMapOf<Pair<TypeVariableMarker, Constraint>, ConstraintElement>()
 
-    private fun cachedElementFor(constraint: InitialConstraint) =
+    private fun cachedElementFor(constraint: InitialConstraint): ConstraintElement =
         initialConstraintToKnownElement[constraint]
             ?: error("This constraint has not yet been logged: $constraint")
 
-    private fun cachedElementFor(variable: TypeVariableMarker, constraint: Constraint) =
+    private fun cachedElementFor(variable: TypeVariableMarker, constraint: Constraint): ConstraintElement =
         variableConstraintToKnownElement[variable to constraint]
             ?: error("This constraint has not yet been logged: $variable with $constraint")
 

@@ -60,7 +60,7 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
         }
     }
 
-    private fun FirTypeParameterSymbol.originalBounds() = resolvedBounds.flatMap { it.unwrapBound() }
+    private fun FirTypeParameterSymbol.originalBounds(): List<FirTypeRef> = resolvedBounds.flatMap { it.unwrapBound() }
 
     private fun FirTypeRef.unwrapBound(): List<FirTypeRef> =
         if (this is FirErrorTypeRef && diagnostic is ConeCyclicTypeBound) {

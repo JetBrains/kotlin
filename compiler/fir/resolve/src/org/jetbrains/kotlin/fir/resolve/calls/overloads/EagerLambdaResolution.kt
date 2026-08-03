@@ -170,7 +170,7 @@ private fun Collection<LambdaAtomWithCandidate>.inputTypesAreTheSame(
     lambda.inputTypes.map { substitutor.substituteOrSelf(it) }
 }
 
-private fun Candidate.temporaryNamedReference() = FirNamedReferenceWithCandidate(null, callInfo.name, this)
+private fun Candidate.temporaryNamedReference(): FirNamedReferenceWithCandidate = FirNamedReferenceWithCandidate(null, callInfo.name, this)
 
 private class LambdaAtomWithCandidate(
     val candidate: Candidate,

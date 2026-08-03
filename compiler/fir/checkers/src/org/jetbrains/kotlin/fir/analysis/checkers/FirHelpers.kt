@@ -1026,7 +1026,7 @@ fun ConeKotlinType.isMalformedExpandedType(allowNullableNothing: Boolean): Boole
 }
 
 context(context: CheckerContext)
-private fun ConeKotlinType.containsMalformedArgument(allowNullableNothing: Boolean) =
+private fun ConeKotlinType.containsMalformedArgument(allowNullableNothing: Boolean): Boolean =
     typeArguments.any {
         it.type?.fullyExpandedType()?.isMalformedExpandedType(allowNullableNothing) == true
     }

@@ -530,7 +530,7 @@ private fun intersectReturnTypes(overrides: Collection<FirCallableSymbol<*>>, se
 }
 
 
-private fun <D : FirCallableSymbol<*>> D.withScope(baseScope: FirTypeScope) = MemberWithBaseScope(this, baseScope)
+private fun <D : FirCallableSymbol<*>> D.withScope(baseScope: FirTypeScope): MemberWithBaseScope<D> = MemberWithBaseScope(this, baseScope)
 
 typealias FirIntersectionOverrideCache =
         FirCache<FirCallableSymbol<*>, MemberWithBaseScope<FirCallableSymbol<*>>, ResultOfIntersection.NonTrivial<*>>

@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -39,6 +42,7 @@ import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
@@ -171,25 +175,27 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
      */
     private fun FirCallableSymbol<*>.ensureKnownVisibility(
         source: KtSourceElement? = this.source,
-    ) = when {
+    ): Boolean = when {
         visibility != Visibilities.Unknown -> true
         else -> false.also { reporter.reportOn(source, chooseCannotInferVisibilityFor(this), this) }
     }
 
-    private fun chooseCannotInferVisibilityFor(symbol: FirCallableSymbol<*>) = when {
+    private fun chooseCannotInferVisibilityFor(symbol: FirCallableSymbol<*>): KtDiagnosticFactory1<FirCallableSymbol<*>> = when {
         !symbol.wouldMissDiagnosticInK1 -> FirErrors.CANNOT_INFER_VISIBILITY
         else -> FirErrors.CANNOT_INFER_VISIBILITY_WARNING
     }
 
-    private fun chooseCannotChangeAccessPrivilegeFor(symbol: FirCallableSymbol<*>) = when {
-        !symbol.wouldMissDiagnosticInK1 -> FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE
-        else -> FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE_WARNING
-    }
+    private fun chooseCannotChangeAccessPrivilegeFor(symbol: FirCallableSymbol<*>): KtDiagnosticFactory3<Visibility, FirCallableSymbol<*>, Name> =
+        when {
+            !symbol.wouldMissDiagnosticInK1 -> FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE
+            else -> FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE_WARNING
+        }
 
-    private fun chooseCannotWeakenAccessPrivilegeFor(symbol: FirCallableSymbol<*>) = when {
-        !symbol.wouldMissDiagnosticInK1 -> FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE
-        else -> FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING
-    }
+    private fun chooseCannotWeakenAccessPrivilegeFor(symbol: FirCallableSymbol<*>): KtDiagnosticFactory3<Visibility, FirCallableSymbol<*>, Name> =
+        when {
+            !symbol.wouldMissDiagnosticInK1 -> FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE
+            else -> FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING
+        }
 
     private val FirCallableSymbol<*>.wouldMissDiagnosticInK1: Boolean
         get() = this is FirPropertyAccessorSymbol && propertySymbol.isIntersectionOverride && visibility != propertySymbol.visibility

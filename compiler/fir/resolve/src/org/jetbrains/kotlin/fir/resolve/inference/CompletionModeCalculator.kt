@@ -244,7 +244,7 @@ private class CalculatorForNestedCall(
         return !iltConstraintPresent || nonNothingProperConstraintPresent
     }
 
-    private fun Constraint.hasRequiredKind(direction: FixationDirection) = when (direction) {
+    private fun Constraint.hasRequiredKind(direction: FixationDirection): Boolean = when (direction) {
         FixationDirection.TO_SUBTYPE -> kind.isLower() || kind.isEqual()
         FixationDirection.EQUALITY -> kind.isEqual()
     }
