@@ -46,6 +46,7 @@ internal const val KOTLIN_TEXT = "kotlin.text"
 
 internal val ANNOTATION_EXPERIMENTAL = ClassName(API_ARGUMENTS_PACKAGE, "ExperimentalCompilerArgument")
 internal val ANNOTATION_USE_FROM_IMPL_RESTRICTED = ClassName("org.jetbrains.kotlin.buildtools.internal", "UseFromImplModuleRestricted")
+internal val ANNOTATION_DELICATE_BUILDTOOLS_API = ClassName("org.jetbrains.kotlin.buildtools.api", "DelicateBuildToolsApi")
 
 internal const val KDOC_SINCE = "@since"
 internal const val KDOC_SINCE_2_3_0 = "$KDOC_SINCE 2.3.0"

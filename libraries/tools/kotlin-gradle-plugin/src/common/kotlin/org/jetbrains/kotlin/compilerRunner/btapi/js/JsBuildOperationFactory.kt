@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.compilerRunner.btapi.js
 
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
@@ -36,6 +37,7 @@ internal class JsKlibBuildOperationFactory(private val compilerArgs: List<String
         @Suppress("DEPRECATION")
         args.irProduceKlibFile = null
 
+        @OptIn(DelicateBuildToolsApi::class)
         compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false
@@ -62,6 +64,7 @@ internal class JsLinkingBuildOperationFactory(private val compilerArgs: List<Str
         args.irProduceJs = K2JSCompilerArguments().irProduceJs
         args.includes = null
 
+        @OptIn(DelicateBuildToolsApi::class)
         compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false
