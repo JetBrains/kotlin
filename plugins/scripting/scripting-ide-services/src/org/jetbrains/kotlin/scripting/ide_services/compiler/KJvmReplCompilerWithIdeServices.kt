@@ -2,6 +2,7 @@
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.scripting.ide_services.compiler
 
@@ -22,6 +23,7 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.calcAbsolute
 
+@Deprecated("This declaration would be removed in the next Kotlin release (2.5.0)", level = DeprecationLevel.ERROR)
 class KJvmReplCompilerWithIdeServices(hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration) :
     KJvmReplCompilerBase<IdeLikeReplCodeAnalyzer>(
         hostConfiguration,

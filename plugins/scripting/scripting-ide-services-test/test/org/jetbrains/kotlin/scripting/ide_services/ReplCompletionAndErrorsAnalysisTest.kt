@@ -22,6 +22,7 @@ import kotlin.script.experimental.jvm.util.classpathFromClass
 
 typealias TestRunConfigurator = (TestConf.Run).() -> Unit
 
+@Suppress("DEPRECATION_ERROR")
 class ReplCompletionAndErrorsAnalysisTest : TestCase() {
     @Test
     fun testTrivial() = test {

@@ -30,6 +30,7 @@ internal class JvmTestRepl (
             code
         )
 
+    @Suppress("DEPRECATION_ERROR")
     private val replCompiler: KJvmReplCompilerWithIdeServices by lazy {
         KJvmReplCompilerWithIdeServices()
     }
