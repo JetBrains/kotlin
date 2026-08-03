@@ -143,6 +143,17 @@ class MainKtsTest {
     }
 
     @Test
+    fun testImportKt87958() {
+
+        val out = captureOut {
+            val res = evalFile(File("$TEST_DATA_ROOT/kt87958/testing.main.kts"))
+            assertSucceeded(res)
+        }.lines()
+
+        Assert.assertEquals(listOf("Ok"), out)
+    }
+
+    @Test
     fun testImport() {
 
         val out = captureOut {
