@@ -25,7 +25,7 @@ class TowerResolveManager private constructor(private val shouldStopAtTheLevel: 
         queue.clear()
     }
 
-    private suspend fun suspendResolverTask(group: TowerGroup) =
+    private suspend fun suspendResolverTask(group: TowerGroup): Unit =
         suspendCoroutineUninterceptedOrReturn<Unit> {
             queue += SuspendedResolverTask(it, group)
             COROUTINE_SUSPENDED

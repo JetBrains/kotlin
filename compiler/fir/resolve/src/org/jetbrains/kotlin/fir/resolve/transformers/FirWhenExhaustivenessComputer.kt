@@ -339,7 +339,7 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker() 
         var containsFalse = false
     }
 
-    private fun recordValue(value: Any?, data: Flags) = when (value) {
+    private fun recordValue(value: Any?, data: Flags): Unit = when (value) {
         true -> data.containsTrue = true
         false -> data.containsFalse = true
         else -> {}

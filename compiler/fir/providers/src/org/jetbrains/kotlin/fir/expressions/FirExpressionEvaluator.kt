@@ -687,7 +687,7 @@ private fun FirExpression.hasAllowedCompileTimeType(session: FirSession): Boolea
     return expType.classId in StandardClassIds.constantAllowedTypes && !expType.isMarkedNullable
 }
 
-private fun FirExpression.getExpandedType(session: FirSession) = resolvedType.fullyExpandedType(session)
+private fun FirExpression.getExpandedType(session: FirSession): ConeKotlinType = resolvedType.fullyExpandedType(session)
 
 private fun FirFunctionCall.isCompileTimeBuiltinCall(session: FirSession): Boolean {
     val calleeReference = this.calleeReference
@@ -942,7 +942,7 @@ private fun ConstantValueKind.convertToGivenKind(value: Any?): Any? {
     }
 }
 
-private fun CompileTimeType.isFloatingPoint() = this == CompileTimeType.FLOAT || this == CompileTimeType.DOUBLE
+private fun CompileTimeType.isFloatingPoint(): Boolean = this == CompileTimeType.FLOAT || this == CompileTimeType.DOUBLE
 
 private fun Any?.toConstExpression(
     kind: ConstantValueKind,

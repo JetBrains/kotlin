@@ -264,7 +264,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
         }
 
     context(context: CheckerContext)
-    private fun ConeKotlinType.isExportableReturn(currentlyProcessed: MutableSet<ConeKotlinType> = hashSetOf()) =
+    private fun ConeKotlinType.isExportableReturn(currentlyProcessed: MutableSet<ConeKotlinType> = hashSetOf()): Boolean =
         isUnit || isExportable(currentlyProcessed)
 
     context(context: CheckerContext)

@@ -183,7 +183,7 @@ class JavaOverrideChecker internal constructor(
             else -> false
         }
 
-    private fun Collection<FirTypeParameterRef>.buildErasure() = associate {
+    private fun Collection<FirTypeParameterRef>.buildErasure(): Map<FirTypeParameterSymbol, ConeKotlinType> = associate {
         val symbol = it.symbol
         symbol to symbol.findFirstBoundForErasure(hashSetOf())
     }

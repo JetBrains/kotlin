@@ -282,7 +282,7 @@ class FirSamResolver(
         }.symbol
     }
 
-    private fun FirClassLikeSymbol<*>.createSyntheticConstructorSymbol() =
+    private fun FirClassLikeSymbol<*>.createSyntheticConstructorSymbol(): FirSyntheticFunctionSymbol =
         FirSyntheticFunctionSymbol(
             CallableId(
                 classId.packageFqName,

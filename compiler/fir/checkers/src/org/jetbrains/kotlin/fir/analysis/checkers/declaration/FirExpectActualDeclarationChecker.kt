@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
@@ -416,7 +417,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                 .contains(symbol.correspondingValueParameterFromPrimaryConstructor)
 }
 
-private fun ExpectActualIncompatibility<*>.toDiagnostic() = when (this) {
+private fun ExpectActualIncompatibility<*>.toDiagnostic(): KtDiagnosticFactory3<FirBasedSymbol<*>, FirBasedSymbol<*>, String> = when (this) {
     ExpectActualIncompatibility.ActualFunctionWithOptionalParameters -> error("unreachable")
     is ExpectActualIncompatibility.ClassScopes<*> -> error("unreachable")
     ExpectActualIncompatibility.IgnorabilityIsDifferent -> error("Should be handled before")

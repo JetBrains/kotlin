@@ -794,7 +794,8 @@ class CallAndReferenceGenerator(
         return null
     }
 
-    internal fun findInjectedValue(calleeReference: FirReference) = extensions.findInjectedValue(calleeReference, conversionScope)
+    internal fun findInjectedValue(calleeReference: FirReference): InjectedValue? =
+        extensions.findInjectedValue(calleeReference, conversionScope)
 
     fun convertToIrSetCall(
         variableAssignment: FirVariableAssignment,

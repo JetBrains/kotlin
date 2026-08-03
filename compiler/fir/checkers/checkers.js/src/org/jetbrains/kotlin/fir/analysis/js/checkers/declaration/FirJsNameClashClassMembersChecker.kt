@@ -154,9 +154,10 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
         }
     }
 
-    private fun List<FirJsStableName>.filterFakeOverrideNames(declaration: FirClass) = filterTo(mutableSetOf()) {
-        it.symbol.getContainingClassSymbol() != declaration.symbol
-    }
+    private fun List<FirJsStableName>.filterFakeOverrideNames(declaration: FirClass): MutableSet<FirJsStableName> =
+        filterTo(mutableSetOf()) {
+            it.symbol.getContainingClassSymbol() != declaration.symbol
+        }
 
     private data class ClashedSymbol(val symbol: FirBasedSymbol<*>, val clashedWith: List<FirBasedSymbol<*>>)
 

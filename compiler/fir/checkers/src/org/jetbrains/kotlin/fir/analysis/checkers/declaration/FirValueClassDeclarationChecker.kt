@@ -340,7 +340,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         }
     }
 
-    private fun FirPropertySymbol.isRelatedToParameter(parameter: FirValueParameterSymbol?) =
+    private fun FirPropertySymbol.isRelatedToParameter(parameter: FirValueParameterSymbol?): Boolean =
         name == parameter?.name && source?.kind is KtFakeSourceElementKind
 
     private fun FirValueParameterSymbol.isNotFinalReadOnly(primaryConstructorProperty: FirPropertySymbol?): Boolean {

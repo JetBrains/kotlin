@@ -70,7 +70,7 @@ object FirOptInUsageTypeRefChecker : FirResolvedTypeRefChecker(MppCheckerKind.Co
     }
 
     context(context: CheckerContext)
-    private fun FirClassLikeSymbol<*>.loadClassifierExperimentalities(isSupertypeRef: Boolean) =
+    private fun FirClassLikeSymbol<*>.loadClassifierExperimentalities(isSupertypeRef: Boolean): Set<FirOptInUsageBaseChecker.Experimentality> =
         if (isSupertypeRef) loadExperimentalitiesFromSupertype() else loadExperimentalities(fromSetter = false)
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

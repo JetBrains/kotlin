@@ -1157,7 +1157,7 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun extractOperationFromDynamicSetCall(functionCall: FirFunctionCall) =
+    private fun extractOperationFromDynamicSetCall(functionCall: FirFunctionCall): FirFunctionCall? =
         functionCall.dynamicVarargArguments?.lastOrNull() as? FirFunctionCall
 
     private fun FirStatement.unwrapDesugaredAssignmentValueReference(): FirStatement =
@@ -1873,7 +1873,7 @@ class Fir2IrVisitor(
         return visitResolvedQualifier(errorResolvedQualifier, data)
     }
 
-    private fun LogicOperationKind.toIrDynamicOperator() = when (this) {
+    private fun LogicOperationKind.toIrDynamicOperator(): IrDynamicOperator = when (this) {
         LogicOperationKind.AND -> IrDynamicOperator.ANDAND
         LogicOperationKind.OR -> IrDynamicOperator.OROR
     }

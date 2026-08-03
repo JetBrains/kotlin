@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.isAny
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.common.isES5IdentifierPart
 import org.jetbrains.kotlin.js.common.isES5IdentifierStart
@@ -105,7 +106,7 @@ fun FirBasedSymbol<*>.isPredefinedObject(): Boolean = isPredefinedObject(context
 context(context: CheckerContext)
 fun FirBasedSymbol<*>.isLibraryObject(): Boolean = isLibraryObject(context.session)
 
-internal fun FirClass.superClassNotAny(session: FirSession) = superConeTypes
+internal fun FirClass.superClassNotAny(session: FirSession): ConeClassLikeType? = superConeTypes
     .filterNot { it.isAny || it.isNullableAny }
     .find { it.toSymbol(session)?.classKind == ClassKind.CLASS }
 

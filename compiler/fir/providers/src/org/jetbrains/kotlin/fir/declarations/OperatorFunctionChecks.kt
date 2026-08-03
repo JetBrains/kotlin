@@ -195,7 +195,7 @@ private object Checks {
         message: String,
         requiredResolvePhase: ((FirNamedFunction) -> FirResolvePhase?)? = null,
         predicate: (FirNamedFunction, FirSession) -> Boolean,
-    ) = full(requiredResolvePhase) { function, session ->
+    ): Check = full(requiredResolvePhase) { function, session ->
         if (predicate(function, session)) null
         else OperatorDiagnostic.IllegalOperatorDiagnostic(message)
     }
@@ -226,15 +226,15 @@ private object Checks {
     }
 
     object ValueParametersCount {
-        fun atLeast(n: Int) = simple("must have at least $n value parameter" + (if (n > 1) "s" else "")) { function, _ ->
+        fun atLeast(n: Int): Check = simple("must have at least $n value parameter" + (if (n > 1) "s" else "")) { function, _ ->
             function.valueParameters.size >= n
         }
 
-        fun exactly(n: Int) = simple("must have exactly $n value parameters") { function, _ ->
+        fun exactly(n: Int): Check = simple("must have exactly $n value parameters") { function, _ ->
             function.valueParameters.size == n
         }
 
-        fun atMost(n: Int, feature: LanguageFeature?) =
+        fun atMost(n: Int, feature: LanguageFeature?): Check =
             full { function, _ ->
                 if (function.valueParameters.size <= n) return@full null
 

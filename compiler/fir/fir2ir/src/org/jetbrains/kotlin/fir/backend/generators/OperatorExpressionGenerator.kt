@@ -131,7 +131,7 @@ internal class OperatorExpressionGenerator(
         }
     }
 
-    private fun FirOperation.toIrDynamicOperator() = when (this) {
+    private fun FirOperation.toIrDynamicOperator(): IrDynamicOperator? = when (this) {
         FirOperation.LT -> IrDynamicOperator.LT
         FirOperation.LT_EQ -> IrDynamicOperator.LE
         FirOperation.GT -> IrDynamicOperator.GT
@@ -147,7 +147,7 @@ internal class OperatorExpressionGenerator(
         else -> error("Unexpected operation: $operation")
     }
 
-    private fun IrStatementOrigin.toIrDynamicOperator() = when (this) {
+    private fun IrStatementOrigin.toIrDynamicOperator(): IrDynamicOperator? = when (this) {
         IrStatementOrigin.EQEQ -> IrDynamicOperator.EQEQ
         IrStatementOrigin.EXCLEQ -> IrDynamicOperator.EXCLEQ
         IrStatementOrigin.EQEQEQ -> IrDynamicOperator.EQEQEQ
@@ -161,7 +161,7 @@ internal class OperatorExpressionGenerator(
         firstArgument: IrExpression,
         secondArgument: IrExpression,
         origin: IrStatementOrigin,
-    ) = if (firstArgument.type is IrDynamicType) {
+    ): IrDynamicOperatorExpressionImpl? = if (firstArgument.type is IrDynamicType) {
         val dynamicOperator = origin.toIrDynamicOperator()
             ?: throw Exception("Couldn't convert to the corresponding IrDynamicOperator")
 
@@ -269,7 +269,7 @@ internal class OperatorExpressionGenerator(
         }
     }
 
-    private fun IrExpression.negate(origin: IrStatementOrigin) =
+    private fun IrExpression.negate(origin: IrStatementOrigin): IrExpression =
         primitiveOp1(startOffset, endOffset, builtins.booleanNotSymbol, builtins.booleanType, origin, this)
 
     private fun FirExpression.convertToIrExpression(

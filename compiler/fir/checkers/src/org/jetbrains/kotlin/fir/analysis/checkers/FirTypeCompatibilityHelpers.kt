@@ -41,7 +41,7 @@ private val FirClassSymbol<*>.isBuiltin get() = isPrimitiveType() || classId == 
 
 internal val TypeInfo.isNullableEnum get() = isEnumClass && type.isMarkedOrFlexiblyNullable
 
-internal fun TypeInfo.isIdentityLess(session: FirSession) =
+internal fun TypeInfo.isIdentityLess(session: FirSession): Boolean =
     session.identityLessPlatformDeterminer.isIdentityLess(this) || isValueClass
 
 internal val TypeInfo.isNotNullPrimitive get() = isPrimitive && !type.isMarkedOrFlexiblyNullable
@@ -51,9 +51,9 @@ private val FirClassSymbol<*>.isFinalClass get() = isClass && isFinal
 // NB: This is what RULES1 means then it says "class".
 private val FirClassSymbol<*>.isClass get() = !isInterface
 
-internal fun ConeKotlinType.isEnum(session: FirSession) = toRegularClassSymbol(session)?.isEnumClass == true
+internal fun ConeKotlinType.isEnum(session: FirSession): Boolean = toRegularClassSymbol(session)?.isEnumClass == true
 
-internal fun ConeKotlinType.isClass(session: FirSession) = toRegularClassSymbol(session) != null
+internal fun ConeKotlinType.isClass(session: FirSession): Boolean = toRegularClassSymbol(session) != null
 
 fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
     val bounds = collectUpperBounds(session.typeContext).map { it.replaceArgumentsWithStarProjections() }
@@ -104,7 +104,7 @@ private val FirExpression.mostOriginalTypeIfSmartCast: ConeKotlinType
     }
 
 context(context: CheckerContext)
-internal fun FirExpression.toArgumentInfo() =
+internal fun FirExpression.toArgumentInfo(): ArgumentInfo =
     ArgumentInfo(
         this,
         userType = resolvedType.finalApproximationOrSelf(),

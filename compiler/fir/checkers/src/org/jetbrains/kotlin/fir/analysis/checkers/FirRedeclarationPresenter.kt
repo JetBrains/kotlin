@@ -69,14 +69,14 @@ internal object FirRedeclarationPresenter {
         else -> null
     }
 
-    fun represent(it: FirNamedFunctionSymbol) = buildString {
+    fun represent(it: FirNamedFunctionSymbol): String = buildString {
         appendRepresentationBeforeCallableId(it)
         appendRepresentation(it.callableId)
         appendValueParameters(it)
     }
 
 
-    fun represent(it: FirVariableSymbol<*>) = buildString {
+    fun represent(it: FirVariableSymbol<*>): String = buildString {
         appendRepresentationBeforeCallableId(it)
         appendRepresentation(it.callableId!!)
 
@@ -85,10 +85,10 @@ internal object FirRedeclarationPresenter {
         }
     }
 
-    fun represent(it: FirTypeAliasSymbol) = representClassLike(it)
-    fun represent(it: FirRegularClassSymbol) = representClassLike(it)
+    fun represent(it: FirTypeAliasSymbol): String = representClassLike(it)
+    fun represent(it: FirRegularClassSymbol): String = representClassLike(it)
 
-    private fun representClassLike(it: FirClassLikeSymbol<*>) = buildString {
+    private fun representClassLike(it: FirClassLikeSymbol<*>): String = buildString {
         append('<')
         append('>')
         append('[')
@@ -96,7 +96,7 @@ internal object FirRedeclarationPresenter {
         appendRepresentation(it.classId)
     }
 
-    fun represent(it: FirConstructorSymbol, owner: FirClassLikeSymbol<*>) = buildString {
+    fun represent(it: FirConstructorSymbol, owner: FirClassLikeSymbol<*>): String = buildString {
         append('<')
         repeat(it.typeParameterSymbols.size) {
             append(',')

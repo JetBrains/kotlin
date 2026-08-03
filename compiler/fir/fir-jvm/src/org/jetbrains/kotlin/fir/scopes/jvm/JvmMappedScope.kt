@@ -216,7 +216,7 @@ class JvmMappedScope(
     }
 
     @OptIn(ScopeFunctionRequiresPrewarm::class)
-    private fun isOverrideOfKotlinDeclaredFunction(symbol: FirNamedFunctionSymbol) =
+    private fun isOverrideOfKotlinDeclaredFunction(symbol: FirNamedFunctionSymbol): Boolean =
         javaMappedClassUseSiteScope.anyOverriddenOf(symbol, ::isDeclaredInBuiltinClass)
 
     @OptIn(ScopeFunctionRequiresPrewarm::class)
