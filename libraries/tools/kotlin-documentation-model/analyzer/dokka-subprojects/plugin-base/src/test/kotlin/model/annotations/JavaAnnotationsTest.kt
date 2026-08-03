@@ -9,6 +9,7 @@ import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import translators.findClasslike
+import translators.findPackage
 import kotlin.test.*
 
 class JavaAnnotationsTest : BaseAbstractTest() {
@@ -250,6 +251,62 @@ class JavaAnnotationsTest : BaseAbstractTest() {
                         mustBeDocumented = true
                     ), annotation2
                 )
+            }
+        }
+    }
+
+    @Test
+    fun `package level annotation for java only package`() {
+        testInline(
+            """
+                /src/main/java/annotation/package-info.java
+                @Deprecated
+                package annotation;
+
+                /src/main/java/annotation/JavaClass.java
+                package annotation;
+                public class JavaClass {}
+            """.trimIndent(),
+            configuration,
+        ) {
+            documentablesTransformationStage = { module ->
+                val pkg = module.findPackage("annotation")
+                assertNotNull(pkg)
+                val pkgAnnotations = pkg.extra[Annotations]
+                assertNotNull(pkgAnnotations)
+                val sourceSetPkgAnnotations = pkgAnnotations.directAnnotations.values.single()
+                assertEquals(sourceSetPkgAnnotations.size, 1)
+                assertEquals(sourceSetPkgAnnotations.single().dri.classNames, "Deprecated")
+            }
+        }
+    }
+
+    @Test
+    fun `package level annotation for java and kotlin package`() {
+        testInline(
+            """
+                /src/main/java/annotation/package-info.java
+                @Deprecated
+                package annotation;
+
+                /src/main/java/annotation/JavaClass.java
+                package annotation;
+                public class JavaClass {}
+
+                /src/main/kotlin/annotation/KotlinClass.kt
+                package annotation
+                class KotlinClass
+            """.trimIndent(),
+            configuration,
+        ) {
+            documentablesTransformationStage = { module ->
+                val pkg = module.findPackage("annotation")
+                assertNotNull(pkg)
+                val pkgAnnotations = pkg.extra[Annotations]
+                assertNotNull(pkgAnnotations)
+                val sourceSetPkgAnnotations = pkgAnnotations.directAnnotations.values.single()
+                assertEquals(sourceSetPkgAnnotations.size, 1)
+                assertEquals(sourceSetPkgAnnotations.single().dri.classNames, "Deprecated")
             }
         }
     }
