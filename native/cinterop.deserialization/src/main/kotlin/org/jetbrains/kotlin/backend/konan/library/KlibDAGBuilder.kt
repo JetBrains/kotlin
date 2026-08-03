@@ -47,9 +47,16 @@ object KlibDAGBuilder {
             // Optimization: Stdlib is a dependency for each library.
             node.directDependencies.addAll(stdlib)
 
+            // Note: We are intentionally extracting only signatures of top-level declarations. It's an optimization.
+            // We can always deduce the signature of a top-level class from a signature of any member or an inner/nested class.
+            // In case there are numerous members or inner/nested classes, this helps us to reduce the amount of the computational work.
             val [declaredSignatures, importedSignatures] = node.library.getSignatureExtractor().extractOnlyTopLevelPublicSignatures()
 
             for (signature in declaredSignatures) {
+                // Note: It might happen that there are clashing signatures coming from different libraries.
+                // At the moment, we will just overwrite the first occurrence with the next one(s).
+                // However, this should be fixed in the appropriate way once we have a design decision for KT-82172.
+                // TODO(KT-82172): Handle clashing signatures here in the proper way.
                 declaredSignatureToNode[signature] = node
             }
 
@@ -59,9 +66,12 @@ object KlibDAGBuilder {
         // Build the DAG.
         for ([node, importedSignatures] in nodeToImportedSignatures) {
             for (importedSignature in importedSignatures) {
-                val dependency: KlibDAGNodeImpl? = declaredSignatureToNode[importedSignature]
-                if (dependency != null) {
-                    node.directDependencies.add(dependency)
+                when (val dependency: KlibDAGNodeImpl? = declaredSignatureToNode[importedSignature]) {
+                    null -> {
+                        // This is a legal situation: There can be unbound symbols.
+                        // It's the job of the Partial Linkage engine to tackle them. DAG builder should not fail here.
+                    }
+                    else -> node.directDependencies.add(dependency)
                 }
             }
         }
