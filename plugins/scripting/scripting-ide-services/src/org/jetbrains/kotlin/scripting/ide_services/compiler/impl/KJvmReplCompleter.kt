@@ -2,6 +2,7 @@
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.scripting.ide_services.compiler.impl
 
@@ -45,6 +46,7 @@ import java.io.File
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCodeCompletionVariant
 
+@Deprecated("This declaration would be removed in future versions", level = DeprecationLevel.ERROR)
 fun getKJvmCompletion(
     ktScript: KtFile,
     bindingContext: BindingContext,
@@ -68,6 +70,7 @@ fun getKJvmCompletion(
 // is converted to
 //   import java.ABCDEF
 // and it makes token after dot (for which reference variants are looked) discoverable in PSI
+@Deprecated("This declaration would be removed in future versions", level = DeprecationLevel.ERROR)
 fun prepareCodeForCompletion(code: String, cursor: Int) =
     code.substring(0, cursor) + KJvmReplCompleter.INSERTED_STRING + code.substring(cursor)
 
