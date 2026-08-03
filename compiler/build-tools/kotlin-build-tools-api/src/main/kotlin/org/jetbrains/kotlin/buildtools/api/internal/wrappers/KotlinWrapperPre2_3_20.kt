@@ -357,6 +357,7 @@ internal class KotlinWrapperPre2_3_20(
             base.applyArgumentStrings(arguments)
         }
 
+        @OptIn(DelicateBuildToolsApi::class)
         override fun applyCommandLineArguments(arguments: List<String>) {
             // this will never get called because KotlinWrapperPre2_5_0 will provide this functionality for all lower versions
             TODO("Not implemented")

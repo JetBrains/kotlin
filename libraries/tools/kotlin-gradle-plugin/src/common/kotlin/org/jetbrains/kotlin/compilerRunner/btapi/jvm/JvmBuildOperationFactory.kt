@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.compilerRunner.btapi.jvm
 
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
@@ -27,6 +28,7 @@ internal class JvmBuildOperationFactory(val compilerArgs: List<String>, val kotl
             args.destination = null // TODO: KT-85394 refactor setting up arguments to avoid this hack
             compilationOperationBuilder[KOTLINSCRIPT_EXTENSIONS] = kotlinScriptExtensions.toTypedArray()
         }
+        @OptIn(DelicateBuildToolsApi::class)
         compilationOperationBuilder.compilerArguments.applyCommandLineArguments(args.toArgumentStrings(allowArgFileInValues = false))
         return compilationOperationBuilder
     }
