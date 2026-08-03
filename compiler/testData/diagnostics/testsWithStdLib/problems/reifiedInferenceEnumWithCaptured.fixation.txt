@@ -55,7 +55,6 @@ TypeVariable(T) --- Readiness(
      <: kotlin/Enum<TypeVariable(T)>
      <: TypeVariable(K)
      <: MyEnum (inferred during fixation)
-     <: kotlin/Enum<out MyEnum> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED
@@ -75,10 +74,8 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     )
      <: kotlin/Enum<TypeVariable(T)>
      <: MyEnum
-     <: kotlin/Enum<out MyEnum>
      = MyEnum (inferred during fixation)
      = MyEnum (inferred during fixation)
-     <: kotlin/Enum<MyEnum> (inferred during fixation)
     FIXED TO: MyEnum
 ********************************
 CHOSEN for fixation: TypeVariable(E) --- Readiness(
@@ -99,6 +96,5 @@ CHOSEN for fixation: TypeVariable(E) --- Readiness(
     )
      <: kotlin/Enum<TypeVariable(E)>
      = MyEnum
-     <: kotlin/Enum<MyEnum> (inferred during fixation)
     FIXED TO: MyEnum
 ********************************
