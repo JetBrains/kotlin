@@ -101,6 +101,8 @@ object LombokNames {
     val IMMUTABLE_SORTED_MAP_ID = "ImmutableSortedMap".guavaCollectType()
 
     val TABLE_ID = "Table".guavaCollectType()
+    val IMMUTABLE_TABLE_ID = "ImmutableTable".guavaCollectType()
+    val HASH_BASED_TABLE_ID = "HashBasedTable".guavaCollectType()
 
     val SUPPORTED_GUAVA_COLLECTION_IDS = setOf(
         IMMUTABLE_COLLECTION_ID,
@@ -148,7 +150,7 @@ object LombokNames {
     )
 
     val SUPPORTED_TABLE_IDS = setOf(
-        "ImmutableTable".guavaCollectType(),
+        IMMUTABLE_TABLE_ID,
     )
 
     private fun String.guavaCollectType(): ClassId {

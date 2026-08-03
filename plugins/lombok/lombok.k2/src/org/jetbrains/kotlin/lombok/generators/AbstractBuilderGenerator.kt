@@ -682,6 +682,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 StandardClassIds.Map, StandardClassIds.MutableMap,
                 LombokNames.IMMUTABLE_MAP_ID, LombokNames.IMMUTABLE_BI_MAP_ID, LombokNames.IMMUTABLE_SORTED_MAP_ID,
                     -> StandardClassIds.MutableMap
+                LombokNames.IMMUTABLE_TABLE_ID -> TABLE_ID
                 else -> null
             }
         return mutableCollectionClassId?.constructClassLikeType(
