@@ -109,8 +109,19 @@ committing it locally and then invoking this command:
 ./gradlew -Ptest.federation.enabled=true inferAffectedDomains
 ```
 
-For more granular testing you can look into `testFederation/runtimeEnvironment.kt` properties
-(example: `-Ptest.federation.mode=Smoke -Ptest.federation.affected.domains=CompilerPlugins`)
+If you want to check how some specific task would work when only specific domains were changed, you need to run 
+
+```shell
+./gradlew -Ptest.federation.enabled=true -Ptest.federation.mode=Smoke -Ptest.federation.affected.domains="XXX" :some:module:test
+```
+
+Available values for affected domains (`XXX`):
+- some single domain (e.g. `-Ptest.federation.affected.domains=CompilerPlugins`)
+- several affected domains (e.g. `-Ptest.federation.affected.domains=Wasm;Js`)
+- all domains affected: `-Ptest.federation.affected.domains="*"`
+- none domains affected: `-Ptest.federation.affected.domains="<none>"`
+
+For other properties and their values you can check [runtimeEnvironment.kt](./test-federation-runtime/src/main/kotlin/org/jetbrains/kotlin/testFederation/runtimeEnvironment.kt).
 
 ### Smoke Tests: Verifying commits on the federal level
 
