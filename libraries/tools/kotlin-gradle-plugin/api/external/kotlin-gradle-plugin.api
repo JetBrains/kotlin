@@ -252,13 +252,19 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinProjectExtension : o
 	public final fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
 	public synthetic fun getKotlinDaemonJvmArgs ()Ljava/util/List;
 	public fun getProject ()Lorg/gradle/api/Project;
+	public fun getReturnValueCheckerMode ()Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
+	public fun getReturnValueCheckerModeForTests ()Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
 	public fun getSourceSets ()Lorg/gradle/api/NamedDomainObjectContainer;
 	public fun invokeWhenCreated (Lorg/gradle/api/NamedDomainObjectContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
 	public fun jvmToolchain (I)V
 	public fun jvmToolchain (Lorg/gradle/api/Action;)V
+	public fun returnValueChecker ()V
+	public fun returnValueChecker (Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;)V
 	public fun setCoreLibrariesVersion (Ljava/lang/String;)V
 	public fun setExplicitApi (Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;)V
 	public fun setKotlinDaemonJvmArgs (Ljava/util/List;)V
+	public fun setReturnValueCheckerMode (Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;)V
+	public fun setReturnValueCheckerModeForTests (Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions : org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions, org/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerTypeHolder {

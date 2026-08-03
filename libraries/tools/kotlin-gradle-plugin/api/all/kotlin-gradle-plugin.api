@@ -533,6 +533,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/KotlinBaseApiPlugin : o
 	public fun registerKotlinJvmCompileTask (Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
 	public fun registerKotlinJvmCompileTask (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
 	public fun registerKotlinJvmCompileTask (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;Lorg/gradle/api/provider/Provider;)Lorg/gradle/api/tasks/TaskProvider;
+	public fun registerKotlinJvmCompileTask (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;Lorg/gradle/api/provider/Provider;Lorg/gradle/api/provider/Provider;)Lorg/gradle/api/tasks/TaskProvider;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper : org/jetbrains/kotlin/gradle/plugin/DefaultKotlinBasePlugin {
@@ -5867,6 +5868,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompile : 
 	protected fun getIncrementalProps ()Ljava/util/List;
 	protected final fun getMultiModuleICSettings ()Lorg/jetbrains/kotlin/daemon/common/MultiModuleICSettings;
 	public fun getNormalizedKotlinDaemonJvmArguments ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getReturnValueCheckerMode ()Lorg/gradle/api/provider/Property;
 	protected fun makeIncrementalCompilationFeatures ()Lorg/jetbrains/kotlin/incremental/IncrementalCompilationFeatures;
 	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;Z)V
 	public final fun setIncremental (Z)V

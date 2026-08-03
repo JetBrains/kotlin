@@ -13,7 +13,9 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.compilerRunner.CompilerSystemPropertiesService
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+import org.jetbrains.kotlin.gradle.dsl.ReturnValueCheckerMode
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -33,6 +35,7 @@ import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
 internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile<*>>(
     project: Project,
     val explicitApiMode: Provider<ExplicitApiMode>,
+    val returnValueCheckerMode: Provider<ReturnValueCheckerMode> = project.providers.provider<ReturnValueCheckerMode> { null },
 ) : TaskConfigAction<TASK>(project) {
 
     init {
@@ -84,6 +87,9 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.explicitApiMode
                 .value(explicitApiMode)
                 .finalizeValueOnRead()
+            task.returnValueCheckerMode
+                .value(returnValueCheckerMode)
+                .finalizeValueOnRead()
             task.separateKmpCompilation.convention(propertiesProvider.separateKmpCompilation)
         }
     }
@@ -97,6 +103,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
     constructor(compilationInfo: KotlinCompilationInfo) : this(
         compilationInfo.project,
         compilationInfo.explicitApiMode(),
+        compilationInfo.returnValueCheckerMode(),
     ) {
         configureTask { task ->
             task.friendPaths.from({ compilationInfo.friendPaths })
@@ -139,6 +146,30 @@ private fun KotlinCompilationInfo.explicitApiMode(): Provider<ExplicitApiMode> =
         project.topLevelExtension.explicitApi
     } else {
         ExplicitApiMode.Disabled
+    }
+}
+
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
+private fun KotlinCompilationInfo.returnValueCheckerMode(): Provider<ReturnValueCheckerMode> = project.providers.provider {
+    // Unlike 'explicitApi', the return value checker mode applies to both production and test sources by default.
+    // The test-specific mode is used only when it was explicitly configured.
+    // Note: 'isCommonCompilation' here ('target is KotlinMetadataTarget') and 'isMetadataCompilation'
+    // ('compilation is KotlinMetadataCompilation') in KotlinCreateNativeCompileTasksSideEffect guard the same
+    // semantic: shared/intermediate metadata compilations are production code and must use the production mode.
+    val compilation = tcs.compilation
+    val isCommonCompilation = compilation.target is KotlinMetadataTarget
+
+    val androidCompilation = tcs.compilation as? KotlinJvmAndroidCompilation
+    val isMainAndroidCompilation = androidCompilation?.let {
+        @Suppress("DEPRECATION") val variant = it.androidVariant
+        variant != null && getTestedVariantData(variant) == null
+    } == true
+
+    val extension = project.topLevelExtension
+    if (isMain || isCommonCompilation || isMainAndroidCompilation) {
+        extension.returnValueCheckerMode
+    } else {
+        extension.returnValueCheckerModeForTests ?: extension.returnValueCheckerMode
     }
 }
 

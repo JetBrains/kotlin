@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
 import org.gradle.api.plugins.BasePlugin
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.artifacts.klibOutputDirectory
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
  * Will register (and configure) the corresponding [KotlinNativeCompile] task for a given
  * [AbstractKotlinNativeCompilation] (which includes shared native metadata and 'platform compilations')
  */
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
 internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEffect<AbstractKotlinNativeCompilation> { compilation ->
     val project = compilation.project
     val extension = project.topLevelExtension
@@ -67,6 +69,19 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
                     extension.explicitApi
                 } else {
                     ExplicitApiMode.Disabled
+                }
+            }
+        ).finalizeValueOnRead()
+        task.returnValueCheckerMode.value(
+            project.providers.provider {
+                // Unlike 'explicitApi', the return value checker mode applies to both production and test sources
+                // by default. The test-specific mode is used only when it was explicitly configured.
+                // Shared/intermediate native metadata compilations (e.g. 'nativeMain') are production code, not tests,
+                // so they must use the production mode like 'isMain' compilations do.
+                if (compilationInfo.isMain || isMetadataCompilation) {
+                    extension.returnValueCheckerMode
+                } else {
+                    extension.returnValueCheckerModeForTests ?: extension.returnValueCheckerMode
                 }
             }
         ).finalizeValueOnRead()

@@ -14,6 +14,7 @@ import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+import org.jetbrains.kotlin.gradle.dsl.ReturnValueCheckerMode
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
@@ -118,9 +119,11 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
     constructor(
         project: Project,
         explicitApiMode: Provider<ExplicitApiMode>,
+        returnValueCheckerMode: Provider<ReturnValueCheckerMode> = project.providers.provider<ReturnValueCheckerMode> { null },
     ) : super(
         project,
-        explicitApiMode
+        explicitApiMode,
+        returnValueCheckerMode,
     )
 
     companion object {
