@@ -52,7 +52,8 @@ projectTests {
         defineJDKEnvVariables = listOf(
             JdkMajorVersion.JDK_11_0, // TestsWithJava11 and others
             JdkMajorVersion.JDK_17_0, // TestsWithJava17 and others
-            JdkMajorVersion.JDK_21_0  // TestsWithJava21 and others
+            JdkMajorVersion.JDK_21_0, // TestsWithJava21 and others
+            JdkMajorVersion.JDK_25_0, // TestsWithJava25 and others
         )
     ) {
         smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)

@@ -115,6 +115,9 @@ public class KotlinTestUtils {
         else if (jdkKind == TestJdkKind.FULL_JDK_21) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk21Home());
         }
+        else if (jdkKind == TestJdkKind.FULL_JDK_25) {
+            configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk25Home());
+        }
         else if (currentJavaVersion().compareTo(JavaVersion.compose(9)) >= 0) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(System.getProperty("java.home")));
         }

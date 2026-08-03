@@ -182,6 +182,11 @@ public class KtTestUtil {
     }
 
     @NotNull
+    public static File getJdk25Home() {
+        return getJdkHome("JDK_25_0", "JDK_25");
+    }
+
+    @NotNull
     public static File getJdkValhallaHome() {
         return getJdkHome("JDK_VALHALLA");
     }
