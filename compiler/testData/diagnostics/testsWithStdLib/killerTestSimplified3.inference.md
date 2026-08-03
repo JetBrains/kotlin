@@ -250,8 +250,7 @@ x#(String(), String(), String(), String(), String(), String(), String(), String(
         	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
         )`
 2. `TypeVariable(A1) == kotlin/String` _from Fix variable A1_
-3. Combine `TypeVariable(A1) == kotlin/String` with `TypeVariable(T) <: (TypeVariable(A1), TypeVariable(A2), TypeVariable(A3), TypeVariable(A4), TypeVariable(A5), TypeVariable(A6), TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)`
-    1. `TypeVariable(T) <: (kotlin/String, TypeVariable(A2), TypeVariable(A3), TypeVariable(A4), TypeVariable(A5), TypeVariable(A6), TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)`
+3. `TypeVariable(T) <: (kotlin/String, TypeVariable(A2), TypeVariable(A3), TypeVariable(A4), TypeVariable(A5), TypeVariable(A6), TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)` _from Fix variable A1_
 4. Combine `TypeVariable(T) == (kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String) -> kotlin/String` with `TypeVariable(T) <: (kotlin/String, TypeVariable(A2), TypeVariable(A3), TypeVariable(A4), TypeVariable(A5), TypeVariable(A6), TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)`
     1. `TypeVariable(A2) <: kotlin/String`
     2. `TypeVariable(A3) <: kotlin/String`
@@ -423,8 +422,7 @@ x#(String(), String(), String(), String(), String(), String(), String(), String(
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 6. `TypeVariable(A2) == kotlin/String` _from Fix variable A2_
-7. Combine `TypeVariable(A2) == kotlin/String` with `TypeVariable(T) <: (kotlin/String, TypeVariable(A2), TypeVariable(A3), TypeVariable(A4), TypeVariable(A5), TypeVariable(A6), TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)`
-    1. `TypeVariable(T) <: (kotlin/String, kotlin/String, TypeVariable(A3), TypeVariable(A4), TypeVariable(A5), TypeVariable(A6), TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)`
+7. `TypeVariable(T) <: (kotlin/String, kotlin/String, TypeVariable(A3), TypeVariable(A4), TypeVariable(A5), TypeVariable(A6), TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)` _from Fix variable A2_
 8. Choose `TypeVariable(A3)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -570,8 +568,7 @@ x#(String(), String(), String(), String(), String(), String(), String(), String(
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 9. `TypeVariable(A3) == kotlin/String` _from Fix variable A3_
-10. Combine `TypeVariable(A3) == kotlin/String` with `TypeVariable(T) <: (kotlin/String, kotlin/String, TypeVariable(A3), TypeVariable(A4), TypeVariable(A5), TypeVariable(A6), TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)`
-    1. `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, TypeVariable(A4), TypeVariable(A5), TypeVariable(A6), TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)`
+10. `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, TypeVariable(A4), TypeVariable(A5), TypeVariable(A6), TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)` _from Fix variable A3_
 11. Choose `TypeVariable(A4)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -701,8 +698,7 @@ x#(String(), String(), String(), String(), String(), String(), String(), String(
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 12. `TypeVariable(A4) == kotlin/String` _from Fix variable A4_
-13. Combine `TypeVariable(A4) == kotlin/String` with `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, TypeVariable(A4), TypeVariable(A5), TypeVariable(A6), TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)`
-    1. `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, TypeVariable(A5), TypeVariable(A6), TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)`
+13. `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, TypeVariable(A5), TypeVariable(A6), TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)` _from Fix variable A4_
 14. Choose `TypeVariable(A5)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -816,8 +812,7 @@ x#(String(), String(), String(), String(), String(), String(), String(), String(
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 15. `TypeVariable(A5) == kotlin/String` _from Fix variable A5_
-16. Combine `TypeVariable(A5) == kotlin/String` with `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, TypeVariable(A5), TypeVariable(A6), TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)`
-    1. `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, TypeVariable(A6), TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)`
+16. `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, TypeVariable(A6), TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)` _from Fix variable A5_
 17. Choose `TypeVariable(A6)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -915,8 +910,7 @@ x#(String(), String(), String(), String(), String(), String(), String(), String(
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 18. `TypeVariable(A6) == kotlin/String` _from Fix variable A6_
-19. Combine `TypeVariable(A6) == kotlin/String` with `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, TypeVariable(A6), TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)`
-    1. `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)`
+19. `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)` _from Fix variable A6_
 20. Choose `TypeVariable(A7)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -998,8 +992,7 @@ x#(String(), String(), String(), String(), String(), String(), String(), String(
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 21. `TypeVariable(A7) == kotlin/String` _from Fix variable A7_
-22. Combine `TypeVariable(A7) == kotlin/String` with `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, TypeVariable(A7), TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)`
-    1. `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)`
+22. `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)` _from Fix variable A7_
 23. Choose `TypeVariable(A8)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -1065,8 +1058,7 @@ x#(String(), String(), String(), String(), String(), String(), String(), String(
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 24. `TypeVariable(A8) == kotlin/String` _from Fix variable A8_
-25. Combine `TypeVariable(A8) == kotlin/String` with `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, TypeVariable(A8), TypeVariable(A9)) -> TypeVariable(R)`
-    1. `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, TypeVariable(A9)) -> TypeVariable(R)`
+25. `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, TypeVariable(A9)) -> TypeVariable(R)` _from Fix variable A8_
 26. Choose `TypeVariable(A9)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -1116,8 +1108,7 @@ x#(String(), String(), String(), String(), String(), String(), String(), String(
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 27. `TypeVariable(A9) == kotlin/String` _from Fix variable A9_
-28. Combine `TypeVariable(A9) == kotlin/String` with `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, TypeVariable(A9)) -> TypeVariable(R)`
-    1. `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String) -> TypeVariable(R)`
+28. `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String) -> TypeVariable(R)` _from Fix variable A9_
 29. Choose `TypeVariable(R)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -1151,8 +1142,7 @@ x#(String(), String(), String(), String(), String(), String(), String(), String(
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 30. `TypeVariable(R) == kotlin/String` _from Fix variable R_
-31. Combine `TypeVariable(R) == kotlin/String` with `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String) -> TypeVariable(R)`
-    1. `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String) -> kotlin/String`
+31. `TypeVariable(T) <: (kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String) -> kotlin/String` _from Fix variable R_
 32. Choose `TypeVariable(T)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS

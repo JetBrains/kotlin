@@ -236,26 +236,20 @@ flowchart TD
     class constraint39 nowrapClass;
     constraint37 --> constraint39
     constraint26 --> constraint39
-    constraint40["<tt>TypeVariable(T) &lt;: Comparable&lt;Long></tt>"]
+    constraint40["<tt>TypeVariable(T) == Long</tt>"]
     class constraint40 nowrapClass;
     constraint38 --> constraint40
-    constraint24 --> constraint40
-    constraint41["<tt>TypeVariable(S) &lt;: Comparable&lt;Long>?</tt>"]
+    constraint39 --> constraint40
+    constraint41["<tt>TypeVariable(S) &lt;: Long?</tt>"]
     class constraint41 nowrapClass;
-    constraint38 --> constraint41
-    constraint26 --> constraint41
-    constraint42["<tt>TypeVariable(T) == Long</tt>"]
+    constraint25 --> constraint41
+    constraint40 --> constraint41
+    constraint42["<tt>Long &lt;: TypeVariable(T)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable S</tt></pre></i>"]
     class constraint42 nowrapClass;
-    constraint38 --> constraint42
-    constraint39 --> constraint42
-    constraint43["<tt>TypeVariable(S) &lt;: Long?</tt>"]
-    class constraint43 nowrapClass;
-    constraint25 --> constraint43
-    constraint42 --> constraint43
+    variableReadiness35 ~~~ constraint42
 
-    constraint40 ~~~~ variableReadiness36
-    constraint41 ~~~~ variableReadiness36
-    constraint43 ~~~ variableReadiness36
+    constraint41 ~~~ variableReadiness36
+    constraint42 ~~~~~~ variableReadiness36
 
     variableReadiness36["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
 	 true ALLOWED
@@ -265,7 +259,7 @@ flowchart TD
 	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
 	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
 	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
 	false REIFIED
 	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
 	 true HAS_PROPER_NON_ILT_CONSTRAINT
@@ -275,87 +269,87 @@ flowchart TD
 )</tt></pre>"]
     class variableReadiness36 nowrapClass;
     class variableReadiness36 readinessStyle;
-    constraint44["<tt>TypeVariable(T) == Long</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
-    class constraint44 nowrapClass;
-    variableReadiness36 ~~~ constraint44
+    constraint43["<tt>TypeVariable(T) == Long</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
+    class constraint43 nowrapClass;
+    variableReadiness36 ~~~ constraint43
 
-    constraint44 ~~~ call45
+    constraint43 ~~~ call44
 
-    call45["Call 4<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>R|&lt;local>/countExpr|.greater#(String(0))</tt></pre>"]
-    class call45 nowrapClass;
-    class call45 callStyle;
+    call44["Call 4<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>R|&lt;local>/countExpr|.greater#(String(0))</tt></pre>"]
+    class call44 nowrapClass;
+    class call44 callStyle;
 
-    call45 --> candidate46
+    call44 --> candidate45
 
-    candidate46["Candidate 1: <tt>FirNamedFunctionSymbol /greater</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>fun &lt;T : Comparable&lt;T>, S : T?> Expression&lt;in S>.greater(other: T): GreaterOp</tt></pre>"]
-    class candidate46 nowrapClass;
-    class candidate46 candidateStyle;
+    candidate45["Candidate 1: <tt>FirNamedFunctionSymbol /greater</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>fun &lt;T : Comparable&lt;T>, S : T?> Expression&lt;in S>.greater(other: T): GreaterOp</tt></pre>"]
+    class candidate45 nowrapClass;
+    class candidate45 candidateStyle;
 
-    candidate46 --> stage47
+    candidate45 --> stage46
 
-    stage47["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
-    class stage47 nowrapClass;
-    class stage47 stageStyle;
+    stage46["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
+    class stage46 nowrapClass;
+    class stage46 stageStyle;
 
-    stage47 ~~~ newVariable48
+    stage46 ~~~ newVariable47
 
-    newVariable48["New <tt>TypeVariable(T)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 0"]
+    newVariable47["New <tt>TypeVariable(T)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 0"]
+    class newVariable47 nowrapClass;
+
+    newVariable47 ~~~ newVariable48
+
+    newVariable48["New <tt>TypeVariable(S)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 1"]
     class newVariable48 nowrapClass;
-
-    newVariable48 ~~~ newVariable49
-
-    newVariable49["New <tt>TypeVariable(S)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 1"]
-    class newVariable49 nowrapClass;
-    constraint50["<tt>TypeVariable(T) &lt;: Comparable&lt;TypeVariable(T)></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>DeclaredUpperBound</tt></pre></i>"]
+    constraint49["<tt>TypeVariable(T) &lt;: Comparable&lt;TypeVariable(T)></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>DeclaredUpperBound</tt></pre></i>"]
+    class constraint49 nowrapClass;
+    newVariable48 ~~~ constraint49
+    constraint50["<tt>TypeVariable(S) &lt;: TypeVariable(T)?</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>DeclaredUpperBound</tt></pre></i>"]
     class constraint50 nowrapClass;
-    newVariable49 ~~~ constraint50
-    constraint51["<tt>TypeVariable(S) &lt;: TypeVariable(T)?</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>DeclaredUpperBound</tt></pre></i>"]
+    newVariable48 ~~~ constraint50
+    constraint51["<tt>TypeVariable(S) &lt;: Comparable&lt;TypeVariable(T)>?</tt>"]
     class constraint51 nowrapClass;
-    newVariable49 ~~~ constraint51
-    constraint52["<tt>TypeVariable(S) &lt;: Comparable&lt;TypeVariable(T)>?</tt>"]
-    class constraint52 nowrapClass;
-    constraint51 --> constraint52
-    constraint50 --> constraint52
+    constraint50 --> constraint51
+    constraint49 --> constraint51
 
-    constraint52 ~~~ stage53
+    constraint51 ~~~ stage52
 
-    stage53["Resolution Stages > CheckExtensionReceiver"]
-    class stage53 nowrapClass;
-    class stage53 stageStyle;
-    constraint54["<tt>Expression&lt;Long> &lt;: Expression&lt;in TypeVariable(S)></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Receiver R|&lt;local>/countExpr|</tt></pre></i>"]
-    class constraint54 nowrapClass;
-    stage53 ~~~ constraint54
+    stage52["Resolution Stages > CheckExtensionReceiver"]
+    class stage52 nowrapClass;
+    class stage52 stageStyle;
+    constraint53["<tt>Expression&lt;Long> &lt;: Expression&lt;in TypeVariable(S)></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Receiver R|&lt;local>/countExpr|</tt></pre></i>"]
+    class constraint53 nowrapClass;
+    stage52 ~~~ constraint53
 
-    constraint54 ~~~ stage55
+    constraint53 ~~~ stage54
 
-    stage55["Resolution Stages > CheckArguments"]
-    class stage55 nowrapClass;
-    class stage55 stageStyle;
-    constraint56["<tt>String &lt;: TypeVariable(T)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument String(0)</tt></pre></i>"]
+    stage54["Resolution Stages > CheckArguments"]
+    class stage54 nowrapClass;
+    class stage54 stageStyle;
+    constraint55["<tt>String &lt;: TypeVariable(T)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument String(0)</tt></pre></i>"]
+    class constraint55 nowrapClass;
+    stage54 ~~~ constraint55
+    constraint56["<tt>TypeVariable(T) &lt;: String</tt>"]
     class constraint56 nowrapClass;
-    stage55 ~~~ constraint56
-    constraint57["<tt>TypeVariable(T) &lt;: String</tt>"]
+    constraint55 --> constraint56
+    constraint49 --> constraint56
+    constraint57["<tt>TypeVariable(T) == String</tt>"]
     class constraint57 nowrapClass;
+    constraint55 ---> constraint57
     constraint56 --> constraint57
-    constraint50 --> constraint57
-    constraint58["<tt>TypeVariable(T) == String</tt>"]
+    constraint58["<tt>TypeVariable(S) &lt;: String?</tt>"]
     class constraint58 nowrapClass;
-    constraint56 ---> constraint58
+    constraint50 --> constraint58
     constraint57 --> constraint58
-    constraint59["<tt>TypeVariable(S) &lt;: String?</tt>"]
-    class constraint59 nowrapClass;
-    constraint51 --> constraint59
-    constraint58 --> constraint59
 
-    constraint59 ~~~ stage60
+    constraint58 ~~~ stage59
 
-    stage60["Call Completion"]
-    class stage60 nowrapClass;
-    class stage60 stageStyle;
+    stage59["Call Completion"]
+    class stage59 nowrapClass;
+    class stage59 stageStyle;
 
-    stage60 ~~~ variableReadiness61
+    stage59 ~~~ variableReadiness60
 
-    variableReadiness61["Choose <tt>TypeVariable(S)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
+    variableReadiness60["Choose <tt>TypeVariable(S)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
 	 true ALLOWED
 	 true HAS_PROPER_CONSTRAINTS
 	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -371,43 +365,38 @@ flowchart TD
 	false HAS_PROPER_EQUALITY_CONSTRAINT
 	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
 )</tt></pre>"]
-    class variableReadiness61 nowrapClass;
-    class variableReadiness61 readinessStyle;
+    class variableReadiness60 nowrapClass;
+    class variableReadiness60 readinessStyle;
 
-    variableReadiness61 ~~~ error62
+    variableReadiness60 ~~~ error61
 
-    error62["<b>InferredEmptyIntersectionWarning<b>"]
-    class error62 nowrapClass;
-    constraint64["<tt>TypeVariable(S) == it(Long &amp; String)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable S</tt></pre></i>"]
+    error61["<b>InferredEmptyIntersectionWarning<b>"]
+    class error61 nowrapClass;
+    constraint63["<tt>TypeVariable(S) == it(Long &amp; String)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable S</tt></pre></i>"]
+    class constraint63 nowrapClass;
+    error61 ~~~ constraint63
+    constraint64["<tt>it(Long &amp; String) &lt;: TypeVariable(T)</tt>"]
     class constraint64 nowrapClass;
-    error62 ~~~ constraint64
-    constraint65["<tt>it(Long &amp; String) &lt;: TypeVariable(T)</tt>"]
+    constraint63 --> constraint64
+    constraint50 --> constraint64
+    constraint65["<tt>TypeVariable(T) &lt;: Long</tt>"]
     class constraint65 nowrapClass;
-    constraint64 --> constraint65
+    constraint63 --> constraint65
     constraint51 --> constraint65
-    constraint66["<tt>TypeVariable(T) &lt;: Long</tt>"]
+    constraint66["<tt>TypeVariable(T) &lt;: String</tt>"]
     class constraint66 nowrapClass;
-    constraint64 --> constraint66
-    constraint52 --> constraint66
-    constraint67["<tt>TypeVariable(T) &lt;: String</tt>"]
+    constraint63 --> constraint66
+    constraint51 --> constraint66
+    constraint67["<tt>it(Long &amp; String) &lt;: TypeVariable(T)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable S</tt></pre></i>"]
     class constraint67 nowrapClass;
-    constraint64 --> constraint67
-    constraint52 --> constraint67
-    constraint68["<tt>TypeVariable(T) &lt;: Comparable&lt;it(Long &amp; String)></tt>"]
-    class constraint68 nowrapClass;
-    constraint65 --> constraint68
-    constraint50 --> constraint68
-    constraint69["<tt>TypeVariable(S) &lt;: Comparable&lt;it(Long &amp; String)>?</tt>"]
-    class constraint69 nowrapClass;
-    constraint65 --> constraint69
-    constraint52 --> constraint69
+    error61 ~~~ constraint67
 
-    constraint66 ~~~~ variableReadiness63
-    constraint67 ~~~~ variableReadiness63
-    constraint68 ~~~ variableReadiness63
-    constraint69 ~~~ variableReadiness63
+    constraint64 ~~~ variableReadiness62
+    constraint65 ~~~ variableReadiness62
+    constraint66 ~~~ variableReadiness62
+    constraint67 ~~~~ variableReadiness62
 
-    variableReadiness63["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
+    variableReadiness62["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
 	 true ALLOWED
 	 true HAS_PROPER_CONSTRAINTS
 	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -423,104 +412,98 @@ flowchart TD
 	 true HAS_PROPER_EQUALITY_CONSTRAINT
 	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
 )</tt></pre>"]
-    class variableReadiness63 nowrapClass;
-    class variableReadiness63 readinessStyle;
-    constraint70["<tt>TypeVariable(T) == String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
-    class constraint70 nowrapClass;
-    variableReadiness63 ~~~ constraint70
-    constraint71["<tt>TypeVariable(T) &lt;: Comparable&lt;String></tt>"]
-    class constraint71 nowrapClass;
-    variableReadiness63 ~~~ constraint71
-    constraint58 --> constraint71
-    constraint50 --> constraint71
+    class variableReadiness62 nowrapClass;
+    class variableReadiness62 readinessStyle;
+    constraint68["<tt>TypeVariable(T) == String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
+    class constraint68 nowrapClass;
+    variableReadiness62 ~~~ constraint68
 
-    constraint70 ~~~ call72
-    constraint71 ~~~ call72
+    constraint68 ~~~ call69
 
-    call72["Call 5<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>R|&lt;local>/countExpr|.greater#&lt;R|kotlin/String|, R|kotlin/Nothing|>(String(0))</tt></pre>"]
-    class call72 nowrapClass;
-    class call72 callStyle;
+    call69["Call 5<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>R|&lt;local>/countExpr|.greater#&lt;R|kotlin/String|, R|kotlin/Nothing|>(String(0))</tt></pre>"]
+    class call69 nowrapClass;
+    class call69 callStyle;
 
-    call72 --> candidate73
+    call69 --> candidate70
 
-    candidate73["Candidate 1: <tt>FirNamedFunctionSymbol /greater</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>fun &lt;T : Comparable&lt;T>, S : T?> Expression&lt;in S>.greater(other: T): GreaterOp</tt></pre>"]
-    class candidate73 nowrapClass;
-    class candidate73 candidateStyle;
+    candidate70["Candidate 1: <tt>FirNamedFunctionSymbol /greater</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>fun &lt;T : Comparable&lt;T>, S : T?> Expression&lt;in S>.greater(other: T): GreaterOp</tt></pre>"]
+    class candidate70 nowrapClass;
+    class candidate70 candidateStyle;
 
-    candidate73 --> stage74
+    candidate70 --> stage71
 
-    stage74["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
-    class stage74 nowrapClass;
-    class stage74 stageStyle;
+    stage71["Resolution Stages > CreateFreshTypeVariableSubstitutorStage"]
+    class stage71 nowrapClass;
+    class stage71 stageStyle;
 
-    stage74 ~~~ newVariable75
+    stage71 ~~~ newVariable72
 
-    newVariable75["New <tt>TypeVariable(T)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 0"]
-    class newVariable75 nowrapClass;
+    newVariable72["New <tt>TypeVariable(T)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 0"]
+    class newVariable72 nowrapClass;
 
-    newVariable75 ~~~ newVariable76
+    newVariable72 ~~~ newVariable73
 
-    newVariable76["New <tt>TypeVariable(S)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 1"]
-    class newVariable76 nowrapClass;
-    constraint77["<tt>TypeVariable(T) &lt;: Comparable&lt;TypeVariable(T)></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>DeclaredUpperBound</tt></pre></i>"]
+    newVariable73["New <tt>TypeVariable(S)</tt> for <tt>FirNamedFunctionSymbol /greater</tt>s parameter 1"]
+    class newVariable73 nowrapClass;
+    constraint74["<tt>TypeVariable(T) &lt;: Comparable&lt;TypeVariable(T)></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>DeclaredUpperBound</tt></pre></i>"]
+    class constraint74 nowrapClass;
+    newVariable73 ~~~ constraint74
+    constraint75["<tt>TypeVariable(S) &lt;: TypeVariable(T)?</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>DeclaredUpperBound</tt></pre></i>"]
+    class constraint75 nowrapClass;
+    newVariable73 ~~~ constraint75
+    constraint76["<tt>TypeVariable(S) &lt;: Comparable&lt;TypeVariable(T)>?</tt>"]
+    class constraint76 nowrapClass;
+    constraint75 --> constraint76
+    constraint74 --> constraint76
+    constraint77["<tt>TypeVariable(T) == String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>TypeParameter R|kotlin/String|</tt></pre></i>"]
     class constraint77 nowrapClass;
-    newVariable76 ~~~ constraint77
-    constraint78["<tt>TypeVariable(S) &lt;: TypeVariable(T)?</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>DeclaredUpperBound</tt></pre></i>"]
+    newVariable73 ~~~ constraint77
+    constraint78["<tt>TypeVariable(S) &lt;: String?</tt>"]
     class constraint78 nowrapClass;
-    newVariable76 ~~~ constraint78
-    constraint79["<tt>TypeVariable(S) &lt;: Comparable&lt;TypeVariable(T)>?</tt>"]
+    constraint75 --> constraint78
+    constraint77 --> constraint78
+    constraint79["<tt>TypeVariable(T) &lt;: String</tt>"]
     class constraint79 nowrapClass;
-    constraint78 --> constraint79
     constraint77 --> constraint79
-    constraint80["<tt>TypeVariable(T) == String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>TypeParameter R|kotlin/String|</tt></pre></i>"]
+    constraint74 --> constraint79
+    constraint80["<tt>TypeVariable(S) == Nothing</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>TypeParameter R|kotlin/Nothing|</tt></pre></i>"]
     class constraint80 nowrapClass;
-    newVariable76 ~~~ constraint80
-    constraint81["<tt>TypeVariable(S) &lt;: String?</tt>"]
+    newVariable73 ~~~~~ constraint80
+    constraint81["<tt>Nothing &lt;: TypeVariable(T)</tt>"]
     class constraint81 nowrapClass;
-    constraint78 --> constraint81
     constraint80 --> constraint81
-    constraint82["<tt>TypeVariable(T) &lt;: String</tt>"]
-    class constraint82 nowrapClass;
-    constraint80 --> constraint82
-    constraint77 --> constraint82
-    constraint83["<tt>TypeVariable(S) == Nothing</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>TypeParameter R|kotlin/Nothing|</tt></pre></i>"]
+    constraint75 ----> constraint81
+
+    constraint76 ~~~~~ stage82
+    constraint78 ~~~~~ stage82
+    constraint79 ~~~~~ stage82
+    constraint81 ~~~ stage82
+
+    stage82["Resolution Stages > CheckExtensionReceiver"]
+    class stage82 nowrapClass;
+    class stage82 stageStyle;
+    constraint83["<tt>Expression&lt;Long> &lt;: Expression&lt;in TypeVariable(S)></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Receiver R|&lt;local>/countExpr|</tt></pre></i>"]
     class constraint83 nowrapClass;
-    newVariable76 ~~~~~ constraint83
-    constraint84["<tt>Nothing &lt;: TypeVariable(T)</tt>"]
-    class constraint84 nowrapClass;
-    constraint83 --> constraint84
-    constraint78 ----> constraint84
+    stage82 ~~~ constraint83
 
-    constraint79 ~~~~~ stage85
-    constraint81 ~~~~~ stage85
-    constraint82 ~~~~~ stage85
-    constraint84 ~~~ stage85
+    constraint83 ~~~ stage84
 
-    stage85["Resolution Stages > CheckExtensionReceiver"]
-    class stage85 nowrapClass;
-    class stage85 stageStyle;
-    constraint86["<tt>Expression&lt;Long> &lt;: Expression&lt;in TypeVariable(S)></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Receiver R|&lt;local>/countExpr|</tt></pre></i>"]
-    class constraint86 nowrapClass;
-    stage85 ~~~ constraint86
+    stage84["Resolution Stages > CheckArguments"]
+    class stage84 nowrapClass;
+    class stage84 stageStyle;
+    constraint85["<tt>String &lt;: TypeVariable(T)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument String(0)</tt></pre></i>"]
+    class constraint85 nowrapClass;
+    stage84 ~~~ constraint85
 
-    constraint86 ~~~ stage87
+    constraint85 ~~~ stage86
 
-    stage87["Resolution Stages > CheckArguments"]
-    class stage87 nowrapClass;
-    class stage87 stageStyle;
-    constraint88["<tt>String &lt;: TypeVariable(T)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument String(0)</tt></pre></i>"]
-    class constraint88 nowrapClass;
-    stage87 ~~~ constraint88
+    stage86["Call Completion"]
+    class stage86 nowrapClass;
+    class stage86 stageStyle;
 
-    constraint88 ~~~ stage89
+    stage86 ~~~ variableReadiness87
 
-    stage89["Call Completion"]
-    class stage89 nowrapClass;
-    class stage89 stageStyle;
-
-    stage89 ~~~ variableReadiness90
-
-    variableReadiness90["Choose <tt>TypeVariable(S)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
+    variableReadiness87["Choose <tt>TypeVariable(S)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
 	 true ALLOWED
 	 true HAS_PROPER_CONSTRAINTS
 	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -536,15 +519,19 @@ flowchart TD
 	 true HAS_PROPER_EQUALITY_CONSTRAINT
 	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
 )</tt></pre>"]
-    class variableReadiness90 nowrapClass;
-    class variableReadiness90 readinessStyle;
-    constraint92["<tt>TypeVariable(S) == Nothing</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable S</tt></pre></i>"]
-    class constraint92 nowrapClass;
-    variableReadiness90 ~~~ constraint92
+    class variableReadiness87 nowrapClass;
+    class variableReadiness87 readinessStyle;
+    constraint89["<tt>TypeVariable(S) == Nothing</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable S</tt></pre></i>"]
+    class constraint89 nowrapClass;
+    variableReadiness87 ~~~ constraint89
+    constraint90["<tt>Nothing &lt;: TypeVariable(T)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable S</tt></pre></i>"]
+    class constraint90 nowrapClass;
+    variableReadiness87 ~~~ constraint90
 
-    constraint92 ~~~ variableReadiness91
+    constraint89 ~~~ variableReadiness88
+    constraint90 ~~~ variableReadiness88
 
-    variableReadiness91["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
+    variableReadiness88["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
 	 true ALLOWED
 	 true HAS_PROPER_CONSTRAINTS
 	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -560,16 +547,11 @@ flowchart TD
 	 true HAS_PROPER_EQUALITY_CONSTRAINT
 	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
 )</tt></pre>"]
-    class variableReadiness91 nowrapClass;
-    class variableReadiness91 readinessStyle;
-    constraint93["<tt>TypeVariable(T) == String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
-    class constraint93 nowrapClass;
-    variableReadiness91 ~~~ constraint93
-    constraint94["<tt>TypeVariable(T) &lt;: Comparable&lt;String></tt>"]
-    class constraint94 nowrapClass;
-    variableReadiness91 ~~~ constraint94
-    constraint80 --> constraint94
-    constraint77 --> constraint94
+    class variableReadiness88 nowrapClass;
+    class variableReadiness88 readinessStyle;
+    constraint91["<tt>TypeVariable(T) == String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
+    class constraint91 nowrapClass;
+    variableReadiness88 ~~~ constraint91
 
     linkStyle 6 stroke:#990000
     linkStyle 13 stroke:#009999
@@ -592,63 +574,50 @@ flowchart TD
     linkStyle 43 stroke:#002b99
     linkStyle 44 stroke:#950099
     linkStyle 45 stroke:#009921
-    linkStyle 46 stroke:#039900
-    linkStyle 47 stroke:#009921
-    linkStyle 48 stroke:#950099
-    linkStyle 49 stroke:#009921
-    linkStyle 50 stroke:#990077
-    linkStyle 51 stroke:#004f99
-    linkStyle 52 stroke:#991200
-    linkStyle 53 stroke:#008699
-    linkStyle 54 stroke:#3a9900
-    linkStyle 55 stroke:#5e0099
-    linkStyle 57 stroke:#993600
-    linkStyle 64 stroke:#006299
-    linkStyle 65 stroke:#159900
-    linkStyle 66 stroke:#830099
+    linkStyle 46 stroke:#990077
+    linkStyle 47 stroke:#004f99
+    linkStyle 48 stroke:#991200
+    linkStyle 50 stroke:#008699
+    linkStyle 51 stroke:#3a9900
+    linkStyle 53 stroke:#5e0099
+    linkStyle 60 stroke:#993600
+    linkStyle 61 stroke:#006299
+    linkStyle 62 stroke:#159900
+    linkStyle 64 stroke:#830099
+    linkStyle 66 stroke:#995b00
+    linkStyle 67 stroke:#006299
     linkStyle 68 stroke:#995b00
-    linkStyle 70 stroke:#003d99
-    linkStyle 71 stroke:#159900
-    linkStyle 72 stroke:#003d99
-    linkStyle 73 stroke:#00990e
-    linkStyle 74 stroke:#006299
-    linkStyle 75 stroke:#99008a
+    linkStyle 69 stroke:#003d99
+    linkStyle 70 stroke:#993600
+    linkStyle 71 stroke:#00990e
+    linkStyle 72 stroke:#99008a
     linkStyle 76 stroke:#997f00
-    linkStyle 80 stroke:#001999
-    linkStyle 81 stroke:#006299
-    linkStyle 82 stroke:#001999
-    linkStyle 83 stroke:#830099
-    linkStyle 84 stroke:#001999
-    linkStyle 85 stroke:#830099
-    linkStyle 86 stroke:#009933
-    linkStyle 87 stroke:#159900
-    linkStyle 88 stroke:#009933
-    linkStyle 89 stroke:#830099
-    linkStyle 90 stroke:#990065
-    linkStyle 91 stroke:#990900
-    linkStyle 92 stroke:#008f99
-    linkStyle 93 stroke:#439900
-    linkStyle 96 stroke:#99008a
-    linkStyle 97 stroke:#159900
-    linkStyle 98 stroke:#550099
+    linkStyle 77 stroke:#993600
+    linkStyle 78 stroke:#997f00
+    linkStyle 79 stroke:#159900
+    linkStyle 80 stroke:#997f00
+    linkStyle 81 stroke:#159900
+    linkStyle 83 stroke:#001999
+    linkStyle 84 stroke:#009933
+    linkStyle 85 stroke:#990065
+    linkStyle 86 stroke:#990900
+    linkStyle 88 stroke:#008f99
+    linkStyle 95 stroke:#439900
+    linkStyle 96 stroke:#550099
+    linkStyle 98 stroke:#439900
     linkStyle 99 stroke:#991b00
-    linkStyle 106 stroke:#007d99
-    linkStyle 107 stroke:#319900
-    linkStyle 109 stroke:#007d99
-    linkStyle 110 stroke:#670099
-    linkStyle 111 stroke:#670099
-    linkStyle 112 stroke:#319900
-    linkStyle 114 stroke:#992d00
-    linkStyle 115 stroke:#007d99
-    linkStyle 116 stroke:#006b99
-    linkStyle 117 stroke:#1e9900
-    linkStyle 118 stroke:#7a0099
-    linkStyle 119 stroke:#993f00
-    linkStyle 121 stroke:#005999
-    linkStyle 123 stroke:#0c9900
-    linkStyle 126 stroke:#8c0099
-    linkStyle 129 stroke:#670099
-    linkStyle 130 stroke:#319900
+    linkStyle 100 stroke:#991b00
+    linkStyle 101 stroke:#550099
+    linkStyle 103 stroke:#007d99
+    linkStyle 104 stroke:#439900
+    linkStyle 105 stroke:#319900
+    linkStyle 106 stroke:#670099
+    linkStyle 107 stroke:#992d00
+    linkStyle 108 stroke:#006b99
+    linkStyle 110 stroke:#1e9900
+    linkStyle 112 stroke:#7a0099
+    linkStyle 116 stroke:#993f00
+    linkStyle 117 stroke:#005999
     style constraint6 stroke:#990000;
     style constraint12 stroke:#009999;
     style constraint13 stroke:#4c9900;
@@ -665,35 +634,33 @@ flowchart TD
     style constraint37 stroke:#002b99;
     style constraint38 stroke:#009921;
     style constraint39 stroke:#990077;
-    style constraint42 stroke:#991200;
-    style constraint40 stroke:#008699;
-    style constraint41 stroke:#3a9900;
+    style constraint40 stroke:#991200;
+    style constraint41 stroke:#008699;
+    style constraint42 stroke:#3a9900;
     style constraint43 stroke:#5e0099;
-    style constraint44 stroke:#993600;
-    style constraint51 stroke:#006299;
-    style constraint50 stroke:#159900;
-    style constraint52 stroke:#830099;
-    style constraint54 stroke:#995b00;
+    style constraint50 stroke:#993600;
+    style constraint49 stroke:#006299;
+    style constraint51 stroke:#159900;
+    style constraint53 stroke:#830099;
+    style constraint55 stroke:#995b00;
     style constraint56 stroke:#003d99;
     style constraint57 stroke:#00990e;
     style constraint58 stroke:#99008a;
-    style constraint59 stroke:#997f00;
+    style constraint63 stroke:#997f00;
     style constraint64 stroke:#001999;
     style constraint65 stroke:#009933;
     style constraint66 stroke:#990065;
     style constraint67 stroke:#990900;
     style constraint68 stroke:#008f99;
-    style constraint69 stroke:#439900;
-    style constraint70 stroke:#550099;
-    style constraint71 stroke:#991b00;
-    style constraint78 stroke:#007d99;
-    style constraint77 stroke:#319900;
-    style constraint80 stroke:#670099;
-    style constraint83 stroke:#992d00;
-    style constraint79 stroke:#006b99;
-    style constraint81 stroke:#1e9900;
-    style constraint82 stroke:#7a0099;
-    style constraint84 stroke:#993f00;
-    style constraint86 stroke:#005999;
-    style constraint88 stroke:#0c9900;
-    style constraint92 stroke:#8c0099;
+    style constraint75 stroke:#439900;
+    style constraint74 stroke:#550099;
+    style constraint77 stroke:#991b00;
+    style constraint80 stroke:#007d99;
+    style constraint76 stroke:#319900;
+    style constraint78 stroke:#670099;
+    style constraint79 stroke:#992d00;
+    style constraint81 stroke:#006b99;
+    style constraint83 stroke:#1e9900;
+    style constraint85 stroke:#7a0099;
+    style constraint89 stroke:#993f00;
+    style constraint90 stroke:#005999;

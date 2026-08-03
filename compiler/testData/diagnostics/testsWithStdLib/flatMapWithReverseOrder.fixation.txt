@@ -324,7 +324,6 @@ CHOSEN for fixation: TypeVariable(W) --- Readiness(
      >: ft<TypeVariable(E) & Any, TypeVariable(E)?>
      >: TypeVariable(R)!
      = kotlin/Int!
-     <: kotlin/Comparable<in kotlin/Int!>! (inferred during fixation)
     FIXED TO: kotlin/Int!
 TypeVariable(R) --- Readiness(
     	 true ALLOWED
@@ -410,8 +409,6 @@ TypeVariable(_R) --- Readiness(
     )
      <: kotlin/collections/Iterable<TypeVariable(R)>
      >: kotlin/collections/MutableSet<kotlin/Int>
-     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>?> (inferred during fixation)
-     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(R) --- Readiness(
     	 true ALLOWED
@@ -495,8 +492,6 @@ TypeVariable(_R) --- Readiness(
     )
      <: kotlin/collections/Iterable<TypeVariable(R)>
      >: kotlin/collections/MutableSet<kotlin/Int>
-     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>?>
-     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>
      <: kotlin/collections/Iterable<kotlin/Int> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(E) --- Readiness(
@@ -556,8 +551,6 @@ TypeVariable(_R) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: kotlin/collections/MutableSet<kotlin/Int>
-     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>?>
-     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>
      <: kotlin/collections/Iterable<kotlin/Int>
 ********************************
 CHOSEN for fixation: TypeVariable(C) --- Readiness(
@@ -597,8 +590,6 @@ TypeVariable(_R) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: kotlin/collections/MutableSet<kotlin/Int>
-     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>?>
-     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>
      <: kotlin/collections/Iterable<kotlin/Int>
 ********************************
 CHOSEN for fixation: TypeVariable(_R) --- Readiness(
@@ -618,8 +609,6 @@ CHOSEN for fixation: TypeVariable(_R) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: kotlin/collections/MutableSet<kotlin/Int>
-     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>?>
-     <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>
      <: kotlin/collections/Iterable<kotlin/Int>
      = kotlin/collections/MutableSet<kotlin/Int> (inferred during fixation)
     FIXED TO: kotlin/collections/MutableSet<kotlin/Int>

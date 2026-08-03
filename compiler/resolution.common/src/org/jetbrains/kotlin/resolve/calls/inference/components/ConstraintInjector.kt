@@ -122,6 +122,54 @@ class ConstraintInjector(
         }
     }
 
+    /**
+     * For freshly fixed type variable T := ResultType and some other type variable F and its constraint F <: SomeOtherType<T>,
+     * it adds F <: SomeOtherType<ResultType>.
+     *
+     * NB: All other constraint's properties are not changed.
+     * NB: It doesn't remove the existing F <: SomeOtherType<T> constraint, it shall be removed later at [NewConstraintSystemImpl.fixVariable]
+     *
+     * @param typeVariable type variable F from the example above
+     * @param existingConstraint constraint F <: SomeOtherType<T> from the example above
+     * @param newType substituted type SomeOtherType<ResultType>
+     */
+    context(c: Context)
+    fun addSubstitutedConstraintReplacementAfterVariableFixation(
+        typeVariable: TypeVariableMarker,
+        existingConstraint: Constraint,
+        newType: KotlinTypeMarker,
+        position: FixVariableConstraintPosition<*>,
+    ) {
+        val initialConstraint =
+            InitialConstraint(typeVariable.defaultType(), newType, existingConstraint.kind, position)
+                .also { c.addInitialConstraint(it) }
+
+        inferenceLogger?.logInitial(initialConstraint, c)
+
+        with(TypeCheckerStateForConstraintInjector(c, IncorporationConstraintPosition(initialConstraint))) {
+            inferenceLogger.withOrigin(initialConstraint) {
+                val inputTypePositionBeforeIncorporation =
+                    (existingConstraint.position.from as? OnlyInputTypeConstraintPosition
+                        ?: existingConstraint.inputTypePositionBeforeIncorporation)
+
+                addNewIncorporatedConstraint(
+                    typeVariable,
+                    newType,
+                    ConstraintContext(
+                        existingConstraint.kind,
+                        derivedFrom = emptySet(), // derivedFrom was only used for the second kind incorporation
+                        inputTypePositionBeforeIncorporation,
+                        existingConstraint.isNullabilityConstraint,
+                        existingConstraint.isNoInfer,
+                        existingConstraint.forceInflexibilityForUpperTypeAtDirectIncorporation,
+                    )
+                )
+            }
+
+            processConstraints()
+        }
+    }
+
     context(c: Context, typeCheckerState: TypeCheckerStateForConstraintInjector)
     private fun addSubTypeConstraintAndIncorporateIt(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker) {
         typeCheckerState.setConstrainingTypesToPrintDebugInfo(lowerType, upperType)

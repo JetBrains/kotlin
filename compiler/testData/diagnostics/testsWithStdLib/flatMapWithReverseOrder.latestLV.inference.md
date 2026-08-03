@@ -509,15 +509,11 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
     1. `TypeVariable(R) <: kotlin/Int!`
 5. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(W) <: kotlin/Comparable<in TypeVariable(W)!>!`
     1. `TypeVariable(W) <: kotlin/Int!`
-    2. `TypeVariable(W) <: kotlin/Comparable<in kotlin/Int!>!`
-6. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(E) <: TypeVariable(W)!`
-    1. `TypeVariable(E) <: kotlin/Int!`
-7. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(E) <: kotlin/Comparable<in TypeVariable(W)!>?`
-    1. `TypeVariable(E) <: kotlin/Comparable<in kotlin/Int!>?`
-8. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(R) <: kotlin/Comparable<in TypeVariable(W)!>?`
+6. `TypeVariable(E) <: kotlin/Int!` _from Fix variable W_
+7. `TypeVariable(E) <: kotlin/Comparable<in kotlin/Int!>?` _from Fix variable W_
+8. Combine `TypeVariable(R) <: TypeVariable(E)` with `TypeVariable(E) <: kotlin/Comparable<in kotlin/Int!>?`
     1. `TypeVariable(R) <: kotlin/Comparable<in kotlin/Int!>?`
-9. Combine `TypeVariable(W) == kotlin/Int!` with `TypeVariable(R) <: kotlin/Comparable<in TypeVariable(W)!>!`
-    1. `TypeVariable(R) <: kotlin/Comparable<in kotlin/Int!>!`
+9. `TypeVariable(R) <: kotlin/Comparable<in kotlin/Int!>!` _from Fix variable W_
 10. Choose `TypeVariable(R)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -569,8 +565,7 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
 11. `TypeVariable(R) == kotlin/Int` _from Fix variable R_
 12. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(R) <: TypeVariable(E)`
     1. `kotlin/Int <: TypeVariable(E)`
-13. Combine `TypeVariable(R) == kotlin/Int` with `TypeVariable(C) <: kotlin/collections/MutableCollection<in TypeVariable(R)>`
-    1. `TypeVariable(C) <: kotlin/collections/MutableCollection<in kotlin/Int>`
+13. `TypeVariable(C) <: kotlin/collections/MutableCollection<in kotlin/Int>` _from Fix variable R_
 14. Choose `TypeVariable(E)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -604,8 +599,7 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 15. `TypeVariable(E) == kotlin/Int` _from Fix variable E_
-16. Combine `TypeVariable(E) == kotlin/Int` with `java/util/TreeSet<TypeVariable(E)> <: TypeVariable(C)`
-    1. `java/util/TreeSet<kotlin/Int> <: TypeVariable(C)`
+16. `java/util/TreeSet<kotlin/Int> <: TypeVariable(C)` _from Fix variable E_
 17. Choose `TypeVariable(C)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS

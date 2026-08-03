@@ -183,7 +183,7 @@ class ConstraintIncorporator(
         constraint: Constraint,
         isCausedByFixation: Boolean,
     ) {
-        if (secondIncorporationKindRestrictedToFixation && !isCausedByFixation) return
+        if (secondIncorporationKindRestrictedToFixation) return
 
         if (typeVariable in constraint.derivedFrom) return
         val freshTypeConstructor = typeVariable.freshTypeConstructor()

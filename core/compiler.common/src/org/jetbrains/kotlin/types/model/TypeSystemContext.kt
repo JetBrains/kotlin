@@ -668,6 +668,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
      */
     fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker
 
+    fun TypeSubstitutorMarker.substituteOrNull(type: KotlinTypeMarker): KotlinTypeMarker? = safeSubstitute(type).takeIf { it !== type }
+
     /** See [CustomSubtypingCallback] */
     val customSubtypingCallback: CustomSubtypingCallback? get() = null
 }
