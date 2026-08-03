@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-87439
 
 // FILE: F.java
@@ -50,7 +50,7 @@ interface Factory {
 
 class FactoryImpl : Factory {
     override fun <N : Any, E : Any> show(): Promise<Pair<Handle<N, E>, Editor>> {
-        return helper<N, E>().thenApply { <!RETURN_TYPE_MISMATCH!>Pair.create(it, it.builder.editor)<!> }
+        return helper<N, E>().thenApply { Pair.create(it, it.builder.editor) }
     }
 
     fun <N : Any, E : Any> helper(): Promise<HandleImpl<N, E>> = null!!
