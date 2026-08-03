@@ -34,6 +34,7 @@ namespace {
 char debugBuffer[4096];
 
 const char* Konan_DebugGetTypeNameImpl(KRef obj);
+const char* Konan_DebugGetFieldNameImpl(KRef obj, int32_t index);
 
 constexpr int runtimeTypeSize[] = {
     -1,                  // INVALID
@@ -81,6 +82,7 @@ enum Konan_DebugOperation {
   DO_DebugBatchGetFieldCount = 14,
   DO_DebugBatchObjectToUtf8Array = 15,
   DO_DebugBatchGetTypeName = 16,
+  DO_DebugBatchGetFieldName = 17,
 };
 
 template <typename F>
@@ -346,6 +348,43 @@ void Konan_DebugBatchGetTypeNameImpl(
   }
 }
 
+void Konan_DebugBatchGetFieldNameImpl(
+    KRef obj,
+    const int32_t* indices,
+    int32_t count,
+    int32_t* offsets,
+    int32_t* lengths,
+    char* buffer,
+    int32_t bufferSize
+) {
+  if (offsets == nullptr || lengths == nullptr || count <= 0)
+    return;
+
+  for (int32_t i = 0; i < count; ++i) {
+    offsets[i] = -1;
+    lengths[i] = 0;
+  }
+
+  if (indices == nullptr || buffer == nullptr || bufferSize <= 0)
+    return;
+
+  int32_t used = 0;
+  for (int32_t i = 0; i < count; ++i) {
+    const char* fieldName = Konan_DebugGetFieldNameImpl(obj, indices[i]);
+    if (fieldName == nullptr)
+      continue;
+
+    const int32_t written = static_cast<int32_t>(::strlen(fieldName)) + 1;
+    if (written > bufferSize - used)
+      continue;
+
+    ::memcpy(buffer + used, fieldName, written);
+    offsets[i] = used;
+    lengths[i] = written;
+    used += written;
+  }
+}
+
 // Compute address of field or an array element at the index, or null, if incorrect.
 const char* Konan_DebugGetFieldNameImpl(KRef obj, int32_t index) {
   if (obj == nullptr || index < 0)
@@ -535,6 +574,35 @@ RUNTIME_EXPORT RUNTIME_WEAK void Konan_DebugBatchGetTypeName(
   impl(obj, indices, count, offsets, lengths, buffer, bufferSize);
 }
 
+RUNTIME_EXPORT RUNTIME_WEAK void Konan_DebugBatchGetFieldName(
+    KRef obj,
+    const int32_t* indices,
+    int32_t count,
+    int32_t* offsets,
+    int32_t* lengths,
+    char* buffer,
+    int32_t bufferSize
+) {
+  auto* impl = getImpl<void (*)(
+      KRef,
+      const int32_t*,
+      int32_t,
+      int32_t*,
+      int32_t*,
+      char*,
+      int32_t
+  )>(obj, DO_DebugBatchGetFieldName);
+  if (impl == nullptr) {
+    if (offsets == nullptr || lengths == nullptr || count <= 0) return;
+    for (int32_t i = 0; i < count; ++i) {
+      offsets[i] = -1;
+      lengths[i] = 0;
+    }
+    return;
+  }
+  impl(obj, indices, count, offsets, lengths, buffer, bufferSize);
+}
+
 // Compute address of field or an array element at the index, or null, if incorrect.
 RUNTIME_EXPORT RUNTIME_WEAK const char* Konan_DebugGetFieldName(KRef obj, int32_t index) {
   auto* impl = getImpl<const char* (*)(KRef, int32_t)>(obj, DO_DebugGetFieldName);
@@ -565,7 +633,8 @@ const void* Konan_debugOperationsList[] = {
   reinterpret_cast<const void*>(&Konan_DebugBatchGetFieldAddressImpl),
   reinterpret_cast<const void*>(&Konan_DebugBatchGetFieldCountImpl),
   reinterpret_cast<const void*>(&Konan_DebugBatchObjectToUtf8ArrayImpl),
-  reinterpret_cast<const void*>(&Konan_DebugBatchGetTypeNameImpl)
+  reinterpret_cast<const void*>(&Konan_DebugBatchGetTypeNameImpl),
+  reinterpret_cast<const void*>(&Konan_DebugBatchGetFieldNameImpl)
 };
 
 }  // extern "C"

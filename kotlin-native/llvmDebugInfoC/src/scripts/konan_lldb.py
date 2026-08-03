@@ -28,6 +28,7 @@ import struct
 import sys
 import time
 import logging
+from enum import Enum
 
 import lldb
 
@@ -37,132 +38,12 @@ _FAST_ARRAY_PREFETCH_RADIUS = 150
 _RUNTIME_TYPE_INVALID = 0
 _RUNTIME_TYPE_OBJECT = 1
 _RUNTIME_TYPE_VECTOR128 = 10
-_LIST_BACKING_FIELD_NAMES = ("backing", "$this_asList", "backingArray")
-_LIST_SIZE_FIELD_NAMES = ("length",)
-_MAP_BACKING_FIELD_NAMES = ("keysArray", "valuesArray")
-_MAP_SIZE_FIELD_NAMES = ("length",)
-_SET_BACKING_FIELD_NAME = "backing"
-_COLLECTION_DEBUG = False
-_COLLECTION_DEBUG_SLOW_SUMMARY_SECONDS = 0.02
-_COLLECTION_DEBUG_REPETITION_LIMIT = 3
-_COLLECTION_DEBUG_EVENT_COUNTS = {}
-_INSPECTION_TIMING = False
-_INSPECTION_TIMING_MIN_SECONDS = 0.01
-_INSPECTION_TIMING_REPETITION_LIMIT = 3
-_INSPECTION_TIMING_STATS = {}
-_INSPECTION_TIMING_EVENT_COUNTS = {}
-_FIELD_NAME_DEBUG = False
-_FIELD_NAME_DEBUG_REPETITION_LIMIT = 50
-_FIELD_NAME_DEBUG_COUNT = 0
 
 
-def enable_collection_debug(enabled=True, repetition_limit=3):
-    """Print collection-inspection timings to the LLDB console."""
-    global _COLLECTION_DEBUG, _COLLECTION_DEBUG_REPETITION_LIMIT
-    global _COLLECTION_DEBUG_EVENT_COUNTS
-    _COLLECTION_DEBUG = enabled
-    _COLLECTION_DEBUG_REPETITION_LIMIT = repetition_limit
-    _COLLECTION_DEBUG_EVENT_COUNTS = {}
-    print(
-        f"[konan-lldb] collection debug "
-        f"{'enabled' if enabled else 'disabled'}"
-    )
-
-
-def _trace_collection(message, event_key=None):
-    if _COLLECTION_DEBUG:
-        if event_key is not None:
-            count = _COLLECTION_DEBUG_EVENT_COUNTS.get(event_key, 0)
-            _COLLECTION_DEBUG_EVENT_COUNTS[event_key] = count + 1
-            if count >= _COLLECTION_DEBUG_REPETITION_LIMIT:
-                if count == _COLLECTION_DEBUG_REPETITION_LIMIT:
-                    print(
-                        f"[konan-lldb] further {event_key} events suppressed"
-                    )
-                return
-        print(f"[konan-lldb] {message}")
-
-
-def enable_field_name_debug(enabled=True, repetition_limit=50):
-    """Explain why Konan_DebugGetFieldName is called."""
-    global _FIELD_NAME_DEBUG, _FIELD_NAME_DEBUG_REPETITION_LIMIT
-    global _FIELD_NAME_DEBUG_COUNT
-    _FIELD_NAME_DEBUG = enabled
-    _FIELD_NAME_DEBUG_REPETITION_LIMIT = repetition_limit
-    _FIELD_NAME_DEBUG_COUNT = 0
-    print(
-        f"[konan-lldb] field name debug "
-        f"{'enabled' if enabled else 'disabled'}"
-    )
-
-
-def _trace_field_name(message):
-    global _FIELD_NAME_DEBUG_COUNT
-    if not _FIELD_NAME_DEBUG:
-        return
-    if _FIELD_NAME_DEBUG_COUNT < _FIELD_NAME_DEBUG_REPETITION_LIMIT:
-        print(f"[konan-lldb] field name {message}")
-    elif _FIELD_NAME_DEBUG_COUNT == _FIELD_NAME_DEBUG_REPETITION_LIMIT:
-        print("[konan-lldb] further field name events suppressed")
-    _FIELD_NAME_DEBUG_COUNT += 1
-
-
-def enable_inspection_timing(enabled=True, min_seconds=0.01):
-    """Measure potentially expensive LLDB inspection operations."""
-    global _INSPECTION_TIMING, _INSPECTION_TIMING_MIN_SECONDS
-    global _INSPECTION_TIMING_STATS, _INSPECTION_TIMING_EVENT_COUNTS
-    _INSPECTION_TIMING = enabled
-    _INSPECTION_TIMING_MIN_SECONDS = min_seconds
-    _INSPECTION_TIMING_STATS = {}
-    _INSPECTION_TIMING_EVENT_COUNTS = {}
-    print(
-        f"[konan-lldb] inspection timing "
-        f"{'enabled' if enabled else 'disabled'}"
-    )
-
-
-def print_inspection_timing():
-    """Print cumulative inspection timings collected in this stop state."""
-    if not _INSPECTION_TIMING_STATS:
-        print("[konan-lldb] no inspection timings recorded")
-        return
-    for operation, stats in sorted(
-        _INSPECTION_TIMING_STATS.items(),
-        key=lambda item: item[1]["total"],
-        reverse=True,
-    ):
-        print(
-            f"[konan-lldb] timing {operation}: "
-            f"count={stats['count']} total={stats['total']:.3f}s "
-            f"avg={stats['total'] / stats['count']:.3f}s "
-            f"max={stats['max']:.3f}s"
-        )
-
-
-def _record_inspection_timing(operation, start):
-    if not _INSPECTION_TIMING:
-        return
-    duration = time.monotonic() - start
-    stats = _INSPECTION_TIMING_STATS.setdefault(
-        operation, {"count": 0, "total": 0.0, "max": 0.0}
-    )
-    stats["count"] += 1
-    stats["total"] += duration
-    stats["max"] = max(stats["max"], duration)
-    if duration < _INSPECTION_TIMING_MIN_SECONDS:
-        return
-
-    count = _INSPECTION_TIMING_EVENT_COUNTS.get(operation, 0)
-    _INSPECTION_TIMING_EVENT_COUNTS[operation] = count + 1
-    if count < _INSPECTION_TIMING_REPETITION_LIMIT:
-        print(f"[konan-lldb] slow {operation}: {duration:.3f}s")
-    elif count == _INSPECTION_TIMING_REPETITION_LIMIT:
-        print(f"[konan-lldb] further slow {operation} events suppressed")
-
-
-def _evaluation_operation(expr):
-    match = re.search(r"Konan_Debug[A-Za-z0-9_]+", expr)
-    return match.group(0) if match is not None else "EvaluateExpression"
+class CollectionKind(Enum):
+    LIST = "list"
+    MAP = "map"
+    SET = "set"
 
 
 def initialize_expression_options():
@@ -178,15 +59,7 @@ def initialize_expression_options():
     return options
 
 
-def initialize_top_level_expression_options():
-    options = initialize_expression_options()
-    options.SetTopLevel(True)
-    options.SetSuppressPersistentResult(False)
-    return options
-
-
 _EXPRESSION_OPTIONS = initialize_expression_options()
-_TOP_LEVEL_EXPRESSION_OPTIONS = initialize_top_level_expression_options()
 
 
 def _bench(start, msg):
@@ -225,10 +98,7 @@ def _evaluate(expr):
     original_frame = frame
     original_frame_id = frame.GetFrameID()
 
-    start = time.monotonic() if _INSPECTION_TIMING else None
     result = frame.EvaluateExpression(expr, _EXPRESSION_OPTIONS)
-    if start is not None:
-        _record_inspection_timing(_evaluation_operation(expr), start)
 
     # Try to find and restore the original frame
     current_frame = thread.GetSelectedFrame()
@@ -382,16 +252,11 @@ _FACTORY = {}
 # Cache type info pointer to [ChildMetaInfo]
 _SYNTHETIC_OBJECT_LAYOUT_CACHE = {}
 _SBVALUE_QUERY_CACHE = {}
-# Cache a collection kind by concrete runtime type. An empty string means the
-# type is not one of the collections with a logical child count.
+# Cache a collection kind by concrete runtime type. `None` means the type is
+# not one of the collections with a synthetic child count.
 _COLLECTION_TYPE_INFO_CACHE = {}
-_COLLECTION_KIND_LIST = "list"
-_COLLECTION_KIND_MAP = "map"
-_COLLECTION_KIND_SET = "set"
-_COLLECTION_KIND_NONE = ""
+_UNCACHED = object()
 _KOTLIN_STRING_TYPE_INFO = None
-_LIST_LENGTH_OFFSET_CACHE = {}
-_HAS_CHILDREN_QUERY_QUEUE = {}
 _SBVALUE_QUERY_CACHE_STATE = None
 _TO_STRING_DEPTH = 2
 _ARRAY_TO_STRING_LIMIT = 10
@@ -400,34 +265,20 @@ _TOTAL_MEMBERS_LIMIT = 50
 
 class CachedSbValueResponses:
     def __init__(self):
-        self.array_child_addresses = {}
+        self.child_addresses_by_index = {}
+        self.child_types_by_index = {}
+        self.child_name_to_index = {}
         self.children_count = None
-        self.list_backing_field_address = None
-        self.map_keys_field_address = None
-        self.map_values_field_address = None
-        self.map_visible_children_count = None
-        self.set_keys_field_address = None
-        self.set_visible_children_count = None
-        self.logical_children_count = None
+        self.synthetic_children_count = None
         self.has_children = None
+        self.resolved_proxy = None
         self.summary = None
         self.runtime_type_name = None
         self.type_info = None
 
-
-def _trace_children_count_cache(message):
-    pass
-
-
 def _clear_sbvalue_query_cache(reason="manual"):
     global _SBVALUE_QUERY_CACHE, _SBVALUE_QUERY_CACHE_STATE
-    global _HAS_CHILDREN_QUERY_QUEUE
-    _trace_children_count_cache(
-        f"clear reason={reason} state={_SBVALUE_QUERY_CACHE_STATE} "
-        f"entries={len(_SBVALUE_QUERY_CACHE)}"
-    )
     _SBVALUE_QUERY_CACHE = {}
-    _HAS_CHILDREN_QUERY_QUEUE = {}
     _SBVALUE_QUERY_CACHE_STATE = None
 
 
@@ -444,9 +295,6 @@ def _ensure_sbvalue_query_cache_state(process):
         _clear_sbvalue_query_cache("invalid-process")
         return None, False
     if _SBVALUE_QUERY_CACHE_STATE != state:
-        _trace_children_count_cache(
-            f"state-change old={_SBVALUE_QUERY_CACHE_STATE} new={state}"
-        )
         _clear_sbvalue_query_cache("state-change")
         _SBVALUE_QUERY_CACHE_STATE = state
         return state, False
@@ -490,16 +338,12 @@ def _get_or_create_cached_sbvalue_responses_for_key(process, key):
         _clear_sbvalue_query_cache("invalid-process-create")
         return None
     if _SBVALUE_QUERY_CACHE_STATE != state:
-        _trace_children_count_cache(
-            f"state-change-create old={_SBVALUE_QUERY_CACHE_STATE} new={state}"
-        )
         _clear_sbvalue_query_cache("state-change-create")
         _SBVALUE_QUERY_CACHE_STATE = state
     responses = _SBVALUE_QUERY_CACHE.get(key)
     if responses is None:
         responses = CachedSbValueResponses()
         _SBVALUE_QUERY_CACHE[key] = responses
-        _trace_children_count_cache(f"create key={_hex(key)} state={state}")
     return responses
 
 
@@ -507,136 +351,218 @@ def _set_cached_children_count_for_key(
     process, key, children_count, type_info=None
 ):
     if key == 0:
-        _trace_children_count_cache(
-            f"skip-seed key=0 count={children_count}"
-        )
         return
     responses = _get_or_create_cached_sbvalue_responses_for_key(process, key)
     if responses is not None:
         responses.children_count = children_count
         if type_info is not None:
             responses.type_info = type_info
-        _trace_children_count_cache(
-            f"seed key={_hex(key)} count={children_count}"
-        )
 
 
-def _set_cached_logical_children_count_for_key(process, key, children_count):
+def _set_cached_synthetic_children_count_for_key(
+    process, key, children_count
+):
     if key == 0:
         return
     responses = _get_or_create_cached_sbvalue_responses_for_key(process, key)
     if responses is not None:
-        responses.logical_children_count = children_count
+        responses.synthetic_children_count = children_count
         responses.has_children = children_count > 0
 
 
-def _get_cached_logical_children_count(value):
+def _get_cached_synthetic_children_count(value):
     responses = _get_cached_sbvalue_responses(value)
-    return None if responses is None else responses.logical_children_count
+    return None if responses is None else responses.synthetic_children_count
 
 
-def _get_cached_has_children(value):
-    responses = _get_cached_sbvalue_responses(value)
-    return None if responses is None else responses.has_children
-
-
-def _get_cached_array_child_addresses(value):
+def _get_cached_child_addresses_by_index(value):
     responses = _get_or_create_cached_sbvalue_responses(value)
-    return None if responses is None else responses.array_child_addresses
+    return None if responses is None else responses.child_addresses_by_index
 
 
-def _get_cached_list_backing_field_address(value):
-    responses = _get_cached_sbvalue_responses(value)
-    return None if responses is None else responses.list_backing_field_address
+def _get_cached_child_types_by_index(value):
+    responses = _get_or_create_cached_sbvalue_responses(value)
+    return None if responses is None else responses.child_types_by_index
 
 
-def _set_cached_list_backing_field_address(value, field_address):
-    if not field_address:
+def _get_cached_child_name_to_index(value):
+    responses = _get_or_create_cached_sbvalue_responses(value)
+    return None if responses is None else responses.child_name_to_index
+
+
+def _cache_child_address(value, index, address):
+    cached_addresses = _get_cached_child_addresses_by_index(value)
+    if cached_addresses is not None:
+        cached_addresses[index] = address
+
+
+def _cache_child_type(value, index, child_type):
+    cached_types = _get_cached_child_types_by_index(value)
+    if cached_types is not None:
+        cached_types[index] = child_type
+
+
+def _cache_child_name(value, index, name):
+    if name is None:
         return
-    responses = _get_or_create_cached_sbvalue_responses(value)
-    if responses is not None:
-        responses.list_backing_field_address = field_address
+    cached_names = _get_cached_child_name_to_index(value)
+    if cached_names is not None:
+        cached_names[name] = index
 
 
-def _get_cached_map_backing(value):
-    responses = _get_cached_sbvalue_responses(value)
-    if responses is None:
-        return (None, None, None)
-    return (
-        responses.map_keys_field_address,
-        responses.map_values_field_address,
-        responses.map_visible_children_count,
-    )
-
-
-def _set_cached_map_backing(
-    value, keys_field_address, values_field_address, visible_children_count
-):
-    if (
-        not keys_field_address
-        or not values_field_address
-        or visible_children_count is None
-    ):
-        return
-    responses = _get_or_create_cached_sbvalue_responses(value)
-    if responses is not None:
-        responses.map_keys_field_address = keys_field_address
-        responses.map_values_field_address = values_field_address
-        responses.map_visible_children_count = visible_children_count
-
-
-def _get_cached_set_backing(value):
-    responses = _get_cached_sbvalue_responses(value)
-    if responses is None:
-        return (None, None)
-    return (
-        responses.set_keys_field_address,
-        responses.set_visible_children_count,
-    )
-
-
-def _set_cached_set_backing(value, keys_field_address, visible_children_count):
-    if not keys_field_address or visible_children_count is None:
-        return
-    responses = _get_or_create_cached_sbvalue_responses(value)
-    if responses is not None:
-        responses.set_keys_field_address = keys_field_address
-        responses.set_visible_children_count = visible_children_count
-
-
-def _read_int32_from_process(process, target, address):
-    error = lldb.SBError()
-    raw = process.ReadMemory(address, 4, error)
-    if not error.Success():
+def _get_cached_child_names_by_index(value, children_count):
+    cached_names = _get_cached_child_name_to_index(value)
+    if cached_names is None or len(cached_names) < children_count:
         return None
-    prefix = ">" if target.GetByteOrder() == lldb.eByteOrderBig else "<"
-    return struct.unpack(f"{prefix}i", raw)[0]
+
+    names = [None] * children_count
+    for name, index in cached_names.items():
+        if not 0 <= index < children_count or names[index] is not None:
+            return None
+        names[index] = name
+    return names if all(name is not None for name in names) else None
 
 
-def _resolve_queued_has_children(type_info):
-    length_offset = _LIST_LENGTH_OFFSET_CACHE.get(type_info)
-    if length_offset is None:
+def _align_up(value, alignment):
+    return (value + alignment - 1) & ~(alignment - 1)
+
+
+def _struct_prefix_for_target(target):
+    return ">" if target.GetByteOrder() == lldb.eByteOrderBig else "<"
+
+
+def _string_batch_layout(buffer_addr, buffer_size, count):
+    indices_addr = _align_up(buffer_addr, 4)
+    offsets_addr = _align_up(indices_addr + count * 4, 4)
+    lengths_addr = _align_up(offsets_addr + count * 4, 4)
+    string_buffer_addr = lengths_addr + count * 4
+    required_size = string_buffer_addr - buffer_addr
+    fits = required_size < buffer_size
+    string_buffer_size = buffer_size - required_size if fits else 0
+    return {
+        "indices_addr": indices_addr,
+        "offsets_addr": offsets_addr,
+        "lengths_addr": lengths_addr,
+        "string_buffer_addr": string_buffer_addr,
+        "string_buffer_size": string_buffer_size,
+        "fits": fits,
+    }
+
+
+def _max_string_batch_count(buffer_addr, buffer_size, max_count):
+    low = 0
+    high = max_count
+    while low < high:
+        mid = (low + high + 1) // 2
+        if _string_batch_layout(buffer_addr, buffer_size, mid)["fits"]:
+            low = mid
+        else:
+            high = mid - 1
+    return low
+
+
+def _write_batch_indices(process, indices, prefix, indices_addr):
+    if not indices:
         return
-
-    queued = _HAS_CHILDREN_QUERY_QUEUE.pop(type_info, [])
-    target = lldb.debugger.GetSelectedTarget()
-    for process, object_address in queued:
-        length = _read_int32_from_process(
-            process, target, object_address + length_offset
-        )
-        if length is not None:
-            _set_cached_logical_children_count_for_key(
-                process, object_address, length
-            )
+    indices_bytes = struct.pack(f"{prefix}{len(indices)}i", *indices)
+    error = lldb.SBError()
+    bytes_written = process.WriteMemory(indices_addr, indices_bytes, error)
+    if not error.Success() or bytes_written != len(indices_bytes):
+        raise DebuggerException("Failed to write batch indices")
 
 
-def _queue_has_children_query(process, object_address, type_info):
-    if object_address == 0 or type_info is None:
-        return
-    _HAS_CHILDREN_QUERY_QUEUE.setdefault(type_info, []).append(
-        (process, object_address)
+def _read_batch_strings(process, count, prefix, layout):
+    error = lldb.SBError()
+    raw_offsets = process.ReadMemory(layout["offsets_addr"], count * 4, error)
+    if not error.Success():
+        raise DebuggerException("Failed to read batch string offsets")
+    raw_lengths = process.ReadMemory(layout["lengths_addr"], count * 4, error)
+    if not error.Success():
+        raise DebuggerException("Failed to read batch string lengths")
+    offsets = struct.unpack(f"{prefix}{count}i", raw_offsets)
+    lengths = struct.unpack(f"{prefix}{count}i", raw_lengths)
+    max_end = max(
+        (
+            offset + length
+            for offset, length in zip(offsets, lengths)
+            if offset >= 0 and length > 0
+        ),
+        default=0,
     )
-    _resolve_queued_has_children(type_info)
+    if max_end <= 0:
+        return (offsets, lengths, None)
+
+    data = process.ReadMemory(layout["string_buffer_addr"], max_end, error)
+    if not error.Success():
+        raise DebuggerException("Failed to read batch strings")
+    return (offsets, lengths, data)
+
+
+def _prefetch_child_names_by_index(value, reason):
+    children_count = _children_count(value)
+    if children_count <= 0:
+        return
+    if _get_cached_child_names_by_index(value, children_count) is not None:
+        return
+
+    process = value.GetProcess()
+    target = lldb.debugger.GetSelectedTarget()
+    buffer_addr = _evaluate("(void *)Konan_DebugBuffer()").unsigned
+    buffer_size = _evaluate("(int)Konan_DebugBufferSize()").signed
+    max_batch_count = _max_string_batch_count(
+        buffer_addr, buffer_size, children_count
+    )
+    if max_batch_count <= 0:
+        raise DebuggerException(
+            "Konan_DebugBuffer is too small for field-name prefetch"
+        )
+
+    prefix = _struct_prefix_for_target(target)
+    for batch_offset in range(0, children_count, max_batch_count):
+        indices = list(
+            range(
+                batch_offset,
+                min(children_count, batch_offset + max_batch_count),
+            )
+        )
+        layout = _string_batch_layout(buffer_addr, buffer_size, len(indices))
+        _write_batch_indices(process, indices, prefix, layout["indices_addr"])
+        _evaluate(
+            (
+                f"((void)Konan_DebugBatchGetFieldName("
+                f"{_hex(value.unsigned)}, "
+                f"(int32_t *){_hex(layout['indices_addr'])}, "
+                f"{len(indices)}, "
+                f"(int32_t *){_hex(layout['offsets_addr'])}, "
+                f"(int32_t *){_hex(layout['lengths_addr'])}, "
+                f"(char *){_hex(layout['string_buffer_addr'])}, "
+                f"{layout['string_buffer_size']}"
+                f"), (void *){_hex(layout['string_buffer_addr'])})"
+            )
+        )
+        offsets, lengths, data = _read_batch_strings(
+            process, len(indices), prefix, layout
+        )
+        for index, offset, length in zip(indices, offsets, lengths):
+            if data is None or offset < 0 or length <= 0:
+                continue
+            name = data[offset : offset + length - 1].decode(
+                "utf-8", errors="replace"
+            )
+            _cache_child_name(value, index, name)
+
+
+def _get_cached_resolved_proxy(value):
+    responses = _get_cached_sbvalue_responses(value)
+    return None if responses is None else responses.resolved_proxy
+
+
+def _set_cached_resolved_proxy(value, proxy):
+    if proxy is None:
+        return
+    responses = _get_or_create_cached_sbvalue_responses(value)
+    if responses is not None:
+        responses.resolved_proxy = proxy
 
 
 def _get_cached_summary_for_key(process, key):
@@ -707,16 +633,9 @@ def _children_count(value):
     key = _sbvalue_query_cache_key(value)
     responses = _get_cached_sbvalue_responses(value)
     if responses is not None and responses.children_count is not None:
-        _trace_children_count_cache(
-            f"hit value={_hex(value.unsigned)} key={_hex(key)} "
-            f"count={responses.children_count}"
-        )
         return responses.children_count
 
     value_str = f"{_hex(value.unsigned)}"
-    _trace_children_count_cache(
-        f"miss value={value_str} key={_hex(key)}"
-    )
     children_count = (
         0
         if value.GetValueAsUnsigned() == 0
@@ -725,9 +644,6 @@ def _children_count(value):
     responses = _get_or_create_cached_sbvalue_responses(value)
     if responses is not None:
         responses.children_count = children_count
-        _trace_children_count_cache(
-            f"store value={value_str} key={_hex(key)} count={children_count}"
-        )
     return children_count
 
 _TYPE_CONVERSION = [
@@ -795,7 +711,6 @@ def _render_object(addr):
     cached = _get_cached_summary_for_key(process, addr)
     if cached is not None:
         return cached
-    start = time.monotonic()
     buff_addr = _evaluate("(void *)Konan_DebugBuffer()").unsigned
     buff_len = _evaluate(
         (
@@ -808,14 +723,6 @@ def _render_object(addr):
     ).signed
     summary = _read_string(buff_addr, buff_len)
     _set_cached_summary_for_key(process, addr, summary)
-    _record_inspection_timing("object_summary", start)
-    duration = time.monotonic() - start
-    if duration >= _COLLECTION_DEBUG_SLOW_SUMMARY_SECONDS:
-        _trace_collection(
-            f"summary rendered object={_hex(addr)} bytes={buff_len} "
-            f"duration={duration:.3f}s",
-            "slow-summary",
-        )
     return summary
 
 
@@ -851,7 +758,7 @@ def _select_provider(lldb_val, tip, internal_dict):
     logging.debug("%s name:%s tip:%s", value_str, lldb_val.name, _hex(tip))
     soa = _is_string_or_array(lldb_val)
     logging.debug("%s soa: %s", value_str, soa)
-    ret = (
+    raw_provider = (
         _FACTORY["string"](lldb_val, tip, internal_dict)
         if soa == 1
         else (
@@ -860,6 +767,27 @@ def _select_provider(lldb_val, tip, internal_dict):
             else _FACTORY["object"](lldb_val, tip, internal_dict)
         )
     )
+
+    ret = raw_provider
+    if isinstance(raw_provider, FastKonanObjectSyntheticProvider):
+        collection_kind = KonanProxyTypeProvider._collection_kind(lldb_val, tip)
+        if collection_kind is CollectionKind.LIST:
+            collection_proxy = KonanListSyntheticProvider.fromObjectProxy(
+                lldb_val, raw_provider, internal_dict
+            )
+        elif collection_kind is CollectionKind.SET:
+            collection_proxy = KonanSetSyntheticProvider.fromObjectProxy(
+                lldb_val, raw_provider, internal_dict
+            )
+        elif collection_kind is CollectionKind.MAP:
+            collection_proxy = KonanMapSyntheticProvider.fromObjectProxy(
+                lldb_val, raw_provider, internal_dict
+            )
+        else:
+            collection_proxy = None
+        if collection_proxy is not None:
+            ret = collection_proxy
+
     logging.debug("%s = %s", value_str, ret)
     _bench(start, lambda: f"select_provider({value_str})")
     return ret
@@ -903,12 +831,7 @@ class KonanHelperProvider(lldb.SBSyntheticValueProvider):
         self._log.debug(
             "[%s, type:%s, address:%s]", index, value_type, _hex(address)
         )
-        previous_reason = getattr(self, "_field_name_debug_reason", None)
-        self._field_name_debug_reason = "name a synthetic child SBValue"
-        try:
-            field_name = self._field_name(index)
-        finally:
-            self._field_name_debug_reason = previous_reason
+        field_name = self._child_name(index)
         return _TYPE_CONVERSION[int(value_type)](
             self, self._valobj, address, str(field_name)
         )
@@ -925,22 +848,47 @@ class KonanHelperProvider(lldb.SBSyntheticValueProvider):
         return obj_type
 
     def _field_address(self, index):
-        return _evaluate(
+        cached_addresses = _get_cached_child_addresses_by_index(self._valobj)
+        if cached_addresses is not None and index in cached_addresses:
+            return cached_addresses[index]
+
+        address = _evaluate(
             (
                 f"(void *)Konan_DebugGetFieldAddress("
                 f"{_hex(self._valobj.unsigned)}, {index}"
                 f")"
             )
         ).unsigned
+        _cache_child_address(self._valobj, index, address)
+        return address
 
     def _field_type(self, index):
-        return _evaluate(
+        cached_types = _get_cached_child_types_by_index(self._valobj)
+        if cached_types is not None and index in cached_types:
+            return cached_types[index]
+
+        child_type = _evaluate(
             (
                 f"(int)Konan_DebugGetFieldType("
                 f"{_hex(self._valobj.unsigned)}, {index}"
                 f")"
             )
         ).unsigned
+        _cache_child_type(self._valobj, index, child_type)
+        return child_type
+
+    def _child_name(self, index):
+        children = getattr(self, "_children", None)
+        if children is not None and 0 <= index < len(children):
+            return children[index]
+
+        cached_names = _get_cached_child_name_to_index(self._valobj)
+        if cached_names is not None:
+            for name, cached_index in cached_names.items():
+                if cached_index == index:
+                    return name
+
+        return self._field_name(index)
 
     def _render_string(self, representation):
         writer = io.StringIO()
@@ -1013,9 +961,13 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
         super(KonanObjectSyntheticProvider, self).__init__(
             valobj, False, "ObjectProvider", internal_dict
         )
-        self._children = [
-            self._field_name(i) for i in range(self._children_count)
-        ]
+        self._children = _get_cached_child_names_by_index(
+            self._valobj, self._children_count
+        )
+        if self._children is None:
+            self._children = [
+                self._field_name(i) for i in range(self._children_count)
+            ]
         self._log.debug(
             "%s _children: %s", _hex(self._valobj.unsigned), self._children
         )
@@ -1039,13 +991,7 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
             index,
             name,
         )
-        reason = getattr(
-            self, "_field_name_debug_reason", None
-        ) or "build visible object children"
-        _trace_field_name(
-            f"query object={_hex(self._valobj.unsigned)} index={index} "
-            f"name={name} reason={reason}"
-        )
+        _cache_child_name(self._valobj, index, name)
         return name
 
     def num_children(self):
@@ -1075,9 +1021,13 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
 
     def update(self):
         super(KonanObjectSyntheticProvider, self).update()
-        self._children = [
-            self._field_name(i) for i in range(self._children_count)
-        ]
+        self._children = _get_cached_child_names_by_index(
+            self._valobj, self._children_count
+        )
+        if self._children is None:
+            self._children = [
+                self._field_name(i) for i in range(self._children_count)
+            ]
         return False
 
 
@@ -1110,29 +1060,18 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
             index,
             name,
         )
-        reason = getattr(
-            self, "_field_name_debug_reason", None
-        ) or "build a field-name index"
-        _trace_field_name(
-            f"query object={_hex(self._valobj.unsigned)} index={index} "
-            f"name={name} reason={reason}"
-        )
+        _cache_child_name(self._valobj, index, name)
         return name
 
     def _ensure_children(self, reason):
         if self._children is None:
-            _trace_field_name(
-                f"enumerate object={_hex(self._valobj.unsigned)} "
-                f"count={self._children_count} reason={reason}"
+            self._children = _get_cached_child_names_by_index(
+                self._valobj, self._children_count
             )
-            previous_reason = getattr(self, "_field_name_debug_reason", None)
-            self._field_name_debug_reason = reason
-            try:
+            if self._children is None:
                 self._children = [
                     self._field_name(i) for i in range(self._children_count)
                 ]
-            finally:
-                self._field_name_debug_reason = previous_reason
             self._log.debug(
                 "%s _children: %s",
                 _hex(self._valobj.unsigned),
@@ -1258,7 +1197,7 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
         if not (0 <= index < self._children_count):
             return None
 
-        cached_addresses = _get_cached_array_child_addresses(self._valobj)
+        cached_addresses = _get_cached_child_addresses_by_index(self._valobj)
         if cached_addresses is None:
             return None
         if index not in cached_addresses:
@@ -1278,7 +1217,6 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
         return False
 
     def _prefetch_child_addresses(self, index, cached_addresses):
-        start_time = time.monotonic() if _INSPECTION_TIMING else None
         start = max(0, index - _FAST_ARRAY_PREFETCH_RADIUS)
         end = min(
             self._children_count - 1,
@@ -1317,41 +1255,24 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
                 buffer_addr, buffer_size, count
             )
 
-            batch_start_time = time.monotonic()
             addresses = self._run_batch_address_request(
                 indices, count, prefix, address_layout
             )
-            addresses_duration = time.monotonic() - batch_start_time
 
-            batch_start_time = time.monotonic()
             counts = self._run_batch_count_request(
                 indices, count, prefix, counts_layout
             )
-            counts_duration = time.monotonic() - batch_start_time
 
-            batch_start_time = time.monotonic()
             type_name_offsets, type_name_lengths, type_name_data = (
                 self._run_batch_type_name_request(
                     indices, count, prefix, type_name_layout
                 )
             )
-            type_names_duration = time.monotonic() - batch_start_time
 
-            batch_start_time = time.monotonic()
             summary_offsets, summary_lengths, summary_data = (
                 self._run_batch_summary_request(
                     indices, count, prefix, summary_layout
                 )
-            )
-            summaries_duration = time.monotonic() - batch_start_time
-            _trace_collection(
-                f"array prefetch object={_hex(self._valobj.unsigned)} "
-                f"indices={indices[0]}-{indices[-1]} count={count} "
-                f"addresses={addresses_duration:.3f}s "
-                f"children={counts_duration:.3f}s "
-                f"types={type_names_duration:.3f}s "
-                f"summaries={summaries_duration:.3f}s",
-                f"array-prefetch:{_hex(self._tip)}",
             )
             for (
                 child_index,
@@ -1371,6 +1292,9 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
                 summary_lengths,
             ):
                 cached_addresses[child_index] = child_address
+                _cache_child_type(
+                    self._valobj, child_index, self._element_runtime_type
+                )
                 if (
                     self._element_runtime_type == _RUNTIME_TYPE_OBJECT
                     and child_address
@@ -1383,13 +1307,6 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
                         child_count,
                         child_type_info,
                     )
-                    if (
-                        _COLLECTION_TYPE_INFO_CACHE.get(child_type_info)
-                        == _COLLECTION_KIND_LIST
-                    ):
-                        _queue_has_children_query(
-                            self._process, child_key, child_type_info
-                        )
                     if (
                         type_name_data is not None
                         and type_name_offset >= 0
@@ -1413,11 +1330,6 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
                         _set_cached_summary_for_key(
                             self._process, child_key, summary
                         )
-
-        if start_time is not None:
-            _record_inspection_timing(
-                "FastKonanArraySyntheticProvider.prefetch", start_time
-            )
 
     def _max_batch_count(self, buffer_addr, buffer_size):
         pointer_size = self._target.GetAddressByteSize()
@@ -1770,6 +1682,131 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
         return (value + alignment - 1) & ~(alignment - 1)
 
 
+def _object_field(object_proxy, field_name):
+    try:
+        field_index = object_proxy.get_child_index(field_name)
+    except (DebuggerException, ValueError):
+        return None
+    value = object_proxy.get_child_at_index(field_index)
+    if value is not None and value.IsValid():
+        _cache_type_info_from_memory(value)
+    return value
+
+
+def _object_field_unsigned(object_proxy, field_name):
+    value = _object_field(object_proxy, field_name)
+    if value is None or not value.IsValid():
+        return None
+    return value.GetValueAsUnsigned()
+
+
+class KonanDelegatingSyntheticProvider:
+    def __init__(self, valobj, proxy, children_count=None):
+        self._valobj = valobj
+        self._proxy = proxy
+        self._children_count = children_count
+
+    def num_children(self):
+        proxy_children_count = self._proxy.num_children()
+        children_count = proxy_children_count
+        if self._children_count is not None:
+            children_count = min(proxy_children_count, self._children_count)
+        _set_cached_synthetic_children_count_for_key(
+            self._valobj.GetProcess(), self._valobj.unsigned, children_count
+        )
+        return children_count
+
+    def has_children(self):
+        return self.num_children() > 0
+
+    def get_child_index(self, name):
+        child_index = self._proxy.get_child_index(name)
+        return child_index if 0 <= child_index < self.num_children() else -1
+
+    def get_child_at_index(self, index):
+        if not 0 <= index < self.num_children():
+            return None
+        return self._proxy.get_child_at_index(index)
+
+    def update(self):
+        return self._proxy.update()
+
+    def __getattr__(self, item):
+        return getattr(self._proxy, item)
+
+
+class KonanListSyntheticProvider(KonanDelegatingSyntheticProvider):
+    def __init__(self, valobj, backing_proxy, children_count):
+        super().__init__(valobj, backing_proxy, children_count)
+        self._log = logging.getLogger(self.__class__.__name__)
+
+    @staticmethod
+    def fromObjectProxy(valobj, object_proxy, internal_dict):
+        if object_proxy is None:
+            return None
+
+        _prefetch_child_names_by_index(
+            valobj, "resolve List backing fields"
+        )
+        visible_children_count = _object_field_unsigned(object_proxy, "length")
+        for field_name in ("backing", "$this_asList", "backingArray"):
+            backing = _object_field(object_proxy, field_name)
+            if backing is not None and backing.IsValid() and backing.unsigned != 0:
+                return KonanListSyntheticProvider(
+                    valobj,
+                    KonanProxyTypeProvider(backing, internal_dict),
+                    visible_children_count,
+                )
+
+        logging.getLogger(KonanListSyntheticProvider.__name__).debug(
+            "%s has no supported List backing field", _hex(valobj.unsigned)
+        )
+        return None
+
+
+class KonanSetSyntheticProvider(KonanDelegatingSyntheticProvider):
+    def __init__(self, valobj, keys_proxy, children_count):
+        super().__init__(valobj, keys_proxy, children_count)
+        self._log = logging.getLogger(self.__class__.__name__)
+
+    @staticmethod
+    def fromObjectProxy(valobj, object_proxy, internal_dict):
+        if object_proxy is None:
+            return None
+
+        _prefetch_child_names_by_index(
+            valobj, "resolve Set backing fields"
+        )
+        backing = _object_field(object_proxy, "backing")
+        if backing is None or not backing.IsValid() or backing.unsigned == 0:
+            logging.getLogger(KonanSetSyntheticProvider.__name__).debug(
+                "%s has no supported Set backing field", _hex(valobj.unsigned)
+            )
+            return None
+
+        backing_type_info = _get_cached_type_info(backing) or _type_info(backing)
+        if not backing_type_info:
+            return None
+        backing_object_proxy = _select_provider(
+            backing, backing_type_info, internal_dict
+        )
+        _prefetch_child_names_by_index(
+            backing, "resolve Set keysArray field"
+        )
+        keys = _object_field(backing_object_proxy, "keysArray")
+        if keys is None or not keys.IsValid() or keys.unsigned == 0:
+            return None
+
+        visible_children_count = _object_field_unsigned(
+            backing_object_proxy, "length"
+        )
+        return KonanSetSyntheticProvider(
+            valobj,
+            KonanProxyTypeProvider(keys, internal_dict),
+            visible_children_count,
+        )
+
+
 class KonanMapSyntheticProvider:
     def __init__(self, valobj, keys, values, children_count, internal_dict):
         self._log = logging.getLogger(self.__class__.__name__)
@@ -1781,50 +1818,16 @@ class KonanMapSyntheticProvider:
         self._children_count = children_count
         self._entry_type = None
 
-    @classmethod
-    def create(cls, valobj, object_proxy, internal_dict):
-        (
-            keys_field_address,
-            values_field_address,
-            visible_children_count,
-        ) = _get_cached_map_backing(valobj)
-        if (
-            keys_field_address
-            and values_field_address
-            and visible_children_count is not None
-        ):
-            keys = valobj.CreateValueFromAddress(
-                "keysArray", keys_field_address, valobj.type
-            )
-            values = valobj.CreateValueFromAddress(
-                "valuesArray", values_field_address, valobj.type
-            )
-            if (
-                keys.IsValid()
-                and keys.unsigned != 0
-                and values.IsValid()
-                and values.unsigned != 0
-            ):
-                _trace_collection(
-                    f"map backing cache object={_hex(valobj.unsigned)} "
-                    f"keys={_hex(keys.unsigned)} "
-                    f"values={_hex(values.unsigned)} "
-                    f"size={visible_children_count}",
-                    f"map-backing-cache:{visible_children_count}",
-                )
-                return cls(
-                    valobj,
-                    keys,
-                    values,
-                    visible_children_count,
-                    internal_dict,
-                )
-
+    @staticmethod
+    def fromObjectProxy(valobj, object_proxy, internal_dict):
         if object_proxy is None:
             return None
 
-        keys = cls._object_field(object_proxy, "keysArray")
-        values = cls._object_field(object_proxy, "valuesArray")
+        _prefetch_child_names_by_index(
+            valobj, "resolve Map backing fields"
+        )
+        keys = _object_field(object_proxy, "keysArray")
+        values = _object_field(object_proxy, "valuesArray")
         if (
             keys is None
             or not keys.IsValid()
@@ -1836,34 +1839,25 @@ class KonanMapSyntheticProvider:
             return None
 
         visible_children_count = None
-        for field_name in _MAP_SIZE_FIELD_NAMES:
-            value = cls._object_field(object_proxy, field_name)
+        for field_name in ("length",):
+            value = _object_field(object_proxy, field_name)
             if value is not None and value.IsValid():
                 visible_children_count = value.GetValueAsUnsigned()
                 break
-        _set_cached_map_backing(
-            valobj,
-            keys.AddressOf().GetValueAsUnsigned(),
-            values.AddressOf().GetValueAsUnsigned(),
-            visible_children_count,
-        )
-        return cls(
+        return KonanMapSyntheticProvider(
             valobj, keys, values, visible_children_count, internal_dict
         )
-
-    @staticmethod
-    def _object_field(object_proxy, field_name):
-        try:
-            field_index = object_proxy.get_child_index(field_name)
-        except (DebuggerException, ValueError):
-            return None
-        return object_proxy.get_child_at_index(field_index)
 
     def num_children(self):
         keys_count = self._keys.num_children()
         values_count = self._values.num_children()
         count = min(keys_count, values_count)
-        return count if self._children_count is None else min(count, self._children_count)
+        if self._children_count is not None:
+            count = min(count, self._children_count)
+        _set_cached_synthetic_children_count_for_key(
+            self._valobj.GetProcess(), self._valobj.unsigned, count
+        )
+        return count
 
     def has_children(self):
         return self.num_children() > 0
@@ -1953,28 +1947,27 @@ class KonanNotInitializedObjectSyntheticProvider(KonanZerroSyntheticProvider):
 
 
 class KonanProxyTypeProvider:
-    def __init__(self, valobj, internal_dict, visible_children_count=None):
+    def __init__(self, valobj, internal_dict):
         self._log = logging.getLogger(self.__class__.__name__)
         self._valobj = valobj
         self._internal_dict = internal_dict
-        self._visible_children_count = visible_children_count
-        self._proxy = None
-        self._uses_list_backing = False
-        self._uses_map_backing = False
-        self._uses_set_backing = False
         self._type_info_address = _object_type_info_from_memory(valobj)
         if self._type_info_address is not None:
             _set_cached_type_info(valobj, self._type_info_address)
         self._log.debug("%s, name: %s", _hex(valobj.unsigned), valobj.name)
 
-    def _cached_children_count(self):
-        responses = _get_cached_sbvalue_responses(self._valobj)
-        if responses is None:
-            return None
-        return responses.children_count
-
     def _cached_type_info(self):
         return self._type_info_address or _get_cached_type_info(self._valobj)
+
+    def _type_info(self):
+        cached_type_info = self._cached_type_info()
+        if cached_type_info is not None:
+            return cached_type_info
+
+        type_info = _type_info(self._valobj)
+        if type_info is not None:
+            _set_cached_type_info(self._valobj, type_info)
+        return type_info
 
     def _is_kotlin_string(self):
         global _KOTLIN_STRING_TYPE_INFO
@@ -1994,17 +1987,22 @@ class KonanProxyTypeProvider:
     def _cached_collection_kind(self):
         type_info = self._cached_type_info()
         if type_info is None:
-            return None
-        return _COLLECTION_TYPE_INFO_CACHE.get(type_info)
+            return _UNCACHED
+        if type_info not in _COLLECTION_TYPE_INFO_CACHE:
+            return _UNCACHED
+        return _COLLECTION_TYPE_INFO_CACHE[type_info]
 
     def _get_proxy(self):
-        if self._proxy is not None:
-            return self._proxy
+        cached_proxy = _get_cached_resolved_proxy(self._valobj)
+        if cached_proxy is not None:
+            return cached_proxy
 
         start = time.monotonic()
         valobj = self._valobj
         value_str = _hex(valobj.unsigned)
         value_name = valobj.name
+
+        # TODO: Check that we dont need to return the null provider if the value changed to 0 in the meantime
         if valobj.unsigned == 0:
             self._log.debug(
                 "%s, name: %s NULL syntectic %s",
@@ -2012,10 +2010,9 @@ class KonanProxyTypeProvider:
                 value_name,
                 valobj.IsValid(),
             )
-            self._proxy = KonanNullSyntheticProvider(valobj)
+            proxy = KonanNullSyntheticProvider(valobj)
         else:
-            cached_type_info = self._cached_type_info()
-            tip = cached_type_info or _type_info(valobj)
+            tip = self._type_info()
             if not tip:
                 self._log.debug(
                     "%s, name: %s NULL syntectic %s",
@@ -2023,301 +2020,54 @@ class KonanProxyTypeProvider:
                     value_name,
                     valobj.IsValid(),
                 )
-                self._proxy = KonanNotInitializedObjectSyntheticProvider(
+                proxy = KonanNotInitializedObjectSyntheticProvider(
                     valobj
                 )
             else:
-                if cached_type_info is None:
-                    _set_cached_type_info(valobj, tip)
-                _trace_collection(
-                    f"proxy object={value_str} type_info={_hex(tip)} "
-                    f"source={'cache' if cached_type_info else 'expression'}",
-                    f"proxy:{_hex(tip)}:"
-                    f"{'cache' if cached_type_info else 'expression'}",
-                )
                 self._log.debug("%s tip: %s", value_str, _hex(tip))
-                collection_kind = self._collection_kind(valobj, tip)
-                if collection_kind == _COLLECTION_KIND_LIST:
-                    backing_proxy = self._list_backing_proxy()
-                    if backing_proxy is None:
-                        object_proxy = _select_provider(
-                            valobj, tip, self._internal_dict
-                        )
-                        self._proxy = object_proxy
-                        backing_proxy = self._list_backing_proxy(object_proxy)
-                    if backing_proxy is not None:
-                        self._proxy = backing_proxy
-                        self._uses_list_backing = True
-                elif collection_kind == _COLLECTION_KIND_SET:
-                    backing_proxy = self._set_backing_proxy()
-                    if backing_proxy is None:
-                        object_proxy = _select_provider(
-                            valobj, tip, self._internal_dict
-                        )
-                        self._proxy = object_proxy
-                        backing_proxy = self._set_backing_proxy(object_proxy)
-                    if backing_proxy is not None:
-                        self._proxy = backing_proxy
-                        self._uses_set_backing = True
-                elif collection_kind == _COLLECTION_KIND_MAP:
-                    map_proxy = KonanMapSyntheticProvider.create(
-                        valobj, None, self._internal_dict
-                    )
-                    if map_proxy is None:
-                        object_proxy = _select_provider(
-                            valobj, tip, self._internal_dict
-                        )
-                        self._proxy = object_proxy
-                        map_proxy = KonanMapSyntheticProvider.create(
-                            valobj, object_proxy, self._internal_dict
-                        )
-                    if map_proxy is not None:
-                        self._proxy = map_proxy
-                        self._uses_map_backing = True
-                else:
-                    self._proxy = _select_provider(
-                        valobj, tip, self._internal_dict
-                    )
+                proxy = _select_provider(
+                    valobj, tip, self._internal_dict
+                )
 
+        _set_cached_resolved_proxy(self._valobj, proxy)
         _bench(start, lambda: f"KonanProxyTypeProvider({value_str})")
-        _record_inspection_timing("KonanProxyTypeProvider", start)
         self._log.debug(
-            "%s _proxy: %s", value_str, self._proxy.__class__.__name__
+            "%s _proxy: %s", value_str, proxy.__class__.__name__
         )
-        return self._proxy
+        return proxy
 
     @staticmethod
     def _collection_kind(valobj, type_info):
-        collection_kind = _COLLECTION_TYPE_INFO_CACHE.get(type_info)
-        if collection_kind is not None:
-            _trace_collection(
-                f"collection type cache hit type_info={_hex(type_info)} "
-                f"kind={collection_kind or 'object'}",
-                f"collection-kind:{_hex(type_info)}",
-            )
-            return collection_kind
+        if type_info in _COLLECTION_TYPE_INFO_CACHE:
+            return _COLLECTION_TYPE_INFO_CACHE[type_info]
 
         if _is_kotlin_list(valobj):
-            collection_kind = _COLLECTION_KIND_LIST
+            collection_kind = CollectionKind.LIST
         elif _is_kotlin_map(valobj):
-            collection_kind = _COLLECTION_KIND_MAP
+            collection_kind = CollectionKind.MAP
         elif _is_kotlin_set(valobj):
-            collection_kind = _COLLECTION_KIND_SET
+            collection_kind = CollectionKind.SET
         else:
-            collection_kind = _COLLECTION_KIND_NONE
+            collection_kind = None
         _COLLECTION_TYPE_INFO_CACHE[type_info] = collection_kind
-        _trace_collection(
-            f"collection type classified type_info={_hex(type_info)} "
-            f"kind={collection_kind or 'object'}",
-            f"collection-kind:{_hex(type_info)}",
-        )
         return collection_kind
-
-    def _list_backing_proxy(self, object_proxy=None):
-        cached_field_address = _get_cached_list_backing_field_address(
-            self._valobj
-        )
-        if cached_field_address:
-            backing = self._valobj.CreateValueFromAddress(
-                "backing", cached_field_address, self._valobj.type
-            )
-            if backing.IsValid() and backing.unsigned != 0:
-                _trace_collection(
-                    f"list backing cache object={_hex(self._valobj.unsigned)} "
-                    f"backing={_hex(backing.unsigned)}",
-                    f"list-backing-cache:{_hex(self._cached_type_info() or 0)}",
-                )
-                return KonanProxyTypeProvider(
-                    backing,
-                    self._internal_dict,
-                    _get_cached_logical_children_count(self._valobj),
-                )
-
-        if object_proxy is None:
-            return None
-
-        visible_children_count = self._list_size(object_proxy, True)
-        for field_name in _LIST_BACKING_FIELD_NAMES:
-            backing = self._object_field(object_proxy, field_name)
-            if backing is not None and backing.IsValid() and backing.unsigned != 0:
-                _trace_collection(
-                    f"list backing object={_hex(self._valobj.unsigned)} "
-                    f"field={field_name} backing={_hex(backing.unsigned)} "
-                    f"length={visible_children_count}",
-                    f"list-backing:{field_name}:{visible_children_count}",
-                )
-                field_address = backing.AddressOf().GetValueAsUnsigned()
-                _set_cached_list_backing_field_address(
-                    self._valobj, field_address
-                )
-                return KonanProxyTypeProvider(
-                    backing, self._internal_dict, visible_children_count
-                )
-
-        self._log.debug(
-            "%s has no supported List backing field", _hex(self._valobj.unsigned)
-        )
-        return None
-
-    def _list_size(self, object_proxy, cache_layout=False):
-        for field_name in _LIST_SIZE_FIELD_NAMES:
-            try:
-                field_index = object_proxy.get_child_index(field_name)
-            except (DebuggerException, ValueError):
-                continue
-            value = object_proxy.get_child_at_index(field_index)
-            if value is not None and value.IsValid():
-                if cache_layout:
-                    type_info = self._cached_type_info()
-                    field_address = object_proxy._field_address(field_index)
-                    if type_info is not None and field_address:
-                        _LIST_LENGTH_OFFSET_CACHE[type_info] = (
-                            field_address - self._valobj.unsigned
-                        )
-                        _resolve_queued_has_children(type_info)
-                return value.GetValueAsUnsigned()
-        return None
-
-    def _set_backing_proxy(self, object_proxy=None):
-        keys_field_address, visible_children_count = _get_cached_set_backing(
-            self._valobj
-        )
-        if keys_field_address and visible_children_count is not None:
-            keys = self._valobj.CreateValueFromAddress(
-                "keysArray", keys_field_address, self._valobj.type
-            )
-            if keys.IsValid() and keys.unsigned != 0:
-                _trace_collection(
-                    f"set backing cache object={_hex(self._valobj.unsigned)} "
-                    f"keys={_hex(keys.unsigned)} "
-                    f"length={visible_children_count}",
-                    f"set-backing-cache:{visible_children_count}",
-                )
-                return KonanProxyTypeProvider(
-                    keys, self._internal_dict, visible_children_count
-                )
-
-        if object_proxy is None:
-            return None
-
-        backing = self._object_field(object_proxy, _SET_BACKING_FIELD_NAME)
-        if backing is None or not backing.IsValid() or backing.unsigned == 0:
-            self._log.debug(
-                "%s has no supported Set backing field",
-                _hex(self._valobj.unsigned),
-            )
-            return None
-
-        backing_type_info = _get_cached_type_info(backing) or _type_info(backing)
-        if not backing_type_info:
-            return None
-        backing_object_proxy = _select_provider(
-            backing, backing_type_info, self._internal_dict
-        )
-        keys = self._object_field(backing_object_proxy, "keysArray")
-        if keys is None or not keys.IsValid() or keys.unsigned == 0:
-            return None
-
-        visible_children_count = self._list_size(backing_object_proxy)
-        _trace_collection(
-            f"set backing object={_hex(self._valobj.unsigned)} "
-            f"keys={_hex(keys.unsigned)} length={visible_children_count}",
-            f"set-backing:{visible_children_count}",
-        )
-        _set_cached_set_backing(
-            self._valobj,
-            keys.AddressOf().GetValueAsUnsigned(),
-            visible_children_count,
-        )
-        return KonanProxyTypeProvider(
-            keys, self._internal_dict, visible_children_count
-        )
-
-    @staticmethod
-    def _object_field(object_proxy, field_name):
-        try:
-            field_index = object_proxy.get_child_index(field_name)
-        except (DebuggerException, ValueError):
-            return None
-        value = object_proxy.get_child_at_index(field_index)
-        if value is not None and value.IsValid():
-            _cache_type_info_from_memory(value)
-        return value
-
-    def _limit_children_count(self, children_count):
-        if self._visible_children_count is None:
-            return children_count
-        return min(children_count, self._visible_children_count)
-
-    def _trace_children_query(self, operation):
-        _trace_field_name(
-            f"proxy {operation} object={_hex(self._valobj.unsigned)} "
-            f"proxy_cached={self._proxy is not None} "
-            f"type_info={_hex(self._cached_type_info() or 0)}"
-        )
 
     def get_value(self):
         return self._valobj.GetValue()
 
     def num_children(self):
-        self._trace_children_query("num_children")
-        logical_children_count = _get_cached_logical_children_count(
-            self._valobj
-        )
-        if logical_children_count is not None:
-            return self._limit_children_count(logical_children_count)
-
-        type_info = self._cached_type_info()
-        if (
-            _COLLECTION_TYPE_INFO_CACHE.get(type_info)
-            == _COLLECTION_KIND_LIST
-        ):
-            _queue_has_children_query(
-                self._valobj.GetProcess(), self._valobj.unsigned, type_info
-            )
-            logical_children_count = _get_cached_logical_children_count(
-                self._valobj
-            )
-            if logical_children_count is not None:
-                return self._limit_children_count(logical_children_count)
-
-        cached_children_count = self._cached_children_count()
-        if (
-            cached_children_count is not None
-            and self._cached_collection_kind() == _COLLECTION_KIND_NONE
-        ):
-            return self._limit_children_count(cached_children_count)
+        synthetic_children_count = _get_cached_synthetic_children_count(self._valobj)
+        if synthetic_children_count is not None:
+            return synthetic_children_count
 
         proxy = self._get_proxy()
-        if (
-            self._uses_list_backing
-            or self._uses_map_backing
-            or self._uses_set_backing
-        ):
-            count = self._limit_children_count(proxy.num_children())
-            _set_cached_logical_children_count_for_key(
-                self._valobj.GetProcess(), self._valobj.unsigned, count
-            )
-            _trace_collection(
-                f"logical children object={_hex(self._valobj.unsigned)} "
-                f"count={count}",
-                f"logical-children:"
-                f"{_hex(self._cached_type_info() or 0)}:{count}",
-            )
-            return count
-
-        if cached_children_count is not None:
-            return self._limit_children_count(cached_children_count)
-
-        return self._limit_children_count(proxy.num_children())
+        return proxy.num_children()
 
     def update(self):
-        if self._proxy is not None:
-            return self._proxy.update()
-        return False
+        cached_proxy = _get_cached_resolved_proxy(self._valobj)
+        return False if cached_proxy is None else cached_proxy.update()
 
     def has_children(self):
-        self._trace_children_query("has_children")
         if self._valobj.unsigned == 0:
             return False
 
@@ -2364,7 +2114,6 @@ def field_type_command(_, field_address, exe_ctx, result, internal_dict):
     '(foo.bar.baz <TYPE_NAME>)'. If requested field could not be traced,
     then '<NO_FIELD_FOUND>' plug is used for type name.
     """
-    start = time.monotonic()
     fields = field_address.split(".")
 
     variable = exe_ctx.GetFrame().FindVariable(fields[0])
@@ -2385,10 +2134,6 @@ def field_type_command(_, field_address, exe_ctx, result, internal_dict):
             desc = rt
 
     result.write(f"{desc}")
-    print(
-        f"[konan-lldb] field_type {field_address}: "
-        f"{time.monotonic() - start:.3f}s"
-    )
 
 
 _KONAN_VARIABLE = re.compile("kvar:(.*)#internal")
@@ -2410,11 +2155,9 @@ _TYPES_KONAN_TO_C = {
 
 
 def type_by_address_command(debugger, command, result, _):
-    result.AppendMessage(f"DEBUG: {command}")
     tokens = command.split()
     target = debugger.GetSelectedTarget()
     types = _type_info_by_address(tokens[0])
-    result.AppendMessage(f"DEBUG: {types}")
     for t in types:
         result.AppendMessage(
             f"{t.name}: {_hex(t.GetStartAddress().GetLoadAddress(target))}"
