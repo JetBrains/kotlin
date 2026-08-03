@@ -1882,6 +1882,7 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverSc
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation$Companion;
+	public static final field EXPAND_TYPE_ALIASES Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation$Option;
 	public static final field GRANULARITY Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation$Option;
 	public static final field PARSE_INLINED_LOCAL_CLASSES Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation$Option;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation$Option;)Ljava/lang/Object;

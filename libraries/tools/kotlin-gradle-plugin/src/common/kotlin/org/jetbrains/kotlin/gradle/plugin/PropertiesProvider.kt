@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStream
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CLASSLOADER_CACHE_TIMEOUT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CREATE_ARCHIVE_TASKS_FOR_CUSTOM_COMPILATIONS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CREATE_DEFAULT_MULTIPLATFORM_PUBLICATIONS
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_EXPAND_TYPE_ALIASES_IN_CLASSPATH_SNAPSHOTS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_EXPERIMENTAL_TRY_NEXT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_GENERATE_COMPILER_REF_INDEX
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INCREMENTAL_FIR
@@ -730,6 +731,18 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val parseInlinedLocalClasses: Provider<Boolean> = booleanProvider(KOTLIN_PARSE_INLINED_LOCAL_CLASSES).orElse(true)
 
     /**
+     * Affects classpath snapshot transformation.
+     *
+     * If enabled, we'd additionally record the expanded types of top-level type aliases, which is required for correct
+     * KMP incremental compilation of type alias-based actual declarations (KT-77546).
+     *
+     * Note that this only enables the expansion tracking; it is additionally restricted to multiplatform projects at the use site,
+     * as there is nothing to gain from it in a non-multiplatform one.
+     */
+    val expandTypeAliasesInClasspathSnapshots: Provider<Boolean>
+        get() = booleanProvider(KOTLIN_EXPAND_TYPE_ALIASES_IN_CLASSPATH_SNAPSHOTS).orElse(separateKmpCompilation)
+
+    /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]
      * @see KOTLIN_JS_KARMA_BROWSERS
      */
@@ -895,6 +908,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_CLASSLOADER_CACHE_TIMEOUT = property("$KOTLIN_INTERNAL_NAMESPACE.classloaderCache.timeoutSeconds")
         val ABI_VALIDATION_BANNED_TARGETS = property(ABI_VALIDATION_BANNED_TARGETS_NAME)
         val KOTLIN_PARSE_INLINED_LOCAL_CLASSES = property("$KOTLIN_INTERNAL_NAMESPACE.classpathSnapshot.parseInlinedLocalClasses")
+        val KOTLIN_EXPAND_TYPE_ALIASES_IN_CLASSPATH_SNAPSHOTS =
+            property("$KOTLIN_INTERNAL_NAMESPACE.jvm.expandTypeAliasesInClasspathSnapshots")
         val KOTLIN_SWIFTPM_MACRO_COLLECTING_MODE = property("$KOTLIN_INTERNAL_NAMESPACE.swiftPMCinteropMacroNamesCollectingMode")
         val KOTLIN_NATIVE_ENABLE_RELEASE_BINARY_CACHE = property("$KOTLIN_INTERNAL_NAMESPACE.native.enableReleaseBinaryCache")
 

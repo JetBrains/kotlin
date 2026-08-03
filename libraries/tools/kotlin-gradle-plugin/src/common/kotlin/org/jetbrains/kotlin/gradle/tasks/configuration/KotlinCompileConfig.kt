@@ -14,6 +14,7 @@ import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
@@ -173,6 +174,11 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         parameters.compilationViaBuildToolsApi.set(runKotlinCompilerViaBuildToolsApi)
         parameters.kgpVersion.set(kgpVersion)
         parameters.parseInlinedLocalClasses.set(project.kotlinPropertiesProvider.parseInlinedLocalClasses)
+
+        val isMultiplatform = project.multiplatformExtensionOrNull != null
+        parameters.expandTypeAliases.set(
+            project.kotlinPropertiesProvider.expandTypeAliasesInClasspathSnapshots.map { it && isMultiplatform }
+        )
 
         val suppressVersionInconsistencyChecks = project.kotlinPropertiesProvider.suppressBuildToolsApiVersionConsistencyChecks
         if (!suppressVersionInconsistencyChecks) {
