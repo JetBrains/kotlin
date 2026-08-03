@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
+import org.jetbrains.kotlin.konan.library.components.bitcode
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.library.isHeader
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
@@ -73,6 +77,12 @@ class CInteropHeaderModeValidationTest : AbstractNativeSimpleTest() {
             TestCInteropArgs(includeArg + "-Xheader-mode")
         ).assertSuccess().resultingArtifact
 
+        val headerLibrary = KlibLoader { libraryPaths(headerKlib.klibFile.path) }.load().librariesStdlibFirst.single()
+        assertTrue(headerLibrary.isHeader) { "Expected header klib to have header=true in manifest" }
+
+        val bitcodeFiles = headerLibrary.bitcode(targets.testTarget)?.bitcodeFilePaths ?: emptyList()
+        assertTrue(bitcodeFiles.isEmpty()) { "Expected no bitcode files in header klib, got: $bitcodeFiles" }
+
         // 2. Compile dependent Kotlin code using the Header-Mode KLIB (Succeeds)
         val dependentKlibSuccess = compileToLibrary(
             dependentKotlinDir,
@@ -88,6 +98,9 @@ class CInteropHeaderModeValidationTest : AbstractNativeSimpleTest() {
             buildDir.resolve("fullModeOut").apply { mkdirs() },
             TestCInteropArgs(includeArg)
         ).assertSuccess().resultingArtifact
+
+        val fullLibrary = KlibLoader { libraryPaths(fullKlib.klibFile.path) }.load().librariesStdlibFirst.single()
+        assertFalse(fullLibrary.isHeader) { "Expected full klib to not have header=true in manifest" }
 
         // 4. Link the pre-compiled dependent KLIB with the Full-Mode KLIB (fails linking)
         val linkTestCase = generateTestCaseWithSingleModule(null, TestCompilerArgs.EMPTY)
