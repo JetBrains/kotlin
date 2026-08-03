@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens.VAL_VAR
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtParameter
@@ -1229,4 +1230,26 @@ fun FirBasedSymbol<*>.getContainingFile(): FirFile? {
         is FirClassLikeSymbol<*> -> moduleData.session.firProvider.getFirClassifierContainerFileIfAny(this)
         else -> null
     }
+}
+
+internal fun FirDeclaration.containsErrorTypes(): Boolean {
+    var hasErrorType = false
+
+    accept(object : FirVisitorVoid() {
+        override fun visitElement(element: FirElement) {
+            element.acceptChildren(this)
+        }
+
+        override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
+            hasErrorType = true
+        }
+
+        override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
+            if (resolvedTypeRef.coneType.hasError()) {
+                hasErrorType = true
+            }
+        }
+    }, null)
+
+    return hasErrorType
 }
