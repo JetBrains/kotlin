@@ -1,9 +1,9 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-88132
 
 typealias Anything = Any
 
-abstract class MyList<T>: List<T & <!INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION!>Anything<!>> {
+abstract class MyList<T>: List<T & Anything> {
     abstract fun items(): List<T & Anything>
 }
 
