@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.konan.config", "NativeConfigurationKeys") {
     val CHECK_DEPENDENCIES by key<Boolean>("Check dependencies and download the missing ones.")
     val DEBUG by key<Boolean>()
-    val FAKE_OVERRIDE_VALIDATOR by key<Boolean>()
     val EMIT_LAZY_OBJC_HEADER_FILE by key<String>()
     val ENABLE_ASSERTIONS by key<Boolean>()
     val KONAN_ENTRY_POINT by key<String>("Fully qualified main() name.")

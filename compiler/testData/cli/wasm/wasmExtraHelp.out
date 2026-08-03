@@ -37,7 +37,6 @@ where advanced options include:
   -Xwasm-use-traps-instead-of-exceptions
                              Use traps instead of throwing exceptions.
   -Xcache-directory=<path>   Path to the cache directory.
-  -Xfake-override-validator  Enable the IR fake override validator.
   -Xfriend-modules=<path>    Paths to friend modules.
   -Xfriend-modules-disabled  Disable internal declaration export.
   -Xgenerate-dts             Generate a TypeScript declaration .d.ts file alongside the JS file.

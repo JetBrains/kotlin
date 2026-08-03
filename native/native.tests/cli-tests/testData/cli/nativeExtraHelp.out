@@ -31,7 +31,6 @@ where advanced options include:
   -Xexport-library=<path>    A library to be included in the produced framework API.
                              This library must be one of the ones passed with '-library'.
   -Xexternal-dependencies=<path> Path to the file containing external dependencies.
-  -Xfake-override-validator  Enable the IR fake override validator.
   -Xfile-to-cache=<path>     Path to the file to cache.
   -Xframework-import-header=<header>
                              Add an additional header import to the framework header.

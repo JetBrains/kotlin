@@ -3,10 +3,12 @@
 
 package org.jetbrains.kotlin.buildtools.api.arguments
 
+import kotlin.Boolean
 import kotlin.Int
 import kotlin.String
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
+import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.DuplicatedUniqueNameStrategy
 
 /**
@@ -58,6 +60,19 @@ public interface CommonKlibBasedArguments : CommonCompilerArguments {
   }
 
   public companion object {
+    /**
+     * Enable the IR fake override validator.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.5.0.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
+    public val X_FAKE_OVERRIDE_VALIDATOR: CommonKlibBasedArgument<Boolean> =
+        CommonKlibBasedArgument("X_FAKE_OVERRIDE_VALIDATOR", KotlinReleaseVersion(1, 5, 20))
+
     /**
      * Klib dependencies usage strategy when multiple KLIBs has same `unique_name` property value.
      *
