@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactSidecar
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.replMemberOverloadSignature
 
 /**
  * A [FirReplHistoryProvider] that serves two kinds of prior REPL snippets for the same compile
@@ -143,7 +146,12 @@ internal class ClasspathBackedFirReplHistoryProvider(
                 evalSymbol = evalSymbol,
             )
 
-            val byName = embeddedSidecar?.replSnippetDeclarations.orEmpty().associateBy { it.name }
+            // Grouped by name (not associateBy, which would silently drop all but one MemberRef of
+            // an overloaded name): a snippet may declare several functions sharing a name, each with
+            // its own source-level visibility, and each must be paired with — and re-tagged from —
+            // its own MemberRef. See matchMemberRef for the overload-safe pairing.
+            val byName: Map<String, List<SnippetArtifactSidecar.MemberRef>> =
+                embeddedSidecar?.replSnippetDeclarations.orEmpty().groupBy { it.name }
             var tagged = 0
             for (declSymbol in classSymbol.declarationSymbols) {
                 val fir = declSymbol.fir
@@ -154,15 +162,15 @@ internal class ClasspathBackedFirReplHistoryProvider(
                     is FirTypeAlias -> fir.name.asString()
                     else -> null
                 } ?: continue
-                if (byName.containsKey(name)) {
-                    fir.isReplSnippetDeclaration = true
-                    fir.originalReplSnippetSymbol = reconstructedSymbol
-                    tagged++
+                val candidates = byName[name] ?: continue
+                val matched = matchMemberRef(name, fir, candidates, classId)
+                fir.isReplSnippetDeclaration = true
+                fir.originalReplSnippetSymbol = reconstructedSymbol
+                tagged++
 
-                    val sidecarVisibility = byName[name]?.visibility?.toFirVisibility()
-                    if (sidecarVisibility != null && fir is FirMemberDeclaration) {
-                        restampVisibility(fir, sidecarVisibility, classSymbol)
-                    }
+                val sidecarVisibility = matched.visibility.toFirVisibility()
+                if (sidecarVisibility != null && fir is FirMemberDeclaration) {
+                    restampVisibility(fir, sidecarVisibility, classSymbol)
                 }
             }
             statelessReplDebug("materialize: tagged $tagged/${classSymbol.declarationSymbols.size} declarations on snippet[$index] ($classId)")
@@ -171,5 +179,37 @@ internal class ClasspathBackedFirReplHistoryProvider(
             result += reconstructedSymbol
         }
         return result
+    }
+
+    /**
+     * Pairs a deserialised wrapper-class declaration [fir] (named [name]) with the specific
+     * [SnippetArtifactSidecar.MemberRef] it originated from, among all [candidates] that share that
+     * name.
+     *
+     * The common case is a single candidate (a unique name) -- returned directly. When a name is
+     * shared by several declarations (function overloads), each declaration is paired with the
+     * candidate whose overload signature (see [replMemberOverloadSignature]) matches its own, so
+     * every overload is re-tagged from — and gets the source-level visibility of — its *own*
+     * MemberRef rather than an arbitrary same-named one. A non-callable declaration and a legacy
+     * sidecar (both rendering a `null` signature) pair with a `null`-descriptor candidate, so
+     * name-only entries still resolve. If no signature matches (e.g. a sidecar produced by an
+     * incompatible signature scheme), the first candidate is used as a best-effort fallback and the
+     * mismatch is surfaced via [statelessReplDebug].
+     */
+    private fun matchMemberRef(
+        name: String,
+        fir: FirDeclaration,
+        candidates: List<SnippetArtifactSidecar.MemberRef>,
+        classId: ClassId,
+    ): SnippetArtifactSidecar.MemberRef {
+        if (candidates.size == 1) return candidates.single()
+        val signature = (fir as? FirCallableDeclaration)?.let { replMemberOverloadSignature(it) }
+        return candidates.firstOrNull { it.descriptor == signature }
+            ?: candidates.first().also {
+                statelessReplDebug(
+                    "materialize: no overload-signature match for '$name' (signature=$signature) among " +
+                            "${candidates.size} candidates on $classId; falling back to the first"
+                )
+            }
     }
 }
