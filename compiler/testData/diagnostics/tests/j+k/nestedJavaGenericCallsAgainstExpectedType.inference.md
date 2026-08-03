@@ -121,8 +121,7 @@ Q|Box|.create1#(Q|Box|.R?C|/Box.create2|(R|<local>/s|))
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 2. `TypeVariable(A2) == kotlin/String!` _from Fix variable A2_
-3. Combine `TypeVariable(A2) == kotlin/String!` with `Box<TypeVariable(A2)!>! <: TypeVariable(A1)`
-    1. `Box<kotlin/String!>! <: TypeVariable(A1)`
+3. `Box<kotlin/String!>! <: TypeVariable(A1)` _from Fix variable A2_
 4. Choose `TypeVariable(A1)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
