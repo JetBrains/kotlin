@@ -32,8 +32,18 @@ public data class Annotations(
     private val myContent: SourceSetDependent<List<Annotation>>
 ) : ExtraProperty<AnnotationTarget> {
     public companion object : ExtraProperty.Key<AnnotationTarget, Annotations> {
-        override fun mergeStrategyFor(left: Annotations, right: Annotations): MergeStrategy<AnnotationTarget> =
-            MergeStrategy.Replace(Annotations(left.myContent + right.myContent))
+        override fun mergeStrategyFor(left: Annotations, right: Annotations): MergeStrategy<AnnotationTarget> {
+            val sourceSets = left.myContent.keys + right.myContent.keys
+            // For each source set, merge the annotations from the `left` and `right`, if they exist.
+            return MergeStrategy.Replace(
+                Annotations(
+                    sourceSets.associateWith { sourceSet ->
+                        left.myContent.getOrDefault(sourceSet, emptyList()) +
+                                right.myContent.getOrDefault(sourceSet, emptyList())
+                    }
+                )
+            )
+        }
     }
 
     override val key: ExtraProperty.Key<AnnotationTarget, *> = Annotations
