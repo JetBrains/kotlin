@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.lombok.generators.BuilderDeclarationType
 import org.jetbrains.kotlin.lombok.generators.BuilderGeneratorKey
+import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -112,7 +114,7 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
             val field = builderClass.findBuilderField(parameter.name) ?: continue
             val fieldRead = irGetField(irGet(thisParameter), field)
             val value = when {
-                parameter.name in singularFieldNames -> buildSingularResult(field, thisParameter)
+                parameter.name in singularFieldNames -> buildSingularResult(field, thisParameter, parameter.type)
                 else -> builderClass.defaultFlagField(parameter.name)?.let { flagField ->
                     buildDefaultOrSetValue(declaration, parameter, flagField, thisParameter, fieldRead, resolvedValues)
                 } ?: fieldRead
@@ -233,6 +235,32 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
     private enum class SingularKind { COLLECTION, SET, ITERABLE, MAP }
 
     private class SingularCollectionInfo(val kind: SingularKind, val typeArguments: List<IrType>)
+
+    /** The Guava immutable class to construct for a `@Singular` field whose *entity-declared* type is Guava. */
+    private enum class GuavaCollectionKind(val classId: ClassId) {
+        LIST(LombokNames.IMMUTABLE_LIST_ID),
+        SET(LombokNames.IMMUTABLE_SET_ID),
+        SORTED_SET(LombokNames.IMMUTABLE_SORTED_SET_ID),
+        MAP(LombokNames.IMMUTABLE_MAP_ID),
+        BI_MAP(LombokNames.IMMUTABLE_BI_MAP_ID),
+        SORTED_MAP(LombokNames.IMMUTABLE_SORTED_MAP_ID),
+    }
+
+    /**
+     * Classifies the *entity's own declared* property/constructor-parameter type (NOT the builder's backing
+     * field type, which is always a plain Kotlin `Mutable*` after `toBackingMutableCollectionType()`).
+     */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrType.guavaCollectionKindOrNull(): GuavaCollectionKind? =
+        when (classOrNull?.owner?.classId) {
+            LombokNames.IMMUTABLE_LIST_ID, LombokNames.IMMUTABLE_COLLECTION_ID -> GuavaCollectionKind.LIST
+            LombokNames.IMMUTABLE_SET_ID -> GuavaCollectionKind.SET
+            LombokNames.IMMUTABLE_SORTED_SET_ID -> GuavaCollectionKind.SORTED_SET
+            LombokNames.IMMUTABLE_MAP_ID -> GuavaCollectionKind.MAP
+            LombokNames.IMMUTABLE_BI_MAP_ID -> GuavaCollectionKind.BI_MAP
+            LombokNames.IMMUTABLE_SORTED_MAP_ID -> GuavaCollectionKind.SORTED_MAP
+            else -> null
+        }
 
     /** `item(e)` (or `item(k, v)` for maps) — mutates the (lazily-created) backing collection in place. */
     @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -376,8 +404,12 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
     private fun IrBlockBodyBuilder.buildSingularResult(
         field: IrField,
         thisParameter: IrValueParameter,
+        entityParameterType: IrType,
     ): IrExpression {
         val info = singularCollectionInfo(field.type) ?: return irGetField(irGet(thisParameter), field)
+        entityParameterType.guavaCollectionKindOrNull()?.let { guavaKind ->
+            return buildGuavaSingularResult(field, thisParameter, info, guavaKind)
+        }
         val builtIns = pluginContext.irBuiltIns
         // Built from `info`'s (already-substituted, builder-scoped) type arguments rather than the entity
         // constructor's own declared parameter type, which references the entity class's own type parameters
@@ -405,6 +437,45 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         branches += irElseBranch(unmodifiableDefensiveCopy(info, field.file, nonNullField()))
 
         return irWhen(resultType, branches)
+    }
+
+    /** `build()`'s per-field result for a Guava-declared `@Singular` field: `field == null ? Guava.of() : Guava.copyOf(field)`. */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrBlockBodyBuilder.buildGuavaSingularResult(
+        field: IrField,
+        thisParameter: IrValueParameter,
+        info: SingularCollectionInfo,
+        guavaKind: GuavaCollectionKind,
+    ): IrExpression {
+        val builtIns = pluginContext.irBuiltIns
+        val guavaClass = pluginContext.finderForSource(field.file).findClass(guavaKind.classId)
+            ?: return irGetField(irGet(thisParameter), field)
+        val resultType = guavaClass.typeWith(info.typeArguments)
+        val staticFunctions = guavaClass.owner.declarations.filterIsInstance<IrSimpleFunction>()
+
+        val ofFunction = staticFunctions.first {
+            it.name.asString() == "of" && it.parameters.none { p -> p.kind == IrParameterKind.Regular }
+        }
+        val expectedParamClassifiers = if (info.kind == SingularKind.MAP) {
+            setOf(builtIns.mapClass, builtIns.mutableMapClass)
+        } else {
+            setOf(builtIns.collectionClass, builtIns.mutableCollectionClass)
+        }
+        val copyOfFunction = staticFunctions.first { function ->
+            function.name.asString() == "copyOf" &&
+                    function.parameters.singleOrNull { it.kind == IrParameterKind.Regular }
+                        ?.let { (it.type as? IrSimpleType)?.classifier in expectedParamClassifiers } == true
+        }
+
+        val fieldTmp = irTemporary(irGetField(irGet(thisParameter), field), nameHint = "singular")
+        val nonNullField = irImplicitCast(irGet(fieldTmp), field.type.makeNotNull())
+
+        return irIfNull(
+            resultType,
+            irGet(fieldTmp),
+            irCallWithSubstitutedType(ofFunction.symbol, info.typeArguments),
+            irCallWithSubstitutedType(copyOfFunction.symbol, info.typeArguments).apply { arguments[0] = nonNullField },
+        )
     }
 
     /** `listOf(element)` / `setOf(element)`, `element` being the collection's sole entry. */

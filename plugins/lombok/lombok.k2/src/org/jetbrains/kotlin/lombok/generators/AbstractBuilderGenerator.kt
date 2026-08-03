@@ -674,9 +674,14 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 StandardClassIds.List, StandardClassIds.MutableList,
                 StandardClassIds.Collection, StandardClassIds.MutableCollection,
                 StandardClassIds.Iterable, StandardClassIds.MutableIterable,
+                LombokNames.IMMUTABLE_LIST_ID, LombokNames.IMMUTABLE_COLLECTION_ID,
                     -> StandardClassIds.MutableList
-                StandardClassIds.Set, StandardClassIds.MutableSet -> StandardClassIds.MutableSet
-                StandardClassIds.Map, StandardClassIds.MutableMap -> StandardClassIds.MutableMap
+                StandardClassIds.Set, StandardClassIds.MutableSet,
+                LombokNames.IMMUTABLE_SET_ID, LombokNames.IMMUTABLE_SORTED_SET_ID,
+                    -> StandardClassIds.MutableSet
+                StandardClassIds.Map, StandardClassIds.MutableMap,
+                LombokNames.IMMUTABLE_MAP_ID, LombokNames.IMMUTABLE_BI_MAP_ID, LombokNames.IMMUTABLE_SORTED_MAP_ID,
+                    -> StandardClassIds.MutableMap
                 else -> null
             }
         return mutableCollectionClassId?.constructClassLikeType(
