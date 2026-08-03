@@ -1,0 +1,38 @@
+public open class Basic<T : R|@EnhancedNullability @R|org/jetbrains/annotations/NotNull|()  kotlin/Any|> : R|kotlin/Any| {
+    public/*package*/ constructor<T : R|@EnhancedNullability @R|org/jetbrains/annotations/NotNull|()  kotlin/Any|>(p: R|test/Basic.G<@EnhancedNullability @R|org/jetbrains/annotations/NotNull|()  kotlin/String>!|): R|test/Basic<T>|
+
+    public/*package*/ open class A : R|kotlin/Any| {
+        public/*package*/ constructor(): R|test/Basic.A|
+
+        public/*package*/ open inner class B<A : R|kotlin/Any!|, B : R|kotlin/Any!|> : R|kotlin/Any| {
+            public/*package*/ test/Basic.A.constructor<A : R|kotlin/Any!|, B : R|kotlin/Any!|>(): R|test/Basic.A.B<A, B>|
+
+        }
+    }
+    public/*package*/ abstract interface G<T : R|kotlin/Any!|> : R|test/Basic.G2<@EnhancedNullability @R|org/jetbrains/annotations/NotNull|()  T & Any, @EnhancedNullability @R|org/jetbrains/annotations/NotNull|()  kotlin/String>| {
+    }
+    public/*package*/ abstract interface G2<A : R|kotlin/Any!|, B : R|kotlin/Any!|> : R|kotlin/Any| {
+    }
+    public abstract interface MyClass<TT : R|kotlin/Any!|> : R|kotlin/Any| {
+        public abstract fun f1(p: R|test/Basic.G<@EnhancedNullability @R|org/jetbrains/annotations/NotNull|()  kotlin/String>!|): R|kotlin/Unit|
+
+        public abstract fun f2(): R|test/Basic.G2<@EnhancedNullability @R|org/jetbrains/annotations/Nullable|()  kotlin/String?, @EnhancedNullability @R|org/jetbrains/annotations/NotNull|()  kotlin/Int>!|
+
+        public abstract fun <T : R|@EnhancedNullability @R|org/jetbrains/annotations/NotNull|()  kotlin/Any|> f3(@R|org/jetbrains/annotations/NotNull|() x: R|@EnhancedNullability T|): R|kotlin/Unit|
+
+        public abstract fun f4(p: R|test/Basic.G<ft<@R|org/jetbrains/annotations/Nullable|()  kotlin/Array<@EnhancedNullability @R|org/jetbrains/annotations/NotNull|()  kotlin/String>?, @R|org/jetbrains/annotations/Nullable|()  kotlin/Array<out @EnhancedNullability @R|org/jetbrains/annotations/NotNull|()  kotlin/String>?>>!|): R|kotlin/Unit|
+
+        public abstract fun f5(p: R|test/Basic.G<*>!|): R|kotlin/Unit|
+
+        public abstract fun f6(p: R|test/Basic.G<out @EnhancedNullability @R|org/jetbrains/annotations/Nullable|()  kotlin/Any?>!|): R|kotlin/Unit|
+
+        public abstract fun f7(p: R|test/Basic.G<test/Basic.A.B<*, *>!>!|): R|kotlin/Unit|
+
+        public abstract fun f81(): R|test/Basic.G<test/Basic.A.B<*, *>!>!|
+
+        public abstract fun f9(): R|test/Basic.G<@EnhancedNullability @R|org/jetbrains/annotations/Nullable|()  test/Basic.A.B<*, *>?>!|
+
+        public abstract fun <T : R|@EnhancedNullability @R|org/jetbrains/annotations/NotNull|()  kotlin/Any|, K : R|test/Basic.G<ft<kotlin/Array<@EnhancedNullability @R|org/jetbrains/annotations/NotNull|()  kotlin/String>, kotlin/Array<out @EnhancedNullability @R|org/jetbrains/annotations/NotNull|()  kotlin/String>?>>!|> f10(p: R|@EnhancedNullability T|): R|kotlin/Unit|
+
+    }
+}

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.kotlin.jvm.runtime.AbstractJvm8RuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
 
 fun main(args: Array<String>) {
@@ -17,10 +16,6 @@ fun main(args: Array<String>) {
             testClass<AbstractJvmRuntimeDescriptorLoaderTest> {
                 model("loadJava/compiledKotlin")
                 model("loadJava/compiledJava", extension = "java", excludeDirs = listOf("sam", "kotlinSignature/propagation"))
-            }
-
-            testClass<AbstractJvm8RuntimeDescriptorLoaderTest> {
-                model("loadJava8/compiledJava", extension = "java")
             }
         }
     }

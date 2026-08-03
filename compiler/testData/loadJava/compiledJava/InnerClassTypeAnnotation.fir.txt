@@ -1,0 +1,14 @@
+public open class InnerClassTypeAnnotation : R|kotlin/Any| {
+    public constructor(): R|test/InnerClassTypeAnnotation|
+
+    @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.TYPE; type = kotlin/Array<out kotlin/annotation/AnnotationTarget>, elementType = kotlin/annotation/AnnotationTarget)) public final annotation class Foo : R|kotlin/Annotation| {
+        public constructor(): R|test/InnerClassTypeAnnotation.Foo|
+
+    }
+    public open inner class Inner : R|kotlin/Any| {
+        @R|test/InnerClassTypeAnnotation.Foo|() public open fun bar(x: R|kotlin/String!|, @R|test/InnerClassTypeAnnotation.Foo|() y: R|@R|test/InnerClassTypeAnnotation.Foo|()  kotlin/String!|): R|@R|test/InnerClassTypeAnnotation.Foo|()  kotlin/String!|
+
+        public test/InnerClassTypeAnnotation.constructor(@R|test/InnerClassTypeAnnotation.Foo|() foo: R|@R|test/InnerClassTypeAnnotation.Foo|()  kotlin/String!|): R|test/InnerClassTypeAnnotation.Inner|
+
+    }
+}
