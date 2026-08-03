@@ -680,7 +680,8 @@ testing {
                         provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
                         dependsOn(acceptLicensesTask)
                     }
-                    maxParallelForks = 8
+
+                    maxParallelForks = if (kotlinBuildProperties.isTeamcityBuild.get()) 2 else 8
                     maxHeapSize = "4G" // KT-72460 to investigate why we need to change heap size
 
                     testLogging {
