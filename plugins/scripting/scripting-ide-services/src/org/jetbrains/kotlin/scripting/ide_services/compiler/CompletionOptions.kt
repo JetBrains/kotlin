@@ -9,32 +9,32 @@ package org.jetbrains.kotlin.scripting.ide_services.compiler
 import kotlin.script.experimental.api.ScriptCompilationConfigurationKeys
 import kotlin.script.experimental.util.PropertiesCollection
 
-@Deprecated("This declaration would be removed in the next Kotlin release (2.5.0)", level = DeprecationLevel.ERROR)
+@Deprecated("This declaration would be removed in future versions", level = DeprecationLevel.ERROR)
 interface ReplCompletionOptionsKeys
 
-@Deprecated("This declaration would be removed in the next Kotlin release (2.5.0)", level = DeprecationLevel.ERROR)
+@Deprecated("This declaration would be removed in future versions", level = DeprecationLevel.ERROR)
 open class ReplCompletionOptionsBuilder : PropertiesCollection.Builder(), ReplCompletionOptionsKeys {
     companion object : ReplCompletionOptionsKeys
 }
 
-@Deprecated("This declaration would be removed in the next Kotlin release (2.5.0)", level = DeprecationLevel.ERROR)
+@Deprecated("This declaration would be removed in future versions", level = DeprecationLevel.ERROR)
 fun ReplCompletionOptionsBuilder.filterOutShadowedDescriptors(value: Boolean) {
     this[filterOutShadowedDescriptors] = value
 }
 
-@Deprecated("This declaration would be removed in the next Kotlin release (2.5.0)", level = DeprecationLevel.ERROR)
+@Deprecated("This declaration would be removed in future versions", level = DeprecationLevel.ERROR)
 fun ReplCompletionOptionsBuilder.nameFilter(value: (String, String) -> Boolean) {
     this[nameFilter] = value
 }
 
-@Deprecated("This declaration would be removed in the next Kotlin release (2.5.0)", level = DeprecationLevel.ERROR)
+@Deprecated("This declaration would be removed in future versions", level = DeprecationLevel.ERROR)
 val ReplCompletionOptionsKeys.filterOutShadowedDescriptors by PropertiesCollection.key(true)
 
-@Deprecated("This declaration would be removed in the next Kotlin release (2.5.0)", level = DeprecationLevel.ERROR)
+@Deprecated("This declaration would be removed in future versions", level = DeprecationLevel.ERROR)
 val ReplCompletionOptionsKeys.nameFilter
         by PropertiesCollection.key<(String, String) -> Boolean>({ name, namePart -> name.startsWith(namePart) })
 
 @Suppress("unused")
-@Deprecated("This declaration would be removed in the next Kotlin release (2.5.0)", level = DeprecationLevel.ERROR)
+@Deprecated("This declaration would be removed in future versions", level = DeprecationLevel.ERROR)
 val ScriptCompilationConfigurationKeys.completion
     get() = ReplCompletionOptionsBuilder()

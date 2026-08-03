@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 
-@Deprecated("This declaration would be removed in the next Kotlin release (2.5.0)", level = DeprecationLevel.ERROR)
+@Deprecated("This declaration would be removed in future versions", level = DeprecationLevel.ERROR)
 class IdeLikeReplCodeAnalyzer(
     private val environment: KotlinCoreEnvironment,
     implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter

@@ -23,7 +23,7 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.calcAbsolute
 
-@Deprecated("This declaration would be removed in the next Kotlin release (2.5.0)", level = DeprecationLevel.ERROR)
+@Deprecated("This declaration would be removed in future versions", level = DeprecationLevel.ERROR)
 class KJvmReplCompilerWithIdeServices(hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration) :
     KJvmReplCompilerBase<IdeLikeReplCodeAnalyzer>(
         hostConfiguration,

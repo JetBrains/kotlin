@@ -46,7 +46,7 @@ import java.io.File
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCodeCompletionVariant
 
-@Deprecated("This declaration would be removed in the next Kotlin release (2.5.0)", level = DeprecationLevel.ERROR)
+@Deprecated("This declaration would be removed in future versions", level = DeprecationLevel.ERROR)
 fun getKJvmCompletion(
     ktScript: KtFile,
     bindingContext: BindingContext,
@@ -70,7 +70,7 @@ fun getKJvmCompletion(
 // is converted to
 //   import java.ABCDEF
 // and it makes token after dot (for which reference variants are looked) discoverable in PSI
-@Deprecated("This declaration would be removed in the next Kotlin release (2.5.0)", level = DeprecationLevel.ERROR)
+@Deprecated("This declaration would be removed in future versions", level = DeprecationLevel.ERROR)
 fun prepareCodeForCompletion(code: String, cursor: Int) =
     code.substring(0, cursor) + KJvmReplCompleter.INSERTED_STRING + code.substring(cursor)
 

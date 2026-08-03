@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 
-@Deprecated("This declaration would be removed in the next Kotlin release (2.5.0)", level = DeprecationLevel.ERROR)
+@Deprecated("This declaration would be removed in future versions", level = DeprecationLevel.ERROR)
 class KotlinResolutionFacadeForRepl(
     private val environment: KotlinCoreEnvironment,
     private val provider: ComponentProvider
