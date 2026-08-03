@@ -15,7 +15,12 @@
  * [REPL_SIDECAR_PLUGIN_ID]). The read path (`ClasspathBackedFirReplHistoryProvider`) finds the
  * wrapper class via its `ClassId`, then reads this sidecar from the located class's metadata.
  *
- * Field set is unstable; bumping [sidecarVersion] is mandatory on any structural change.
+ * The wire format is **forward- and backward-compatible**: protobuf field *numbers* are append-only
+ * and never reused, unknown fields are skipped on read, and fields absent from an older payload fall
+ * back to their defaults. Bumping [sidecarVersion] is still mandatory on any structural change (so a
+ * payload can be identified), but a version mismatch is no longer fatal within the supported range
+ * (see [SnippetArtifactSidecar.MIN_SUPPORTED_VERSION]). This makes a sidecar safe to persist and
+ * read back with a differing compiler version.
  *
  * Everything in this file is `internal` to `scripting-compiler`. It is **not** part of any public
  * API surface (`libraries/scripting/common`).
@@ -37,9 +42,13 @@ data class SnippetArtifactSidecar(
      *
      * @property kind one of [Kind].
      * @property name the source-level name (`Name.identifier`).
-     * @property descriptor JVM descriptor for [Kind.PROPERTY] (field descriptor) / [Kind.FUNCTION]
-     *   (method descriptor); JVM internal name for [Kind.CLASS] / [Kind.TYPEALIAS]. May be `null`
-     *   when the descriptor cannot be derived in the prototype (e.g. type aliases).
+     * @property descriptor an overload-discriminating signature for [Kind.FUNCTION] declarations
+     *   (see `replMemberOverloadSignature`) -- functions are the only declaration kind that can
+     *   share a name within one snippet. `null` for every other kind (whose name is already unique),
+     *   for a function whose signature cannot be derived, and for sidecars produced before v5 (which
+     *   never populated this field). The read path (`ClasspathBackedFirReplHistoryProvider`) uses it
+     *   to pair each deserialised overload with the correct [MemberRef]; a `null` descriptor falls
+     *   back to name-only matching. Despite the historical name, this is **not** a JVM descriptor.
      * @property visibility source-level visibility of the declaration as seen at compile time.
      *   Defaults to [Visibility.UNKNOWN] for compatibility with sidecars produced before v3.
      *   Consumers (e.g. `ClasspathBackedFirReplHistoryProvider`) use this to decide whether to
@@ -104,8 +113,22 @@ data class SnippetArtifactSidecar(
          * |         | `packageFqName`, `historyIndex`, `stateObjectFqName`, `resultPropertyName`, |
          * |         | `isSynthetic`, `isImplicit`) that a caller already knows out-of-band |
          * |         | (e.g. via the snippet's own `ClassId`). |
+         * | 5       | Began populating [MemberRef.descriptor] with an overload-discriminating |
+         * |         | signature (previously always `null`); the read side pairs function |
+         * |         | overloads by it instead of by simple name. Decode became forward- and |
+         * |         | backward-compatible (see [MIN_SUPPORTED_VERSION]) rather than exact-match. |
          */
-        const val CURRENT_VERSION: Int = 4
+        const val CURRENT_VERSION: Int = 5
+
+        /**
+         * The oldest [sidecarVersion] this codec still decodes. The format is forward- and
+         * backward-compatible within `[MIN_SUPPORTED_VERSION, ∞)`: field numbers are append-only
+         * and never reused, unknown fields are skipped on read, and fields absent from an older
+         * payload fall back to their defaults. A version below this bound is rejected (a field it
+         * carried has since been repurposed or dropped); a version *above* [CURRENT_VERSION] is
+         * accepted and decoded best-effort (any not-yet-known fields are simply skipped).
+         */
+        const val MIN_SUPPORTED_VERSION: Int = 1
     }
 }
 
@@ -133,8 +156,10 @@ data class SnippetArtifactSidecar(
  *
  * `ImportEntry`: `1` fqName, `2` isAllUnder (bool), `3` aliasName (optional).
  *
- * Unknown fields are skipped on read (forward-compatible), but [SnippetArtifactSidecar.sidecarVersion]
- * is still validated for an exact match — the field set is not yet declared stable.
+ * Unknown fields are skipped on read and absent fields fall back to their defaults, so the format is
+ * forward- and backward-compatible across versions in `[SnippetArtifactSidecar.MIN_SUPPORTED_VERSION, ∞)`;
+ * [SnippetArtifactSidecar.sidecarVersion] is validated only against that lower bound, not for an
+ * exact match.
  */
 object SnippetArtifactSidecarProtoCodec {
 
@@ -215,13 +240,19 @@ object SnippetArtifactSidecarProtoCodec {
                 else -> r.skipField(wireType)
             }
         }
-        if (version != SnippetArtifactSidecar.CURRENT_VERSION) {
+        if (version < 0) {
+            error("SnippetArtifactSidecar: missing sidecarVersion field")
+        }
+        if (version < SnippetArtifactSidecar.MIN_SUPPORTED_VERSION) {
             error(
-                "SnippetArtifactSidecar: unsupported sidecarVersion=$version " +
-                        "(expected ${SnippetArtifactSidecar.CURRENT_VERSION}). " +
-                        "The sidecar field set is unstable; rebuild prior snippets with the matching compiler version."
+                "SnippetArtifactSidecar: sidecarVersion=$version is older than the minimum supported " +
+                        "version ${SnippetArtifactSidecar.MIN_SUPPORTED_VERSION}; rebuild the prior snippet " +
+                        "with a current compiler."
             )
         }
+        // Any version >= MIN_SUPPORTED_VERSION -- including one newer than CURRENT_VERSION -- is decoded
+        // best-effort: field numbers are append-only, unknown fields were skipped above, and fields
+        // absent from an older payload fall back to their defaults. No exact-version match is required.
         return SnippetArtifactSidecar(
             sidecarVersion = version,
             replSnippetDeclarations = declarations,
