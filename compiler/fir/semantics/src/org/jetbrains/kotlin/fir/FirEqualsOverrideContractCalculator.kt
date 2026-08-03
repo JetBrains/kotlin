@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
@@ -26,13 +25,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.fir.EqualsOverrideContract.*
-import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundTypeOfParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
-import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
-import org.jetbrains.kotlin.fir.types.canBeNull
-import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlin.fir.types.withNullability
 
 /**
  * The entries are ordered from least trustworthy to most trustworthy.
@@ -176,24 +170,6 @@ class FirEqualsOverrideContractCalculator(
 
     private val FirClassSymbol<*>.isTrustedDependency: Boolean
         get() = (isData || isInlineOrValue || classKind.isObject) && moduleData != session.moduleData
-
-    fun computeTypeForEqualityBoundBasedContract(type: ConeKotlinType): ConeKotlinType? {
-        if (LanguageFeature.StrictEquals.isDisabled()) return null
-
-        var result: ConeKotlinType? = null
-        type.scope(CallableCopyTypeCalculator.DoNothing, requiredMembersPhase = FirResolvePhase.STATUS)?.processFunctionsByName(
-            OperatorNameConventions.EQUALS,
-        ) { function ->
-            // should only be a single such function
-            if (function.isEquals(session)) {
-                function.equalityBoundTypeOfParameter?.let {
-                    result = it
-                }
-            }
-        }
-        // currently, flexible LHS results in nullable RHS
-        return result?.withNullability(type.canBeNull(), session.typeContext)
-    }
 }
 
 /**
