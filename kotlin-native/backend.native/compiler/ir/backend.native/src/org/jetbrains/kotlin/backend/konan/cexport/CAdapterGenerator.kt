@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.konan.allParameters
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.backend.konan.descriptors.isDeserializedAndHasCompanionExtensionReceiver
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.util.referenceFunction
-import org.jetbrains.kotlin.metadata.deserialization.hasCompanionExtensionReceiver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isChildOf
@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
@@ -63,20 +61,9 @@ private fun isExportedFunction(descriptor: FunctionDescriptor): Boolean {
         return false
     if (descriptor.typeParameters.any())
         return false
-    when (descriptor) {
-        is SimpleFunctionDescriptor -> {
-            val proto = (descriptor as DeserializedSimpleFunctionDescriptor).proto
-            return !proto.hasCompanionExtensionReceiver()
-        }
-        is PropertyAccessorDescriptor -> {
-            val proto = (descriptor.correspondingProperty as DeserializedPropertyDescriptor).proto
-            return !proto.hasCompanionExtensionReceiver()
-        }
-        is ConstructorDescriptor -> return true
-        else -> {
-            error("Unexpected FunctionDescriptor: $descriptor")
-        }
-    }
+    if (descriptor.isDeserializedAndHasCompanionExtensionReceiver)
+        return false
+    return true
 }
 
 private fun isExportedClass(descriptor: ClassDescriptor): Boolean {
