@@ -37,12 +37,16 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
 
         checkSenselessness(l.smartCastType, r.smartCastType, expression)
 
+        val isThereAnySmartCast = l.argument is FirSmartCastExpression || r.argument is FirSmartCastExpression
+
         context.session.firPlatformSpecificEqualityChecker.runApplicabilityCheck(
             expression.operation,
             l.originalType,
             r.originalType,
             this
         ).ifInapplicable {
+            // we only want to report weak equality bound warning for `smartCastType`s
+            if (it == Applicability.INAPPLICABLE_BY_EQUALITY_BOUNDS_WEAK && isThereAnySmartCast) return@ifInapplicable
             // K1 checks consist of 2 parts: reporting a
             // diagnostic if the intersection is empty,
             // and otherwise reporting a diagnostic if
@@ -61,9 +65,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
             )
         }
 
-        if (l.argument !is FirSmartCastExpression && r.argument !is FirSmartCastExpression) {
-            return
-        }
+        if (!isThereAnySmartCast) return
 
         context.session.firPlatformSpecificEqualityChecker.runApplicabilityCheck(
             expression.operation,
@@ -109,9 +111,13 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         fun TypeInfo.toBoundTypeInfo(): TypeInfo {
             return (type.calculateEqualityBoundType() ?: StandardTypes.NullableAny).toTypeInfo(context.session)
         }
+
+        val lBound = l.toBoundTypeInfo()
+        val rBound = r.toBoundTypeInfo()
         return when {
-            shouldReportAsPerRules1(l.toBoundTypeInfo(), r) -> Applicability.INAPPLICABLE_BY_EQUALITY_BOUNDS_STRONG_LEFT
-            shouldReportAsPerRules1(l, r.toBoundTypeInfo()) -> Applicability.INAPPLICABLE_BY_EQUALITY_BOUNDS_STRONG_RIGHT
+            shouldReportAsPerRules1(lBound, r) -> Applicability.INAPPLICABLE_BY_EQUALITY_BOUNDS_STRONG_LEFT
+            shouldReportAsPerRules1(l, rBound) -> Applicability.INAPPLICABLE_BY_EQUALITY_BOUNDS_STRONG_RIGHT
+            shouldReportWeakEqualityBoundWarning(l, r, lBound, rBound) -> Applicability.INAPPLICABLE_BY_EQUALITY_BOUNDS_WEAK
             else -> Applicability.APPLICABLE
         }
     }
@@ -163,6 +169,11 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
          * `LHS` and `EB(RHS)` are incompatible
          */
         INAPPLICABLE_BY_EQUALITY_BOUNDS_STRONG_RIGHT,
+
+        /**
+         * `LHS </: EB(RHS)` and `RHS </: EB(LHS)` at the same time
+         */
+        INAPPLICABLE_BY_EQUALITY_BOUNDS_WEAK,
     }
 
     inline fun Applicability.ifInapplicable(block: (Applicability) -> Unit) {
@@ -282,6 +293,14 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
             rUserType.calculateEqualityBoundType() ?: StandardTypes.NullableAny,
             "type of left-hand side",
             "equality bound type of right-hand side",
+        )
+        Applicability.INAPPLICABLE_BY_EQUALITY_BOUNDS_WEAK -> reportOn(
+            expression.source,
+            FirErrors.EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS,
+            lUserType,
+            rUserType,
+            lUserType.calculateEqualityBoundType() ?: StandardTypes.NullableAny,
+            rUserType.calculateEqualityBoundType() ?: StandardTypes.NullableAny,
         )
         // This check ensures K2 reports the same diagnostics as K1 used to.
         else if (expression.source?.kind !is KtRealSourceElementKind) -> reportOn(

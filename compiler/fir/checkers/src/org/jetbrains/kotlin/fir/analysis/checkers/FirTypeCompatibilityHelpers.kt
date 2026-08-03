@@ -148,3 +148,11 @@ internal fun shouldReportAsPerRules1(l: TypeInfo, r: TypeInfo): Boolean {
         else -> false
     }
 }
+
+context(context: CheckerContext)
+internal fun shouldReportWeakEqualityBoundWarning(
+    l: TypeInfo, r: TypeInfo,
+    lBound: TypeInfo, rBound: TypeInfo,
+): Boolean {
+    return !l.isSubtypeOf(rBound) && !r.isSubtypeOf(lBound)
+}

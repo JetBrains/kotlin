@@ -24,7 +24,7 @@ class H {
 
 fun test1(x: Any, y: Any): Boolean {
     if (x !is A || x !is B || y !is C) return false
-    return x == y
+    return <!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>x == y<!>
 }
 
 fun test2(x: Any, y: Any): Boolean {
@@ -47,7 +47,7 @@ fun test5(x: Any, y: Any): Boolean {
     // since C and D are unrelated _classes_. However, for open classes we only
     // consider types incompatible here if they are normal `ConeClassLikeType`s.
     if (x !is A || x !is C || y !is D) return false
-    return x == y
+    return <!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>x == y<!>
 }
 
 fun test6(x: Any, y: Any): Boolean {
@@ -67,7 +67,7 @@ fun test8(x: Any, y: Any): Boolean {
     // EB(y) = C
     //  see above why it is not enough at the moment
     if (x !is A || x !is B || y !is C || y !is F) return false
-    return x == y
+    return <!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>x == y<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, classReference, disjunctionExpression, equalityExpression, functionDeclaration,

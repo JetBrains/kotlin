@@ -296,6 +296,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_BOUND_NO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_FROM_JAVA_RESOLUTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_IN_CONTRACT_DESCRIPTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_SUPPRESSION
@@ -1601,6 +1602,16 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_TYPE,
             TO_STRING,
             TO_STRING,
+        )
+        map.put(
+            EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS,
+            "Comparison might not be intended: neither type of left-hand side ''{0}'' is subtype of equality bound of right-hand side ''{3}'' " +
+            "nor type of right-hand side ''{1}'' is subtype of equality bound of left-hand side ''{2}''. " +
+            "If the comparison is intended, you can suppress this warning or add an explicit ''is'' check before the comparison.",
+            RENDER_TYPE,
+            RENDER_TYPE,
+            RENDER_TYPE,
+            RENDER_TYPE,
         )
 
         // OptIn

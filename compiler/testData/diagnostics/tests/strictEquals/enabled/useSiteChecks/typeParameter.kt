@@ -24,21 +24,21 @@ fun <TA : A, TB : B, TC: C, TD: D> foo(
     if (ta == a) return
     if (b == tb) return
     if (tb == b) return
-    if (c == ta) return
-    if (tc == a) return
-    if (tc == ta) return
+    if (<!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>c == ta<!>) return
+    if (<!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>tc == a<!>) return
+    if (<!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>tc == ta<!>) return
     if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>b == td<!>) return
     if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>tb == d<!>) return
     if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>tb == td<!>) return
-    if (tb == c) return
-    if (tc == b) return
-    if (tc == tb) return
+    if (<!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>tb == c<!>) return
+    if (<!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>tc == b<!>) return
+    if (<!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>tc == tb<!>) return
     if (tb == a) return
     if (ta == b) return
     if (tb == ta) return
-    if (td == a) return
-    if (ta == d) return
-    if (ta == td) return
+    if (<!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>td == a<!>) return
+    if (<!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>ta == d<!>) return
+    if (<!EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS!>ta == td<!>) return
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, classReference, equalityExpression, functionDeclaration, ifExpression,
