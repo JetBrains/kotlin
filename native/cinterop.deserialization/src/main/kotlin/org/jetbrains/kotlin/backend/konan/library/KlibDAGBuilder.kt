@@ -20,8 +20,8 @@ import kotlin.io.path.pathString
 
 interface KlibDAGNode {
     val library: KotlinLibrary
-    val directDependencies: Set<KlibDAGNode>
-    val allDependencies: Set<KlibDAGNode>
+    val directDependencies: Set<KotlinLibrary>
+    val allDependencies: Set<KotlinLibrary>
 }
 
 typealias KlibDAG = Map<KotlinLibrary, KlibDAGNode>
@@ -45,7 +45,7 @@ object KlibDAGBuilder {
         // Fill in indices.
         for (node in others) {
             // Optimization: Stdlib is a dependency for each library.
-            node.directDependencies.addAll(stdlib)
+            node.targets.addAll(stdlib)
 
             // Note: We are intentionally extracting only signatures of top-level declarations. It's an optimization.
             // We can always deduce the signature of a top-level class from a signature of any member or an inner/nested class.
@@ -71,7 +71,7 @@ object KlibDAGBuilder {
                         // This is a legal situation: There can be unbound symbols.
                         // It's the job of the Partial Linkage engine to tackle them. DAG builder should not fail here.
                     }
-                    else -> node.directDependencies.add(dependency)
+                    else -> node.targets.add(dependency)
                 }
             }
         }
@@ -101,13 +101,17 @@ object KlibDAGBuilder {
 }
 
 private class KlibDAGNodeImpl(override val library: KotlinLibrary) : KlibDAGNode {
-    override val directDependencies = hashSetOf<KlibDAGNodeImpl>()
+    val targets = hashSetOf<KlibDAGNodeImpl>()
 
-    override val allDependencies: Set<KlibDAGNode> by LockBasedStorageManager.NO_LOCKS.createLazyValue(
+    override val directDependencies: Set<KotlinLibrary> by LockBasedStorageManager.NO_LOCKS.createLazyValue {
+        targets.mapTo(hashSetOf()) { it.library }
+    }
+
+    override val allDependencies: Set<KotlinLibrary> by LockBasedStorageManager.NO_LOCKS.createLazyValue(
         computable = {
             buildSet {
                 addAll(directDependencies)
-                directDependencies.flatMapTo(this, KlibDAGNode::allDependencies)
+                targets.flatMapTo(this, KlibDAGNode::allDependencies)
             }
         },
         onRecursiveCall = {
