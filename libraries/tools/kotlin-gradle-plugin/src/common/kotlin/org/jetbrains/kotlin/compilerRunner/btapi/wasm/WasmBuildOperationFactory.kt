@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.compilerRunner.btapi.wasm
 
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain.Companion.wasm
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmLinkingOperation
@@ -24,6 +24,7 @@ internal class WasmKlibBuildOperationFactory(private val compilerArgs: List<Stri
         val destination = Path(requireNotNull(args.outputDir))
         val compilationOperationBuilder =
             kotlinToolchains.wasm.wasmKlibCompilationOperationBuilder(extractSourceFiles(args.freeArgs), destination)
+        @OptIn(DelicateBuildToolsApi::class)
         compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false
@@ -39,6 +40,7 @@ internal class WasmLinkingBuildOperationFactory(private val compilerArgs: List<S
         val destination = Path(requireNotNull(args.outputDir))
         val includes = Path(requireNotNull(args.includes))
         val compilationOperationBuilder = kotlinToolchains.wasm.wasmLinkingOperationBuilder(includes, destination)
+        @OptIn(DelicateBuildToolsApi::class)
         compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false

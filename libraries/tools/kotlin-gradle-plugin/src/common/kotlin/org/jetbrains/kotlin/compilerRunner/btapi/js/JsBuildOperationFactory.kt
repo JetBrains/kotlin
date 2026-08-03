@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.compilerRunner.btapi.js
 
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
@@ -24,6 +24,7 @@ internal class JsKlibBuildOperationFactory(private val compilerArgs: List<String
         val destination = Path(requireNotNull(args.outputDir))
         val compilationOperationBuilder =
             kotlinToolchains.js.jsKlibCompilationOperationBuilder(extractSourceFiles(args.freeArgs), destination)
+        @OptIn(DelicateBuildToolsApi::class)
         compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false
@@ -39,6 +40,7 @@ internal class JsLinkingBuildOperationFactory(private val compilerArgs: List<Str
         val destination = Path(requireNotNull(args.outputDir))
         val includes = Path(requireNotNull(args.includes))
         val compilationOperationBuilder = kotlinToolchains.js.jsLinkingOperationBuilder(includes, destination)
+        @OptIn(DelicateBuildToolsApi::class)
         compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.compilerRunner.btapi.js
 
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
@@ -21,7 +20,6 @@ internal class JsKlibIncrementalConfigurationStrategy(
     val outputDirs: List<Path>,
 ) :
     IncrementalConfigurationStrategy<JsKlibCompilationOperation.Builder> {
-    @OptIn(ExperimentalCompilerArgument::class)
     override fun configureIncrementalCompilationConfiguration(buildOperation: JsKlibCompilationOperation.Builder) {
         buildOperation[JsKlibCompilationOperation.INCREMENTAL_COMPILATION] =
             buildOperation.historyBasedIcConfigurationBuilder(

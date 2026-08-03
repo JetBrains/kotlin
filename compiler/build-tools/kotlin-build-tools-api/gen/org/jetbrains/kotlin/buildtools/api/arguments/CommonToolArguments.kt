@@ -10,6 +10,7 @@ import kotlin.ReplaceWith
 import kotlin.String
 import kotlin.collections.List
 import kotlin.jvm.JvmField
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 
 /**
@@ -131,6 +132,7 @@ public interface CommonToolArguments {
      *
      * @param arguments a list of arguments for the Kotlin CLI compiler
      */
+    @DelicateBuildToolsApi
     public fun applyCommandLineArguments(arguments: List<String>)
   }
 

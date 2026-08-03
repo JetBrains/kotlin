@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Comp
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_TS_EXPORT_UNTYPED_AS_UNKNOWN
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_TYPED_ARRAYS
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerArguments
@@ -245,6 +246,7 @@ internal class JsArgumentsImpl(
     applyCompilerArguments(compilerArgs)
   }
 
+  @DelicateBuildToolsApi
   override fun applyCommandLineArguments(arguments: List<String>) {
     val compilerArgs = toCompilerArguments()
     parseCommandLineArguments(arguments, compilerArgs, false)
