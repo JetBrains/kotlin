@@ -228,7 +228,7 @@ internal abstract class SirAbstractGetter(
         val variable = variable
         val propName = variable?.kotlinPropertyName
         buildList {
-            addAll(proxy.createSirBridges(forwardCall))
+            addAll(proxy.createSirBridges(nonVirtualTargetMethod = null, forwardCall))
 
             if (variable != null && propName != null && !isUnavailable) {
                 if (variable.accessorNeedsNonVirtualForwardBridge() && !variable.isAbstractKotlinProperty) {
@@ -335,7 +335,7 @@ internal abstract class SirAbstractSetter(
         val variable = variable
         val propName = variable?.kotlinPropertyName
         buildList {
-            addAll(proxy.createSirBridges(forwardCall))
+            addAll(proxy.createSirBridges(nonVirtualTargetMethod = null, forwardCall))
 
             if (variable != null && propName != null && !isUnavailable) {
                 if (variable.accessorNeedsNonVirtualForwardBridge() && !variable.isAbstractKotlinProperty) {

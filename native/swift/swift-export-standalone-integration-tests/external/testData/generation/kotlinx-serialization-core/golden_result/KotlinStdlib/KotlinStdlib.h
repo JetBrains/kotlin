@@ -831,6 +831,8 @@ int64_t kotlin_Long_ushr__TypesOfArguments__Swift_Int32__(void * self, int32_t b
 
 int64_t kotlin_Long_xor__TypesOfArguments__Swift_Int64__(void * self, int64_t other);
 
+_Bool kotlin_Number_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 int8_t kotlin_Number_toByte(void * self);
 
 uint16_t kotlin_Number_toChar(void * self);
@@ -1503,9 +1505,13 @@ uint16_t kotlin_UShort_toUShort(void * self);
 
 uint16_t kotlin_UShort_xor__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
 
+_Bool kotlin_collections_CharIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 uint16_t kotlin_collections_CharIterator_next(void * self);
 
 uint16_t kotlin_collections_CharIterator_nextChar(void * self);
+
+_Bool kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 int32_t kotlin_collections_IntIterator_next(void * self);
 

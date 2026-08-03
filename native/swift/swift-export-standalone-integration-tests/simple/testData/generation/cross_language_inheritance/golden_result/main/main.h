@@ -119,6 +119,8 @@ _Bool Greeter_mood_set__TypesOfArguments__Swift_String__(void * self, NSString *
 
 NSString * Greeter_salutation(void * self);
 
+_Bool __root___AbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * __root___Base_init_allocate();
 
 _Bool __root___Base_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);

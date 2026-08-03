@@ -12,13 +12,19 @@ open class AbstractBase: KotlinRuntime.KotlinBase {
             }
         }
     }
-    package init() {
-        fatalError()
+    public init() {
+        precondition(Self.self != overrides.AbstractBase.self, "overrides.AbstractBase is an abstract class and cannot be instantiated directly")
+        let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___AbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
-    package init(
+    public init(
         x: Swift.Int32
     ) {
-        fatalError()
+        precondition(Self.self != overrides.AbstractBase.self, "overrides.AbstractBase is an abstract class and cannot be instantiated directly")
+        let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___AbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, x); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -42,13 +48,19 @@ open class AbstractBase: KotlinRuntime.KotlinBase {
     }
 }
 open class AbstractDerived2: overrides.OpenDerived1 {
-    package override init() {
-        fatalError()
+    public override init() {
+        precondition(Self.self != overrides.AbstractDerived2.self, "overrides.AbstractDerived2 is an abstract class and cannot be instantiated directly")
+        let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___AbstractDerived2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
-    package override init(
+    public override init(
         x: Swift.Int32
     ) {
-        fatalError()
+        precondition(Self.self != overrides.AbstractDerived2.self, "overrides.AbstractDerived2 is an abstract class and cannot be instantiated directly")
+        let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___AbstractDerived2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, x); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -122,14 +134,24 @@ open class Child: overrides.Parent {
     public init(
         value: Swift.Int32
     ) {
-        let __kt = __root___Child_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == overrides.Child.self {
+             __kt = __root___Child_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Child_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value); return () }()
     }
     public override init(
         value: Swift.String
     ) {
-        let __kt = __root___Child_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == overrides.Child.self {
+             __kt = __root___Child_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Child_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt, value); return () }()
     }
@@ -144,7 +166,12 @@ open class Child: overrides.Parent {
         poly: overrides.Parent,
         nullablePoly: overrides.Parent
     ) {
-        let __kt = __root___Child_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == overrides.Child.self {
+             __kt = __root___Child_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Child_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_overrides_Parent_overrides_Parent__(__kt, nullable, poly.__externalRCRef(), nullablePoly.__externalRCRef()); return () }()
     }
@@ -299,14 +326,24 @@ open class OpenDerived1: overrides.AbstractBase {
         }
     }
     public override init() {
-        let __kt = __root___OpenDerived1_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == overrides.OpenDerived1.self {
+             __kt = __root___OpenDerived1_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___OpenDerived1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     public override init(
         x: Swift.Int32
     ) {
-        let __kt = __root___OpenDerived1_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == overrides.OpenDerived1.self {
+             __kt = __root___OpenDerived1_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___OpenDerived1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, x); return () }()
     }
@@ -394,7 +431,12 @@ open class Parent: KotlinRuntime.KotlinBase {
     public init(
         value: Swift.String
     ) {
-        let __kt = __root___Parent_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == overrides.Parent.self {
+             __kt = __root___Parent_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Parent_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt, value); return () }()
     }

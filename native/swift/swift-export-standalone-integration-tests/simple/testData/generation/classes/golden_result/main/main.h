@@ -149,6 +149,8 @@ _Bool SEALED_C_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_
 
 void * SEALED_O_get();
 
+_Bool __root___ABSTRACT_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * __root___CLASS_WITH_SAME_NAME_init_allocate();
 
 _Bool __root___CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);

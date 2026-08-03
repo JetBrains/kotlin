@@ -62,8 +62,11 @@ public protocol __InterfaceB: KotlinRuntimeSupport._KotlinBridgeable, edge_cases
 public protocol __SomeInterface: KotlinRuntimeSupport._KotlinBridgeable {
 }
 open class ClassC: KotlinRuntime.KotlinBase, edge_cases.InterfaceB, edge_cases.__InterfaceB {
-    package init() {
-        fatalError()
+    public init() {
+        precondition(Self.self != edge_cases.ClassC.self, "edge_cases.ClassC is an abstract class and cannot be instantiated directly")
+        let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___ClassC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
