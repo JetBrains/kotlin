@@ -293,8 +293,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)`
+4. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
 5. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -555,8 +554,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/String` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/String> <: TypeVariable(Z)`
+4. `kotlin/collections/Set<kotlin/String> <: TypeVariable(Z)` _from Fix variable T_
 5. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -590,8 +588,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 6. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-7. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)`
+7. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
 8. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -822,8 +819,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)`
+4. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
 5. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -856,8 +852,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-6. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)`
+6. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
 7. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -1026,8 +1021,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)`
+4. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
 5. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -1412,8 +1406,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/String` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
+4. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)` _from Fix variable T_
 5. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -1651,8 +1644,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)`
+4. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
 5. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -1920,8 +1912,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/String` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
+4. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)` _from Fix variable T_
 5. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -1955,8 +1946,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 6. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-7. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)`
+7. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
 8. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -2210,8 +2200,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)`
+4. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
 5. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -2653,17 +2642,13 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)`
-5. Combine `TypeVariable(T) == kotlin/Int` with `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>`
-    1. `TypeVariable(Z) <: kotlin/collections/List<kotlin/Int>`
-6. Combine `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>`
+4. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
+5. Combine `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>`
     1. `kotlin/Int <: TypeVariable(T)`
-7. Combine `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)` with `TypeVariable(Z) <: kotlin/collections/List<kotlin/Int>`
-    1. `TypeVariable(Z) == kotlin/collections/List<kotlin/Int>`
-8. Combine `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>` with `TypeVariable(Z) == kotlin/collections/List<kotlin/Int>`
+6. `TypeVariable(Z) == kotlin/collections/List<kotlin/Int>` _from Fix variable T_
+7. Combine `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/List<kotlin/Int>`
     1. `TypeVariable(T) <: kotlin/Int`
-9. Choose `TypeVariable(Z)` with `Readiness(
+8. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -2905,8 +2890,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)`
+4. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
 5. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -3204,8 +3188,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/String` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/String> <: TypeVariable(Z)`
+4. `kotlin/collections/Set<kotlin/String> <: TypeVariable(Z)` _from Fix variable T_
 5. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -3239,8 +3222,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 6. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-7. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)`
+7. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
 8. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -3506,8 +3488,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/String` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
+4. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)` _from Fix variable T_
 5. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -3541,8 +3522,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 6. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-7. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)`
+7. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
 8. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -3791,8 +3771,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/String` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
+4. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)` _from Fix variable T_
 5. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -3826,8 +3805,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 6. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-7. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)`
+7. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
 8. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -4082,15 +4060,11 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
     1. `TypeVariable(T) <: kotlin/Comparable<*>`
     2. `TypeVariable(T) <: java/io/Serializable`
     3. `TypeVariable(T) <: it(kotlin/Comparable<*> & java/io/Serializable)`
-5. Combine `TypeVariable(T) == it(kotlin/Comparable<*> & java/io/Serializable)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)> <: TypeVariable(Z)`
-6. Combine `TypeVariable(T) == it(kotlin/Comparable<*> & java/io/Serializable)` with `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>`
-    1. `TypeVariable(Z) <: kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>`
-7. Combine `kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)> <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>`
+5. `kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)> <: TypeVariable(Z)` _from Fix variable T_
+6. Combine `kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)> <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>`
     1. `it(kotlin/Comparable<*> & java/io/Serializable) <: TypeVariable(T)`
-8. Combine `kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)> <: TypeVariable(Z)` with `TypeVariable(Z) <: kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>`
-    1. `TypeVariable(Z) == kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>`
-9. Choose `TypeVariable(T)` with `Readiness(
+7. `TypeVariable(Z) == kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>` _from Fix variable T_
+8. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -4122,10 +4096,9 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-10. `TypeVariable(T) == kotlin/String` _from Fix variable T_
-11. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
-12. Choose `TypeVariable(Z)` with `Readiness(
+9. `TypeVariable(T) == kotlin/String` _from Fix variable T_
+10. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)` _from Fix variable T_
+11. Choose `TypeVariable(Z)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -5005,10 +4978,8 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(X)`
-    1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(X)`
-5. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)`
+4. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
+5. `kotlin/collections/List<kotlin/Int> <: TypeVariable(X)` _from Fix variable T_
 6. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -5416,10 +5387,8 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/String` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(X)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(X)`
-5. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
+4. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)` _from Fix variable T_
+5. `kotlin/collections/List<kotlin/String> <: TypeVariable(X)` _from Fix variable T_
 6. Choose `TypeVariable(X)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -5534,10 +5503,8 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 9. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-10. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(X)`
-    1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(X)`
-11. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)`
+10. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
+11. `kotlin/collections/List<kotlin/Int> <: TypeVariable(X)` _from Fix variable T_
 12. Choose `TypeVariable(Z)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -5869,10 +5836,8 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/String` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(X)`
-    1. `kotlin/collections/Set<kotlin/String> <: TypeVariable(X)`
-5. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/String> <: TypeVariable(Z)`
+4. `kotlin/collections/Set<kotlin/String> <: TypeVariable(Z)` _from Fix variable T_
+5. `kotlin/collections/Set<kotlin/String> <: TypeVariable(X)` _from Fix variable T_
 6. Choose `TypeVariable(X)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -5955,8 +5920,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 9. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-10. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)`
+10. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
 11. Choose `TypeVariable(Z)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -6415,9 +6379,8 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)`
-5. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(K)`
+4. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
+5. Combine `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)` with `TypeVariable(Z) == TypeVariable(K)`
     1. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(K)`
 6. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
@@ -6542,8 +6505,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-14. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(R)`
-    1. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(R)`
+14. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(R)` _from Fix variable T_
 15. Choose `TypeVariable(K)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -7019,9 +6981,8 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/String` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
-5. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(K)`
+4. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)` _from Fix variable T_
+5. Combine `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)` with `TypeVariable(Z) == TypeVariable(K)`
     1. `kotlin/collections/List<kotlin/String> <: TypeVariable(K)`
 6. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
@@ -7088,12 +7049,10 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 7. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-8. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(R)`
-    1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(R)`
-9. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)`
-10. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(K)`
+8. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
+9. Combine `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)` with `TypeVariable(Z) == TypeVariable(K)`
     1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(K)`
+10. `kotlin/collections/List<kotlin/Int> <: TypeVariable(R)` _from Fix variable T_
 11. Choose `TypeVariable(Z)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -8358,11 +8317,8 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)`
-5. Combine `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)` with `TypeVariable(K) == TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(K)`
-6. Choose `TypeVariable(Z)` with `Readiness(
+4. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
+5. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -8412,34 +8368,31 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        )`
     3. `TypeVariable(K)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-7. `TypeVariable(Z) == kotlin/collections/Collection<kotlin/Int>` _from Fix variable Z_
-8. Combine `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/Collection<kotlin/Int>`
+6. `TypeVariable(Z) == kotlin/collections/Collection<kotlin/Int>` _from Fix variable Z_
+7. Combine `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/Collection<kotlin/Int>`
     1. `TypeVariable(T) <: kotlin/Int`
-9. Combine `TypeVariable(K) <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/Collection<kotlin/Int>`
+8. Combine `TypeVariable(K) <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/Collection<kotlin/Int>`
     1. `TypeVariable(K) <: kotlin/collections/Collection<kotlin/Int>`
-10. Combine `TypeVariable(Z) == kotlin/collections/Collection<kotlin/Int>` with `TypeVariable(K) == TypeVariable(Z)`
-    1. `kotlin/collections/Collection<kotlin/Int> <: TypeVariable(K)`
-11. Combine `TypeVariable(K) == TypeVariable(Z)` with `TypeVariable(K) <: kotlin/collections/Collection<kotlin/Int>`
+9. Combine `TypeVariable(K) == TypeVariable(Z)` with `TypeVariable(K) <: kotlin/collections/Collection<kotlin/Int>`
     1. `TypeVariable(Z) <: kotlin/collections/Collection<kotlin/Int>`
-12. Combine `TypeVariable(K) <: kotlin/collections/Collection<kotlin/Int>` with `kotlin/collections/Collection<kotlin/Int> <: TypeVariable(K)`
-    1. `TypeVariable(K) == kotlin/collections/Collection<kotlin/Int>`
-13. Combine `TypeVariable(K) == kotlin/collections/Collection<kotlin/Int>` with `TypeVariable(K) == TypeVariable(Z)`
+10. `TypeVariable(K) == kotlin/collections/Collection<kotlin/Int>` _from Fix variable Z_
+11. Combine `TypeVariable(K) == kotlin/collections/Collection<kotlin/Int>` with `TypeVariable(K) == TypeVariable(Z)`
     1. `kotlin/collections/Collection<kotlin/Int> <: TypeVariable(Z)`
-14. Choose `TypeVariable(T)` with `Readiness(
+12. Choose `TypeVariable(T)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -8487,9 +8440,8 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-15. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(K)`
-    1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(K)`
-16. Choose `TypeVariable(T)` with `Readiness(
+13. `kotlin/collections/List<kotlin/Int> <: TypeVariable(K)` _from Fix variable T_
+14. Choose `TypeVariable(T)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -8521,7 +8473,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-17. Choose `TypeVariable(K)` with `Readiness(
+15. Choose `TypeVariable(K)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -8901,10 +8853,8 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)`
-5. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(K)`
-    1. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(K)`
+4. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)` _from Fix variable T_
+5. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(K)` _from Fix variable T_
 6. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -8958,15 +8908,12 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
     1. `TypeVariable(T) <: kotlin/Int`
 9. Combine `TypeVariable(K) <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/Collection<kotlin/Int>`
     1. `TypeVariable(K) <: kotlin/collections/Collection<kotlin/Int>`
-10. Combine `TypeVariable(Z) == kotlin/collections/Collection<kotlin/Int>` with `TypeVariable(K) == TypeVariable(Z)`
-    1. `kotlin/collections/Collection<kotlin/Int> <: TypeVariable(K)`
-11. Combine `TypeVariable(K) == TypeVariable(Z)` with `TypeVariable(K) <: kotlin/collections/Collection<kotlin/Int>`
+10. Combine `TypeVariable(K) == TypeVariable(Z)` with `TypeVariable(K) <: kotlin/collections/Collection<kotlin/Int>`
     1. `TypeVariable(Z) <: kotlin/collections/Collection<kotlin/Int>`
-12. Combine `TypeVariable(K) <: kotlin/collections/Collection<kotlin/Int>` with `kotlin/collections/Collection<kotlin/Int> <: TypeVariable(K)`
-    1. `TypeVariable(K) == kotlin/collections/Collection<kotlin/Int>`
-13. Combine `TypeVariable(K) == kotlin/collections/Collection<kotlin/Int>` with `TypeVariable(K) == TypeVariable(Z)`
+11. `TypeVariable(K) == kotlin/collections/Collection<kotlin/Int>` _from Fix variable Z_
+12. Combine `TypeVariable(K) == kotlin/collections/Collection<kotlin/Int>` with `TypeVariable(K) == TypeVariable(Z)`
     1. `kotlin/collections/Collection<kotlin/Int> <: TypeVariable(Z)`
-14. Choose `TypeVariable(T)` with `Readiness(
+13. Choose `TypeVariable(T)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -8998,9 +8945,8 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-15. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(K)`
-    1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(K)`
-16. Choose `TypeVariable(K)` with `Readiness(
+14. `kotlin/collections/List<kotlin/Int> <: TypeVariable(K)` _from Fix variable T_
+15. Choose `TypeVariable(K)` with `Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY

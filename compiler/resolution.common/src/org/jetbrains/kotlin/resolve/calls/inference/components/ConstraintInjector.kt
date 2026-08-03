@@ -122,6 +122,43 @@ class ConstraintInjector(
         }
     }
 
+    context(c: Context)
+    fun addSubstitutedConstraintReplacement(
+        typeVariable: TypeVariableMarker,
+        existingConstraint: Constraint,
+        newType: KotlinTypeMarker,
+        position: FixVariableConstraintPosition<*>,
+    ) {
+        val initialConstraint =
+            InitialConstraint(typeVariable.defaultType(), newType, existingConstraint.kind, position)
+                .also { c.addInitialConstraint(it) }
+
+        inferenceLogger?.logInitial(initialConstraint, c)
+
+        with(TypeCheckerStateForConstraintInjector(c, IncorporationConstraintPosition(initialConstraint))) {
+            inferenceLogger.withOrigin(initialConstraint) {
+                val inputTypePositionBeforeIncorporation =
+                    (existingConstraint.position.from as? OnlyInputTypeConstraintPosition
+                        ?: existingConstraint.inputTypePositionBeforeIncorporation)
+
+                addNewIncorporatedConstraint(
+                    typeVariable,
+                    newType,
+                    ConstraintContext(
+                        existingConstraint.kind,
+                        derivedFrom = emptySet(),
+                        inputTypePositionBeforeIncorporation,
+                        isNullabilityConstraint = false,
+                        existingConstraint.isNoInfer,
+                        existingConstraint.isFromFlexibleUpperDuringIncorporation,
+                    )
+                )
+            }
+
+            processConstraints()
+        }
+    }
+
     context(c: Context, typeCheckerState: TypeCheckerStateForConstraintInjector)
     private fun addSubTypeConstraintAndIncorporateIt(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker) {
         typeCheckerState.setConstrainingTypesToPrintDebugInfo(lowerType, upperType)
@@ -190,15 +227,6 @@ class ConstraintInjector(
             val constraintToIncorporate = when {
                 wasAdded && !constraint.isNullabilityConstraint -> addedOrNonRedundantExistedConstraint
                 positionFrom is FixVariableConstraintPosition<*> && positionFrom.variable == typeVariable && constraint.kind == EQUALITY ->
-                    addedOrNonRedundantExistedConstraint
-                // With the feature enabled, an equality added by a semi-fixation might duplicate an already existing derived
-                // constraint (e.g. `Kv == Tv` from `provideDelegate` semi-fixation when the receiver check has already derived it).
-                // The existing copy has not been incorporated by the second kind (only fixation-caused constraints are),
-                // so the semi-fixation must (re-)incorporate it to substitute the result into the constraints containing
-                // the variable, the same way an actual fixation would (KT-86022).
-                (positionFrom is ProvideDelegateFixationPosition || positionFrom is SemiFixVariableConstraintPosition) &&
-                        constraint.kind == EQUALITY &&
-                        languageVersionSettings.supportsFeature(LanguageFeature.EliminateSecondKindIncorporation) ->
                     addedOrNonRedundantExistedConstraint
                 else -> null
             }
