@@ -2,6 +2,7 @@
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.scripting.ide_services.compiler.impl
 
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 
+@Deprecated("This declaration would be removed in future versions", level = DeprecationLevel.ERROR)
 class KotlinResolutionFacadeForRepl(
     private val environment: KotlinCoreEnvironment,
     private val provider: ComponentProvider
