@@ -1,0 +1,375 @@
+Module: lib
+FILE fqName:<root> fileName:/lib.kt lineStartOffsets: [0, 15, 42, 43, 59, 115, 116]
+  FUN[66, 114] name:inlinedUInt visibility:public modality:FINAL returnType:kotlin.UIntArray [inline]
+    VALUE_PARAMETER[82, 97] kind:Regular name:us index:0 type:kotlin.UIntArray varargElementType:kotlin.UInt [vararg]
+    BLOCK_BODY[112, 114]
+      RETURN[114, 114] type=kotlin.Nothing from='public final fun inlinedUInt (vararg us: kotlin.UInt): kotlin.UIntArray declared in <root>'
+        GET_VAR[112, 114] 'us: kotlin.UIntArray declared in <root>.inlinedUInt' type=kotlin.UIntArray origin=null
+Module: main
+FILE fqName:<root> fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 23, 65, 66, 114, 146, 187, 189, 190, 241, 254, 269, 284, 299, 300, 353, 367, 383, 399, 415, 416, 465, 477, 491, 505, 519, 520, 571, 584, 599, 614, 629, 630, 650, 683, 726, 727, 784, 836, 837, 894, 945, 946, 989, 1039, 1040, 1116, 1174, 1175, 1228, 1229, 1281, 1282, 1298, 1300, 1301, 1334, 1351, 1371, 1388, 1394, 1395, 1410, 1412]
+  PROPERTY[254, 268] name:ubyte0 visibility:public modality:FINAL [val]
+    annotations:
+      AnnoUByte(args = [] type=kotlin.UByteArray varargElementType=kotlin.UByte)
+    FIELD[254, 268] PROPERTY_BACKING_FIELD name:ubyte0 type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY[267, 268]
+        CONST[267, 268] Int type=kotlin.Int value=0
+    FUN[254, 264] DEFAULT_PROPERTY_ACCESSOR name:<get-ubyte0> visibility:public modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY[254, 268] name:ubyte0 visibility:public modality:FINAL [val]
+      BLOCK_BODY[254, 264]
+        RETURN[254, 264] type=kotlin.Nothing from='public final fun <get-ubyte0> (): kotlin.Int declared in <root>'
+          GET_FIELD[254, 264] 'FIELD PROPERTY_BACKING_FIELD name:ubyte0 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  PROPERTY[284, 298] name:ubyte1 visibility:public modality:FINAL [val]
+    annotations:
+      AnnoUByte(args = [0] type=kotlin.UByteArray varargElementType=kotlin.UByte)
+    FIELD[284, 298] PROPERTY_BACKING_FIELD name:ubyte1 type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY[297, 298]
+        CONST[297, 298] Int type=kotlin.Int value=1
+    FUN[284, 294] DEFAULT_PROPERTY_ACCESSOR name:<get-ubyte1> visibility:public modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY[284, 298] name:ubyte1 visibility:public modality:FINAL [val]
+      BLOCK_BODY[284, 294]
+        RETURN[284, 294] type=kotlin.Nothing from='public final fun <get-ubyte1> (): kotlin.Int declared in <root>'
+          GET_FIELD[284, 294] 'FIELD PROPERTY_BACKING_FIELD name:ubyte1 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  PROPERTY[367, 382] name:ushort0 visibility:public modality:FINAL [val]
+    annotations:
+      AnnoUShort(args = [] type=kotlin.UShortArray varargElementType=kotlin.UShort)
+    FIELD[367, 382] PROPERTY_BACKING_FIELD name:ushort0 type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY[381, 382]
+        CONST[381, 382] Int type=kotlin.Int value=0
+    FUN[367, 378] DEFAULT_PROPERTY_ACCESSOR name:<get-ushort0> visibility:public modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY[367, 382] name:ushort0 visibility:public modality:FINAL [val]
+      BLOCK_BODY[367, 378]
+        RETURN[367, 378] type=kotlin.Nothing from='public final fun <get-ushort0> (): kotlin.Int declared in <root>'
+          GET_FIELD[367, 378] 'FIELD PROPERTY_BACKING_FIELD name:ushort0 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  PROPERTY[399, 414] name:ushort1 visibility:public modality:FINAL [val]
+    annotations:
+      AnnoUShort(args = [0] type=kotlin.UShortArray varargElementType=kotlin.UShort)
+    FIELD[399, 414] PROPERTY_BACKING_FIELD name:ushort1 type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY[413, 414]
+        CONST[413, 414] Int type=kotlin.Int value=1
+    FUN[399, 410] DEFAULT_PROPERTY_ACCESSOR name:<get-ushort1> visibility:public modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY[399, 414] name:ushort1 visibility:public modality:FINAL [val]
+      BLOCK_BODY[399, 410]
+        RETURN[399, 410] type=kotlin.Nothing from='public final fun <get-ushort1> (): kotlin.Int declared in <root>'
+          GET_FIELD[399, 410] 'FIELD PROPERTY_BACKING_FIELD name:ushort1 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  PROPERTY[477, 490] name:uint0 visibility:public modality:FINAL [val]
+    annotations:
+      AnnoUInt(args = [] type=kotlin.UIntArray varargElementType=kotlin.UInt)
+    FIELD[477, 490] PROPERTY_BACKING_FIELD name:uint0 type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY[489, 490]
+        CONST[489, 490] Int type=kotlin.Int value=0
+    FUN[477, 486] DEFAULT_PROPERTY_ACCESSOR name:<get-uint0> visibility:public modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY[477, 490] name:uint0 visibility:public modality:FINAL [val]
+      BLOCK_BODY[477, 486]
+        RETURN[477, 486] type=kotlin.Nothing from='public final fun <get-uint0> (): kotlin.Int declared in <root>'
+          GET_FIELD[477, 486] 'FIELD PROPERTY_BACKING_FIELD name:uint0 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  PROPERTY[505, 518] name:uint1 visibility:public modality:FINAL [val]
+    annotations:
+      AnnoUInt(args = [0] type=kotlin.UIntArray varargElementType=kotlin.UInt)
+    FIELD[505, 518] PROPERTY_BACKING_FIELD name:uint1 type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY[517, 518]
+        CONST[517, 518] Int type=kotlin.Int value=1
+    FUN[505, 514] DEFAULT_PROPERTY_ACCESSOR name:<get-uint1> visibility:public modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY[505, 518] name:uint1 visibility:public modality:FINAL [val]
+      BLOCK_BODY[505, 514]
+        RETURN[505, 514] type=kotlin.Nothing from='public final fun <get-uint1> (): kotlin.Int declared in <root>'
+          GET_FIELD[505, 514] 'FIELD PROPERTY_BACKING_FIELD name:uint1 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  PROPERTY[584, 598] name:ulong0 visibility:public modality:FINAL [val]
+    annotations:
+      AnnoULong(args = [] type=kotlin.ULongArray varargElementType=kotlin.ULong)
+    FIELD[584, 598] PROPERTY_BACKING_FIELD name:ulong0 type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY[597, 598]
+        CONST[597, 598] Int type=kotlin.Int value=0
+    FUN[584, 594] DEFAULT_PROPERTY_ACCESSOR name:<get-ulong0> visibility:public modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY[584, 598] name:ulong0 visibility:public modality:FINAL [val]
+      BLOCK_BODY[584, 594]
+        RETURN[584, 594] type=kotlin.Nothing from='public final fun <get-ulong0> (): kotlin.Int declared in <root>'
+          GET_FIELD[584, 594] 'FIELD PROPERTY_BACKING_FIELD name:ulong0 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  PROPERTY[614, 628] name:ulong1 visibility:public modality:FINAL [val]
+    annotations:
+      AnnoULong(args = [0] type=kotlin.ULongArray varargElementType=kotlin.ULong)
+    FIELD[614, 628] PROPERTY_BACKING_FIELD name:ulong1 type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY[627, 628]
+        CONST[627, 628] Int type=kotlin.Int value=1
+    FUN[614, 624] DEFAULT_PROPERTY_ACCESSOR name:<get-ulong1> visibility:public modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY[614, 628] name:ulong1 visibility:public modality:FINAL [val]
+      BLOCK_BODY[614, 624]
+        RETURN[614, 624] type=kotlin.Nothing from='public final fun <get-ulong1> (): kotlin.Int declared in <root>'
+          GET_FIELD[614, 624] 'FIELD PROPERTY_BACKING_FIELD name:ulong1 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  CLASS[190, 240] ANNOTATION_CLASS name:AnnoUByte modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    thisReceiver: VALUE_PARAMETER[190, 240] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.AnnoUByte
+    PROPERTY[224, 239] name:args visibility:public modality:FINAL [val]
+      FIELD[224, 239] PROPERTY_BACKING_FIELD name:args type:kotlin.UByteArray visibility:private [final]
+        EXPRESSION_BODY[217, 239]
+          GET_VAR[217, 239] 'args: kotlin.UByteArray declared in <root>.AnnoUByte.<init>' type=kotlin.UByteArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN[224, 239] DEFAULT_PROPERTY_ACCESSOR name:<get-args> visibility:public modality:FINAL returnType:kotlin.UByteArray
+        VALUE_PARAMETER[224, 239] kind:DispatchReceiver name:<this> index:0 type:<root>.AnnoUByte
+        correspondingProperty: PROPERTY[224, 239] name:args visibility:public modality:FINAL [val]
+        BLOCK_BODY[224, 239]
+          RETURN[224, 239] type=kotlin.Nothing from='public final fun <get-args> (): kotlin.UByteArray declared in <root>.AnnoUByte'
+            GET_FIELD[224, 239] 'FIELD PROPERTY_BACKING_FIELD name:args type:kotlin.UByteArray visibility:private [final]' type=kotlin.UByteArray origin=null
+              receiver: GET_VAR[224, 239] '<this>: <root>.AnnoUByte declared in <root>.AnnoUByte.<get-args>' type=<root>.AnnoUByte origin=null
+    CONSTRUCTOR[216, 240] visibility:public returnType:<root>.AnnoUByte [primary]
+      VALUE_PARAMETER[224, 239] kind:Regular name:args index:0 type:kotlin.UByteArray varargElementType:kotlin.UByte [vararg]
+      BLOCK_BODY[216, 240]
+        DELEGATING_CONSTRUCTOR_CALL[190, 240] 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL[190, 240] classDescriptor='CLASS ANNOTATION_CLASS name:AnnoUByte modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Unit
+    FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+    FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+    FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+  CLASS[416, 464] ANNOTATION_CLASS name:AnnoUInt modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    thisReceiver: VALUE_PARAMETER[416, 464] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.AnnoUInt
+    PROPERTY[449, 463] name:args visibility:public modality:FINAL [val]
+      FIELD[449, 463] PROPERTY_BACKING_FIELD name:args type:kotlin.UIntArray visibility:private [final]
+        EXPRESSION_BODY[442, 463]
+          GET_VAR[442, 463] 'args: kotlin.UIntArray declared in <root>.AnnoUInt.<init>' type=kotlin.UIntArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN[449, 463] DEFAULT_PROPERTY_ACCESSOR name:<get-args> visibility:public modality:FINAL returnType:kotlin.UIntArray
+        VALUE_PARAMETER[449, 463] kind:DispatchReceiver name:<this> index:0 type:<root>.AnnoUInt
+        correspondingProperty: PROPERTY[449, 463] name:args visibility:public modality:FINAL [val]
+        BLOCK_BODY[449, 463]
+          RETURN[449, 463] type=kotlin.Nothing from='public final fun <get-args> (): kotlin.UIntArray declared in <root>.AnnoUInt'
+            GET_FIELD[449, 463] 'FIELD PROPERTY_BACKING_FIELD name:args type:kotlin.UIntArray visibility:private [final]' type=kotlin.UIntArray origin=null
+              receiver: GET_VAR[449, 463] '<this>: <root>.AnnoUInt declared in <root>.AnnoUInt.<get-args>' type=<root>.AnnoUInt origin=null
+    CONSTRUCTOR[441, 464] visibility:public returnType:<root>.AnnoUInt [primary]
+      VALUE_PARAMETER[449, 463] kind:Regular name:args index:0 type:kotlin.UIntArray varargElementType:kotlin.UInt [vararg]
+      BLOCK_BODY[441, 464]
+        DELEGATING_CONSTRUCTOR_CALL[416, 464] 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL[416, 464] classDescriptor='CLASS ANNOTATION_CLASS name:AnnoUInt modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Unit
+    FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+    FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+    FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+  CLASS[520, 570] ANNOTATION_CLASS name:AnnoULong modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    thisReceiver: VALUE_PARAMETER[520, 570] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.AnnoULong
+    PROPERTY[554, 569] name:args visibility:public modality:FINAL [val]
+      FIELD[554, 569] PROPERTY_BACKING_FIELD name:args type:kotlin.ULongArray visibility:private [final]
+        EXPRESSION_BODY[547, 569]
+          GET_VAR[547, 569] 'args: kotlin.ULongArray declared in <root>.AnnoULong.<init>' type=kotlin.ULongArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN[554, 569] DEFAULT_PROPERTY_ACCESSOR name:<get-args> visibility:public modality:FINAL returnType:kotlin.ULongArray
+        VALUE_PARAMETER[554, 569] kind:DispatchReceiver name:<this> index:0 type:<root>.AnnoULong
+        correspondingProperty: PROPERTY[554, 569] name:args visibility:public modality:FINAL [val]
+        BLOCK_BODY[554, 569]
+          RETURN[554, 569] type=kotlin.Nothing from='public final fun <get-args> (): kotlin.ULongArray declared in <root>.AnnoULong'
+            GET_FIELD[554, 569] 'FIELD PROPERTY_BACKING_FIELD name:args type:kotlin.ULongArray visibility:private [final]' type=kotlin.ULongArray origin=null
+              receiver: GET_VAR[554, 569] '<this>: <root>.AnnoULong declared in <root>.AnnoULong.<get-args>' type=<root>.AnnoULong origin=null
+    CONSTRUCTOR[546, 570] visibility:public returnType:<root>.AnnoULong [primary]
+      VALUE_PARAMETER[554, 569] kind:Regular name:args index:0 type:kotlin.ULongArray varargElementType:kotlin.ULong [vararg]
+      BLOCK_BODY[546, 570]
+        DELEGATING_CONSTRUCTOR_CALL[520, 570] 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL[520, 570] classDescriptor='CLASS ANNOTATION_CLASS name:AnnoULong modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Unit
+    FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+    FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+    FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+  CLASS[300, 352] ANNOTATION_CLASS name:AnnoUShort modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    thisReceiver: VALUE_PARAMETER[300, 352] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.AnnoUShort
+    PROPERTY[335, 351] name:args visibility:public modality:FINAL [val]
+      FIELD[335, 351] PROPERTY_BACKING_FIELD name:args type:kotlin.UShortArray visibility:private [final]
+        EXPRESSION_BODY[328, 351]
+          GET_VAR[328, 351] 'args: kotlin.UShortArray declared in <root>.AnnoUShort.<init>' type=kotlin.UShortArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN[335, 351] DEFAULT_PROPERTY_ACCESSOR name:<get-args> visibility:public modality:FINAL returnType:kotlin.UShortArray
+        VALUE_PARAMETER[335, 351] kind:DispatchReceiver name:<this> index:0 type:<root>.AnnoUShort
+        correspondingProperty: PROPERTY[335, 351] name:args visibility:public modality:FINAL [val]
+        BLOCK_BODY[335, 351]
+          RETURN[335, 351] type=kotlin.Nothing from='public final fun <get-args> (): kotlin.UShortArray declared in <root>.AnnoUShort'
+            GET_FIELD[335, 351] 'FIELD PROPERTY_BACKING_FIELD name:args type:kotlin.UShortArray visibility:private [final]' type=kotlin.UShortArray origin=null
+              receiver: GET_VAR[335, 351] '<this>: <root>.AnnoUShort declared in <root>.AnnoUShort.<get-args>' type=<root>.AnnoUShort origin=null
+    CONSTRUCTOR[327, 352] visibility:public returnType:<root>.AnnoUShort [primary]
+      VALUE_PARAMETER[335, 351] kind:Regular name:args index:0 type:kotlin.UShortArray varargElementType:kotlin.UShort [vararg]
+      BLOCK_BODY[327, 352]
+        DELEGATING_CONSTRUCTOR_CALL[300, 352] 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL[300, 352] classDescriptor='CLASS ANNOTATION_CLASS name:AnnoUShort modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Unit
+    FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+    FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+    FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+  FUN[630, 1299] name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY[648, 1299]
+      VAR[654, 682] name:uints type:kotlin.UIntArray [val]
+        CALL[666, 682] 'public final fun uint (vararg us: kotlin.UInt): kotlin.UIntArray declared in <root>' type=kotlin.UIntArray origin=null
+          ARG us: VARARG[671, 681] type=kotlin.UIntArray varargElementType=kotlin.UInt
+            CONST[671, 673] Int type=kotlin.UInt value=1
+            CONST[675, 677] Int type=kotlin.UInt value=2
+            CONST[679, 681] Int type=kotlin.UInt value=3
+      WHEN[687, 725] type=kotlin.Unit origin=IF
+        BRANCH[691, 725]
+          if: CALL[691, 708] 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            ARG <this>: CALL[691, 708] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: CALL[691, 702] 'public final fun sum (vararg us: kotlin.UInt): kotlin.UInt declared in <root>' type=kotlin.UInt origin=null
+                ARG us: VARARG[695, 701] type=kotlin.UIntArray varargElementType=kotlin.UInt
+                  SPREAD_ELEMENT[695, 701]
+                    GET_VAR[696, 701] 'val uints: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
+              ARG arg1: CONST[706, 708] Int type=kotlin.UInt value=6
+          then: RETURN[710, 725] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            CONST[717, 725] String type=kotlin.String value="Fail 1"
+      VAR[731, 783] name:complextUInts type:kotlin.UIntArray [val]
+        CALL[751, 783] 'public final fun uint (vararg us: kotlin.UInt): kotlin.UIntArray declared in <root>' type=kotlin.UIntArray origin=null
+          ARG us: VARARG[756, 782] type=kotlin.UIntArray varargElementType=kotlin.UInt
+            CONST[756, 758] Int type=kotlin.UInt value=4
+            SPREAD_ELEMENT[760, 766]
+              GET_VAR[761, 766] 'val uints: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
+            CONST[768, 770] Int type=kotlin.UInt value=5
+            SPREAD_ELEMENT[772, 778]
+              GET_VAR[773, 778] 'val uints: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
+            CONST[780, 782] Int type=kotlin.UInt value=6
+      WHEN[788, 835] type=kotlin.Unit origin=IF
+        BRANCH[792, 835]
+          if: CALL[792, 818] 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            ARG <this>: CALL[792, 818] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: CALL[792, 811] 'public final fun sum (vararg us: kotlin.UInt): kotlin.UInt declared in <root>' type=kotlin.UInt origin=null
+                ARG us: VARARG[796, 810] type=kotlin.UIntArray varargElementType=kotlin.UInt
+                  SPREAD_ELEMENT[796, 810]
+                    GET_VAR[797, 810] 'val complextUInts: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
+              ARG arg1: CONST[815, 818] Int type=kotlin.UInt value=27
+          then: RETURN[820, 835] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            CONST[827, 835] String type=kotlin.String value="Fail 2"
+      VAR[841, 893] name:nullableUInts type:kotlin.UIntArray [val]
+        CALL[861, 893] 'public final fun nullableUInt (vararg us: kotlin.UInt?): kotlin.UIntArray declared in <root>' type=kotlin.UIntArray origin=null
+          ARG us: VARARG[874, 892] type=kotlin.Array<out kotlin.UInt?> varargElementType=kotlin.UInt?
+            CONST[874, 876] Int type=kotlin.UInt value=1
+            CONST[878, 882] Null type=kotlin.Nothing? value=null
+            CONST[884, 886] Int type=kotlin.UInt value=2
+            CONST[888, 892] Null type=kotlin.Nothing? value=null
+      WHEN[898, 944] type=kotlin.Unit origin=IF
+        BRANCH[902, 944]
+          if: CALL[902, 927] 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            ARG <this>: CALL[902, 927] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: CALL[902, 921] 'public final fun sum (vararg us: kotlin.UInt): kotlin.UInt declared in <root>' type=kotlin.UInt origin=null
+                ARG us: VARARG[906, 920] type=kotlin.UIntArray varargElementType=kotlin.UInt
+                  SPREAD_ELEMENT[906, 920]
+                    GET_VAR[907, 920] 'val nullableUInts: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
+              ARG arg1: CONST[925, 927] Int type=kotlin.UInt value=3
+          then: RETURN[929, 944] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            CONST[936, 944] String type=kotlin.String value="Fail 3"
+      VAR[950, 988] name:inlinedUInts type:kotlin.UIntArray [val]
+        CALL[969, 988] 'public final fun inlinedUInt (vararg us: kotlin.UInt): kotlin.UIntArray declared in <root>' type=kotlin.UIntArray origin=null
+          ARG us: VARARG[981, 987] type=kotlin.UIntArray varargElementType=kotlin.UInt
+            CONST[981, 983] Int type=kotlin.UInt value=1
+            CONST[985, 987] Int type=kotlin.UInt value=3
+      WHEN[993, 1038] type=kotlin.Unit origin=IF
+        BRANCH[997, 1038]
+          if: CALL[997, 1021] 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            ARG <this>: CALL[997, 1021] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: CALL[997, 1015] 'public final fun sum (vararg us: kotlin.UInt): kotlin.UInt declared in <root>' type=kotlin.UInt origin=null
+                ARG us: VARARG[1001, 1014] type=kotlin.UIntArray varargElementType=kotlin.UInt
+                  SPREAD_ELEMENT[1001, 1014]
+                    GET_VAR[1002, 1014] 'val inlinedUInts: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
+              ARG arg1: CONST[1019, 1021] Int type=kotlin.UInt value=4
+          then: RETURN[1023, 1038] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            CONST[1030, 1038] String type=kotlin.String value="Fail 4"
+      VAR[1044, 1115] name:complexInlinedUInts type:kotlin.UIntArray [val]
+        CALL[1070, 1115] 'public final fun inlinedUInt (vararg us: kotlin.UInt): kotlin.UIntArray declared in <root>' type=kotlin.UIntArray origin=null
+          ARG us: VARARG[1082, 1114] type=kotlin.UIntArray varargElementType=kotlin.UInt
+            SPREAD_ELEMENT[1082, 1095]
+              GET_VAR[1083, 1095] 'val inlinedUInts: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
+            CONST[1097, 1099] Int type=kotlin.UInt value=3
+            SPREAD_ELEMENT[1101, 1114]
+              GET_VAR[1102, 1114] 'val inlinedUInts: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
+      WHEN[1120, 1173] type=kotlin.Unit origin=IF
+        BRANCH[1124, 1173]
+          if: CALL[1124, 1156] 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            ARG <this>: CALL[1124, 1156] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: CALL[1124, 1149] 'public final fun sum (vararg us: kotlin.UInt): kotlin.UInt declared in <root>' type=kotlin.UInt origin=null
+                ARG us: VARARG[1128, 1148] type=kotlin.UIntArray varargElementType=kotlin.UInt
+                  SPREAD_ELEMENT[1128, 1148]
+                    GET_VAR[1129, 1148] 'val complexInlinedUInts: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
+              ARG arg1: CONST[1153, 1156] Int type=kotlin.UInt value=11
+          then: RETURN[1158, 1173] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            CONST[1165, 1173] String type=kotlin.String value="Fail 5"
+      WHEN[1179, 1227] type=kotlin.Unit origin=IF
+        BRANCH[1183, 1227]
+          if: TYPE_OP[1183, 1210] type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.UIntArray
+            GET_VAR[1183, 1196] 'val nullableUInts: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
+          then: RETURN[1212, 1227] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            CONST[1219, 1227] String type=kotlin.String value="Fail 6"
+      WHEN[1233, 1280] type=kotlin.Unit origin=IF
+        BRANCH[1237, 1280]
+          if: TYPE_OP[1237, 1263] type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.UIntArray
+            GET_VAR[1237, 1249] 'val inlinedUInts: kotlin.UIntArray declared in <root>.box' type=kotlin.UIntArray origin=null
+          then: RETURN[1265, 1280] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            CONST[1272, 1280] String type=kotlin.String value="Fail 7"
+      RETURN[1286, 1297] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST[1293, 1297] String type=kotlin.String value="OK"
+  FUN[66, 188] name:nullableUInt visibility:public modality:FINAL returnType:kotlin.UIntArray
+    VALUE_PARAMETER[83, 99] kind:Regular name:us index:0 type:kotlin.Array<out kotlin.UInt?> varargElementType:kotlin.UInt? [vararg]
+    BLOCK_BODY[112, 188]
+      VAR[118, 145] name:ls type:kotlin.collections.List<kotlin.UInt> [val]
+        CALL[130, 145] 'public final fun filterNotNull <T> (<this>: kotlin.Array<out T of kotlin.collections.filterNotNull?>): kotlin.collections.List<T of kotlin.collections.filterNotNull> declared in kotlin.collections' type=kotlin.collections.List<kotlin.UInt> origin=null
+          TYPE_ARG T: kotlin.UInt
+          ARG <this>: GET_VAR[127, 129] 'us: kotlin.Array<out kotlin.UInt?> declared in <root>.nullableUInt' type=kotlin.Array<out kotlin.UInt?> origin=null
+      RETURN[150, 186] type=kotlin.Nothing from='public final fun nullableUInt (vararg us: kotlin.UInt?): kotlin.UIntArray declared in <root>'
+        CALL[157, 186] 'public final fun UIntArray (size: kotlin.Int, init: kotlin.Function1<kotlin.Int, kotlin.UInt>): kotlin.UIntArray declared in kotlin' type=kotlin.UIntArray origin=null
+          ARG size: CALL[170, 174] 'public abstract fun <get-size> (): kotlin.Int declared in kotlin.collections.List' type=kotlin.Int origin=GET_PROPERTY
+            ARG <this>: GET_VAR[167, 169] 'val ls: kotlin.collections.List<kotlin.UInt> declared in <root>.nullableUInt' type=kotlin.collections.List<kotlin.UInt> origin=null
+          ARG init: FUN_EXPR[176, 186] type=kotlin.Function1<kotlin.Int, kotlin.UInt> origin=LAMBDA
+            FUN[176, 186] LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.UInt
+              VALUE_PARAMETER[176, 186] kind:Regular name:it index:0 type:kotlin.Int
+              BLOCK_BODY[178, 184]
+                RETURN[184, 184] type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.UInt declared in <root>.nullableUInt'
+                  CALL[178, 184] 'public abstract fun get (index: kotlin.Int): E of kotlin.collections.List declared in kotlin.collections.List' type=kotlin.UInt origin=GET_ARRAY_ELEMENT
+                    ARG <this>: GET_VAR[178, 180] 'val ls: kotlin.collections.List<kotlin.UInt> declared in <root>.nullableUInt' type=kotlin.collections.List<kotlin.UInt> origin=null
+                    ARG index: GET_VAR[181, 183] 'it: kotlin.Int declared in <root>.nullableUInt.<anonymous>' type=kotlin.Int origin=null
+  FUN[1301, 1411] name:sum visibility:public modality:FINAL returnType:kotlin.UInt
+    VALUE_PARAMETER[1309, 1324] kind:Regular name:us index:0 type:kotlin.UIntArray varargElementType:kotlin.UInt [vararg]
+    BLOCK_BODY[1332, 1411]
+      VAR[1338, 1350] name:sum type:kotlin.UInt [var]
+        CONST[1348, 1350] Int type=kotlin.UInt value=0
+      BLOCK[1355, 1393] type=kotlin.Unit origin=FOR_LOOP
+        VAR[1365, 1367] FOR_LOOP_ITERATOR name:tmp_0 type:kotlin.collections.Iterator<kotlin.UInt> [val]
+          CALL[1365, 1367] 'public open fun iterator (): kotlin.collections.Iterator<kotlin.UInt> declared in kotlin.UIntArray' type=kotlin.collections.Iterator<kotlin.UInt> origin=FOR_LOOP_ITERATOR
+            ARG <this>: GET_VAR[1365, 1367] 'us: kotlin.UIntArray declared in <root>.sum' type=kotlin.UIntArray origin=null
+        WHILE[1355, 1393] label=null origin=FOR_LOOP_INNER_WHILE
+          condition: CALL[1365, 1367] 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+            ARG <this>: GET_VAR[1365, 1367] 'val tmp_0: kotlin.collections.Iterator<kotlin.UInt> declared in <root>.sum' type=kotlin.collections.Iterator<kotlin.UInt> origin=null
+          body: BLOCK[1355, 1393] type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
+            VAR[1360, 1361] FOR_LOOP_VARIABLE name:i type:kotlin.UInt [val]
+              CALL[1365, 1367] 'public abstract fun next (): T of kotlin.collections.Iterator declared in kotlin.collections.Iterator' type=kotlin.UInt origin=FOR_LOOP_NEXT
+                ARG <this>: GET_VAR[1365, 1367] 'val tmp_0: kotlin.collections.Iterator<kotlin.UInt> declared in <root>.sum' type=kotlin.collections.Iterator<kotlin.UInt> origin=null
+            BLOCK[1369, 1393] type=kotlin.Unit origin=null
+              SET_VAR[1379, 1387] 'var sum: kotlin.UInt declared in <root>.sum' type=kotlin.Unit origin=PLUSEQ
+                CALL[1379, 1387] 'public final fun plus (other: kotlin.UInt): kotlin.UInt declared in kotlin.UInt' type=kotlin.UInt origin=PLUSEQ
+                  ARG <this>: GET_VAR[1379, 1382] 'var sum: kotlin.UInt declared in <root>.sum' type=kotlin.UInt origin=PLUSEQ
+                  ARG other: GET_VAR[1386, 1387] 'val i: kotlin.UInt declared in <root>.sum' type=kotlin.UInt origin=null
+      RETURN[1399, 1409] type=kotlin.Nothing from='public final fun sum (vararg us: kotlin.UInt): kotlin.UInt declared in <root>'
+        GET_VAR[1406, 1409] 'var sum: kotlin.UInt declared in <root>.sum' type=kotlin.UInt origin=null
+  FUN[23, 64] name:uint visibility:public modality:FINAL returnType:kotlin.UIntArray
+    VALUE_PARAMETER[32, 47] kind:Regular name:us index:0 type:kotlin.UIntArray varargElementType:kotlin.UInt [vararg]
+    BLOCK_BODY[62, 64]
+      RETURN[64, 64] type=kotlin.Nothing from='public final fun uint (vararg us: kotlin.UInt): kotlin.UIntArray declared in <root>'
+        GET_VAR[62, 64] 'us: kotlin.UIntArray declared in <root>.uint' type=kotlin.UIntArray origin=null

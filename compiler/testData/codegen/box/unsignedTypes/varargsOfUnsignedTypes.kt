@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// DUMP_IR
+// DUMP_IR_AFTER_SPLITTING
 
 // FILE: lib.kt
 inline fun inlinedUInt(vararg us: UInt): UIntArray = us

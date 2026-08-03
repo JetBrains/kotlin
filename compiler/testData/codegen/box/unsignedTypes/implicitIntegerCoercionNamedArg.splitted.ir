@@ -1,0 +1,82 @@
+Module: lib
+FILE fqName:kotlin.internal fileName:/annotation.kt lineStartOffsets: [0, 19, 75, 99, 114, 141, 142, 169, 180, 246, 324, 399, 485, 486, 509, 510, 534, 535, 576, 577]
+  CLASS[535, 575] ANNOTATION_CLASS name:ImplicitIntegerCoercion modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    thisReceiver: VALUE_PARAMETER[535, 575] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:kotlin.internal.ImplicitIntegerCoercion
+    CONSTRUCTOR[535, 575] visibility:public returnType:kotlin.internal.ImplicitIntegerCoercion [primary]
+      BLOCK_BODY[535, 575]
+        DELEGATING_CONSTRUCTOR_CALL[535, 575] 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL[535, 575] classDescriptor='CLASS ANNOTATION_CLASS name:ImplicitIntegerCoercion modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Unit
+    FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+    FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+    FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+Module: main
+FILE fqName:<root> fileName:/test.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 36, 37, 84, 85, 143, 204, 205, 232, 283, 342, 398, 462, 479, 481]
+  FUN[205, 480] name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY[225, 480]
+      RETURN[480, 480] type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        WHEN[225, 480] type=kotlin.String origin=WHEN
+          BRANCH[236, 282]
+            if: CALL[236, 260] 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL[236, 260] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: CALL[236, 246] 'public final fun testInt (x: kotlin.UInt): kotlin.UInt declared in <root>' type=kotlin.UInt origin=null
+                  ARG x: CALL[244, 245] 'public final fun toUInt (<this>: kotlin.Int): kotlin.UInt declared in kotlin' type=kotlin.UInt origin=null
+                    ARG <this>: CONST[244, 245] Int type=kotlin.Int value=5
+                ARG arg1: CALL[252, 260] 'public final fun toUInt (<this>: kotlin.Int): kotlin.UInt declared in kotlin' type=kotlin.UInt origin=null
+                  ARG <this>: CONST[250, 251] Int type=kotlin.Int value=5
+            then: CONST[264, 282] String type=kotlin.String value="Fail: testInt(5)"
+          BRANCH[287, 341]
+            if: CALL[287, 315] 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL[287, 315] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: CALL[287, 301] 'public final fun testInt (x: kotlin.UInt): kotlin.UInt declared in <root>' type=kotlin.UInt origin=null
+                  ARG x: CALL[299, 300] 'public final fun toUInt (<this>: kotlin.Int): kotlin.UInt declared in kotlin' type=kotlin.UInt origin=null
+                    ARG <this>: CONST[299, 300] Int type=kotlin.Int value=5
+                ARG arg1: CALL[307, 315] 'public final fun toUInt (<this>: kotlin.Int): kotlin.UInt declared in kotlin' type=kotlin.UInt origin=null
+                  ARG <this>: CONST[305, 306] Int type=kotlin.Int value=5
+            then: CONST[319, 341] String type=kotlin.String value="Fail: testInt(x = 5)"
+          BRANCH[346, 397]
+            if: CALL[346, 373] 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL[346, 373] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: CALL[346, 357] 'public final fun testLong (x: kotlin.ULong): kotlin.ULong declared in <root>' type=kotlin.ULong origin=null
+                  ARG x: CALL[355, 356] 'public final fun toULong (<this>: kotlin.Int): kotlin.ULong declared in kotlin' type=kotlin.ULong origin=null
+                    ARG <this>: CONST[355, 356] Int type=kotlin.Int value=5
+                ARG arg1: CALL[364, 373] 'public final fun toULong (<this>: kotlin.Long): kotlin.ULong declared in kotlin' type=kotlin.ULong origin=null
+                  ARG <this>: CONST[361, 363] Long type=kotlin.Long value=5
+            then: CONST[377, 397] String type=kotlin.String value="Fail: testLong(5L)"
+          BRANCH[402, 461]
+            if: CALL[402, 433] 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL[402, 433] 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: CALL[402, 417] 'public final fun testLong (x: kotlin.ULong): kotlin.ULong declared in <root>' type=kotlin.ULong origin=null
+                  ARG x: CALL[415, 416] 'public final fun toULong (<this>: kotlin.Int): kotlin.ULong declared in kotlin' type=kotlin.ULong origin=null
+                    ARG <this>: CONST[415, 416] Int type=kotlin.Int value=5
+                ARG arg1: CALL[424, 433] 'public final fun toULong (<this>: kotlin.Long): kotlin.ULong declared in kotlin' type=kotlin.ULong origin=null
+                  ARG <this>: CONST[421, 423] Long type=kotlin.Long value=5
+            then: CONST[437, 461] String type=kotlin.String value="Fail: testLong(x = 5L)"
+          BRANCH[474, 478]
+            if: CONST[474, 478] Boolean type=kotlin.Boolean value=true
+            then: CONST[474, 478] String type=kotlin.String value="OK"
+  FUN[85, 142] name:testInt visibility:public modality:FINAL returnType:kotlin.UInt
+    VALUE_PARAMETER[97, 129] kind:Regular name:x index:0 type:kotlin.UInt
+      annotations:
+        ImplicitIntegerCoercion
+    BLOCK_BODY[133, 142]
+      RETURN[142, 142] type=kotlin.Nothing from='public final fun testInt (x: kotlin.UInt): kotlin.UInt declared in <root>'
+        TYPE_OP[133, 142] type=kotlin.UInt origin=CAST typeOperand=kotlin.UInt
+          GET_VAR[133, 134] 'x: kotlin.UInt declared in <root>.testInt' type=kotlin.UInt origin=null
+  FUN[143, 203] name:testLong visibility:public modality:FINAL returnType:kotlin.ULong
+    VALUE_PARAMETER[156, 189] kind:Regular name:x index:0 type:kotlin.ULong
+      annotations:
+        ImplicitIntegerCoercion
+    BLOCK_BODY[193, 203]
+      RETURN[203, 203] type=kotlin.Nothing from='public final fun testLong (x: kotlin.ULong): kotlin.ULong declared in <root>'
+        TYPE_OP[193, 203] type=kotlin.ULong origin=CAST typeOperand=kotlin.ULong
+          GET_VAR[193, 194] 'x: kotlin.ULong declared in <root>.testLong' type=kotlin.ULong origin=null
