@@ -26,6 +26,7 @@ abstract class TypeCheckerStateForConstraintSystem(
     baseTypeCheckerState.kotlinTypePreparator,
     baseTypeCheckerState.kotlinTypeRefiner,
 ) {
+    private var isEqualityConstraintForFlexibleTypeVariable = false
     abstract val languageVersionSettings: LanguageVersionSettings
 
     abstract fun isMyTypeVariable(type: RigidTypeMarker): Boolean
@@ -97,6 +98,23 @@ abstract class TypeCheckerStateForConstraintSystem(
 
         if (result == null && result2 == null) return null
         return (result ?: true) && (result2 ?: true)
+    }
+
+    override fun runForEquality(
+        a: KotlinTypeMarker,
+        b: KotlinTypeMarker,
+        block: () -> Boolean,
+    ): Boolean {
+        return try {
+            isEqualityConstraintForFlexibleTypeVariable = a.isFlexibleTypeVariable() || b.isFlexibleTypeVariable()
+            block()
+        } finally {
+            isEqualityConstraintForFlexibleTypeVariable = false
+        }
+    }
+
+    private fun KotlinTypeMarker.isFlexibleTypeVariable(): Boolean = context(extensionTypeContext) {
+        asFlexibleType()?.lowerBound()?.isTypeVariableType() == true
     }
 
     private fun extractTypeForProjectedType(type: KotlinTypeMarker, out: Boolean): KotlinTypeMarker? = with(extensionTypeContext) {
@@ -439,7 +457,7 @@ abstract class TypeCheckerStateForConstraintSystem(
                 superType.withNullability(true)
             } else if (superType.isRigidType()) {
                 createTrivialFlexibleTypeOrSelf(superType).also {
-                    isFromFlexible = it is FlexibleTypeMarker
+                    isFromFlexible = it is FlexibleTypeMarker && !isEqualityConstraintForFlexibleTypeVariable
                 }
             } else {
                 superType

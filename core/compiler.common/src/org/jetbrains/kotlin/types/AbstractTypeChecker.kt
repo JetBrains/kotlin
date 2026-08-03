@@ -76,6 +76,12 @@ open class TypeCheckerState(
         isFromNullabilityConstraint: Boolean = false
     ): Boolean? = null
 
+    open fun runForEquality(
+        a: KotlinTypeMarker,
+        b: KotlinTypeMarker,
+        block: () -> Boolean,
+    ): Boolean = block()
+
     // Handling cases like A<Int> & A<T> <: A<F_var>
     // There are two possible solutions for F_var (Int and T) and both of them may work well or not with other constrains
     // Effectively, we need to fork constraint system to two copies: one with F_var=Int and the other with F_var=T
@@ -300,7 +306,9 @@ object AbstractTypeChecker {
                 }
             }
 
-            return isSubtypeOf(state, a, b) && isSubtypeOf(state, b, a)
+            return state.runForEquality(a, b) {
+                isSubtypeOf(state, a, b) && isSubtypeOf(state, b, a)
+            }
         }
 
 
