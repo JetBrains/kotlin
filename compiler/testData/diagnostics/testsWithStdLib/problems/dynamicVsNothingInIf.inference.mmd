@@ -197,8 +197,12 @@ flowchart TD
     class constraint31 nowrapClass;
     constraint30 --> constraint31
     constraint23 --> constraint31
+    constraint32["<tt>dynamic &lt;: TypeVariable(K)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
+    class constraint32 nowrapClass;
+    variableReadiness28 ~~~ constraint32
 
     constraint31 ~~~ variableReadiness29
+    constraint32 ~~~~ variableReadiness29
 
     variableReadiness29["Choose <tt>TypeVariable(K)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
 	 true ALLOWED
@@ -218,31 +222,31 @@ flowchart TD
 )</tt></pre>"]
     class variableReadiness29 nowrapClass;
     class variableReadiness29 readinessStyle;
-    constraint32["<tt>TypeVariable(K) == dynamic</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable K</tt></pre></i>"]
-    class constraint32 nowrapClass;
-    variableReadiness29 ~~~ constraint32
+    constraint33["<tt>TypeVariable(K) == dynamic</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable K</tt></pre></i>"]
+    class constraint33 nowrapClass;
+    variableReadiness29 ~~~ constraint33
 
-    constraint32 ~~~ call33
+    constraint33 ~~~ call34
 
-    call33["Call 4<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>TODO#()</tt></pre>"]
-    class call33 nowrapClass;
-    class call33 callStyle;
+    call34["Call 4<br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>TODO#()</tt></pre>"]
+    class call34 nowrapClass;
+    class call34 callStyle;
 
-    call33 --> candidate34
+    call34 --> candidate35
 
-    candidate34["Candidate 1: <tt>FirNamedFunctionSymbol kotlin/TODO</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>@InlineOnly() fun TODO(): Nothing
+    candidate35["Candidate 1: <tt>FirNamedFunctionSymbol kotlin/TODO</tt><br><br><pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>@InlineOnly() fun TODO(): Nothing
 </tt></pre>"]
-    class candidate34 nowrapClass;
-    class candidate34 candidateStyle;
+    class candidate35 nowrapClass;
+    class candidate35 candidateStyle;
 
-    candidate34 --> stage35
+    candidate35 --> stage36
 
-    stage35["Continue Resolution Stages > CheckLambdaAgainstTypeVariableContradiction"]
-    class stage35 nowrapClass;
-    class stage35 stageStyle;
-    constraint36["<tt>Nothing &lt;: T</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>ExpectedType for some call</tt></pre></i>"]
-    class constraint36 nowrapClass;
-    stage35 ~~~ constraint36
+    stage36["Continue Resolution Stages > CheckLambdaAgainstTypeVariableContradiction"]
+    class stage36 nowrapClass;
+    class stage36 stageStyle;
+    constraint37["<tt>Nothing &lt;: T</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>ExpectedType for some call</tt></pre></i>"]
+    class constraint37 nowrapClass;
+    stage36 ~~~ constraint37
 
     linkStyle 4 stroke:#990000
     linkStyle 6 stroke:#009999
@@ -255,8 +259,9 @@ flowchart TD
     linkStyle 28 stroke:#950099
     linkStyle 31 stroke:#992400
     linkStyle 32 stroke:#004f99
-    linkStyle 33 stroke:#007499
+    linkStyle 34 stroke:#007499
     linkStyle 35 stroke:#279900
+    linkStyle 37 stroke:#710099
     style constraint4 stroke:#990000;
     style constraint6 stroke:#009999;
     style constraint12 stroke:#4c9900;
@@ -268,3 +273,4 @@ flowchart TD
     style constraint30 stroke:#992400;
     style constraint31 stroke:#007499;
     style constraint32 stroke:#279900;
+    style constraint33 stroke:#710099;

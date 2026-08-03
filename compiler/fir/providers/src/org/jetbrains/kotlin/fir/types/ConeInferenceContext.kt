@@ -442,6 +442,12 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.substituteOrSelf(type)
     }
 
+    override fun TypeSubstitutorMarker.substituteOrNull(type: KotlinTypeMarker): KotlinTypeMarker? {
+        require(this is ConeSubstitutor)
+        require(type is ConeKotlinType)
+        return this.substituteOrNull(type)
+    }
+
     override fun TypeVariableMarker.defaultType(): ConeTypeVariableType {
         require(this is ConeTypeVariable)
         return this.defaultType
