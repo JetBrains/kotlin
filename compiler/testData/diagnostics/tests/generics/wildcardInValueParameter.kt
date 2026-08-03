@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_JAVAC
 // FILE: JavaClass.java
 public class JavaClass {
     public void foo(? x) {}

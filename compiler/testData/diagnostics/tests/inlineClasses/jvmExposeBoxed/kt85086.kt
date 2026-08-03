@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_JAVAC
 // WITH_STDLIB
 
 @file:OptIn(ExperimentalStdlibApi::class)

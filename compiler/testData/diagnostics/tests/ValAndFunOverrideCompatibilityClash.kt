@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// JAVAC_EXPECTED_FILE
 class Foo1() : java.util.ArrayList<Int>()
 
 open class Bar() {

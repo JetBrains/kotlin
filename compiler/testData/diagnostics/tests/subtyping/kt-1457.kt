@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE
-// JAVAC_EXPECTED_FILE
 
 import java.util.ArrayList
 

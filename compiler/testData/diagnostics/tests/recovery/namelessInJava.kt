@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_JAVAC
 // FILE: p/Nameless.java
 
 package p;

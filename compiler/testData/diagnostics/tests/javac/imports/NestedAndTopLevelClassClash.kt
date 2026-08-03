@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_JAVAC
 // FILE: a/B.java
 package a;
 

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// JAVAC_EXPECTED_FILE
 // See KT-9816, KT-9742
 
 // Not allowed in Java
