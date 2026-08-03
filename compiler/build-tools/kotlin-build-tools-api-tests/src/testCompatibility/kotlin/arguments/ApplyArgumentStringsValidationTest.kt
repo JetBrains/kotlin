@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsLines
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAndPlatformAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectCreator
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -62,14 +64,13 @@ class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
         }
     }
 
-    @BtaV2StrategyAgnosticCompilationTest
-    fun `applyCompilerArguments with inexistent argument name collects one error`(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val [kotlinToolchains, _] = strategyConfig
-        jvmProject(strategyConfig) {
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
+    fun `applyCompilerArguments with inexistent argument name collects one error`(project: ProjectCreator) {
+        project {
             val module = module("basic-multimodule-project/module-1")
             module.compile(
                 compilationConfigAction = {
-                    if (kotlinToolchains.isArgumentExceptionDelayedUntilExecution()) {
+                    if (kotlinToolchain.isArgumentExceptionDelayedUntilExecution()) {
                         it.compilerArguments.applyCommandLineArguments(listOf("-inexistent-argument", "15"))
                     } else {
                         val exception = assertThrows<CompilerArgumentsParseException> {
@@ -79,7 +80,7 @@ class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
                     }
                 },
                 assertions = {
-                    if (kotlinToolchains.isArgumentExceptionDelayedUntilExecution()) {
+                    if (kotlinToolchain.isArgumentExceptionDelayedUntilExecution()) {
                         expectFail()
                         assertLogContainsLines(LogLevel.ERROR, "Invalid argument: -inexistent-argument")
                     }
@@ -88,24 +89,24 @@ class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
         }
     }
 
-    @BtaV2StrategyAgnosticCompilationTest
-    fun `applyCompilerArguments collects errors for every invalid enum, not just the first`(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val [kotlinToolchains, _] = strategyConfig
-        jvmProject(strategyConfig) {
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
+    fun `applyCompilerArguments collects errors for every invalid enum, not just the first`(project: ProjectCreator) {
+        project {
             val module = module("basic-multimodule-project/module-1")
             module.compile(
                 compilationConfigAction = {
-                    if (kotlinToolchains.isArgumentExceptionDelayedUntilExecution()) {
+                    if (kotlinToolchain.isArgumentExceptionDelayedUntilExecution()) {
                         it.compilerArguments.applyCommandLineArguments(listOf("-jvm-target", "target", "-api-version", "bogus"))
                     } else {
                         val exception = assertThrows<CompilerArgumentsParseException> {
                             it.compilerArguments.applyCommandLineArguments(listOf("-jvm-target", "target", "-api-version", "bogus"))
                         }
+                        // on older versions only one error is reported
                         assertTrue(exception.message!!.contains("Unknown -api-version value: bogus"))
                     }
                 },
                 assertions = {
-                    if (kotlinToolchains.isArgumentExceptionDelayedUntilExecution()) {
+                    if (kotlinToolchain.isArgumentExceptionDelayedUntilExecution()) {
                         expectFail()
                         assertLogContainsLines(LogLevel.ERROR, "Unknown -api-version value: bogus")
                         assertLogContainsLines(LogLevel.ERROR, "Unknown -jvm-target value: target")

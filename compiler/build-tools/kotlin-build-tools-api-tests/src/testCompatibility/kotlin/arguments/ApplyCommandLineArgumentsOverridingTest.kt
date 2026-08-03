@@ -39,6 +39,7 @@ class ApplyCommandLineArgumentsOverridingTest : BaseCompilationTest() {
         kotlinToolchains.jvm.jvmCompilationOperation(emptyList(), Path("")) {
             compilerArguments.block()
         }
+        // other platforms supported since 2.4.20
         if (KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) >= KotlinToolingVersion("2.4.20-snapshot")) {
             kotlinToolchains.js.jsKlibCompilationOperation(emptyList(), Path("")) {
                 compilerArguments.block()
@@ -63,7 +64,8 @@ class ApplyCommandLineArgumentsOverridingTest : BaseCompilationTest() {
     fun testDoesNotOverrideValues() {
         runTestForAllOperations {
 
-            if (KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) >= KotlinToolingVersion("2.4.0")) {
+            // BTA versions before 2.3.20 did not have defaults in compiler arguments
+            if (KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) >= KotlinToolingVersion("2.3.20")) {
                 assertEquals(false, this[CommonToolArguments.VERBOSE])
             }
 
