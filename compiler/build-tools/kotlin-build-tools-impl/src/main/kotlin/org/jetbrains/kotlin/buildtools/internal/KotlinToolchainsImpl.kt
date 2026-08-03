@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.internal.abi.AbiValidationToolchainImpl
+import org.jetbrains.kotlin.buildtools.internal.classloading.LruClassLoadersCache
 import org.jetbrains.kotlin.buildtools.internal.cri.CriToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.js.JsPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmPlatformToolchainImpl
@@ -24,8 +25,15 @@ import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
 import java.util.concurrent.*
 
+private const val DEFAULT_CLASSLOADERS_CACHE_SIZE = 10
+private const val PROPERTY_CLASSLOADERS_CACHE_SIZE = "kotlin.buildtools.classloaders.cache.size"
+
 internal class KotlinToolchainsImpl() : KotlinToolchains {
     val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchains.Toolchain> = ConcurrentHashMap()
+    val classloadersCache = LruClassLoadersCache(
+        System.getProperty(PROPERTY_CLASSLOADERS_CACHE_SIZE)?.toIntOrNull() ?: DEFAULT_CLASSLOADERS_CACHE_SIZE,
+        this::class.java.classLoader
+    )
 
     override fun <T : KotlinToolchains.Toolchain> getToolchain(type: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
@@ -56,12 +64,13 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
     override fun getCompilerVersion(): String = KotlinCompilerVersion.VERSION
 
     override fun createBuildSession(): KotlinToolchains.BuildSession {
-        return BuildSessionImpl(this, RandomProjectUUID())
+        return BuildSessionImpl(this, RandomProjectUUID(), classloadersCache)
     }
 
     private class BuildSessionImpl(
-        override val kotlinToolchains: KotlinToolchains,
+        override val kotlinToolchains: KotlinToolchainsImpl,
         override val projectId: ProjectId,
+        val classloadersCache: LruClassLoadersCache,
     ) : KotlinToolchains.BuildSession {
         private val sessionIsAliveFlagFile = lazy { createSessionIsAliveFlagFile() }
         private val executorDelegate = lazy {
@@ -91,11 +100,13 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         ): R {
             check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
             val operationBody: Callable<R> = {
+                val classloadersCacheWithLogger =
+                    classloadersCache.takeIf { operation[BuildOperationImpl.ENABLE_CLASSLOADER_CACHE] }?.withLogger(logger)
                 operation.execute(
                     projectId,
                     executionPolicy,
                     logger,
-                    ExecutionContext(sessionIsAliveFlagFile)
+                    ExecutionContext(sessionIsAliveFlagFile, classloadersCacheWithLogger)
                 )
             }
             return if (executionPolicy is ExecutionPolicy.InProcess) {
@@ -151,4 +162,5 @@ internal sealed interface BtaApiVersion {
 
 internal class ExecutionContext(
     val sessionIsAliveFlagFile: Lazy<File>,
+    val classloadersCache: LruClassLoadersCache?,
 )
