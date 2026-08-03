@@ -122,6 +122,43 @@ class ConstraintInjector(
         }
     }
 
+    context(c: Context)
+    fun addSubstitutedConstraintReplacement(
+        typeVariable: TypeVariableMarker,
+        existingConstraint: Constraint,
+        newType: KotlinTypeMarker,
+        position: FixVariableConstraintPosition<*>,
+    ) {
+        val initialConstraint =
+            InitialConstraint(typeVariable.defaultType(), newType, existingConstraint.kind, position)
+                .also { c.addInitialConstraint(it) }
+
+        inferenceLogger?.logInitial(initialConstraint, c)
+
+        with(TypeCheckerStateForConstraintInjector(c, IncorporationConstraintPosition(initialConstraint))) {
+            inferenceLogger.withOrigin(initialConstraint) {
+                val inputTypePositionBeforeIncorporation =
+                    (existingConstraint.position.from as? OnlyInputTypeConstraintPosition
+                        ?: existingConstraint.inputTypePositionBeforeIncorporation)
+
+                addNewIncorporatedConstraint(
+                    typeVariable,
+                    newType,
+                    ConstraintContext(
+                        existingConstraint.kind,
+                        derivedFrom = emptySet(),
+                        inputTypePositionBeforeIncorporation,
+                        isNullabilityConstraint = false,
+                        existingConstraint.isNoInfer,
+                        existingConstraint.isFromFlexibleUpperDuringIncorporation,
+                    )
+                )
+            }
+
+            processConstraints()
+        }
+    }
+
     context(c: Context, typeCheckerState: TypeCheckerStateForConstraintInjector)
     private fun addSubTypeConstraintAndIncorporateIt(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker) {
         typeCheckerState.setConstrainingTypesToPrintDebugInfo(lowerType, upperType)
