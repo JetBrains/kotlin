@@ -31,9 +31,9 @@ abstract class MyIn : In<MyIn>
 abstract class MyInv : Inv<MyInv>
 
 fun main(x: MyIn?, y: MyInv?, aInv: Inv<A>, a: A?) {
-    <!TYPE_MISMATCH!>JClass.<!UPPER_BOUND_VIOLATED!>foo<!>(a, aInv)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)"), TYPE_MISMATCH!>JClass.<!UPPER_BOUND_VIOLATED!>withIn<!>(x)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)"), TYPE_MISMATCH!>JClass.<!UPPER_BOUND_VIOLATED!>withInv<!>(y)<!>
+    JClass.foo(a, <!ARGUMENT_TYPE_MISMATCH!>aInv<!>)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>JClass.withIn(x)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>JClass.withInv(y)<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, in, interfaceDeclaration, javaFunction,
