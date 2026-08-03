@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// SKIP_JAVAC
 
 // FILE: test/jv/JavaSample.java
 

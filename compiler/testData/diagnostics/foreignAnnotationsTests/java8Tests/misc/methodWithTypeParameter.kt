@@ -1,5 +1,3 @@
-// JAVAC_EXPECTED_FILE
-
 // FILE: X.java
 interface X<T> {}
 

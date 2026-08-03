@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// JAVAC_EXPECTED_FILE
 // FILE: java/util/Collection.java
 package java.util;
 

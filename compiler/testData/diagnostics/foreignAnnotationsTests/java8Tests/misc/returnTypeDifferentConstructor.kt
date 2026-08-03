@@ -1,5 +1,3 @@
-// JAVAC_EXPECTED_FILE
-
 // FILE: Base.java
 interface Base<T> {}
 

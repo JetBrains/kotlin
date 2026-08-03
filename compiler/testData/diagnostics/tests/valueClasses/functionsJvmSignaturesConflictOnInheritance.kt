@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_JAVAC
 // ALLOW_KOTLIN_PACKAGE
 
 package kotlin.jvm

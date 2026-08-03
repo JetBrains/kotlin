@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// JAVAC_EXPECTED_FILE
 
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass<String>): String {

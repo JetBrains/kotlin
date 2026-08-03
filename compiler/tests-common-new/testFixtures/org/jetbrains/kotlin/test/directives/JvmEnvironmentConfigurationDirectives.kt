@@ -33,10 +33,6 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
 
     val USE_PSI_CLASS_FILES_READING by directive("Use a slower (PSI-based) class files reading implementation")
 
-    val USE_JAVAC by directive("Enable javac integration (has no effect on non-K1 tests)")
-    val JAVAC_EXPECTED_FILE by directive("Dump descriptors to .javac.txt file if $USE_JAVAC is enabled")
-    val SKIP_JAVAC by directive("Skip the test if $USE_JAVAC is enabled")
-
     val PROVIDE_JAVA_AS_BINARIES by directive(
         "Compile Kotlin with classpath JAR binaries for all .java sources instead of with .java sources themselves"
     )

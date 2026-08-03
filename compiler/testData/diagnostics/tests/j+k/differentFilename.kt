@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-4455
-// SKIP_JAVAC
 
 // FILE: A.java
 public class A {
