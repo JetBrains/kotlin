@@ -704,9 +704,20 @@ Use the 'warning' level to issue warnings instead of errors.""".asReleaseDepende
 
     compilerArgument {
         name = "XXexplicit-return-types"
-        description = """Force the compiler to report errors on all public API declarations without an explicit return type.
-Use the 'warning' level to issue warnings instead of errors.
-This flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether""".asReleaseDependent()
+        description = ReleaseDependent(
+            current = """
+                Force the compiler to report errors on all public API declarations and non-local functions without an explicit return type.
+                Use the 'warning' level to issue warnings instead of errors.
+                This flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether
+            """.trimIndent(),
+            valueInVersions = mapOf(
+                KotlinReleaseVersion.v2_0_20..KotlinReleaseVersion.v2_4_20 to """
+                    Force the compiler to report errors on all public API declarations without an explicit return type.
+                    Use the 'warning' level to issue warnings instead of errors.
+                    This flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether
+                """.trimIndent()
+            )
+        )
         valueDescription = ReleaseDependent(
             current = ExplicitApiMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}")
         )

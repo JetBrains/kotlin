@@ -2269,8 +2269,14 @@
                         "shortName": null,
                         "deprecatedName": null,
                         "description": {
-                            "current": "Force the compiler to report errors on all public API declarations without an explicit return type.\nUse the 'warning' level to issue warnings instead of errors.\nThis flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether",
-                            "valueInVersions": []
+                            "current": "Force the compiler to report errors on all public API declarations and non-local functions without an explicit return type.\nUse the 'warning' level to issue warnings instead of errors.\nThis flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether",
+                            "valueInVersions": [
+                                {
+                                    "minReleaseVersion": "2.0.20",
+                                    "maxReleaseVersion": "2.4.20",
+                                    "value": "Force the compiler to report errors on all public API declarations without an explicit return type.\nUse the 'warning' level to issue warnings instead of errors.\nThis flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether"
+                                }
+                            ]
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
