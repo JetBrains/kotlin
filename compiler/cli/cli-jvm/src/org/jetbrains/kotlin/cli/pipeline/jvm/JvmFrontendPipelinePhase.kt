@@ -657,7 +657,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
         project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
 
-        project.setupHighestLanguageLevel(isValhallaSupportEnabled = configuration.languageVersionSettings.isValhallaSupportEnabled())
+        project.setupHighestLanguageLevel()
 
         return ProjectEnvironmentWithCoreEnvironmentEmulation(
             project,
