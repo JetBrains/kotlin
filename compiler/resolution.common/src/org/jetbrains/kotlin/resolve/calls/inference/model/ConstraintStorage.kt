@@ -146,6 +146,23 @@ class Constraint(
     // Can only be true in K2
     val isNoInfer: Boolean,
     val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null,
+    /**
+     * For the case like `T! <: SomeType` which is currently simplified to `T <: SomeType!` ONLY generated from the direct incorporation
+     * of two non-trivial constraints of a type variable.
+     * For example, `MyComparable <: X <: Comparable<in T!>!` we incorporate `MyComparable <: Comparable<in T!>!` which eventually
+     * reduces to `T! <: MyComparable` if `interface MyComparable : Comparable<MyComparable>`, and further it becomes `T <: MyComparable!`
+     * which is arguably correct (see KT-88593).
+     *
+     * We use this flag to reproduce second-kind incorporation behavior which allowed eagerly rejecting some candidates due to nullability
+     * mismatch: namely, we would remove the flexibility once using such constraint in another incorporation cycle.
+     * Previously, it was working due to `insideOtherConstraints` (see the "Inconsistency 1" section at KT-88593)
+     *
+     * For the case above, if we have `T <: MyComparable!` with the flag set to true, and there's new `Nothing? <: T` constraint
+     * instead of the usual `Nothing? <: MyComparable!`, we would run more strict subtyping `Nothing? <: MyComparable` leading to CS error.
+     *
+     * TODO: Remove it once KT-88593 is addressed, thus we always would reduce `T! <: SomeType` to `T <: SomeType`
+     */
+    val forceInflexibilityForUpperTypeAtDirectIncorporation: Boolean = false,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

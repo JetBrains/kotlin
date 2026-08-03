@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature.InferenceEnhancementsIn21
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
@@ -31,7 +32,15 @@ abstract class TypeCheckerStateForConstraintSystem(
     abstract fun isMyTypeVariable(type: RigidTypeMarker): Boolean
 
     // super and sub type isSingleClassifierType
-    abstract fun addUpperConstraint(typeVariable: TypeConstructorMarker, superType: KotlinTypeMarker, isNoInfer: Boolean)
+    abstract fun addUpperConstraint(
+        typeVariable: TypeConstructorMarker, superType: KotlinTypeMarker,
+        isNoInfer: Boolean,
+        /**
+         * If we're processing T! <: SomeType case
+         * @see Constraint.forceInflexibilityForUpperTypeAtDirectIncorporation
+         */
+        isFromFlexibleTypeVariablePosition: Boolean = false,
+    )
 
     abstract fun addLowerConstraint(
         typeVariable: TypeConstructorMarker,
@@ -428,12 +437,16 @@ abstract class TypeCheckerStateForConstraintSystem(
     ): Boolean = with(extensionTypeContext) {
         val typeVariableLowerBound = typeVariable.lowerBoundIfFlexible()
 
+        var isFromFlexible = false
+
         val simplifiedSuperType = if (typeVariable.isFlexible()) {
             if (typeVariableLowerBound.isDefinitelyNotNullType() && simplifyFlexibleUpperConstraintWithDnnBoundToNullable) {
                 // This is the legacy behavior typically disabled in K2 because the LF is turned off and has no sinceVersion.
                 superType.withNullability(true)
             } else if (superType.isRigidType()) {
-                createTrivialFlexibleTypeOrSelf(superType)
+                createTrivialFlexibleTypeOrSelf(superType).also {
+                    isFromFlexible = it is FlexibleTypeMarker
+                }
             } else {
                 superType
             }
@@ -443,7 +456,7 @@ abstract class TypeCheckerStateForConstraintSystem(
             superType
         }
 
-        addUpperConstraint(typeVariableLowerBound.typeConstructor(), simplifiedSuperType, isNoInfer)
+        addUpperConstraint(typeVariableLowerBound.typeConstructor(), simplifiedSuperType, isNoInfer, isFromFlexible)
 
         // T? <: Type
         if (typeVariableLowerBound.isMarkedNullable()) {
