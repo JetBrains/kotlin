@@ -1,6 +1,7 @@
-// SKIP_IN_RUNTIME_TEST
 package test;
+
 import java.util.Map;
+
 public class MapRemove {
     public abstract class MyMap<K, V> implements Map<K, V> {
         public boolean remove(Object x, Object y) { return false; }

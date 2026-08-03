@@ -1,4 +1,3 @@
-// SKIP_IN_RUNTIME_TEST
 package test;
 
 import java.lang.annotation.ElementType;

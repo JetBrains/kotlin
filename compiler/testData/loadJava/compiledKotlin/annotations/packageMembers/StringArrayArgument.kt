@@ -2,8 +2,9 @@
 // ALLOW_AST_ACCESS
 // NO_CHECK_SOURCE_VS_BINARY
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_FIR_METADATA_LOADING_K1
-// K1/K2 difference: KT-60820
+
+// SKIP_IN_RUNTIME_TEST
+// ^ java.lang.annotation.IncompleteAnnotationException: test.Anno5 missing element t
 
 // MODULE: common
 // FILE: common.kt

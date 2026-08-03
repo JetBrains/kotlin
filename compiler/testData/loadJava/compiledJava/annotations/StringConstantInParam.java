@@ -1,6 +1,3 @@
-// SKIP_IN_RUNTIME_TEST
-// ^ There's no stable way to determine if a field is initialized with a non-null value in runtime.
-
 package test;
 
 public interface StringConstantInParam {
