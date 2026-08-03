@@ -412,6 +412,15 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun testCompanionBlocksAndExtensions() {
+        // Companion blocks and extensions are not available to ObjC Export. This test compiles the framework and uses it from Swift
+        // to check that the generated binary is okay.
+        val testName = "companionBlocksAndExtensions"
+        val testCase = generateObjCFramework(testName, listOf("-XXLanguage:+CompanionBlocks", "-XXLanguage:+CompanionExtensions"))
+        compileAndRunSwift(testName, testCase)
+    }
+
+    @Test
     fun objCExportTest() {
         objCExportTestImpl("", emptyList(), emptyList(), false)
     }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenDescriptors
+import org.jetbrains.kotlin.backend.konan.descriptors.isDeserializedAndHasCompanionExtensionReceiver
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.*
@@ -129,6 +130,9 @@ fun ObjCExportMapper.shouldBeExposed(descriptor: CallableMemberDescriptor): Bool
     // KT-42641. Don't expose componentN methods of data classes
     // because they are useless in Objective-C/Swift.
     isComponentNMethod(descriptor) && descriptor.overriddenDescriptors.isEmpty() -> false
+    descriptor.contextReceiverParameters.isNotEmpty() -> false
+    @OptIn(K1Deprecation::class)
+    descriptor.isDeserializedAndHasCompanionExtensionReceiver -> false
     descriptor.isHiddenFromObjC() -> false
     !entryPoints.shouldBeExposed(descriptor) -> false
     else -> true
@@ -140,7 +144,6 @@ private fun AnnotationDescriptor.hidesFromObjC(): Boolean =
 private fun CallableMemberDescriptor.isHiddenFromObjC(): Boolean = when {
     // Note: the front-end checker requires all overridden descriptors to be either refined or not refined.
     overriddenDescriptors.isNotEmpty() -> overriddenDescriptors.first().isHiddenFromObjC()
-    contextReceiverParameters.isNotEmpty() -> true
     else -> annotations.any(AnnotationDescriptor::hidesFromObjC)
 }
 
