@@ -47,6 +47,7 @@ tasks.withType<Test>().configureEach {
             else -> error("Unknown _PSEUDO_TEST_ configuration")
         }
     }
+    testFederationAllowAffectedBy = setOf(Domain.Js, Domain.Wasm, Domain.Gradle)
 
     @OptIn(DelicateTestFederationApi::class)
     providers.environmentVariable("_DOMAINS_OVERRIDE_").orNull?.let { value ->

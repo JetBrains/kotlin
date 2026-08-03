@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
 
 plugins {
     id("common-configuration")
@@ -75,6 +77,7 @@ projectTests {
         addClasspathProperty(kotlinxSerializationGradlePluginClasspath, "kotlin.script.test.kotlinx.serialization.plugin.classpath")
         addClasspathProperty(kotlinDataFrameGradlePluginClasspath, "kotlin.script.test.kotlin.dataframe.plugin.classpath")
         addClasspathProperty(kotlinxCoroutinesCoreGradlePluginClasspath, "kotlin.script.test.kotlinx.coroutines.core.classpath")
+        testFederationAllowAffectedBy = setOf(Domain.Compiler)
     }
 
     testGenerator("org.jetbrains.kotlin.scripting.test.TestGeneratorKt")
