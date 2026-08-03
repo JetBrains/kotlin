@@ -70,6 +70,7 @@ dependencies {
     implementation(kotlin("tooling-core", version = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
     implementation(libs.jackson.module.kotlin)
     implementation(libs.jackson.dataformat.yaml)
+    implementation(libs.develocity.gradlePlugin)
 
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

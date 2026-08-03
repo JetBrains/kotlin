@@ -1,3 +1,4 @@
+import com.gradle.develocity.agent.gradle.DevelocityConfiguration
 import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
 import org.jetbrains.kotlin.testFederation.*
 
@@ -35,9 +36,15 @@ tasks.withType<Test>().configureEach {
     })
 
     val testFederationRuntime = testFederationRuntime
+    val projectPath = project.path
+    val scan = project.extensions.getByType(DevelocityConfiguration::class).buildScan
 
     doFirst {
         this as Test
+
+        scan.value("$projectPath:${this.name} domain", currentDomain.get().toString())
+        scan.value("$projectPath:${this.name} affected domains", formattedAffectedDomains.get())
+        scan.value("$projectPath:${this.name} test mode", testFederationMode.get().toString())
 
         val testFramework = testFramework
         val smokeTestConfig = smokeTestConfig.get()
