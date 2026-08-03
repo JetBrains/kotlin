@@ -116,6 +116,9 @@ enum class ConstraintKind {
     // For EQUALITY, we effectively have both directions
     fun impliesLower(): Boolean = !isUpper() // this == LOWER || this == EQUALITY
 
+    // For EQUALITY, we effectively have both directions
+    fun impliesUpper(): Boolean = !isLower() // this == UPPER || this == EQUALITY
+
     fun opposite() = when (this) {
         LOWER -> UPPER
         UPPER -> LOWER
