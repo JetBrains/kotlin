@@ -162,7 +162,7 @@ class KotlinPlaywrightTestFrameworkWiringTest {
     fun `without runners no playwright install task is registered`() {
         val setup = buildBrowserTestProject {}
 
-        PwBrowserKind.values().forEach {
+        PwBrowserKind.entries.forEach {
             val installTask = setup.project.tasks.findByName(it.getPwInstallBrowserTaskName())
             assertNull(installTask, "Expected no ${it.getPwInstallBrowserTaskName()} task when no runners declared")
         }

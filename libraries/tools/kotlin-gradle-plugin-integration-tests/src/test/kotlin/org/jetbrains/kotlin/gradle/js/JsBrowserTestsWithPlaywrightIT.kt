@@ -470,11 +470,12 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_2])
     fun `verify playwright install browsers executed only once for multiple js targets`(gradleVersion: GradleVersion) {
         project(
             "empty",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions
+            buildOptions = defaultBuildOptions,
         ) {
             addKgpToBuildScriptCompilationClasspath()
             buildScriptInjection {
@@ -490,6 +491,7 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
                         browser {
                             test.apply {
                                 chromium()
+                                firefox()
                             }
                         }
                     }
@@ -516,12 +518,54 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
             build(":firstBrowserTest", ":secondBrowserTest") {
                 assertTasksExecuted(":kotlinInstallPlaywrightChromium")
                 assertTasksExecuted(":firstBrowserTest", ":secondBrowserTest")
-                assertEquals(
-                    1,
-                    output.lines().count { "> Task :kotlinInstallPlaywrightChromium" in it },
-                    "Expected playwright chromium install to be executed exactly once across all JS targets"
-                )
-                assertOutputContains("dummy test")
+                //Expected playwright chromium install to be executed exactly once across all JS targets
+                assertOutputContainsExactlyTimes("Task :kotlinInstallPlaywrightChromium", 1)
+                assertOutputContainsExactlyTimes("Task :kotlinInstallPlaywrightFirefox", 1)
+                assertOutputContainsExactlyTimes("dummy test", 3)
+            }
+        }
+    }
+
+    @GradleTest
+    fun `js smoke test when no browser is set`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js() {
+                        browser {
+                            test.apply {
+                                //no browsers
+                            }
+                        }
+                    }
+                    sourceSets.commonTest.dependencies {
+                        implementation(kotlin("test"))
+                    }
+                }
+
+                project.projectDir.resolve("src/commonTest/kotlin/DummyTest.kt").apply {
+                    parentFile.mkdirs()
+                    writeText(
+                        """
+                            class DummyTest {
+                              @kotlin.test.Test
+                              fun dummy() {
+                                println("dummy test")
+                              }
+                            }
+                        """.trimIndent()
+                    )
+                }
+            }
+
+            build(":jsBrowserTest") {
+                assertTasksAreNotInTaskGraph(":kotlinInstallPlaywrightChromium", ":kotlinInstallPlaywrightWebkit", ":kotlinInstallPlaywrightFirefox")
+                assertTasksExecuted(":jsBrowserTest")
             }
         }
     }

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import kotlin.time.toJavaDuration
 
 internal fun PwBrowserKind.getPwInstallBrowserTaskName() = "kotlinInstallPlaywright${browserName.replaceFirstChar { it.uppercaseChar() }}"
+
 internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { target ->
     if (target !is KotlinJsIrTarget) return@KotlinTargetSideEffect
 
