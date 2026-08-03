@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-87439
 // DUMP_INFERENCE_LOGS: MARKDOWN
 
@@ -16,7 +16,7 @@ public class Box<A> {
 // FILE: main.kt
 
 fun show(s: String?): Box<Box<String>> {
-    return <!RETURN_TYPE_MISMATCH!>Box.create1(Box.create2(s))<!>
+    return Box.create1(Box.create2(s))
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, nullableType */
