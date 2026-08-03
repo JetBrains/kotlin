@@ -38,18 +38,23 @@ class InferenceComponents(override val session: FirSession) : FirSessionComponen
     val resultTypeResolver: ResultTypeResolver =
         ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle, session.languageVersionSettings)
     val variableFixationFinder: VariableFixationFinder = run {
-        val variableReadinessCalculatorBuilder =
-            ::VariableReadinessCalculator.takeIf { LanguageFeature.LexicographicVariableReadinessCalculation.isEnabled() }
-                ?: ::LegacyVariableReadinessCalculator
 
-        VariableFixationFinder.Default(
-            session.languageVersionSettings,
-            variableReadinessCalculatorBuilder(
+        val readinessCalculator = when {
+            LanguageFeature.LexicographicVariableReadinessCalculation.isEnabled() ->
+                VariableReadinessCalculator(
+                    trivialConstraintTypeInferenceOracle,
+                    session.languageVersionSettings,
+                    approximator,
+                    session.inferenceLogger,
+                )
+            else -> LegacyVariableReadinessCalculator(
                 trivialConstraintTypeInferenceOracle,
                 session.languageVersionSettings,
                 session.inferenceLogger,
-            ),
-        )
+            )
+        }
+
+        VariableFixationFinder.Default(session.languageVersionSettings, readinessCalculator)
     }
     val postponedArgumentInputTypesResolver: PostponedArgumentInputTypesResolver =
         PostponedArgumentInputTypesResolver(

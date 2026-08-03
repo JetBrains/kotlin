@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.isRecursiveTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeApproximatorCachesPerConfiguration
 import org.jetbrains.kotlin.types.model.*
 
 /**
@@ -77,6 +78,8 @@ abstract class VariableFixationFinder(
          * [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.fixInnerVariablesForProvideDelegateIfNeeded]
          */
         val typeVariablesThatAreCountedAsProperTypes: Set<TypeConstructorMarker>?
+
+        val approximatorCaches: TypeApproximatorCachesPerConfiguration
 
         fun isReified(variable: TypeVariableMarker): Boolean
     }
