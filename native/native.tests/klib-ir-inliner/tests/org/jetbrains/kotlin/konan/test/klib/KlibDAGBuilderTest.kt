@@ -82,12 +82,12 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
 
         // Direct dependencies computed by signatures.
         val directDependenciesByDAGBuilder: Map<KotlinLibrary, Set<KotlinLibrary>> = dag.values.associate { node ->
-            node.library to node.directDependencies.map { it.library }.toSet()
+            node.library to node.directDependencies
         }
 
         // All dependencies computed by signatures.
         val allDependenciesByDAGBuilder: Map<KotlinLibrary, Set<KotlinLibrary>> = dag.values.associate { node ->
-            node.library to node.allDependencies.map { it.library }.toSet()
+            node.library to node.allDependencies
         }
 
         // Sanity check:
@@ -165,8 +165,8 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
             expectedDirectDependencies: /* set of module names */ Set<String> = emptySet(),
             expectedAllDependencies: /* set of module names */ Set<String> = expectedDirectDependencies,
         ) {
-            fun Set<KlibDAGNode>.excludeStdlib(): Set<KotlinLibrary> =
-                mapNotNullTo(hashSetOf()) { node -> node.library.takeUnless { it.isNativeStdlib } }
+            fun Set<KotlinLibrary>.excludeStdlib(): Set<KotlinLibrary> =
+                mapNotNullTo(hashSetOf()) { library -> library.takeUnless { it.isNativeStdlib } }
 
             fun Set<KotlinLibrary>.toUserModuleNames(): Set<String> =
                 mapToSet { userLibraryPathToModuleName.getValue(it.path) }
