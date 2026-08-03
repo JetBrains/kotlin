@@ -54,10 +54,11 @@ internal interface ImpactingClassesResolver {
  * A composite [Impact] containing all possible concrete impacts. Currently, the types of impact include:
  *   1. [SupertypesInheritorsImpact]
  *   2. [ConstantsInCompanionObjectsImpact]
+ *   3. [TypeAliasExpansionImpact]
  */
 internal object AllImpacts : Impact {
 
-    private val allImpacts = listOf(SupertypesInheritorsImpact, ConstantsInCompanionObjectsImpact)
+    private val allImpacts = listOf(SupertypesInheritorsImpact, ConstantsInCompanionObjectsImpact, TypeAliasExpansionImpact)
 
     override fun getResolver(allClasses: Iterable<AccessibleClassSnapshot>): ImpactedSymbolsResolver {
         val resolvers = allImpacts.map { it.getResolver(allClasses) }
@@ -220,6 +221,71 @@ private object ConstantsInCompanionObjectsImpact : Impact {
             }
         }
     }
+}
+
+/**
+ * Describes the impact of a top-level type alias on the class it expands to.
+ *
+ * == Assuming we have "typealias A = B" ==
+ * A type alias A = B exposes B's members (e.g., A.foo when B.foo exists). Therefore:
+ *   - If B (or one of its members) has changed, A (and the corresponding member of A) is impacted, so a source file that references
+ *     A must be recompiled. This is the forward direction ([getResolver]).
+ *   - When a package facade is retained during classpath shrinking (e.g., because one of its type aliases is referenced), the classes its
+ *     aliases expand to must be retained too; otherwise a later change in the expanded class could not be detected as a change in the
+ *     alias. This is the reverse direction ([getReverseResolver]).
+ */
+private object TypeAliasExpansionImpact : Impact {
+
+    /**
+     * == Assuming we have "typealias A = B" ==
+     * Forward direction is keyed by the expanded class B: only real classes ever appear in the changed set, and the alias A has no
+     * class file of its own. So "B (or B.foo) changed" maps to the alias A (and A.foo) that mirror it, so consumers of A recompile.
+     */
+    override fun getResolver(allClasses: Iterable<AccessibleClassSnapshot>): ImpactedSymbolsResolver {
+        val expandedClassToAliases: Map<ClassId, Set<ClassId>> = getExpandedClassToAliasesMap(allClasses)
+
+        return object : ImpactedSymbolsResolver {
+            override fun getImpactedClasses(classId: ClassId): Set<ClassId> {
+                return expandedClassToAliases[classId] ?: emptySet()
+            }
+
+            override fun getImpactedClassMembers(classMembers: ClassMembers): Set<ClassMembers> =
+                expandedClassToAliases[classMembers.classId]
+                    ?.map { aliasClassId -> ClassMembers(aliasClassId, classMembers.memberNames) }
+                    ?.toSet() ?: emptySet()
+        }
+    }
+
+    private fun getExpandedClassToAliasesMap(allClasses: Iterable<AccessibleClassSnapshot>): Map<ClassId, Set<ClassId>> =
+        buildMap<ClassId, MutableSet<ClassId>> {
+            allClasses.filterIsInstance<PackageFacadeKotlinClassSnapshot>().flatMap { it.typeAliases.orEmpty() }.forEach { snapshot ->
+                getOrPut(snapshot.expandedClassId) { mutableSetOf() }.add(snapshot.aliasClassId)
+            }
+        }
+
+    /**
+     * == Assuming we have "typealias A = B" ==
+     * Reverse direction is keyed by the facade that declares the alias, NOT by the alias A (which has no class file and so never appears
+     * in the shrinker's referenced set). When A is referenced, the facade is what gets retained (via its packageMemberNames); retaining
+     * it must also retain B, otherwise a later change in B could not be detected. This is deliberately not the exact inverse of the
+     * forward map above.
+     */
+    override fun getReverseResolver(allClasses: Iterable<AccessibleClassSnapshot>): ImpactingClassesResolver {
+        val facadeToExpandedClasses: Map<ClassId, Set<ClassId>> = getFacadeToExpandedClassesMap(allClasses)
+
+        return object : ImpactingClassesResolver {
+            override fun getImpactingClasses(classId: ClassId): Set<ClassId> {
+                return facadeToExpandedClasses[classId] ?: emptySet()
+            }
+        }
+    }
+
+    private fun getFacadeToExpandedClassesMap(allClasses: Iterable<AccessibleClassSnapshot>): Map<ClassId, Set<ClassId>> =
+        buildMap<ClassId, MutableSet<ClassId>> {
+            allClasses.filterIsInstance<PackageFacadeKotlinClassSnapshot>().forEach { snapshot ->
+                getOrPut(snapshot.classId) { mutableSetOf() }.addAll(snapshot.typeAliases.orEmpty().map { it.expandedClassId })
+            }
+        }
 }
 
 internal object BreadthFirstSearch {

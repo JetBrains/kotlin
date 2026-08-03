@@ -14,8 +14,11 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.Type
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.deserialization.expandedType
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
@@ -414,6 +417,21 @@ class DifferenceCalculatorForPackageFacade(
 
         fun PackagePartProtoData.getVisibleTypeAliasFqNames(): List<FqName> {
             return proto.typeAliasList.filterNot { it.isPrivate }.map { nameResolver.getClassId(it.name).asSingleFqName() }
+        }
+
+        fun PackagePartProtoData.getVisibleTypeAliasExpansions(): List<Pair<ClassId, ClassId>> {
+            if (proto.typeAliasList.isEmpty()) return emptyList()
+            val typeTable = TypeTable(proto.typeTable)
+
+            return proto.typeAliasList.filterNot { it.isPrivate }.mapNotNull { alias ->
+                val expandedType = alias.expandedType(typeTable)
+                if (!expandedType.hasClassName()) {
+                    return@mapNotNull null
+                }
+
+                val aliasClassId = ClassId(packageFqName, Name.identifier(nameResolver.getString(alias.name)))
+                aliasClassId to nameResolver.getClassId(expandedType.className)
+            }
         }
     }
 }
