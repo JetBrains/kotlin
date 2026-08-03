@@ -28,6 +28,7 @@ dependencies {
 
     testImplementation(project(":plugins:scripting:scripting-tests:runtime"))
     testImplementation(project(":kotlin-scripting-dependencies-maven"))
+    testImplementation(libs.kotlinx.coroutines.core.jvm)
     testImplementation(kotlinTest("junit5"))
 
     testFixturesApi(platform(libs.junit.bom))
