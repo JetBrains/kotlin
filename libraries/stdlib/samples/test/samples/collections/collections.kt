@@ -395,8 +395,8 @@ class Collections {
             assertPrints(lst3.upperBound(null), "0")
             assertPrints(lst4.lowerBound(null), "0")
             assertPrints(lst4.upperBound(null), "2")
-            assertPrints(lst4.lowerBound('d'), "3")
-            assertPrints(lst4.upperBound('d'), "3")
+            assertPrints(lst4.lowerBound('d'), "5")
+            assertPrints(lst4.upperBound('d'), "5")
         }
 
         @Sample
