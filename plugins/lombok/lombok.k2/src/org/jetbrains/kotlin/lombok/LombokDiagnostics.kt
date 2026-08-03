@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.diagnostics.warning1
 import org.jetbrains.kotlin.diagnostics.warning2
 import org.jetbrains.kotlin.diagnostics.warningWithoutSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.KOTLIN_TARGETS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lombok.LombokCliDiagnostics.LOMBOK_CONFIG_IS_MISSING
 import org.jetbrains.kotlin.lombok.LombokCliDiagnostics.LOMBOK_PLUGIN_IS_EXPERIMENTAL
 import org.jetbrains.kotlin.lombok.LombokCliDiagnostics.UNKNOWN_PLUGIN_OPTION
@@ -74,7 +76,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val BUILDER_DEFAULT_AND_SINGULAR_MIXED by error0<KtAnnotationEntry>()
     val SINGULAR_REQUIRES_EXPLICIT_NAME by error0<KtAnnotationEntry>()
     val CANNOT_SINGULARIZE_NAME by error0<KtAnnotationEntry>()
-    val UNSUPPORTED_SINGULAR_TYPE by error1<KtAnnotationEntry, String>()
+    val UNSUPPORTED_SINGULAR_TYPE by error1<KtAnnotationEntry, ConeKotlinType>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = LombokFirDiagnosticsMessages
 }
@@ -156,7 +158,7 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
         map.put(
             UNSUPPORTED_SINGULAR_TYPE,
             "Lombok does not know how to create the singular-form builder methods for type ''{0}''; these methods will not be generated.",
-            CommonRenderers.STRING,
+            RENDER_TYPE,
         )
     }
 }

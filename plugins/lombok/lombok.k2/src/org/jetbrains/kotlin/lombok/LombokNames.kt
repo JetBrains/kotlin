@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.lombok
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object LombokNames {
     val LOMBOK = FqName("lombok")
+    val GUAVA_COLLECT_PACKAGE = FqName("com.google.common.collect")
 
     val ACCESSORS = FqName("lombok.experimental.Accessors")
     val GETTER = FqName("lombok.Getter")
@@ -35,8 +37,6 @@ object LombokNames {
     val XSLF4J = FqName("lombok.extern.slf4j.XSlf4j")
     val TO_STRING = FqName("lombok.ToString")
     val EQUALS_AND_HASH_CODE = FqName("lombok.EqualsAndHashCode")
-
-    val TABLE = FqName("Table".guavaPackage())
 
     val ACCESSORS_ID = ClassId.topLevel(ACCESSORS)
     val GETTER_ID = ClassId.topLevel(GETTER)
@@ -86,75 +86,73 @@ object LombokNames {
         "org.springframework.lang.NonNull"
     ).map { FqName(it) }.toSet()
 
-    private val SUPPORTED_JAVA_COLLECTIONS = setOf(
-        "java.lang.Iterable",
-        "java.util.Collection",
-        "java.util.List",
-        "java.util.Set",
-        "java.util.SortedSet",
-        "java.util.NavigableSet",
+    val JAVA_OBJECT_ID = ClassId.fromString("java.lang/Object")
+    val JAVA_ITERABLE_ID = ClassId.fromString("java.lang/Iterable")
+    val JAVA_COLLECTION_ID = ClassId.fromString("java.util/Collection")
+    val JAVA_MAP_ID = ClassId.fromString("java.util/Map")
+
+    val IMMUTABLE_COLLECTION_ID = "ImmutableCollection".guavaCollectType()
+    val IMMUTABLE_LIST_ID = "ImmutableList".guavaCollectType()
+    val IMMUTABLE_SET_ID = "ImmutableSet".guavaCollectType()
+    val IMMUTABLE_SORTED_SET_ID = "ImmutableSortedSet".guavaCollectType()
+
+    val IMMUTABLE_MAP_ID = "ImmutableMap".guavaCollectType()
+    val IMMUTABLE_BI_MAP_ID = "ImmutableBiMap".guavaCollectType()
+    val IMMUTABLE_SORTED_MAP_ID = "ImmutableSortedMap".guavaCollectType()
+
+    val TABLE_ID = "Table".guavaCollectType()
+
+    val SUPPORTED_GUAVA_COLLECTION_IDS = setOf(
+        IMMUTABLE_COLLECTION_ID,
+        IMMUTABLE_LIST_ID,
+        IMMUTABLE_SET_ID,
+        IMMUTABLE_SORTED_SET_ID,
     )
 
-    private val SUPPORTED_JAVA_MAPS = setOf(
-        "java.util.Map",
-        "java.util.SortedMap",
-        "java.util.NavigableMap",
+    val SUPPORTED_COLLECTION_IDS = setOf(
+        // Java collections
+        JAVA_ITERABLE_ID,
+        JAVA_COLLECTION_ID,
+        ClassId.fromString("java.util/List"),
+        ClassId.fromString("java.util/Set"),
+        ClassId.fromString("java.util/SortedSet"),
+        ClassId.fromString("java.util/NavigableSet"),
+
+        // Kotlin collections
+        StandardClassIds.Iterable,
+        StandardClassIds.MutableIterable,
+        StandardClassIds.Collection,
+        StandardClassIds.MutableCollection,
+        StandardClassIds.List,
+        StandardClassIds.MutableList,
+        StandardClassIds.Set,
+        StandardClassIds.MutableSet,
+
+        *SUPPORTED_GUAVA_COLLECTION_IDS.toTypedArray()
     )
 
-    private val SUPPORTED_KOTLIN_COLLECTIONS = setOf(
-        "kotlin.collections.Iterable",
-        "kotlin.collections.MutableIterable",
-        "kotlin.collections.Collection",
-        "kotlin.collections.MutableCollection",
-        "kotlin.collections.List",
-        "kotlin.collections.MutableList",
-        "kotlin.collections.Set",
-        "kotlin.collections.MutableSet",
+    val SUPPORTED_MAP_IDS = setOf(
+        // Java maps
+        JAVA_MAP_ID,
+        ClassId.fromString("java.util/SortedMap"),
+        ClassId.fromString("java.util/NavigableMap"),
+
+        // Kotlin maps
+        StandardClassIds.Map,
+        StandardClassIds.MutableMap,
+
+        // Guava maps
+        IMMUTABLE_MAP_ID,
+        IMMUTABLE_BI_MAP_ID,
+        IMMUTABLE_SORTED_MAP_ID,
     )
 
-    private val SUPPORTED_KOTLIN_MAPS = setOf(
-        "kotlin.collections.Map",
-        "kotlin.collections.MutableMap",
+    val SUPPORTED_TABLE_IDS = setOf(
+        "ImmutableTable".guavaCollectType(),
     )
 
-    val SUPPORTED_GUAVA_COLLECTIONS = listOf(
-        "ImmutableCollection",
-        "ImmutableList",
-        "ImmutableSet",
-        "ImmutableSortedSet",
-    ).guavaPackage()
-
-    private val SUPPORTED_GUAVA_MAPS = listOf(
-        "ImmutableMap",
-        "ImmutableBiMap",
-        "ImmutableSortedMap",
-    ).guavaPackage()
-
-    val SUPPORTED_COLLECTIONS = SUPPORTED_JAVA_COLLECTIONS + SUPPORTED_KOTLIN_COLLECTIONS + SUPPORTED_GUAVA_COLLECTIONS
-
-    val SUPPORTED_MAPS = SUPPORTED_JAVA_MAPS + SUPPORTED_KOTLIN_MAPS + SUPPORTED_GUAVA_MAPS
-
-    val SUPPORTED_TABLES = listOf(
-        "ImmutableTable",
-    ).guavaPackage()
-
-    val IMMUTABLE_COLLECTION_ID = ClassId.topLevel(FqName("ImmutableCollection".guavaPackage()))
-    val IMMUTABLE_LIST_ID = ClassId.topLevel(FqName("ImmutableList".guavaPackage()))
-    val IMMUTABLE_SET_ID = ClassId.topLevel(FqName("ImmutableSet".guavaPackage()))
-    val IMMUTABLE_SORTED_SET_ID = ClassId.topLevel(FqName("ImmutableSortedSet".guavaPackage()))
-    val IMMUTABLE_MAP_ID = ClassId.topLevel(FqName("ImmutableMap".guavaPackage()))
-    val IMMUTABLE_BI_MAP_ID = ClassId.topLevel(FqName("ImmutableBiMap".guavaPackage()))
-    val IMMUTABLE_SORTED_MAP_ID = ClassId.topLevel(FqName("ImmutableSortedMap".guavaPackage()))
-
-    // Such ugly function is needed because shade plugin shades any name starting with com.google
-    //   which causes shading even from string literals
-    private fun Collection<String>.guavaPackage(): Set<String> {
-        return mapTo(mutableSetOf()) { it.guavaPackage() }
-    }
-
-    private fun String.guavaPackage(): String {
-        val prefix = listOf("com", "google", "common", "collect").joinToString(".")
-        return "$prefix.$this"
+    private fun String.guavaCollectType(): ClassId {
+        return ClassId(GUAVA_COLLECT_PACKAGE, Name.identifier(this))
     }
 }
 

@@ -75,13 +75,13 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
             }
         }
 
-        val typeName = property.resolvedReturnType.classId?.asFqNameString()
-        if (typeName != null &&
-            typeName !in LombokNames.SUPPORTED_COLLECTIONS &&
-            typeName !in LombokNames.SUPPORTED_MAPS &&
-            typeName !in LombokNames.SUPPORTED_TABLES
+        val classId = property.resolvedReturnType.classId
+        if (classId != null &&
+            classId !in LombokNames.SUPPORTED_COLLECTION_IDS &&
+            classId !in LombokNames.SUPPORTED_MAP_IDS &&
+            classId !in LombokNames.SUPPORTED_TABLE_IDS
         ) {
-            reporter.reportOn(source, LombokFirDiagnostics.UNSUPPORTED_SINGULAR_TYPE, typeName, context)
+            reporter.reportOn(source, LombokFirDiagnostics.UNSUPPORTED_SINGULAR_TYPE, property.resolvedReturnType, context)
         }
     }
 
