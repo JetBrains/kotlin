@@ -387,7 +387,6 @@ private fun TypeSpec.Builder.addApplyArgumentStringsFun(kotlinVersion: KotlinRel
     }
 }
 
-
 private fun TypeSpec.Builder.addApplyCommandLineArgumentsFun() {
     function("applyCommandLineArguments") {
         addKdoc(
@@ -419,10 +418,10 @@ private fun TypeSpec.Builder.addApplyCommandLineArgumentsFun() {
             ParameterSpec.builder("arguments", listTypeNameOf<String>())
                 .addKdoc("a list of arguments for the Kotlin CLI compiler").build()
         )
+        addAnnotation(ANNOTATION_DELICATE_BUILDTOOLS_API)
         this.addModifiers(KModifier.ABSTRACT)
     }
 }
-
 
 private fun TypeSpec.Builder.addToArgumentStringsFun() {
     function("toArgumentStrings") {

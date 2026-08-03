@@ -1067,8 +1067,8 @@ private fun TypeSpec.Builder.maybeAddApplyCommandLineArgumentsFun(
     val compilerArgumentsClass = level.getCompilerArgumentsClassName()
 
     function("applyCommandLineArguments") {
+        addAnnotation(ANNOTATION_DELICATE_BUILDTOOLS_API)
         addModifiers(KModifier.OVERRIDE)
-
         addParameter("arguments", listTypeNameOf<String>())
         if (!generateCompatLayer) {
             addStatement("val compilerArgs = toCompilerArguments()")

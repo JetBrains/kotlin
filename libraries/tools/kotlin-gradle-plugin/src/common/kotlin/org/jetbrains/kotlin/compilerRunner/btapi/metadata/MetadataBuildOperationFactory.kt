@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.compilerRunner.btapi.metadata
 
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain.Companion.metadata
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
@@ -24,6 +24,7 @@ internal class MetadataKlibBuildOperationFactory(private val compilerArgs: List<
         val compilationOperationBuilder =
             kotlinToolchains.metadata.metadataKlibCompilationOperationBuilder(extractSourceFiles(args.freeArgs), destination)
         args.destination = null // TODO: KT-85394 refactor setting up arguments to avoid this hack
+        @OptIn(DelicateBuildToolsApi::class)
         compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false
