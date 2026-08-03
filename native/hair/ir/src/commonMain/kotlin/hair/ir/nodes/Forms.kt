@@ -81,7 +81,7 @@ class MetaForm(val session: Session, val simpleName: String) {
         val fullName get() = "${simpleName}[${args.joinToString()}]"
 
         @Suppress("UNCHECKED_CAST")
-        fun ensureFormUniq(): F {
+        fun ensureFormUnique(): F {
             return metaForm.ensureUnique(this) as F
         }
     }

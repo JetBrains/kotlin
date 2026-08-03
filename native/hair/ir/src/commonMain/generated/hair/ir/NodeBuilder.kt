@@ -1,9 +1,12 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 @file:Suppress("FunctionName")
-
 package hair.ir
+
 import hair.ir.nodes.*
 import hair.sym.*
-import hair.sym.Type.*
 
 context(nodeBuilder: NodeBuilder)
 fun Use(control: Controlling?, value: Node?): Controlling = nodeBuilder.onNodeBuilt(Use(nodeBuilder.session.useForm, control, value)) as Controlling
@@ -93,7 +96,7 @@ context(nodeBuilder: NodeBuilder)
 fun Unwind(thrower: Throwing?): BlockExit = nodeBuilder.onNodeBuilt(Unwind(nodeBuilder.session.unwindForm, thrower)) as BlockExit
 
 context(nodeBuilder: NodeBuilder)
-private fun ReadVarForm(variable: Any): ReadVar.Form = ReadVar.Form(nodeBuilder.session.readVarMetaForm, variable).ensureFormUniq()
+private fun ReadVarForm(variable: Any): ReadVar.Form = ReadVar.Form(nodeBuilder.session.readVarMetaForm, variable).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
 fun ReadVar(variable: Any): ReadVar.Form = ReadVarForm(variable)
@@ -108,7 +111,7 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun ReadVar.Form.invoke(): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
-fun AssignVar(variable: Any): AssignVar.Form = AssignVar.Form(nodeBuilder.session.assignVarMetaForm, variable).ensureFormUniq()
+fun AssignVar(variable: Any): AssignVar.Form = AssignVar.Form(nodeBuilder.session.assignVarMetaForm, variable).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun AssignVar.Form.invoke(control: Controlling?, assignedValue: Node?): Controlling = nodeBuilder.onNodeBuilt(AssignVar(this@invoke, control, assignedValue)) as Controlling
@@ -120,13 +123,13 @@ context(nodeBuilder: NodeBuilder)
 fun Phi(block: BlockEntry?, vararg joinedValues: Node?): Node = nodeBuilder.onNodeBuilt(Phi(nodeBuilder.session.phiForm, block, *joinedValues))
 
 context(nodeBuilder: NodeBuilder)
-fun PhiPlaceholder(origin: Any): PhiPlaceholder.Form = PhiPlaceholder.Form(nodeBuilder.session.phiPlaceholderMetaForm, origin).ensureFormUniq()
+fun PhiPlaceholder(origin: Any): PhiPlaceholder.Form = PhiPlaceholder.Form(nodeBuilder.session.phiPlaceholderMetaForm, origin).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun PhiPlaceholder.Form.invoke(block: BlockEntry?, vararg joinedValues: Node?): Node = nodeBuilder.onNodeBuilt(PhiPlaceholder(this@invoke, block, *joinedValues))
 
 context(nodeBuilder: NodeBuilder)
-private fun ParamForm(index: Int): Param.Form = Param.Form(nodeBuilder.session.paramMetaForm, index).ensureFormUniq()
+private fun ParamForm(index: Int): Param.Form = Param.Form(nodeBuilder.session.paramMetaForm, index).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Param.Form.invoke(): Param = nodeBuilder.onNodeBuilt(Param(this@invoke)) as Param
@@ -138,7 +141,7 @@ context(nodeBuilder: NodeBuilder)
 fun Catch(unwind: Node?): Node = nodeBuilder.onNodeBuilt(Catch(nodeBuilder.session.catchForm, unwind))
 
 context(nodeBuilder: NodeBuilder)
-private fun ConstForm(value: Number): Const.Form = Const.Form(nodeBuilder.session.constMetaForm, value).ensureFormUniq()
+private fun ConstForm(value: Number): Const.Form = Const.Form(nodeBuilder.session.constMetaForm, value).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Const.Form.invoke(): Const = nodeBuilder.onNodeBuilt(Const(this@invoke)) as Const
@@ -156,31 +159,31 @@ context(nodeBuilder: NodeBuilder)
 fun False(): False = nodeBuilder.onNodeBuilt(False(nodeBuilder.session.falseForm)) as False
 
 context(nodeBuilder: NodeBuilder)
-fun Add(opType: ArithmeticType): Add.Form = Add.Form(nodeBuilder.session.addMetaForm, opType).ensureFormUniq()
+fun Add(opType: ArithmeticType): Add.Form = Add.Form(nodeBuilder.session.addMetaForm, opType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Add.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Add(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Sub(opType: ArithmeticType): Sub.Form = Sub.Form(nodeBuilder.session.subMetaForm, opType).ensureFormUniq()
+fun Sub(opType: ArithmeticType): Sub.Form = Sub.Form(nodeBuilder.session.subMetaForm, opType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Sub.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Sub(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Mul(opType: ArithmeticType): Mul.Form = Mul.Form(nodeBuilder.session.mulMetaForm, opType).ensureFormUniq()
+fun Mul(opType: ArithmeticType): Mul.Form = Mul.Form(nodeBuilder.session.mulMetaForm, opType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Mul.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Mul(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Div(opType: ArithmeticType): Div.Form = Div.Form(nodeBuilder.session.divMetaForm, opType).ensureFormUniq()
+fun Div(opType: ArithmeticType): Div.Form = Div.Form(nodeBuilder.session.divMetaForm, opType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Div.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Div(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Rem(opType: ArithmeticType): Rem.Form = Rem.Form(nodeBuilder.session.remMetaForm, opType).ensureFormUniq()
+fun Rem(opType: ArithmeticType): Rem.Form = Rem.Form(nodeBuilder.session.remMetaForm, opType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Rem.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Rem(this@invoke, lhs, rhs))
@@ -189,37 +192,37 @@ context(nodeBuilder: NodeBuilder)
 fun Neg(operand: Node?): Node = nodeBuilder.onNodeBuilt(Neg(nodeBuilder.session.negForm, operand))
 
 context(nodeBuilder: NodeBuilder)
-fun And(opType: ArithmeticType): And.Form = And.Form(nodeBuilder.session.andMetaForm, opType).ensureFormUniq()
+fun And(opType: ArithmeticType): And.Form = And.Form(nodeBuilder.session.andMetaForm, opType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun And.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(And(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Or(opType: ArithmeticType): Or.Form = Or.Form(nodeBuilder.session.orMetaForm, opType).ensureFormUniq()
+fun Or(opType: ArithmeticType): Or.Form = Or.Form(nodeBuilder.session.orMetaForm, opType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Or.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Or(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Xor(opType: ArithmeticType): Xor.Form = Xor.Form(nodeBuilder.session.xorMetaForm, opType).ensureFormUniq()
+fun Xor(opType: ArithmeticType): Xor.Form = Xor.Form(nodeBuilder.session.xorMetaForm, opType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Xor.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Xor(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Shl(opType: ArithmeticType): Shl.Form = Shl.Form(nodeBuilder.session.shlMetaForm, opType).ensureFormUniq()
+fun Shl(opType: ArithmeticType): Shl.Form = Shl.Form(nodeBuilder.session.shlMetaForm, opType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Shl.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Shl(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Shr(opType: ArithmeticType): Shr.Form = Shr.Form(nodeBuilder.session.shrMetaForm, opType).ensureFormUniq()
+fun Shr(opType: ArithmeticType): Shr.Form = Shr.Form(nodeBuilder.session.shrMetaForm, opType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Shr.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Shr(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
-fun Ushr(opType: ArithmeticType): Ushr.Form = Ushr.Form(nodeBuilder.session.ushrMetaForm, opType).ensureFormUniq()
+fun Ushr(opType: ArithmeticType): Ushr.Form = Ushr.Form(nodeBuilder.session.ushrMetaForm, opType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Ushr.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Ushr(this@invoke, lhs, rhs))
@@ -228,7 +231,7 @@ context(nodeBuilder: NodeBuilder)
 fun Inv(operand: Node?): Node = nodeBuilder.onNodeBuilt(Inv(nodeBuilder.session.invForm, operand))
 
 context(nodeBuilder: NodeBuilder)
-fun Cmp(type: HairType, op: CmpOp): Cmp.Form = Cmp.Form(nodeBuilder.session.cmpMetaForm, type, op).ensureFormUniq()
+fun Cmp(type: HairType, op: CmpOp): Cmp.Form = Cmp.Form(nodeBuilder.session.cmpMetaForm, type, op).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Cmp.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Cmp(this@invoke, lhs, rhs))
@@ -237,31 +240,31 @@ context(nodeBuilder: NodeBuilder)
 fun Not(operand: Node?): Node = nodeBuilder.onNodeBuilt(Not(nodeBuilder.session.notForm, operand))
 
 context(nodeBuilder: NodeBuilder)
-fun SignExtend(targetType: HairType): SignExtend.Form = SignExtend.Form(nodeBuilder.session.signExtendMetaForm, targetType).ensureFormUniq()
+fun SignExtend(targetType: HairType): SignExtend.Form = SignExtend.Form(nodeBuilder.session.signExtendMetaForm, targetType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun SignExtend.Form.invoke(operand: Node?): Node = nodeBuilder.onNodeBuilt(SignExtend(this@invoke, operand))
 
 context(nodeBuilder: NodeBuilder)
-fun ZeroExtend(targetType: HairType): ZeroExtend.Form = ZeroExtend.Form(nodeBuilder.session.zeroExtendMetaForm, targetType).ensureFormUniq()
+fun ZeroExtend(targetType: HairType): ZeroExtend.Form = ZeroExtend.Form(nodeBuilder.session.zeroExtendMetaForm, targetType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun ZeroExtend.Form.invoke(operand: Node?): Node = nodeBuilder.onNodeBuilt(ZeroExtend(this@invoke, operand))
 
 context(nodeBuilder: NodeBuilder)
-fun Truncate(targetType: HairType): Truncate.Form = Truncate.Form(nodeBuilder.session.truncateMetaForm, targetType).ensureFormUniq()
+fun Truncate(targetType: HairType): Truncate.Form = Truncate.Form(nodeBuilder.session.truncateMetaForm, targetType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Truncate.Form.invoke(operand: Node?): Node = nodeBuilder.onNodeBuilt(Truncate(this@invoke, operand))
 
 context(nodeBuilder: NodeBuilder)
-fun Reinterpret(targetType: HairType): Reinterpret.Form = Reinterpret.Form(nodeBuilder.session.reinterpretMetaForm, targetType).ensureFormUniq()
+fun Reinterpret(targetType: HairType): Reinterpret.Form = Reinterpret.Form(nodeBuilder.session.reinterpretMetaForm, targetType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Reinterpret.Form.invoke(operand: Node?): Node = nodeBuilder.onNodeBuilt(Reinterpret(this@invoke, operand))
 
 context(nodeBuilder: NodeBuilder)
-private fun NewForm(objectType: HairClass): New.Form = New.Form(nodeBuilder.session.newMetaForm, objectType).ensureFormUniq()
+private fun NewForm(objectType: HairClass): New.Form = New.Form(nodeBuilder.session.newMetaForm, objectType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
 fun New(objectType: HairClass): New.Form = NewForm(objectType)
@@ -276,7 +279,7 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun New.Form.invoke(): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
-fun NewArray(elementType: HairClass): NewArray.Form = NewArray.Form(nodeBuilder.session.newArrayMetaForm, elementType).ensureFormUniq()
+fun NewArray(elementType: HairClass): NewArray.Form = NewArray.Form(nodeBuilder.session.newArrayMetaForm, elementType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun NewArray.Form.invoke(control: Controlling?, size: Node?): Controlling = nodeBuilder.onNodeBuilt(NewArray(this@invoke, control, size)) as Controlling
@@ -285,13 +288,13 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun NewArray.Form.invoke(size: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, size) }
 
 context(nodeBuilder: NodeBuilder)
-fun IsInstanceOf(targetType: HairClass): IsInstanceOf.Form = IsInstanceOf.Form(nodeBuilder.session.isInstanceOfMetaForm, targetType).ensureFormUniq()
+fun IsInstanceOf(targetType: HairClass): IsInstanceOf.Form = IsInstanceOf.Form(nodeBuilder.session.isInstanceOfMetaForm, targetType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun IsInstanceOf.Form.invoke(obj: Node?): Node = nodeBuilder.onNodeBuilt(IsInstanceOf(this@invoke, obj))
 
 context(nodeBuilder: NodeBuilder)
-fun CheckCast(targetType: HairClass): CheckCast.Form = CheckCast.Form(nodeBuilder.session.checkCastMetaForm, targetType).ensureFormUniq()
+fun CheckCast(targetType: HairClass): CheckCast.Form = CheckCast.Form(nodeBuilder.session.checkCastMetaForm, targetType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun CheckCast.Form.invoke(control: Controlling?, obj: Node?): Controlling = nodeBuilder.onNodeBuilt(CheckCast(this@invoke, control, obj)) as Controlling
@@ -303,7 +306,7 @@ context(nodeBuilder: NodeBuilder)
 fun TypeInfo(obj: Node?): Node = nodeBuilder.onNodeBuilt(TypeInfo(nodeBuilder.session.typeInfoForm, obj))
 
 context(nodeBuilder: NodeBuilder)
-private fun ConstTypeInfoForm(type: HairClass): ConstTypeInfo.Form = ConstTypeInfo.Form(nodeBuilder.session.constTypeInfoMetaForm, type).ensureFormUniq()
+private fun ConstTypeInfoForm(type: HairClass): ConstTypeInfo.Form = ConstTypeInfo.Form(nodeBuilder.session.constTypeInfoMetaForm, type).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun ConstTypeInfo.Form.invoke(): ConstTypeInfo = nodeBuilder.onNodeBuilt(ConstTypeInfo(this@invoke)) as ConstTypeInfo
@@ -321,7 +324,7 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 fun ArrayIndexCheck(array: Node?, index: Node?): Controlling = controlBuilder.appendControlled { ctrl -> ArrayIndexCheck(ctrl, array, index) }
 
 context(nodeBuilder: NodeBuilder)
-fun Load(type: HairType): Load.Form = Load.Form(nodeBuilder.session.loadMetaForm, type).ensureFormUniq()
+fun Load(type: HairType): Load.Form = Load.Form(nodeBuilder.session.loadMetaForm, type).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Load.Form.invoke(control: Controlling?, location: Node?): Controlling = nodeBuilder.onNodeBuilt(Load(this@invoke, control, location)) as Controlling
@@ -330,7 +333,7 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun Load.Form.invoke(location: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, location) }
 
 context(nodeBuilder: NodeBuilder)
-fun Store(type: HairType): Store.Form = Store.Form(nodeBuilder.session.storeMetaForm, type).ensureFormUniq()
+fun Store(type: HairType): Store.Form = Store.Form(nodeBuilder.session.storeMetaForm, type).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun Store.Form.invoke(control: Controlling?, location: Node?, value: Node?): Controlling = nodeBuilder.onNodeBuilt(Store(this@invoke, control, location, value)) as Controlling
@@ -339,7 +342,7 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun Store.Form.invoke(location: Node?, value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, location, value) }
 
 context(nodeBuilder: NodeBuilder)
-fun LoadField(field: Field): LoadField.Form = LoadField.Form(nodeBuilder.session.loadFieldMetaForm, field).ensureFormUniq()
+fun LoadField(field: Field): LoadField.Form = LoadField.Form(nodeBuilder.session.loadFieldMetaForm, field).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun LoadField.Form.invoke(control: Controlling?, obj: Node?): Controlling = nodeBuilder.onNodeBuilt(LoadField(this@invoke, control, obj)) as Controlling
@@ -348,7 +351,7 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun LoadField.Form.invoke(obj: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, obj) }
 
 context(nodeBuilder: NodeBuilder)
-fun StoreField(field: Field): StoreField.Form = StoreField.Form(nodeBuilder.session.storeFieldMetaForm, field).ensureFormUniq()
+fun StoreField(field: Field): StoreField.Form = StoreField.Form(nodeBuilder.session.storeFieldMetaForm, field).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun StoreField.Form.invoke(control: Controlling?, obj: Node?, value: Node?): Controlling = nodeBuilder.onNodeBuilt(StoreField(this@invoke, control, obj, value)) as Controlling
@@ -357,7 +360,7 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun StoreField.Form.invoke(obj: Node?, value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, obj, value) }
 
 context(nodeBuilder: NodeBuilder)
-private fun LoadGlobalForm(field: Global): LoadGlobal.Form = LoadGlobal.Form(nodeBuilder.session.loadGlobalMetaForm, field).ensureFormUniq()
+private fun LoadGlobalForm(field: Global): LoadGlobal.Form = LoadGlobal.Form(nodeBuilder.session.loadGlobalMetaForm, field).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
 fun LoadGlobal(field: Global): LoadGlobal.Form = LoadGlobalForm(field)
@@ -372,7 +375,7 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun LoadGlobal.Form.invoke(): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
-fun StoreGlobal(field: Global): StoreGlobal.Form = StoreGlobal.Form(nodeBuilder.session.storeGlobalMetaForm, field).ensureFormUniq()
+fun StoreGlobal(field: Global): StoreGlobal.Form = StoreGlobal.Form(nodeBuilder.session.storeGlobalMetaForm, field).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun StoreGlobal.Form.invoke(control: Controlling?, value: Node?): Controlling = nodeBuilder.onNodeBuilt(StoreGlobal(this@invoke, control, value)) as Controlling
@@ -381,7 +384,7 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun StoreGlobal.Form.invoke(value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, value) }
 
 context(nodeBuilder: NodeBuilder)
-fun LoadArrayElement(elementType: HairType): LoadArrayElement.Form = LoadArrayElement.Form(nodeBuilder.session.loadArrayElementMetaForm, elementType).ensureFormUniq()
+fun LoadArrayElement(elementType: HairType): LoadArrayElement.Form = LoadArrayElement.Form(nodeBuilder.session.loadArrayElementMetaForm, elementType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun LoadArrayElement.Form.invoke(control: Controlling?, array: Node?, index: Node?): Controlling = nodeBuilder.onNodeBuilt(LoadArrayElement(this@invoke, control, array, index)) as Controlling
@@ -390,7 +393,7 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun LoadArrayElement.Form.invoke(array: Node?, index: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, array, index) }
 
 context(nodeBuilder: NodeBuilder)
-fun StoreArrayElement(elementType: HairType): StoreArrayElement.Form = StoreArrayElement.Form(nodeBuilder.session.storeArrayElementMetaForm, elementType).ensureFormUniq()
+fun StoreArrayElement(elementType: HairType): StoreArrayElement.Form = StoreArrayElement.Form(nodeBuilder.session.storeArrayElementMetaForm, elementType).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun StoreArrayElement.Form.invoke(control: Controlling?, array: Node?, index: Node?, value: Node?): Controlling = nodeBuilder.onNodeBuilt(StoreArrayElement(this@invoke, control, array, index, value)) as Controlling
@@ -399,7 +402,7 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun StoreArrayElement.Form.invoke(array: Node?, index: Node?, value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, array, index, value) }
 
 context(nodeBuilder: NodeBuilder)
-fun InvokeStatic(function: HairFunction): InvokeStatic.Form = InvokeStatic.Form(nodeBuilder.session.invokeStaticMetaForm, function).ensureFormUniq()
+fun InvokeStatic(function: HairFunction): InvokeStatic.Form = InvokeStatic.Form(nodeBuilder.session.invokeStaticMetaForm, function).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun InvokeStatic.Form.invoke(control: Controlling?, vararg callArgs: Node?): Controlling = nodeBuilder.onNodeBuilt(InvokeStatic(this@invoke, control, *callArgs)) as Controlling
@@ -408,11 +411,12 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun InvokeStatic.Form.invoke(vararg callArgs: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, *callArgs) }
 
 context(nodeBuilder: NodeBuilder)
-fun InvokeVirtual(function: HairFunction): InvokeVirtual.Form = InvokeVirtual.Form(nodeBuilder.session.invokeVirtualMetaForm, function).ensureFormUniq()
+fun InvokeVirtual(function: HairFunction): InvokeVirtual.Form = InvokeVirtual.Form(nodeBuilder.session.invokeVirtualMetaForm, function).ensureFormUnique()
 
 context(nodeBuilder: NodeBuilder)
 operator fun InvokeVirtual.Form.invoke(control: Controlling?, vararg callArgs: Node?): Controlling = nodeBuilder.onNodeBuilt(InvokeVirtual(this@invoke, control, *callArgs)) as Controlling
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun InvokeVirtual.Form.invoke(vararg callArgs: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, *callArgs) }
+
 

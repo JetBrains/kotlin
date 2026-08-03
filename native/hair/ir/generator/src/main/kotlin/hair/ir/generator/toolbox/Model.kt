@@ -1,123 +1,181 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package hair.ir.generator.toolbox
 
-import hair.ir.generator.ControlFlow
 import kotlin.reflect.KClass
-import hair.utils.*
 
-sealed class Element(val name: String, val nestedIn: Element?) {
+sealed class Element {
+    abstract val name: String
+    abstract val nestedIn: Element?
+    abstract val interfaces: List<Interface>
+    abstract val formParams: List<FormParam>
+    abstract val nodeParams: List<NodeParam>
+    abstract val variadicParam: NodeParam?
+
+    val isBuiltin get() = (this is Interface && builtin) || (this is AbstractClass && builtin)
+
     override fun toString(): String = name
 
-    class FormParam(val name: String, var type: KClass<*>) {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other is FormParam) return name == other.name
-            return false
+    fun hasInterface(name: String): Boolean {
+        if (interfaces.any { it.name == name || it.hasInterface(name) }) return true
+        if (this is ElementWithParams) parent?.let { if (it.hasInterface(name)) return true }
+        return false
+    }
+
+    fun allInterfaces(): Set<Interface> {
+        val result = mutableSetOf<Interface>()
+        fun visit(e: Element) {
+            for (iface in e.interfaces)
+                if (result.add(iface)) visit(iface)
+            if (e is ElementWithParams) e.parent?.let { visit(it) }
         }
-        override fun hashCode(): Int = name.hashCode()
-        override fun toString(): String = "FormParam($name)"
+        visit(this)
+        return result
     }
-    data class NodeParam(val name: String, var type: Element?, var variable: Boolean, var optional: Boolean) {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other is NodeParam) return name == other.name
-            return false
+}
+
+data class FormParam(
+    val name: String,
+    val type: KClass<*>,
+)
+
+data class NodeParam(
+    val name: String,
+    val type: Element?,
+    val variable: Boolean,
+    val optional: Boolean,
+)
+
+class Interface internal constructor(
+    override val name: String,
+    val builtin: Boolean,
+    override val nestedIn: Element?,
+    override val interfaces: List<Interface>,
+    override val formParams: List<FormParam>,
+    override val nodeParams: List<NodeParam>,
+    override val variadicParam: NodeParam?,
+) : Element() {
+    fun hasFormParam(name: String): Boolean =
+        formParams.any { it.name == name } || interfaces.any { it.hasFormParam(name) }
+
+    fun hasNodeParam(name: String): Boolean =
+        nodeParams.any { it.name == name } || interfaces.any { it.hasNodeParam(name) }
+
+}
+
+sealed class ElementWithParams : Element() {
+    abstract val parent: AbstractClass?
+
+    fun isSubclassOf(name: String): Boolean {
+        var current: ElementWithParams? = this
+        while (current != null) {
+            if (current.name == name) return true
+            current = current.parent
         }
-        override fun hashCode(): Int = name.hashCode()
-        override fun toString(): String = "NodeParam($name)"
+        return false
     }
 
-    internal val interfaces = linkedSetOf<Interface>()
-    internal val formParams = mutableListOf<FormParam>()
-    internal val nodeParams = mutableListOf<NodeParam>()
-    internal var variadicParam: NodeParam? = null // FIXME ensure single in hierarchy
-    internal var nestedProjections = linkedMapOf<String, Node>()
+    fun allParents(): List<ElementWithParams> =
+        parent?.let { it.allParents() + it } ?: emptyList()
 
-    open fun getFormParam(name: String) = formParams.first { it.name == name }
-    open fun getParam(name: String) = nodeParams.first { it.name == name }
+    fun allFormParams(): List<FormParam> =
+        (parent?.allFormParams() ?: emptyList()) + formParams
 
-    fun interfaces(vararg interfaces: Interface) {
-        this.interfaces.addAll(interfaces)
-    }
-    internal open fun allInterfaces(): Set<Interface> =
-        interfaces.dfsClosure { it.interfaces }
+    fun allNodeParams(): List<NodeParam> =
+        (parent?.allNodeParams() ?: emptyList()) + nodeParams
 
-    internal fun allPromisedFormParams() = allInterfaces().flatMap { it.formParams }.toSet()
-    internal fun allPromisedNodeParams() = allInterfaces().flatMap { it.nodeParams }.toSet()
-    internal fun promisedVariadic() = allInterfaces().mapNotNull { it.variadicParam }.singleOrNull()
+    fun variadicWithInherited(): NodeParam? =
+        variadicParam ?: parent?.variadicWithInherited()
 
-    internal open fun superDeclFormParam(name: String): FormParam? {
-        val promisedWithName = allPromisedFormParams().filter { it.name == name }
-        require(promisedWithName.size <= 1)
-        return promisedWithName.singleOrNull()
+    fun ownParamsWithIndex(): List<IndexedValue<NodeParam>> {
+        val firstOwnParamIdx = parent?.allNodeParams()?.size ?: 0
+        return nodeParams.withIndex().map { IndexedValue(it.index + firstOwnParamIdx, it.value) }
     }
 
-    internal fun superDecl(formParam: FormParam): FormParam? {
-        return superDeclFormParam(formParam.name)
-    }
+    fun superHasFormParam(name: String): Boolean =
+        parent?.let { it.formParams.any { p -> p.name == name } || it.superHasFormParam(name) } == true ||
+                interfaces.any { it.hasFormParam(name) }
 
-    internal fun superDeclNodeParam(name: String): NodeParam? {
-        val promisedWithName = allPromisedNodeParams().filter { it.name == name }
-        require(promisedWithName.size <= 1)
-        return promisedWithName.singleOrNull()
-    }
+    fun superHasNodeParam(name: String): Boolean =
+        parent?.let { it.nodeParams.any { p -> p.name == name } || it.superHasNodeParam(name) } == true ||
+                interfaces.any { it.hasNodeParam(name) }
 
-    internal fun superDecl(param: NodeParam): NodeParam? {
-        return superDeclNodeParam(param.name)
-    }
-
-    internal fun superDeclVariadic(): NodeParam? = promisedVariadic()
-
-    internal fun hasInterface(iface: Interface): Boolean = iface in allInterfaces()
-
-    internal fun isControlFlow(): Boolean = hasInterface(ControlFlow.controlFlow)
 }
 
-class Interface(name: String, val builtin: Boolean, nestedIn: Element? = null) : Element(name, nestedIn)
+class AbstractClass internal constructor(
+    override val name: String,
+    val builtin: Boolean,
+    override val nestedIn: Element?,
+    override val parent: AbstractClass?,
+    override val interfaces: List<Interface>,
+    override val formParams: List<FormParam>,
+    override val nodeParams: List<NodeParam>,
+    override val variadicParam: NodeParam?,
+) : ElementWithParams()
 
-sealed class ElementWithParams(name: String, val parent: AbstractClass? = null, nestedIn: Element?) : Element(name, nestedIn) {
-    override fun allInterfaces(): Set<Interface> =
-        interfaces.closure { it.allInterfaces() } + (parent?.allInterfaces() ?: emptySet())
+class Node internal constructor(
+    override val name: String,
+    override val nestedIn: Element?,
+    override val parent: AbstractClass?,
+    override val interfaces: List<Interface>,
+    override val formParams: List<FormParam>,
+    override val nodeParams: List<NodeParam>,
+    override val variadicParam: NodeParam?,
+) : ElementWithParams()
 
+sealed class ElementBuilder {
+    abstract val name: String
+    abstract val nestedIn: Element?
 
-    override fun getFormParam(name: String) = allFormParams().first { it.name == name }
-    override fun getParam(name: String) = allParams().first { it.name == name }
+    val interfaces = mutableListOf<InterfaceBuilder>()
+    val formParams = mutableListOf<FormParam>()
+    val nodeParams = mutableListOf<NodeParamBuilder>()
+    var variadicParam: NodeParamBuilder? = null
 
-    internal fun allParents(): List<ElementWithParams> = parent?.let { listOf(it) + it.allParents() } ?: emptyList()
-
-    override fun superDeclFormParam(name: String): FormParam? {
-        super.superDeclFormParam(name)?.let { return it }
-        val fromParents = allParents().flatMap { it.formParams }.filter { it.name == name }
-        require(fromParents.size <= 1)
-        return fromParents.singleOrNull()
-    }
-    internal fun allFormParams(): List<FormParam> = (parent?.allFormParams() ?: emptyList()) + formParams
-    internal fun allParams(): List<NodeParam> = (parent?.allParams() ?: emptyList()) + nodeParams
-    internal fun variadicWithInherited(): NodeParam? {
-        val inherited = parent?.variadicWithInherited()
-        require(inherited == null || variadicParam == null)
-        return inherited ?: variadicParam
-    }
-    internal fun ownParamsWithIndex(): List<IndexedValue<NodeParam>> {
-        val firstOwnParamIndex = parent?.allParams()?.size ?: 0
-        return nodeParams.withIndex().map { IndexedValue(it.index + firstOwnParamIndex,it.value) }
-    }
-
-    internal fun isSubclassOf(other: AbstractClass): Boolean = (this == other) || (parent?.isSubclassOf(other) == true)
-
-    internal fun producesControl(): Boolean = hasInterface(ControlFlow.controlling)
-    internal fun producesException(): Boolean = hasInterface(ControlFlow.throwing)
-    internal fun transfersControl(): Boolean = hasInterface(ControlFlow.blockExit)
-
-    internal fun hasControlInput(): Boolean = isSubclassOf(ControlFlow.controlled)
+    override fun toString(): String = name
 }
 
-class AbstractClass(name: String, val builtin: Boolean, parent: AbstractClass?, nestedIn: Element? = null) : ElementWithParams(name, parent, nestedIn)
-class Node(name: String, parent: AbstractClass?, nestedIn: Element? = null) : ElementWithParams(name, parent, nestedIn) {
-    internal fun verify() {
-        require(allFormParams().toSet().containsAll(allPromisedFormParams()))
-        require(allParams().toSet().containsAll(allPromisedNodeParams()))
-        val variadicDefs = (listOf(this) + allParents()).mapNotNull { it.variadicParam }
-        require(variadicDefs.size <= 1)
-        require(variadicDefs.containsAll(listOfNotNull(promisedVariadic())))
-    }
+data class NodeParamBuilder(
+    val name: String,
+    val type: ElementBuilder?,
+    val variable: Boolean,
+    val optional: Boolean,
+)
+
+class InterfaceBuilder(
+    override val name: String,
+    val builtIn: Boolean = false,
+    override val nestedIn: Element? = null,
+) : ElementBuilder()
+
+sealed class ElementWithParamsBuilder : ElementBuilder() {
+    abstract val parent: AbstractClassBuilder?
 }
+
+class AbstractClassBuilder(
+    override val name: String,
+    val builtIn: Boolean = false,
+    override val nestedIn: Element? = null,
+    override val parent: AbstractClassBuilder? = null,
+) : ElementWithParamsBuilder()
+
+class NodeBuilder(
+    override val name: String,
+    override val nestedIn: Element? = null,
+    override val parent: AbstractClassBuilder? = null,
+) : ElementWithParamsBuilder()
+
+// Control
+
+internal const val CONTROL_FLOW = "ControlFlow"
+internal const val CONTROLLING = "Controlling"
+internal const val BLOCK_EXIT = "BlockExit"
+internal const val CONTROLLED = "Controlled"
+
+fun Node.isControlFlow() = hasInterface(CONTROL_FLOW)
+fun ElementWithParams.hasControlInput() = isSubclassOf(CONTROLLED)
+fun ElementWithParams.producesControl() = hasInterface(CONTROLLING)
+fun ElementWithParams.transfersControl() = hasInterface(BLOCK_EXIT)

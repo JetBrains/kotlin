@@ -1,9 +1,13 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package hair.ir
 
 import hair.ir.nodes.*
-import hair.sym.*
 
-class Session: SessionBase() {
+class Session : SessionBase() {
     // Simple forms
 
     internal val useForm = Use.form(this).also { register(it) }
@@ -60,7 +64,6 @@ class Session: SessionBase() {
 
     internal val arrayIndexCheckForm = ArrayIndexCheck.form(this).also { register(it) }
 
-    
 
     // Meta forms
 
@@ -136,12 +139,9 @@ class Session: SessionBase() {
 
     internal val invokeVirtualMetaForm = InvokeVirtual.metaForm(this)
 
-    
 
-    val entry by lazy { BlockEntry(blockEntryForm).also{ register(gvn(it)) } }
+    val entry by lazy { BlockEntry(blockEntryForm).also { register(gvn(it)) } }
 
-    val unreachable by lazy { Unreachable(unreachableForm).also{ register(gvn(it)) } }
-
+    val unreachable by lazy { Unreachable(unreachableForm).also { register(gvn(it)) } }
 }
-
 

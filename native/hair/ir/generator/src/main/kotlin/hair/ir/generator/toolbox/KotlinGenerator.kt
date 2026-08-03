@@ -1,181 +1,252 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package hair.ir.generator.toolbox
 
-import kotlin.collections.isNotEmpty
-import kotlin.text.*
+interface ScopeBuilder {
+    fun line(text: String = "")
+    fun comment(text: String)
+    fun raw(text: String)
 
-fun StringBuilder.appendIndented(indent: String, string: String) {
-    string.lines().forEach { appendLine("$indent$it") }
+    fun cls(
+        modifiers: List<String> = emptyList(),
+        name: String,
+        typeParams: List<String> = emptyList(),
+        constructor: String? = null,
+        superclass: String? = null,
+        superInterfaces: List<String> = emptyList(),
+        block: Block.() -> Unit,
+    )
+
+    fun iface(
+        modifiers: List<String> = emptyList(),
+        name: String,
+        typeParams: List<String> = emptyList(),
+        superInterfaces: List<String> = emptyList(),
+        block: Block.() -> Unit,
+    )
+
+    fun method(
+        contextReceivers: List<Pair<String, String>> = emptyList(),
+        modifiers: List<String> = emptyList(),
+        name: String,
+        typeParams: List<String> = emptyList(),
+        receiver: String? = null,
+        params: List<Pair<String, String>> = emptyList(),
+        returns: String? = null,
+        expr: String? = null,
+        block: (Block.() -> Unit)? = null,
+    )
+
+    fun property(
+        contextReceivers: List<Pair<String, String>> = emptyList(),
+        modifiers: List<String> = emptyList(),
+        name: String,
+        type: String? = null,
+        receiver: String? = null,
+        value: String? = null,
+        delegate: String? = null,
+        getter: String? = null,
+        setter: String? = null,
+    )
+
+    fun companion(block: Block.() -> Unit)
 }
 
-sealed class ScopeBuilder {
-    protected val members = mutableListOf<String>()
+class TopLevelBuilder(
+    val pkg: String,
+    val name: String,
+    private val body: Block = Block(""),
+) : ScopeBuilder by body {
+    private val imports = mutableListOf<String>()
+    private val fileAnnotations = mutableSetOf<String>()
 
-    fun member(str: String)  {
-        members += str.trim()
+    private val license = """
+            |/*
+            | * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+            | * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+            | */
+            |
+        """.trimMargin()
+
+    fun imports(vararg fqns: String) {
+        imports.addAll(fqns)
     }
 
-    fun member(builderAction: StringBuilder.() -> Unit)  {
-        members += StringBuilder().apply(builderAction).toString().trim()
-    }
-
-    fun blankLine() {
-        member("")
-    }
-
-    abstract fun appendTo(stringBuilder: StringBuilder)
-
-    fun build(): String = buildString {
-        appendTo(this)
-    }
-}
-
-class TopLevelBuilder : ScopeBuilder() {
-    override fun appendTo(stringBuilder: StringBuilder) {
-        with (stringBuilder) {
-            if (members.isNotEmpty()) {
-                for (member in members) {
-                    appendIndented("", member)
-                    appendLine()
-                }
-            } else {
-                appendLine()
-            }
-        }
-    }
-}
-
-fun topLevel(annotations: List<String>? = null, pkg: String, imports: List<String>? = null, body: TopLevelBuilder.() -> Unit = {}): String = buildString {
-    annotations?.let {
-        for (annotation in annotations) {
-            appendLine(annotation)
-        }
+    fun render(): String = buildString {
+        append(license)
+        line()
+        append(fileAnnotations.joinToString("\n") { "@file:$it" })
         appendLine()
-    }
-    append("package $pkg")
-    appendLine()
-    imports?.let {
-        for (import in imports) {
-            appendLine("import $import")
-        }
+        appendLine("package $pkg")
         appendLine()
+        if (imports.isNotEmpty()) {
+            imports.forEach { appendLine("import $it") }
+            appendLine()
+        }
+        append(body.target)
     }
-    TopLevelBuilder().apply(body).appendTo(this)
+
+    fun fileAnnotations(annotation: String) {
+        fileAnnotations += annotation
+    }
+
+    fun writeTo(sink: FileSink) = sink.write(pkg, "$name.kt", render())
 }
 
-class MembersBuilder : ScopeBuilder() {
-    override fun appendTo(stringBuilder: StringBuilder) {
-        with (stringBuilder) {
-            if (members.isNotEmpty()) {
-                appendLine(" {")
-                for (member in members) {
-                    appendIndented("    ", member)
-                    appendLine()
-                }
-                appendLine("}")
-            } else {
-                appendLine()
-            }
+class Block internal constructor(
+    private val indent: String,
+    val target: StringBuilder = StringBuilder(),
+) : ScopeBuilder {
+    override fun line(text: String) {
+        if (text.isEmpty()) {
+            target.appendLine()
+            return
+        }
+        text.lineSequence().forEach { l ->
+            if (l.isEmpty()) target.appendLine()
+            else target.appendLine("$indent$l")
         }
     }
 
-    // FIXME remove
-    fun appendSimple(stringBuilder: StringBuilder) {
-        with (stringBuilder) {
-            if (members.isNotEmpty()) {
-                for (member in members) {
-                    appendIndented("", member)
-                }
-            } else {
-                appendLine()
+    override fun raw(text: String) {
+        target.append(text)
+    }
+
+    override fun comment(text: String) {
+        line("// $text")
+    }
+
+    override fun cls(
+        modifiers: List<String>,
+        name: String,
+        typeParams: List<String>,
+        constructor: String?,
+        superclass: String?,
+        superInterfaces: List<String>,
+        block: Block.() -> Unit,
+    ) = braced(classHeader("class", name, modifiers, typeParams, constructor, superclass, superInterfaces), block)
+
+    override fun iface(
+        modifiers: List<String>,
+        name: String,
+        typeParams: List<String>,
+        superInterfaces: List<String>,
+        block: Block.() -> Unit,
+    ) = braced(classHeader("interface", name, modifiers, typeParams, null, null, superInterfaces), block)
+
+    private fun classHeader(
+        keyword: String,
+        name: String,
+        modifiers: List<String>,
+        typeParams: List<String>,
+        constructor: String?,
+        superclass: String?,
+        superInterfaces: List<String>,
+    ): String = buildString {
+        appendModifiers(modifiers)
+        append("$keyword $name")
+        if (typeParams.isNotEmpty()) append("<${typeParams.joinToString(", ")}>")
+        constructor?.let { append(it) }
+        val supers = listOfNotNull(superclass) + superInterfaces
+        if (supers.isNotEmpty()) append(" : ${supers.joinToString(", ")}")
+    }
+
+    override fun method(
+        contextReceivers: List<Pair<String, String>>,
+        modifiers: List<String>,
+        name: String,
+        typeParams: List<String>,
+        receiver: String?,
+        params: List<Pair<String, String>>,
+        returns: String?,
+        expr: String?,
+        block: (Block.() -> Unit)?
+    ) {
+        require(expr == null || block == null) { "fn($name): expr and block are mutually exclusive." }
+        val header = buildString {
+            appendContextReceiver(contextReceivers)
+            appendModifiers(modifiers)
+            append("fun ")
+            if (typeParams.isNotEmpty()) append("<${typeParams.joinToString(", ")}> ")
+            receiver?.let { append("$it.") }
+            append("$name(")
+            append(params.joinToString(", ") { [n, t] -> "$n: $t" })
+            append(")")
+            returns?.let { append(": $it") }
+        }
+        when {
+            block != null -> braced(header, block)
+            expr != null -> line("$header = $expr")
+            else -> line(header)
+        }
+    }
+
+    override fun property(
+        contextReceivers: List<Pair<String, String>>,
+        modifiers: List<String>,
+        name: String,
+        type: String?,
+        receiver: String?,
+        value: String?,
+        delegate: String?,
+        getter: String?,
+        setter: String?
+    ) {
+        val kind = if (setter != null) "var" else "val"
+        val header = buildString {
+            appendContextReceiver(contextReceivers)
+            appendModifiers(modifiers)
+            append("$kind ")
+            receiver?.let { append("$it.") }
+            append(name)
+            type?.let { append(": $it") }
+        }
+        when {
+            value != null -> line("$header = $value")
+            delegate != null -> line("$header by $delegate")
+            getter != null || setter != null -> {
+                line(header)
+                getter?.let { line("    get() = $it") }
+                setter?.let { line("    set(value) $it") }
             }
+            else -> line(header)
+        }
+    }
+
+    private fun StringBuilder.appendModifiers(modifiers: List<String>) {
+        if (modifiers.isNotEmpty()) append(modifiers.joinToString(" ")).append(' ')
+    }
+
+    private fun StringBuilder.appendContextReceiver(list: List<Pair<String, String>>) {
+        if (list.isEmpty()) return
+        append("context(")
+        append(list.joinToString(", ") { [n, t] -> "$n: $t" })
+        append(")\n$indent")
+    }
+
+    override fun companion(block: Block.() -> Unit) = braced("companion object") { block() }
+
+    private fun braced(header: String, block: Block.() -> Unit) {
+        val tempTarget = StringBuilder()
+        Block("$indent    ", tempTarget).apply(block)
+        if (tempTarget.isEmpty()) {
+            target.append("$indent$header")
+        } else {
+            target.appendLine("$indent$header {")
+            target.append(tempTarget)
+            target.appendLine("$indent}")
         }
     }
 }
 
-fun ScopeBuilder.iface(name: String, superInterfaces: List<String>? = null, contentsBuilder: MembersBuilder.() -> Unit = {}) = member {
-    append("interface $name")
-    superInterfaces?.let { append(" : ${it.joinToString()}") }
-    MembersBuilder().apply(contentsBuilder).appendTo(this)
-}
-
-fun renderInterface(name: String, superInterfaces: List<String>? = null, contentsBuilder: MembersBuilder.() -> Unit = {}): String =
-    TopLevelBuilder().apply { iface(name, superInterfaces, contentsBuilder) }.build()
-
-fun ScopeBuilder.cls(modifiers: List<String>? = null, name: String, constr: String? = null, superClass: String? = null, superInterfaces: List<String>? = null, contentsBuilder: MembersBuilder.() -> Unit = {}) = member {
-    modifiers?.let { append(it.joinToString(" ", postfix = " ")) }
-    append("class $name")
-    constr?.let { append(it) }
-    superClass?.let { append(": $it") }
-    superInterfaces?.let {
-        if (superClass == null) append(": ") else append(", ")
-        append(it.joinToString())
-    }
-    MembersBuilder().apply(contentsBuilder).appendTo(this)
-}
-
-fun renderClass(modifiers: List<String>? = null, name: String, constr: String? = null, superClass: String? = null, superInterfaces: List<String>? = null, contentsBuilder: MembersBuilder.() -> Unit = {}): String =
-    TopLevelBuilder().apply { cls(modifiers, name, constr, superClass, superInterfaces, contentsBuilder) }.build()
-
-fun ScopeBuilder.method(
+inline fun writeKotlinFile(
+    sink: FileSink,
+    pkg: String,
     name: String,
-    modifiers: List<String>? = null,
-    params: List<Pair<String, String>> = emptyList(),
-    returnType: String? = null,
-    value: String? = null,
-    body: String? = null,
-    extension: String? = null,
-    context: List<Pair<String, String>>? = null,
+    block: TopLevelBuilder.() -> Unit,
 ) {
-    member {
-        context?.let {
-            appendLine("context(${context.joinToString { [param, type] -> "$param: $type" }})")
-        }
-        modifiers?.let {
-            for (modifier in modifiers) {
-                append("$modifier ")
-            }
-        }
-        append("fun ")
-        extension?.let { append("$it.") }
-        append("$name(")
-        append(params.joinToString { "${it.first}: ${it.second}" })
-        append(")")
-        returnType?.let { append(": $it") }
-        value?.let { append(" = $it") }
-        require(body == null) // TODO
-    }
-
+    TopLevelBuilder(pkg, name).apply(block).writeTo(sink)
 }
-
-fun ScopeBuilder.property(
-    name: String,
-    modifiers: List<String>? = null,
-    type: String? = null,
-    initial: String? = null,
-    getter: String? = null,
-    setter: String? = null,
-    settable: Boolean = setter != null,
-    context: List<Pair<String, String>>? = null,
-) {
-    val kind = if (settable) "var" else "val"
-    member {
-        context?.let {
-            appendLine("context(${context.joinToString { [param, type] -> "$param: $type" }})")
-        }
-        modifiers?.let { append(it.joinToString(" ", postfix = " ")) }
-        append("$kind $name")
-        type?.let{ append(": $it") }
-        initial?.let{ append(" = $it") }
-        appendLine()
-        getter?.let{
-            appendLine("    get() = $it")
-        }
-        setter?.let{
-            appendLine("    set(value) $it")
-        }
-    }
-}
-
-operator fun String.invoke(vararg args: String): String = this(args.toList())
-operator fun String.invoke(args: List<String>? = null): String = "$this(${args?.joinToString() ?: ""})"
-

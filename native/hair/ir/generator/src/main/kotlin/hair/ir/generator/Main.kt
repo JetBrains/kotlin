@@ -1,23 +1,19 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package hair.ir.generator
 
-import hair.ir.generator.toolbox.Generator
+import hair.ir.generator.toolbox.FileSink
+import hair.ir.generator.toolbox.Generators
+import hair.ir.generator.toolbox.SchemaBuilder
+import hair.ir.generator.toolbox.validateControlFlow
 import java.io.File
 
 fun main(args: Array<String>) {
-    val generationPath = File(args.first())
-    val generator = Generator(generationPath)
-
-    generator.generate(Utils)
-    generator.generate(ControlFlow)
-    generator.generate(DataFlow)
-    generator.generate(Arithmetics)
-    generator.generate(Object)
-    generator.generate(Memory)
-    generator.generate(Calls)
-
-    generator.generateArgumentAccessors()
-    generator.generateSession()
-    generator.generateVisitor()
-    generator.generateBuilder()
-    generator.generateCloner()
+    val schema = SchemaBuilder.build(Models.all)
+    schema.validateControlFlow()
+    val sink = FileSink(File(args.first()))
+    Generators.all.forEach { it.generate(schema, sink) }
 }

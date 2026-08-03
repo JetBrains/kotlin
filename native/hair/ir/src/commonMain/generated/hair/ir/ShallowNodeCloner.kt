@@ -1,9 +1,13 @@
-package hair.ir
-import hair.ir.nodes.*
-import hair.sym.*
-import hair.sym.Type.*
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
-class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
+package hair.ir
+
+import hair.ir.nodes.*
+
+class ShallowNodeCloner(val nodeBuilder: NodeBuilder) : NodeVisitor<Node>() {
     override fun visitNode(node: Node): Node = error("Should not reach here $node")
 
     override fun visitUse(node: Use): Use = context(nodeBuilder, NoControlFlowBuilder) { Use(null, null) } as Use
