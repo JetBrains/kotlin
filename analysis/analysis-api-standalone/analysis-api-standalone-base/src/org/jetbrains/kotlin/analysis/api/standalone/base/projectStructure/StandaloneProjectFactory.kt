@@ -288,6 +288,7 @@ object StandaloneProjectFactory {
             ),
             SingleJavaFileRootsIndex(singleJavaFileRoots),
             usePsiClassFilesReading = true,
+            javaModuleFinder = javaModuleFinder,
             perfManager = null, // Don't care about pure compiler performance in Analysis API
         )
 
