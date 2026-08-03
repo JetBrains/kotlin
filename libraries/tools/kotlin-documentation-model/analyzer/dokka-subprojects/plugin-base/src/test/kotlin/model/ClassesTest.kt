@@ -464,6 +464,25 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
     }
 
     @Test
+    fun annotationClassWithVarargParameter() {
+        inlineModelTest(
+            """annotation class Throws(vararg val exceptionClasses: kotlin.reflect.KClass<out Throwable>)"""
+        ) {
+            with((this / "classes" / "Throws").cast<DAnnotation>()) {
+                with(constructors.single()) {
+                    with(parameters.single()) {
+                        name equals "exceptionClasses"
+                        with(extra[AdditionalModifiers]!!.content.entries.single().value.assertNotNull("AdditionalModifiers")) {
+                            this counts 1
+                            first() equals ExtraModifiers.KotlinOnlyModifiers.VarArg
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
     fun genericAnnotationClass() {
         inlineModelTest(
             """annotation class Foo<A,B,C,D:Number>() {}"""
