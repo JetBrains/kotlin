@@ -1,0 +1,14 @@
+package test
+
+public open class ArithmeticExpressionInParam {
+    public constructor ArithmeticExpressionInParam()
+
+    @kotlin.annotation.Retention(value = ...) public final annotation class Anno : kotlin.Annotation {
+        public final val value: kotlin.Int
+            public final fun `<get-value>`(): kotlin.Int
+    }
+
+    @test.ArithmeticExpressionInParam.Anno(value = 42) public open class Class {
+        public constructor Class()
+    }
+}

@@ -1,0 +1,5 @@
+package test
+
+public open class ConstructorWithParentTypeParams</*0*/ T : kotlin.Any!> {
+    public constructor ConstructorWithParentTypeParams</*0*/ T : kotlin.Any!>(/*0*/ T!)
+}

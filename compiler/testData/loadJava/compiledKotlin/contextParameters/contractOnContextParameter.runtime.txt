@@ -1,0 +1,3 @@
+package test
+
+context(kotlin.String?) public fun validate(): kotlin.Unit

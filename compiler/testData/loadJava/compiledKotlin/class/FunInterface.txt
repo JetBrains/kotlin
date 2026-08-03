@@ -1,5 +1,0 @@
-package test
-
-public fun interface F {
-    public abstract fun kotlin.String.f(/*0*/ x: kotlin.Int): kotlin.Unit
-}

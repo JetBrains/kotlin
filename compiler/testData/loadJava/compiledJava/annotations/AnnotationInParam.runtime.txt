@@ -1,0 +1,48 @@
+package test
+
+public interface AnnotationInParam {
+
+    @test.AnnotationInParam.MyAnnotationWithParam(value = test.AnnotationInParam.MyAnnotation(value = "test")) public open class A {
+        public constructor A()
+    }
+
+    @test.AnnotationInParam.MyAnnotationWithParam2(value = test.AnnotationInParam.MyAnnotation2(value = {"test", "test2"})) public open class B {
+        public constructor B()
+    }
+
+    @test.AnnotationInParam.MyAnnotationWithParam3(value = test.AnnotationInParam.MyAnnotation3(first = "f", second = "s")) public open class C {
+        public constructor C()
+    }
+
+    @kotlin.annotation.Retention(value = ...) public final annotation class MyAnnotation : kotlin.Annotation {
+        public final val value: kotlin.String
+            public final fun `<get-value>`(): kotlin.String
+    }
+
+    @kotlin.annotation.Retention(value = ...) public final annotation class MyAnnotation2 : kotlin.Annotation {
+        public final val value: kotlin.Array<kotlin.String>
+            public final fun `<get-value>`(): kotlin.Array<kotlin.String>
+    }
+
+    @kotlin.annotation.Retention(value = ...) public final annotation class MyAnnotation3 : kotlin.Annotation {
+        public final val first: kotlin.String
+            public final fun `<get-first>`(): kotlin.String
+        public final val second: kotlin.String
+            public final fun `<get-second>`(): kotlin.String
+    }
+
+    @kotlin.annotation.Retention(value = ...) public final annotation class MyAnnotationWithParam : kotlin.Annotation {
+        public final val value: test.AnnotationInParam.MyAnnotation
+            public final fun `<get-value>`(): test.AnnotationInParam.MyAnnotation
+    }
+
+    @kotlin.annotation.Retention(value = ...) public final annotation class MyAnnotationWithParam2 : kotlin.Annotation {
+        public final val value: test.AnnotationInParam.MyAnnotation2
+            public final fun `<get-value>`(): test.AnnotationInParam.MyAnnotation2
+    }
+
+    @kotlin.annotation.Retention(value = ...) public final annotation class MyAnnotationWithParam3 : kotlin.Annotation {
+        public final val value: test.AnnotationInParam.MyAnnotation3
+            public final fun `<get-value>`(): test.AnnotationInParam.MyAnnotation3
+    }
+}

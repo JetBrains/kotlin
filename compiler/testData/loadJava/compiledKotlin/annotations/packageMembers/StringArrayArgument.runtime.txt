@@ -1,0 +1,42 @@
+package test
+
+@field:test.Anno(t = {"prosper"}) public val bar: kotlin.Int
+    public fun `<get-bar>`(): kotlin.Int
+@test.Anno(t = {}) @test.Anno2(t = ...) @test.Anno3(t = ...) @test.Anno4(t = {}) @test.Anno5(t = ...) @test.Anno6(t = ...) public fun baz(): kotlin.Unit
+@test.Anno(t = {"live", "long"}) public fun foo(): kotlin.Unit
+
+public final annotation class Anno : kotlin.Annotation {
+    /*primary*/ public constructor Anno(/*0*/ vararg kotlin.String /*kotlin.Array<out kotlin.String>*/)
+    public final val t: kotlin.Array<out kotlin.String>
+        public final fun `<get-t>`(): kotlin.Array<out kotlin.String>
+}
+
+public final annotation class Anno2 : kotlin.Annotation {
+    /*primary*/ public constructor Anno2(/*0*/ vararg kotlin.String /*kotlin.Array<out kotlin.String>*/ = ...)
+    public final val t: kotlin.Array<out kotlin.String>
+        public final fun `<get-t>`(): kotlin.Array<out kotlin.String>
+}
+
+public final annotation class Anno3 : kotlin.Annotation {
+    /*primary*/ public constructor Anno3(/*0*/ vararg kotlin.String /*kotlin.Array<out kotlin.String>*/ = ...)
+    public final val t: kotlin.Array<out kotlin.String>
+        public final fun `<get-t>`(): kotlin.Array<out kotlin.String>
+}
+
+public final annotation class Anno4 : kotlin.Annotation {
+    /*primary*/ public constructor Anno4(/*0*/ vararg kotlin.String /*kotlin.Array<out kotlin.String>*/)
+    public final val t: kotlin.Array<out kotlin.String>
+        public final fun `<get-t>`(): kotlin.Array<out kotlin.String>
+}
+
+public final annotation class Anno5 : kotlin.Annotation {
+    /*primary*/ public constructor Anno5(/*0*/ vararg kotlin.String /*kotlin.Array<out kotlin.String>*/ = ...)
+    public final val t: kotlin.Array<out kotlin.String>
+        public final fun `<get-t>`(): kotlin.Array<out kotlin.String>
+}
+
+public final annotation class Anno6 : kotlin.Annotation {
+    /*primary*/ public constructor Anno6(/*0*/ vararg kotlin.String /*kotlin.Array<out kotlin.String>*/ = ...)
+    public final val t: kotlin.Array<out kotlin.String>
+        public final fun `<get-t>`(): kotlin.Array<out kotlin.String>
+}

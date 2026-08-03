@@ -1,0 +1,14 @@
+package test
+
+public interface EnumInParam {
+
+    @kotlin.annotation.Retention(value = ...) public final annotation class MyRetention : kotlin.Annotation {
+        public final val value: java.lang.annotation.RetentionPolicy
+            public final fun `<get-value>`(): java.lang.annotation.RetentionPolicy
+    }
+
+    @test.EnumInParam.MyRetention(value = RetentionPolicy.RUNTIME) @kotlin.annotation.Retention(value = ...) public final annotation class RetentionAnnotation : kotlin.Annotation {
+        public final val value: kotlin.String
+            public final fun `<get-value>`(): kotlin.String
+    }
+}

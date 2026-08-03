@@ -1,0 +1,33 @@
+package test
+
+public open class AnnotationRetentions {
+    public constructor AnnotationRetentions()
+
+    public final annotation class BaseAnnotation : kotlin.Annotation {
+    }
+
+    public/*package*/ open inner class BaseClass {
+        public/*package*/ constructor BaseClass()
+    }
+
+    @kotlin.annotation.Retention(value = ...) public final annotation class BinaryAnnotation : kotlin.Annotation {
+    }
+
+    public/*package*/ open inner class BinaryClass {
+        public/*package*/ constructor BinaryClass()
+    }
+
+    @kotlin.annotation.Retention(value = ...) public final annotation class RuntimeAnnotation : kotlin.Annotation {
+    }
+
+    @test.AnnotationRetentions.RuntimeAnnotation public/*package*/ open inner class RuntimeClass {
+        public/*package*/ constructor RuntimeClass()
+    }
+
+    @kotlin.annotation.Retention(value = ...) public final annotation class SourceAnnotation : kotlin.Annotation {
+    }
+
+    public/*package*/ open inner class SourceClass {
+        public/*package*/ constructor SourceClass()
+    }
+}

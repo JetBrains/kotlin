@@ -1,0 +1,4 @@
+package test
+
+public fun f(/*0*/ vararg kotlin.String /*kotlin.Array<out kotlin.String>*/, /*1*/ () -> kotlin.Unit): kotlin.Unit
+public fun f(/*0*/ vararg kotlin.Int /*kotlin.IntArray*/, /*1*/ () -> kotlin.Unit): kotlin.Unit
