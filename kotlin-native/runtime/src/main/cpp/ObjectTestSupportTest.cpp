@@ -65,7 +65,11 @@ public:
 };
 
 template <typename TestCase>
-class ObjectTestSupportObjectTest : public testing::Test {};
+class ObjectTestSupportObjectTest : public testing::Test {
+    void TearDown() override {
+        mm::GlobalData::Instance().allocator().clearForTests();
+    }
+};
 using ObjectTestCases = testing::Types<RegularObjectTestCase, IrregularObjectTestCase>;
 TYPED_TEST_SUITE(ObjectTestSupportObjectTest, ObjectTestCases, ObjectTestCaseNames);
 
@@ -282,7 +286,11 @@ public:
 };
 
 template <typename TestCase>
-class ObjectTestSupportArrayTest : public testing::Test {};
+class ObjectTestSupportArrayTest : public testing::Test {
+    void TearDown() override {
+        mm::GlobalData::Instance().allocator().clearForTests();
+    }
+};
 using ArrayTestCases = testing::Types<
         ArrayTestCase<mm::RefField, 0>,
         ArrayTestCase<mm::RefField, 3>,

@@ -12,9 +12,9 @@ extern "C" void Kotlin_TestSupport_AssertClearGlobalState();
 
 namespace {
 
-class GlobalStateChecker : public testing::Environment {
+class GlobalStateChecker : public testing::EmptyTestEventListener {
 public:
-    void TearDown() override { Kotlin_TestSupport_AssertClearGlobalState(); }
+    void OnTestSuiteEnd(const testing::TestSuite&) override { Kotlin_TestSupport_AssertClearGlobalState(); }
 };
 
 } // namespace
@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
     testing::FLAGS_gtest_death_test_style="threadsafe";
 
     // Googletest takes ownership of the registered environment object.
-    testing::AddGlobalTestEnvironment(new GlobalStateChecker());
+    testing::UnitTest::GetInstance()->listeners().Append(new GlobalStateChecker());
 
     kotlin::initializeGlobalRuntimeIfNeeded();
 
