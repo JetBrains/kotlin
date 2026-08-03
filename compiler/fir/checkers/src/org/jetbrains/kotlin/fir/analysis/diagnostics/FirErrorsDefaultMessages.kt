@@ -294,6 +294,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_BOUND_MI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_BOUND_MISMATCH_ON_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_BOUND_NOT_SUPERTYPE_OF_CONTAINING_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_FROM_JAVA_RESOLUTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_IN_CONTRACT_DESCRIPTION
@@ -1592,6 +1593,14 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             EQUALITY_BOUND_NOT_SUPERTYPE_OF_CONTAINING_CLASS,
             "Equality bound must be a supertype of the type ''{0}'' it is declared for.",
             RENDER_TYPE,
+        )
+        map.put(
+            EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS,
+            "Equality operator is not applicable: {2} ''{0}'' and {3} ''{1}'' are incompatible.",
+            RENDER_TYPE,
+            RENDER_TYPE,
+            TO_STRING,
+            TO_STRING,
         )
 
         // OptIn

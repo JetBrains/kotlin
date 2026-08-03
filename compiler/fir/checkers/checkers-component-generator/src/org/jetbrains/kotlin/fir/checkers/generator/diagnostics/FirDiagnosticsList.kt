@@ -558,6 +558,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val EQUALITY_BOUND_NOT_SUPERTYPE_OF_CONTAINING_CLASS by error<KtExpression> {
             parameter<ConeKotlinType>("receiverType")
         }
+        val EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS by warning<KtExpression> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+            parameter<String>("leftIsEqualityBound")
+            parameter<String>("rightIsEqualityBound")
+        }
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {

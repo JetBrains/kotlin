@@ -13,12 +13,14 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.analysis.checkers.firPlatformSpecificEqualityChecker
+import org.jetbrains.kotlin.fir.declarations.calculateEqualityBoundType
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
@@ -97,6 +99,19 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
 
         return when {
             (oneIsBuiltin || oneIsIdentityLess) && shouldReportAsPerRules1(l, r) -> getInapplicabilityFor(l, r)
+            else -> checkEqualityApplicabilityByEqualityBounds(l, r)
+        }
+    }
+
+    context(context: CheckerContext)
+    private fun checkEqualityApplicabilityByEqualityBounds(l: TypeInfo, r: TypeInfo): Applicability {
+        if (LanguageFeature.StrictEquals.isDisabled()) return Applicability.APPLICABLE
+        fun TypeInfo.toBoundTypeInfo(): TypeInfo {
+            return (type.calculateEqualityBoundType() ?: StandardTypes.NullableAny).toTypeInfo(context.session)
+        }
+        return when {
+            shouldReportAsPerRules1(l.toBoundTypeInfo(), r) -> Applicability.INAPPLICABLE_BY_EQUALITY_BOUNDS_STRONG_LEFT
+            shouldReportAsPerRules1(l, r.toBoundTypeInfo()) -> Applicability.INAPPLICABLE_BY_EQUALITY_BOUNDS_STRONG_RIGHT
             else -> Applicability.APPLICABLE
         }
     }
@@ -138,6 +153,16 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         GENERALLY_INAPPLICABLE,
         INAPPLICABLE_AS_ENUMS,
         INAPPLICABLE_AS_IDENTITY_LESS,
+
+        /**
+         * `RHS` and `EB(LHS)` are incompatible
+         */
+        INAPPLICABLE_BY_EQUALITY_BOUNDS_STRONG_LEFT,
+
+        /**
+         * `LHS` and `EB(RHS)` are incompatible
+         */
+        INAPPLICABLE_BY_EQUALITY_BOUNDS_STRONG_RIGHT,
     }
 
     inline fun Applicability.ifInapplicable(block: (Applicability) -> Unit) {
@@ -223,8 +248,8 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         r: TypeInfo,
         lUserType: ConeKotlinType,
         rUserType: ConeKotlinType,
-    ): Unit = when {
-        applicability == Applicability.INAPPLICABLE_AS_IDENTITY_LESS -> reportOn(
+    ): Unit = when (applicability) {
+        Applicability.INAPPLICABLE_AS_IDENTITY_LESS -> reportOn(
             expression.source,
             getIdentityLessInapplicabilityDiagnostic(
                 l,
@@ -234,26 +259,44 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
             lUserType,
             rUserType
         )
-        applicability == Applicability.INAPPLICABLE_AS_ENUMS -> reportOn(
+        Applicability.INAPPLICABLE_AS_ENUMS -> reportOn(
             expression.source,
             getEnumInapplicabilityDiagnostic(l, r, forceWarning),
             lUserType,
             rUserType
         )
+        Applicability.INAPPLICABLE_BY_EQUALITY_BOUNDS_STRONG_LEFT -> reportOn(
+            expression.source,
+            // currently, always a warning
+            FirErrors.EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS,
+            lUserType.calculateEqualityBoundType() ?: StandardTypes.NullableAny,
+            rUserType,
+            "equality bound type of left-hand side",
+            "type of right-hand side",
+        )
+        Applicability.INAPPLICABLE_BY_EQUALITY_BOUNDS_STRONG_RIGHT -> reportOn(
+            expression.source,
+            // currently, always a warning
+            FirErrors.EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS,
+            lUserType,
+            rUserType.calculateEqualityBoundType() ?: StandardTypes.NullableAny,
+            "type of left-hand side",
+            "equality bound type of right-hand side",
+        )
         // This check ensures K2 reports the same diagnostics as K1 used to.
-        expression.source?.kind !is KtRealSourceElementKind -> reportOn(
+        else if (expression.source?.kind !is KtRealSourceElementKind) -> reportOn(
             expression.source,
             getSourceLessInapplicabilityDiagnostic(forceWarning),
             lUserType,
             rUserType
         )
-        applicability == Applicability.GENERALLY_INAPPLICABLE -> reportOn(
+        Applicability.GENERALLY_INAPPLICABLE -> reportOn(
             expression.source,
             getGeneralInapplicabilityDiagnostic(forceWarning),
             operation.operator,
             lUserType, rUserType
         )
-        else -> error("Shouldn't be here")
+        Applicability.APPLICABLE -> error("Shouldn't be here")
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

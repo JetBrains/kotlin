@@ -1538,6 +1538,15 @@ internal class EqualityBoundNotSupertypeOfContainingClassImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.EqualityBoundNotSupertypeOfContainingClass
 
+internal class EqualityNotApplicableByEqualityBoundsImpl(
+    override val leftType: KaType,
+    override val rightType: KaType,
+    override val leftIsEqualityBound: String,
+    override val rightIsEqualityBound: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.EqualityNotApplicableByEqualityBounds
+
 internal class OptInUsageImpl(
     override val optInMarkerClassId: ClassId,
     override val message: String,

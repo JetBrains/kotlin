@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76548
+// LANGUAGE: +StrictEquals
 
 sealed class MySealed {
     data object X : MySealed() {}
@@ -14,9 +15,9 @@ fun <T : MySealed> foo(a: T) {
     val L = MySealed.X
 
     if (a == X) {}
-    if (a == Y) {}
+    if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>a == Y<!>) {}
     if (a != X) {}
-    if (a != Y) {}
+    if (<!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>a != Y<!>) {}
     if (a === X) {}
     if (<!EQUALITY_NOT_APPLICABLE!>a === Y<!>) {}
     if (a !== X) {}
@@ -37,7 +38,7 @@ fun <T : MySealed> foo(a: T) {
 
     when {
         a == X -> {}
-        a != Y -> {}
+        <!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>a != Y<!> -> {}
     }
 
     when {
@@ -50,13 +51,13 @@ fun <T : MySealed> foo(a: T) {
 
     when (a) {
         X -> {}
-        Y, L -> {}
+        <!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>Y<!>, L -> {}
         is Derived -> {}
     }
 
     when (val c = a) {
         X -> {}
-        Y, L -> {}
+        <!EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS!>Y<!>, L -> {}
         is Derived -> {}
     }
 
