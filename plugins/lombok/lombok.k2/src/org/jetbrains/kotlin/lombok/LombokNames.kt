@@ -138,6 +138,14 @@ object LombokNames {
         "ImmutableTable",
     ).guavaPackage()
 
+    val IMMUTABLE_COLLECTION_ID = ClassId.topLevel(FqName("ImmutableCollection".guavaPackage()))
+    val IMMUTABLE_LIST_ID = ClassId.topLevel(FqName("ImmutableList".guavaPackage()))
+    val IMMUTABLE_SET_ID = ClassId.topLevel(FqName("ImmutableSet".guavaPackage()))
+    val IMMUTABLE_SORTED_SET_ID = ClassId.topLevel(FqName("ImmutableSortedSet".guavaPackage()))
+    val IMMUTABLE_MAP_ID = ClassId.topLevel(FqName("ImmutableMap".guavaPackage()))
+    val IMMUTABLE_BI_MAP_ID = ClassId.topLevel(FqName("ImmutableBiMap".guavaPackage()))
+    val IMMUTABLE_SORTED_MAP_ID = ClassId.topLevel(FqName("ImmutableSortedMap".guavaPackage()))
+
     // Such ugly function is needed because shade plugin shades any name starting with com.google
     //   which causes shading even from string literals
     private fun Collection<String>.guavaPackage(): Set<String> {
