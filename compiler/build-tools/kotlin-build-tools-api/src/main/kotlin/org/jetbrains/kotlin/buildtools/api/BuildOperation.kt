@@ -71,6 +71,15 @@ public interface BuildOperation<R> {
         @JvmField
         public val METRICS_COLLECTOR: Option<BuildMetricsCollector?> = Option("METRICS_COLLECTOR", KotlinReleaseVersion(2, 3, 0))
 
+        /**
+         * Whether to enable caching of classloaders used for loading compiler plugins and annotation processors between build sessions.
+         *
+         * Additionally, the size of the classloader cache can be controlled by setting the "kotlin.buildtools.classloaders.cache.size"
+         * system property *before* calling the [KotlinToolchains.loadImplementation] method. The default number of entries in the cache is 10.
+         */
+        @JvmField
+        public val ENABLE_CLASSLOADER_CACHE: Option<Boolean> = Option("ENABLE_CLASSLOADER_CACHE", KotlinReleaseVersion(2, 5, 0))
+
         @Deprecated("Internal use only for the migration period. Will be removed soon.", level = DeprecationLevel.ERROR)
         public fun <V> createCustomOption(id: String): Option<V> = Option(id, KotlinReleaseVersion(1, 0, 0))
     }
