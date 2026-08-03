@@ -211,7 +211,7 @@ private suspend fun evaluateInRepl(
     snippets: List<RunRequest>,
     lineCounter: AtomicInteger
 ): List<ResultWithDiagnostics<ActualResult>> {
-    @Suppress("DEPRECATION_ERROR")
+    @Suppress("DEPRECATION")
     val compiler = KJvmReplCompilerWithIdeServices()
     return snippets.map { runRequest ->
         with(runRequest) {
