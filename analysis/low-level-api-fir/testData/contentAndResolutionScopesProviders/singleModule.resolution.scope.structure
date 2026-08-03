@@ -3,16 +3,11 @@ Module MAIN:
 UnionScope
     IntersectionScope
         KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
+        UnionScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
     IntersectionScope
         NotScope
             FilesScope

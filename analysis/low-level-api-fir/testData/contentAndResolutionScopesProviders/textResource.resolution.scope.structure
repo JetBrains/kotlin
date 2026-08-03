@@ -3,21 +3,15 @@ Module LIBRARY:
 UnionScope
     IntersectionScope
         KaFirJvmLibraryRestrictionScope
-        NotScope
-            EmptyScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
+        UnionScope
+            IntersectionScope
+                NotScope
+                    EmptyScope
+                ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
     KotlinBuiltinsFileScope
         FilesScope
             files:
@@ -38,21 +32,15 @@ UnionScope
             EmptyScope
     IntersectionScope
         KaFirJvmLibraryRestrictionScope
-        NotScope
-            EmptyScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
+        UnionScope
+            IntersectionScope
+                NotScope
+                    EmptyScope
+                ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
     KotlinBuiltinsFileScope
         FilesScope
             files:

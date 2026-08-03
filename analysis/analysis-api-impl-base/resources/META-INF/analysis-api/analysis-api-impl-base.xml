@@ -165,6 +165,15 @@
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
     <kotlinContentScopeRefiner implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaResolveExtensionToContentScopeRefinerBridge"/>
+    <kotlinGlobalSearchScopeMergeStrategy
+        implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinUnionScopeMergeStrategy"
+        order="first"/>
+
+    <!-- We merge intersection scopes right after flattening union scopes. This allows the merger to profit from nested union scopes being
+         flattened (which may contain intersection scopes), while also cutting down on the number of scopes passed to later mergers. -->
+    <kotlinGlobalSearchScopeMergeStrategy
+        implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinIntersectionScopeMergeStrategy"
+        order="first"/>
     <kotlinGlobalSearchScopeMergeStrategy implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinResolveExtensionGeneratedFileScopeMergeStrategy"/>
   </extensions>
 </idea-plugin>

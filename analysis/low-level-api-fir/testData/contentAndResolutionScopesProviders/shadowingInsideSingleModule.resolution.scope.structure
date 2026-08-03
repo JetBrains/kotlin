@@ -14,16 +14,11 @@ UnionScope
                     c.kt
     IntersectionScope
         KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
+        UnionScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
     KotlinBuiltinsFileScope
         FilesScope
             files:

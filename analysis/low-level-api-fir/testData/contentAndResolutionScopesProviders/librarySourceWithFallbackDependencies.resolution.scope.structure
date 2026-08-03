@@ -3,23 +3,17 @@ Module LIBRARY:
 UnionScope
     IntersectionScope
         KaFirJvmLibraryRestrictionScope
-        NotScope
-            FileScope: b.class
         UnionScope
-            FileScope: x.class
+            IntersectionScope
+                NotScope
+                    FileScope: b.class
+                UnionScope
+                    FileScope: x.class
+                    ParentTraversalLibrarySearchScope
             ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
     KotlinBuiltinsFileScope
         FilesScope
             files:
@@ -35,14 +29,6 @@ UnionScope
 Module MAIN:
 UnionScope
     IntersectionScope
-        BinaryOnlyScope
-        CoreLibrariesScope
-        KaFirJvmLibraryRestrictionScope
-        NotScope
-            IntersectionScope
-                KaFirJvmLibraryRestrictionScope
-                ParentTraversalLibrarySearchScope
-    IntersectionScope
         FilesScope
             files:
                 MANIFEST.MF
@@ -51,7 +37,15 @@ UnionScope
             EmptyScope
     IntersectionScope
         KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
+        UnionScope
+            IntersectionScope
+                BinaryOnlyScope
+                CoreLibrariesScope
+                NotScope
+                    IntersectionScope
+                        KaFirJvmLibraryRestrictionScope
+                        ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
     KotlinBuiltinsFileScope
         FilesScope
             files:
