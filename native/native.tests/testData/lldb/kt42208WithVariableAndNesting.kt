@@ -1,6 +1,8 @@
 // KIND: STANDALONE_LLDB
 // FREE_COMPILER_ARGS: -Xklib-ir-inliner=disabled
-
+// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
+// INPUT_DATA_FILE: kt42208WithVariableAndNesting.in
+// OUTPUT_DATA_FILE: kt42208WithVariableAndNesting.out
 
 
 // FILE: kt42208-1.kt

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
 import com.intellij.openapi.util.SystemInfo
-import com.intellij.openapi.util.text.StringUtilRt
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -19,16 +18,16 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBTestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestReport
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.utils.yieldIfNotNull
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.junit.jupiter.api.Assumptions
-import org.opentest4j.AssertionFailedError
 import org.opentest4j.TestAbortedException
-import org.opentest4j.ValueWrapper
 import java.io.File
 import kotlin.time.Duration
 
@@ -38,7 +37,12 @@ sealed interface TestRunCheck {
 
     sealed interface Result {
         data object Passed : Result
-        data class Failed(val reason: String, val cause: Throwable? = null) : Result {
+        data class Failed(
+            val reason: String,
+            val cause: Throwable? = null,
+            val expectedFile: File? = null,
+            val actual: String? = null,
+        ) : Result {
             override fun toString(): String = reason
         }
     }
@@ -101,11 +105,10 @@ sealed interface TestRunCheck {
 
     class OutputDataFile(val output: Output = Output.ALL, val file: File) : TestRunCheck {
         override fun apply(testRun: TestRun, runResult: RunResult): Result {
-            val expectedOutput = file.readText()
             val actualFilteredOutput = runResult.processOutputAsString(output)
-
-            return if (StringUtilRt.convertLineSeparators(expectedOutput) != StringUtilRt.convertLineSeparators(actualFilteredOutput))
-                Result.Failed("Tested process output mismatch. See \"TEST STDOUT\" and \"EXPECTED OUTPUT DATA FILE\" below.")
+            val match = JUnit5Assertions.doesEqualToFile(file, actualFilteredOutput)
+            return if (!match)
+                Result.Failed("Tested process output mismatch.", expectedFile = file, actual = actualFilteredOutput)
             else Result.Passed
         }
     }
@@ -128,7 +131,7 @@ sealed interface TestRunCheck {
 
     class TestFiltering(val testOutputFilter: TestOutputFilter) : TestRunCheck {
         override fun apply(testRun: TestRun, runResult: RunResult): Result {
-            if (testOutputFilter != TestOutputFilter.NO_FILTERING) {
+            if (testOutputFilter != TestOutputFilter.NO_FILTERING && testOutputFilter != LLDBTestOutputFilter) {
                 val testReport = runResult.processOutput.stdOut.testReport
 
                 checkNotNull(testReport) { "TestRun has TestFiltering enabled, but test report is null" }

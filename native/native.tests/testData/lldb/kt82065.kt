@@ -1,6 +1,8 @@
 // ISSUE: KT-82065
 // KIND: STANDALONE_LLDB
 // FREE_COMPILER_ARGS: -Xklib-ir-inliner=full
+// INPUT_DATA_FILE: kt82065.in
+// OUTPUT_DATA_FILE: kt82065.out
 
 // FILE: lib.kt
 inline fun foo(a: Int = 1) = a + 1

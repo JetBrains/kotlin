@@ -1,7 +1,11 @@
 // KIND: STANDALONE_LLDB
 // FREE_COMPILER_ARGS: -Xbinary=enableDebugTransparentStepping=false
-
+// INPUT_DATA_FILE: kt61131.in
+// OUTPUT_DATA_FILE: kt61131.out
 // FILE: kt61131-1.kt
+
+
+
 class FooImpl : Foo {
     override fun bar() = "zzz"
 }
@@ -17,6 +21,9 @@ fun main() {
 }
 
 // FILE: kt61131-2.kt
+
+
+
 interface Foo {
     fun bar(): String
 }

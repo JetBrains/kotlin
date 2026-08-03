@@ -1,0 +1,53 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) settings set stop-disassembly-display never
+(lldb) command script import <path to lldb script>
+(lldb) b main.kt:9
+Breakpoint 1: where = lldb_canStepThroughCode.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + <breakpoint offset> at main.kt:9:13, address = <memory address>
+(lldb) r
+Process <process id> launched: <path to executable>
+Process <process id> stopped
+* thread #<thread id>, stop reason = breakpoint 1.1
+    frame #0: <frame pc> lldb_canStepThroughCode.kexe`kfun:#main(args=[]){} at main.kt:9:13
+   6
+   7
+   8   	fun main(args: Array<String>) {
+-> 9   	    var x = 1
+    	            ^
+   10  	    var y = 2
+   11  	    var z = x + y
+   12  	    println(z)
+(lldb) n
+Process <process id> stopped
+* thread #<thread id>, stop reason = step over
+    frame #0: <frame pc> lldb_canStepThroughCode.kexe`kfun:#main(args=[]){} at main.kt:10:13
+   7
+   8   	fun main(args: Array<String>) {
+   9   	    var x = 1
+-> 10  	    var y = 2
+    	            ^
+   11  	    var z = x + y
+   12  	    println(z)
+   13  	}
+(lldb) n
+Process <process id> stopped
+* thread #<thread id>, stop reason = step over
+    frame #0: <frame pc> lldb_canStepThroughCode.kexe`kfun:#main(args=[]){} at main.kt:11:13
+   8   	fun main(args: Array<String>) {
+   9   	    var x = 1
+   10  	    var y = 2
+-> 11  	    var z = x + y
+    	            ^
+   12  	    println(z)
+   13  	}
+(lldb) n
+Process <process id> stopped
+* thread #<thread id>, stop reason = step over
+    frame #0: <frame pc> lldb_canStepThroughCode.kexe`kfun:#main(args=[]){} at main.kt:12:13
+   9   	    var x = 1
+   10  	    var y = 2
+   11  	    var z = x + y
+-> 12  	    println(z)
+    	            ^
+   13  	}
+(lldb) q

@@ -1,0 +1,42 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) settings set stop-disassembly-display never
+(lldb) command script import <path to lldb script>
+(lldb) b main.kt:12
+Breakpoint 1: where = lldb_canInspectCatchParameter.kexe`kfun:#main(){} + <breakpoint offset> at main.kt:12:17, address = <memory address>
+(lldb) r
+Process <process id> launched: <path to executable>
+Process <process id> stopped
+* thread #<thread id>, stop reason = breakpoint 1.1
+    frame #0: <frame pc> lldb_canInspectCatchParameter.kexe`kfun:#main(){} at main.kt:12:17
+   9   	    try {
+   10  	        throw Exception("message 1")
+   11  	    } catch (e1: Throwable) {
+-> 12  	        println(e1.message)
+    	                ^
+   13  	    }
+   14
+   15  	    try {
+(lldb) fr var
+(ObjHeader *) e1 = kotlin.Exception: message 1
+(ObjHeader *) e2 = NULL
+(lldb) b main.kt:16
+Breakpoint 2: where = lldb_canInspectCatchParameter.kexe`kfun:#main(){} + <breakpoint offset> at main.kt:16:9, address = <memory address>
+(lldb) c
+message 1
+Process <process id> resuming
+Process <process id> stopped
+* thread #<thread id>, stop reason = breakpoint 2.1
+    frame #0: <frame pc> lldb_canInspectCatchParameter.kexe`kfun:#main(){} at main.kt:16:9
+   13  	    }
+   14
+   15  	    try {
+-> 16  	        throwError()
+    	        ^
+   17  	    } catch (e2: Throwable) {
+   18  	        println(e2.message)
+   19  	    }
+(lldb) fr var
+(ObjHeader *) e1 = kotlin.Exception: message 1
+(ObjHeader *) e2 = NULL
+(lldb) q

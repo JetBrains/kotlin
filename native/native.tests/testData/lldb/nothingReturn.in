@@ -1,0 +1,4 @@
+b main.kt:9
+r
+get_native_func_type kfun:#test(){}kotlin.Nothing
+q
