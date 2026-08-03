@@ -313,7 +313,10 @@ tasks {
     }
 
     testLifecycleTask("wasmFirCompilerTest") {
-        dependsOn(":wasm:wasm.tests:test")
+        dependsOn(":wasm:wasm.tests:wasmJsTest")
+        dependsOn(":wasm:wasm.tests:wasmWasiTest")
+        dependsOn(":wasm:wasm.tests:wasmIcTest")
+        dependsOn(":wasm:wasm.tests:wasmMiscTest")
         // Windows WABT release requires Visual C++ Redistributable
         if (!kotlinBuildProperties.isTeamcityBuild.get() || !org.gradle.internal.os.OperatingSystem.current().isWindows) {
             dependsOn(":wasm:wasm.ir:test")

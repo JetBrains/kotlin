@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmLocalVariableDebugRunner
-import org.jetbrains.kotlin.wasm.test.handlers.WasmStackSwitchingRunner
 import org.jetbrains.kotlin.wasm.test.providers.WasmJsSteppingTestAdditionalSourceProvider
 import org.jetbrains.kotlin.wasm.test.utils.configureIgnoredTestSuppressor
 
@@ -102,6 +101,7 @@ abstract class AbstractFirWasmTest(
     }
 }
 
+@WasmJsTest
 open class AbstractFirWasmJsTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,

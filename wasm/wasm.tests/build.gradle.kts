@@ -348,7 +348,12 @@ projectTests {
         generateTestsInBuildDirectory = true,
     )
 
-    fun wasmProjectTest(taskName: String, skipInLocalBuild: Boolean = false, body: Test.() -> Unit = {}) {
+    fun wasmProjectTest(
+        taskName: String,
+        tags: String? = null,
+        skipInLocalBuild: Boolean = false,
+        body: Test.() -> Unit = {},
+    ) {
         testTask(
             taskName = taskName,
             skipInLocalBuild = skipInLocalBuild,
@@ -376,7 +381,10 @@ projectTests {
             setupSpiderMonkey()
             setupWasmEdge()
             setupJsc()
-            useJUnitPlatform()
+            // Note: arbitrary JUnit tag expressions can be used here.
+            useJUnitPlatform {
+                tags?.let { includeTags(it) }
+            }
             setupGradlePropertiesForwarding()
             addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
             addAbsoluteDirectoryProperty(node.nodeProjectDir, "kotlin.wasm.test.node.dir")
@@ -385,18 +393,49 @@ projectTests {
         }
     }
 
+    // The tags are declared in testFixtures/org/jetbrains/kotlin/wasm/test/WasmTestGroups.kt
+    val icTag = "wasmIc"
+    val jsTag = "wasmJs"
+    val wasiTag = "wasmWasi"
+    val extraTag = "wasmFirCompilerExtra"
+
     // Test everything
     wasmProjectTest("test") {
-        include("**/*.class")
-        exclude("**/*SingleModule*TestGenerated.class")
-        exclude("**/*MultiModule*TestGenerated.class")
         smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
     }
 
-    wasmProjectTest("wasmFirCompilerExtraTest") {
-        include("**/*SingleModule*TestGenerated.class")
-        include("**/*MultiModule*TestGenerated.class")
-    }
+    // The five tasks below split the content of the `test` task into disjoint groups.
+    // Tests without any of the group tags are run by the `wasmMiscTest` task.
+    // The `wasmFirCompilerExtraTest` task is excluded from aggregate `wasmFirCompilerTest` task.
+    wasmProjectTest(
+        taskName = "wasmFirCompilerExtraTest",
+        tags = extraTag,
+        skipInLocalBuild = true
+    )
+
+    wasmProjectTest(
+        taskName = "wasmJsTest",
+        tags = "$jsTag & !$extraTag",
+        skipInLocalBuild = true
+    )
+
+    wasmProjectTest(
+        taskName = "wasmWasiTest",
+        tags = "$wasiTag & !$extraTag",
+        skipInLocalBuild = true
+    )
+
+    wasmProjectTest(
+        taskName = "wasmIcTest",
+        tags = "$icTag & !$extraTag",
+        skipInLocalBuild = true
+    )
+
+    wasmProjectTest(
+        taskName = "wasmMiscTest",
+        tags = "!$icTag & !$jsTag & !$wasiTag & !$extraTag",
+        skipInLocalBuild = true,
+    )
 
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/codegen")

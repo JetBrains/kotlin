@@ -32,6 +32,8 @@ import java.io.PrintStream
 import kotlin.io.path.createTempDirectory
 
 abstract class AbstractWasmPartialLinkageNoICTestCase : AbstractWasmPartialLinkageTestCase(CompilerType.NO_IC)
+
+@WasmIcTest
 abstract class AbstractWasmPartialLinkageWithICTestCase : AbstractWasmPartialLinkageTestCase(CompilerType.WITH_IC)
 
 abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: CompilerType) {
