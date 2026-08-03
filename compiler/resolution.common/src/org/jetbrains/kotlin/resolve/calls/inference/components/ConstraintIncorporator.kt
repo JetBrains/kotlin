@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorCachesPerConfiguration
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
-import org.jetbrains.kotlin.types.model.contains
-import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.SmartSet
 import java.util.*
 
@@ -37,6 +35,9 @@ class ConstraintIncorporator(
 
     private val enhancementOfSecondIncorporationKindEnabled =
         languageVersionSettings.supportsFeature(LanguageFeature.EnhancementsOfSecondIncorporationKind25)
+
+    private val secondIncorporationKindRestrictedToFixation =
+        languageVersionSettings.supportsFeature(LanguageFeature.EliminateSecondKindIncorporation)
 
     interface Context : TypeSystemInferenceExtensionContext {
         val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
@@ -166,6 +167,15 @@ class ConstraintIncorporator(
         constraint: Constraint,
         isCausedByFixation: Boolean,
     ) {
+        // With this feature, the second incorporation kind runs only for (semi-)fixation-caused constraints
+        // (see the `isCausedByFixation` computation in ConstraintInjector): the (semi-)fixed result is substituted
+        // into all constraints containing the variable. Eager runs are unnecessary because whatever they would derive is
+        // re-derived at fixation time, while the fixation order impact is modeled by
+        // [AbstractVariableReadinessCalculator.hasDependencyToOtherTypeVariablesViaSecondKindIncorporation],
+        // and readers of not-yet-derived constraints emulate the substitution themselves
+        // (see `FirDeclarationsResolveTransformer.findResultTypeForInnerVariableIfNeeded`) (KT-86022).
+        if (secondIncorporationKindRestrictedToFixation && !isCausedByFixation) return
+
         if (typeVariable in constraint.derivedFrom) return
         val freshTypeConstructor = typeVariable.freshTypeConstructor()
         for (storageForOtherVariable in c.getVariablesWithConstraintsContainingGivenTypeVariable(freshTypeConstructor)) {
