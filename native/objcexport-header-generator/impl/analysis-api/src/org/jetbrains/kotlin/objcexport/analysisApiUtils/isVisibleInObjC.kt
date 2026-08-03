@@ -38,6 +38,8 @@ internal fun KaSession.isVisibleInObjC(symbol: KaCallableSymbol): Boolean {
     if (isHiddenFromObjCByAnnotation(symbol)) return false
     if (isSealedClassConstructor(symbol)) return false
     if (isComponentNMethod(symbol) && !symbol.directlyOverriddenSymbols.any()) return false
+    @OptIn(KaExperimentalApi::class)
+    if (symbol.isCompanion) return false
     return true
 }
 

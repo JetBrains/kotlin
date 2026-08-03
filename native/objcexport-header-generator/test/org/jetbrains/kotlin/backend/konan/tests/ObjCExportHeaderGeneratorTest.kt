@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.tests
 
 import org.jetbrains.kotlin.backend.konan.testUtils.HeaderGenerator
 import org.jetbrains.kotlin.backend.konan.testUtils.HeaderGenerator.Configuration
+import org.jetbrains.kotlin.backend.konan.testUtils.IgnoreK1
 import org.jetbrains.kotlin.backend.konan.testUtils.TodoAnalysisApi
 import org.jetbrains.kotlin.backend.konan.testUtils.headersTestDataDir
 import org.jetbrains.kotlin.test.TestDataAssertions
@@ -301,6 +302,12 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     @Test
     fun `test - companion`() {
         doTest(headersTestDataDir.resolve("companion"))
+    }
+
+    @Test
+    @IgnoreK1 // The corresponding checks work only for descriptors built from klibs, not from the sources. See KT-87794
+    fun `test - companion blocks and extensions`() {
+        doTest(headersTestDataDir.resolve("companionBlocksAndExtensions"))
     }
 
     @Test
