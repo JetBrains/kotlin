@@ -192,7 +192,7 @@ class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBack
         if (hasSuperClass && declaration.isInner) {
             declaration.markAsNeedsBoxParameter()
         } else if (
-            hasSuperClass && (declaration.isOriginallyLocal || declaration.isFullValueClass) && declaration.containsCapturedValues()
+            (declaration.isFullValueClass || hasSuperClass && declaration.isOriginallyLocal) && declaration.containsCapturedValues()
         ) {
             declaration.markAsNeedsBoxParameter()
         }
@@ -201,7 +201,7 @@ class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBack
     }
 
     private fun IrClass.containsCapturedValues(): Boolean {
-        if (superClass == null) return false
+        if (superClass == null && !isFullValueClass) return false
 
         declarations
             .filterIsInstanceAnd<IrFunction> { it.isEs6ConstructorReplacement }
