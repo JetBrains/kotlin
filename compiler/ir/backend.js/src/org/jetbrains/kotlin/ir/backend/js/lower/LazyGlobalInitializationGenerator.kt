@@ -79,7 +79,7 @@ abstract class LazyGlobalInitializationGenerator {
             returnType = backendContext.irBuiltIns.unitType
         }
         return initFunction.apply {
-            val builder = backendContext.createIrBuilder(symbol, SYNTHETIC_OFFSET)
+            val builder = backendContext.createIrBuilder(symbol)
             body = backendContext.irFactory.createBlockBody(startOffset, endOffset) {
                 with(builder) {
                     val stateCheck = generateStaticInitializationStateCheck(irGetField(null, stateField), klass)
