@@ -56,7 +56,7 @@ class CacheBuilder(
 
     private val allKlibs by lazy { CachedKlibs(config.resolvedLibraries.getFullList()) }
 
-    private val uniqueNameToLibrary by lazy { allKlibs.allLibraries.associateBy { it.uniqueName } }
+    private val uniqueNameToLibrary by lazy { allKlibs.librariesReverseTopoSorted.associateBy { it.uniqueName } }
     private val uniqueNameToHash = mutableMapOf<String, FingerprintHash>()
 
     private val caches = mutableMapOf<KotlinLibrary, CachedLibraries.Cache>()
@@ -139,7 +139,7 @@ class CacheBuilder(
         val icedLibraries = mutableListOf<KotlinLibrary>()
         val lastRebuiltArchives = mutableListOf<Path>()
 
-        allKlibs.allLibraries.forEach { library ->
+        allKlibs.librariesReverseTopoSorted.forEach { library ->
             // For MinGW target avoid compiling caches for anything except stdlib.
             if (config.target == KonanTarget.MINGW_X64 && !library.isNativeStdlib) {
                 return@forEach

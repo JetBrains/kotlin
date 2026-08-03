@@ -75,7 +75,7 @@ class CacheSupport(
     private val allKlibs by lazy { CachedKlibs(resolvedLibraries.getFullList()) }
 
     // TODO: consider using [FeaturedLibraries.kt].
-    private val pathToLibrary = allKlibs.allLibraries.associateBy { it.path }
+    private val pathToLibrary = allKlibs.librariesReverseTopoSorted.associateBy { it.path }
 
     private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!
             .map {
@@ -144,7 +144,7 @@ class CacheSupport(
             pathToLibrary[path] ?: error("library to cache\n" +
                     "  ${path.absolutePathString()}\n" +
                     "not found among resolved libraries:\n  " +
-                    allKlibs.allLibraries.joinToString("\n  ") { it.path.absolutePathString() })
+                    allKlibs.librariesReverseTopoSorted.joinToString("\n  ") { it.path.absolutePathString() })
 
     internal val libraryToCache = configuration.konanLibraryToAddToCache?.let {
         val libraryToAddToCacheFile = Path(it)
@@ -173,7 +173,7 @@ class CacheSupport(
 
     fun checkConsistency() {
         // Ensure dependencies of every cached library are cached too:
-        for (library in allKlibs.allLibraries) {
+        for (library in allKlibs.librariesReverseTopoSorted) {
             val cache = cachedLibraries.getLibraryCache(library)
             if (cache != null || library == libraryToCache?.klib) {
                 val dependencies = allKlibs.getAllTransitiveDependencies(library)

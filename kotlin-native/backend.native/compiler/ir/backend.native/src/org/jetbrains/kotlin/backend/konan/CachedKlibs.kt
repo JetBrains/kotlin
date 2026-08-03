@@ -9,17 +9,17 @@ import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGNode
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.utils.mapToSetOrEmpty
+import org.jetbrains.kotlin.utils.DFS
 
-class CachedKlibs(val allLibraries: Collection<KotlinLibrary>) {
-    private val dag: KlibDAG by lazy { KlibDAGBuilder.build(allLibraries) }
+class CachedKlibs(libraries: Collection<KotlinLibrary>) {
+    private val dag: KlibDAG by lazy { KlibDAGBuilder.build(libraries) }
 
-    fun getDirectDependencies(library: KotlinLibrary): Set<KotlinLibrary> =
-            getDagNode(library).directDependencies.mapToSetOrEmpty { it.library }
+    val librariesReverseTopoSorted: List<KotlinLibrary> by lazy {
+        DFS.topologicalOrder(dag.keys) { library -> dag[library]!!.directDependencies }.reversed()
+    }
 
-    fun getAllTransitiveDependencies(library: KotlinLibrary): Set<KotlinLibrary> =
-            getDagNode(library).allDependencies.mapToSetOrEmpty { it.library }
+    fun getDirectDependencies(library: KotlinLibrary): Set<KotlinLibrary> = getDagNode(library).directDependencies
+    fun getAllTransitiveDependencies(library: KotlinLibrary): Set<KotlinLibrary> = getDagNode(library).allDependencies
 
-    private fun getDagNode(library: KotlinLibrary): KlibDAGNode =
-            dag[library] ?: error("Unexpected library in KLIB DAG: $library")
+    private fun getDagNode(library: KotlinLibrary): KlibDAGNode = dag[library] ?: error("Unexpected library in KLIB DAG: $library")
 }

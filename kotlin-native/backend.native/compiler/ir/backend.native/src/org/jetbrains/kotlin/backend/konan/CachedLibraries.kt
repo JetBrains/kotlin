@@ -238,7 +238,7 @@ class CachedLibraries(
                     .mapNotNull { it?.trySelectCacheFor(this) }
                     .firstOrNull()
 
-    private val allCaches: Map<KotlinLibrary, Cache> = allKlibs.allLibraries.mapNotNull { library ->
+    private val allCaches: Map<KotlinLibrary, Cache> = allKlibs.librariesReverseTopoSorted.mapNotNull { library ->
         val explicitPath = explicitCaches[library]
 
         val cache = if (explicitPath != null) {
