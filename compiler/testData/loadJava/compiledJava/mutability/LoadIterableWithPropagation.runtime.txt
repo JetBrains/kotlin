@@ -1,0 +1,19 @@
+package test
+
+public interface LoadIterableWithPropagation {
+
+    public interface LoadIterable</*0*/ T : kotlin.Any!> {
+        public abstract fun getIterable(): kotlin.collections.(Mutable)Iterable<T!>!
+        public abstract fun getReadOnlyIterable(): kotlin.collections.(Mutable)Iterable<T!>!
+        public abstract fun setIterable(/*0*/ kotlin.collections.(Mutable)Iterable<T!>!): kotlin.Unit
+        public abstract fun setReadOnlyIterable(/*0*/ kotlin.collections.(Mutable)Iterable<T!>!): kotlin.Unit
+    }
+
+    public open class LoadIterableImpl</*0*/ T : kotlin.Any!> : test.LoadIterableWithPropagation.LoadIterable<T!> {
+        public constructor LoadIterableImpl</*0*/ T : kotlin.Any!>()
+        public open override /*1*/ fun getIterable(): kotlin.collections.(Mutable)Iterable<T!>!
+        public open override /*1*/ fun getReadOnlyIterable(): kotlin.collections.(Mutable)Iterable<T!>!
+        public open override /*1*/ fun setIterable(/*0*/ kotlin.collections.(Mutable)Iterable<T!>!): kotlin.Unit
+        public open override /*1*/ fun setReadOnlyIterable(/*0*/ kotlin.collections.(Mutable)Iterable<T!>!): kotlin.Unit
+    }
+}

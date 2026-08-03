@@ -1,0 +1,26 @@
+package test
+
+public val xx: kotlin.Int
+    public fun `<get-xx>`(): kotlin.Int
+public var yy: kotlin.Boolean
+    public fun `<get-yy>`(): kotlin.Boolean
+    public fun `<set-yy>`(/*0*/ kotlin.Boolean): kotlin.Unit
+public var zz: kotlin.String
+    public fun `<get-zz>`(): kotlin.String
+    public fun `<set-zz>`(/*0*/ kotlin.String): kotlin.Unit
+public fun bar(/*0*/ kotlin.Boolean): kotlin.Unit
+
+public final class C {
+    /*primary*/ public constructor C()
+
+    // Static members
+    public final val x: kotlin.Int
+        public final fun `<get-x>`(): kotlin.Int
+    public final var y: kotlin.Boolean
+        public final fun `<get-y>`(): kotlin.Boolean
+        public final fun `<set-y>`(/*0*/ kotlin.Boolean): kotlin.Unit
+    public final var z: kotlin.String
+        public final fun `<get-z>`(): kotlin.String
+        public final fun `<set-z>`(/*0*/ kotlin.String): kotlin.Unit
+    public final fun foo(/*0*/ kotlin.String): kotlin.Int
+}

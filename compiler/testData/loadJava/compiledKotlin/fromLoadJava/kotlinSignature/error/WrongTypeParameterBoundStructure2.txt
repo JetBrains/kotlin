@@ -1,6 +1,0 @@
-package test
-
-public open class WrongTypeParameterBoundStructure2 {
-    /*primary*/ public constructor WrongTypeParameterBoundStructure2()
-    public open fun </*0*/ A, /*1*/ B : java.lang.Runnable?> foo(/*0*/ p0: A?, /*1*/ p1: kotlin.collections.List<B>?): kotlin.Unit where B : kotlin.collections.List<kotlin.Cloneable>?
-}

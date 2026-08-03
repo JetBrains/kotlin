@@ -1,0 +1,23 @@
+package test
+
+public interface PrimitiveValueInParam {
+
+    @test.PrimitiveValueInParam.Ann(bool = true, d = 1.0.toDouble(), f = 1.0.toFloat(), i = 1, l = 1.toLong(), str = "str") public open class A {
+        public constructor A()
+    }
+
+    @kotlin.annotation.Retention(value = ...) public final annotation class Ann : kotlin.Annotation {
+        public final val bool: kotlin.Boolean
+            public final fun `<get-bool>`(): kotlin.Boolean
+        public final val d: kotlin.Double
+            public final fun `<get-d>`(): kotlin.Double
+        public final val f: kotlin.Float
+            public final fun `<get-f>`(): kotlin.Float
+        public final val i: kotlin.Int
+            public final fun `<get-i>`(): kotlin.Int
+        public final val l: kotlin.Long
+            public final fun `<get-l>`(): kotlin.Long
+        public final val str: kotlin.String
+            public final fun `<get-str>`(): kotlin.String
+    }
+}

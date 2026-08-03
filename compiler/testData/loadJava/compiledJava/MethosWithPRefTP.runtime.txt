@@ -1,0 +1,6 @@
+package test
+
+public final class MethosWithPRefTP {
+    public constructor MethosWithPRefTP()
+    public final fun </*0*/ P : kotlin.Any!> f(/*0*/ P!): kotlin.Unit
+}

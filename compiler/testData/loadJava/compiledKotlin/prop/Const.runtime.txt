@@ -1,0 +1,20 @@
+package test
+
+private const val topLevel: kotlin.Int
+    private fun `<get-topLevel>`(): kotlin.Int
+
+public object A {
+    /*primary*/ private constructor A()
+    internal const final val inObject: kotlin.Int
+        internal final fun `<get-inObject>`(): kotlin.Int
+}
+
+public final class B {
+    /*primary*/ public constructor B()
+
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
+        public const final val inCompanion: kotlin.Int
+            public final fun `<get-inCompanion>`(): kotlin.Int
+    }
+}

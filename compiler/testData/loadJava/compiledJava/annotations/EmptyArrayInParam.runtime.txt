@@ -1,0 +1,13 @@
+package test
+
+public interface EmptyArrayInParam {
+
+    @test.EmptyArrayInParam.MyAnnotation(value = {}) public open class A {
+        public constructor A()
+    }
+
+    @kotlin.annotation.Retention(value = ...) public final annotation class MyAnnotation : kotlin.Annotation {
+        public final val value: kotlin.Array<kotlin.String>
+            public final fun `<get-value>`(): kotlin.Array<kotlin.String>
+    }
+}

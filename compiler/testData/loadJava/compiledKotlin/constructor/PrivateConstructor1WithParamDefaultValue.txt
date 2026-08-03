@@ -1,5 +1,0 @@
-package test
-
-public final class TestConstructor {
-    /*primary*/ private constructor TestConstructor(/*0*/ p: kotlin.Int = ...)
-}

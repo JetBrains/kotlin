@@ -1,6 +1,0 @@
-package test
-
-public final class ClassParamUsedInFun</*0*/ T> {
-    /*primary*/ public constructor ClassParamUsedInFun</*0*/ T>()
-    public final fun f(/*0*/ t: T): kotlin.Int
-}

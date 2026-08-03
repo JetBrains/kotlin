@@ -1,0 +1,35 @@
+package test
+
+public open class AnnotationTargets {
+    public constructor AnnotationTargets()
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS}) @kotlin.annotation.Retention(value = ...) public final annotation class annotation : kotlin.Annotation {
+    }
+
+    @kotlin.annotation.Retention(value = ...) public final annotation class base : kotlin.Annotation {
+    }
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CONSTRUCTOR}) @kotlin.annotation.Retention(value = ...) public final annotation class constructor : kotlin.Annotation {
+    }
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FIELD}) @kotlin.annotation.Retention(value = ...) public final annotation class field : kotlin.Annotation {
+    }
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.LOCAL_VARIABLE}) @kotlin.annotation.Retention(value = ...) public final annotation class local : kotlin.Annotation {
+    }
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER}) @kotlin.annotation.Retention(value = ...) public final annotation class method : kotlin.Annotation {
+    }
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FIELD}) @kotlin.annotation.Retention(value = ...) public final annotation class multiple : kotlin.Annotation {
+    }
+
+    @kotlin.annotation.Target(allowedTargets = {}) @kotlin.annotation.Retention(value = ...) public final annotation class packag : kotlin.Annotation {
+    }
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) @kotlin.annotation.Retention(value = ...) public final annotation class parameter : kotlin.Annotation {
+    }
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FILE}) @kotlin.annotation.Retention(value = ...) public final annotation class type : kotlin.Annotation {
+    }
+}

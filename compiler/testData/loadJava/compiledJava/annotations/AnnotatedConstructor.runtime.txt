@@ -1,0 +1,10 @@
+package test
+
+public open class AnnotatedConstructor {
+    @test.AnnotatedConstructor.Anno(value = "constructor") public constructor AnnotatedConstructor()
+
+    @kotlin.annotation.Retention(value = ...) public final annotation class Anno : kotlin.Annotation {
+        public final val value: kotlin.String
+            public final fun `<get-value>`(): kotlin.String
+    }
+}

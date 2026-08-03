@@ -1,0 +1,14 @@
+package test
+
+public final class A {
+    /*primary*/ public constructor A()
+    public final var a: kotlin.Int
+        public final fun `<get-a>`(): kotlin.Int
+        public final fun `<set-a>`(/*0*/ kotlin.Int): kotlin.Unit
+}
+
+public final class MyProperty</*0*/ T> {
+    /*primary*/ public constructor MyProperty</*0*/ T>()
+    public final operator fun getValue(/*0*/ T, /*1*/ kotlin.reflect.KProperty<*>): kotlin.Int
+    public final operator fun setValue(/*0*/ T, /*1*/ kotlin.reflect.KProperty<*>, /*2*/ kotlin.Int): kotlin.Unit
+}

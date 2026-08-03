@@ -1,0 +1,11 @@
+package test
+
+public fun test1(/*0*/ test.L<kotlin.String> /* = kotlin.collections.List<kotlin.String> */): kotlin.Unit
+public fun test2(/*0*/ test.LL<kotlin.String> /* = kotlin.collections.List<kotlin.String> */): kotlin.Unit
+public fun test3(/*0*/ test.LLL<kotlin.String> /* = kotlin.collections.List<kotlin.String> */): kotlin.Unit
+public fun test4(/*0*/ test.L<test.L<kotlin.String> /* = kotlin.collections.List<kotlin.String> */> /* = kotlin.collections.List<test.L<kotlin.String> /* = kotlin.collections.List<kotlin.String> */> */): kotlin.Unit
+public fun test5(/*0*/ test.LL<test.LL<kotlin.String> /* = kotlin.collections.List<kotlin.String> */> /* = kotlin.collections.List<test.LL<kotlin.String> /* = kotlin.collections.List<kotlin.String> */> */): kotlin.Unit
+public fun test6(/*0*/ test.LLL<test.LLL<kotlin.String> /* = kotlin.collections.List<kotlin.String> */> /* = kotlin.collections.List<test.LLL<kotlin.String> /* = kotlin.collections.List<kotlin.String> */> */): kotlin.Unit
+public typealias L</*0*/ T> = kotlin.collections.List<T>
+public typealias LL</*0*/ T> = test.L<T>
+public typealias LLL</*0*/ T> = test.LL<T>
