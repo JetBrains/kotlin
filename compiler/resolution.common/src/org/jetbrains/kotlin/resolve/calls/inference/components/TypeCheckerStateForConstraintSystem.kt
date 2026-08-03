@@ -27,6 +27,7 @@ abstract class TypeCheckerStateForConstraintSystem(
     baseTypeCheckerState.kotlinTypePreparator,
     baseTypeCheckerState.kotlinTypeRefiner,
 ) {
+    private var isEqualityConstraintForFlexibleTypeVariable = false
     abstract val languageVersionSettings: LanguageVersionSettings
 
     abstract fun isMyTypeVariable(type: RigidTypeMarker): Boolean
@@ -36,10 +37,10 @@ abstract class TypeCheckerStateForConstraintSystem(
         typeVariable: TypeConstructorMarker, superType: KotlinTypeMarker,
         isNoInfer: Boolean,
         /**
-         * If we're processing T! <: SomeType case
+         * If we're processing T! <: SomeType case, but not T! = SomeType
          * @see Constraint.forceInflexibilityForUpperTypeAtDirectIncorporation
          */
-        isFromFlexibleTypeVariablePosition: Boolean = false,
+        isFromFlexibleNotEqualityPosition: Boolean = false,
     )
 
     abstract fun addLowerConstraint(
@@ -103,6 +104,23 @@ abstract class TypeCheckerStateForConstraintSystem(
 
         if (result == null && result2 == null) return null
         return (result ?: true) && (result2 ?: true)
+    }
+
+    override fun runForEquality(
+        a: KotlinTypeMarker,
+        b: KotlinTypeMarker,
+        block: () -> Boolean,
+    ): Boolean {
+        return try {
+            isEqualityConstraintForFlexibleTypeVariable = a.isFlexibleTypeVariable() || b.isFlexibleTypeVariable()
+            block()
+        } finally {
+            isEqualityConstraintForFlexibleTypeVariable = false
+        }
+    }
+
+    private fun KotlinTypeMarker.isFlexibleTypeVariable(): Boolean = context(extensionTypeContext) {
+        asFlexibleType()?.lowerBound()?.isTypeVariableType() == true
     }
 
     private fun extractTypeForProjectedType(type: KotlinTypeMarker, out: Boolean): KotlinTypeMarker? = with(extensionTypeContext) {
@@ -456,7 +474,10 @@ abstract class TypeCheckerStateForConstraintSystem(
             superType
         }
 
-        addUpperConstraint(typeVariableLowerBound.typeConstructor(), simplifiedSuperType, isNoInfer, isFromFlexible)
+        addUpperConstraint(
+            typeVariableLowerBound.typeConstructor(), simplifiedSuperType, isNoInfer,
+            isFromFlexibleNotEqualityPosition = isFromFlexible && !isEqualityConstraintForFlexibleTypeVariable
+        )
 
         // T? <: Type
         if (typeVariableLowerBound.isMarkedNullable()) {
