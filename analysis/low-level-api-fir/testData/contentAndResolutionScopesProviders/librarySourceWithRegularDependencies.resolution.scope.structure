@@ -3,23 +3,17 @@ Module LIBRARY:
 UnionScope
     IntersectionScope
         KaFirJvmLibraryRestrictionScope
-        NotScope
-            FileScope: b.class
         UnionScope
-            FileScope: x.class
+            IntersectionScope
+                NotScope
+                    FileScope: b.class
+                UnionScope
+                    FileScope: x.class
+                    ParentTraversalLibrarySearchScope
             ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
     KotlinBuiltinsFileScope
         FilesScope
             files:
@@ -43,26 +37,18 @@ UnionScope
             EmptyScope
     IntersectionScope
         KaFirJvmLibraryRestrictionScope
-        NotScope
-            FileScope: b.class
         UnionScope
-            FileScope: x.class
+            IntersectionScope
+                NotScope
+                    FileScope: b.class
+                UnionScope
+                    FileScope: x.class
+                    ParentTraversalLibrarySearchScope
             ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
-    IntersectionScope
-        KaFirJvmLibraryRestrictionScope
-        ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
+            ParentTraversalLibrarySearchScope
     KotlinBuiltinsFileScope
         FilesScope
             files:
