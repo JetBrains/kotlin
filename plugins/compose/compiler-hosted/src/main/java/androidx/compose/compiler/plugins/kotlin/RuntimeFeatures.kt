@@ -8,6 +8,7 @@ package androidx.compose.compiler.plugins.kotlin
 enum class ComposeRuntimeVersion(val value: String) {
     v1_8("1.8"),
     v1_9("1.9"),
+    v1_13("1.13"),
     ;
 
     fun supportsFeature(feature: ComposeRuntimeFeature): Boolean {
@@ -26,6 +27,7 @@ enum class ComposeRuntimeVersion(val value: String) {
 
 enum class ComposeRuntimeFeature(val targetVersion: ComposeRuntimeVersion) {
     SourceInfoParameterNames(ComposeRuntimeVersion.v1_9),
+    ComposableInferredTargetConstraints(ComposeRuntimeVersion.v1_13),
     ;
 }
 

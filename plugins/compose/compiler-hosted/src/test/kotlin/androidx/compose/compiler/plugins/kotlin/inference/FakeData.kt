@@ -16,6 +16,8 @@
 
 package androidx.compose.compiler.plugins.kotlin.inference
 
+import kotlin.random.Random
+
 val data = mapOf(
     "identity" to fresh { t ->
         Function(
@@ -425,6 +427,64 @@ val data = mapOf(
         )
     ),
 
+    "WX" to Function(
+        "WX",
+        annotations = composable + wTarget + xTarget,
+    ),
+
+    "CallWX/0" to Function(
+        "CallWX/0",
+        annotations = composable,
+        body = listOf(
+            call(
+                "WX",
+            )
+        )
+    ),
+
+    "CallWX/1" to Function(
+        "CallWX/1",
+        annotations = composable,
+        parameters = listOf(
+            Parameter(
+                "content",
+                FunctionType(
+                    "lambda",
+                    annotations = yTarget + zTarget,
+                )
+            )
+        ),
+        body = listOf(
+            call(
+                "WX",
+            )
+        )
+    ),
+
+    "CallContent" to Function(
+        "CallContent",
+        annotations = composable,
+        parameters = listOf(
+            Parameter(
+                "content",
+                FunctionType(
+                    "lambda",
+                    annotations = wTarget + xTarget,
+                )
+            )
+        ),
+        body = listOf(
+            call(
+                "content",
+            )
+        ),
+        result =
+            FunctionType(
+                "lambda",
+                annotations = yTarget + zTarget,
+            )
+    ),
+
     "e1" to Function(
         "e1",
         annotations = composable,
@@ -451,7 +511,20 @@ val data = mapOf(
                 )
             )
         )
-    )
+    ),
+
+    "e3" to Function(
+        "e3",
+        annotations = composable,
+        body = listOf(
+            call(
+                "CallWX/1",
+                lambda(
+                    call("CallWX/0")
+                )
+            ),
+        )
+    ),
 )
 
 fun walkData(visitor: Visitor) {
@@ -460,7 +533,12 @@ fun walkData(visitor: Visitor) {
     }
 }
 
-fun randomlyWalkData(visitor: Visitor) {
+/**
+ * Randomly walks the fake data.
+ *
+ * @param seed The integer that will be used to seed the source of randomness
+ */
+fun randomlyWalkData(visitor: Visitor, seed: Int) {
     val nodes = mutableListOf<Node>()
     for (function in data.values) {
         walk(
@@ -500,7 +578,7 @@ fun randomlyWalkData(visitor: Visitor) {
             }
         )
     }
-    nodes.shuffle()
+    nodes.shuffle(Random(seed))
     nodes.forEach { walk(it, visitor) }
 }
 

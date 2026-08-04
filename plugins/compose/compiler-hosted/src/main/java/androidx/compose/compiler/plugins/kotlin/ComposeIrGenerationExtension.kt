@@ -182,6 +182,7 @@ class ComposeIrGenerationExtension(
             moduleFragment,
             metrics,
             stabilityInferencer,
+            targetRuntimeVersion,
             featureFlags,
         ).lower(moduleFragment)
 

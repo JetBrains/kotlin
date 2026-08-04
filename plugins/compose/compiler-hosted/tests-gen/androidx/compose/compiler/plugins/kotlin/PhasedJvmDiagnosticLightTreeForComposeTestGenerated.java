@@ -40,6 +40,12 @@ public class PhasedJvmDiagnosticLightTreeForComposeTestGenerated extends Abstrac
   }
 
   @Test
+  @TestMetadata("targetConstraintWarnings.kt")
+  public void testTargetConstraintWarnings() {
+    run("targetConstraintWarnings.kt");
+  }
+
+  @Test
   @TestMetadata("targetWarnings.kt")
   public void testTargetWarnings() {
     run("targetWarnings.kt");
