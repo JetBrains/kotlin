@@ -40,8 +40,8 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-private const val KOTLIN_SEQUENCES_PREFIX = "kotlin.sequences.SequencesKt."
-private const val KOTLIN_COLLECTIONS_PREFIX = "kotlin.collections.CollectionsKt."
+internal const val KOTLIN_SEQUENCES_PREFIX = "kotlin.sequences.SequencesKt."
+internal const val KOTLIN_COLLECTIONS_PREFIX = "kotlin.collections.CollectionsKt."
 private const val SEQUENCE_OF = KOTLIN_SEQUENCES_PREFIX + "sequenceOf"
 private const val AS_SEQUENCE = KOTLIN_COLLECTIONS_PREFIX + "asSequence"
 private const val GENERATE_SEQUENCE = KOTLIN_SEQUENCES_PREFIX + "generateSequence"
