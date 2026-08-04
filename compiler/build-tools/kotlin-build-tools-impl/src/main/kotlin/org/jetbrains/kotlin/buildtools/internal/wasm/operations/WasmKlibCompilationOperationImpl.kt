@@ -133,6 +133,8 @@ internal class WasmKlibCompilationOperationImpl private constructor(
         reportSeverity: Int,
         requestedCompilationResults: Array<Int>,
         arguments: KotlinWasmCompilerArguments,
+        projectId: String,
+        outputPath: String,
     ): IncrementalCompilationOptions? {
         return when (val aggregatedIcConfiguration: WasmIncrementalCompilationConfiguration? = get(INCREMENTAL_COMPILATION)) {
             is WasmHistoryBasedIncrementalCompilationConfigurationImpl -> {
@@ -161,7 +163,9 @@ internal class WasmKlibCompilationOperationImpl private constructor(
                     icFeatures = aggregatedIcConfiguration.extractIncrementalCompilationFeatures(),
                     useJvmFirRunner = false,
                     generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
-                    configurationInputs = makeConfigurationInputs(aggregatedIcConfiguration)
+                    configurationInputs = makeConfigurationInputs(aggregatedIcConfiguration),
+                    projectId = projectId,
+                    outputPath = outputPath,
                 )
             }
             null -> null

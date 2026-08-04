@@ -134,6 +134,8 @@ internal class JsKlibCompilationOperationImpl private constructor(
         reportSeverity: Int,
         requestedCompilationResults: Array<Int>,
         arguments: K2JSCompilerArguments,
+        projectId: String,
+        outputPath: String,
     ): IncrementalCompilationOptions? {
         return when (val aggregatedIcConfiguration: JsIncrementalCompilationConfiguration? = get(INCREMENTAL_COMPILATION)) {
             is JsHistoryBasedIncrementalCompilationConfigurationImpl -> {
@@ -162,7 +164,9 @@ internal class JsKlibCompilationOperationImpl private constructor(
                     icFeatures = aggregatedIcConfiguration.extractIncrementalCompilationFeatures(),
                     useJvmFirRunner = false,
                     generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
-                    configurationInputs = makeConfigurationInputs(aggregatedIcConfiguration)
+                    configurationInputs = makeConfigurationInputs(aggregatedIcConfiguration),
+                    projectId = projectId,
+                    outputPath = outputPath,
                 )
             }
             null -> null

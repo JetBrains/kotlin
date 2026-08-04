@@ -36,6 +36,9 @@ open class CompilationOptions(
     val requestedCompilationResults: Array<Int>,
     val kotlinScriptExtensions: Array<String>? = null,
     val generateCompilerRefIndex: Boolean = false,
+    // New compilation attributes for context reconstruction
+    val projectId : String? = null,
+    val outputPath : String? = null,
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 0
@@ -82,7 +85,10 @@ class IncrementalCompilationOptions(
     kotlinScriptExtensions: Array<String>? = null,
     val icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
     generateCompilerRefIndex: Boolean = false,
-    val configurationInputs: ConfigurationInputs? = null
+    val configurationInputs: ConfigurationInputs? = null,
+    // New compilation attributes for context reconstruction
+    projectId: String? = null,
+    outputPath: String? = null,
 ) : CompilationOptions(
     compilerMode,
     targetPlatform,
@@ -91,6 +97,8 @@ class IncrementalCompilationOptions(
     requestedCompilationResults,
     kotlinScriptExtensions,
     generateCompilerRefIndex,
+    projectId = projectId,
+    outputPath = outputPath,
 ) {
     companion object {
         const val serialVersionUID: Long = 5

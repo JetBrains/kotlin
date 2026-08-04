@@ -92,6 +92,8 @@ internal class WasmLinkingOperationImpl private constructor(
         reportSeverity: Int,
         requestedCompilationResults: Array<Int>,
         arguments: KotlinWasmCompilerArguments,
+        projectId: String,
+        outputPath: String,
     ): IncrementalCompilationOptions? {
         return null
     }

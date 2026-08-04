@@ -127,9 +127,11 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         reportSeverity: Int,
         requestedCompilationResults: Array<Int>,
         arguments: CompilerArgs,
+        projectId: String,
+        outputPath: String,
     ): IncrementalCompilationOptions?
 
-    private fun toDaemonCompilationOptions(isDebugLoggingEnabled: Boolean, arguments: CompilerArgs): CompilationOptions {
+    private fun toDaemonCompilationOptions(isDebugLoggingEnabled: Boolean, arguments: CompilerArgs, projectId: ProjectId): CompilationOptions {
         // TODO: KT-79976 automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
         val reportCategories = buildList {
             add(ReportCategory.COMPILER_MESSAGE.code)
@@ -151,7 +153,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES.code.takeIf { this[METRICS_COLLECTOR] != null || this[XX_KGP_METRICS_COLLECTOR] || isDebugLoggingEnabled },
         ).toTypedArray()
 
-        return getIcOptionsOrNull(reportCategories, reportSeverity, requestedCompilationResults, arguments)
+        return getIcOptionsOrNull(reportCategories, reportSeverity, requestedCompilationResults, arguments, projectId.toString(), outputPath.toString())
             ?: CompilationOptions(
                 compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
                 targetPlatform = targetPlatform,
@@ -160,6 +162,8 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
                 requestedCompilationResults = requestedCompilationResults,
                 kotlinScriptExtensions = ktsExtensionsAsArray,
                 generateCompilerRefIndex = this[GENERATE_COMPILER_REF_INDEX],
+                projectId = projectId.toString(),
+                outputPath = outputPath?.toString(),
             )
     }
 
@@ -230,7 +234,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
 
         val rootProjectDir = getRootProjectDir()
-        val daemonCompileOptions = toDaemonCompilationOptions(loggerAdapter.kotlinLogger.isDebugEnabled, arguments)
+        val daemonCompileOptions = toDaemonCompilationOptions(loggerAdapter.kotlinLogger.isDebugEnabled, arguments, projectId)
         loggerAdapter.kotlinLogger.info("Options for KOTLIN DAEMON: $daemonCompileOptions")
 
         val metricsReporter = getMetricsReporter()

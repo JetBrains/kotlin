@@ -95,6 +95,8 @@ internal class JsLinkingOperationImpl private constructor(
         reportSeverity: Int,
         requestedCompilationResults: Array<Int>,
         arguments: K2JSCompilerArguments,
+        projectId: String,
+        outputPath: String,
     ): IncrementalCompilationOptions? {
         return null
     }

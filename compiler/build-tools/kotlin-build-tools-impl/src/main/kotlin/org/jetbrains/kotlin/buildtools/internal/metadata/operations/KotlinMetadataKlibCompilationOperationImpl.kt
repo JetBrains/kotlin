@@ -100,6 +100,8 @@ internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
         reportSeverity: Int,
         requestedCompilationResults: Array<Int>,
         arguments: K2MetadataCompilerArguments,
+        projectId: String,
+        outputPath: String,
     ): IncrementalCompilationOptions? {
         return null
     }

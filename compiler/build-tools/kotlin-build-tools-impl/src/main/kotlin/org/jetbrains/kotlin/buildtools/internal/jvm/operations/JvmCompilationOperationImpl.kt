@@ -178,6 +178,8 @@ internal class JvmCompilationOperationImpl private constructor(
         reportSeverity: Int,
         requestedCompilationResults: Array<Int>,
         arguments: K2JVMCompilerArguments,
+        projectId: String,
+        outputPath: String,
     ): IncrementalCompilationOptions? {
         val aggregatedIcConfigurationOptions = getIcOptionsAccessorOrNull() ?: return null
 
@@ -210,7 +212,9 @@ internal class JvmCompilationOperationImpl private constructor(
                     aggregatedIcConfigurationOptions,
                     arguments,
                 ),
-            )
+            ),
+            projectId = projectId,
+            outputPath = outputPath,
         )
     }
 
