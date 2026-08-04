@@ -500,6 +500,9 @@ class AvailableSinceTest : BaseCompilationTest() {
         "org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration",
         "org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation",
         "org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration",
+        $$"org.jetbrains.kotlin.buildtools.api.jvm.KaptConfiguration$AptPhase",
+        $$"org.jetbrains.kotlin.buildtools.api.jvm.KaptConfiguration$StubsPhase",
+        "org.jetbrains.kotlin.buildtools.api.jvm.KaptConfiguration",
     )
 
     /**

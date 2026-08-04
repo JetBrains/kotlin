@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalCompilerArgument::class)
-
 package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
@@ -15,7 +13,6 @@ import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
@@ -26,16 +23,14 @@ import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfig
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_DIR
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.TRACK_CONFIGURATION_INPUTS
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
+import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.LANGUAGE_VERSION
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_IC
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
-import org.jetbrains.kotlin.buildtools.internal.jvm.HasSnapshotBasedIcOptionsAccessor
-import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
-import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl
+import org.jetbrains.kotlin.buildtools.internal.jvm.*
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.PRECISE_JAVA_TRACKING
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.USE_FIR_RUNNER
-import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -161,6 +156,7 @@ internal class JvmCompilationOperationImpl private constructor(
     override fun createAndPrepareCompilerArguments(): K2JVMCompilerArguments =
         compilerArguments.toCompilerArguments().also { compilerArguments ->
             compilerArguments.destination = destinationDirectory.absolutePathStringOrThrow()
+            addKaptCompilerPluginOptions(getIcOptionsAccessorOrNull()?.workingDirectory)
         }
 
     override fun getIcOptionsOrNull(
@@ -210,7 +206,7 @@ internal class JvmCompilationOperationImpl private constructor(
 
     override fun compileInProcess(
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): CompilationResult {
         setupIdeaStandaloneExecution()
         return super.compileInProcess(loggerAdapter, executionContext)
@@ -227,7 +223,7 @@ internal class JvmCompilationOperationImpl private constructor(
     override fun compileIncrementallyInProcess(
         arguments: K2JVMCompilerArguments,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): CompilationResult {
         val snapshotBasedIcOptionsAccessor = getIcOptionsAccessorOrNull() ?: error("Missing INCREMENTAL_COMPILATION option.")
         arguments.freeArgs += sources.filter { it.toFile().isJavaFile() }.map { it.absolutePathStringOrThrow() }
@@ -277,6 +273,7 @@ internal class JvmCompilationOperationImpl private constructor(
         arguments.incrementalCompilation = true
         logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
 
+
         val fileLocations = if (projectDir != null && buildDir != null) {
             FileLocations(projectDir, buildDir)
         } else null
@@ -295,6 +292,18 @@ internal class JvmCompilationOperationImpl private constructor(
         populateMetricsCollector(metricsReporter)
 
         return compilationResult
+    }
+
+    private fun addKaptCompilerPluginOptions(workingDirectory: Path? = null) {
+        get(KAPT_CONFIGURATION)?.let { kaptConfiguration ->
+            val compilerPlugins = compilerArguments[CommonCompilerArgumentsImpl.COMPILER_PLUGINS].toMutableList()
+            val kaptBuilder = kaptConfiguration.deepCopy()
+            workingDirectory?.let { path ->
+                kaptBuilder[KaptConfigurationImpl.INCREMENTAL_DATA_OUTPUT_DIR] = path
+            }
+            compilerPlugins += kaptBuilder.toCompilerPlugin()
+            compilerArguments[CommonCompilerArgumentsImpl.COMPILER_PLUGINS] = compilerPlugins
+        }
     }
 
     private fun getIcOptionsAccessorOrNull(): HasSnapshotBasedIcOptionsAccessor? = get(INCREMENTAL_COMPILATION)?.let { icConfiguration ->
@@ -379,6 +388,8 @@ internal class JvmCompilationOperationImpl private constructor(
 
 
     companion object {
+        val KAPT_CONFIGURATION: Option<KaptConfigurationImpl?> = Option("KAPT_CONFIGURATION", null)
+
         val INCREMENTAL_COMPILATION: Option<JvmIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION", null)
 
         val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS", null)
