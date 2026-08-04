@@ -80,6 +80,7 @@ internal class PwDebugOptions(
     val remoteDebuggingPort: Int,
     // Present for sessions that wait for confirmed attachment before navigation.
     val debuggerReadyPort: Int?,
+    val debuggerReadyTimeoutMillis: Int,
 )
 
 /**
@@ -290,8 +291,8 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
         val readyPort = debugOptions?.debuggerReadyPort ?: return
         try {
             Socket().use { socket ->
-                socket.connect(InetSocketAddress(InetAddress.getLoopbackAddress(), readyPort), DEBUGGER_READY_TIMEOUT_MILLIS)
-                socket.soTimeout = DEBUGGER_READY_TIMEOUT_MILLIS
+                socket.connect(InetSocketAddress(InetAddress.getLoopbackAddress(), readyPort), debugOptions.debuggerReadyTimeoutMillis)
+                socket.soTimeout = debugOptions.debuggerReadyTimeoutMillis
                 check(socket.getInputStream().read() >= 0) { "Debugger readiness connection closed without acknowledgement" }
             }
         } catch (e: SocketTimeoutException) {
@@ -317,9 +318,5 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
             }
         }
         return args + "--remote-debugging-port=$port"
-    }
-
-    companion object {
-        private const val DEBUGGER_READY_TIMEOUT_MILLIS = 30_000
     }
 }

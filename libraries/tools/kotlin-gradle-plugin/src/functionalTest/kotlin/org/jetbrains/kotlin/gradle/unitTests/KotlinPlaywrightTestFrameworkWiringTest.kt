@@ -78,6 +78,15 @@ class KotlinPlaywrightTestFrameworkWiringTest {
     }
 
     @Test
+    fun `browser debug option does not enable the Karma task`() {
+        val setup = buildBrowserTestProject {}
+
+        setup.jsBrowserTestTask.setBrowserDebug(true)
+
+        assertFalse(setup.jsBrowserTestTask.debug)
+    }
+
+    @Test
     fun `declaring a both runner and karma, runners win`() {
         val project = buildProjectWithMPP {
             with(multiplatformExtension) {
@@ -295,6 +304,7 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         val debuggerReadyPort = ServerSocket(0).use { it.localPort }
         setup.jsBrowserTestTask.setBrowserDebugPort("32123")
         setup.jsBrowserTestTask.setDebuggerReadyPort(debuggerReadyPort.toString())
+        setup.jsBrowserTestTask.setDebuggerReadyTimeout("45000")
 
         assertEquals(setOf("firefox", "chromium"), installTask.browsers.get().toSet())
 
@@ -314,6 +324,7 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         assertEquals(emptyMap(), runner.launchEnvironmentVariables)
         assertEquals(32123, runner.debugOptions?.remoteDebuggingPort)
         assertEquals(debuggerReadyPort, runner.debugOptions?.debuggerReadyPort)
+        assertEquals(45000, runner.debugOptions?.debuggerReadyTimeoutMillis)
     }
 
     @Test
@@ -337,6 +348,7 @@ class KotlinPlaywrightTestFrameworkWiringTest {
 
         assertEquals(9222, debugOptions?.remoteDebuggingPort)
         assertNull(debugOptions?.debuggerReadyPort)
+        assertEquals(30_000, debugOptions?.debuggerReadyTimeoutMillis)
     }
 }
 

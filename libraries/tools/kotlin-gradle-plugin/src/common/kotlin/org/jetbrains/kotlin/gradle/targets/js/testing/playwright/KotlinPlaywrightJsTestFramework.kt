@@ -109,6 +109,7 @@ internal class KotlinPlaywrightJsTestFramework(
 
     private val debugPort: Property<Int> = objects.property<Int>().convention(DEFAULT_DEBUG_PORT)
     private var debuggerReadyPort: Int? = null
+    private var debuggerReadyTimeoutMillis: Int = DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS
 
     @Suppress("unused")
     fun getConfiguredDebugPort(): Int = debugPort.get()
@@ -116,9 +117,13 @@ internal class KotlinPlaywrightJsTestFramework(
     @Suppress("unused")
     fun getConfiguredDebuggerReadyPort(): Int? = debuggerReadyPort
 
+    @Suppress("unused")
+    fun getConfiguredDebuggerReadyTimeoutMillis(): Int = debuggerReadyTimeoutMillis
+
     override fun configureDebug(options: KotlinJsBrowserDebugOptions) {
         options.debugPort?.let { debugPort.set(it) }
         debuggerReadyPort = options.debuggerReadyPort
+        options.debuggerReadyTimeoutMillis?.let { debuggerReadyTimeoutMillis = it }
     }
 
     @get:Internal
@@ -227,6 +232,7 @@ internal class KotlinPlaywrightJsTestFramework(
         return PwDebugOptions(
             remoteDebuggingPort = remoteDebuggingPort,
             debuggerReadyPort = debuggerReadyPort,
+            debuggerReadyTimeoutMillis = debuggerReadyTimeoutMillis,
         )
     }
 
@@ -267,6 +273,7 @@ internal class KotlinPlaywrightJsTestFramework(
 
     companion object {
         private const val DEFAULT_DEBUG_PORT = 9222
+        private const val DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS = 30_000
         fun createInputs(objects: ObjectFactory): Inputs =
             objects.newInstance(Inputs::class.java)
 

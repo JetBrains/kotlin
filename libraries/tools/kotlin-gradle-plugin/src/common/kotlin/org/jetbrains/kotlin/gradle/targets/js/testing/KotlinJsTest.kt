@@ -84,7 +84,9 @@ internal constructor(
         description = "Runs this browser test task in debug mode.",
     )
     internal fun setBrowserDebug(enabled: Boolean) {
-        debug = enabled
+        if (testFramework is KotlinJsBrowserDebuggableFramework) {
+            debug = enabled
+        }
     }
 
     @Option(
@@ -103,14 +105,33 @@ internal constructor(
         browserDebugOptions.copy(debuggerReadyPort = it)
     }
 
+    @Option(
+        option = "ready-timeout",
+        description = "Sets the debugger attachment timeout in milliseconds and enables browser debugging.",
+    )
+    internal fun setDebuggerReadyTimeout(value: String) {
+        val timeout = value.toIntOrNull()
+        if (timeout == null || timeout <= 0) {
+            throw GradleException("Browser debugger readiness timeout must be greater than 0 milliseconds")
+        }
+        browserDebugOptions = browserDebugOptions.copy(debuggerReadyTimeoutMillis = timeout)
+        enableBrowserDebug()
+    }
+
     private fun updateBrowserDebugOptions(value: String, update: (Int) -> KotlinJsBrowserDebugOptions) {
         val port = value.toIntOrNull()
         if (port == null || port !in 1..65535) {
             throw GradleException("Browser debug ports must be between 1 and 65535")
         }
         browserDebugOptions = update(port)
-        debug = true
-        configureBrowserDebug()
+        enableBrowserDebug()
+    }
+
+    private fun enableBrowserDebug() {
+        if (testFramework is KotlinJsBrowserDebuggableFramework) {
+            debug = true
+            configureBrowserDebug()
+        }
     }
 
     @Suppress("unused")
@@ -225,10 +246,8 @@ internal constructor(
     private fun configureBrowserDebug() {
         if (!debug) return
 
-        val framework = testFramework as? KotlinJsBrowserDebuggableFramework
-            ?: throw GradleException(
-                "Browser debugging is not supported for ${testFramework?.javaClass?.name ?: "an unconfigured test framework"}"
-            )
-        framework.configureDebug(browserDebugOptions)
+        // Karma debugging continues to be configured by the IDEA init script.
+        // Command-line browser debug options are consumed by Playwright only.
+        (testFramework as? KotlinJsBrowserDebuggableFramework)?.configureDebug(browserDebugOptions)
     }
 }
