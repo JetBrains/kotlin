@@ -225,6 +225,10 @@ private class JvmCompilationOperationV1Adapter private constructor(
         )
     }
 
+    override fun kaptCompilerPluginBuilder(kaptClasspath: List<Path>): KaptConfiguration.Builder {
+        error("Not available in this version")
+    }
+
     private operator fun <V> get(key: Option<V>): V = options[key]
 
     private operator fun <V> set(key: Option<V>, value: V) {

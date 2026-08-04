@@ -15,6 +15,7 @@ val assignmentCompilerPlugin = configurations.dependencyScope("assignmentCompile
 val serializationCompilerPlugin = configurations.dependencyScope("serializationCompilerPlugin")
 val serializationCore = configurations.dependencyScope("serializationCore")
 val pluginSandbox = configurations.dependencyScope("pluginSandbox")
+val kaptCompilerPlugin = configurations.dependencyScope("kaptCompilerPlugin")
 
 val noArgCompilerPluginResolvable = configurations.resolvable("noArgCompilerPluginResolvable") {
     extendsFrom(noArgCompilerPlugin.get())
@@ -30,6 +31,9 @@ val serializationCoreResolvable = configurations.resolvable("serializationCoreRe
 }
 val pluginSandboxResolvable = configurations.resolvable("pluginSandboxResolvable") {
     extendsFrom(pluginSandbox.get())
+}
+val kaptCompilerPluginResolvable = configurations.resolvable("kaptCompilerPluginResolvable") {
+    extendsFrom(kaptCompilerPlugin.get())
 }
 
 val buildToolsApiImpl = configurations.dependencyScope("buildToolsApiImpl")
@@ -134,6 +138,7 @@ dependencies {
     serializationCompilerPlugin(project(":kotlinx-serialization-compiler-plugin.embeddable"))
     serializationCore(libs.kotlinx.serialization.core)
     pluginSandbox(project(":plugins:plugin-sandbox"))
+    kaptCompilerPlugin(project(":kotlin-annotation-processing-embeddable"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-compat"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-impl"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
@@ -394,6 +399,7 @@ testing {
                     addClasspathProperty(serializationCompilerPluginResolvable.get(), "SERIALIZATION_COMPILER_PLUGIN")
                     addClasspathProperty(serializationCoreResolvable.get(), "SERIALIZATION_CORE")
                     addClasspathProperty(pluginSandboxResolvable.get(), "PLUGIN_SANDBOX")
+                    addClasspathProperty(kaptCompilerPluginResolvable.get(), "KAPT_COMPILER_PLUGIN")
 
                     // those classes use compileOnly dependency on scripting and should not be considered as containing test classes to avoid runtime failures
                     exclude(
