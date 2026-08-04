@@ -14,8 +14,8 @@ actual typealias LinuxSSizeT = Long
 actual typealias LinuxMutexSpins = Int
 actual typealias LinuxFExceptT = UInt
 
-actual typealias LinuxScalarT = Long
-actual typealias LinuxUScalarT = ULong
+actual typealias LinuxScalarT = Int
+actual typealias LinuxUScalarT = UInt
 
 actual typealias LinuxUBlksize = UInt
 actual typealias LinuxBlksize = Int

@@ -6,6 +6,12 @@
 package support.raw
 
 /** Similar to [IntOrLong] + With Var */
+expect class LinuxSSizeT
+
+/** Similar to [UIntOrULong] + With Var */
+expect value class LinuxSizeT
+
+/** Similar to [IntOrLong] + With Var */
 expect class LinuxBlksize
 
 /** Similar to [UIntOrULong] + With Var */

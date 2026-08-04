@@ -17,6 +17,7 @@ private const val SUPPORT_LIB_NAME = "commonizer-support-library"
 val supportHierarchy = mapOf(
     "linuxArm64" to "linuxMain",
     "linuxX64" to "linuxMain",
+    "linuxArm32Hfp" to "linuxMain",
 
     "iosX64" to "iosMain",
     "iosArm64" to "iosMain",
@@ -118,7 +119,9 @@ internal fun loadSupportLibraries(distribution: KonanDistribution, logger: Logge
 
     // Leaf target klibs: <target>/main/klib/<libName>/
     val supportLibLeafTargets = klibsBase.list { _, name ->
-        name.endsWith("X64") || name.endsWith("Arm64") || name.endsWith("X32") || name.endsWith("Arm32") || name.endsWith("X86")
+        name.endsWith("X64") || name.endsWith("X32") || name.endsWith("X86")
+                || name.endsWith("Arm64") || name.endsWith("Arm32")
+                || name.endsWith("Hfp")
     } ?: return emptyMap()
     val supportNativeLeafLibraries = supportLibLeafTargets.associateWith { targetName ->
         val file = klibsBase.resolve(targetName).resolve("main").resolve("klib").resolve(SUPPORT_LIB_NAME)

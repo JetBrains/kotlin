@@ -8,31 +8,31 @@ package support.raw
 import kotlinx.cinterop.*
 import kotlinx.cinterop.value as valueFromCinterop
 
-actual typealias NativeSizeT = ULong
-actual typealias NativeSSizeT = Long
+actual typealias NativeSizeT = LinuxSizeT
+actual typealias NativeSSizeT = LinuxSSizeT
 
-actual typealias NativeOffT = Long
+actual typealias NativeOffT = LinuxSSizeT
 
 actual typealias NativeModeT = UInt
 actual typealias NativeSModeT_Helper = Int
 
-actual typealias NativeInoT = ULong
-actual typealias NativeInoT_ReturnType = ULong
-actual typealias NativeSInoT_Helper = Long
+actual typealias NativeInoT = LinuxSizeT
+actual typealias NativeInoT_ReturnType = LinuxSizeT
+actual typealias NativeSInoT_Helper = LinuxSSizeT
 
 actual typealias NativeSaFamilyT = UShort
 actual typealias NativeSSaFamilyT_Helper = Short
 
 actual typealias NativeDispatchQueuePriorityT = Long
 
-actual typealias NativeIntFast32T = Long
-actual typealias NativeUIntFast16T = ULong
-actual typealias NativeIntFast16T = Long
+actual typealias NativeIntFast32T = LinuxSSizeT
+actual typealias NativeUIntFast16T = LinuxSizeT
+actual typealias NativeIntFast16T = LinuxSSizeT
 
-actual typealias NativeULong = ULong
-actual typealias NativeLong_Helper = Long
+actual typealias NativeULong = LinuxSizeT
+actual typealias NativeLong_Helper = LinuxSSizeT
 
-actual typealias NativeZlibULong = ULong
+actual typealias NativeZlibULong = LinuxSizeT
 
 actual typealias NativePidT = Int
 
@@ -42,6 +42,6 @@ actual typealias NativeFExceptT_Helper = LinuxMutexSpins
 actual typealias NativeZCrcT = UInt
 actual typealias NativeSZCrcT = Int
 
-actual typealias NativeFsFilCntT = ULong
+actual typealias NativeFsFilCntT = LinuxSizeT
 
 actual typealias NativeThOff = UByte

@@ -75,10 +75,10 @@ kotlin {
         watchosX64()
     }
 
-//    @Suppress("DEPRECATION")
-//    "Deprecated and seems unimportant".run {
-//        linuxArm32Hfp()
-//    }
+    @Suppress("DEPRECATION")
+    "Deprecated but used by cryptography-kotlin".run {
+        linuxArm32Hfp()
+    }
 
     sourceSets {
         configureEach {

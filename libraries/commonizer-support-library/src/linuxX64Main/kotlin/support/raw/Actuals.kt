@@ -8,6 +8,9 @@ package support.raw
 import kotlinx.cinterop.*
 import kotlinx.cinterop.value as valueFromCinterop
 
+actual typealias LinuxSizeT = ULong
+actual typealias LinuxSSizeT = Long
+
 actual typealias LinuxMutexSpins = Short
 actual typealias LinuxFExceptT = UShort
 
