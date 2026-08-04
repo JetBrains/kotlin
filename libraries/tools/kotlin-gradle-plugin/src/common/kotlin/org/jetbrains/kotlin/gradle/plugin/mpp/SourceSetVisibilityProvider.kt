@@ -10,7 +10,6 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.cache.KotlinGradleTaskExecutionCache
-import org.jetbrains.kotlin.gradle.cache.getOrPutSynchronized
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationComponent
@@ -45,7 +44,7 @@ internal class SourceSetVisibilityProvider(
     private val cache: KotlinGradleTaskExecutionCache,
 ) {
     fun LazyResolvedConfigurationComponent.resolvedDependenciesByKmpModuleId(): Map<KmpModuleIdentifier, Set<ResolvedDependencyResult>> =
-        cache.getOrPutSynchronized(extrasKeyOf("$projectId/$configurationName/resolvedDependenciesByKmpModuleId")) {
+        cache.getOrCompute(extrasKeyOf("$projectId/$configurationName/resolvedDependenciesByKmpModuleId")) {
             groupByToNonNullSet(
                 keySelector = { KmpModuleIdentifier.from(it.from, buildIdentifierAccessor) },
                 valueTransform = { it as? ResolvedDependencyResult },
@@ -53,7 +52,7 @@ internal class SourceSetVisibilityProvider(
         }
 
     fun LazyResolvedConfigurationComponent.resolvedDependenciesByRequested(): Map<ComponentSelector, Set<ResolvedDependencyResult>> =
-        cache.getOrPutSynchronized(extrasKeyOf("$projectId/$configurationName/resolvedDependenciesByRequested")) {
+        cache.getOrCompute(extrasKeyOf("$projectId/$configurationName/resolvedDependenciesByRequested")) {
             groupByToNonNullSet(
                 keySelector = { it.requested },
                 valueTransform = { it as? ResolvedDependencyResult },
@@ -170,30 +169,30 @@ internal class SourceSetVisibilityProvider(
         val res = mutableMapOf<String, File>()
         hostSpecificSourceSets.forEach { hostSpecificSourceSet ->
             val cacheKey = "hostSpecificMetadataJarFile/$projectId/${resolvedRootMppDependencyIdentifier.componentId}/$hostSpecificSourceSet"
-            val hostSpecificMetadataJarFile = cache.getOrPutSynchronized(extrasKeyOf<File?>(cacheKey)) {
+            val hostSpecificMetadataJarFile = cache.getOrCompute(extrasKeyOf<File?>(cacheKey)) {
                 val resolvedHostSpecificMetadataConfiguration = dependencyProjectStructureMetadata
                     .sourceSetNamesByVariantName
                     .firstNotNullOfOrNull { (variantName, variantSourceSets) ->
                         if (!variantSourceSets.contains(hostSpecificSourceSet)) return@firstNotNullOfOrNull null
                         platformCompilationsByResolvedVariantName[variantName]?.hostSpecificMetadataConfiguration
-                    } ?: return@getOrPutSynchronized null
+                    } ?: return@getOrCompute null
 
                 val dependency = resolvedHostSpecificMetadataConfiguration
                     .allResolvedDependencies
                     .find { KmpModuleIdentifier.from(it.selected, buildIdentifierAccessor) == resolvedRootMppDependencyIdentifier }
-                    ?: return@getOrPutSynchronized null
+                    ?: return@getOrCompute null
 
                 val metadataArtifact = resolvedHostSpecificMetadataConfiguration
                     // it can happen that related host-specific metadata artifact doesn't exist
                     // for example on linux machines, then just gracefully return null
                     .dependencyArtifactsOrNull(dependency)
                     ?.singleOrNull()
-                    ?: return@getOrPutSynchronized null
+                    ?: return@getOrCompute null
 
                 // It can happen that host-specific artifact is mentioned in resolve but it doesn't exist physically
                 // then again gracefully return null
                 val metadataArtifactFile = metadataArtifact.file
-                if (!metadataArtifactFile.exists()) return@getOrPutSynchronized null
+                if (!metadataArtifactFile.exists()) return@getOrCompute null
 
                 metadataArtifactFile
             }
