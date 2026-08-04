@@ -36,6 +36,7 @@ dependencies {
     embedded(project(":kotlin-scripting-compiler-impl-embeddable")) { isTransitive = false }
     embedded(project(":kotlin-scripting-common")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
+    embedded(libs.guava) { isTransitive = false }
 
     // dependencies for ABI validation
     compileOnly(project(":libraries:tools:abi-validation:abi-tools-api"))
