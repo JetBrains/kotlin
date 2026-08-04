@@ -25,7 +25,6 @@ object AbstractExpectActualAnnotationMatchChecker {
         StandardClassIds.Annotations.SinceKotlin,
         StandardClassIds.Annotations.ExpectRefinement,
         StandardClassIds.Annotations.Suppress,
-        StandardClassIds.Annotations.Effects,
         StandardClassIds.Annotations.WasExperimental,
         StandardClassIds.Annotations.jsExport,
         StandardClassIds.Annotations.jsExportIgnore,
@@ -35,6 +34,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         StandardClassIds.Annotations.jsNoRuntime,
         OptInNames.OPT_IN_CLASS_ID,
         OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID,
+        ClassId(StandardClassIds.BASE_INTERNAL_PACKAGE, Name.identifier("Effects")),
     )
 
     class Incompatibility(
