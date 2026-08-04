@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.cache
 
-import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import java.util.concurrent.Callable
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
@@ -28,14 +27,14 @@ class KotlinConcurrentGetOrComputeStorageTest {
 
     @Test
     fun testValueIsComputedOnFirstAccess() {
-        assertEquals("value", storage.getOrCompute(extrasKeyOf("key")) { "value" })
+        assertEquals("value", storage.getOrCompute("key") { "value" })
     }
 
     @Test
     fun testValueIsComputedOnlyOncePerKey() {
         val computations = AtomicInteger()
         val values = List(3) {
-            storage.getOrCompute(extrasKeyOf("key")) {
+            storage.getOrCompute("key") {
                 computations.incrementAndGet()
                 Any()
             }
@@ -47,18 +46,18 @@ class KotlinConcurrentGetOrComputeStorageTest {
 
     @Test
     fun testDifferentKeysAreComputedIndependently() {
-        assertEquals("a-value", storage.getOrCompute(extrasKeyOf("a")) { "a-value" })
-        assertEquals("b-value", storage.getOrCompute(extrasKeyOf("b")) { "b-value" })
+        assertEquals("a-value", storage.getOrCompute("a") { "a-value" })
+        assertEquals("b-value", storage.getOrCompute("b") { "b-value" })
 
-        assertEquals("a-value", storage.getOrCompute(extrasKeyOf<String>("a")) { fail("'a' should be already cached") })
-        assertEquals("b-value", storage.getOrCompute(extrasKeyOf<String>("b")) { fail("'b' should be already cached") })
+        assertEquals("a-value", storage.getOrCompute<String>("a") { fail("'a' should be already cached") })
+        assertEquals("b-value", storage.getOrCompute<String>("b") { fail("'b' should be already cached") })
     }
 
     @Test
     fun testNullValueIsCached() {
         val computations = AtomicInteger()
         repeat(2) {
-            val value = storage.getOrCompute(extrasKeyOf<String?>("key")) {
+            val value = storage.getOrCompute<String?>("key") {
                 computations.incrementAndGet()
                 null
             }
@@ -70,7 +69,7 @@ class KotlinConcurrentGetOrComputeStorageTest {
 
     @Test
     fun testValueIsComputedOnTheCallingThread() {
-        val computationThread = storage.getOrCompute(extrasKeyOf("key")) { Thread.currentThread() }
+        val computationThread = storage.getOrCompute("key") { Thread.currentThread() }
         assertSame(Thread.currentThread(), computationThread)
     }
 
@@ -78,7 +77,7 @@ class KotlinConcurrentGetOrComputeStorageTest {
     fun testFailureIsRethrownAsIsWithoutExecutionExceptionWrapper() {
         val expectedFailure = TestException()
         val actualFailure = assertFailsWith<TestException> {
-            storage.getOrCompute(extrasKeyOf<Unit>("key")) { throw expectedFailure }
+            storage.getOrCompute<Unit>("key") { throw expectedFailure }
         }
 
         assertSame(expectedFailure, actualFailure)
@@ -91,7 +90,7 @@ class KotlinConcurrentGetOrComputeStorageTest {
 
         repeat(3) {
             val actualFailure = assertFailsWith<TestException> {
-                storage.getOrCompute(extrasKeyOf<Unit>("key")) {
+                storage.getOrCompute<Unit>("key") {
                     computations.incrementAndGet()
                     throw expectedFailure
                 }
@@ -111,7 +110,7 @@ class KotlinConcurrentGetOrComputeStorageTest {
         val values = runConcurrently(threadCount) {
             startLine.countDown()
             assertTrue(startLine.await(TIMEOUT_SECONDS, TimeUnit.SECONDS), "Threads failed to reach the start line")
-            storage.getOrCompute(extrasKeyOf("key")) {
+            storage.getOrCompute("key") {
                 computations.incrementAndGet()
                 Any()
             }
@@ -132,7 +131,7 @@ class KotlinConcurrentGetOrComputeStorageTest {
             startLine.countDown()
             assertTrue(startLine.await(TIMEOUT_SECONDS, TimeUnit.SECONDS), "Threads failed to reach the start line")
             assertFailsWith<TestException> {
-                storage.getOrCompute(extrasKeyOf<Unit>("key")) {
+                storage.getOrCompute<Unit>("key") {
                     computations.incrementAndGet()
                     throw expectedFailure
                 }
@@ -154,7 +153,7 @@ class KotlinConcurrentGetOrComputeStorageTest {
         val computations = AtomicInteger()
 
         val computingThread = thread(name = "computing") {
-            storage.getOrCompute(extrasKeyOf<String>("key")) {
+            storage.getOrCompute<String>("key") {
                 computations.incrementAndGet()
                 computationStarted.countDown()
                 releaseComputation.awaitOrFail("computation to be released")
@@ -170,7 +169,7 @@ class KotlinConcurrentGetOrComputeStorageTest {
                 val waitingThread = thread(name = "waiting-$index") {
                     result.set(
                         runCatching {
-                            storage.getOrCompute(extrasKeyOf<String>("key")) { fail("Value is already being computed by another thread") }
+                            storage.getOrCompute<String>("key") { fail("Value is already being computed by another thread") }
                         }
                     )
                 }
@@ -196,7 +195,7 @@ class KotlinConcurrentGetOrComputeStorageTest {
         val releaseSlowComputation = CountDownLatch(1)
 
         val slowThread = thread(name = "slow-computation") {
-            storage.getOrCompute(extrasKeyOf<String>("slow")) {
+            storage.getOrCompute<String>("slow") {
                 slowComputationStarted.countDown()
                 releaseSlowComputation.awaitOrFail("slow computation to be released")
                 "slow-value"
@@ -206,7 +205,7 @@ class KotlinConcurrentGetOrComputeStorageTest {
         try {
             slowComputationStarted.awaitOrFail("slow computation to start")
             // must not block on the in-flight computation of another key
-            assertEquals("fast-value", storage.getOrCompute(extrasKeyOf("fast")) { "fast-value" })
+            assertEquals("fast-value", storage.getOrCompute("fast") { "fast-value" })
         } finally {
             releaseSlowComputation.countDown()
             slowThread.join(TIMEOUT_SECONDS * 1000)
@@ -219,7 +218,7 @@ class KotlinConcurrentGetOrComputeStorageTest {
         val releaseComputation = CountDownLatch(1)
 
         val computingThread = thread(name = "computing") {
-            storage.getOrCompute(extrasKeyOf<String>("key")) {
+            storage.getOrCompute<String>("key") {
                 computationStarted.countDown()
                 releaseComputation.awaitOrFail("computation to be released")
                 "value"
@@ -233,7 +232,7 @@ class KotlinConcurrentGetOrComputeStorageTest {
             val interruptedFlagWasSet = AtomicBoolean()
             val waitingThread = thread(name = "waiting") {
                 try {
-                    storage.getOrCompute(extrasKeyOf<String>("key")) { fail("Value is already being computed by another thread") }
+                    storage.getOrCompute<String>("key") { fail("Value is already being computed by another thread") }
                 } catch (e: Throwable) {
                     failure.set(e)
                     interruptedFlagWasSet.set(Thread.currentThread().isInterrupted)
@@ -258,8 +257,8 @@ class KotlinConcurrentGetOrComputeStorageTest {
     @Test
     fun testNestedGetOrComputeWithTheSameKeyIsRejected() {
         val failure = assertFailsWith<IllegalStateException> {
-            storage.getOrCompute(extrasKeyOf<String>("key")) {
-                storage.getOrCompute(extrasKeyOf<String>("key")) { "value" }
+            storage.getOrCompute<String>("key") {
+                storage.getOrCompute<String>("key") { "value" }
             }
         }
 
@@ -273,8 +272,8 @@ class KotlinConcurrentGetOrComputeStorageTest {
     @Test
     fun testNestedGetOrComputeWithADifferentKeyIsRejected() {
         val failure = assertFailsWith<IllegalStateException> {
-            storage.getOrCompute(extrasKeyOf<String>("outer")) {
-                storage.getOrCompute(extrasKeyOf<String>("inner")) { "inner-value" }
+            storage.getOrCompute<String>("outer") {
+                storage.getOrCompute<String>("inner") { "inner-value" }
             }
         }
 
@@ -288,12 +287,12 @@ class KotlinConcurrentGetOrComputeStorageTest {
     @Test
     fun testRejectedNestingDoesNotBreakFollowingCallsOnTheSameThread() {
         assertFailsWith<IllegalStateException> {
-            storage.getOrCompute(extrasKeyOf<String>("outer")) {
-                storage.getOrCompute(extrasKeyOf<String>("inner")) { "inner-value" }
+            storage.getOrCompute<String>("outer") {
+                storage.getOrCompute<String>("inner") { "inner-value" }
             }
         }
 
-        assertEquals("value", storage.getOrCompute(extrasKeyOf("unrelated")) { "value" })
+        assertEquals("value", storage.getOrCompute("unrelated") { "value" })
     }
 
     private class TestException : RuntimeException("Computation failed")
