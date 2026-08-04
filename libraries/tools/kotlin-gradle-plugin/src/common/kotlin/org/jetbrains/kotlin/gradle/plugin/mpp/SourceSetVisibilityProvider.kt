@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationComponent
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.jetbrains.kotlin.gradle.utils.dependencyArtifactsOrNull
 import org.jetbrains.kotlin.gradle.utils.groupByToNonNullSet
-import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import java.io.File
 import kotlin.collections.contains
 import kotlin.collections.ifEmpty
@@ -44,7 +43,7 @@ internal class SourceSetVisibilityProvider(
     private val cache: KotlinGradleTaskExecutionCache,
 ) {
     fun LazyResolvedConfigurationComponent.resolvedDependenciesByKmpModuleId(): Map<KmpModuleIdentifier, Set<ResolvedDependencyResult>> =
-        cache.getOrCompute(extrasKeyOf("$projectId/$configurationName/resolvedDependenciesByKmpModuleId")) {
+        cache.getOrCompute("$projectId/$configurationName/resolvedDependenciesByKmpModuleId") {
             groupByToNonNullSet(
                 keySelector = { KmpModuleIdentifier.from(it.from, buildIdentifierAccessor) },
                 valueTransform = { it as? ResolvedDependencyResult },
@@ -52,7 +51,7 @@ internal class SourceSetVisibilityProvider(
         }
 
     fun LazyResolvedConfigurationComponent.resolvedDependenciesByRequested(): Map<ComponentSelector, Set<ResolvedDependencyResult>> =
-        cache.getOrCompute(extrasKeyOf("$projectId/$configurationName/resolvedDependenciesByRequested")) {
+        cache.getOrCompute("$projectId/$configurationName/resolvedDependenciesByRequested") {
             groupByToNonNullSet(
                 keySelector = { it.requested },
                 valueTransform = { it as? ResolvedDependencyResult },
@@ -169,7 +168,7 @@ internal class SourceSetVisibilityProvider(
         val res = mutableMapOf<String, File>()
         hostSpecificSourceSets.forEach { hostSpecificSourceSet ->
             val cacheKey = "hostSpecificMetadataJarFile/$projectId/${resolvedRootMppDependencyIdentifier.componentId}/$hostSpecificSourceSet"
-            val hostSpecificMetadataJarFile = cache.getOrCompute(extrasKeyOf<File?>(cacheKey)) {
+            val hostSpecificMetadataJarFile = cache.getOrCompute(cacheKey) {
                 val resolvedHostSpecificMetadataConfiguration = dependencyProjectStructureMetadata
                     .sourceSetNamesByVariantName
                     .firstNotNullOfOrNull { (variantName, variantSourceSets) ->
