@@ -42,6 +42,13 @@ val scriptingCompilerPluginResolvable = configurations.resolvable("scriptingComp
     extendsFrom(scriptingCompilerPlugin.get())
 }
 
+val kaptCompilerPluginResolvable = createResolvableConfiguration("kaptCompilerPlugin") {
+    it(project(":kotlin-annotation-processing-embeddable"))
+}
+val exampleAnnotationProcessorResolvable = createResolvableConfiguration("exampleAnnotationProcessor") {
+    it(project(":examples:annotation-processor-example"))
+}
+
 val unpackedResources = configurations.dependencyScope("unpackedResources")
 val unpackedResourcesResolvable = configurations.resolvable("unpackedResourcesResolvable") {
     // Wire the dependency declarations
@@ -394,6 +401,8 @@ testing {
                     addClasspathProperty(serializationCompilerPluginResolvable.get(), "SERIALIZATION_COMPILER_PLUGIN")
                     addClasspathProperty(serializationCoreResolvable.get(), "SERIALIZATION_CORE")
                     addClasspathProperty(pluginSandboxResolvable.get(), "PLUGIN_SANDBOX")
+                    addClasspathProperty(kaptCompilerPluginResolvable.get(), "KAPT_COMPILER_PLUGIN")
+                    addClasspathProperty(exampleAnnotationProcessorResolvable.get(), "EXAMPLE_ANNOTATION_PROCESSOR")
 
                     // those classes use compileOnly dependency on scripting and should not be considered as containing test classes to avoid runtime failures
                     exclude(
