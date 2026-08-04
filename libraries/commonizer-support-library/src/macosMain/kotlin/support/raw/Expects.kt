@@ -5,7 +5,10 @@
 
 package support.raw
 
-/** Similar to [UIntOrULong] + With Var */
+/**
+ * Similar to [UIntOrULong] + With Var.
+ * Modeled after [platform.posix.ino_t].
+ */
 expect value class MacosInoT
 
 /** Similar to [IntOrLong] + With Var */

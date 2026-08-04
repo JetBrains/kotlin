@@ -72,6 +72,7 @@ abstract class GenerateSupportSources : DefaultTask() {
                     classesThatNeedVar.add(name)
                 }
 
+                val prototypeReference = prototypePattern.find(entireMatch)?.groupValues?.getOrNull(1)
                 val similarToContent = similarToSearchIndex[similarToName] ?: error("$similarToName not found")
 
                 val ranges = listOf("AnyNumberRange", "SignedNumberRange", "UnsignedNumberRange")
@@ -103,6 +104,12 @@ abstract class GenerateSupportSources : DefaultTask() {
                             ?: error("No actualizations for $name")
 
                         "@NumericClass($relevantActualizations)\n$content"
+                    }
+                    .let { content ->
+                        when {
+                            prototypeReference != null -> "/**\n * Modeled after [$prototypeReference].\n */\n$content"
+                            else -> content
+                        }
                     }
 
                 contents = contents.replaceFirst(entireMatch, adjustedContent)
@@ -162,6 +169,7 @@ private val includeContentsPattern = """^\s*/\*\* Include contents of \[([\w.]+)
 private val expectNumberClassPattern = """/\*\*(?:.|\n)*?\*/\nexpect (?:\w+\s+)*class (\w+)""".toRegex()
 private val similarityPattern = """Similar to \[([\w.]+)]""".toRegex()
 private val varCounterpartPattern = """With Var""".toRegex()
+private val prototypePattern = """Modeled after \[([\w.]+)]""".toRegex()
 private val actualTypealiasPattern = """actual typealias (\w+) = ([\w.]+)""".toRegex()
 
 private fun String.walkUntilNewlineAfterBalancedBraces(startIndex: Int = 0): Int {

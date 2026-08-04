@@ -5,22 +5,37 @@
 
 package support.raw
 
-/** Similar to [UIntOrULong] + With Var */
-expect class AndroidSizeT
+/**
+ * Similar to [UIntOrULong] + With Var.
+ * Modeled after [platform.posix.size_t].
+ */
+expect value class AndroidSizeT
 
-/** Similar to [IntOrLong] + With Var */
+/**
+ * Similar to [IntOrLong] + With Var.
+ * Modeled after [platform.posix.ssize_t].
+ */
 expect class AndroidSSizeT
 
-/** Similar to [UIntOrULong] + With Var */
+/**
+ * Similar to [UIntOrULong] + With Var.
+ * Modeled after [platform.posix.stat.st_nlink].
+ */
 expect value class AndroidStNlink
 
-/** Similar to [SmallUnsignedNumber] + With Var */
+/**
+ * Similar to [SmallUnsignedNumber] + With Var.
+ * Modeled after [platform.posix.fexcept_t].
+ */
 expect value class AndroidFExceptT
 
 /** Similar to [SmallSignedNumber] */
 expect class AndroidFExceptT_Helper
 
-/** Similar to [SmallUnsignedNumber] + With Var */
+/**
+ * Similar to [SmallUnsignedNumber] + With Var.
+ * Modeled after [platform.posix.mode_t].
+ */
 expect value class AndroidModeT
 
 /** Similar to [SmallSignedNumber] */

@@ -5,23 +5,41 @@
 
 package support.raw
 
-/** Similar to [UIntOrULong] + With Var */
+/**
+ * Similar to [UIntOrULong] + With Var.
+ * Modeled after [platform.posix.size_t].
+ */
 expect value class AppleSizeT
 
-/** Similar to [IntOrLong] + With Var */
+/**
+ * Similar to [IntOrLong] + With Var.
+ * Modeled after [platform.posix.ssize_t].
+ */
 expect class AppleSSizeT
 
-/** Similar to [FloatOrDouble] */
+/**
+ * Similar to [FloatOrDouble].
+ * Modeled after [platform.CoreGraphics.CGFloat].
+ */
 expect class AppleCGFloat
 
-/** Similar to [FloatOrDouble] */
+/**
+ * Similar to [FloatOrDouble].
+ * Modeled after [platform.SceneKit.SCNVector3.x].
+ */
 expect class AppleMatrixComponent
 
-/** Similar to [UIntOrULong] + With Var */
+/**
+ * Similar to [UIntOrULong] + With Var.
+ * Modeled after [platform.posix.ino_t].
+ */
 expect value class AppleInoT
 
 /** Similar to [IntOrLong] + With Var */
 expect class AppleSInoT_Helper
 
-/** Similar to [SmallUnsignedNumber] + With Var */
+/**
+ * Similar to [SmallUnsignedNumber] + With Var.
+ * Modeled after [platform.posix.uint16_t].
+ */
 expect value class AppleUInt16T

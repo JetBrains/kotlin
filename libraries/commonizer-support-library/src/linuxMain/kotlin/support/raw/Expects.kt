@@ -5,26 +5,47 @@
 
 package support.raw
 
-/** Similar to [IntOrLong] + With Var */
+/**
+ * Similar to [IntOrLong] + With Var.
+ * Modeled after [platform.posix.ssize_t].
+ */
 expect class LinuxSSizeT
 
-/** Similar to [UIntOrULong] + With Var */
+/**
+ * Similar to [UIntOrULong] + With Var.
+ * Modeled after [platform.posix.size_t].
+ */
 expect value class LinuxSizeT
 
-/** Similar to [IntOrLong] + With Var */
+/**
+ * Similar to [IntOrLong] + With Var.
+ * Modeled after [platform.posix.blksize_t].
+ */
 expect class LinuxBlksize
 
 /** Similar to [UIntOrULong] + With Var */
 expect value class LinuxUBlksize
 
-/** Similar to [SmallUnsignedNumber] + With Var */
+/**
+ * Similar to [SmallUnsignedNumber] + With Var.
+ * Modeled after [platform.posix.fexcept_t].
+ */
 expect value class LinuxFExceptT
 
-/** Similar to [SmallSignedNumber] */
+/**
+ * Similar to [SmallSignedNumber].
+ * Modeled after [platform.posix.__pthread_mutex_s.__spins].
+ */
 expect class LinuxMutexSpins
 
-/** Similar to [IntOrLong] + With Var */
+/**
+ * Similar to [IntOrLong] + With Var.
+ * Modeled after [platform.linux.__t_scalar_t].
+ */
 expect class LinuxScalarT
 
-/** Similar to [UIntOrULong] + With Var */
+/**
+ * Similar to [UIntOrULong] + With Var.
+ * Modeled after [platform.linux.t_uscalar_t].
+ */
 expect value class LinuxUScalarT
