@@ -62,8 +62,8 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
 
             buildAndFail(":jsBrowserTest") {
                 assertHasDiagnostic(
-                    KotlinToolingDiagnostics.InvalidCustomBrowserExecutable,
-                    withSubstring = "Custom browser executable for runner 'chromium' does not exist: $customBrowserExecutable",
+                    KotlinToolingDiagnostics.NonExistentCustomBrowserExecutable,
+                    withSubstring = "Custom browser executable for runner 'chromium' does not exist at path: $customBrowserExecutable",
                 )
             }
         }

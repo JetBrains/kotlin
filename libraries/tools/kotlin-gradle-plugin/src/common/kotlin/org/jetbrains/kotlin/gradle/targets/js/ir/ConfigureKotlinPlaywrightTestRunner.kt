@@ -115,7 +115,7 @@ private fun KotlinPlaywrightJsTestFramework.BrowserRunnerInput.populateFrom(
         runner.customBrowserExecutable.map { executable ->
             if (!executable.asFile.exists()) {
                 project.reportDiagnostic(
-                    KotlinToolingDiagnostics.InvalidCustomBrowserExecutable(
+                    KotlinToolingDiagnostics.NonExistentCustomBrowserExecutable(
                         runnerName = runner.name,
                         executable = executable.asFile,
                     )

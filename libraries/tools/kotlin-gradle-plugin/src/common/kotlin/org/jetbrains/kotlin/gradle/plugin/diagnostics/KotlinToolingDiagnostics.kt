@@ -2378,17 +2378,17 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    internal object InvalidCustomBrowserExecutable : ToolingDiagnosticFactory(
+    internal object NonExistentCustomBrowserExecutable : ToolingDiagnosticFactory(
         predefinedSeverity = ERROR,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
     ) {
         operator fun invoke(runnerName: String, executable: File) = build {
-            title { "Invalid custom browser executable" }
+            title { "Non-existent custom browser executable" }
                 .description {
-                    "Custom browser executable for runner '$runnerName' does not exist: $executable"
+                    "Custom browser executable for runner '$runnerName' does not exist at path: $executable"
                 }
                 .solution {
-                    "Configure an existing browser executable for runner '$runnerName'"
+                    "Specify a path to an existing browser executable for runner '$runnerName'"
                 }
         }
     }
