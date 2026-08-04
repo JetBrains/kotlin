@@ -66,6 +66,9 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
                 project.locateOrRegisterTask<PlaywrightBrowserInstall>(browserType.getPwInstallBrowserTaskName(), args = listOf(testCompilation)) {
                     browsers.add(browserType.browserName)
                 }
+                if (testTaskProvider.get().browserDebugRequested.get()){
+                    browsers.add("chromium")
+                }
             }
 
         testTaskProvider.configure { testTask ->
@@ -110,6 +113,14 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         }
     }
 }
+
+private fun KotlinBrowserTestRunnerDsl.playwrightBrowserName(): String =
+    when (this) {
+        is KotlinFirefoxTestRunner -> "firefox"
+        is KotlinWebkitTestRunner -> "webkit"
+        is KotlinChromiumTestRunner -> "chromium"
+        else -> throw IllegalArgumentException("Unsupported browser runner: ${this::class.simpleName}")
+    }
 
 private fun KotlinPlaywrightJsTestFramework.BrowserRunnerInput.populateFrom(
     project: Project,
