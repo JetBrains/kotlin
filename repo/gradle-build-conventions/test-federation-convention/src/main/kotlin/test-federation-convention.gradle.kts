@@ -20,7 +20,7 @@ tasks.withType<Test>().configureEach {
     val smokeTestConfig = smokeTestConfig
 
     /* If the task itself is marked as 'isSmokeTest', then it always has to be fully executed */
-    val testFederationMode = project.testFederationMode
+    val testFederationMode: Provider<TestFederationMode> = testFederationMode
 
     inputs.property(TEST_FEDERATION_MODE_KEY, testFederationMode)
     inputs.property(SMOKE_TEST_CONFIG_KEY, smokeTestConfig)
@@ -142,7 +142,7 @@ afterEvaluate {
             else defaultFailOnNoDiscoveredTests
         }).disallowChanges()
 
-        val testFederationMode = project.testFederationMode
+        val testFederationMode = testFederationMode
         doFirst {
             if (testFederationMode.get() == TestFederationMode.Smoke) {
                 filter.isFailOnNoMatchingTests = false

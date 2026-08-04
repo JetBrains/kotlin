@@ -59,6 +59,18 @@ val Project.testFederationMode: Provider<TestFederationMode> by extensionPropert
 }
 
 /**
+ * Provides the [TestFederationMode] assigned to this test
+ *
+ * It adapts Project.testFederationMode by taking into account SmokeTestConfig
+*/
+@DelicateTestFederationApi
+val Test.testFederationMode: Provider<TestFederationMode>  by extensionProperty property@{
+    smokeTestConfig.filter { it == SmokeTestConfig.RunAllTests }.map { TestFederationMode.Full }
+        .orElse(project.testFederationMode)
+}
+
+
+/**
  * Provides the set of [Domain]s currently marked as affected.
  *
  * For example, a change to the Kotlin Gradle Plugin might affect [Domain.Gradle]. Explicitly configured affected domains take precedence over
