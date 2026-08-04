@@ -54,9 +54,9 @@ class CacheBuilder(
             && (config.isFinalBinary || config.produce.isFullCache)
             && (autoCacheableFrom.isNotEmpty() || icEnabled)
 
-    private val allKlibs by lazy { CachedKlibs(config.resolvedLibraries.getFullList()) }
+    private val allKlibs by lazy { LoadedKlibsWithDependencies(config.resolvedLibraries.getFullList()) }
 
-    private val uniqueNameToLibrary by lazy { allKlibs.librariesReverseTopoSorted.associateBy { it.uniqueName } }
+    private val uniqueNameToLibrary by lazy { allKlibs.klibsReverseTopoSorted.associateBy { it.uniqueName } }
     private val uniqueNameToHash = mutableMapOf<String, FingerprintHash>()
 
     private val caches = mutableMapOf<KotlinLibrary, CachedLibraries.Cache>()
@@ -100,7 +100,7 @@ class CacheBuilder(
     // contribute to the fingerprint: changes in the per-file cached dependencies are tracked by the dirty-file analysis,
     // and the distribution libraries only change together with the compiler fingerprint (they live in compiler's dist directory).
     private fun computeDependenciesFingerprint(library: KotlinLibrary): FingerprintHash {
-        val monolithicallyCachedDependencies = allKlibs.getAllTransitiveDependencies(library).filter {
+        val monolithicallyCachedDependencies = allKlibs.getAllDependencies(library).filter {
             !it.isCachedPerFile && !it.isImplicitlyLoadedFromKotlinNativeDistribution && !it.isNativeStdlib
         }
         return CachedLibraries.computeDependenciesFingerprint(monolithicallyCachedDependencies, uniqueNameToHash)
@@ -139,7 +139,7 @@ class CacheBuilder(
         val icedLibraries = mutableListOf<KotlinLibrary>()
         val lastRebuiltArchives = mutableListOf<Path>()
 
-        allKlibs.librariesReverseTopoSorted.forEach { library ->
+        allKlibs.klibsReverseTopoSorted.forEach { library ->
             // For MinGW target avoid compiling caches for anything except stdlib.
             if (config.target == KonanTarget.MINGW_X64 && !library.isNativeStdlib) {
                 return@forEach
@@ -347,7 +347,7 @@ class CacheBuilder(
     }
 
     private fun buildLibraryCache(library: KotlinLibrary, isExternal: Boolean, filesToCache: List<String>): List<Path> {
-        val dependencies = allKlibs.getAllTransitiveDependencies(library).toList()
+        val dependencies = allKlibs.getAllDependencies(library).toList()
         val dependencyCaches = dependencies.map {
             cacheRootDirectories[it] ?: run {
                 configuration.reportLog("SKIPPING ${library.path} as some of the dependencies aren't cached")

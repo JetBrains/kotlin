@@ -134,7 +134,7 @@ class KonanDriver(
             notifyPhaseFinished(PhaseType.Initialization)
         }
 
-        val cacheBuilder = CacheBuilder(config, compilationSpawner)
+        val cacheBuilder = CacheBuilder(config, compilationSpawner) // cache builder creation
         if (cacheBuilder.needToBuild()) {
             // Build missing caches.
             cacheBuilder.build()
