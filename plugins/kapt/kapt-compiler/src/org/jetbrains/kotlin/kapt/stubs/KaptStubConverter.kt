@@ -1665,7 +1665,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         if (type is ConeErrorType) {
             val diagnostic = type.diagnostic as? ConeUnresolvedError
             val simpleName = diagnostic?.qualifier ?: return null
-            val outerType = (diagnostic as? ConeUnresolvedNameError)?.receiverType
+            val outerType = (diagnostic as? ConeUnresolvedNameError)?.receiverInfo?.type
             return if (outerType == null) {
                 treeMaker.SimpleName(simpleName) to simpleName
             } else {

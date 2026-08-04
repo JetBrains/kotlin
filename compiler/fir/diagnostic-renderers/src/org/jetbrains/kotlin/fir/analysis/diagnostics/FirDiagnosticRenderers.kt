@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeReceiverInfo
 import org.jetbrains.kotlin.fir.types.hasError
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
@@ -368,8 +368,20 @@ object FirDiagnosticRenderers {
         if (!it.isNullOrBlank()) " for operator '$it'" else ""
     }
 
-    val FOR_OPTIONAL_RECEIVER = ContextDependentRenderer { type: ConeKotlinType?, ctx ->
-        if (type?.hasError() == false) " on receiver of type '${RENDER_TYPE.render(type, ctx)}'" else ""
+    val FOR_OPTIONAL_RECEIVER = ContextDependentRenderer { receiverInfo: ConeReceiverInfo?, ctx ->
+        if (receiverInfo == null || receiverInfo.type.hasError()) return@ContextDependentRenderer ""
+        buildString {
+            if (receiverInfo.couldBePositionalDestructuring) {
+                append(" for name-based destructuring")
+            }
+            append(" on receiver of type '")
+            append(RENDER_TYPE.render(receiverInfo.type, ctx))
+            append("'")
+
+            if (receiverInfo.couldBePositionalDestructuring) {
+                append(". To use positional destructuring, use the 'val [...] = ...' syntax")
+            }
+        }
     }
 
     val OF_OPTIONAL_NAME = Renderer { name: Name? ->

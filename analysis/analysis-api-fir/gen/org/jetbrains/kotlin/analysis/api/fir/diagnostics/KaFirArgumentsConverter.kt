@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeReceiverInfo
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtExpression
@@ -81,6 +82,7 @@ private fun convertArgument(argument: Any?, firSymbolBuilder: KaSymbolByFirBuild
         is FirTypeRef -> convertArgument(argument, firSymbolBuilder)
         is KtSourceElement -> convertArgument(argument, firSymbolBuilder)
         is WhenMissingCase -> convertArgument(argument, firSymbolBuilder)
+        is ConeReceiverInfo -> convertArgument(argument, firSymbolBuilder)
         is Map<*, *> -> convertArgument(argument, firSymbolBuilder)
         is Collection<*> -> convertArgument(argument, firSymbolBuilder)
         is Pair<*, *> -> convertArgument(argument, firSymbolBuilder)
@@ -194,6 +196,10 @@ private fun convertArgument(argument: KtSourceElement, firSymbolBuilder: KaSymbo
 
 private fun convertArgument(argument: WhenMissingCase, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return argument.toKaWhenMissingCase()
+}
+
+private fun convertArgument(argument: ConeReceiverInfo, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
+    return firSymbolBuilder.typeBuilder.buildKtType(argument.type)
 }
 
 private fun convertArgument(argument: Map<*, *>, firSymbolBuilder: KaSymbolByFirBuilder): Any? {

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeErrorLookupTag
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeReceiverInfo
 import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.types.getConstructor
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
@@ -41,8 +42,11 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
  */
 object FirAdaptiveTypeRenderingKey : RenderingContext.Key<Map<ConeKotlinType, String>>("ADAPTIVE_RENDERED_TYPES") {
     override fun compute(objectsToRender: Collection<Any?>, diagnosticContext: DiagnosticBaseContext): Map<ConeKotlinType, String> {
-        val coneTypes = objectsToRender.filterIsInstance<ConeKotlinType>() +
-                objectsToRender.filterIsInstance<Iterable<*>>().flatMap { it.filterIsInstance<ConeKotlinType>() }
+        val coneTypes = buildList {
+            objectsToRender.filterIsInstanceTo<ConeKotlinType, _>(this)
+            objectsToRender.filterIsInstance<Iterable<*>>().flatMapTo(this) { it.filterIsInstance<ConeKotlinType>() }
+            objectsToRender.filterIsInstance<ConeReceiverInfo>().mapTo(this) { it.type }
+        }
 
         val constructors = buildSet {
             coneTypes.forEach {

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeReceiverInfo
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.CallableId
@@ -78,7 +79,7 @@ class ConeUnresolvedTypeQualifierError(val qualifiers: List<FirQualifierPart>) :
 class ConeUnresolvedNameError(
     val name: Name,
     val operatorToken: String? = null,
-    val receiverType: ConeKotlinType? = null,
+    val receiverInfo: ConeReceiverInfo? = null,
 ) : ConeUnresolvedError {
     override val qualifier: String get() = name.asString()
     override val reason: String get() = "Unresolved name: $prettyReference"
