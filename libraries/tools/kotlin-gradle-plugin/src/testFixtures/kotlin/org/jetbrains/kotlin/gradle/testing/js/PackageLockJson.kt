@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
  * to reduce the complexity and maintenance.
  */
 @Serializable
-internal data class PackageLockJson(
+data class PackageLockJson(
     val name: String,
     val version: String? = null,
     val packages: Map<String, Package>,
