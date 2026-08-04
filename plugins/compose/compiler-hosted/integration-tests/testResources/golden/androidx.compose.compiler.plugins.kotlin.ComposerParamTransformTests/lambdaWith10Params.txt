@@ -65,7 +65,7 @@ fun BrokenComposable(composableParameter: Function13<@[ParameterName(name = 'par
       } else {
         %composer.skipToGroupEnd()
       }
-    }, %composer, 0b00110110)
+    }, %composer, 0b00110110) as Function2<Composer, Int, Unit>
     if (isTraceInProgress()) {
       traceEventEnd()
     }

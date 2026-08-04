@@ -195,7 +195,7 @@ fun Test5(content: Function2<Composer, Int, Unit>, %composer: Composer?, %change
       } else {
         %composer.skipToGroupEnd()
       }
-    }, %composer, 0b00110110), %composer, 0b00110000 or ProvidedValue.%stable)
+    }, %composer, 0b00110110) as Function2<Composer, Int, Unit>, %composer, 0b00110000 or ProvidedValue.%stable)
     if (isTraceInProgress()) {
       traceEventEnd()
     }
@@ -234,7 +234,7 @@ fun Test6(test: String, %composer: Composer?, %changed: Int) {
       } else {
         %composer.skipToGroupEnd()
       }
-    }, %composer, 0b00110110), %composer, 0b00110000 or ProvidedValue.%stable)
+    }, %composer, 0b00110110) as Function2<Composer, Int, Unit>, %composer, 0b00110000 or ProvidedValue.%stable)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

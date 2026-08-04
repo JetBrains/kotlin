@@ -747,12 +747,12 @@ class ComposerLambdaMemoization(
         )
 
         val isComposableContext = currentFunctionContext?.composable == true
-        if (!collector.hasCaptures) {
+        val originalType = functionExpression.type
+        return if (!collector.hasCaptures) {
             val enclosingFunction = currentFunctionContext?.declaration
             val inPublicInlineScope = enclosingFunction?.isInPublicInlineScope == true
             // lambda will be moved into ComposableSingletons, which is a non-generic object, so nothing stored there may reference type parameters of the enclosing declaration
             // erase them to their upper bounds: the singleton is a single shared instance and genuinely is not parameterized.
-            val originalType = functionExpression.type
             functionExpression.type = originalType.eraseTypeParameters()
             val singleton = irGetComposableSingleton(
                 lambdaExpression = wrapFunctionExpression(
@@ -764,7 +764,7 @@ class ComposerLambdaMemoization(
                 lambdaType = functionExpression.type,
                 lambdaName = createSingletonLambdaName(functionExpression)
             )
-            return if (inPublicInlineScope) {
+            if (inPublicInlineScope) {
                 // Public inline functions can't use singleton instance because changes to the function body
                 // can cause ABI incompatibilities. Note that we still generate singleton instances
                 // to ensure that we don't break existing consumers.
@@ -778,22 +778,25 @@ class ComposerLambdaMemoization(
                         it.associatedComposableSingletonStub = singleton
                     }
             } else {
-                singleton.reinterpretAs(originalType)
+                singleton
             }
         } else {
-            return wrapFunctionExpression(declarationContext, functionExpression, collector, isComposableContext)
+            wrapFunctionExpression(declarationContext, functionExpression, collector, isComposableContext)
         }
+            .implicitCastTo(originalType) // restore original type of expression after type erasure (in case of singleton get) or wrapper-induced `ComposableLambda` return type
     }
 
     private val typeSystem by lazy { IrTypeSystemContextImpl(context.irBuiltIns) }
+
     /**
-     * Adjusts the type of a lambda read from ComposableSingletons back to [expectedType], the type the lambda had before its type parameters were erased.
+     * Adjusts the type of a lambda read from ComposableSingletons (back to [expectedType], the type the lambda had before its type parameters were erased)
+     * or wrapped by one of `composableLambda*` functions (they return `ComposableLambda` so erase real lambda type)
      *
      * Not always needed: a function type is contravariant in its parameters, so for a lambda parameter type `P<S>` the check reduces to `P<S>` <: `P<Any?>`.
      * not needed for covariant type arguments: `List<S>` is a subtype of `List<Any?>`
      * but needed for invariant (`MutableList<S>`) and contravariant (`Comparator<S>`) ones, which are not
      */
-    private fun IrExpression.reinterpretAs(expectedType: IrType): IrExpression {
+    private fun IrExpression.implicitCastTo(expectedType: IrType): IrExpression {
         if (type.isSubtypeOf(expectedType, typeSystem)) return this
         return IrTypeOperatorCallImpl(
             startOffset = startOffset,
@@ -802,7 +805,7 @@ class ComposerLambdaMemoization(
             operator = IrTypeOperator.IMPLICIT_CAST,
             typeOperand = expectedType,
             argument = this,
-        ).markAsStatic(true) // reading a composable singleton is static, and so is casting it
+        )
     }
 
     private fun createSingletonLambdaName(expression: IrFunctionExpression): String {

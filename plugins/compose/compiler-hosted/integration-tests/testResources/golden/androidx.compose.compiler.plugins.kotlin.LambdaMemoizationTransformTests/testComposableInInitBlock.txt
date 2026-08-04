@@ -58,7 +58,7 @@ class ComposeScreenSaverView {
         %composer.skipToGroupEnd()
       }
     }
-    )
+     as Function2<Composer, Int, Unit>)
   }
   val %stable: Int = 0
     get() {

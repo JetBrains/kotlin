@@ -51,7 +51,7 @@ fun SimpleAnimatedContentSample(%composer: Composer?, %changed: Int) {
       } else {
         %composer.skipToGroupEnd()
       }
-    }, %composer, 0b00110110), %composer, 0b00110110)
+    }, %composer, 0b00110110) as @[ExtensionFunctionType] Function4<AnimatedVisibilityScope, Float, Composer, Int, Unit>, %composer, 0b00110110)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

@@ -411,6 +411,8 @@ class ComposableTargetAnnotationsTransformer(
         get() = when (this) {
             is IrFunctionExpression -> function.isComposable
             is IrCall -> isComposableSingletonGetter() || hasTransformedLambda
+            // `ComposerLambdaMemoization` casts `composableLambda*` calls back to the composable function type of the lambda they replace
+            is IrTypeOperatorCall if operator == IrTypeOperator.IMPLICIT_CAST -> argument.isComposableLambda
             else -> false
         }
 

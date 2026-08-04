@@ -1013,9 +1013,10 @@ abstract class AbstractComposeLowering(
                 }
             }
 
-            is IrFunctionExpression,
-            is IrTypeOperatorCall ->
+            is IrFunctionExpression ->
                 this.isStaticFunctionExpression
+            is IrTypeOperatorCall ->
+                this.isStaticFunctionExpression || (this.operator == IrTypeOperator.IMPLICIT_CAST && this.argument.isStatic(fileContainingDependent))
 
             is IrGetField ->
                 // K2 sometimes produces `IrGetField` for reads from constant properties
