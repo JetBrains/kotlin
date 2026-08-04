@@ -698,6 +698,15 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val useNonPackedKlibs: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_USE_NON_PACKED_KLIBS) ?: true
 
+    /**
+     * When set [org.jetbrains.kotlin.gradle.cache.KotlinGradleTaskExecutionCacheWithMetrics]
+     * will write there after build finish detailed report on cache entries.
+     *
+     * And log to console some summary statistics.
+     */
+    val taskExecutionCacheMetricsFile: String?
+        get() = get(PropertyNames.KOTLIN_TASK_EXECUTION_CACHE_METRICS_FILE)
+
     private val defaultClassLoaderCacheTimeout = 120.minutes.inWholeSeconds
 
     val classLoaderCacheTimeoutInSeconds: Provider<Long>
@@ -879,6 +888,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_PARSE_INLINED_LOCAL_CLASSES = property("$KOTLIN_INTERNAL_NAMESPACE.classpathSnapshot.parseInlinedLocalClasses")
         val KOTLIN_SWIFTPM_MACRO_COLLECTING_MODE = property("$KOTLIN_INTERNAL_NAMESPACE.swiftPMCinteropMacroNamesCollectingMode")
         val KOTLIN_NATIVE_ENABLE_RELEASE_BINARY_CACHE = property("$KOTLIN_INTERNAL_NAMESPACE.native.enableReleaseBinaryCache")
+        val KOTLIN_TASK_EXECUTION_CACHE_METRICS_FILE = property("$KOTLIN_INTERNAL_NAMESPACE.reportTaskExecutionCacheMetricsToFile")
 
         val FUNCTIONAL_TEST_MODE_PROPERTY = "$KOTLIN_INTERNAL_NAMESPACE.functionalTestMode"
     }
