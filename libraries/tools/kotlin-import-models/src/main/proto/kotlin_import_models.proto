@@ -1,0 +1,75 @@
+edition = "2023";
+
+package org.jetbrains.kotlin.importmodels.proto;
+option java_multiple_files = true;
+
+import "google/protobuf/any.proto";
+
+enum ErrorType {
+  UNKNOWN_ERROR = 0;
+  UNKNOWN_MODEL_ID = 1;
+  UNKNOWN_MODEL_PARAMS = 2;
+  UNSUPPORTED_MODEL_ID = 3;
+  UNSUPPORTED_MODEL_PARAMS = 4;
+  INTERNAL_ERROR = 5;
+  GENERIC_ERROR = 6;
+}
+
+message Error {
+  ErrorType error_type = 1;
+  string error_message = 2;
+}
+
+message Result {
+  oneof result {
+    google.protobuf.Any model = 1;
+    Error error = 2;
+  }
+}
+
+message Version {
+  uint32 major = 1;
+  uint32 minor = 2;
+  uint32 patch = 3;
+  string classifier = 4;
+}
+
+enum Capability {
+  UNKNOWN_CAPABILITY = 0;
+  JVM_ONLY = 1;
+  KAPT = 2;
+}
+
+enum Platform {
+  PLATFORM_UNSPECIFIED = 0;
+  JVM = 1;
+}
+
+message CompilationUnitId {
+  string value = 1;
+}
+
+message BaseModel {
+  string id = 1;
+  Version plugin_version = 2;
+  repeated Capability capabilities = 3;
+}
+
+message ProjectModel {
+  string id = 1;
+  string project_path = 2;
+  repeated CompilationUnitId compilation_unit_ids = 3;
+}
+
+message CompilationUnitModel {
+  message Parameters {
+    CompilationUnitId compilation_unit_id = 1;
+  }
+
+  string id = 1;
+  Parameters parameters = 2;
+  string compilation_name = 3;
+  Platform platform = 4;
+  bool is_test = 5;
+  string compile_task_path = 6;
+}
