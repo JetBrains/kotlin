@@ -12,7 +12,6 @@ import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.internal.component.external.model.DefaultModuleComponentSelector
 import org.gradle.kotlin.dsl.project
-import org.jetbrains.kotlin.gradle.cache.getOrPutSynchronized
 import org.jetbrains.kotlin.gradle.cache.kotlinGradleTaskExecutionCache
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.createResolvable
 import org.jetbrains.kotlin.gradle.utils.groupByToNonNullSet
-import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -228,12 +226,12 @@ class LazyResolvedConfigurationTest {
 
         val cache = project.kotlinGradleTaskExecutionCache.get()
 
-        val group = cache.getOrPutSynchronized(extrasKeyOf("group")) {
+        val group = cache.getOrCompute("group") {
             lazyCommonMainCompileDependencies.groupByToNonNullSet(coordinatesMapper, variantNameMapper)
         }
 
         // getting group with the same name but different selectors should return the previously computed group
-        val groupV2 = cache.getOrPutSynchronized(extrasKeyOf("group")) {
+        val groupV2 = cache.getOrCompute("group") {
             lazyCommonMainCompileDependencies.groupByToNonNullSet({ "" }, { "" })
         }
         assertSame(
@@ -256,7 +254,7 @@ class LazyResolvedConfigurationTest {
             group.prettyPrinted
         )
 
-        val reversedGroup = cache.getOrPutSynchronized(extrasKeyOf("reversedGroup")) {
+        val reversedGroup = cache.getOrCompute("reversedGroup") {
             lazyCommonMainCompileDependencies.groupByToNonNullSet(
                 keySelector = variantNameMapper,
                 valueTransform = coordinatesMapper
