@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -30,6 +31,10 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 private const val SEQUENCE_OF = "sequenceOf"
+internal const val MAP = "map"
+internal const val MAP_INDEXED = "mapIndexed"
+internal const val MAP_NOT_NULL = "mapNotNull"
+internal const val MAP_NOT_NULL_INDEXED = "mapIndexedNotNull"
 
 // this is stored for expressions, intended to be passed either to value declarations or to for loops iterated over the expression result
 internal var IrExpression.sequenceDataOfExpression: SequenceData? by irAttribute(true)
@@ -138,6 +143,44 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         expression.sequenceDataOfExpression = variableDeclaration.sequenceDataOfVariable
     }
 
+    private fun matchWithMap(
+        expression: IrCall,
+        isIndexed: Boolean,
+        isNotNull: Boolean,
+    ) {
+        val receiver = expression.arguments.getOrNull(0) ?: return
+        val receiverData = receiver.sequenceDataOfExpression ?: return
+        val fnArg = getPredicateArgument(expression, 1) ?: return
+        if (fnArg is IrCall) return
+        val nonIndexedPredicateCall: MapPredicate = { builderWithParent ->
+            val builder = builderWithParent.first
+            val parent = builderWithParent.second
+            { sequenceElement: IrValueDeclaration -> builder.callPredicate(fnArg, parent, builder.irGet(sequenceElement)) }
+        }
+        val indexedPredicateCall: MapIndexedPredicate = { builderWithParent ->
+            val builder = builderWithParent.first
+            val parent = builderWithParent.second
+            { index: IrValueDeclaration, sequenceElement: IrValueDeclaration ->
+                builder.callPredicate(fnArg, parent, builder.irGet(index), builder.irGet(sequenceElement))
+            }
+        }
+        val predicateCall = if (isIndexed) {
+            MapPredicateCall.Indexed(indexedPredicateCall)
+        } else {
+            MapPredicateCall.NonIndexed(nonIndexedPredicateCall)
+        }
+        val transformers = listOf(
+            SequenceTransformer.Map(
+                predicateCall,
+                isIndexed,
+                isNotNull,
+                expression.startOffset,
+                expression.endOffset
+            )
+        ) + receiverData.transformers
+        expression.sequenceDataOfExpression = SequenceData(receiverData.sequenceSource, transformers)
+    }
+
     private fun extractSequenceArgumentType(sequenceType: IrType): IrType? =
         (sequenceType as? IrSimpleType)?.arguments?.singleOrNull()?.let { return it.typeOrNull }
 
@@ -148,6 +191,7 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         if (expression.arguments.isEmpty()) {
             expression.sequenceDataOfExpression = SequenceData(
                 SequenceSource.SequenceOf(listOf(), elementType),
+                emptyList()
             )
             return
         }
@@ -156,6 +200,7 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         val sequenceOfArguments = gatherVarargArgument(argument) ?: return
         expression.sequenceDataOfExpression = SequenceData(
             SequenceSource.SequenceOf(sequenceOfArguments, elementType),
+            emptyList()
         )
     }
 
@@ -164,6 +209,10 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         if (!isElementSequence(context, expression)) return
         val functionName = expression.symbol.owner.name.asString()
         when (functionName) {
+            MAP -> matchWithMap(expression, isIndexed = false, isNotNull = false)
+            MAP_INDEXED -> matchWithMap(expression, isIndexed = true, isNotNull = false)
+            MAP_NOT_NULL -> matchWithMap(expression, isIndexed = false, isNotNull = true)
+            MAP_NOT_NULL_INDEXED -> matchWithMap(expression, isIndexed = true, isNotNull = true)
             SEQUENCE_OF -> matchWithSequenceOf(expression)
         }
     }
