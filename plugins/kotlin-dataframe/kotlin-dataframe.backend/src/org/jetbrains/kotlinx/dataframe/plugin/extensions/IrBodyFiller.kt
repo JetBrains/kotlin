@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlinx.dataframe.DataColumn
 import org.jetbrains.kotlinx.dataframe.columns.ColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
+import org.jetbrains.kotlinx.dataframe.plugin.DataFrameScope
 import org.jetbrains.kotlinx.dataframe.plugin.DataFrameTokenContentKey
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
@@ -220,8 +221,7 @@ private class DataFrameFileLowering(
             val receiverType = expression.symbol.owner.parameters.getOrNull(0)?.type
             if (receiverType != null) {
                 if (receiverType.isScope()) {
-                    val constructor = receiverType.classOrFail.constructors.single()
-                    expression.arguments[0] = IrConstructorCallImpl(-1, -1, receiverType, constructor, 0, 0)
+                    expression.arguments[0] = receiverType.scopeClassConstructorCall()
                 } else if (expression.arguments.size == 1) {
                     return inlineExtensionProperty(receiverType, extensionPropertyCall = expression, data = data)
                 }
@@ -230,6 +230,22 @@ private class DataFrameFileLowering(
             return super.visitCall(expression, data)
         }
         return super.visitCall(expression, data)
+    }
+
+    // A parameter can expect a scope while the argument is the value that is really on the stack,
+    // e.g. `let` called on an injected implicit receiver has `T` inferred to a scope.
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclarationParent): IrElement {
+        val function = expression.symbol.owner
+        val substitutor = IrTypeSubstitutor(expression.typeSubstitutionMap, allowEmptySubstitution = true)
+        for ([index, parameter] in function.parameters.withIndex()) {
+            val argument = expression.arguments.getOrNull(index) ?: continue
+            val expectedType = substitutor.substitute(parameter.type)
+            if (argument.type.classOrNull == expectedType.classOrNull) continue
+            if (expectedType.isScope()) {
+                expression.arguments[index] = expectedType.scopeClassConstructorCall()
+            }
+        }
+        return super.visitFunctionAccess(expression, data)
     }
 
     private fun inlineExtensionProperty(
@@ -249,15 +265,14 @@ private class DataFrameFileLowering(
     )
 
     private fun IrType.isScope(): Boolean {
-        val origin = (classifierOrNull?.owner as? IrClass)?.origin ?: return false
-        val fromPlugin = origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey is DataFramePlugin
-        val scopeReference = classFqName?.shortName()?.asString()?.startsWith("Scope") ?: false
-        return fromPlugin || scopeReference
+        val origin = getClass()?.origin ?: return false
+        return origin is IrDeclarationOrigin.GeneratedByPlugin
+                && origin.pluginKey is DataFrameScope
     }
 
     override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: IrDeclarationParent): IrExpression {
         if (expression.type.isScope()) {
-            return expression.replaceWithConstructorCall()
+            return expression.type.scopeClassConstructorCall()
         }
         return super.visitErrorCallExpression(expression, data)
     }
@@ -267,15 +282,15 @@ private class DataFrameFileLowering(
             expression.operator == IrTypeOperator.IMPLICIT_CAST &&
             expression.argument is IrGetValue
         ) {
-            return expression.replaceWithConstructorCall()
+            return expression.type.scopeClassConstructorCall()
         }
         return super.visitTypeOperator(expression, data)
     }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun IrExpression.replaceWithConstructorCall(): IrConstructorCallImpl {
-        val constructor = type.getClass()!!.constructors.toList().single()
-        return IrConstructorCallImpl(-1, -1, type, constructor.symbol, 0, 0)
+    private fun IrType.scopeClassConstructorCall(): IrConstructorCallImpl {
+        val constructor = getClass()!!.constructors.single()
+        return IrConstructorCallImpl(-1, -1, this, constructor.symbol, 0, 0)
     }
     // endregion
 }

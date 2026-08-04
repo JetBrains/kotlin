@@ -86,6 +86,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
+import org.jetbrains.kotlinx.dataframe.plugin.DataFrameScope
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.PropertyName
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
@@ -539,7 +540,7 @@ class FunctionCallTransformer(
                     ),
                 )
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
-                origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
+                origin = FirDeclarationOrigin.Plugin(DataFrameScope)
                 status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
                 deprecationsProvider = EmptyDeprecationsProvider
                 classKind = ClassKind.CLASS
