@@ -6,16 +6,13 @@
 package org.jetbrains.kotlin.fir.java
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
@@ -32,7 +29,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.load.java.structure.*
@@ -44,6 +40,22 @@ import java.util.*
 internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
     session: FirSession, source: KtSourceElement?,
 ): List<FirAnnotation> = map { it.toFirAnnotation(session, source) }
+
+/**
+ * Defers [getDeprecationsProviderFromAnnotations] until deprecations are queried,
+ * so lazy Java annotations are not forced eagerly (KT-74097).
+ */
+class FirJavaLazyDeprecationsProvider(
+    private val annotations: List<FirAnnotation>,
+    private val session: FirSession,
+) : DeprecationsProvider() {
+    private val delegate: DeprecationsProvider by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        annotations.getDeprecationsProviderFromAnnotations(session, fromJava = true)
+    }
+
+    override fun getDeprecationsInfo(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite? =
+        delegate.getDeprecationsInfo(languageVersionSettings)
+}
 
 internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
     session: FirSession,
@@ -138,15 +150,6 @@ internal object DeprecatedInJavaDocAnnotation : JavaAnnotation {
     override val arguments: Collection<JavaAnnotationArgument> get() = emptyList()
     override val classId: ClassId get() = JvmStandardClassIds.Annotations.Java.Deprecated
     override fun resolve(): JavaClass? = null
-}
-
-internal fun FirAnnotationContainer.setAnnotationsFromJava(
-    session: FirSession, source: KtSourceElement?,
-    javaAnnotationOwner: JavaAnnotationOwner,
-) {
-    val annotations = mutableListOf<FirAnnotation>()
-    javaAnnotationOwner.annotations.mapTo(annotations) { it.toFirAnnotation(session, source) }
-    replaceAnnotations(annotations)
 }
 
 internal fun JavaValueParameter.toFirValueParameter(
