@@ -18,6 +18,8 @@ open class /A { // /A|null[0]
     constructor <init>() // /A.<init>|<init>(){}[0]
 }
 final class /B : /A { // /B|null[0]
+    final val p // /B.p|{}p[0]
+        final fun <get-p>(): /I // /B.p.<get-p>|<get-p>(){}[0]
     constructor <init>() // /B.<init>|<init>(){}[0]
 }
 abstract interface /I // /I|null[0]
