@@ -46,6 +46,12 @@ public class JvmIrTextTestForComposeGenerated extends AbstractJvmIrTextTestForCo
   }
 
   @Test
+  @TestMetadata("composableSingletonInvariantArgumentInPublicInline.kt")
+  public void testComposableSingletonInvariantArgumentInPublicInline() {
+    run("composableSingletonInvariantArgumentInPublicInline.kt");
+  }
+
+  @Test
   @TestMetadata("composableSingletonTypeParameter.kt")
   public void testComposableSingletonTypeParameter() {
     run("composableSingletonTypeParameter.kt");

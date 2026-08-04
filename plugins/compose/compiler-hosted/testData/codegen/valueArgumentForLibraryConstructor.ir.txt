@@ -174,55 +174,56 @@ MODULE_FRAGMENT
       BLOCK_BODY
         CALL 'public open fun item (key: kotlin.Any?, contentType: kotlin.Any?, content: @[ExtensionFunctionType] kotlin.Function3<androidx.compose.foundation.lazy.LazyItemScope, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in androidx.compose.foundation.lazy.LazyListScope' type=kotlin.Unit origin=null
           ARG <this>: GET_VAR '<this>: androidx.compose.foundation.lazy.LazyListScope declared in home.podcastCategory' type=androidx.compose.foundation.lazy.LazyListScope origin=IMPLICIT_ARGUMENT
-          ARG content: CALL 'public final fun composableLambdaInstance (key: kotlin.Int, tracked: kotlin.Boolean, block: kotlin.Any): androidx.compose.runtime.internal.ComposableLambda declared in androidx.compose.runtime.internal' type=androidx.compose.runtime.internal.ComposableLambda origin=null
-            ARG key: CONST Int type=kotlin.Int value=-1614294205
-            ARG tracked: CONST Boolean type=kotlin.Boolean value=true
-            ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function3<androidx.compose.foundation.lazy.LazyItemScope, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=LAMBDA
-              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
-                VALUE_PARAMETER kind:ExtensionReceiver name:$this$item index:0 type:androidx.compose.foundation.lazy.LazyItemScope
-                VALUE_PARAMETER kind:Regular name:$composer index:1 type:androidx.compose.runtime.Composer? [assignable]
-                VALUE_PARAMETER kind:Regular name:$changed index:2 type:kotlin.Int
-                annotations:
-                  Composable
-                  FunctionKeyMeta(key = -1614294205, startOffset = 776, endOffset = 833)
-                BLOCK_BODY
-                  CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
-                    ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.podcastCategory.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
-                    ARG sourceInformation: CONST String type=kotlin.String value="C79@786L41:main.kt#1wrmn"
-                  WHEN type=kotlin.Unit origin=IF
-                    BRANCH
-                      if: CALL 'public abstract fun shouldExecute (parametersChanged: kotlin.Boolean, flags: kotlin.Int): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
-                        ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.podcastCategory.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
-                        ARG parametersChanged: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
-                          ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
-                            ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
-                              ARG <this>: GET_VAR '$changed: kotlin.Int declared in home.podcastCategory.<anonymous>' type=kotlin.Int origin=null
-                              ARG other: CONST Int type=kotlin.Int value=17
-                            ARG arg1: CONST Int type=kotlin.Int value=16
-                        ARG flags: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
-                          ARG <this>: GET_VAR '$changed: kotlin.Int declared in home.podcastCategory.<anonymous>' type=kotlin.Int origin=null
-                          ARG other: CONST Int type=kotlin.Int value=1
-                      then: BLOCK type=kotlin.Unit origin=null
-                        WHEN type=kotlin.Unit origin=IF
-                          BRANCH
-                            if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
-                            then: CALL 'public final fun traceEventStart (key: kotlin.Int, dirty1: kotlin.Int, dirty2: kotlin.Int, info: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
-                              ARG key: CONST Int type=kotlin.Int value=-1614294205
-                              ARG dirty1: GET_VAR '$changed: kotlin.Int declared in home.podcastCategory.<anonymous>' type=kotlin.Int origin=null
-                              ARG dirty2: CONST Int type=kotlin.Int value=-1
-                              ARG info: CONST String type=kotlin.String value="home.podcastCategory.<anonymous> (main.kt:79)"
-                        CALL 'private final fun CategoryPodcasts (onTogglePodcastFollowed: kotlin.Function1<kotlin.String, kotlin.Unit>, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in home' type=kotlin.Unit origin=null
-                          ARG onTogglePodcastFollowed: GET_VAR 'onTogglePodcastFollowed: kotlin.Function1<kotlin.String, kotlin.Unit> declared in home.podcastCategory' type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=null
-                          ARG $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.podcastCategory.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
-                          ARG $changed: CONST Int type=kotlin.Int value=0
-                        WHEN type=kotlin.Unit origin=IF
-                          BRANCH
-                            if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
-                            then: CALL 'public final fun traceEventEnd (): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
-                    BRANCH
-                      if: CONST Boolean type=kotlin.Boolean value=true
-                      then: CALL 'public abstract fun skipToGroupEnd (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
-                        ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.podcastCategory.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
+          ARG content: TYPE_OP type=@[ExtensionFunctionType] kotlin.Function3<androidx.compose.foundation.lazy.LazyItemScope, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=IMPLICIT_CAST typeOperand=@[ExtensionFunctionType] kotlin.Function3<androidx.compose.foundation.lazy.LazyItemScope, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>
+            CALL 'public final fun composableLambdaInstance (key: kotlin.Int, tracked: kotlin.Boolean, block: kotlin.Any): androidx.compose.runtime.internal.ComposableLambda declared in androidx.compose.runtime.internal' type=androidx.compose.runtime.internal.ComposableLambda origin=null
+              ARG key: CONST Int type=kotlin.Int value=-1614294205
+              ARG tracked: CONST Boolean type=kotlin.Boolean value=true
+              ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function3<androidx.compose.foundation.lazy.LazyItemScope, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                  VALUE_PARAMETER kind:ExtensionReceiver name:$this$item index:0 type:androidx.compose.foundation.lazy.LazyItemScope
+                  VALUE_PARAMETER kind:Regular name:$composer index:1 type:androidx.compose.runtime.Composer? [assignable]
+                  VALUE_PARAMETER kind:Regular name:$changed index:2 type:kotlin.Int
+                  annotations:
+                    Composable
+                    FunctionKeyMeta(key = -1614294205, startOffset = 776, endOffset = 833)
+                  BLOCK_BODY
+                    CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+                      ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.podcastCategory.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
+                      ARG sourceInformation: CONST String type=kotlin.String value="C79@786L41:main.kt#1wrmn"
+                    WHEN type=kotlin.Unit origin=IF
+                      BRANCH
+                        if: CALL 'public abstract fun shouldExecute (parametersChanged: kotlin.Boolean, flags: kotlin.Int): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
+                          ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.podcastCategory.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
+                          ARG parametersChanged: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                            ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
+                              ARG arg0: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                                ARG <this>: GET_VAR '$changed: kotlin.Int declared in home.podcastCategory.<anonymous>' type=kotlin.Int origin=null
+                                ARG other: CONST Int type=kotlin.Int value=17
+                              ARG arg1: CONST Int type=kotlin.Int value=16
+                          ARG flags: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                            ARG <this>: GET_VAR '$changed: kotlin.Int declared in home.podcastCategory.<anonymous>' type=kotlin.Int origin=null
+                            ARG other: CONST Int type=kotlin.Int value=1
+                        then: BLOCK type=kotlin.Unit origin=null
+                          WHEN type=kotlin.Unit origin=IF
+                            BRANCH
+                              if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
+                              then: CALL 'public final fun traceEventStart (key: kotlin.Int, dirty1: kotlin.Int, dirty2: kotlin.Int, info: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+                                ARG key: CONST Int type=kotlin.Int value=-1614294205
+                                ARG dirty1: GET_VAR '$changed: kotlin.Int declared in home.podcastCategory.<anonymous>' type=kotlin.Int origin=null
+                                ARG dirty2: CONST Int type=kotlin.Int value=-1
+                                ARG info: CONST String type=kotlin.String value="home.podcastCategory.<anonymous> (main.kt:79)"
+                          CALL 'private final fun CategoryPodcasts (onTogglePodcastFollowed: kotlin.Function1<kotlin.String, kotlin.Unit>, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in home' type=kotlin.Unit origin=null
+                            ARG onTogglePodcastFollowed: GET_VAR 'onTogglePodcastFollowed: kotlin.Function1<kotlin.String, kotlin.Unit> declared in home.podcastCategory' type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=null
+                            ARG $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.podcastCategory.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
+                            ARG $changed: CONST Int type=kotlin.Int value=0
+                          WHEN type=kotlin.Unit origin=IF
+                            BRANCH
+                              if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
+                              then: CALL 'public final fun traceEventEnd (): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: CALL 'public abstract fun skipToGroupEnd (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
+                          ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.podcastCategory.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
         CALL 'public final fun items <T> (<this>: androidx.compose.foundation.lazy.LazyListScope, items: kotlin.collections.List<T of androidx.compose.foundation.lazy.items>, key: kotlin.Function1<@[ParameterName(name = "item")] T of androidx.compose.foundation.lazy.items, kotlin.Any>?, contentType: kotlin.Function1<@[ParameterName(name = "item")] T of androidx.compose.foundation.lazy.items, kotlin.Any?>, itemContent: @[ExtensionFunctionType] kotlin.Function4<androidx.compose.foundation.lazy.LazyItemScope, @[ParameterName(name = "item")] T of androidx.compose.foundation.lazy.items, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>): kotlin.Unit [inline] declared in androidx.compose.foundation.lazy' type=kotlin.Unit origin=null
           TYPE_ARG T: com.example.jetcaster.data.EpisodeToPodcast
           ARG <this>: GET_VAR '<this>: androidx.compose.foundation.lazy.LazyListScope declared in home.podcastCategory' type=androidx.compose.foundation.lazy.LazyListScope origin=IMPLICIT_ARGUMENT

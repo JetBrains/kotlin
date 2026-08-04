@@ -57,14 +57,14 @@ fun Test(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed
           } else {
             %composer.skipToGroupEnd()
           }
-        }, %composer, 0b00110110))
+        }, %composer, 0b00110110) as Function2<Composer, Int, Unit>)
         if (isTraceInProgress()) {
           traceEventEnd()
         }
       } else {
         %composer.skipToGroupEnd()
       }
-    }, %composer, 0b00110110))
+    }, %composer, 0b00110110) as Function2<Composer, Int, Unit>)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

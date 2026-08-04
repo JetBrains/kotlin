@@ -52,6 +52,7 @@ fun Test(crossinline content: Function0<Unit>, %composer: Composer?, %changed: I
           %composer.skipToGroupEnd()
         }
       }
+       as Function2<Composer, Int, Unit>
     }, %composer, 0)
   }, %composer, 0)
   sourceInformationMarkerEnd(%composer)
@@ -76,6 +77,7 @@ fun TestComposable(crossinline content: Function2<Composer, Int, Unit>, %compose
           %composer.skipToGroupEnd()
         }
       }
+       as Function2<Composer, Int, Unit>
     }, %composer, 0)
   }, %composer, 0)
   sourceInformationMarkerEnd(%composer)

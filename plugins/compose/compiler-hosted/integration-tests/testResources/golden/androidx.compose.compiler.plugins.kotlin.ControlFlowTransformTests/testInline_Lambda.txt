@@ -44,6 +44,6 @@ fun Test(condition: Boolean) {
         %composer.skipToGroupEnd()
       }
     }
-    )
+     as Function2<Composer, Int, Unit>)
   }
 }

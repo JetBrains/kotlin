@@ -28,7 +28,7 @@ class Test(val value: Int) : Delegate {
       %composer.skipToGroupEnd()
     }
   }
-  )
+   as Function2<Composer, Int, Unit>)
   val content: Function2<Composer, Int, Unit>
     get() {
       return <this>.%%delegate_0.content

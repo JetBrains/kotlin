@@ -43,6 +43,7 @@ fun Test(s: String, %composer: Composer?, %changed: Int) {
           %composer.skipToGroupEnd()
         }
       }
+       as Function2<Composer, Int, Unit>
     }
     sourceInformationMarkerEnd(%composer)
     tmp0_group(%composer, 6)
@@ -61,6 +62,7 @@ fun Test(s: String, %composer: Composer?, %changed: Int) {
           %composer.skipToGroupEnd()
         }
       }
+       as Function2<Composer, Int, Unit>
     }
     (%composer, 0)
     if (isTraceInProgress()) {

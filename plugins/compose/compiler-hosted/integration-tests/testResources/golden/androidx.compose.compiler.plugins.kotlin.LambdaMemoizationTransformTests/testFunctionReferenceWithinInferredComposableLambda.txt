@@ -36,4 +36,5 @@ fun Problem() {
       %composer.skipToGroupEnd()
     }
   }
+   as Function2<Composer, Int, Unit>
 }
