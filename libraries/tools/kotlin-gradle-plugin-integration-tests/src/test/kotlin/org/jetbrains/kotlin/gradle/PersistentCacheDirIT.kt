@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.projectPersistentCache
 import org.jetbrains.kotlin.gradle.testbase.source
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.exists
@@ -28,6 +29,8 @@ import kotlin.test.assertTrue
 @DisplayName("Kotlin project persistent cache directory")
 @JvmGradlePluginTests
 class PersistentCacheDirIT : KGPBaseTest() {
+    @TempDir
+    lateinit var tempDir: Path
 
     @GradleTest
     @DisplayName("default .kotlin directory is created")
@@ -62,7 +65,7 @@ class PersistentCacheDirIT : KGPBaseTest() {
     @DisplayName("absolute kotlin.project.persistent.dir is used as is")
     fun testAbsolutePersistentDir(gradleVersion: GradleVersion) {
         project("empty", gradleVersion) {
-            val persistentDir = projectPath.parent.resolve("absolute-kotlin-persistent-dir")
+            val persistentDir = tempDir.resolve("absolute-kotlin-persistent-dir")
             configureMultiModuleJvmProject(
                 kotlinProjectPersistentDir = persistentDir.pathString,
             )
