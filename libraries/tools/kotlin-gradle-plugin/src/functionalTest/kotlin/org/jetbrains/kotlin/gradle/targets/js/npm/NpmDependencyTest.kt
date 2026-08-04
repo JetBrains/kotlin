@@ -17,7 +17,7 @@ import kotlin.test.assertEquals
 class NpmDependencyTest {
 
     @Test
-    fun `directoryNpmDependency - expect version uses absolute real path`(
+    fun `directoryNpmDependency - expect version uses absolute+normalized path`(
         @TempDir
         tempDir: Path,
     ) {
@@ -32,7 +32,7 @@ class NpmDependencyTest {
             )
 
         assertEquals(
-            "file:" + tempDir.toRealPath().absolutePathString(),
+            "file:" + tempDir.toAbsolutePath().normalize().absolutePathString(),
             npmDep.version,
         )
     }
