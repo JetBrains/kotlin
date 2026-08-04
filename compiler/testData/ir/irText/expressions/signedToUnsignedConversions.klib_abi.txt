@@ -4,9 +4,6 @@
 // - Show declarations: true
 
 // Library unique name: <main>
-open annotation class kotlin.internal/ImplicitIntegerCoercion : kotlin/Annotation { // kotlin.internal/ImplicitIntegerCoercion|null[0]
-    constructor <init>() // kotlin.internal/ImplicitIntegerCoercion.<init>|<init>(){}[0]
-}
 final const val /BIGGER_THAN_UBYTE // /BIGGER_THAN_UBYTE|{}BIGGER_THAN_UBYTE[0]
     final fun <get-BIGGER_THAN_UBYTE>(): kotlin/Int // /BIGGER_THAN_UBYTE.<get-BIGGER_THAN_UBYTE>|<get-BIGGER_THAN_UBYTE>(){}[0]
 final const val /EXPLICIT_INT // /EXPLICIT_INT|{}EXPLICIT_INT[0]

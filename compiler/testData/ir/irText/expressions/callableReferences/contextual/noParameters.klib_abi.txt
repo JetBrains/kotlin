@@ -4,9 +4,18 @@
 // - Show declarations: true
 
 // Library unique name: <main>
-final class /Bar { // /Bar|null[0]
+open class /Bar { // /Bar|null[0]
     constructor <init>() // /Bar.<init>|<init>(){}[0]
     final fun (context(kotlin/String)).baz() // /Bar.baz|baz(kotlin.String)(){}[0]
+    final fun (context(kotlin/String, kotlin/Boolean)).baz2() // /Bar.baz2|baz2(kotlin.String;kotlin.Boolean)(){}[0]
+}
+final class /SubBar : /Bar { // /SubBar|null[0]
+    constructor <init>() // /SubBar.<init>|<init>(){}[0]
 }
 final fun (context(kotlin/String))./foo() // /foo|foo(kotlin.String)(){}[0]
+final fun (context(kotlin/String, kotlin/Boolean))./foo2() // /foo2|foo2(kotlin.String;kotlin.Boolean)(){}[0]
+final suspend fun (context(kotlin/String))./fooSuspend() // /fooSuspend|fooSuspend(kotlin.String)(){}[0]
+final fun (context(kotlin/String), kotlin/Int)./qux() // /qux|qux(kotlin.String)@kotlin.Int(){}[0]
+final fun (context(kotlin/String, kotlin/Boolean), kotlin/Int)./qux2() // /qux2|qux2(kotlin.String;kotlin.Boolean)@kotlin.Int(){}[0]
 final fun (kotlin/String)./test() // /test|test@kotlin.String(){}[0]
+final fun (context(kotlin/String, kotlin/Boolean))./test2() // /test2|test2(kotlin.String;kotlin.Boolean)(){}[0]

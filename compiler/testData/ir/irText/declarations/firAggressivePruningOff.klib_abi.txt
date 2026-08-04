@@ -4,10 +4,7 @@
 // - Show declarations: true
 
 // Library unique name: <main>
-final class /Foo { // /Foo|null[0]
-    constructor <init>() // /Foo.<init>|<init>(){}[0]
-    final fun access$<get-privatePropertyReferencedByInline>(/Foo): kotlin/String // /Foo.access$<get-privatePropertyReferencedByInline>|access$<get-privatePropertyReferencedByInline>#static(Foo){}[0]
-    final fun access$privateFunReferencedByInline(/Foo): kotlin/String // /Foo.access$privateFunReferencedByInline|access$privateFunReferencedByInline#static(Foo){}[0]
-    final inline fun publicInlineFun(): kotlin/String // /Foo.publicInlineFun|publicInlineFun(){}[0]
-    final fun publicNonInlineFun(): kotlin/String // /Foo.publicNonInlineFun|publicNonInlineFun(){}[0]
-}
+final fun /access$<get-privatePropertyReferencedByInline>$tFirAggressivePruningOffKt(): kotlin/String // /access$<get-privatePropertyReferencedByInline>$tFirAggressivePruningOffKt|access$<get-privatePropertyReferencedByInline>$tFirAggressivePruningOffKt(){}[0]
+final fun /access$privateFunReferencedByInline$tFirAggressivePruningOffKt(): kotlin/String // /access$privateFunReferencedByInline$tFirAggressivePruningOffKt|access$privateFunReferencedByInline$tFirAggressivePruningOffKt(){}[0]
+final inline fun /publicInlineFun(): kotlin/String // /publicInlineFun|publicInlineFun(){}[0]
+final fun /publicNonInlineFun(): kotlin/String // /publicNonInlineFun|publicNonInlineFun(){}[0]

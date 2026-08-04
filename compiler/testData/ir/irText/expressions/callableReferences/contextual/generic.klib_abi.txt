@@ -4,6 +4,8 @@
 // - Show declarations: true
 
 // Library unique name: <main>
-final fun <#A: kotlin/Any?, #B: kotlin/Any?, #C: kotlin/Any?> (#A)./foo(#B): #C? // /foo|foo@0:0(0:1){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0]
+final var /bar // /bar|(0:0)@0:1{0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}bar[0]
+    final fun <#A1: kotlin/Any?, #B1: kotlin/Any?, #C1: kotlin/Any?> (context(#A1), #B1).<get-bar>(): #C1? // /bar.<get-bar>|<get-bar>(0:0)@0:1(){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?, #B1: kotlin/Any?, #C1: kotlin/Any?> (context(#A1), #B1).<set-bar>(#C1?) // /bar.<set-bar>|<set-bar>(0:0)@0:1(0:2?){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?, #B: kotlin/Any?, #C: kotlin/Any?, #D: kotlin/Any?> (context(#A), #B)./foo(#C): #D? // /foo|foo(0:0)@0:1(0:2){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>;3§<kotlin.Any?>}[0]
-final fun /test() // /test|test(){}[0]
+final fun (kotlin/String)./test() // /test|test@kotlin.String(){}[0]
