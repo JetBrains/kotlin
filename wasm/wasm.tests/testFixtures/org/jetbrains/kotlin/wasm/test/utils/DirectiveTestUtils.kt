@@ -16,13 +16,14 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.utils.WasmIgnoreForConfig
 import org.jetbrains.kotlin.wasm.ir.WasmModule
 import org.jetbrains.kotlin.wasm.ir.WasmOp
+import org.jetbrains.kotlin.wasm.test.AbstractFirWasmJsSteppingTest
 import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunnerBase
 import org.jetbrains.kotlin.wasm.test.handlers.WasmVMException
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.function.Executable
+import kotlin.reflect.full.isSuperclassOf
 
 object DirectiveTestUtils {
 
@@ -207,7 +208,8 @@ object DirectiveTestUtils {
         targetBackend: TargetBackend,
     ) {
         assertAll(
-            DIRECTIVE_HANDLERS.map { handler -> Executable {
+            DIRECTIVE_HANDLERS.map { handler ->
+                Executable {
                     handler.process(module, sourceCode, targetBackend)
                 }
             }
@@ -340,6 +342,9 @@ private class WasmIgnoredTestSuppressorGroup(
                 if (hasVmMismatchInConcreteFailure(failedAssertion))
                     return@filter true
 
+                if (hasRunnerMismatch())
+                    return@filter true
+
                 // we know that all conditions that were specified are met
                 if (inDebugMode)
                     println("------ Suppressing test failure because the test is running with $ignoreForConfig (matches current environment)")
@@ -380,6 +385,14 @@ private class WasmIgnoredTestSuppressorGroup(
             return compilerConfiguration.wasmCompilationMode() != mode
         }
 
+        private fun hasRunnerMismatch(): Boolean {
+            val expectedRunnerKClass = ignoreForConfig.runner
+                ?: return false
+
+            return !testServices.testInfo.className.contains(expectedRunnerKClass.qualifiedName!!)
+        }
+
+
         fun checkIfTestShouldBeUnmuted() {
             // This function is only called if the whole test succeeded
 
@@ -390,6 +403,7 @@ private class WasmIgnoredTestSuppressorGroup(
             if (hasModeMismatch()) return
             if (hasOsMismatch()) return
             if (hasMismatchInVMsRun()) return
+            if (hasRunnerMismatch()) return
 
             // All specified conditions match the current environment
             throw AssertionError(
