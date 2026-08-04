@@ -118,19 +118,9 @@ private sealed class FeaturedLibrariesReporter {
             "Following libraries are specified to be exported with -Xexport-library, but not included to the build:"
     }
 
-    private class CoveredLibraryReporter(configuration: CompilerConfiguration): BaseReporter(configuration) {
-        override fun illegalKindMessage(kind: String, libraryName: String): String =
-            "Cannot provide the code coverage for the $kind library $libraryName."
-
-        override fun notIncludedLibraryMessageTitle(): String =
-            "The code coverage is enabled for the following libraries, but they are not included to the build:"
-    }
-
     companion object {
         fun forExportedLibraries(configuration: CompilerConfiguration): FeaturedLibrariesReporter =
                 ExportedLibrariesReporter(configuration)
-        fun forCoveredLibraries(configuration: CompilerConfiguration): FeaturedLibrariesReporter =
-                CoveredLibraryReporter(configuration)
         fun forIncludedLibraries(configuration: CompilerConfiguration): FeaturedLibrariesReporter =
                 IncludedLibrariesReporter(configuration)
     }
