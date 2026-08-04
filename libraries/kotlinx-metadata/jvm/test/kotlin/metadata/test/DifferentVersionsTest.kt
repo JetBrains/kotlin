@@ -88,7 +88,7 @@ class DifferentVersionsTest {
         val resource = DifferentVersionsTest::class.java.classLoader.getResource(path) ?: error("No resource found named '$path'.")
         val md = KotlinModuleMetadata.readStrict(resource.readBytes())
         md.version = JvmMetadataVersion(md.version.major, md.version.minor + 2, md.version.patch)
-        val futureVersion = md.write() // TODO this fails because I can't write far-future metadata
+        val futureVersion = md.writeImpl()
 
         assertFailsWith<IllegalArgumentException> { KotlinModuleMetadata.readStrict(futureVersion) }
         assertIs<KotlinModuleMetadata>(KotlinModuleMetadata.readLenient(futureVersion))
