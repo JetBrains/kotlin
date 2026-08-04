@@ -10,13 +10,12 @@ import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.JvmGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.TestProject
+import org.jetbrains.kotlin.gradle.testbase.addKgpToBuildScriptCompilationClasspath
 import org.jetbrains.kotlin.gradle.testbase.build
-import org.jetbrains.kotlin.gradle.testbase.buildScriptBuildscriptBlockInjection
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.projectPersistentCache
 import org.jetbrains.kotlin.gradle.testbase.source
-import org.jetbrains.kotlin.gradle.testbase.transferPluginRepositoriesIntoBuildScript
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.nio.file.Path
@@ -115,14 +114,7 @@ class PersistentCacheDirIT : KGPBaseTest() {
             )
         }
 
-        transferPluginRepositoriesIntoBuildScript()
-
-        val kotlinVersion = buildOptions.kotlinVersion
-        buildScriptBuildscriptBlockInjection {
-            buildscript.configurations.getByName("classpath").dependencies.add(
-                buildscript.dependencies.create("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-            )
-        }
+        addKgpToBuildScriptCompilationClasspath()
 
         includeOtherProjectAsSubmodule("empty", newSubmoduleName = "lib") {
             buildScriptInjection {
