@@ -10,7 +10,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
-import org.jetbrains.kotlin.tooling.core.Extras
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.FutureTask
@@ -26,7 +25,7 @@ internal abstract class KotlinGradleTaskExecutionCache : BuildService<BuildServi
     private val storage = KotlinConcurrentGetOrComputeStorage()
 
     fun <V> getOrCompute(
-        key: Extras.Key<V>,
+        key: String,
         compute: () -> V
     ): V = storage.getOrCompute(key, compute)
 }
@@ -40,7 +39,7 @@ private val computingOnThread = ThreadLocal.withInitial { false }
  * Should be used only in [KotlinGradleTaskExecutionCache], extracted to separate class for testing needs
  */
 internal class KotlinConcurrentGetOrComputeStorage {
-    private val hashMap = ConcurrentHashMap<Extras.Key<*>, FutureTask<*>>()
+    private val hashMap = ConcurrentHashMap<String, FutureTask<*>>()
 
     /**
      * Gets existing value by [key] or computes new one using [compute].
@@ -60,7 +59,7 @@ internal class KotlinConcurrentGetOrComputeStorage {
      * ```
      */
     fun <V> getOrCompute(
-        key: Extras.Key<V>,
+        key: String,
         compute: () -> V
     ): V {
         /** implementation note:

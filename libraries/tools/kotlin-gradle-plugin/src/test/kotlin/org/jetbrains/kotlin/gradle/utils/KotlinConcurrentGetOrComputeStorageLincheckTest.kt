@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.jetbrains.kotlin.gradle.cache.KotlinConcurrentGetOrComputeStorage
-import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import org.jetbrains.kotlinx.lincheck.annotations.Operation
 import org.jetbrains.kotlinx.lincheck.check
 import org.jetbrains.kotlinx.lincheck.strategy.stress.StressOptions
@@ -16,7 +15,7 @@ class KotlinConcurrentGetOrComputeStorageLincheckTest {
     private val storage = KotlinConcurrentGetOrComputeStorage()
 
     @Operation
-    fun getOrPut(key: String, value: String): Any = storage.getOrCompute(extrasKeyOf(key)) { value }
+    fun getOrPut(key: String, value: String): Any = storage.getOrCompute(key) { value }
 
     @Test
     fun stressTest() = StressOptions().check(this::class)
