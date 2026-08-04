@@ -615,7 +615,10 @@ class NativeSecondStageCompilationConfig(
         else -> null
     }
 
-    internal val cacheSupport = CacheSupport(
+    internal var cacheSupport: CacheSupport = createCacheSupport()
+        private set
+
+    private fun createCacheSupport() = CacheSupport(
             configuration = configuration,
             resolvedLibraries = resolvedLibraries,
             ignoreCacheReason = ignoreCacheReason,
@@ -625,6 +628,10 @@ class NativeSecondStageCompilationConfig(
             target = target,
             produce = produce
     )
+
+    internal fun reloadCacheSupport() {
+        cacheSupport = createCacheSupport()
+    }
 
     internal val cachedLibraries: CachedLibraries
         get() = cacheSupport.cachedLibraries
