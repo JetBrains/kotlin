@@ -6,20 +6,22 @@
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.COMPILER_PLUGINS
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.KaptConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.KaptDetectMemoryLeaksMode
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputsContains
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.nio.file.Paths
-import kotlin.apply
 
 @OptIn(ExperimentalBuildToolsApi::class)
 class KaptSmokeTest : BaseCompilationTest() {
@@ -56,7 +58,7 @@ class KaptSmokeTest : BaseCompilationTest() {
                         .withAptPhase().apply {
                             this[KaptConfiguration.AptPhase.DETECT_MEMORY_LEAKS] = KaptDetectMemoryLeaksMode.NONE
                         }.build()
-                it.compilerArguments[COMPILER_PLUGINS] = listOf(kaptConfig.toCompilerPlugin())
+                it[JvmCompilationOperation.KAPT_CONFIGURATION] = kaptConfig
             }) {
                 assertOutputsContains(
                     "generated/stubs/error/NonExistentClass.java",
@@ -77,6 +79,64 @@ class KaptSmokeTest : BaseCompilationTest() {
                     "generated/source/example/TestClassGenerated.java",
                     "generated/source/example/TestFunctionGenerated.java",
                     addKotlinModuleFile = false,
+                )
+            }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Test that Kapt with IC automatically adds incrementalData to compiler plugin arguments")
+    @TestMetadata("kapt-project")
+    fun testKaptConfiguerationWithIc(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        val kotlinToolchain = strategyConfig.first
+        jvmScenario(strategyConfig) {
+            val moduleBuildDir = project.projectDirectory.resolve("kapt-project/build/output")
+            val module = module("kapt-project",
+                compilationConfigAction = {
+                    it.compilerArguments[CommonToolArguments.VERBOSE] = true
+                    val kaptConfig =
+                        kotlinToolchain.jvm.kaptCompilerPluginBuilder(
+                            kaptClasspath = kaptClasspath.plusElement(toolsJar.toPath()),
+                            stubsOutputDir = moduleBuildDir.resolve("generated/stubs"),
+                            sourcesOutputDir = moduleBuildDir.resolve("generated/source"),
+                            annotationProcessorsClasspath = exampleApClasspath
+                        ).apply {
+                            this[KaptConfiguration.VERBOSE] = true
+                        }
+                            .withStubsPhase()
+                            .withAptPhase().apply {
+                                this[KaptConfiguration.AptPhase.DETECT_MEMORY_LEAKS] = KaptDetectMemoryLeaksMode.NONE
+                            }.build()
+                    it[JvmCompilationOperation.KAPT_CONFIGURATION] = kaptConfig
+                }
+            )
+
+
+            module.compile {
+                assertOutputsContains(
+                    "generated/stubs/error/NonExistentClass.java",
+                    "generated/stubs/foo/InternalDummy.java",
+                    "generated/stubs/foo/TopLevelDummyFunKt.java",
+                    "generated/stubs/foo/InternalDummyUser.java",
+                    "generated/stubs/example/TestClass.java",
+                    "generated/stubs/example/GenError.java",
+                    "generated/stubs/example/ExampleAnnotation.java",
+                    "generated/stubs/example/ExampleBinaryAnnotation.java",
+                    "generated/stubs/example/ExampleRuntimeAnnotation.java",
+                    "generated/stubs/example/ExampleSourceAnnotation.java",
+                    "generated/stubs/example/KotlinFilerGenerated.java",
+                    $$"generated/source/example/GetTestVal$annotationsGenerated.java",
+                    "generated/source/example/BinaryAnnotatedTestClassGenerated.java",
+                    "generated/source/example/RuntimeAnnotatedTestClassGenerated.java",
+                    "generated/source/example/SourceAnnotatedTestClassGenerated.java",
+                    "generated/source/example/TestClassGenerated.java",
+                    "generated/source/example/TestFunctionGenerated.java",
+                    addKotlinModuleFile = false,
+                )
+                println(logLines)
+                assertLogContainsPatterns(
+                    logLevel = LogLevel.DEBUG,
+                    ".*plugin:org.jetbrains.kotlin.kapt3:incrementalData=.*".toRegex(),
                 )
             }
         }
