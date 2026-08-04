@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import java.util.concurrent.ConcurrentHashMap
@@ -174,7 +175,13 @@ fun FirCallableSymbol<*>.parameters(): List<FirValueParameterSymbol> =
 context(session: FirSession)
 private fun FirCallableSymbol<*>.fileScopeTarget(): Item? {
     fun findFileScope(element: FirElement): Item? =
-        (element as? FirFile)?.compositionTarget()?.let { Token(it) } ?: element.parent?.let { findFileScope(it) }
+        (element as? FirFile)?.targetsFromAnnotations()?.let { targets ->
+            when {
+                targets.size == 1 -> Token(targets.first())
+                targets.size > 1 -> Open(-1, allowedTokens = targets)
+                else -> null
+            }
+        } ?: element.parent?.let { findFileScope(it) }
     return findFileScope(fir)
 }
 
@@ -184,15 +191,24 @@ fun FirCallableSymbol<*>.declaredScheme() =
         ComposeClassIds.ComposableInferredTarget,
         ComposeFqNames.ComposableInferredTargetSchemeArgument
     ) as? String)?.let {
-        deserializeScheme(it)
+        val positional = annotationArgument(
+            ComposeClassIds.ComposableInferredTargetConstraints,
+            ComposeFqNames.ComposableInferredTargetConstraintsPositionalArgument
+        ) as String?
+        val indexed = annotationArgument(
+            ComposeClassIds.ComposableInferredTargetConstraints,
+            ComposeFqNames.ComposableInferredTargetConstraintsIndexedArgument
+        ) as String?
+        deserializeScheme(it, positional, indexed)
     }
 
 context(session: FirSession)
 fun FirCallableSymbol<*>.schemeItem(): Item {
-    val explicitTarget = compositionTarget()
+    val targets = targetsFromAnnotations()
     val explicitOpen = compositionOpenTarget()
     return when {
-        explicitTarget != null -> Token(explicitTarget)
+        targets.size == 1 -> Token(targets.first())
+        targets.size > 1 -> Open(explicitOpen ?: -1, allowedTokens = targets)
         explicitOpen != null -> Open(explicitOpen)
         else -> Open(-1, isUnspecified = true)
     }
@@ -200,18 +216,26 @@ fun FirCallableSymbol<*>.schemeItem(): Item {
 
 @OptIn(SymbolInternals::class)
 context(session: FirSession)
-fun FirCallableSymbol<*>.compositionTarget(): String? {
-    val annotationArg = annotationArgument(ComposeClassIds.ComposableTarget, ComposeFqNames.ComposableTargetApplierArgument) as? String
-    if (annotationArg != null) return annotationArg
+fun FirCallableSymbol<*>.targetsFromAnnotations(): Set<String> {
+    val targets = mutableSetOf<String>()
 
     if (this is FirValueParameterSymbol) {
-        val paramTarget = resolvedReturnType.typeAnnotations.firstNotNullOfOrNull { it.resolvedType.targetName() }
-        if (paramTarget != null) return paramTarget
+        resolvedReturnTypeRef.coneType.typeAnnotations.forEach { annotation ->
+            annotation.targetName()?.let { targets.add(it) }
+        }
+    } else {
+        annotations.forEach { annotation ->
+            annotation.targetName()?.let { targets.add(it) }
+        }
     }
 
-    return annotations.firstNotNullOfOrNull { it.resolvedType.targetName() }
+    return targets
 }
 
+/**
+ * If the class corresponding to this type is annotated with `ComposableTargetMarker`, returns the
+ * fully qualified name of the class. Otherwise, returns null.
+ */
 context(session: FirSession)
 fun ConeKotlinType.targetName(): String? = toClassSymbol(session)?.let { cls ->
     cls.annotationArgument(ComposeClassIds.ComposableTargetMarker, ComposeFqNames.ComposableTargetMarkerDescriptionName)?.let {
@@ -229,21 +253,27 @@ fun FirBasedSymbol<*>.annotationArgument(classId: ClassId, argumentName: Name) =
 
 @OptIn(SymbolInternals::class)
 context(session: FirSession)
-fun FirAnnotationContainer.compositionTarget(): String? =
-    annotationArgument(ComposeClassIds.ComposableTarget, ComposeFqNames.ComposableTargetApplierArgument) as? String ?: run {
-        annotations.firstNotNullOfOrNull {
-            it.resolvedType.targetName()
-        }
-    }
-
-context(session: FirSession)
-fun FirAnnotationContainer.annotationArgument(classId: ClassId, argumentName: Name) =
-    getAnnotationByClassId(classId, session)?.argument(argumentName)
+fun FirAnnotationContainer.targetsFromAnnotations(): Set<String> = annotations.mapNotNull { annotation ->
+    annotation.targetName()
+}.toSet()
 
 fun FirAnnotation.argument(name: Name): Any? = argumentMapping.mapping[name]?.let {
     if ((it.resolvedType.isString || it.resolvedType.isPrimitive) && it is FirLiteralExpression)
         it.value
     else null
+}
+
+/**
+ * If this is a `ComposableTarget` annotation, or the class of this annotation is annotated with
+ * `ComposableTargetMarker`, returns the corresponding target name. Otherwise, returns null.
+ */
+context(session: FirSession)
+fun FirAnnotation.targetName(): String? {
+    return if (toAnnotationClassId(session) == ComposeClassIds.ComposableTarget) {
+        argument(ComposeFqNames.ComposableTargetApplierArgument) as? String
+    } else {
+        resolvedType.targetName()
+    }
 }
 
 object ComposableTargetChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
@@ -306,17 +336,33 @@ internal class FirApplierInferencer(
             override fun referencedContainerOf(node: FirInferenceNode): FirInferenceNode? = node.referenceContainer
         },
         errorReporter = object : ErrorReporter<FirInferenceNode> {
-            private fun descriptionFrom(token: String): String =
+            private fun descriptionFrom(effectiveAllowedTokens: Set<String>): String =
                 with(session) {
-                    val symbol = symbolProvider.getClassLikeSymbolByClassId(ClassId.fromString(token.replace('.', '/')))
-                    val description = symbol?.annotationArgument(
-                        ComposeClassIds.ComposableTargetMarker,
-                        ComposeFqNames.ComposableTargetMarkerDescriptionName
-                    ) as? String
-                    description ?: token
+                    val descriptionsOrFqNamesOfTokens = effectiveAllowedTokens.map {
+                        val symbol = symbolProvider.getClassLikeSymbolByClassId(ClassId.fromString(it.replace('.', '/')))
+                        val description = symbol?.annotationArgument(
+                            ComposeClassIds.ComposableTargetMarker,
+                            ComposeFqNames.ComposableTargetMarkerDescriptionName
+                        ) as? String
+                        description ?: it
+                    }
+                    if (descriptionsOrFqNamesOfTokens.size == 1) {
+                        descriptionsOrFqNamesOfTokens.first()
+                    } else {
+                        val sb = StringBuilder()
+                        descriptionsOrFqNamesOfTokens.forEachIndexed { index, value ->
+                            sb.append(value)
+                            if (index < descriptionsOrFqNamesOfTokens.size - 2) {
+                                sb.append(", ")
+                            } else if (index == descriptionsOrFqNamesOfTokens.size - 2) {
+                                sb.append(" or ")
+                            }
+                        }
+                        sb.toString()
+                    }
                 }
 
-            override fun reportCallError(node: FirInferenceNode, expected: String, received: String) {
+            override fun reportCallError(node: FirInferenceNode, expected: Set<String>, received: Set<String>) {
                 if (expected != received) {
                     val expectedDescription = descriptionFrom(expected)
                     val receivedDescription = descriptionFrom(received)
@@ -331,14 +377,18 @@ internal class FirApplierInferencer(
                 }
             }
 
-            override fun reportParameterError(node: FirInferenceNode, index: Int, expected: String, received: String) {
-                with(context) {
-                    reporter.reportOn(
-                        source = node.element.source,
-                        factory = ComposeErrors.COMPOSE_APPLIER_PARAMETER_MISMATCH,
-                        a = expected,
-                        b = received
-                    )
+            override fun reportParameterError(node: FirInferenceNode, index: Int, expected: Set<String>, received: Set<String>) {
+                if (expected != received) {
+                    val expectedDescription = descriptionFrom(expected)
+                    val receivedDescription = descriptionFrom(received)
+                    with(context) {
+                        reporter.reportOn(
+                            source = node.element.source,
+                            factory = ComposeErrors.COMPOSE_APPLIER_PARAMETER_MISMATCH,
+                            a = expectedDescription,
+                            b = receivedDescription,
+                        )
+                    }
                 }
             }
 

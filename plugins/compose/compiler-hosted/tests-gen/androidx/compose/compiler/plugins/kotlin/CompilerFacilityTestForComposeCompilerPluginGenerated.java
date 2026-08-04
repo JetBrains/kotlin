@@ -46,6 +46,12 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("composableInferredTargetConstraints.kt")
+  public void testComposableInferredTargetConstraints() {
+    run("composableInferredTargetConstraints.kt");
+  }
+
+  @Test
   @TestMetadata("composableTypeRemappingOfExternalAccessors.kt")
   public void testComposableTypeRemappingOfExternalAccessors() {
     run("composableTypeRemappingOfExternalAccessors.kt");
@@ -157,6 +163,12 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   @TestMetadata("propertyWithDelegateBackingField.kt")
   public void testPropertyWithDelegateBackingField() {
     run("propertyWithDelegateBackingField.kt");
+  }
+
+  @Test
+  @TestMetadata("repeatedComposableTarget.kt")
+  public void testRepeatedComposableTarget() {
+    run("repeatedComposableTarget.kt");
   }
 
   @Test

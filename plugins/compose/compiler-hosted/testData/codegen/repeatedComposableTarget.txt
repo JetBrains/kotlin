@@ -1,0 +1,16 @@
+public final class Module_main_repeatedComposableTargetKt {
+    // source: 'module_main_repeatedComposableTarget.kt'
+    private final static method CallWX$lambda$0(p0: int, p1: androidx.compose.runtime.Composer, p2: int): kotlin.Unit
+    public final static method CallWX(p0: androidx.compose.runtime.Composer, p1: int): void
+    private final static method WX$lambda$0(p0: int, p1: androidx.compose.runtime.Composer, p2: int): kotlin.Unit
+    public final static method WX(p0: androidx.compose.runtime.Composer, p1: int): void
+    public inner class androidx/compose/runtime/ComposableTarget$Container
+}
+
+public annotation class WComposable {
+    // source: 'module_main_repeatedComposableTarget.kt'
+}
+
+public annotation class XComposable {
+    // source: 'module_main_repeatedComposableTarget.kt'
+}

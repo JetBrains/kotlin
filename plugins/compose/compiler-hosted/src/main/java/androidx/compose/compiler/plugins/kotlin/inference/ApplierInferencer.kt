@@ -127,14 +127,16 @@ private inline fun <Node> LazySchemeStorage<Node>.getOrPut(
  */
 interface ErrorReporter<Node> {
     /**
-     * Report a call node applier is not correct.
+     * Report that a call node is not compatible with the appliers expected by the body containing
+     * the call.
      */
-    fun reportCallError(node: Node, expected: String, received: String)
+    fun reportCallError(node: Node, expected: Set<String>, received: Set<String>)
 
     /**
-     * Report that the value or lambda passed to a parameter to a call was not correct.
+     * Report that a value or lambda passed as a call argument is not compatible with the appliers
+     * expected by the corresponding parameter.
      */
-    fun reportParameterError(node: Node, index: Int, expected: String, received: String)
+    fun reportParameterError(node: Node, index: Int, expected: Set<String>, received: Set<String>)
 
     /**
      * Log internal errors detected that indicate problems in the inference algorithm or when the
@@ -221,9 +223,6 @@ class ApplierInferencer<Type, Node>(
             anyParameters = anyParameters
         )
 
-    // Produce a token that can be used in error messages.
-    private val Binding.safeToken: String get() = token ?: "unbound"
-
     /**
      * Perform structural unification of two call bindings. All bindings that are in the same
      * structural place must unify or there is an error in the source. That is the targets are
@@ -235,9 +234,10 @@ class ApplierInferencer<Type, Node>(
     private fun Bindings.unify(call: Node?, a: CallBindings, b: CallBindings): Boolean {
         if (!unify(a.target, b.target)) {
             if (call != null) {
-                val aName = a.target.safeToken
-                val bName = b.target.safeToken
-                errorReporter.reportCallError(call, aName, bName)
+                // It's not possible for unification to fail when either `a` or `b` are allowed to
+                // be bound to every target, so within this if-branch, `effectiveAllowedTokens` must
+                // be non-null for both.
+                errorReporter.reportCallError(call, a.target.effectiveAllowedTokens!!, b.target.effectiveAllowedTokens!!)
             }
             return false
         }
@@ -253,16 +253,15 @@ class ApplierInferencer<Type, Node>(
             val bp = b.parameters[i]
             if (!unify(null, ap, bp)) {
                 if (call != null) {
-                    val aToken = ap.target.token
-                    val bToken = bp.target.token
-                    if (aToken != null && bToken != null) {
-                        errorReporter.reportParameterError(
-                            call,
-                            i,
-                            bp.target.token!!,
-                            ap.target.token!!
-                        )
-                    } else unify(call, ap, bp)
+                    // It's not possible for unification to fail when either `a` or `b` are allowed
+                    // to be bound to every target, so within this if-branch,
+                    // `effectiveAllowedTokens` must be non-null for both.
+                    errorReporter.reportParameterError(
+                        call,
+                        i,
+                        bp.target.effectiveAllowedTokens!!,
+                        ap.target.effectiveAllowedTokens!!
+                    )
                 }
             }
         }

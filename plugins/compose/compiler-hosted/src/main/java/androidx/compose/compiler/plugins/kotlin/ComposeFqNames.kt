@@ -44,6 +44,7 @@ object ComposeClassIds {
 
     val Composable = classIdFor("Composable")
     val ComposableInferredTarget = classIdFor("ComposableInferredTarget")
+    val ComposableInferredTargetConstraints = classIdFor("ComposableInferredTargetConstraints")
     val ComposableLambda = internalClassIdFor("ComposableLambda")
     val ComposableOpenTarget = classIdFor("ComposableOpenTarget")
     val ComposableTarget = classIdFor("ComposableTarget")
@@ -115,6 +116,8 @@ object ComposeFqNames {
     val ComposableOpenTargetIndexArgument = Name.identifier("index")
     val ComposableInferredTarget = ComposeClassIds.ComposableInferredTarget.asSingleFqName()
     val ComposableInferredTargetSchemeArgument = Name.identifier("scheme")
+    val ComposableInferredTargetConstraintsPositionalArgument = Name.identifier("positional")
+    val ComposableInferredTargetConstraintsIndexedArgument = Name.identifier("indexed")
     val CurrentComposerIntrinsic = fqNameFor("<get-currentComposer>")
     val getCurrentComposerFullName = composablesFqNameFor("<get-currentComposer>")
     val DisallowComposableCalls = ComposeClassIds.DisallowComposableCalls.asSingleFqName()
