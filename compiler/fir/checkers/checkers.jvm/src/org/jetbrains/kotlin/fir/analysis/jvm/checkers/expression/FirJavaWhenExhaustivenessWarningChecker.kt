@@ -5,48 +5,43 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
+import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirWhenExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
-import org.jetbrains.kotlin.fir.expressions.FirOperation
-import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
-import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
-import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
-import org.jetbrains.kotlin.fir.expressions.isExhaustive
 import org.jetbrains.kotlin.fir.java.enhancement.enhancedTypeForWarning
-import org.jetbrains.kotlin.fir.types.canBeNull
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isMarkedOrFlexiblyNullable
-import org.jetbrains.kotlin.fir.types.isNullableNothing
-import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
-import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.*
 
 object FirJavaWhenExhaustivenessWarningChecker : FirWhenExpressionChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirWhenExpression) {
         if (!expression.isExhaustive) return
         val variable = expression.subjectVariable ?: return
-        val coneType = variable.returnTypeRef.coneType
-        val enhancedType = coneType.enhancedTypeForWarning ?: return
+        // Take the type of the initializer to account for smart casts.
+        val coneType = variable.initializer!!.resolvedType
+        // Take the type of the variable to account for explicit variable types overriding the inferred type
+        val enhancedType = variable.returnTypeRef.coneType.enhancedTypeForWarning ?: return
         if (!enhancedType.lowerBoundIfFlexible().canBeNull() ||
             coneType.lowerBoundIfFlexible().canBeNull()
         ) return
 
-        val hasNullCheck = expression.branches.any {
-            if (it.hasGuard) return@any false
-            when (val condition = it.condition) {
-                is FirEqualityOperatorCall -> condition.arguments[1].resolvedType.isNullableNothing
-                is FirTypeOperatorCall -> condition.operation == FirOperation.IS && condition.conversionTypeRef.coneType.isMarkedOrFlexiblyNullable
-                is FirElseIfTrueCondition -> true
-                else -> false
-            }
+        if (expression.branches.none { it.condition.handlesNull() && !it.hasGuard }) {
+            reporter.reportOn(expression.source, FirJvmErrors.UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS, enhancedType)
         }
+    }
 
-        if (!hasNullCheck) reporter.reportOn(expression.source, FirJvmErrors.UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS, enhancedType)
+    private fun FirExpression.handlesNull(): Boolean {
+        return when (this) {
+            is FirEqualityOperatorCall -> arguments[1].resolvedType.isNullableNothing
+            is FirTypeOperatorCall -> operation == FirOperation.IS && conversionTypeRef.coneType.isMarkedOrFlexiblyNullable
+            is FirElseIfTrueCondition -> true
+            is FirBooleanOperatorExpression -> kind == LogicOperationKind.OR && (leftOperand.handlesNull() || rightOperand.handlesNull())
+            else -> false
+        }
     }
 }
