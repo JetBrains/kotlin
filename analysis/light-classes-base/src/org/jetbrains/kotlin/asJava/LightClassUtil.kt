@@ -58,7 +58,7 @@ object LightClassUtil {
             val wrapperName = wrapper.name
             if (customNameAnnoProvided) {
                 // cls with loaded text doesn't preserve annotation arguments thus we can't rely on the name
-                // accept everything but the the opposite accessors
+                // accept everything but the opposite accessors
                 if (accessor.isGetter) !JvmAbi.isSetterName(wrapperName) else !JvmAbi.isGetterName(wrapperName)
             } else if (accessor.isGetter) {
                 val getterName = JvmAbi.getterName(propertyName)
