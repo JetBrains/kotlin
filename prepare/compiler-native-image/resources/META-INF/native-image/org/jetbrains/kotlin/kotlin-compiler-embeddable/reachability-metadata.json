@@ -591,6 +591,23 @@
       "type": "org.jetbrains.kotlin.com.intellij.util.QueryExecutor"
     },
     {
+      "type": "org.jetbrains.kotlin.com.intellij.util.containers.ConcurrentLongObjectHashMap",
+      "fields": [
+        {
+          "name": "baseCount"
+        },
+        {
+          "name": "cellsBusy"
+        },
+        {
+          "name": "sizeCtl"
+        },
+        {
+          "name": "transferIndex"
+        }
+      ]
+    },
+    {
       "type": "org.jetbrains.kotlin.com.intellij.util.containers.LockFreeCopyOnWriteArrayList",
       "fields": [
         {
@@ -723,6 +740,12 @@
     },
     {
       "type": "org.jetbrains.kotlin.psi.KtBackingField[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtBinaryExpression"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtBinaryExpression[]"
     },
     {
       "type": "org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry"
@@ -941,6 +964,12 @@
       "type": "org.jetbrains.kotlin.psi.KtObjectDeclaration[]"
     },
     {
+      "type": "org.jetbrains.kotlin.psi.KtOperationReferenceExpression"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtOperationReferenceExpression[]"
+    },
+    {
       "type": "org.jetbrains.kotlin.psi.KtPackageDirective"
     },
     {
@@ -957,6 +986,24 @@
     },
     {
       "type": "org.jetbrains.kotlin.psi.KtParameter[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtParenthesizedExpression"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtParenthesizedExpression[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtPostfixExpression"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtPostfixExpression[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtPrefixExpression"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtPrefixExpression[]"
     },
     {
       "type": "org.jetbrains.kotlin.psi.KtPrimaryConstructor"
@@ -1663,6 +1710,9 @@
     },
     {
       "glob": "META-INF/services/org.jetbrains.kotlin.builtins.BuiltInsLoader"
+    },
+    {
+      "glob": "META-INF/services/org.jetbrains.kotlin.com.intellij.platform.diagnostic.telemetry.TelemetryManager"
     },
     {
       "glob": "META-INF/services/org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition"
