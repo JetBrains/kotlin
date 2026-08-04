@@ -7,8 +7,10 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.GradleException
 import org.gradle.api.file.Directory
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.WebpackBundleKotlinJsTests
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PLAYWRIGHT_VERSION
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
@@ -29,6 +32,7 @@ import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
 import java.io.File
+import java.net.ServerSocket
 import org.junit.jupiter.api.io.TempDir
 import java.net.URI
 import java.net.URLDecoder
@@ -37,6 +41,7 @@ import java.nio.file.Path
 import java.time.Duration
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
@@ -44,7 +49,6 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.seconds
 
 class KotlinPlaywrightTestFrameworkWiringTest {
 
@@ -80,6 +84,21 @@ class KotlinPlaywrightTestFrameworkWiringTest {
             bundleTask.onlyIf.isSatisfiedBy(bundleTask),
             "Expected the bundle task to be skipped, as no browser runners are declared"
         )
+    }
+
+    @Test
+    fun `browser debug options are ignored by the Karma task`() {
+        val setup = buildBrowserTestProject {}
+        assertIs<KotlinKarma>(setup.jsBrowserTestTask.testFramework)
+
+        setup.jsBrowserTestTask.browserDebug.set(true)
+        setup.jsBrowserTestTask.browserDebugPort.set("32123")
+
+        // Karma debugging comes from the IDE init script, so these options must not switch it on.
+        // Building a real Karma spec would write karma.conf.js, which is not what we test here.
+        setup.jsBrowserTestTask.configureBrowserDebug()
+
+        assertFalse(setup.jsBrowserTestTask.debug)
     }
 
     @Test
@@ -279,44 +298,9 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         assertEquals(mockLocation4, webkit2Runner.testsLocation.get())
     }
 
-    // These tests pin the IDE debug contract without launching a real Playwright browser.
+    // Checks the browser debug wiring without starting a real browser.
     @Test
-    fun `playwright debug url uses runtime url`() {
-        val setup = buildBrowserTestProject {
-            chromium()
-        }
-        val framework = assertIs<KotlinPlaywrightJsTestFramework>(setup.jsBrowserTestTask.testFramework)
-        val location = mockLocation(setup.project, URI("http://localhost:12345/test.html"))
-        framework.frameworkTaskInputs.chromiumRunners.get().single().testsLocation.set(location)
-
-        val debugUrl = framework.buildDebugUrl(setup.jsBrowserTestTask)
-
-        assertEquals("http://localhost:12345/test.html", debugUrl.toString().substringBefore("?"))
-    }
-
-    @Test
-    fun `playwright debug url uses configured runner timeout`() {
-        val timeout = 42L.seconds
-        val setup = buildBrowserTestProject {
-            firefox {
-                it.timeout.set(timeout)
-            }
-        }
-        val expectedTimeoutInMilliseconds = timeout.inWholeMilliseconds
-        val framework = assertIs<KotlinPlaywrightJsTestFramework>(setup.jsBrowserTestTask.testFramework)
-        val location = mockLocation(setup.project, URI("http://localhost:12345/test.html"))
-        framework.frameworkTaskInputs.firefoxRunners.get().single().testsLocation.set(location)
-
-        val debugUrl = framework.buildDebugUrl(setup.jsBrowserTestTask)
-
-        assertTrue(
-            decodeKotlinTestConfig(debugUrl).contains("\"mochaSetupOptions\":{\"timeout\":\"${expectedTimeoutInMilliseconds}\"}"),
-            "Expected the debug URL to contain the configured runner timeout",
-        )
-    }
-
-    @Test
-    fun `playwright intellij debug uses default chromium for firefox runner`() {
+    fun `playwright debug uses default chromium for firefox runner`() {
         val setup = buildBrowserTestProject {
             firefox("selected") {
                 it.launchArgs.set(listOf("-devtools"))
@@ -332,7 +316,10 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         )
         assertEquals(setOf("firefox"), installTask.browsers.get().toSet())
 
-        setup.jsBrowserTestTask.debug = true
+        val debuggerReadyPort = ServerSocket(0).use { it.localPort }
+        setup.jsBrowserTestTask.browserDebugPort.set("32123")
+        setup.jsBrowserTestTask.browserDebugReadyPort.set(debuggerReadyPort.toString())
+        setup.jsBrowserTestTask.browserDebugReadyTimeout.set("45000")
 
         assertEquals(setOf("firefox", "chromium"), installTask.browsers.get().toSet())
 
@@ -342,15 +329,8 @@ class KotlinPlaywrightTestFrameworkWiringTest {
             writeText("")
         }
         framework.npmToolingEnvDir.set(npmToolingEnv)
-        framework.prepareDebugSession(setup.jsBrowserTestTask)
-        framework.configureRemoteDebuggingPort(32123)
 
-        val spec = framework.createTestExecutionSpec(
-            task = setup.jsBrowserTestTask,
-            launchOpts = setup.project.objects.processLaunchOptions(),
-            nodeJsArgs = mutableListOf(),
-            debug = setup.jsBrowserTestTask.debug,
-        )
+        val spec = assertIs<PwExecutionSpec>(setup.jsBrowserTestTask.buildExecutionSpec(setup.project))
         val runner = spec.runners.single()
 
         assertEquals("chromium", runner.name)
@@ -358,8 +338,119 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         assertEquals(emptyList(), runner.launchArgs)
         assertEquals(emptyMap(), runner.launchEnvironmentVariables)
         assertEquals(32123, runner.debugOptions?.remoteDebuggingPort)
-        runner.debugOptions?.debuggerReadySocket?.close()
+        assertEquals(debuggerReadyPort, runner.debugOptions?.debuggerReadyPort)
+        assertEquals(45000, runner.debugOptions?.debuggerReadyTimeoutMillis)
     }
+
+    @Test
+    fun `browser debug option uses default port and does not wait without a readiness port`() {
+        val setup = buildBrowserTestProject {
+            chromium()
+        }
+        val framework = assertIs<KotlinPlaywrightJsTestFramework>(setup.jsBrowserTestTask.testFramework)
+        val location = mockLocation(setup.project, URI("http://localhost:12345/test.html"))
+        framework.frameworkTaskInputs.chromiumRunners.get().single().testsLocation.set(location)
+        val npmToolingEnv = setup.project.layout.buildDirectory.dir("test-npm-tooling").get().asFile
+        npmToolingEnv.resolve("node_modules/playwright-core/cli.js").apply {
+            parentFile.mkdirs()
+            writeText("")
+        }
+        framework.npmToolingEnvDir.set(npmToolingEnv)
+        setup.jsBrowserTestTask.browserDebug.set(true)
+
+        val spec = assertIs<PwExecutionSpec>(setup.jsBrowserTestTask.buildExecutionSpec(setup.project))
+        val debugOptions = spec.runners.single().debugOptions
+
+        assertEquals(9222, debugOptions?.remoteDebuggingPort)
+        assertNull(debugOptions?.debuggerReadyPort, "Without a readiness port the run must not wait for a debugger")
+        assertEquals(30_000, debugOptions?.debuggerReadyTimeoutMillis)
+    }
+
+    @Test
+    fun `browser debug readiness port without a timeout keeps the default timeout`() {
+        val setup = buildBrowserTestProject {
+            chromium()
+        }
+        val framework = assertIs<KotlinPlaywrightJsTestFramework>(setup.jsBrowserTestTask.testFramework)
+        val location = mockLocation(setup.project, URI("http://localhost:12345/test.html"))
+        framework.frameworkTaskInputs.chromiumRunners.get().single().testsLocation.set(location)
+        val npmToolingEnv = setup.project.layout.buildDirectory.dir("test-npm-tooling").get().asFile
+        npmToolingEnv.resolve("node_modules/playwright-core/cli.js").apply {
+            parentFile.mkdirs()
+            writeText("")
+        }
+        framework.npmToolingEnvDir.set(npmToolingEnv)
+        setup.jsBrowserTestTask.browserDebugReadyPort.set("54321")
+
+        val spec = assertIs<PwExecutionSpec>(setup.jsBrowserTestTask.buildExecutionSpec(setup.project))
+        val debugOptions = spec.runners.single().debugOptions
+
+        assertEquals(9222, debugOptions?.remoteDebuggingPort, "An unset debug port must fall back to the default")
+        assertEquals(54321, debugOptions?.debuggerReadyPort)
+        assertEquals(30_000, debugOptions?.debuggerReadyTimeoutMillis)
+    }
+
+    @Test
+    fun `browser debug port implies browser debug`() {
+        val setup = buildBrowserTestProject { chromium() }
+
+        setup.jsBrowserTestTask.browserDebugPort.set("32123")
+
+        assertTrue(setup.jsBrowserTestTask.browserDebugRequested.get())
+    }
+
+    @Test
+    fun `browser debug is off when no option is passed`() {
+        val setup = buildBrowserTestProject { chromium() }
+
+        assertFalse(setup.jsBrowserTestTask.browserDebugRequested.get())
+    }
+
+    @Test
+    fun `invalid browser debug port is rejected`() {
+        val setup = buildBrowserTestProject { chromium() }
+        setup.jsBrowserTestTask.browserDebugPort.set("70000")
+
+        val failure = assertFailsWith<GradleException> {
+            setup.jsBrowserTestTask.configureBrowserDebug()
+        }
+
+        assertEquals(
+            "--browser-debug-port must be an integer between 1 and 65535, but was '70000'",
+            failure.message,
+        )
+    }
+
+    @Test
+    fun `invalid browser debug readiness timeout is rejected`() {
+        val setup = buildBrowserTestProject { chromium() }
+        setup.jsBrowserTestTask.browserDebugReadyTimeout.set("0")
+
+        val failure = assertFailsWith<GradleException> {
+            setup.jsBrowserTestTask.configureBrowserDebug()
+        }
+
+        assertEquals(
+            "--browser-debug-ready-timeout must be a positive number of milliseconds, but was '0'",
+            failure.message,
+        )
+    }
+}
+
+// Mirrors KotlinJsTest.createTestExecutionSpec without its protected entry point.
+private fun KotlinJsTest.buildExecutionSpec(project: ProjectInternal): TestExecutionSpec {
+    configureBrowserDebug()
+    val framework = testFramework!!
+    val launchOptions = project.objects.processLaunchOptions {
+        workingDir.set(framework.workingDir)
+        executable.set(framework.executable)
+    }
+    return framework.createTestExecutionSpec(
+        task = this,
+        launchOpts = launchOptions,
+        nodeJsArgs = mutableListOf(),
+        debug = debug,
+    )
 }
 
 private class BrowserTestProject(
@@ -404,12 +495,4 @@ private fun mockLocation(project: ProjectInternal, uri: URI): KotlinJsTestsLocat
 
     override val url: Provider<URI>
         get() = project.providers.provider { uri }
-}
-
-private fun decodeKotlinTestConfig(uri: URI): String {
-    val encodedConfig = uri.rawQuery
-        .split("&")
-        .single { it.startsWith("kotlinTestConfig=") }
-        .substringAfter("=")
-    return URLDecoder.decode(encodedConfig, StandardCharsets.UTF_8)
 }

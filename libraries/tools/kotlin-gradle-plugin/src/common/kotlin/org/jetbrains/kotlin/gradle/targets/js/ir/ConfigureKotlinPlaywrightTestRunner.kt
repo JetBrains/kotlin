@@ -64,6 +64,9 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
                 project.locateOrRegisterTask<PlaywrightBrowserInstall>(browserType.getPwInstallBrowserTaskName(), args = listOf(testCompilation)) {
                     browsers.add(browserType.browserName)
                 }
+                if (testTaskProvider.get().browserDebugRequested.get()){
+                    browsers.add("chromium")
+                }
             }
 
         testTaskProvider.configure { testTask ->

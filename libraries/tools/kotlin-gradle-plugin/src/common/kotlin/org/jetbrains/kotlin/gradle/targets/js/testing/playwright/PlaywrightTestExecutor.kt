@@ -37,9 +37,11 @@ import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import java.net.URI
-import java.net.ServerSocket
+import java.net.InetAddress
+import java.net.InetSocketAddress
+import java.net.Socket
 import java.net.SocketTimeoutException
+import java.net.URI
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.time.Duration
@@ -65,9 +67,11 @@ internal class PwRunnerSpec(
 )
 
 internal class PwDebugOptions(
-    // IntelliJ starts a Chromium remote-debug configuration on this port before Gradle launches Playwright.
+    // A CDP debugger can attach to Chromium on this port.
     val remoteDebuggingPort: Int,
-    val debuggerReadySocket: ServerSocket,
+    // Set when the run should wait until a debugger is attached.
+    val debuggerReadyPort: Int?,
+    val debuggerReadyTimeoutMillis: Int,
 )
 
 /**
@@ -231,13 +235,16 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
         }
 
         val runnerDebugPort = runner.debugOptions?.remoteDebuggingPort
+        if (runnerDebugPort != null && runner.headless) {
+            log.info("Running '${runner.name}' headed instead of headless, because it is being debugged")
+        }
         val launchOptions = BrowserType.LaunchOptions()
             .setHeadless(runnerDebugPort == null && runner.headless)
             .apply {
                 val launchArgs = if (runnerDebugPort != null) {
-                    // The IDE debugger speaks CDP here; non-Chromium runners are converted before reaching the executor.
+                    // The debugger needs CDP, so non-Chromium runners are swapped out before we get here.
                     check(runner.browserKind == PwBrowserKind.CHROMIUM) {
-                        "IntelliJ browser test debugging for Playwright is supported only with Chromium runners"
+                        "Browser test debugging for Playwright is supported only with Chromium runners"
                     }
                     runner.launchArgs.withRemoteDebuggingPort(runnerDebugPort)
                 } else {
@@ -274,14 +281,28 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
         }
     }
 
+    // With no ready port we don't wait at all. The timeout covers the connect and the reply separately.
     private fun PwRunnerSpec.awaitDebuggerAttached() {
-        val readySocket = debugOptions?.debuggerReadySocket ?: return
+        val readyPort = debugOptions?.debuggerReadyPort ?: return
+        val timeoutMillis = debugOptions.debuggerReadyTimeoutMillis
+        log.info("Waiting up to $timeoutMillis ms for a debugger to attach to '$name'")
         try {
-            readySocket.use { serverSocket ->
-                serverSocket.accept().close()
+            Socket().use { socket ->
+                socket.connect(InetSocketAddress(InetAddress.getLoopbackAddress(), readyPort), timeoutMillis)
+                socket.soTimeout = timeoutMillis
+                check(socket.getInputStream().read() >= 0) {
+                    "The debugger readiness connection for '$name' on port $readyPort was closed without acknowledgement"
+                }
             }
         } catch (e: SocketTimeoutException) {
-            throw IllegalStateException("Timed out waiting for IntelliJ debugger to attach to '$name'", e)
+            throw IllegalStateException(
+                "Timed out after $timeoutMillis ms waiting for a debugger to attach to '$name' on port $readyPort", e
+            )
+        } catch (e: IOException) {
+            throw IllegalStateException(
+                "Could not reach the debugger readiness port $readyPort for '$name'. " +
+                        "The debugger is no longer waiting to attach.", e
+            )
         }
     }
 
@@ -291,7 +312,7 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
     }
 
     private fun List<String>.withRemoteDebuggingPort(port: Int): List<String> {
-        // User-provided CDP flags would conflict with the IDE-allocated port, so normalize them here.
+        // Drop any CDP port the user passed, it would clash with the one we were given.
         val args = mutableListOf<String>()
         var skipNext = false
         for (arg in this) {
