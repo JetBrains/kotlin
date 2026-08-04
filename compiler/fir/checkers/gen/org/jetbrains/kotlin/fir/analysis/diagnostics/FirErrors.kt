@@ -204,7 +204,7 @@ object FirErrors : KtDiagnosticsContainer() {
 
     // Unresolved
     val UNRESOLVED_REFERENCE: KtDiagnosticFactory3<String, String?, ConeKotlinType?> = KtDiagnosticFactory3("UNRESOLVED_REFERENCE", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
-    val UNRESOLVED_REFERENCE_WRONG_RECEIVER: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("UNRESOLVED_REFERENCE_WRONG_RECEIVER", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class, getRendererFactory())
+    val UNRESOLVED_REFERENCE_WRONG_RECEIVER: KtDiagnosticFactory2<FirBasedSymbol<*>, String?> = KtDiagnosticFactory2("UNRESOLVED_REFERENCE_WRONG_RECEIVER", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class, getRendererFactory())
     val INACCESSIBLE_OUTER_CLASS_RECEIVER: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("INACCESSIBLE_OUTER_CLASS_RECEIVER", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class, getRendererFactory())
     val UNRESOLVED_IMPORT: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("UNRESOLVED_IMPORT", ERROR, SourceElementPositioningStrategies.IMPORT_LAST_NAME, PsiElement::class, getRendererFactory())
     val INVISIBLE_REFERENCE: KtDiagnosticFactory3<FirBasedSymbol<*>, Visibility, ClassId?> = KtDiagnosticFactory3("INVISIBLE_REFERENCE", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class, getRendererFactory())

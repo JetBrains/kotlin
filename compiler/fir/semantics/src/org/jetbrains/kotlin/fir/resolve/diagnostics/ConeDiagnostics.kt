@@ -127,7 +127,7 @@ class ConeTypeVisibilityError(
     val smallestUnresolvablePrefix: List<FirQualifierPart>,
 ) : ConeVisibilityError(symbol)
 
-class ConeInapplicableWrongReceiver(override val candidate: AbstractCallCandidate<*>) : ConeDiagnosticWithSingleCandidate {
+class ConeInapplicableWrongReceiver(override val candidate: AbstractCallCandidate<*>, val operatorToken: String?) : ConeDiagnosticWithSingleCandidate {
     override val reason: String
         get() = "Candidate is inapplicable because of receiver type mismatch: ${describeSymbol(candidateSymbol)}"
 

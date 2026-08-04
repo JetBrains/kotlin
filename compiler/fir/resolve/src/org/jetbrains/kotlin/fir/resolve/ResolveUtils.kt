@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.references.builder.FirPropertyWithExplicitBackin
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.resolve.calls.TypeParameterAsExpression
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallKind
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
@@ -59,7 +60,9 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.safeSubstitute
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -789,7 +792,7 @@ fun createConeDiagnosticForCandidateWithError(
 
             ConeVisibilityError(symbol)
         }
-        CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ConeInapplicableWrongReceiver(candidate)
+        CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ConeInapplicableWrongReceiver(candidate, candidate.callInfo.operatorToken())
         CandidateApplicability.K2_NO_COMPANION_OBJECT -> ConeNoCompanionObject(candidate)
         else -> {
             if (TypeParameterAsExpression in candidate.diagnostics) {
@@ -798,6 +801,12 @@ fun createConeDiagnosticForCandidateWithError(
                 ConeInapplicableCandidateError(applicability, candidate)
             }
         }
+    }
+}
+
+internal fun CallInfo.operatorToken(): String? {
+    return runIf(origin == FirFunctionCallOrigin.Operator) {
+        OperatorNameConventions.TOKENS_BY_OPERATOR_NAME[name]
     }
 }
 
