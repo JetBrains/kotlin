@@ -64,7 +64,7 @@ internal fun FirSession.registerJavaModelInFlightResolutionsIfAbsent() {
  * cycle break).
  *
  * Resolution-time only; must not be called from cache-population code (`JavaClassCache`,
- * `LeanJavaClassFinder.indexFile`, `JavaSupertypeGraph`-population).
+ * `LeanJavaClassFinder.indexFile`).
  */
 internal fun FirSession.cycleSafeClassLikeSymbol(classId: ClassId): FirClassLikeSymbol<*>? {
     val inFlight = javaModelInFlightResolutions?.classIds

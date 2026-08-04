@@ -23,17 +23,4 @@ internal interface LeanJavaClassFinder {
 
     /** Finds a class by [ClassId], returning null if not found. */
     fun findClass(request: JavaClassFinder.Request): JavaClass?
-
-    /** Recursively collects all inner class names from the supertype hierarchy. */
-    fun collectInheritedInnerClasses(classId: ClassId): Map<String, Set<ClassId>>
-
-    /**
-     * Returns the direct supertype `ClassId`s for a Java source [classId], resolved using
-     * **that class's own file imports** (not the caller's). Used by transitive supertype
-     * walks so each level of the hierarchy is resolved against the right import scope.
-     *
-     * Includes both source and binary supertype `ClassId`s (caller decides existence via
-     * a `tryResolve` probe / per-origin dispatcher).
-     */
-    fun getDirectSupertypes(classId: ClassId): List<ClassId>
 }
