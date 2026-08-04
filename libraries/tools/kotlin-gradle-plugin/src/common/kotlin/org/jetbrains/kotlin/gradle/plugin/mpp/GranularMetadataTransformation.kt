@@ -172,7 +172,7 @@ internal class GranularMetadataTransformation(
         val buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
 
         @get:Internal
-        val cache: Provider<KotlinGradleTaskExecutionCache>
+        val cache: Provider<out KotlinGradleTaskExecutionCache>
     ) {
         constructor(project: Project, kotlinSourceSet: KotlinSourceSet, transformProjectDependenciesWithSourceSetMetadataOutputs: Boolean = true) : this(
             projectId = project.path,
