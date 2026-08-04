@@ -1,0 +1,74 @@
+# Junie Live CLI config for running on GitHub Actions against the Kotlin repo.
+# Secrets/values are injected from the workflow env file; do NOT hardcode them.
+schema-version: 1
+profile: junie-live-ci-kotlin
+
+git:
+  allowed-branches: ["yana/*"]
+  repositories:
+    - url: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git
+      auth: github-app
+      github-app:
+        app-id: ${GITHUB_APP_ID}
+        installation-id: ${GITHUB_APP_INSTALLATION_ID}
+        private-key: ${GITHUB_APP_PRIVATE_KEY}
+
+slack:
+  bot-token: ${SLACK_BOT_TOKEN_JUNIE_LIVE}
+  app-token: ${SLACK_APP_TOKEN_JUNIE_LIVE}
+  channels:
+    - name: primary
+      id: ${SLACK_CHANNEL_ID}
+
+backend:
+  project_id: ${JUNIE_LIVE_PROJECT_ID}
+  token: ${JUNIE_LIVE_BACKEND_TOKEN}
+  state:
+    enabled: true
+    fail_if_not_restored: true
+
+agent-settings:
+  hermes:
+    model:
+      - id: claude-opus-4-8
+        provider: ingrazzio/anthropic
+        reasoning_effort: medium
+  junie-cli:
+    model:
+      - id: grok-4.5
+        provider: ingrazzio
+
+web-search:
+  provider: ingrazzio/tavily
+  headers:
+    X-Accept-EAP-License: "true"
+
+# Disable the sandbox filesystem protection layer. The Anthropic sandbox-runtime
+# otherwise hardcodes .git/hooks as non-writable, which breaks Kotlin's
+# kotlin-prepush-hook build script (it deletes .git/hooks/pre-push at configuration
+# time).
+# Add hosts whitelist to make build and tests work
+sandbox:
+  disable-filesystem: true
+  network:
+    allowed-domains:
+      - proxy.golang.org
+      - pypi.org
+      - repo.maven.apache.org
+      - repo1.maven.org
+      - services.gradle.org
+      - downloads.gradle.org
+      - plugins.gradle.org
+      - storage.googleapis.com
+      - dl.google.com
+      - cache-redirector.jetbrains.com
+      - redirector.kotlinlang.org
+      - packages.jetbrains.team
+      - download.jetbrains.com
+      - maven.pkg.jetbrains.space
+      - artifacts-caching-proxy.aws.intellij.net
+      - www.jetbrains.com
+      # some redirect from jetbrains.com
+      - d2cico3c979uwg.cloudfront.net
+    endpoint-proxies: []
+

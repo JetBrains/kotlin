@@ -1,0 +1,451 @@
+name: Junie Live
+
+on:
+  workflow_dispatch: { }
+  schedule:
+    - cron: "0 */5 * * *"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: junie-live
+  cancel-in-progress: false
+
+jobs:
+  run-junie-live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    env:
+      JUNIE_LIVE_VERSION: ${{ vars.JUNIE_LIVE_VERSION || 'latest' }}
+      JUNIE_LIVE_PROJECT_ID: ${{ vars.JUNIE_LIVE_PROJECT_ID }}
+      SLACK_CHANNEL_ID: ${{ vars.SLACK_CHANNEL_ID }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      # Resolves which installation of the Yana App covers this repository.
+      # Only the installation id is consumed: the tokens Git and the PR tools
+      # use are minted from the App key for the length of the run, so this
+      # step's own token (valid for an hour and revoked when the job ends) is
+      # deliberately left unused.
+      - name: Resolve Yana App installation
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.YANA_APP_ID }}
+          private-key: ${{ secrets.YANA_APP_PRIVATE_KEY }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.11"
+
+      # --- Kotlin build toolchains -------------------------------------------
+      # The Kotlin Gradle build selects JDKs via toolchains and would normally
+      # auto-provision them from Adoptium. The Junie Live sandbox has NO network
+      # egress and foojay/Disco auto-download is blocked, so every JDK the build
+      # and tests need (majors 8, 11, 17, 21, 25 — derived from gradle.properties
+      # JDK_* vars and JavaLanguageVersion literals) must be installed up front.
+      # The last setup-java wins JAVA_HOME; keep 21 last so JAVA_HOME=JDK 21,
+      # matching the launcher JVM the build expects.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "8"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "11"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Configure Gradle JDK toolchains (no auto-download)
+        shell: bash
+        run: |
+          set -euo pipefail
+          # setup-java exports JAVA_HOME_<major>_X64 for each installed JDK.
+          paths="$JAVA_HOME_8_X64,$JAVA_HOME_11_X64,$JAVA_HOME_17_X64,$JAVA_HOME_21_X64,$JAVA_HOME_25_X64"
+
+          # Write into the Gradle user home the sandboxed agent reads. The agent
+          # exports GRADLE_USER_HOME=$HOME/.gradle at build time, so seed both the
+          # runner's real HOME/.gradle and export GRADLE_USER_HOME for downstream
+          # steps. auto-download=false forces Gradle to use only these JDKs and
+          # not try (and fail) to reach foojay. installations.paths in
+          # gradle.properties is inherited by included builds too (e.g.
+          # :test-instrumenter), unlike -P flags passed on the command line.
+          mkdir -p "$HOME/.gradle"
+          {
+            printf 'org.gradle.java.installations.paths=%s\n' "$paths"
+            printf 'org.gradle.java.installations.auto-download=false\n'
+          } >> "$HOME/.gradle/gradle.properties"
+
+          # Also expose the legacy JDK_* env vars that gradle.properties references
+          # as a belt-and-suspenders fallback.
+          {
+            printf 'JDK_1_8=%s\n'  "$JAVA_HOME_8_X64"
+            printf 'JDK_11_0=%s\n' "$JAVA_HOME_11_X64"
+            printf 'JDK_17_0=%s\n' "$JAVA_HOME_17_X64"
+            printf 'JDK_21_0=%s\n' "$JAVA_HOME_21_X64"
+            printf 'JDK_25_0=%s\n' "$JAVA_HOME_25_X64"
+          } >> "$GITHUB_ENV"
+
+      - name: Install Junie Live CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          release_tag="$JUNIE_LIVE_VERSION"
+          if [[ -z "$release_tag" || "$release_tag" == "latest" ]]; then
+            release_url="$(curl -fsSLI -o /dev/null -w '%{url_effective}' \
+              https://github.com/JetBrains/junie-live/releases/latest)"
+            release_tag="${release_url##*/}"
+          fi
+          [[ -n "$release_tag" ]] || { echo "::error::Could not resolve the Junie Live release"; exit 1; }
+
+          case "$(uname -m)" in
+            x86_64 | amd64) architecture=amd64 ;;
+            arm64 | aarch64) architecture=arm64 ;;
+            *) echo "::error::Unsupported architecture: $(uname -m)"; exit 1 ;;
+          esac
+
+          install_dir="$HOME/.junie-live/bin"
+          mkdir -p "$install_dir"
+          curl -fsSL --retry 3 \
+            -o "$install_dir/junie-live" \
+            "https://github.com/JetBrains/junie-live/releases/download/$release_tag/junie-live-linux-$architecture"
+          chmod 0755 "$install_dir/junie-live"
+          printf '%s\n' "$install_dir" >> "$GITHUB_PATH"
+          printf 'JUNIE_LIVE_RELEASE_TAG=%s\n' "$release_tag" >> "$GITHUB_ENV"
+
+          "$install_dir/junie-live" --version
+
+      # Compute the run layout once and share it via GITHUB_ENV. unpack-runtime,
+      # setup-junie-live-python-runtime.sh, and start-agent must all use the same
+      # run_id so the raised runtime lands under $HERMES_HOME/junie-live for this run.
+      - name: Fix run identity
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          run_id="github-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          run_root="$HOME/.junie-live/runs/${run_id}"
+          hermes_home="${run_root}/.hermes"
+          runtime_dir="${hermes_home}/junie-live"
+          # Shim must stay outside HERMES_HOME: hermes backup/import snapshots the
+          # home tree (excluding .venv) and would otherwise restore a stale
+          # absolute-path launcher from a previous run id. Sandbox still reads
+          # the venv via the HermesHome allow-read grant.
+          bin_dir="${run_root}/bin"
+
+          {
+            printf 'JL_RUN_ID=%s\n' "$run_id"
+            printf 'JL_HERMES_HOME=%s\n' "$hermes_home"
+            printf 'JL_RUNTIME_DIR=%s\n' "$runtime_dir"
+            printf 'JL_RUNTIME_BIN_DIR=%s\n' "$bin_dir"
+          } >> "$GITHUB_ENV"
+
+          mkdir -p "$runtime_dir" "$bin_dir"
+          echo "JL_RUN_ID=$run_id"
+          echo "JL_HERMES_HOME=$hermes_home"
+          echo "JL_RUNTIME_DIR=$runtime_dir"
+          echo "JL_RUNTIME_BIN_DIR=$bin_dir"
+
+      - name: Unpack Python runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Binary is already on PATH from "Install Junie Live CLI". The Python
+          # runtime (hermes-agent + providers) is embedded in the CLI, so no
+          # separate git clone / uv sync of the Hermes fork is needed anymore.
+          junie-live unpack-runtime --dest "$JL_RUNTIME_DIR"
+
+          # Required embed outputs (distribution/libs/ is optional when present).
+          test -f "$JL_RUNTIME_DIR/.hermes-rev"
+          test -f "$JL_RUNTIME_DIR/pyproject.toml"
+          test -f "$JL_RUNTIME_DIR/uv.lock"
+          test -f "$JL_RUNTIME_DIR/scripts/setup-junie-live-python-runtime.sh"
+
+          echo "Unpacked runtime to $JL_RUNTIME_DIR"
+          find "$JL_RUNTIME_DIR" -type f | sort
+
+      - name: Raise Python runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Pin matches the runtime's expected uv version.
+          curl -LsSf https://astral.sh/uv/0.11.6/install.sh \
+            | env UV_NO_MODIFY_PATH=1 sh
+          export PATH="$HOME/.local/bin:$PATH"
+
+          # Raises the junie-live uv project (hermes-agent[all,slack,anthropic] +
+          # slack-sdk via the locked uv.lock). Providers must be present up front:
+          # the agent runs sandboxed and cannot fetch them later.
+          bash "$JL_RUNTIME_DIR/scripts/setup-junie-live-python-runtime.sh" \
+            --junie-live-root "$JL_RUNTIME_DIR" \
+            --bin-dir "$JL_RUNTIME_BIN_DIR" \
+            --no-dev
+
+          test -x "$JL_RUNTIME_DIR/.venv/bin/python"
+          test -x "$JL_RUNTIME_BIN_DIR/hermes"
+
+          # Shim on PATH for start-agent preflight. Venv stays under HERMES_HOME
+          # and is covered by the sandbox HermesHome allow-read grant.
+          printf '%s\n' "$JL_RUNTIME_BIN_DIR" >> "$GITHUB_PATH"
+
+          # setup script already smoke-imports hermes_cli/slack_sdk/slack_bolt/
+          # anthropic; keep an explicit check here for the workflow log.
+          "$JL_RUNTIME_DIR/.venv/bin/python" -c \
+            'import hermes_cli, slack_sdk, slack_bolt, anthropic; print("imports ok")'
+          "$JL_RUNTIME_BIN_DIR/hermes" --version
+
+      - name: Install Junie CLI nightly
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          curl -fsSL https://junie.jetbrains.com/install-nightly.sh | bash
+          printf '%s\n' "$HOME/.local/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.local/bin:$PATH"
+
+          current="$HOME/.local/share/junie/current"
+          [[ -L "$current" ]] || { echo "::error::Junie CLI installer did not create the active version link"; exit 1; }
+          active_version="$(readlink -f "$current" || true)"
+          [[ -d "$active_version" && "$active_version" == "$HOME/.local/share/junie/versions/"* ]] || {
+            echo "::error::Junie CLI active version is missing from $HOME/.local/share/junie/versions"
+            exit 1
+          }
+          junie --version
+
+      - name: Install locked Anthropic Sandbox Runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends bubblewrap ripgrep socat
+
+          # Work around https://github.com/anthropics/claude-code/issues/55585
+          if sysctl kernel.apparmor_restrict_unprivileged_userns >/dev/null 2>&1; then
+            sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
+          bwrap --unshare-user --unshare-net --ro-bind / / /bin/true
+
+          archive="$RUNNER_TEMP/junie-live-runtime-lock.tgz"
+          unpack_dir="$RUNNER_TEMP/junie-live-runtime-lock"
+          runtime_dir="$HOME/.junie-live/runtime"
+          rm -rf "$unpack_dir"
+          mkdir -p "$unpack_dir" "$runtime_dir"
+
+          curl -fsSL --retry 3 \
+            -o "$archive" \
+            "https://github.com/JetBrains/junie-live/releases/download/$JUNIE_LIVE_RELEASE_TAG/junie-live-runtime-lock.tgz"
+          tar -xzf "$archive" -C "$unpack_dir"
+          install -m 0600 "$unpack_dir/package.json" "$runtime_dir/package.json"
+          install -m 0600 "$unpack_dir/package-lock.json" "$runtime_dir/package-lock.json"
+          npm ci --omit=dev --ignore-scripts --no-audit --no-fund --prefix "$runtime_dir"
+
+          private_srt="$runtime_dir/node_modules/.bin/srt"
+          [[ -x "$private_srt" ]] || { echo "::error::The private sandbox runtime is missing"; exit 1; }
+          "$private_srt" --version
+          rm -rf "$archive" "$unpack_dir"
+
+          config="$GITHUB_WORKSPACE/.junie-live/config-ci.yaml"
+          [[ -f "$config" ]] || { echo "::error::Missing $config"; exit 1; }
+
+      - name: Start Junie Live proxies
+        env:
+          JUNIE_LIVE_RUN_DIR: ${{ runner.temp }}/junie-live-cli
+          JUNIE_LIVE_PROXY_CONFIG: ${{ runner.temp }}/junie-live-cli/proxied.yaml
+          JUNIE_LIVE_PROXY_PID_FILE: ${{ runner.temp }}/junie-live-cli/proxy.pid
+          JUNIE_LIVE_PROXY_LOG: ${{ runner.temp }}/junie-live-cli/proxy.log
+          JUNIE_API_KEY: ${{ secrets.JUNIE_API_KEY }}
+          GITHUB_APP_ID: ${{ secrets.YANA_APP_ID }}
+          GITHUB_APP_PRIVATE_KEY: ${{ secrets.YANA_APP_PRIVATE_KEY }}
+          GITHUB_APP_INSTALLATION_ID: ${{ steps.app-token.outputs.installation-id }}
+          SLACK_BOT_TOKEN_JUNIE_LIVE: ${{ secrets.SLACK_BOT_TOKEN_JUNIE_LIVE }}
+          SLACK_APP_TOKEN_JUNIE_LIVE: ${{ secrets.SLACK_APP_TOKEN_JUNIE_LIVE }}
+          JUNIE_LIVE_BACKEND_TOKEN: ${{ secrets.YANA_LIVE_BACKEND_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+
+          proxy_env="$JUNIE_LIVE_RUN_DIR/proxy.env"
+          mkdir -p "$JUNIE_LIVE_RUN_DIR"
+
+          required=(
+            JUNIE_API_KEY
+            GITHUB_APP_ID GITHUB_APP_PRIVATE_KEY GITHUB_APP_INSTALLATION_ID
+            SLACK_BOT_TOKEN_JUNIE_LIVE SLACK_APP_TOKEN_JUNIE_LIVE
+            JUNIE_LIVE_BACKEND_TOKEN JUNIE_LIVE_PROJECT_ID SLACK_CHANNEL_ID
+          )
+          for name in "${required[@]}"; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Missing required Junie Live value: $name"
+              exit 1
+            fi
+          done
+
+          {
+            printf '%s=%s\n' JUNIE_API_KEY "$JUNIE_API_KEY"
+            printf '%s=%s\n' GITHUB_APP_ID "$GITHUB_APP_ID"
+            printf '%s=%s\n' GITHUB_APP_INSTALLATION_ID "$GITHUB_APP_INSTALLATION_ID"
+            # The App private key is multi-line PEM material, so it is written
+            # as a double-quoted value: the env-file format keeps such a value
+            # verbatim, newlines included.
+            printf '%s="%s"\n' GITHUB_APP_PRIVATE_KEY "$GITHUB_APP_PRIVATE_KEY"
+            printf '%s=%s\n' SLACK_BOT_TOKEN_JUNIE_LIVE "$SLACK_BOT_TOKEN_JUNIE_LIVE"
+            printf '%s=%s\n' SLACK_APP_TOKEN_JUNIE_LIVE "$SLACK_APP_TOKEN_JUNIE_LIVE"
+            printf '%s=%s\n' JUNIE_LIVE_BACKEND_TOKEN "$JUNIE_LIVE_BACKEND_TOKEN"
+            printf '%s=%s\n' JUNIE_LIVE_PROJECT_ID "$JUNIE_LIVE_PROJECT_ID"
+            printf '%s=%s\n' SLACK_CHANNEL_ID "$SLACK_CHANNEL_ID"
+            printf '%s=%s\n' GITHUB_WORKSPACE "$GITHUB_WORKSPACE"
+            printf '%s=%s\n' GITHUB_SERVER_URL "$GITHUB_SERVER_URL"
+            printf '%s=%s\n' GITHUB_API_URL "$GITHUB_API_URL"
+            printf '%s=%s\n' GITHUB_REPOSITORY "$GITHUB_REPOSITORY"
+          } > "$proxy_env"
+
+          setsid junie-live setup-proxy \
+            --input-config "$GITHUB_WORKSPACE/.junie-live/config-ci.yaml" \
+            --output-config "$JUNIE_LIVE_PROXY_CONFIG" \
+            --env-file "$proxy_env" \
+            </dev/null >"$JUNIE_LIVE_PROXY_LOG" 2>&1 &
+          proxy_pid=$!
+          printf '%s\n' "$proxy_pid" > "$JUNIE_LIVE_PROXY_PID_FILE"
+
+          for _ in {1..300}; do
+            if [[ -f "$JUNIE_LIVE_PROXY_CONFIG" ]]; then
+              break
+            fi
+            if ! kill -0 "$proxy_pid" 2>/dev/null; then
+              echo "::error::setup-proxy exited before publishing its config"
+              tail -n 200 "$JUNIE_LIVE_PROXY_LOG" >&2 || true
+              exit 1
+            fi
+            sleep 0.1
+          done
+
+          if [[ ! -f "$JUNIE_LIVE_PROXY_CONFIG" || -L "$JUNIE_LIVE_PROXY_CONFIG" ]]; then
+            echo "::error::Timed out waiting for the proxied config"
+            exit 1
+          fi
+          if [[ "$(stat -c '%a' "$JUNIE_LIVE_PROXY_CONFIG")" != "600" ]]; then
+            echo "::error::The proxied config is not private"
+            exit 1
+          fi
+
+      - name: Start Junie Live agent
+        env:
+          JUNIE_LIVE_RUN_DIR: ${{ runner.temp }}/junie-live-cli
+          JUNIE_LIVE_AGENT_LOG: ${{ runner.temp }}/junie-live-cli/agent.log
+          JUNIE_LIVE_PROXY_CONFIG: ${{ runner.temp }}/junie-live-cli/proxied.yaml
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+
+          agent_env="$JUNIE_LIVE_RUN_DIR/agent.env"
+          {
+            printf '%s=%s\n' JUNIE_LIVE_PROJECT_ID "$JUNIE_LIVE_PROJECT_ID"
+            printf '%s=%s\n' SLACK_CHANNEL_ID "$SLACK_CHANNEL_ID"
+            printf '%s=%s\n' GITHUB_WORKSPACE "$GITHUB_WORKSPACE"
+            printf '%s=%s\n' GITHUB_SERVER_URL "$GITHUB_SERVER_URL"
+            printf '%s=%s\n' GITHUB_API_URL "$GITHUB_API_URL"
+            printf '%s=%s\n' GITHUB_REPOSITORY "$GITHUB_REPOSITORY"
+            printf '%s=%s\n' GITHUB_RUN_ID "$GITHUB_RUN_ID"
+            printf '%s=%s\n' CI true
+            printf '%s=%s\n' GITHUB_ACTIONS true
+          } > "$agent_env"
+
+          # run_id was fixed in "Fix run identity"; do not recompute it here. The
+          # raised runtime lives under $HOME/.junie-live/runs/$JL_RUN_ID and the
+          # agent must be started with the same id so it finds that venv.
+          [[ -n "${JL_RUN_ID:-}" ]] || { echo "::error::JL_RUN_ID is unset"; exit 1; }
+          runtime_home="$HOME/.junie-live/runs/$JL_RUN_ID/home"
+          mkdir -p "$runtime_home/.local/share" "$runtime_home/.junie/logs"
+          ln -sfn "$HOME/.local/bin" "$runtime_home/.local/bin"
+          ln -sfn "$HOME/.local/share/junie" "$runtime_home/.local/share/junie"
+
+          exec junie-live start-agent \
+            --config "$JUNIE_LIVE_PROXY_CONFIG" \
+            --use-sandbox=true \
+            --log-file "$JUNIE_LIVE_AGENT_LOG" \
+            --env-file "$agent_env" \
+            --run-id "$JL_RUN_ID"
+
+      - name: Stop Junie Live
+        if: ${{ always() }}
+        env:
+          JUNIE_LIVE_RUN_DIR: ${{ runner.temp }}/junie-live-cli
+          JUNIE_LIVE_PROXY_PID_FILE: ${{ runner.temp }}/junie-live-cli/proxy.pid
+          JUNIE_LIVE_PROXY_LOG: ${{ runner.temp }}/junie-live-cli/proxy.log
+          JUNIE_LIVE_AGENT_LOG: ${{ runner.temp }}/junie-live-cli/agent.log
+          JUNIE_LIVE_LOG_STAGE: ${{ runner.temp }}/junie-live-logs
+        shell: bash
+        run: |
+          set +e
+
+          # Preserve the local runner's shutdown order: agent first, proxy second.
+          junie-live stop
+
+          if [[ -f "$JUNIE_LIVE_PROXY_PID_FILE" ]]; then
+            proxy_pid="$(cat "$JUNIE_LIVE_PROXY_PID_FILE")"
+            if kill -0 "$proxy_pid" 2>/dev/null; then
+              kill -TERM "$proxy_pid" 2>/dev/null
+              for _ in {1..100}; do
+                kill -0 "$proxy_pid" 2>/dev/null || break
+                sleep 0.1
+              done
+              kill -KILL "$proxy_pid" 2>/dev/null || true
+            fi
+          fi
+
+          # Stage the diagnostics before the run directory is removed. This is an
+          # allow-list on purpose: the same directory also holds the env files
+          # with resolved credentials, and artifacts are not secret-masked.
+          mkdir -p "$JUNIE_LIVE_LOG_STAGE"
+          cp -f "$JUNIE_LIVE_PROXY_LOG" "$JUNIE_LIVE_LOG_STAGE/" 2>/dev/null
+          cp -f "$JUNIE_LIVE_AGENT_LOG" "$JUNIE_LIVE_LOG_STAGE/" 2>/dev/null
+
+          # Per-run diagnostics written by the CLI itself. The run id is only
+          # known at run time, and the run tree also carries runtime state, so
+          # copy the named files only.
+          for run_dir in "$HOME"/.junie-live/runs/*/; do
+            [[ -d "$run_dir" ]] || continue
+            dest="$JUNIE_LIVE_LOG_STAGE/runs/$(basename "$run_dir")"
+            mkdir -p "$dest"
+            cp -f "$run_dir"logs/*.log "$dest/" 2>/dev/null
+            for name in manifest.json gateway.json effective-config.yaml; do
+              cp -f "$run_dir$name" "$dest/" 2>/dev/null
+            done
+          done
+
+          chmod -R u+rw "$JUNIE_LIVE_LOG_STAGE" 2>/dev/null
+
+          rm -rf "$JUNIE_LIVE_RUN_DIR"
+
+      - name: Upload Junie Live logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: junie-live-logs
+          path: ${{ runner.temp }}/junie-live-logs
+          retention-days: 7
+          if-no-files-found: warn
