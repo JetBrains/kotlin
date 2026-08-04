@@ -80,7 +80,7 @@ fun ImportCollectingPrinter.replaceFunctionDeclaration(
 fun Field.getMutableType(forBuilder: Boolean = false): TypeRefWithNullability = when (this) {
     is ListField -> when {
         forBuilder -> StandardTypes.mutableList
-        !isMutable -> StandardTypes.list
+        !isMutable || isAssignableList -> StandardTypes.list
         isMutableOrEmptyList -> type(BASE_PACKAGE, "MutableOrEmptyList", kind = TypeKind.Class)
         else -> StandardTypes.mutableList
     }.withArgs(baseType).copy(nullable)
