@@ -37,9 +37,11 @@ import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import java.net.URI
-import java.net.ServerSocket
+import java.net.InetAddress
+import java.net.InetSocketAddress
+import java.net.Socket
 import java.net.SocketTimeoutException
+import java.net.URI
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.time.Duration
@@ -74,9 +76,10 @@ internal class PwRunnerSpec(
 )
 
 internal class PwDebugOptions(
-    // IntelliJ starts a Chromium remote-debug configuration on this port before Gradle launches Playwright.
+    // A CDP-compatible debugger can attach to Chromium on this port.
     val remoteDebuggingPort: Int,
-    val debuggerReadySocket: ServerSocket,
+    // Present for sessions that wait for confirmed attachment before navigation.
+    val debuggerReadyPort: Int?,
 )
 
 /**
@@ -284,10 +287,12 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
     }
 
     private fun PwRunnerSpec.awaitDebuggerAttached() {
-        val readySocket = debugOptions?.debuggerReadySocket ?: return
+        val readyPort = debugOptions?.debuggerReadyPort ?: return
         try {
-            readySocket.use { serverSocket ->
-                serverSocket.accept().close()
+            Socket().use { socket ->
+                socket.connect(InetSocketAddress(InetAddress.getLoopbackAddress(), readyPort), DEBUGGER_READY_TIMEOUT_MILLIS)
+                socket.soTimeout = DEBUGGER_READY_TIMEOUT_MILLIS
+                check(socket.getInputStream().read() >= 0) { "Debugger readiness connection closed without acknowledgement" }
             }
         } catch (e: SocketTimeoutException) {
             throw IllegalStateException("Timed out waiting for IntelliJ debugger to attach to '$name'", e)
@@ -312,5 +317,9 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
             }
         }
         return args + "--remote-debugging-port=$port"
+    }
+
+    companion object {
+        private const val DEBUGGER_READY_TIMEOUT_MILLIS = 30_000
     }
 }

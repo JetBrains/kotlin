@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
 import org.gradle.api.Action
+import org.gradle.api.GradleException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.tasks.testing.TestExecuter
 import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.options.Option
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
@@ -73,6 +75,43 @@ internal constructor(
 
     @Input
     var debug: Boolean = false
+
+    @get:Internal
+    internal var browserDebugOptions: KotlinJsBrowserDebugOptions = KotlinJsBrowserDebugOptions()
+
+    @Option(
+        option = "debug-browser",
+        description = "Runs this browser test task in debug mode.",
+    )
+    internal fun setBrowserDebug(enabled: Boolean) {
+        debug = enabled
+    }
+
+    @Option(
+        option = "debug-port",
+        description = "Sets the browser framework debug port and enables browser debugging.",
+    )
+    internal fun setBrowserDebugPort(value: String) = updateBrowserDebugOptions(value) {
+        browserDebugOptions.copy(debugPort = it)
+    }
+
+    @Option(
+        option = "ready-port",
+        description = "Sets the debugger attachment callback port used before Playwright navigation and enables browser debugging.",
+    )
+    internal fun setDebuggerReadyPort(value: String) = updateBrowserDebugOptions(value) {
+        browserDebugOptions.copy(debuggerReadyPort = it)
+    }
+
+    private fun updateBrowserDebugOptions(value: String, update: (Int) -> KotlinJsBrowserDebugOptions) {
+        val port = value.toIntOrNull()
+        if (port == null || port !in 1..65535) {
+            throw GradleException("Browser debug ports must be between 1 and 65535")
+        }
+        browserDebugOptions = update(port)
+        debug = true
+        configureBrowserDebug()
+    }
 
     @Suppress("unused")
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
@@ -162,6 +201,8 @@ internal constructor(
     }
 
     override fun createTestExecutionSpec(): TestExecutionSpec {
+        configureBrowserDebug()
+
         val launchOpts = objects.processLaunchOptions {
             workingDir.set(this@KotlinJsTest.testFramework!!.workingDir)
             executable.set(this@KotlinJsTest.testFramework!!.executable)
@@ -179,5 +220,15 @@ internal constructor(
     override fun createTestExecuter(): TestExecuter<*> {
         val testExecuter = testFramework!!.createTestExecuter() ?: super.createTestExecuter()
         return testExecuter
+    }
+
+    private fun configureBrowserDebug() {
+        if (!debug) return
+
+        val framework = testFramework as? KotlinJsBrowserDebuggableFramework
+            ?: throw GradleException(
+                "Browser debugging is not supported for ${testFramework?.javaClass?.name ?: "an unconfigured test framework"}"
+            )
+        framework.configureDebug(browserDebugOptions)
     }
 }

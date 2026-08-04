@@ -55,7 +55,7 @@ class KotlinKarma internal constructor(
     override val compilation: KotlinJsIrCompilation,
     private val basePath: String,
     private val objects: ObjectFactory,
-) : KotlinJsTestFramework {
+) : KotlinJsTestFramework, KotlinJsBrowserDebuggableFramework {
 
     @Transient
     private val project: Project = compilation.target.project
@@ -114,15 +114,15 @@ class KotlinKarma internal constructor(
         compilation.npmToolingDir()
 
     /**
-     * Used by IntelliJ IDEA to determine which Karma URL should be opened in a browser when starting a debug session.
-     *
-     * Historically, debugging opened the dedicated Karma debug page "/debug.html". We now default to the main page "/".
-     * If you prefer the previous behavior, you can override this property to "/debug.html" (or any other valid Karma page).
-     *
-     * Note: This property is read by IntelliJ IDEA on debugging; changing it affects which page IDEA opens for Karma WASM/JS tests in debug case.
+     * Retained for compatibility with IDE integrations that choose a Karma debug page.
+     * The debugger-agnostic browser-test integration opens the Karma root page.
      */
     @Suppress("unused")
     val debugPath: Property<String> = project.objects.property<String>().convention("/")
+
+    override fun configureDebug(options: KotlinJsBrowserDebugOptions) {
+        options.debugPort?.let { config.port = it }
+    }
 
     val webpackConfig = KotlinWebpackConfig(
         npmProjectDir = npmProjectDir.map { it.asFile },

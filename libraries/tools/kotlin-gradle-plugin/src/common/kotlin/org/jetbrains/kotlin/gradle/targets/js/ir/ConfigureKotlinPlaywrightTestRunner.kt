@@ -53,8 +53,7 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         ) {
             it.browsers.set(project.providers.provider {
                 val browsers = declaredPlaywrightBrowsers.get()
-                // Ultimate marks the test task as debug during configuration; the install task runs before jsBrowserTest.
-                // Debug attaches through Chromium CDP even when the declared Playwright runner is Firefox/WebKit.
+                // Debug runs attach through Chromium CDP even when only Firefox or WebKit is declared.
                 if (testTaskProvider.get().debug) browsers + "chromium" else browsers
             })
         }

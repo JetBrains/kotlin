@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.file.Directory
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -21,12 +22,13 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.WebpackBundleKotlinJsTests
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PLAYWRIGHT_VERSION
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
 import java.io.File
+import java.net.ServerSocket
 import java.net.URI
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
@@ -290,7 +292,9 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         )
         assertEquals(setOf("firefox"), installTask.browsers.get().toSet())
 
-        setup.jsBrowserTestTask.debug = true
+        val debuggerReadyPort = ServerSocket(0).use { it.localPort }
+        setup.jsBrowserTestTask.setBrowserDebugPort("32123")
+        setup.jsBrowserTestTask.setDebuggerReadyPort(debuggerReadyPort.toString())
 
         assertEquals(setOf("firefox", "chromium"), installTask.browsers.get().toSet())
 
@@ -300,15 +304,8 @@ class KotlinPlaywrightTestFrameworkWiringTest {
             writeText("")
         }
         framework.npmToolingEnvDir.set(npmToolingEnv)
-        framework.prepareDebugSession(setup.jsBrowserTestTask)
-        framework.configureRemoteDebuggingPort(32123)
 
-        val spec = framework.createTestExecutionSpec(
-            task = setup.jsBrowserTestTask,
-            launchOpts = setup.project.objects.processLaunchOptions(),
-            nodeJsArgs = mutableListOf(),
-            debug = setup.jsBrowserTestTask.debug,
-        )
+        val spec = assertIs<PwExecutionSpec>(setup.jsBrowserTestTask.createTestExecutionSpecForTest())
         val runner = spec.runners.single()
 
         assertEquals("chromium", runner.name)
@@ -316,9 +313,38 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         assertEquals(emptyList(), runner.launchArgs)
         assertEquals(emptyMap(), runner.launchEnvironmentVariables)
         assertEquals(32123, runner.debugOptions?.remoteDebuggingPort)
-        runner.debugOptions?.debuggerReadySocket?.close()
+        assertEquals(debuggerReadyPort, runner.debugOptions?.debuggerReadyPort)
+    }
+
+    @Test
+    fun `browser debug option uses default playwright port without IDEA synchronization`() {
+        val setup = buildBrowserTestProject {
+            chromium()
+        }
+        val framework = assertIs<KotlinPlaywrightJsTestFramework>(setup.jsBrowserTestTask.testFramework)
+        val location = mockLocation(setup.project, URI("http://localhost:12345/test.html"))
+        framework.frameworkTaskInputs.chromiumRunners.get().single().testsLocation.set(location)
+        val npmToolingEnv = setup.project.layout.buildDirectory.dir("test-npm-tooling").get().asFile
+        npmToolingEnv.resolve("node_modules/playwright-core/cli.js").apply {
+            parentFile.mkdirs()
+            writeText("")
+        }
+        framework.npmToolingEnvDir.set(npmToolingEnv)
+        setup.jsBrowserTestTask.setBrowserDebug(true)
+
+        val spec = assertIs<PwExecutionSpec>(setup.jsBrowserTestTask.createTestExecutionSpecForTest())
+        val debugOptions = spec.runners.single().debugOptions
+
+        assertEquals(9222, debugOptions?.remoteDebuggingPort)
+        assertNull(debugOptions?.debuggerReadyPort)
     }
 }
+
+private fun KotlinJsTest.createTestExecutionSpecForTest(): TestExecutionSpec =
+    KotlinJsTest::class.java
+        .getDeclaredMethod("createTestExecutionSpec")
+        .apply { isAccessible = true }
+        .invoke(this) as TestExecutionSpec
 
 private class BrowserTestProject(
     val project: ProjectInternal,

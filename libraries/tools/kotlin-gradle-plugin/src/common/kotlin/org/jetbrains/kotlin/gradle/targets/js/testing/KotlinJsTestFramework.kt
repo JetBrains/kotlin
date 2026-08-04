@@ -35,3 +35,12 @@ interface KotlinJsTestFramework : RequiresNpmDependencies {
 
     companion object
 }
+
+data class KotlinJsBrowserDebugOptions(
+    val debugPort: Int? = null,
+    val debuggerReadyPort: Int? = null,
+)
+
+internal interface KotlinJsBrowserDebuggableFramework {
+    fun configureDebug(options: KotlinJsBrowserDebugOptions)
+}
