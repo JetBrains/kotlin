@@ -15,7 +15,13 @@ class F {
   val A.prop: Int /* by */
     field = Delegate()
     get(): Int {
-      return <this>.#prop$delegate.getValue(t = <this>, p = F::prop)
+      return <this>.#prop$delegate.getValue(t = <this>, p = KProperty2<F, A, Int>(
+        /* bound = */ [],
+        /* getter = */        local fun(p0: F, p1: A): Int {
+          return p0.<get-prop>(/* <this> = p1 */)
+        }
+      )
+)
     }
 
   class A {
@@ -34,3 +40,4 @@ class F {
   }
 
 }
+

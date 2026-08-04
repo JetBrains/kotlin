@@ -14,12 +14,13 @@ FILE fqName:test fileName:/boundInlineAdaptedReference.kt
   FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun foo (x: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in test' type=kotlin.Unit origin=null
-        ARG x: BLOCK type=kotlin.Function0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:id visibility:local modality:FINAL returnType:kotlin.Unit
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:ExtensionReceiver name:receiver index:0 type:kotlin.String
+        ARG x: RICH_FUNCTION_REFERENCE type=kotlin.Function0<kotlin.Unit> origin=null [unit_conversion,vararg_conversion] reflectionTarget='public final fun id (<this>: kotlin.String, s: kotlin.String, vararg xs: kotlin.Int): kotlin.String declared in test'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0
+          bound receiver: CONST String type=kotlin.String value="Fail"
+          invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:id visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:kotlin.String
             BLOCK_BODY
-              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                CALL 'public final fun id (<this>: kotlin.String, s: kotlin.String, vararg xs: kotlin.Int): kotlin.String declared in test' type=kotlin.String origin=null
-                  ARG <this>: GET_VAR 'receiver: kotlin.String declared in test.test.id' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
-          FUNCTION_REFERENCE 'local final fun id (receiver: kotlin.String): kotlin.Unit declared in test.test' type=kotlin.Function0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun id (<this>: kotlin.String, s: kotlin.String, vararg xs: kotlin.Int): kotlin.String declared in test
-            ARG receiver: CONST String type=kotlin.String value="Fail"
+              RETURN type=kotlin.Nothing from='local final fun id (receiver: kotlin.String): kotlin.Unit declared in test.test'
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  CALL 'public final fun id (<this>: kotlin.String, s: kotlin.String, vararg xs: kotlin.Int): kotlin.String declared in test' type=kotlin.String origin=null
+                    ARG <this>: GET_VAR 'receiver: kotlin.String declared in test.test.id' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE

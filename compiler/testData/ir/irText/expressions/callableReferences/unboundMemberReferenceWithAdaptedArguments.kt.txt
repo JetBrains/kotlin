@@ -25,33 +25,33 @@ object Obj : A {
 }
 
 fun testBound(a: A) {
-  use2(fn = { // BLOCK
-    local fun A.foo(p0: Int) {
-      receiver.foo(xs = [p0]) /*~> Unit */
+  use2(fn = Function1<Int, Unit>(
+    /* bound = */ [a],
+    /* invoke = */    local fun(receiver: A, p0: Int) {
+      return receiver.foo(xs = [p0]) /*~> Unit */
     }
-
-    ::foo/*(receiver = a) */
-  })
+  )
+)
 }
 
 fun testObject() {
-  use2(fn = { // BLOCK
-    local fun Obj.foo(p0: Int) {
-      receiver.foo(xs = [p0]) /*~> Unit */
+  use2(fn = Function1<Int, Unit>(
+    /* bound = */ [Obj],
+    /* invoke = */    local fun(receiver: Obj, p0: Int) {
+      return receiver.foo(xs = [p0]) /*~> Unit */
     }
-
-    ::foo/*(receiver = Obj) */
-  })
+  )
+)
 }
 
 fun testUnbound() {
-  use1(fn = { // BLOCK
-    local fun foo(p0: A, p1: Int) {
-      p0.foo(xs = [p1]) /*~> Unit */
+  use1(fn = Function2<A, Int, Unit>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: A, p1: Int) {
+      return p0.foo(xs = [p1]) /*~> Unit */
     }
-
-    ::foo
-  })
+  )
+)
 }
 
 fun use1(fn: Function2<A, Int, Unit>) {

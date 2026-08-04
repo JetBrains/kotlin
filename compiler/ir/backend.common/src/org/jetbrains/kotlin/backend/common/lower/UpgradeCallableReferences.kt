@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 open class UpgradeCallableReferences(
     val context: LoweringContext,
     val upgradeSamConversions: Boolean = true,
-    val castDispatchReceiver: Boolean = true,
-    val generateFakeAccessorsForReflectionProperty: Boolean = false,
 ) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
@@ -245,30 +243,16 @@ open class UpgradeCallableReferences(
             val boundValues: List<IrExpression>
 
             if (getter != null) {
-                if (generateFakeAccessorsForReflectionProperty && expression.origin == IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE) {
-                    boundValues = emptyList()
-                    getterFun = getter.let {
-                        expression.buildReflectionPropertyAccessorWithoutBody(
-                            emptyList(), data, it.name, it.isSuspend, isPropertySetter = false
-                        )
+                val getterArguments = expression.getCapturedValues()
+                boundValues = getterArguments.map { it.expression }
+                getterFun = expression.wrapFunction(getterArguments, data, getter, isPropertySetter = false)
+                setterFun = runIf(expression.type.isKMutableProperty() && setter != null) {
+                    requireNotNull(setter)
+                    val setterArguments = getterArguments.map {
+                        val parameter = it.correspondingParameter ?: error("Getter argument $it has no corresponding parameter")
+                        it.copy(correspondingParameter = setter.parameters.getOrNull(parameter.indexInParameters))
                     }
-                    setterFun = setter?.let {
-                        expression.buildReflectionPropertyAccessorWithoutBody(
-                            emptyList(), data, it.name, it.isSuspend, isPropertySetter = true
-                        )
-                    }
-                } else {
-                    val getterArguments = expression.getCapturedValues()
-                    boundValues = getterArguments.map { it.expression }
-                    getterFun = expression.wrapFunction(getterArguments, data, getter, isPropertySetter = false)
-                    setterFun = runIf(expression.type.isKMutableProperty() && setter != null) {
-                        requireNotNull(setter)
-                        val setterArguments = getterArguments.map {
-                            val parameter = it.correspondingParameter ?: error("Getter argument $it has no corresponding parameter")
-                            it.copy(correspondingParameter = setter.parameters.getOrNull(parameter.indexInParameters))
-                        }
-                        expression.wrapFunction(setterArguments, data, setter, isPropertySetter = true)
-                    }
+                    expression.wrapFunction(setterArguments, data, setter, isPropertySetter = true)
                 }
             } else {
                 boundValues = listOfNotNull(expression.dispatchReceiver)
@@ -342,36 +326,24 @@ open class UpgradeCallableReferences(
                 type = expression.type,
                 reflectionTargetSymbol = expression.symbol,
                 getterFunction = expression.getter.owner.let {
-                    expression.buildUnsupportedForLocalFunction(emptyList(), data, it.name, it.isSuspend, isPropertySetter = false)
+                    expression.buildAccessorFunctionForLocalDelegatedProperty(emptyList(), data, it.name, it.isSuspend, isPropertySetter = false)
                 },
                 setterFunction = expression.setter?.owner?.let {
-                    expression.buildUnsupportedForLocalFunction(emptyList(), data, it.name, it.isSuspend, isPropertySetter = true)
+                    expression.buildAccessorFunctionForLocalDelegatedProperty(emptyList(), data, it.name, it.isSuspend, isPropertySetter = true)
                 },
                 origin = expression.origin
             )
         }
 
-        private fun IrCallableReference<*>.buildUnsupportedForLocalFunction(
+        private fun IrCallableReference<*>.buildAccessorFunctionForLocalDelegatedProperty(
             captured: List<CapturedValue>,
             parent: IrDeclarationParent,
             name: Name,
             isSuspend: Boolean,
             isPropertySetter: Boolean,
-        ) = buildWrapperFunction(captured, parent, name, isSuspend, isPropertySetter) { _, _ ->
-            +irCall(this@UpgradeCallableReferences.context.symbols.throwUnsupportedOperationException).apply {
-                arguments[0] = irString("Not supported for local property reference.")
-            }
-        }.apply {
+        ) = buildWrapperFunction(captured, parent, name, isSuspend, isPropertySetter, body = null).apply {
             returnType = context.irBuiltIns.nothingType
         }
-
-        private fun IrCallableReference<*>.buildReflectionPropertyAccessorWithoutBody(
-            captured: List<CapturedValue>,
-            parent: IrDeclarationParent,
-            name: Name,
-            isSuspend: Boolean,
-            isPropertySetter: Boolean,
-        ) = buildWrapperFunction(captured, parent, name, isSuspend, isPropertySetter, body = null)
 
         private fun IrCallableReference<*>.buildWrapperFunction(
             captured: List<CapturedValue>,
@@ -500,9 +472,14 @@ open class UpgradeCallableReferences(
                     ).apply {
                         for ([parameter, forwardParameter] in referencedFunction.parameters.zip(forwardOrder)) {
                             val rawArgument = builder.irGet(forwardParameter)
-                            this.arguments[parameter] =
-                                if (!castDispatchReceiver && parameter.kind == IrParameterKind.DispatchReceiver) rawArgument
-                                else rawArgument.implicitCastIfNeededTo(typeSubstitutor.substitute(parameter.type))
+                            // If referencedFunction is a fake override, its dispatch receiver type is some supertype of the containing class.
+                            // We take the conainting class type instead to prevent a crash in synthetic property lowering.
+                            val castType = if (parameter.kind == IrParameterKind.DispatchReceiver) {
+                                referencedFunction.parentAsClass.defaultType
+                            } else {
+                                parameter.type
+                            }
+                            this.arguments[parameter] = rawArgument.implicitCastIfNeededTo(typeSubstitutor.substitute(castType))
                         }
                     }.implicitCastIfNeededTo(expectedReturnType)
                 +irReturn(exprToReturn)

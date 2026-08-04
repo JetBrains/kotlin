@@ -165,6 +165,14 @@ fun <T> buildTree(
                 element.acceptChildren(this, data)
             }
 
+            override fun visitRichCallableReference(expression: IrRichCallableReference<*>, data: Node) {
+                val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
+                for (boundValue in expression.boundValues) {
+                    boundValue.accept(this, data)
+                }
+                chainNode.addChild(ExpressionNode(expression))
+            }
+
             override fun visitExpression(expression: IrExpression, data: Node) {
                 if (expression is IrFunctionExpression) {
                     if (expression.isInlineParameter()) {

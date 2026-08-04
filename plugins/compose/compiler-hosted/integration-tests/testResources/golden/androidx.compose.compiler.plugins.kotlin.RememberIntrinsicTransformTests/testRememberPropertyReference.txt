@@ -35,7 +35,12 @@ fun Test(a: A, %composer: Composer?, %changed: Int) {
     }
     used(<block>{
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-      val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 || %dirty and 0b1000 != 0 && %composer.changed(a), a::value)
+      val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 || %dirty and 0b1000 != 0 && %composer.changed(a), ::value {
+        fun value(receiver: A): Int {
+          return receiver.value
+        }
+      }
+      )
       sourceInformationMarkerEnd(%composer)
       tmp0_group
     })

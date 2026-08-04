@@ -55,47 +55,50 @@ FILE fqName:<root> fileName:/unboundMemberReferenceWithAdaptedArguments.kt
     VALUE_PARAMETER kind:Regular name:a index:0 type:<root>.A
     BLOCK_BODY
       CALL 'public final fun use2 (fn: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: BLOCK type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo visibility:local modality:FINAL returnType:kotlin.Unit
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:ExtensionReceiver name:receiver index:0 type:<root>.A
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null [unit_conversion,vararg_conversion] reflectionTarget='public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.A'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1
+          bound receiver: GET_VAR 'a: <root>.A declared in <root>.testBound' type=<root>.A origin=null
+          invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.A
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:kotlin.Int
             BLOCK_BODY
-              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                CALL 'public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
-                  ARG <this>: GET_VAR 'receiver: <root>.A declared in <root>.testBound.foo' type=<root>.A origin=ADAPTED_FUNCTION_REFERENCE
-                  ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                    GET_VAR 'p0: kotlin.Int declared in <root>.testBound.foo' type=kotlin.Int origin=null
-          FUNCTION_REFERENCE 'local final fun foo (receiver: <root>.A, p0: kotlin.Int): kotlin.Unit declared in <root>.testBound' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.A
-            ARG receiver: GET_VAR 'a: <root>.A declared in <root>.testBound' type=<root>.A origin=null
+              RETURN type=kotlin.Nothing from='local final fun foo (receiver: <root>.A, p0: kotlin.Int): kotlin.Unit declared in <root>.testBound'
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  CALL 'public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
+                    ARG <this>: GET_VAR 'receiver: <root>.A declared in <root>.testBound.foo' type=<root>.A origin=ADAPTED_FUNCTION_REFERENCE
+                    ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                      GET_VAR 'p0: kotlin.Int declared in <root>.testBound.foo' type=kotlin.Int origin=null
   FUN name:testObject visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun use2 (fn: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: BLOCK type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo visibility:local modality:FINAL returnType:kotlin.Unit
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:ExtensionReceiver name:receiver index:0 type:<root>.Obj
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null [unit_conversion,vararg_conversion] reflectionTarget='public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.Obj'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1
+          bound receiver: GET_OBJECT 'CLASS OBJECT name:Obj modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.Obj
+          invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Obj
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:kotlin.Int
             BLOCK_BODY
-              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                CALL 'public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.Obj' type=kotlin.Int origin=null
-                  ARG <this>: GET_VAR 'receiver: <root>.Obj declared in <root>.testObject.foo' type=<root>.Obj origin=ADAPTED_FUNCTION_REFERENCE
-                  ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                    GET_VAR 'p0: kotlin.Int declared in <root>.testObject.foo' type=kotlin.Int origin=null
-          FUNCTION_REFERENCE 'local final fun foo (receiver: <root>.Obj, p0: kotlin.Int): kotlin.Unit declared in <root>.testObject' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.Obj
-            ARG receiver: GET_OBJECT 'CLASS OBJECT name:Obj modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.Obj
+              RETURN type=kotlin.Nothing from='local final fun foo (receiver: <root>.Obj, p0: kotlin.Int): kotlin.Unit declared in <root>.testObject'
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  CALL 'public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.Obj' type=kotlin.Int origin=null
+                    ARG <this>: GET_VAR 'receiver: <root>.Obj declared in <root>.testObject.foo' type=<root>.Obj origin=ADAPTED_FUNCTION_REFERENCE
+                    ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                      GET_VAR 'p0: kotlin.Int declared in <root>.testObject.foo' type=kotlin.Int origin=null
   FUN name:testUnbound visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun use1 (fn: kotlin.Function2<<root>.A, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: BLOCK type=kotlin.Function2<<root>.A, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo visibility:local modality:FINAL returnType:kotlin.Unit
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.Function2<<root>.A, kotlin.Int, kotlin.Unit> origin=null [unit_conversion,vararg_conversion] reflectionTarget='public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.A'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function2, p2: P2 of kotlin.Function2): R of kotlin.Function2 declared in kotlin.Function2
+          invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo visibility:local modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.A
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:1 type:kotlin.Int
             BLOCK_BODY
-              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                CALL 'public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
-                  ARG <this>: GET_VAR 'p0: <root>.A declared in <root>.testUnbound.foo' type=<root>.A origin=null
-                  ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                    GET_VAR 'p1: kotlin.Int declared in <root>.testUnbound.foo' type=kotlin.Int origin=null
-          FUNCTION_REFERENCE 'local final fun foo (p0: <root>.A, p1: kotlin.Int): kotlin.Unit declared in <root>.testUnbound' type=kotlin.Function2<<root>.A, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.A
+              RETURN type=kotlin.Nothing from='local final fun foo (p0: <root>.A, p1: kotlin.Int): kotlin.Unit declared in <root>.testUnbound'
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  CALL 'public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
+                    ARG <this>: GET_VAR 'p0: <root>.A declared in <root>.testUnbound.foo' type=<root>.A origin=null
+                    ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                      GET_VAR 'p1: kotlin.Int declared in <root>.testUnbound.foo' type=kotlin.Int origin=null
   FUN name:use1 visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:fn index:0 type:kotlin.Function2<<root>.A, kotlin.Int, kotlin.Unit>
     BLOCK_BODY

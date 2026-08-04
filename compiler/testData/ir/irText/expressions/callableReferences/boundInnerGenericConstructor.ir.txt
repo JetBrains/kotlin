@@ -75,9 +75,20 @@ FILE fqName:test fileName:/boundInnerGenericConstructor.kt
           TYPE_ARG B: kotlin.String
           ARG a: CONST String type=kotlin.String value="O"
           ARG b: CONST String type=kotlin.String value="K"
-          ARG x: FUNCTION_REFERENCE 'public constructor <init> (a: T of test.Foo, b: P of test.Foo.Inner) declared in test.Foo.Inner' type=kotlin.reflect.KFunction2<@[ParameterName(name = "a")] kotlin.String, @[ParameterName(name = "b")] kotlin.String, test.Foo.Inner<kotlin.String, kotlin.String>> origin=null reflectionTarget=<same>
-            TYPE_ARG P: kotlin.String
-            ARG <this>: GET_VAR 'val z: test.Foo<kotlin.String> declared in test.box' type=test.Foo<kotlin.String> origin=null
+          ARG x: RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction2<@[ParameterName(name = "a")] kotlin.String, @[ParameterName(name = "b")] kotlin.String, test.Foo.Inner<kotlin.String, kotlin.String>> origin=null reflectionTarget='public constructor <init> (a: T of test.Foo, b: P of test.Foo.Inner) declared in test.Foo.Inner'
+            overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
+            bound receiver: GET_VAR 'val z: test.Foo<kotlin.String> declared in test.box' type=test.Foo<kotlin.String> origin=null
+            invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<init> visibility:local modality:FINAL returnType:test.Foo.Inner<kotlin.String, kotlin.String>
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:test.Foo<kotlin.String>
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:@[ParameterName(name = "a")] kotlin.String
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:2 type:@[ParameterName(name = "b")] kotlin.String
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <init> (receiver: test.Foo<kotlin.String>, p0: @[ParameterName(name = "a")] kotlin.String, p1: @[ParameterName(name = "b")] kotlin.String): test.Foo.Inner<kotlin.String, kotlin.String> declared in test.box'
+                  CONSTRUCTOR_CALL 'public constructor <init> (a: T of test.Foo, b: P of test.Foo.Inner) declared in test.Foo.Inner' type=test.Foo.Inner<kotlin.String, kotlin.String> origin=null
+                    TYPE_ARG (of class) P: kotlin.String
+                    ARG <this>: GET_VAR 'receiver: test.Foo<kotlin.String> declared in test.box.<init>' type=test.Foo<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
+                    ARG a: GET_VAR 'p0: @[ParameterName(name = "a")] kotlin.String declared in test.box.<init>' type=@[ParameterName(name = "a")] kotlin.String origin=null
+                    ARG b: GET_VAR 'p1: @[ParameterName(name = "b")] kotlin.String declared in test.box.<init>' type=@[ParameterName(name = "b")] kotlin.String origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in test'
         CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
           ARG <this>: CALL 'public final fun <get-a> (): T of test.Foo declared in test.Foo.Inner' type=kotlin.String origin=GET_PROPERTY

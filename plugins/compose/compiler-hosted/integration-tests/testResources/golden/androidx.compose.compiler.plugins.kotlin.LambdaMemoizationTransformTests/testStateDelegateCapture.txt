@@ -31,7 +31,9 @@ fun A(%composer: Composer?, %changed: Int) {
         value = "abc"
       )
       get() {
-        return x%delegate.getValue(null, ::x%delegate)
+        return x%delegate.getValue(null, ::x {
+          fun x(): String }
+        )
       }
     }
     B(rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->

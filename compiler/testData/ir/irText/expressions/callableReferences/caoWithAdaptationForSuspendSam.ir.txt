@@ -103,15 +103,16 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSuspendSam.kt
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.A [val]
           GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
         VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> [val]
-          BLOCK type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:withVararg visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
+          RICH_FUNCTION_REFERENCE type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=null [unit_conversion,suspend_conversion,vararg_conversion] reflectionTarget='public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>'
+            overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.coroutines.SuspendFunction1): R of kotlin.coroutines.SuspendFunction1 declared in kotlin.coroutines.SuspendFunction1
+            invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:withVararg visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:kotlin.Int
               BLOCK_BODY
-                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-                    ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                      GET_VAR 'p0: kotlin.Int declared in <root>.test1.withVararg' type=kotlin.Int origin=null
-            FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.test1' type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>
+                RETURN type=kotlin.Nothing from='local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.test1'
+                  TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                    CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                      ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                        GET_VAR 'p0: kotlin.Int declared in <root>.test1.withVararg' type=kotlin.Int origin=null
         CALL 'public final fun set (<this>: <root>.A, i: <root>.IFoo, newValue: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
           ARG <this>: GET_VAR 'val tmp_0: <root>.A declared in <root>.test1' type=<root>.A origin=null
           ARG i: TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
@@ -128,15 +129,16 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSuspendSam.kt
         VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.B [val]
           GET_OBJECT 'CLASS OBJECT name:B modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.B
         VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> [val]
-          BLOCK type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:withVararg visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
+          RICH_FUNCTION_REFERENCE type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=null [unit_conversion,suspend_conversion,vararg_conversion] reflectionTarget='public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>'
+            overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.coroutines.SuspendFunction1): R of kotlin.coroutines.SuspendFunction1 declared in kotlin.coroutines.SuspendFunction1
+            invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:withVararg visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:kotlin.Int
               BLOCK_BODY
-                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-                    ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                      GET_VAR 'p0: kotlin.Int declared in <root>.test2.withVararg' type=kotlin.Int origin=null
-            FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>
+                RETURN type=kotlin.Nothing from='local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.test2'
+                  TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                    CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                      ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                        GET_VAR 'p0: kotlin.Int declared in <root>.test2.withVararg' type=kotlin.Int origin=null
         CALL 'public final fun set (<this>: <root>.B, i: <root>.IFoo2, newValue: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
           ARG <this>: GET_VAR 'val tmp_2: <root>.B declared in <root>.test2' type=<root>.B origin=null
           ARG i: TYPE_OP type=<root>.IFoo2 origin=SAM_CONVERSION typeOperand=<root>.IFoo2

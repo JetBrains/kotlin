@@ -63,23 +63,25 @@ FILE fqName:<root> fileName:/constructorWithAdaptedArguments.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testConstructor (): kotlin.Any declared in <root>'
         CALL 'public final fun use (fn: kotlin.Function1<kotlin.Int, kotlin.Any>): kotlin.Any declared in <root>' type=kotlin.Any origin=null
-          ARG fn: BLOCK type=kotlin.Function1<kotlin.Int, <root>.C> origin=ADAPTED_FUNCTION_REFERENCE
-            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:<init> visibility:local modality:FINAL returnType:<root>.C
+          ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.Function1<kotlin.Int, <root>.C> origin=null [vararg_conversion] reflectionTarget='public constructor <init> (vararg xs: kotlin.Int) declared in <root>.C'
+            overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1
+            invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:<init> visibility:local modality:FINAL returnType:<root>.C
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:kotlin.Int
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <init> (p0: kotlin.Int): <root>.C declared in <root>.testConstructor'
                   CONSTRUCTOR_CALL 'public constructor <init> (vararg xs: kotlin.Int) declared in <root>.C' type=<root>.C origin=null
                     ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                       GET_VAR 'p0: kotlin.Int declared in <root>.testConstructor.<init>' type=kotlin.Int origin=null
-            FUNCTION_REFERENCE 'local final fun <init> (p0: kotlin.Int): <root>.C declared in <root>.testConstructor' type=kotlin.Function1<kotlin.Int, <root>.C> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public constructor <init> (vararg xs: kotlin.Int) declared in <root>.C
   FUN name:testInnerClassConstructor visibility:public modality:FINAL returnType:kotlin.Any
     VALUE_PARAMETER kind:Regular name:outer index:0 type:<root>.Outer
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInnerClassConstructor (outer: <root>.Outer): kotlin.Any declared in <root>'
         CALL 'public final fun use (fn: kotlin.Function1<kotlin.Int, kotlin.Any>): kotlin.Any declared in <root>' type=kotlin.Any origin=null
-          ARG fn: BLOCK type=kotlin.Function1<kotlin.Int, <root>.Outer.Inner> origin=ADAPTED_FUNCTION_REFERENCE
-            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:<init> visibility:local modality:FINAL returnType:<root>.Outer.Inner
-              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:ExtensionReceiver name:receiver index:0 type:<root>.Outer
+          ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.Function1<kotlin.Int, <root>.Outer.Inner> origin=null [vararg_conversion] reflectionTarget='public constructor <init> (vararg xs: kotlin.Int) declared in <root>.Outer.Inner'
+            overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1
+            bound receiver: GET_VAR 'outer: <root>.Outer declared in <root>.testInnerClassConstructor' type=<root>.Outer origin=null
+            invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:<init> visibility:local modality:FINAL returnType:<root>.Outer.Inner
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Outer
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:kotlin.Int
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <init> (receiver: <root>.Outer, p0: kotlin.Int): <root>.Outer.Inner declared in <root>.testInnerClassConstructor'
@@ -87,15 +89,15 @@ FILE fqName:<root> fileName:/constructorWithAdaptedArguments.kt
                     ARG <this>: GET_VAR 'receiver: <root>.Outer declared in <root>.testInnerClassConstructor.<init>' type=<root>.Outer origin=ADAPTED_FUNCTION_REFERENCE
                     ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                       GET_VAR 'p0: kotlin.Int declared in <root>.testInnerClassConstructor.<init>' type=kotlin.Int origin=null
-            FUNCTION_REFERENCE 'local final fun <init> (receiver: <root>.Outer, p0: kotlin.Int): <root>.Outer.Inner declared in <root>.testInnerClassConstructor' type=kotlin.Function1<kotlin.Int, <root>.Outer.Inner> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public constructor <init> (vararg xs: kotlin.Int) declared in <root>.Outer.Inner
-              ARG receiver: GET_VAR 'outer: <root>.Outer declared in <root>.testInnerClassConstructor' type=<root>.Outer origin=null
   FUN name:testInnerClassConstructorCapturingOuter visibility:public modality:FINAL returnType:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInnerClassConstructorCapturingOuter (): kotlin.Any declared in <root>'
         CALL 'public final fun use (fn: kotlin.Function1<kotlin.Int, kotlin.Any>): kotlin.Any declared in <root>' type=kotlin.Any origin=null
-          ARG fn: BLOCK type=kotlin.Function1<kotlin.Int, <root>.Outer.Inner> origin=ADAPTED_FUNCTION_REFERENCE
-            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:<init> visibility:local modality:FINAL returnType:<root>.Outer.Inner
-              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:ExtensionReceiver name:receiver index:0 type:<root>.Outer
+          ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.Function1<kotlin.Int, <root>.Outer.Inner> origin=null [vararg_conversion] reflectionTarget='public constructor <init> (vararg xs: kotlin.Int) declared in <root>.Outer.Inner'
+            overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1
+            bound receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Outer' type=<root>.Outer origin=null
+            invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:<init> visibility:local modality:FINAL returnType:<root>.Outer.Inner
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Outer
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:kotlin.Int
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <init> (receiver: <root>.Outer, p0: kotlin.Int): <root>.Outer.Inner declared in <root>.testInnerClassConstructorCapturingOuter'
@@ -103,8 +105,6 @@ FILE fqName:<root> fileName:/constructorWithAdaptedArguments.kt
                     ARG <this>: GET_VAR 'receiver: <root>.Outer declared in <root>.testInnerClassConstructorCapturingOuter.<init>' type=<root>.Outer origin=ADAPTED_FUNCTION_REFERENCE
                     ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                       GET_VAR 'p0: kotlin.Int declared in <root>.testInnerClassConstructorCapturingOuter.<init>' type=kotlin.Int origin=null
-            FUNCTION_REFERENCE 'local final fun <init> (receiver: <root>.Outer, p0: kotlin.Int): <root>.Outer.Inner declared in <root>.testInnerClassConstructorCapturingOuter' type=kotlin.Function1<kotlin.Int, <root>.Outer.Inner> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public constructor <init> (vararg xs: kotlin.Int) declared in <root>.Outer.Inner
-              ARG receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Outer' type=<root>.Outer origin=null
   FUN name:use visibility:public modality:FINAL returnType:kotlin.Any
     VALUE_PARAMETER kind:Regular name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Any>
     BLOCK_BODY

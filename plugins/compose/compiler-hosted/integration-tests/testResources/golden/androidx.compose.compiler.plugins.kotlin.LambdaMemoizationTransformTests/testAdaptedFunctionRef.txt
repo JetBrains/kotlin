@@ -48,14 +48,12 @@ fun rememberFooInline(%composer: Composer?, %changed: Int): Int {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  val tmp0 = fooInline(<block>{
-    fun ScrollState.test(p0: Int): Int {
-      val tmp0_return = receiver.test(
+  val tmp0 = fooInline(::test {
+    fun test(receiver: ScrollState, p0: Int): Int {
+      receiver.test(
         index = p0
       )
-      tmp0_return
     }
-    scrollState()::test
   }, %composer, 0)
   if (isTraceInProgress()) {
     traceEventEnd()
@@ -66,23 +64,16 @@ fun rememberFooInline(%composer: Composer?, %changed: Int): Int {
 @Composable
 @FunctionKeyMeta(key = -954340234, startOffset = 376, endOffset = 420)
 fun rememberFoo(%composer: Composer?, %changed: Int): Int {
-  sourceInformationMarkerStart(%composer, <>, "C(rememberFoo)<scroll...>,<foo(sc...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(rememberFoo)<foo(sc...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  val tmp0 = foo(<block>{
-    val tmp0 = scrollState()
-    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-    val tmp1_group = %composer.cache(%composer.changed(tmp0)) {
-      fun ScrollState.test(p0: Int): Int {
-        receiver.test(
-          index = p0
-        )
-      }
-      tmp0::test
+  val tmp0 = foo(::test {
+    fun test(receiver: ScrollState, p0: Int): Int {
+      receiver.test(
+        index = p0
+      )
     }
-    sourceInformationMarkerEnd(%composer)
-    tmp1_group
   }, %composer, 0)
   if (isTraceInProgress()) {
     traceEventEnd()
@@ -97,7 +88,11 @@ fun rememberFooExactInline(%composer: Composer?, %changed: Int): Int {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  val tmp0 = fooInline(scrollState()::testExact, %composer, 0)
+  val tmp0 = fooInline(::testExact {
+    fun testExact(receiver: ScrollState, p0: @[ParameterName(name = 'index')] Int): Int {
+      return receiver.testExact(p0)
+    }
+  }, %composer, 0)
   if (isTraceInProgress()) {
     traceEventEnd()
   }
@@ -107,18 +102,14 @@ fun rememberFooExactInline(%composer: Composer?, %changed: Int): Int {
 @Composable
 @FunctionKeyMeta(key = -743021907, startOffset = 536, endOffset = 590)
 fun rememberFooExact(%composer: Composer?, %changed: Int): Int {
-  sourceInformationMarkerStart(%composer, <>, "C(rememberFooExact)<scroll...>,<foo(sc...>:Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(rememberFooExact)<foo(sc...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  val tmp0 = foo(<block>{
-    val tmp0 = scrollState()
-    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-    val tmp1_group = %composer.cache(%composer.changed(tmp0)) {
-      tmp0::testExact
+  val tmp0 = foo(::testExact {
+    fun testExact(receiver: ScrollState, p0: @[ParameterName(name = 'index')] Int): Int {
+      return receiver.testExact(p0)
     }
-    sourceInformationMarkerEnd(%composer)
-    tmp1_group
   }, %composer, 0)
   if (isTraceInProgress()) {
     traceEventEnd()

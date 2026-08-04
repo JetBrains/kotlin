@@ -87,12 +87,6 @@ class CallAndReferenceGenerator(
             )
         }
 
-        // val x by y ->
-        //   val `x$delegate` = y
-        //   val x get() = `x$delegate`.getValue(this, ::x)
-        // The reference here (like the rest of the accessor) has DefaultAccessor source kind.
-        val isForDelegate = callableReferenceAccess.source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor
-        val origin = if (isForDelegate) IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE else null
         return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
 
             fun FirCallableSymbol<*>.toSymbolForCall(): IrSymbol? {
@@ -105,39 +99,19 @@ class CallAndReferenceGenerator(
 
             fun convertReferenceToRegularProperty(propertySymbol: FirPropertySymbol): IrExpression? {
                 val irPropertySymbol = propertySymbol.toSymbolForCall() as? IrPropertySymbol ?: return null
-                val referencedPropertyGetterSymbol = declarationStorage.findGetterOfProperty(irPropertySymbol)
+                val referencedPropertyGetterSymbol = declarationStorage.findGetterOfProperty(irPropertySymbol)!!
                 val referencedPropertySetterSymbol = runIf(callableReferenceAccess.resolvedType.isKMutableProperty(session)) {
                     declarationStorage.findSetterOfProperty(irPropertySymbol)
                 }
 
-                // TODO(KT-86453) drop else branch and always generate rich reference
-                return if (referencedPropertyGetterSymbol != null && propertySymbol.hasContextParameters) {
-                    adapterGenerator.generateRichPropertyReference(
-                        callableReferenceAccess,
-                        type,
-                        explicitReceiverExpression,
-                        irPropertySymbol,
-                        referencedPropertyGetterSymbol,
-                        referencedPropertySetterSymbol,
-                        callableReferenceAccess.contextArguments.map { visitor.convertToIrExpression(it) },
-                        isForDelegate,
-                    )
-                } else {
-                    val backingFieldSymbol = when {
-                        referencedPropertyGetterSymbol != null -> null
-                        else -> declarationStorage.findBackingFieldOfProperty(irPropertySymbol)
-                    }
-                    IrPropertyReferenceImpl(
-                        startOffset, endOffset, type, irPropertySymbol,
-                        typeArgumentsCount = callableReferenceAccess.toResolvedCallableSymbol()?.fir?.typeParameters?.size ?: 0,
-                        field = backingFieldSymbol,
-                        getter = referencedPropertyGetterSymbol,
-                        setter = referencedPropertySetterSymbol,
-                        origin = origin
-                    )
-                        .applyTypeArguments(callableReferenceAccess)
-                        .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
-                }
+                return adapterGenerator.generateRichPropertyReference(
+                    callableReferenceAccess,
+                    type,
+                    explicitReceiverExpression,
+                    irPropertySymbol,
+                    referencedPropertyGetterSymbol,
+                    referencedPropertySetterSymbol,
+                )
             }
 
             fun convertReferenceToSyntheticProperty(propertySymbol: FirSimpleSyntheticPropertySymbol): IrExpression? {
@@ -154,87 +128,52 @@ class CallAndReferenceGenerator(
                         declarationStorage.getIrFunctionSymbol(it) as? IrSimpleFunctionSymbol? ?: return null
                     }
                 }
-                return IrPropertyReferenceImpl(
-                    startOffset, endOffset, type, irPropertySymbol,
-                    typeArgumentsCount = callableReferenceAccess.toResolvedCallableSymbol()?.fir?.typeParameters?.size ?: 0,
-                    field = null,
-                    getter = referencedPropertyGetterSymbol,
-                    setter = referencedPropertySetterSymbol,
-                    origin = origin
+                return adapterGenerator.generateRichPropertyReference(
+                    callableReferenceAccess,
+                    type,
+                    explicitReceiverExpression,
+                    irPropertySymbol,
+                    referencedPropertyGetterSymbol,
+                    referencedPropertySetterSymbol,
                 )
-                    .applyTypeArguments(callableReferenceAccess)
-                    .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
             }
 
             fun convertReferenceToLocalDelegatedProperty(propertySymbol: FirPropertySymbol): IrExpression? {
                 val irPropertySymbol = propertySymbol.toSymbolForCall() as? IrLocalDelegatedPropertySymbol ?: return null
 
-                return IrLocalDelegatedPropertyReferenceImpl(
-                    startOffset, endOffset, type, irPropertySymbol,
-                    delegate = declarationStorage.findDelegateVariableOfProperty(irPropertySymbol),
-                    getter = declarationStorage.findGetterOfProperty(irPropertySymbol),
-                    setter = declarationStorage.findSetterOfProperty(irPropertySymbol),
-                    origin = origin
+                return adapterGenerator.generateRichPropertyReference(
+                    callableReferenceAccess,
+                    type,
+                    explicitReceiverExpression,
+                    irPropertySymbol,
+                    declarationStorage.findGetterOfProperty(irPropertySymbol),
+                    declarationStorage.findSetterOfProperty(irPropertySymbol),
                 )
             }
 
             fun convertReferenceToField(fieldSymbol: FirFieldSymbol): IrExpression {
-                val field = fieldSymbol.fir
                 val irPropertySymbol = fieldSymbol.toSymbolForCall() as IrPropertySymbol
                 val irFieldSymbol = declarationStorage.findBackingFieldOfProperty(irPropertySymbol)!!
-                return IrPropertyReferenceImpl(
-                    startOffset, endOffset, type,
+                return adapterGenerator.generateRichPropertyReferenceForField(
+                    callableReferenceAccess,
+                    type,
+                    explicitReceiverExpression,
                     irPropertySymbol,
-                    typeArgumentsCount = 0,
-                    field = irFieldSymbol,
-                    getter = runIf(!field.isStatic) { declarationStorage.findGetterOfProperty(irPropertySymbol) },
-                    setter = runIf(!field.isStatic) { declarationStorage.findSetterOfProperty(irPropertySymbol) },
-                    origin
+                    irFieldSymbol,
                 )
-                    .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
             }
 
             fun convertReferenceToFunction(functionSymbol: FirFunctionSymbol<*>): IrExpression? {
                 val irFunctionSymbol = functionSymbol.toSymbolForCall() as? IrFunctionSymbol ?: return null
 
                 require(type is IrSimpleType)
-                var function = callableReferenceAccess.calleeReference.toResolvedFunctionSymbol()!!.fir
-                if (function is FirConstructor) {
-                    // The number of type parameters of typealias constructor may mismatch with that number in the original constructor.
-                    // And for IR, we need to use the original constructor as a source of truth
-                    function = function.typeAliasConstructorInfo?.originalConstructor ?: function
-                }
 
-                // TODO(KT-86453) drop else branches and always generate rich reference
-                return if (callableReferenceAccess.contextArguments.isNotEmpty()) {
-                    adapterGenerator.generateRichFunctionReference(
-                        callableReferenceAccess,
-                        type,
-                        explicitReceiverExpression,
-                        irFunctionSymbol,
-                        callableReferenceAccess.contextArguments.map { visitor.convertToIrExpression(it) }
-                    )
-                } else if (adapterGenerator.needToGenerateAdaptedCallableReference(callableReferenceAccess, type, function)) {
-                    // Receivers are being applied inside
-                    adapterGenerator.generateAdaptedCallableReference(
-                        callableReferenceAccess,
-                        explicitReceiverExpression,
-                        irFunctionSymbol,
-                        type
-                    )
-                } else {
-                    IrFunctionReferenceImplWithShape(
-                        startOffset, endOffset, type, irFunctionSymbol,
-                        typeArgumentsCount = function.typeParameters.size,
-                        valueArgumentsCount = function.valueParameters.size + function.contextParameters.size,
-                        contextParameterCount = function.contextParameters.size,
-                        hasDispatchReceiver = function.dispatchReceiverType != null,
-                        hasExtensionReceiver = function.isInstanceExtension,
-                        reflectionTarget = irFunctionSymbol
-                    )
-                        .applyTypeArguments(callableReferenceAccess)
-                        .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
-                }
+                return adapterGenerator.generateRichFunctionReference(
+                    callableReferenceAccess,
+                    type,
+                    explicitReceiverExpression,
+                    irFunctionSymbol
+                )
             }
 
             when (firSymbol) {

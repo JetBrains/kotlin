@@ -8,12 +8,12 @@ fun String.id(s: String = <this>, vararg xs: Int): String {
 }
 
 fun test() {
-  foo(x = { // BLOCK
-    local fun String.id() {
-      id(/* <this> = receiver */) /*~> Unit */
+  foo(x = Function0<Unit>(
+    /* bound = */ ["Fail"],
+    /* invoke = */    local fun(receiver: String) {
+      return id(/* <this> = receiver */) /*~> Unit */
     }
-
-    ::id/*(receiver = "Fail") */
-  })
+  )
+)
 }
 

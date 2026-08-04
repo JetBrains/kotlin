@@ -87,7 +87,13 @@ FILE fqName:<root> fileName:/member.kt
             ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) declared in <root>.DelegateProvider' type=<root>.DelegateProvider origin=null
               ARG value: CONST String type=kotlin.String value="OK"
             ARG thisRef: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
-            ARG property: PROPERTY_REFERENCE 'public final testMember: kotlin.String declared in <root>.Host' field=null getter='public final fun <get-testMember> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty1<<root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<<root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final testMember: kotlin.String declared in <root>.Host'
+              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:testMember visibility:local modality:FINAL returnType:kotlin.String
+                VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Host
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun testMember (p0: <root>.Host): kotlin.String declared in <root>.Host.testMember$delegate'
+                    CALL 'public final fun <get-testMember> (): kotlin.String declared in <root>.Host' type=kotlin.String origin=null
+                      ARG <this>: GET_VAR 'p0: <root>.Host declared in <root>.Host.testMember$delegate.testMember' type=<root>.Host origin=null
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testMember> visibility:public modality:FINAL returnType:kotlin.String
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Host
         correspondingProperty: PROPERTY name:testMember visibility:public modality:FINAL [delegated,val]
@@ -97,7 +103,13 @@ FILE fqName:<root> fileName:/member.kt
               ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testMember$delegate type:<root>.Delegate visibility:private [final] declared in <root>.Host' type=<root>.Delegate origin=null
                 receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-testMember>' type=<root>.Host origin=IMPLICIT_ARGUMENT
               ARG thisRef: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-testMember>' type=<root>.Host origin=null
-              ARG property: PROPERTY_REFERENCE 'public final testMember: kotlin.String declared in <root>.Host' field=null getter='public final fun <get-testMember> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty1<<root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<<root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final testMember: kotlin.String declared in <root>.Host'
+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:testMember visibility:local modality:FINAL returnType:kotlin.String
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Host
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun testMember (p0: <root>.Host): kotlin.String declared in <root>.Host.<get-testMember>'
+                      CALL 'public final fun <get-testMember> (): kotlin.String declared in <root>.Host' type=kotlin.String origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.Host declared in <root>.Host.<get-testMember>.testMember' type=<root>.Host origin=null
     CONSTRUCTOR visibility:public returnType:<root>.Host [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
