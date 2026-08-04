@@ -1,0 +1,306 @@
+KtFile: 'localLookupSafeQualifiedExpression.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,35): 'data class A(val a: A?, val n: Int)'
+  null
+
+KtDeclarationModifierList(0,4): 'data'
+  null
+
+KtPrimaryConstructor(12,35): '(val a: A?, val n: Int)'
+  null
+
+KtParameterList(12,35): '(val a: A?, val n: Int)'
+  null
+
+KtParameter(13,22): 'val a: A?'
+  null
+
+KtTypeReference(20,22): 'A?'
+  null
+
+KtNullableType(20,22): 'A?'
+  null
+
+KtUserType(20,21): 'A'
+  null
+
+KtNameReferenceExpression(20,21): 'A'
+  null
+
+KtParameter(24,34): 'val n: Int'
+  null
+
+KtTypeReference(31,34): 'Int'
+  null
+
+KtUserType(31,34): 'Int'
+  null
+
+KtNameReferenceExpression(31,34): 'Int'
+  null
+
+KtNamedFunction(37,147): 'fun f(a: A) {'
+  null
+
+KtParameterList(42,48): '(a: A)'
+  null
+
+KtParameter(43,47): 'a: A'
+  null
+
+KtTypeReference(46,47): 'A'
+  null
+
+KtUserType(46,47): 'A'
+  null
+
+KtNameReferenceExpression(46,47): 'A'
+  null
+
+KtBlockExpression(49,147): '{'
+  null
+
+KtDestructuringDeclaration(55,71): 'val (a1, n1) = a'
+  null
+
+KtDestructuringDeclarationEntry(60,62): 'a1'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a1
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A?
+        symbol = /A.component1(<dispatch receiver>: A): A?
+        valueParameters = []
+        contextParameters = []
+        callableId = /A.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtDestructuringDeclarationEntry(64,66): 'n1'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = n1
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = /A.component2(<dispatch receiver>: A): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = /A.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(70,71): 'a'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = A
+        symbol = a: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtDestructuringDeclaration(76,113): 'val (a2, n2) ='
+  null
+
+KtDestructuringDeclarationEntry(81,83): 'a2'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a2
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A?
+        symbol = /A.component1(<dispatch receiver>: A): A?
+        valueParameters = []
+        contextParameters = []
+        callableId = /A.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtDestructuringDeclarationEntry(85,87): 'n2'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = n2
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = /A.component2(<dispatch receiver>: A): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = /A.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtBinaryExpression(99,113): 'a?.a ?: return'
+  null
+
+KtSafeQualifiedExpression(99,103): 'a?.a'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = true
+        type = A
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = A?
+        symbol = val a: A?
+        contextParameters = []
+        callableId = /A.a
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(99,100): 'a'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = A
+        symbol = a: A
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(102,103): 'a'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = true
+        type = A
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = A?
+        symbol = val a: A?
+        contextParameters = []
+        callableId = /A.a
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(104,106): '?:'
+  null
+
+KtReturnExpression(107,113): 'return'
+  null
+
+KtDestructuringDeclaration(118,145): 'val (a3, n3) = a1 ?: return'
+  null
+
+KtDestructuringDeclarationEntry(123,125): 'a3'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a3
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A?
+        symbol = /A.component1(<dispatch receiver>: A): A?
+        valueParameters = []
+        contextParameters = []
+        callableId = /A.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtDestructuringDeclarationEntry(127,129): 'n3'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = n3
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = /A.component2(<dispatch receiver>: A): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = /A.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtBinaryExpression(133,145): 'a1 ?: return'
+  null
+
+KtNameReferenceExpression(133,135): 'a1'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = a1
+        receiverType = null
+        returnType = A?
+        symbol = val a1: A?
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(136,138): '?:'
+  null
+
+KtReturnExpression(139,145): 'return'
+  null

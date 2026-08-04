@@ -47,7 +47,9 @@ private val KtSimpleNameExpression.contextKind: LocalReferenceTargetLookupVisito
             is KtCallableReferenceExpression,
             is KtValueArgumentName,
                 -> null
-            is KtDotQualifiedExpression -> {
+            is KtDotQualifiedExpression,
+            is KtSafeQualifiedExpression,
+                -> {
                 LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.receiverExpression == this@contextKind }
             }
             is KtUserType -> {

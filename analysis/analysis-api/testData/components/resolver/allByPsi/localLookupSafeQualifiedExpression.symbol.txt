@@ -1,0 +1,224 @@
+KtFile: 'localLookupSafeQualifiedExpression.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,35): 'data class A(val a: A?, val n: Int)'
+  null
+
+KtDeclarationModifierList(0,4): 'data'
+  null
+
+KtPrimaryConstructor(12,35): '(val a: A?, val n: Int)'
+  null
+
+KtParameterList(12,35): '(val a: A?, val n: Int)'
+  null
+
+KtParameter(13,22): 'val a: A?'
+  null
+
+KtTypeReference(20,22): 'A?'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
+
+KtNullableType(20,22): 'A?'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
+
+KtUserType(20,21): 'A'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
+
+KtNameReferenceExpression(20,21): 'A'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
+
+KtParameter(24,34): 'val n: Int'
+  null
+
+KtTypeReference(31,34): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtUserType(31,34): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtNameReferenceExpression(31,34): 'Int'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtNamedFunction(37,147): 'fun f(a: A) {'
+  null
+
+KtParameterList(42,48): '(a: A)'
+  null
+
+KtParameter(43,47): 'a: A'
+  null
+
+KtTypeReference(46,47): 'A'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
+
+KtUserType(46,47): 'A'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
+
+KtNameReferenceExpression(46,47): 'A'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
+
+KtBlockExpression(49,147): '{'
+  null
+
+KtDestructuringDeclaration(55,71): 'val (a1, n1) = a'
+  null
+
+KtDestructuringDeclarationEntry(60,62): 'a1'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.component1(<dispatch receiver>: A): A?
+    ]
+
+KtDestructuringDeclarationEntry(64,66): 'n1'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.component2(<dispatch receiver>: A): kotlin.Int
+    ]
+
+KtNameReferenceExpression(70,71): 'a'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: A
+    ]
+
+KtDestructuringDeclaration(76,113): 'val (a2, n2) ='
+  null
+
+KtDestructuringDeclarationEntry(81,83): 'a2'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.component1(<dispatch receiver>: A): A?
+    ]
+
+KtDestructuringDeclarationEntry(85,87): 'n2'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.component2(<dispatch receiver>: A): kotlin.Int
+    ]
+
+KtBinaryExpression(99,113): 'a?.a ?: return'
+  null
+
+KtSafeQualifiedExpression(99,103): 'a?.a'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A?
+    ]
+
+KtNameReferenceExpression(99,100): 'a'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a: A
+    ]
+
+KtNameReferenceExpression(102,103): 'a'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: A?
+    ]
+
+KtOperationReferenceExpression(104,106): '?:'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  null
+
+KtReturnExpression(107,113): 'return'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /f(a: A): kotlin.Unit
+    ]
+
+KtDestructuringDeclaration(118,145): 'val (a3, n3) = a1 ?: return'
+  null
+
+KtDestructuringDeclarationEntry(123,125): 'a3'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.component1(<dispatch receiver>: A): A?
+    ]
+
+KtDestructuringDeclarationEntry(127,129): 'n3'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.component2(<dispatch receiver>: A): kotlin.Int
+    ]
+
+KtBinaryExpression(133,145): 'a1 ?: return'
+  null
+
+KtNameReferenceExpression(133,135): 'a1'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a1: A?
+    ]
+
+KtOperationReferenceExpression(136,138): '?:'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  null
+
+KtReturnExpression(139,145): 'return'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /f(a: A): kotlin.Unit
+    ]
