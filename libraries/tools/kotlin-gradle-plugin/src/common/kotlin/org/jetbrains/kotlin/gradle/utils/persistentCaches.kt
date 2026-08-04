@@ -15,7 +15,7 @@ private const val ERRORS_DIR_NAME = "errors"
 
 @Suppress("unused") // will be used in the followup KT-58223 issues
 internal val Project.userKotlinPersistentDir
-    get() = kotlinPropertiesProvider.kotlinUserHomeDir?.let { File(it) }
+    get() = kotlinPropertiesProvider.kotlinUserHomeDir?.let(rootProject.projectDir::resolve)
         ?: File(System.getProperty("user.home")).resolve(".kotlin")
 
 internal fun Project.projectKotlinPersistentDir(compositeRootProject: Project? = null): File {
