@@ -190,7 +190,8 @@ class ScriptJvmK2CompilerImpl(
                     baseConfig.refineAll(source)
                 }
             }.valueOr { return it }
-        allSourceFiles.addAll(newSources)
+        // The imported scripts should be analyzed before the main one.
+        allSourceFiles.addAll(0, newSources)
 
         val ignoredOptionsReportingState = state.compilerContext.ignoredOptionsReportingState
         val updatedCompilerOptions = allSourceFiles.flatMapTo(mutableListOf()) {

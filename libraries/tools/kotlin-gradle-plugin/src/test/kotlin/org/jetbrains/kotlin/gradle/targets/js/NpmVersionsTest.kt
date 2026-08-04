@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.js
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertAll
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 class NpmVersionsTest {
@@ -62,5 +64,15 @@ class NpmVersionsTest {
         val karmaVersion = NpmVersions().karma.version
         val expectedPrefix = "github:Kotlin/karma#"
         assertTrue(karmaVersion.startsWith(expectedPrefix), "Karma version should start with $expectedPrefix, but was $karmaVersion")
+    }
+
+    @Test
+    fun `verify all dependencies have a requested version`() {
+        val npmVersions = NpmVersions()
+        assertAll(
+            npmVersions.allDependencies.map {
+                { assertContains(npmVersions.requestedVersions, it) }
+            }
+        )
     }
 }

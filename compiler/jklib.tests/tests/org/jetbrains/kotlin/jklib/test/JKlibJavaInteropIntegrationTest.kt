@@ -15,14 +15,118 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.MockLibraryUtilExt
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 class JKlibJavaInteropIntegrationTest {
+
+    @Test
+    fun testJavaExtendingKotlinClassFromKlib(@TempDir tempDir: File) {
+        val stdlibKlib = ForTestCompileRuntime.jklibStdlibForTests().path
+        val stdlibJar = ForTestCompileRuntime.runtimeJarForTests().path
+
+        val libADir = File(tempDir, "libA").apply { mkdirs() }
+        val classFromKotlin = File(libADir, "ClassFromKotlin.kt").apply {
+            writeText(
+                """
+                package test.dep.kotlin
+                open class ClassFromKotlin {
+                    val prop: String = "OK"
+                    open fun foo(): String = "OK"
+                }
+                """.trimIndent()
+            )
+        }
+        val klibA = File(tempDir, "libA.klib")
+        val resA = AbstractCliTest.executeCompilerGrabOutput(
+            K2JKlibCompiler(),
+            listOf(
+                classFromKotlin.path,
+                "-d", klibA.path,
+                "-module-name", "libA",
+                "-no-stdlib",
+                "-Xklib=$stdlibKlib"
+            )
+        )
+        assertEquals(ExitCode.OK, resA.second, "Failed to compile libA klib: ${resA.first}")
+
+        val jarA = File(tempDir, "libA.jar")
+        val resAJvm = AbstractCliTest.executeCompilerGrabOutput(
+            K2JVMCompiler(),
+            listOf(
+                classFromKotlin.path,
+                "-d", jarA.path,
+                "-no-stdlib",
+                "-classpath", stdlibJar
+            )
+        )
+        assertEquals(ExitCode.OK, resAJvm.second, "Failed to compile libA jar: ${resAJvm.first}")
+
+        val libBDir = File(tempDir, "libB").apply { mkdirs() }
+        File(libBDir, "ClassFromJava.java").apply {
+            writeText(
+                """
+                package test.dep.java;
+                
+                import test.dep.kotlin.ClassFromKotlin;
+                
+                public class ClassFromJava extends ClassFromKotlin {
+                  public String foo() {
+                    return super.foo();
+                  }
+                }
+                """.trimIndent()
+            )
+        }
+        val jarB = MockLibraryUtilExt.compileJavaFilesLibraryToJar(
+            libBDir.path,
+            "libB",
+            extraClasspath = listOf(jarA.path)
+        )
+
+        val mainDir = File(tempDir, "main").apply { mkdirs() }
+        val mainKt = File(mainDir, "Main.kt").apply {
+            writeText(
+                """
+                package test
+                
+                import test.dep.java.ClassFromJava;
+                
+                fun test() {
+                    val j = ClassFromJava()
+                    val z = j.foo()
+                    val x = j.prop
+                }
+                """.trimIndent()
+            )
+        }
+        val mainKlib = File(tempDir, "main.klib")
+        val compiler = K2JKlibCompiler()
+        val args = compiler.createArguments()
+        compiler.parseArguments(
+            arrayOf(
+                mainKt.path,
+                "-d", mainKlib.path,
+                "-module-name", "main",
+                "-no-stdlib",
+                "-classpath", jarB.path,
+                "-Xklib=$stdlibKlib${File.pathSeparator}${klibA.path}"
+            ),
+            args
+        )
+        val messageCollector = MessageCollectorImpl()
+        val disposable = Disposer.newDisposable()
+        try {
+            val artifact = compiler.compileKlibAndDeserializeIr(args, messageCollector, disposable)
+            if (artifact == null) {
+                error("compileKlibAndDeserializeIr returned null. Messages:\n" + messageCollector.messages.joinToString("\n"))
+            }
+        } finally {
+            disposeRootInWriteAction(disposable)
+        }
+    }
 
     @Test
     @Disabled("The fix is reverted due to KT-87507")

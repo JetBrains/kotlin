@@ -30,6 +30,9 @@ private class ExampleCancellableOperation(override val options: Options = Option
             cancellationHandle.checkCanceled()
         }
     }
+
+    override val usesApplicationEnvironment: Boolean
+        get() = false
 }
 
 

@@ -59,7 +59,10 @@ open class CommonCompilerArgumentsConfigurator {
             putAnalysisFlag(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
             putAnalysisFlag(AnalysisFlags.lenientMode, lenientMode)
             putAnalysisFlag(AnalysisFlags.headerMode, headerMode)
-            putAnalysisFlag(AnalysisFlags.headerModeType, headerModeType)
+            HeaderMode.fromString(headerModeType)?.also { putAnalysisFlag(AnalysisFlags.headerModeType, it) }
+                ?: reporter.reportError(
+                    "Unknown value for parameter -Xheader-mode-type: '$headerModeType'. Value should be one of ${HeaderMode.availableValues()}"
+                )
             putAnalysisFlag(AnalysisFlags.firAggressivePruning, firAggressivePruning ?: headerMode)
             putAnalysisFlag(AnalysisFlags.hierarchicalMultiplatformCompilation, separateKmpCompilationScheme && multiPlatform)
             putAnalysisFlag(AnalysisFlags.kmpJvmIncrementalCompilationEnabled, fragmentIncrementalClasspath.isNotEmpty() && multiPlatform)
