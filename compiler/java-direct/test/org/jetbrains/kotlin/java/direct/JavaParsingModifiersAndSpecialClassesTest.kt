@@ -12,7 +12,11 @@ import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.name.Name
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertNotNull
 
 class JavaParsingModifiersAndSpecialClassesTest : JavaParsingTestBase() {
 
@@ -26,17 +30,17 @@ class JavaParsingModifiersAndSpecialClassesTest : JavaParsingTestBase() {
         """.trimIndent()
         val javaClass = parseFirstClass(source)
 
-        assert(javaClass.isInterface) { "Expected interface" }
-        assert(javaClass.fields.size == 2) { "Expected 2 fields, got ${javaClass.fields.size}" }
+        assertTrue(javaClass.isInterface)
+        assertEquals(2, javaClass.fields.size)
 
         val constantField = javaClass.fields.first { it.name.asString() == "CONSTANT" }
-        assert(constantField.isStatic) { "Interface field CONSTANT should be implicitly static" }
-        assert(constantField.isFinal) { "Interface field CONSTANT should be implicitly final" }
-        assert(constantField.visibility.toString() == "public") { "Interface field should be public" }
+        assertTrue(constantField.isStatic, "Interface field CONSTANT should be implicitly static")
+        assertTrue(constantField.isFinal, "Interface field CONSTANT should be implicitly final")
+        assertEquals("public", constantField.visibility.toString())
 
         val numberField = javaClass.fields.first { it.name.asString() == "NUMBER" }
-        assert(numberField.isStatic) { "Interface field NUMBER should be implicitly static" }
-        assert(numberField.isFinal) { "Interface field NUMBER should be implicitly final" }
+        assertTrue(numberField.isStatic, "Interface field NUMBER should be implicitly static")
+        assertTrue(numberField.isFinal, "Interface field NUMBER should be implicitly final")
     }
 
     @Test
@@ -51,24 +55,24 @@ class JavaParsingModifiersAndSpecialClassesTest : JavaParsingTestBase() {
         """.trimIndent()
         val javaClass = parseFirstClass(source)
 
-        assert(!javaClass.isInterface) { "Expected class, not interface" }
-        assert(javaClass.fields.size == 4) { "Expected 4 fields, got ${javaClass.fields.size}" }
+        assertFalse(javaClass.isInterface, "Expected class, not interface")
+        assertEquals(4, javaClass.fields.size)
 
         val field1 = javaClass.fields.first { it.name.asString() == "field1" }
-        assert(!field1.isStatic) { "field1 should NOT be static" }
-        assert(!field1.isFinal) { "field1 should NOT be final" }
+        assertFalse(field1.isStatic, "field1 should NOT be static")
+        assertFalse(field1.isFinal, "field1 should NOT be final")
 
         val field2 = javaClass.fields.first { it.name.asString() == "field2" }
-        assert(field2.isStatic) { "field2 should be static" }
-        assert(!field2.isFinal) { "field2 should NOT be final" }
+        assertTrue(field2.isStatic, "field2 should be static")
+        assertFalse(field2.isFinal, "field2 should NOT be final")
 
         val field3 = javaClass.fields.first { it.name.asString() == "field3" }
-        assert(!field3.isStatic) { "field3 should NOT be static" }
-        assert(field3.isFinal) { "field3 should be final" }
+        assertFalse(field3.isStatic, "field3 should NOT be static")
+        assertTrue(field3.isFinal, "field3 should be final")
 
         val field4 = javaClass.fields.first { it.name.asString() == "field4" }
-        assert(field4.isStatic) { "field4 should be static" }
-        assert(field4.isFinal) { "field4 should be final" }
+        assertTrue(field4.isStatic, "field4 should be static")
+        assertTrue(field4.isFinal, "field4 should be final")
     }
 
     @Test
@@ -82,19 +86,19 @@ class JavaParsingModifiersAndSpecialClassesTest : JavaParsingTestBase() {
         """.trimIndent()
         val javaClass = parseFirstClass(source)
 
-        assert(javaClass.isInterface) { "Expected interface" }
-        assert(javaClass.methods.size == 3) { "Expected 3 methods, got ${javaClass.methods.size}" }
+        assertTrue(javaClass.isInterface)
+        assertEquals(3, javaClass.methods.size)
 
         val abstractMethod = javaClass.methods.first { it.name.asString() == "abstractMethod" }
-        assert(abstractMethod.isAbstract) { "Interface method without body should be implicitly abstract" }
-        assert(abstractMethod.visibility.toString() == "public") { "Interface method should be public" }
+        assertTrue(abstractMethod.isAbstract, "Interface method without body should be implicitly abstract")
+        assertEquals("public", abstractMethod.visibility.toString())
 
         val anotherAbstract = javaClass.methods.first { it.name.asString() == "anotherAbstractMethod" }
-        assert(anotherAbstract.isAbstract) { "Interface method without body should be implicitly abstract" }
-        assert(anotherAbstract.valueParameters.size == 1) { "Should have 1 parameter" }
+        assertTrue(anotherAbstract.isAbstract, "Interface method without body should be implicitly abstract")
+        assertEquals(1, anotherAbstract.valueParameters.size)
 
         val defaultMethod = javaClass.methods.first { it.name.asString() == "defaultMethod" }
-        assert(!defaultMethod.isAbstract) { "Default method with body should NOT be abstract" }
+        assertFalse(defaultMethod.isAbstract, "Default method with body should NOT be abstract")
     }
 
     @Test
@@ -107,14 +111,14 @@ class JavaParsingModifiersAndSpecialClassesTest : JavaParsingTestBase() {
         """.trimIndent()
         val javaClass = parseFirstClass(source)
 
-        assert(!javaClass.isInterface) { "Expected class, not interface" }
-        assert(javaClass.methods.size == 2) { "Expected 2 methods, got ${javaClass.methods.size}" }
+        assertFalse(javaClass.isInterface, "Expected class, not interface")
+        assertEquals(2, javaClass.methods.size)
 
         val regularMethod = javaClass.methods.first { it.name.asString() == "regularMethod" }
-        assert(!regularMethod.isAbstract) { "Regular method with body should NOT be abstract" }
+        assertFalse(regularMethod.isAbstract, "Regular method with body should NOT be abstract")
 
         val abstractMethod = javaClass.methods.first { it.name.asString() == "abstractMethod" }
-        assert(abstractMethod.isAbstract) { "Method with explicit abstract keyword should be abstract" }
+        assertTrue(abstractMethod.isAbstract, "Method with explicit abstract keyword should be abstract")
     }
 
     @Test
@@ -127,25 +131,23 @@ class JavaParsingModifiersAndSpecialClassesTest : JavaParsingTestBase() {
         """.trimIndent()
         val javaClass = parseFirstClass(source)
 
-        assert(javaClass.isInterface) { "Expected interface" }
-        assert(javaClass.methods.size == 1) { "Expected 1 method (SAM), got ${javaClass.methods.size}" }
+        assertTrue(javaClass.isInterface)
+        assertEquals(1, javaClass.methods.size, "Expected exactly 1 method (SAM)")
 
         val applyMethod = javaClass.methods.first()
-        assert(applyMethod.name.asString() == "apply") { "Expected method 'apply'" }
-        assert(applyMethod.isAbstract) { "SAM method should be abstract for SAM conversion to work" }
-        assert(applyMethod.valueParameters.size == 1) { "apply should have 1 parameter" }
+        assertEquals("apply", applyMethod.name.asString())
+        assertTrue(applyMethod.isAbstract, "SAM method should be abstract for SAM conversion to work")
+        assertEquals(1, applyMethod.valueParameters.size)
 
         // Verify type parameters
-        assert(javaClass.typeParameters.size == 2) { "Expected 2 type parameters, got ${javaClass.typeParameters.size}" }
+        assertEquals(2, javaClass.typeParameters.size)
         val typeParamNames = javaClass.typeParameters.map { it.name.asString() }
-        assert("T" in typeParamNames) { "Expected type parameter T" }
-        assert("R" in typeParamNames) { "Expected type parameter R" }
+        assertTrue("T" in typeParamNames, "Expected type parameter T, got $typeParamNames")
+        assertTrue("R" in typeParamNames, "Expected type parameter R, got $typeParamNames")
 
         // Verify the annotation is parsed
-        assert(javaClass.annotations.size == 1) { "Expected 1 annotation, got ${javaClass.annotations.size}" }
-        assert(javaClass.annotations.first().classId?.shortClassName?.asString() == "FunctionalInterface") {
-            "Expected @FunctionalInterface annotation"
-        }
+        assertEquals(1, javaClass.annotations.size)
+        assertEquals("FunctionalInterface", javaClass.annotations.first().classId?.shortClassName?.asString())
     }
 
     @Test
@@ -170,47 +172,47 @@ class JavaParsingModifiersAndSpecialClassesTest : JavaParsingTestBase() {
         val outerClass = parseFirstClass(source)
 
         // Verify outer class
-        assert(outerClass.name.asString() == "A") { "Expected outer class name 'A'" }
-        assert(outerClass.typeParameters.size == 1) { "Outer class should have 1 type parameter, got ${outerClass.typeParameters.size}" }
-        assert(outerClass.typeParameters.first().name.asString() == "X") { "Outer type param should be 'X'" }
+        assertEquals("A", outerClass.name.asString())
+        assertEquals(1, outerClass.typeParameters.size)
+        assertEquals("X", outerClass.typeParameters.first().name.asString())
 
         // Verify nested interface exists
-        assert(outerClass.innerClassNames.size == 1) { "Expected 1 inner class, got ${outerClass.innerClassNames.size}" }
-        assert(outerClass.innerClassNames.first().asString() == "I") { "Expected inner class name 'I'" }
+        assertEquals(1, outerClass.innerClassNames.size)
+        assertEquals("I", outerClass.innerClassNames.first().asString())
 
         // Get nested interface via findInnerClass
         val nestedInterface = outerClass.findInnerClass(Name.identifier("I"))
-        assert(nestedInterface != null) { "findInnerClass should find 'I'" }
-        assert(nestedInterface!!.isInterface) { "I should be an interface" }
-        assert(nestedInterface.name.asString() == "I") { "Nested interface name should be 'I'" }
+        assertNotNull(nestedInterface) { "findInnerClass should find 'I'" }
+        assertTrue(nestedInterface.isInterface, "I should be an interface")
+        assertEquals("I", nestedInterface.name.asString())
 
         // Verify nested interface type parameters
-        assert(nestedInterface.typeParameters.size == 1) { "Nested interface should have 1 type parameter, got ${nestedInterface.typeParameters.size}" }
-        assert(nestedInterface.typeParameters.first().name.asString() == "T") { "Nested type param should be 'T'" }
+        assertEquals(1, nestedInterface.typeParameters.size)
+        assertEquals("T", nestedInterface.typeParameters.first().name.asString())
 
         // Verify nested interface has SAM method
-        assert(nestedInterface.methods.size == 1) { "Nested interface should have 1 method, got ${nestedInterface.methods.size}" }
+        assertEquals(1, nestedInterface.methods.size)
         val computeMethod = nestedInterface.methods.first()
-        assert(computeMethod.name.asString() == "compute") { "Method name should be 'compute'" }
-        assert(computeMethod.isAbstract) { "Interface method should be implicitly abstract" }
+        assertEquals("compute", computeMethod.name.asString())
+        assertTrue(computeMethod.isAbstract, "Interface method should be implicitly abstract")
 
         // Verify fqName of nested interface
-        assert(nestedInterface.fqName?.asString() == "A.I") { "Expected fqName 'A.I', got ${nestedInterface.fqName?.asString()}" }
+        assertEquals("A.I", nestedInterface.fqName?.asString())
 
         // Verify outerClass reference
-        assert(nestedInterface.outerClass == outerClass) { "Nested interface should reference outer class" }
+        assertEquals(outerClass, nestedInterface.outerClass, "Nested interface should reference outer class")
 
         // Verify get method in outer class that uses the nested interface
         val getMethod = outerClass.methods.first { it.name.asString() == "get" }
-        assert(getMethod.typeParameters.size == 1) { "get method should have 1 type parameter" }
-        assert(getMethod.typeParameters.first().name.asString() == "T") { "get method type param should be 'T'" }
-        assert(getMethod.valueParameters.size == 1) { "get method should have 1 parameter" }
+        assertEquals(1, getMethod.typeParameters.size)
+        assertEquals("T", getMethod.typeParameters.first().name.asString())
+        assertEquals(1, getMethod.valueParameters.size)
 
         val paramType = getMethod.valueParameters.first().type as JavaClassifierType
         // The type reference I<T> resolves to A.I since it's used within class A
-        assert(paramType.classifierQualifiedName == "A.I") { "Parameter type name should be 'A.I', got ${paramType.classifierQualifiedName}" }
-        assert(paramType.classifier == nestedInterface) { "Parameter type should resolve to nested interface" }
-        assert(paramType.typeArguments.size == 1) { "Parameter type should have 1 type argument, got ${paramType.typeArguments.size}" }
+        assertEquals("A.I", paramType.classifierQualifiedName)
+        assertEquals(nestedInterface, paramType.classifier, "Parameter type should resolve to nested interface")
+        assertEquals(1, paramType.typeArguments.size)
     }
 
     @Test
@@ -232,17 +234,17 @@ class JavaParsingModifiersAndSpecialClassesTest : JavaParsingTestBase() {
         val outerClass = parseFirstClass(source)
 
         val nestedInterface = outerClass.findInnerClass(Name.identifier("NestedInterface"))
-        assert(nestedInterface != null) { "Should find NestedInterface" }
+        assertNotNull(nestedInterface) { "Should find NestedInterface" }
         // Interfaces are implicitly static in Java
-        assert(nestedInterface!!.isInterface) { "NestedInterface should be an interface" }
+        assertTrue(nestedInterface.isInterface, "NestedInterface should be an interface")
 
         val nestedStaticClass = outerClass.findInnerClass(Name.identifier("NestedStaticClass"))
-        assert(nestedStaticClass != null) { "Should find NestedStaticClass" }
-        assert(nestedStaticClass!!.isStatic) { "NestedStaticClass should be explicitly static" }
+        assertNotNull(nestedStaticClass) { "Should find NestedStaticClass" }
+        assertTrue(nestedStaticClass.isStatic, "NestedStaticClass should be explicitly static")
 
         val nestedInnerClass = outerClass.findInnerClass(Name.identifier("NestedInnerClass"))
-        assert(nestedInnerClass != null) { "Should find NestedInnerClass" }
-        assert(!nestedInnerClass!!.isStatic) { "NestedInnerClass should NOT be static" }
+        assertNotNull(nestedInnerClass) { "Should find NestedInnerClass" }
+        assertFalse(nestedInnerClass.isStatic, "NestedInnerClass should NOT be static")
     }
 
     @Test
@@ -267,23 +269,23 @@ class JavaParsingModifiersAndSpecialClassesTest : JavaParsingTestBase() {
 
         // Nested interface should be implicitly static (no 'static' keyword in source)
         val nestedInterface = outerClass.findInnerClass(Name.identifier("NestedInterface"))
-        assert(nestedInterface != null) { "Should find NestedInterface" }
-        assert(nestedInterface!!.isInterface) { "NestedInterface should be an interface" }
-        assert(nestedInterface.isStatic) { "Nested interface should be implicitly static for FIR isInner=false" }
-        assert(nestedInterface.outerClass == outerClass) { "Nested interface should have outer class reference" }
+        assertNotNull(nestedInterface) { "Should find NestedInterface" }
+        assertTrue(nestedInterface.isInterface, "NestedInterface should be an interface")
+        assertTrue(nestedInterface.isStatic, "Nested interface should be implicitly static for FIR isInner=false")
+        assertEquals(outerClass, nestedInterface.outerClass, "Nested interface should have outer class reference")
 
         // Nested enum should be implicitly static
         val nestedEnum = outerClass.findInnerClass(Name.identifier("NestedEnum"))
-        assert(nestedEnum != null) { "Should find NestedEnum" }
-        assert(nestedEnum!!.isEnum) { "NestedEnum should be an enum" }
-        assert(nestedEnum.isStatic) { "Nested enum should be implicitly static for FIR isInner=false" }
+        assertNotNull(nestedEnum) { "Should find NestedEnum" }
+        assertTrue(nestedEnum.isEnum, "NestedEnum should be an enum")
+        assertTrue(nestedEnum.isStatic, "Nested enum should be implicitly static for FIR isInner=false")
 
         // Inner class (without static keyword) should NOT be static
         val innerClass = outerClass.findInnerClass(Name.identifier("InnerClass"))
-        assert(innerClass != null) { "Should find InnerClass" }
-        assert(!innerClass!!.isInterface) { "InnerClass should not be an interface" }
-        assert(!innerClass.isEnum) { "InnerClass should not be an enum" }
-        assert(!innerClass.isStatic) { "Inner class without 'static' keyword should NOT be static" }
+        assertNotNull(innerClass) { "Should find InnerClass" }
+        assertFalse(innerClass.isInterface, "InnerClass should not be an interface")
+        assertFalse(innerClass.isEnum, "InnerClass should not be an enum")
+        assertFalse(innerClass.isStatic, "Inner class without 'static' keyword should NOT be static")
     }
 
     @Test
@@ -303,14 +305,14 @@ class JavaParsingModifiersAndSpecialClassesTest : JavaParsingTestBase() {
         val classes = tree.getChildrenByType(root, JavaSyntaxElementType.CLASS).map { JavaClassOverAst(it, tree, context) }
 
         val day = classes.first { it.name.asString() == "Day" }
-        assert(day.isEnum) { "Day should be enum" }
-        assert(day.isFinal) { "Plain enum Day should be implicitly final" }
-        assert(!day.isAbstract) { "Plain enum Day should not be abstract" }
+        assertTrue(day.isEnum, "Day should be enum")
+        assertTrue(day.isFinal, "Plain enum Day should be implicitly final")
+        assertFalse(day.isAbstract, "Plain enum Day should not be abstract")
 
         val ops = classes.first { it.name.asString() == "Ops" }
-        assert(ops.isEnum) { "Ops should be enum" }
-        assert(!ops.isFinal) { "Enum Ops with abstract method should NOT be final" }
-        assert(ops.isAbstract) { "Enum Ops with abstract method should be abstract" }
+        assertTrue(ops.isEnum, "Ops should be enum")
+        assertFalse(ops.isFinal, "Enum Ops with abstract method should NOT be final")
+        assertTrue(ops.isAbstract, "Enum Ops with abstract method should be abstract")
     }
 
     @Test
@@ -318,9 +320,9 @@ class JavaParsingModifiersAndSpecialClassesTest : JavaParsingTestBase() {
         // Annotation types with methods are implicitly abstract
         val source = "public @interface Ann { String value(); }"
         val javaClass = parseFirstClass(source)
-        assert(javaClass.isAnnotationType) { "Ann should be annotation type" }
-        assert(javaClass.isAbstract) { "Annotation type with methods should be abstract" }
-        assert(!javaClass.isFinal) { "Annotation type should not be final" }
+        assertTrue(javaClass.isAnnotationType, "Ann should be annotation type")
+        assertTrue(javaClass.isAbstract, "Annotation type with methods should be abstract")
+        assertFalse(javaClass.isFinal, "Annotation type should not be final")
     }
 
     @Test
@@ -350,12 +352,14 @@ class JavaParsingModifiersAndSpecialClassesTest : JavaParsingTestBase() {
             tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() } == "Shape"
         }
         val shape = JavaClassOverAst(shapeNode, tree, parsed.context)
-        assert(shape.isSealed) { "Shape should be sealed" }
+        assertTrue(shape.isSealed, "Shape should be sealed")
 
         val permitted = shape.permittedTypes.map { it.classifierQualifiedName }.toSet()
-        assert(permitted == setOf("Shape.Inner", "Circle", "Square", "Holder.Triangle", "Holder.Mid.Deep")) {
-            "Implicit permits must scan the whole compilation unit (siblings + deeply-nested), got $permitted"
-        }
+        assertEquals(
+            setOf("Shape.Inner", "Circle", "Square", "Holder.Triangle", "Holder.Mid.Deep"),
+            permitted,
+            "Implicit permits must scan the whole compilation unit (siblings + deeply-nested)",
+        )
     }
 
     @Test
@@ -381,12 +385,14 @@ class JavaParsingModifiersAndSpecialClassesTest : JavaParsingTestBase() {
             tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() } == "Shape"
         }
         val shape = JavaClassOverAst(shapeNode, tree, parsed.context)
-        assert(shape.isSealed) { "Top-level Shape should be sealed" }
+        assertTrue(shape.isSealed, "Top-level Shape should be sealed")
 
         val permitted = shape.permittedTypes.map { it.classifierQualifiedName }.toSet()
-        assert(permitted == setOf("Circle")) {
+        assertEquals(
+            setOf("Circle"),
+            permitted,
             "Resolution-based match must include only the real subtype `Circle` and exclude `Box.Impl` " +
-                    "(whose `Shape` resolves to the nested `Box.Shape`), got $permitted"
-        }
+                    "(whose `Shape` resolves to the nested `Box.Shape`)",
+        )
     }
 }

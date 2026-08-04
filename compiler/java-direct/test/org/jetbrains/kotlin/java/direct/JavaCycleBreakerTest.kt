@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.java.direct.resolution.registerJavaModelSupertypeWal
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -93,9 +95,7 @@ class JavaCycleBreakerTest {
 
         walk(a)
 
-        assert(visits == 2) {
-            "Each class in the cycle must be entered exactly once; re-entry is broken by the guard, got $visits"
-        }
+        assertEquals(2, visits, "Each class in the cycle must be entered exactly once; re-entry is broken by the guard")
     }
 
     @OptIn(SessionConfiguration::class)
@@ -153,13 +153,13 @@ class JavaCycleBreakerTest {
 
         val result = session.cycleSafeClassLikeSymbol(a)
 
-        assert(result == null) {
-            "The re-entrant probe for an in-flight ClassId must be short-circuited to null, got $result"
-        }
-        assert(providerInvocations == 1) {
+        assertNull(result, "The re-entrant probe for an in-flight ClassId must be short-circuited to null")
+        assertEquals(
+            1,
+            providerInvocations,
             "The provider must be entered exactly once; the re-entrant probe for the same in-flight " +
-                    "ClassId short-circuits before reaching the provider again, got $providerInvocations"
-        }
+                    "ClassId short-circuits before reaching the provider again"
+        )
     }
 
     @OptIn(SessionConfiguration::class)

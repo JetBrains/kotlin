@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.util.ConstantEvaluator
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class JavaConstantEvaluatorTest : JavaParsingTestBase() {
@@ -54,13 +55,8 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
 
         val result = evaluator.evaluate(refNode)
 
-        assert(captured == "com.example.Constants" to "MAX") {
-            "Statically imported field 'MAX' should reach the external resolver as " +
-                    "('com.example.Constants', 'MAX'), but was routed as $captured"
-        }
-        assert(result == 42) {
-            "Expected the statically imported field to evaluate to 42, got $result"
-        }
+        assertEquals("com.example.Constants" to "MAX", captured)
+        assertEquals(42, result)
     }
 
     /**
@@ -93,9 +89,7 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
 
         evaluator.evaluate(refNode)
 
-        assert(captured == (null to "MISSING")) {
-            "A bare name with no static import must reach the resolver as (null, 'MISSING'), got $captured"
-        }
+        assertEquals(null to "MISSING", captured)
     }
 
     private fun findReferenceExpression(tree: JavaLightTree, node: JavaLightNode, text: String): JavaLightNode? {
