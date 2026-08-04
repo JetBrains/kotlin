@@ -26,6 +26,12 @@ public protocol Greeter: KotlinRuntime.KotlinBase, main._Greeter {
     ) -> Swift.String
     func salutation() -> Swift.String
 }
+public protocol OverloadedInterface: KotlinRuntime.KotlinBase, main._OverloadedInterface {
+    func say() -> Swift.String
+    func say(
+        times: Swift.Int32
+    ) -> Swift.String
+}
 @objc(_Boxed)
 public protocol _Boxed {
 }
@@ -35,11 +41,16 @@ public protocol _Defaulter {
 @objc(_Greeter)
 public protocol _Greeter {
 }
+@objc(_OverloadedInterface)
+public protocol _OverloadedInterface {
+}
 public protocol __Boxed: KotlinRuntimeSupport._KotlinBridgeable {
 }
 public protocol __Defaulter: KotlinRuntimeSupport._KotlinBridgeable {
 }
 public protocol __Greeter: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol __OverloadedInterface: KotlinRuntimeSupport._KotlinBridgeable {
 }
 open class AbstractBase: KotlinRuntime.KotlinBase {
     package init() {
@@ -173,6 +184,77 @@ open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main.__Greeter {
         }
     }
 }
+open class Overloaded: KotlinRuntime.KotlinBase {
+    public init() {
+        let __kt = __root___Overloaded_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___Overloaded_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+    open func nullable(
+        arg: Swift.String?
+    ) -> Swift.String {
+        if Self.self == main.Overloaded.self {
+            return Overloaded_nullable__TypesOfArguments__Swift_Optional_Swift_String___(self.__externalRCRef(), arg ?? nil)
+        } else {
+            return Overloaded_nullable__TypesOfArguments__Swift_Optional_Swift_String____direct(self.__externalRCRef(), arg ?? nil)
+        }
+    }
+    open func nullable(
+        arg: Swift.String
+    ) -> Swift.String {
+        if Self.self == main.Overloaded.self {
+            return Overloaded_nullable__TypesOfArguments__Swift_String__(self.__externalRCRef(), arg)
+        } else {
+            return Overloaded_nullable__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), arg)
+        }
+    }
+    public final func pick() -> Swift.String {
+        return Overloaded_pick(self.__externalRCRef())
+    }
+    open func pick(
+        arg1: Swift.String
+    ) -> Swift.String {
+        if Self.self == main.Overloaded.self {
+            return Overloaded_pick__TypesOfArguments__Swift_String__(self.__externalRCRef(), arg1)
+        } else {
+            return Overloaded_pick__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), arg1)
+        }
+    }
+    open func pick(
+        arg1: Swift.String,
+        arg2: Swift.Int32
+    ) -> Swift.String {
+        if Self.self == main.Overloaded.self {
+            return Overloaded_pick__TypesOfArguments__Swift_String_Swift_Int32__(self.__externalRCRef(), arg1, arg2)
+        } else {
+            return Overloaded_pick__TypesOfArguments__Swift_String_Swift_Int32___direct(self.__externalRCRef(), arg1, arg2)
+        }
+    }
+    open func same(
+        arg: Swift.Int32
+    ) -> Swift.String {
+        if Self.self == main.Overloaded.self {
+            return Overloaded_same__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), arg)
+        } else {
+            return Overloaded_same__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), arg)
+        }
+    }
+    open func same(
+        arg: Swift.String
+    ) -> Swift.String {
+        if Self.self == main.Overloaded.self {
+            return Overloaded_same__TypesOfArguments__Swift_String__(self.__externalRCRef(), arg)
+        } else {
+            return Overloaded_same__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), arg)
+        }
+    }
+}
 open class ThrowingMembers: KotlinRuntime.KotlinBase {
     public init() {
         let __kt = __root___ThrowingMembers_init_allocate()
@@ -271,6 +353,19 @@ extension main.Greeter where Self : main.__Greeter {
 extension main.Greeter {
 }
 @_documentation(visibility: internal)
+extension main.OverloadedInterface where Self : main.__OverloadedInterface {
+    public func say() -> Swift.String {
+        return OverloadedInterface_say(self.__externalRCRef())
+    }
+    public func say(
+        times: Swift.Int32
+    ) -> Swift.String {
+        return OverloadedInterface_say__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), times)
+    }
+}
+extension main.OverloadedInterface {
+}
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.Greeter, main.__Greeter where Wrapped : main._Greeter {
 }
 @_documentation(visibility: internal)
@@ -280,6 +375,9 @@ extension KotlinRuntimeSupport._KotlinExistential: main.Defaulter, main.__Defaul
 extension KotlinRuntimeSupport._KotlinExistential: main.Boxed, main.__Boxed where Wrapped : main._Boxed {
 }
 @_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: main.OverloadedInterface, main.__OverloadedInterface where Wrapped : main._OverloadedInterface {
+}
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Greeter {
 }
 @_documentation(visibility: internal)
@@ -287,6 +385,9 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Defaulter {
 }
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Boxed {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._OverloadedInterface {
 }
 @_cdecl("AbstractBase_abstractMethod__reverse_swift")
 package func AbstractBase_abstractMethod__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
@@ -432,6 +533,62 @@ package func Greeter_mood_set__TypesOfArguments__Swift_String____reverse_swift(_
 package func Greeter_salutation__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Greeter
     let _result: Swift.String = _self.salutation()
+    return _result
+}
+
+@_cdecl("OverloadedInterface_say__TypesOfArguments__Swift_Int32____reverse_swift")
+package func OverloadedInterface_say__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ times: Swift.Int32) -> Swift.String {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.OverloadedInterface
+    let _result: Swift.String = _self.say(times: times)
+    return _result
+}
+
+@_cdecl("OverloadedInterface_say__reverse_swift")
+package func OverloadedInterface_say__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.OverloadedInterface
+    let _result: Swift.String = _self.say()
+    return _result
+}
+
+@_cdecl("Overloaded_nullable__TypesOfArguments__Swift_Optional_Swift_String_____reverse_swift")
+package func Overloaded_nullable__TypesOfArguments__Swift_Optional_Swift_String_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg: Swift.String?) -> Swift.String {
+    let _self = main.Overloaded.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.String = _self.nullable(arg: arg)
+    return _result
+}
+
+@_cdecl("Overloaded_nullable__TypesOfArguments__Swift_String____reverse_swift")
+package func Overloaded_nullable__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg: Swift.String) -> Swift.String {
+    let _self = main.Overloaded.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.String = _self.nullable(arg: arg)
+    return _result
+}
+
+@_cdecl("Overloaded_pick__TypesOfArguments__Swift_String_Swift_Int32____reverse_swift")
+package func Overloaded_pick__TypesOfArguments__Swift_String_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg1: Swift.String, _ arg2: Swift.Int32) -> Swift.String {
+    let _self = main.Overloaded.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.String = _self.pick(arg1: arg1, arg2: arg2)
+    return _result
+}
+
+@_cdecl("Overloaded_pick__TypesOfArguments__Swift_String____reverse_swift")
+package func Overloaded_pick__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg1: Swift.String) -> Swift.String {
+    let _self = main.Overloaded.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.String = _self.pick(arg1: arg1)
+    return _result
+}
+
+@_cdecl("Overloaded_same__TypesOfArguments__Swift_Int32____reverse_swift")
+package func Overloaded_same__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg: Swift.Int32) -> Swift.String {
+    let _self = main.Overloaded.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.String = _self.same(arg: arg)
+    return _result
+}
+
+@_cdecl("Overloaded_same__TypesOfArguments__Swift_String____reverse_swift")
+package func Overloaded_same__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg: Swift.String) -> Swift.String {
+    let _self = main.Overloaded.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.String = _self.same(arg: arg)
     return _result
 }
 
