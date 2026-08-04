@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 /** NOTE: The order and names are important. */
 enum class EffectsKind {
@@ -112,4 +115,9 @@ fun IrExpression.computeEffectsKind(function: IrFunction?): EffectsKind {
     val v = ExpressionEffectVisitor(function)
     acceptVoid(v)
     return v.result
+}
+
+object EffectAnalysisClassIds {
+    val annotation = ClassId(StandardClassIds.BASE_INTERNAL_PACKAGE, Name.identifier("Effects"))
+    val kindParameter = Name.identifier("kind")
 }

@@ -186,8 +186,6 @@ object StandardClassIds {
         Long to AtomicLongArray,
     )
 
-    val EffectsKind = "EffectsKind".internalId()
-
     object Annotations {
         val Suppress = "Suppress".baseId()
         val PublishedApi = "PublishedApi".baseId()
@@ -268,8 +266,6 @@ object StandardClassIds {
 
         val UsedFromCompilerGeneratedCode = "UsedFromCompilerGeneratedCode".internalId()
 
-        val Effects = "Effects".internalId()
-
         object ParameterNames {
             val value = Name.identifier("value")
 
@@ -290,8 +286,6 @@ object StandardClassIds {
             val suppressNames = Name.identifier("names")
 
             val parameterNameName = Name.identifier("name")
-
-            val effectsKind = Name.identifier("kind")
         }
     }
 

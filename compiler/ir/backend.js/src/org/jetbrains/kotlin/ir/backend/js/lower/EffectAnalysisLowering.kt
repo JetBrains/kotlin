@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.EffectAnalysisClassIds
 import org.jetbrains.kotlin.ir.backend.js.EffectsKind
 import org.jetbrains.kotlin.ir.backend.js.EffectsKindCell
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
@@ -67,9 +68,9 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
 
         fun maybeVisit(owner: IrFunction): EffectsKindCell {
             if (owner.effects != null) return owner.effects!!
-            val effectsAnnotation = owner.getAnnotation(StandardClassIds.Annotations.Effects.asSingleFqName())
+            val effectsAnnotation = owner.getAnnotation(EffectAnalysisClassIds.annotation.asSingleFqName())
             if (effectsAnnotation != null) {
-                val arg = effectsAnnotation.argumentMapping[StandardClassIds.Annotations.ParameterNames.effectsKind]
+                val arg = effectsAnnotation.argumentMapping[EffectAnalysisClassIds.kindParameter]
                 if (arg is IrGetEnumValue) {
                     owner.effects = EffectsKindCell(context, owner, EffectsKind.valueOf(arg.symbol.owner.name.asString()))
                     return owner.effects!!
