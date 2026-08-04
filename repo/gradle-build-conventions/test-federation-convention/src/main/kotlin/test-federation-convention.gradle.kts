@@ -110,23 +110,6 @@ tasks.withType<Test>().configureEach {
             println("##teamcity[addBuildTag 'Mode: Full']")
         }
 
-        /* Configuring JUnit includes */
-        if (testFederationMode.get() == TestFederationMode.Smoke) {
-            smokeTestConfig as SmokeTestConfig.Enabled
-
-            /*
-            If we only execute tagged smoke/contract tests, then we can already add those tags as includes.
-            The 'SmokeTestExecutionCondition' would also filter relevant tests, however adding a filter here can lead to
-            a better rendering of the executed tests.
-            */
-            if (smokeTestConfig.autoSmokeTestPercentage == 0) {
-                testFramework.options.includeTags("smoke")
-                affectedDomains.get().forEach { domain ->
-                    testFramework.options.includeTags("affectedBy:${domain.name}")
-                }
-            }
-        }
-
         /* Exclude nightly tests if not specifically running in 'nightly' mode */
         if (!areNightlyTestsEnabled.get()) {
             testFramework.options.excludeTags("nightly", "org.jetbrains.kotlin.testFederation.NightlyTest")
