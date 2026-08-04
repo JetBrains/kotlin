@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.testFederation.TestBuildResult.TestResult
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
+import kotlin.collections.filterNot
 import kotlin.io.path.Path
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
@@ -383,9 +384,15 @@ private fun runTestBuild(
     val tests = output.mapNotNull { line ->
         val match = testResultRegex.matchEntire(line) ?: return@mapNotNull null
         TestResult(match.groupValues[1], match.groupValues[2], match.groupValues[3])
-    }
 
-    return TestBuildResult(buildResult, tests.toSet())
+    }
+        /**
+         * Can be removed again after:
+         * https://youtrack.jetbrains.com/issue/KT-88303
+         */
+        .filterNot { it.status == "SKIPPED" }.toSet()
+
+    return TestBuildResult(buildResult, tests)
 }
 
 private fun cleanTest(): BuildResult {
