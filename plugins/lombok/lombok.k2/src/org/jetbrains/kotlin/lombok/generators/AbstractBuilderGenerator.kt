@@ -80,7 +80,20 @@ sealed class BuilderDeclarationType {
 
     sealed class Function : BuilderDeclarationType() {
         object Setter : Function()
-        object Build : Function()
+
+        /**
+         * [entitySymbol] links this generated `build()` to the declaration `@Builder` was placed on, so that
+         * IR invokes exactly the entity constructor this `build()` belongs to. That is needed because a class
+         * may carry several `@Builder`-annotated secondary constructors, whose fields the FIR side merges
+         * into a single builder class.
+         *
+         * For a class-level `@Builder` this is the class's own symbol, which matches no constructor - and
+         * rightly so, as the entity's primary/only constructor is unambiguous there.
+         *
+         * fir2ir records this very symbol on the declaration it produces, so the two sides are tied together
+         * by identity rather than by declaration names or source offsets.
+         */
+        class Build(val entitySymbol: FirBasedSymbol<*>) : Function()
         object Builder : Function()
         object ToBuilder : Function()
     }
@@ -159,7 +172,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
         return buildSet {
-            if (isCompanionNeeded(classSymbol, context) && getBuilder(classSymbol) != null) {
+            if (isCompanionNeeded(classSymbol, context) && builderWithDeclarationsCache.getValue(classSymbol) != null) {
                 add(DEFAULT_NAME_FOR_COMPANION_OBJECT)
             }
 
@@ -204,7 +217,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         context: NestedClassGenerationContext,
     ): FirClassLikeSymbol<*>? {
         if (name == DEFAULT_NAME_FOR_COMPANION_OBJECT) {
-            return getBuilder(owner)?.let { BuilderGeneratorKey(BuilderDeclarationType.Class.Companion) }?.let { createCompanionObject(owner, it).symbol }
+            return builderWithDeclarationsCache.getValue(owner)?.let { BuilderGeneratorKey(BuilderDeclarationType.Class.Companion) }
+                ?.let { createCompanionObject(owner, it).symbol }
         }
 
         return builderClassesCache.getValue(BuilderKey(owner, name))
