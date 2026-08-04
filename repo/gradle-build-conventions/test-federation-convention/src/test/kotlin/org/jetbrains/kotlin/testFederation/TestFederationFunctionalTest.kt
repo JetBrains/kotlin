@@ -248,6 +248,38 @@ class TestFederationFunctionalTest {
     }
 
     @Test
+    fun `test - build with test federation disabled - build with test federation enabled (full) and smoke+runAllTests - reuses build caches`(@TempDir cache: Path) {
+        val buildCacheArgs = buildCacheArgs(cache)
+
+        cleanTest()
+        runTestBuild(
+            mode = TestFederationMode.Full,
+            smokeTestConfig = "RunAllTests",
+            affected = Domain.entries.toTypedArray(),
+            additionalCliArgs = buildCacheArgs,
+            rerun = false,
+            testFederationEnabled = false
+        ).apply {
+            assertEquals(TaskOutcome.SUCCESS, buildResult.requireTask(":repo:test-federation-runtime:test").outcome)
+            cache.listDirectoryEntries().filterNot { it.name == "gc.properties" }.ifEmpty {
+                fail("No build cache entries produced after first build")
+            }
+        }
+
+        cleanTest()
+        runTestBuild(
+            mode = TestFederationMode.Smoke,
+            smokeTestConfig = "RunAllTests",
+            affected = Domain.entries.toTypedArray(),
+            additionalCliArgs = buildCacheArgs,
+            rerun = false,
+            testFederationEnabled = true
+        ).apply {
+            assertEquals(TaskOutcome.FROM_CACHE, buildResult.requireTask(":repo:test-federation-runtime:test").outcome)
+        }
+    }
+
+    @Test
     fun `test - build with test federation enabled - build in smoke mode - cant reuse caches`(@TempDir cache: Path) {
         val buildCacheArgs = buildCacheArgs(cache)
 
