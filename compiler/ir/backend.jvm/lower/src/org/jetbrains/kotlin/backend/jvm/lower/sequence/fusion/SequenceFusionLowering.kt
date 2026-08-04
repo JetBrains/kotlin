@@ -245,6 +245,28 @@ private class SequenceFusionTransformer(val context: JvmBackendContext) : IrElem
         return producerStrategy.fuseConsumer(builder to parent, sequenceData, sequenceReplacement)
             ?: visitedExpression
     }
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        val visitedExpression = super.visitCall(expression) as? IrCall ?: return expression
+        val functionFQName = expression.symbol.owner.fqNameWhenAvailable?.asString() ?: return visitedExpression
+        val builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
+        val parent =
+            currentScope?.scope?.scopeOwnerSymbol as? IrDeclarationParent ?: currentDeclarationParent ?: return visitedExpression
+        val receiver = expression.arguments.getOrNull(0) ?: return visitedExpression
+        val gatherer = SequenceDataGatherer(context)
+        receiver.accept(gatherer, null)
+        val sequenceData = receiver.sequenceDataOfExpression ?: return visitedExpression
+        val data = ConsumerData(context, builder, parent, sequenceData)
+        val consumerStrategy =
+            createConsumerStrategy(visitedExpression, functionFQName, data, context)
+                ?: return visitedExpression
+        val producerStrategy = sequenceData.sequenceSource.createProducerStrategy(builder, context)
+        if (producerStrategy is EmptySequenceStrategy && consumerStrategy.canBeRemovedOnEmptySequence) return builder.irUnit()
+        val sequenceReplacement =
+            deployTransformerStrategies(consumerStrategy, sequenceData, builder to parent, context) ?: return visitedExpression
+        return producerStrategy.fuseConsumer(builder to parent, sequenceData, sequenceReplacement)
+            ?: visitedExpression
+    }
 }
 
 private fun deployTransformerStrategies(
