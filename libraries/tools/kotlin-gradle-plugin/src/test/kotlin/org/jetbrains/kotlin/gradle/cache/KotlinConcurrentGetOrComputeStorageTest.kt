@@ -74,6 +74,36 @@ class KotlinConcurrentGetOrComputeStorageTest {
     }
 
     @Test
+    fun testSnapshotOfEmptyStorageIsEmpty() {
+        assertEquals(emptyMap(), storage.snapshotCacheEntries())
+    }
+
+    @Test
+    fun testSnapshotContainsAllComputedEntries() {
+        storage.getOrCompute("a") { "a-value" }
+        storage.getOrCompute("b") { "b-value" }
+
+        assertEquals(mapOf("a" to "a-value", "b" to "b-value"), storage.snapshotCacheEntries())
+    }
+
+    @Test
+    fun testSnapshotIsDetachedFromTheStorage() {
+        storage.getOrCompute("a") { "a-value" }
+        val snapshot = storage.snapshotCacheEntries()
+        storage.getOrCompute("b") { "b-value" }
+
+        assertEquals(mapOf("a" to "a-value"), snapshot)
+    }
+
+    @Test
+    fun testSnapshotSkipsFailedComputations() {
+        storage.getOrCompute("ok") { "value" }
+        assertFailsWith<TestException> { storage.getOrCompute<Unit>("failed") { throw TestException() } }
+
+        assertEquals(mapOf("ok" to "value"), storage.snapshotCacheEntries())
+    }
+
+    @Test
     fun testFailureIsRethrownAsIsWithoutExecutionExceptionWrapper() {
         val expectedFailure = TestException()
         val actualFailure = assertFailsWith<TestException> {
