@@ -57,6 +57,11 @@ public class KotlinModuleMetadata internal constructor(
     public fun write(): ByteArray {
         throwIfNotWriteable(isAllowedToWrite, "module")
         checkMetadataVersionForWrite(version)
+        return writeImpl()
+    }
+
+    // internal for testing
+    internal fun writeImpl(): ByteArray {
         val b = JvmModuleProtoBuf.Module.newBuilder()
         kmModule.packageParts.forEach { [fqName, packageParts] ->
             PackageParts(fqName).apply {
