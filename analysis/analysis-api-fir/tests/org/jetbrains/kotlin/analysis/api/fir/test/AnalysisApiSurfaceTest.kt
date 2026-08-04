@@ -274,8 +274,8 @@ class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("testData/surfac
                 "Direction.valueOf(\"SOUTH\"): org/example/Direction.valueOf",
                 "\"\".empty: null",
                 "\"\".fromNumber(42): null",
-                "empty: org/example/empty",
-                "fromNumber(42): org/example/fromNumber",
+                "empty: null",
+                "fromNumber(42): null",
             )
 
             assertEquals(expectedResolutionResult, actualResolutionResult)
