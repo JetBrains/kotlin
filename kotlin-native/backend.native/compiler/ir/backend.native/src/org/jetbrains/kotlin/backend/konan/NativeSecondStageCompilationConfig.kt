@@ -394,7 +394,7 @@ class NativeSecondStageCompilationConfig(
         )
 
     val exportedLibraries: List<KotlinLibrary>
-        get() = getExportedLibraries(configuration, resolve.resolvedLibraries, resolve.resolver.searchPathResolver, report = true)
+        get() = getExportedLibraries(configuration, resolve.resolvedLibraries, resolve.resolver.searchPathResolver)
 
     /**
      * Returns the list of libraries in reverse topological order.

@@ -37,12 +37,11 @@ internal fun getExportedLibraries(
     configuration: CompilerConfiguration,
     resolvedLibraries: KotlinLibraryResolveResult,
     resolver: SearchPathResolver<KotlinLibrary>,
-    report: Boolean
 ): List<KotlinLibrary> = getFeaturedLibraries(
         configuration.exportedLibraries,
         resolvedLibraries,
         resolver,
-        if (report) FeaturedLibrariesReporter.forExportedLibraries(configuration) else FeaturedLibrariesReporter.Silent,
+        FeaturedLibrariesReporter.forExportedLibraries(configuration),
         allowDefaultLibs = false
 )
 
@@ -68,11 +67,6 @@ private sealed class FeaturedLibrariesReporter {
             isFromKotlinNativeDistribution -> "Default"
             else -> "Unknown kind"
         }
-
-    object Silent: FeaturedLibrariesReporter() {
-        override fun reportIllegalKind(library: KotlinLibrary) {}
-        override fun reportNotIncludedLibraries(includedLibraries: List<KotlinLibrary>, remainingFeaturedLibraries: Set<Path>) {}
-    }
 
     abstract class BaseReporter(val configuration: CompilerConfiguration) : FeaturedLibrariesReporter() {
         protected abstract fun illegalKindMessage(kind: String, libraryName: String): String
