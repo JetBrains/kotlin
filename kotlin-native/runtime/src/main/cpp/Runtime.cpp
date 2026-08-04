@@ -175,6 +175,15 @@ RUNTIME_NOTHROW void AppendToInitializersTail(InitNode *next) {
   initTailNode = next;
 }
 
+void ReinitializeGlobalVariablesAndTLS() {
+  auto* memoryState = kotlin::mm::GetMemoryState();
+  ReopenTLSStorage(memoryState);
+  InitOrDeinitGlobalVariables(ALLOC_THREAD_LOCAL_GLOBALS, memoryState);
+  CommitTLSStorage(memoryState);
+  InitOrDeinitGlobalVariables(INIT_GLOBALS, memoryState);
+  InitOrDeinitGlobalVariables(INIT_THREAD_LOCAL_GLOBALS, memoryState);
+}
+
 PERFORMANCE_INLINE RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded() {
   if (!isValidRuntime()) {
     initRuntime();
