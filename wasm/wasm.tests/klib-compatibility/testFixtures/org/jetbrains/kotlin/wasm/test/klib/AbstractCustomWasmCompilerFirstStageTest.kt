@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.wasm.test.klib
 
-import org.jetbrains.kotlin.js.test.klib.*
+import org.jetbrains.kotlin.js.test.klib.CustomWebCompilerFirstStageFacade
+import org.jetbrains.kotlin.js.test.klib.CustomWebCompilerSettings
+import org.jetbrains.kotlin.js.test.klib.customWasmJsCompilerSettings
+import org.jetbrains.kotlin.js.test.klib.customWasmWasiCompilerSettings
+import org.jetbrains.kotlin.js.test.klib.defaultLanguageVersion
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -17,7 +21,7 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.klib.setupCustomLanguageVersionForKlibCompatibilityTest
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWasmTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmentConfigurator
@@ -25,9 +29,9 @@ import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironme
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
-import org.jetbrains.kotlin.wasm.test.WasmWasiBoxTestHelperSourceProvider
 import org.jetbrains.kotlin.wasm.test.commonConfigurationForWasmSecondStageTest
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
+import org.jetbrains.kotlin.wasm.test.WasmWasiBoxTestHelperSourceProvider
 import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDtsHandler
@@ -42,7 +46,7 @@ abstract class AbstractCustomWasmCompilerFirstStageTest(
     private val wasmTarget: WasmTarget,
     private val customWasmCompilerSettings: CustomWebCompilerSettings,
     val testDataRoot: String = "compiler/testData/codegen/",
-) : AbstractKotlinCompilerWasmTest(targetBackend) {
+) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
 
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         globalDefaults {

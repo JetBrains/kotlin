@@ -10,16 +10,17 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.create
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.getOrCreateTestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestRunSettings
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.TwoStageTestConfigurationBuilder
-import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerNativeTest
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerNativeTest
+import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.TestServices
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.RegisterExtension
 
-abstract class AbstractNativeCoreTest : AbstractKotlinCompilerNativeTest() {
+abstract class AbstractNativeCoreTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
     private lateinit var extensionContext: ExtensionContext
 
     @RegisterExtension
@@ -37,7 +38,7 @@ abstract class AbstractNativeCoreTest : AbstractKotlinCompilerNativeTest() {
     }
 }
 
-abstract class AbstractTwoStageNativeCoreTest : AbstractTwoStageKotlinCompilerNativeTest() {
+abstract class AbstractTwoStageNativeCoreTest : AbstractTwoStageKotlinCompilerTest() {
     private lateinit var extensionContext: ExtensionContext
 
     @RegisterExtension

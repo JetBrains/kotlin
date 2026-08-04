@@ -12,9 +12,10 @@ import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
 import org.jetbrains.kotlin.konan.test.NativePreSerializationLoweringCliFacade
 import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.commonConfigurationForDumpSyntheticAccessorsTest
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerNativeTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.utils.bind
 open class AbstractNativeKlibSyntheticAccessorTest(
     // Use the ERROR log level by default to fail any tests where PL detected any incompatibilities.
     private val partialLinkageLogLevel: PartialLinkageLogLevel = PartialLinkageLogLevel.ERROR
-) : AbstractKotlinCompilerNativeTest() {
+) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         commonConfigurationForDumpSyntheticAccessorsTest(
             frontendFacade = ::FirCliNativeFacade,

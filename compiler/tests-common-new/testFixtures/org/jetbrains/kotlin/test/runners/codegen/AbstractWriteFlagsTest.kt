@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.JvmWriteFlagsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -14,9 +15,9 @@ import org.jetbrains.kotlin.test.configuration.commonHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.configureDumpHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.setupJvmPipelineSteps
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_JVM_FLAGS
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJvmTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 
-abstract class AbstractWriteFlagsTest : AbstractKotlinCompilerJvmTest() {
+abstract class AbstractWriteFlagsTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         setupJvmPipelineSteps(FirParser.LightTree)
         commonHandlersForCodegenTest()

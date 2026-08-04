@@ -16,9 +16,11 @@ import org.jetbrains.kotlin.test.builders.configureKlibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWasmTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 
-abstract class AbstractWasmJsLoadCompiledKotlinTest : AbstractKotlinCompilerWasmTest(TargetBackend.WASM_JS) {
+abstract class AbstractWasmJsLoadCompiledKotlinTest :
+    AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.WASM_JS)
+{
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         commonConfigurationForWasmFirstStageTest(
             targetFrontend = FrontendKinds.FIR,

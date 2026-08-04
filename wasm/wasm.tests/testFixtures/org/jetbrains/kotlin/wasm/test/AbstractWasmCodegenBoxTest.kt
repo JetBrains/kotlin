@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
-import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerWasmTest
+import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerTest
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -53,7 +53,7 @@ abstract class AbstractWasmCodegenBoxTest(
     val platform: TargetPlatform,
     val wasmTarget: WasmTarget,
     val pathToTestDir: String = "compiler/testData/codegen/",
-): AbstractTwoStageKotlinCompilerWasmTest() {
+): AbstractTwoStageKotlinCompilerTest() {
     abstract val additionalSourceProviders: List<Constructor<AdditionalSourceProvider>>
     open val wasmCompilationSetsBoxRunner: Constructor<GroupingStageHandler<BinaryArtifacts.Wasm>> = ::WasmCompilationSetsGroupingStageBoxRunner
 

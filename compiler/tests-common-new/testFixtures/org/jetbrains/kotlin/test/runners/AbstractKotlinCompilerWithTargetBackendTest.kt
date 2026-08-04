@@ -6,19 +6,10 @@
 package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.TargetBackend.*
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.testFederation.AffectedByCompiler
-import org.jetbrains.kotlin.testFederation.AffectedByJs
-import org.jetbrains.kotlin.testFederation.AffectedByNative
-import org.jetbrains.kotlin.testFederation.AffectedByWasm
 
-@RequiresOptIn("Consider using predefined inheritors of this class with properly configured test domains. " +
-            "If they don't suite please specify domains yourself")
-annotation class UnspecifiedTargetBackend
-
-abstract class AbstractKotlinCompilerWithTargetBackendTest @UnspecifiedTargetBackend constructor(
+abstract class AbstractKotlinCompilerWithTargetBackendTest(
     val targetBackend: TargetBackend,
 ) : AbstractKotlinCompilerTest() {
     @TestInfrastructureInternals
@@ -39,32 +30,3 @@ abstract class AbstractKotlinCompilerWithTargetBackendTest @UnspecifiedTargetBac
         }
     }
 }
-
-
-@OptIn(UnspecifiedTargetBackend::class)
-@AffectedByCompiler
-abstract class AbstractKotlinCompilerJvmTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR)
-
-@OptIn(UnspecifiedTargetBackend::class)
-@AffectedByJs
-abstract class AbstractKotlinCompilerJsTest(targetBackend: TargetBackend) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
-    init {
-        require(targetBackend == JS_IR || targetBackend == JS_IR_ES6)
-    }
-}
-
-@OptIn(UnspecifiedTargetBackend::class)
-@AffectedByWasm
-abstract class AbstractKotlinCompilerWasmTest(targetBackend: TargetBackend) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
-    init {
-        require(targetBackend == WASM || targetBackend == WASM_JS || targetBackend == WASM_WASI)
-    }
-}
-
-@OptIn(UnspecifiedTargetBackend::class)
-@AffectedByNative
-abstract class AbstractKotlinCompilerNativeTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE)
-
-@OptIn(UnspecifiedTargetBackend::class)
-@AffectedByCompiler
-abstract class AbstractKotlinCompilerJKlibTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JKLIB)

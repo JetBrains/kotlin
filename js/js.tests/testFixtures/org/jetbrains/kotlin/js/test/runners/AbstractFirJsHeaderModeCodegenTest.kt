@@ -26,10 +26,12 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirAnalysisHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJsTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.utils.bind
 
-abstract class AbstractFirJsHeaderModeCodegenTestBase(val parser: FirParser) : AbstractKotlinCompilerJsTest(TargetBackend.JS_IR) {
+abstract class AbstractFirJsHeaderModeCodegenTestBase(
+    val parser: FirParser
+) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         configureFirParser(parser)
 

@@ -6,19 +6,20 @@
 package org.jetbrains.kotlin.test.runners.ir
 
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.JvmNewKotlinReflectCompatibilityCheck
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.*
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJvmTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
 import org.jetbrains.kotlin.test.services.TestPhase
 import org.jetbrains.kotlin.utils.bind
 
-abstract class AbstractJvmIrTextTest(val parser: FirParser) : AbstractKotlinCompilerJvmTest() {
+abstract class AbstractJvmIrTextTest(val parser: FirParser) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
 
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         setupJvmPipelineStepsWithoutCompilationErrorHandlers(parser)

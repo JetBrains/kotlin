@@ -33,17 +33,14 @@ import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.runners.UnspecifiedTargetBackend
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
-import org.jetbrains.kotlin.testFederation.AffectedByJs
 import kotlin.test.assertNotNull
 
 /**
  * This test class can potentially be re-used in the future for other backends.
  */
-@OptIn(UnspecifiedTargetBackend::class)
 abstract class AbstractLibraryAbiReaderTest(
     private val targetPlatform: TargetPlatform,
     targetBackend: TargetBackend,
@@ -93,7 +90,6 @@ abstract class AbstractLibraryAbiReaderTest(
     }
 }
 
-@AffectedByJs
 abstract class AbstractJsLibraryAbiReaderTest : AbstractLibraryAbiReaderTest(JsPlatforms.defaultJsPlatform, TargetBackend.JS_IR) {
     final override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirCliWebFacade

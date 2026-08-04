@@ -6,15 +6,19 @@
 package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.configureJvmBoxCodegenSettings
+import org.jetbrains.kotlin.test.configuration.setupJvmPipelineSteps
 import org.jetbrains.kotlin.test.configuration.setupJvmPipelineStepsWithoutCompilationErrorHandlers
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_HEADER_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.HEADER_MODE
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJvmTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 
-abstract class AbstractFirHeaderModeCodegenTestBase(val parser: FirParser) : AbstractKotlinCompilerJvmTest() {
+abstract class AbstractFirHeaderModeCodegenTestBase(
+    val parser: FirParser
+) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         defaultDirectives {
             +HEADER_MODE

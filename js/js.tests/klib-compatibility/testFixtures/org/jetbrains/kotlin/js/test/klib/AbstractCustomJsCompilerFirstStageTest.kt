@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.klib.setupCustomLanguageVersionForKlibCompatibilityTest
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJsTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Tag
 
 @Tag("custom-first-stage")
 open class AbstractCustomJsCompilerFirstStageTest(val testDataRoot: String = "compiler/testData/codegen/") :
-    AbstractKotlinCompilerJsTest(TargetBackend.JS_IR) {
+    AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {

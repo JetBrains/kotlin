@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.IrNoExpectSymbolsHandler
 import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirCliMetadataSerializerFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJvmTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfiguratorForSeparateKmpCompilation
 import org.jetbrains.kotlin.test.services.configuration.MetadataEnvironmentConfiguratorForSeparateKmpCompilation
@@ -37,7 +38,9 @@ import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSource
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 import org.jetbrains.kotlin.utils.bind
 
-abstract class AbstractJvmBlackBoxCodegenWithSeparateKmpCompilationTestBase(val parser: FirParser) : AbstractKotlinCompilerJvmTest() {
+abstract class AbstractJvmBlackBoxCodegenWithSeparateKmpCompilationTestBase(
+    val parser: FirParser
+) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_DOU
 import org.jetbrains.kotlin.test.frontend.fir.FirCliMetadataFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirCliMetadataSerializerFacade
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJsTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.*
 import org.jetbrains.kotlin.test.services.isLeafModuleInMppGraph
@@ -30,7 +30,7 @@ abstract class AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase(
     val parser: FirParser,
     private val pathToTestDir: String,
     private val testGroupOutputDirPrefix: String,
-) : AbstractKotlinCompilerJsTest(TargetBackend.JS_IR) {
+) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         setUpDefaultDirectivesForJsBoxTest(parser)
