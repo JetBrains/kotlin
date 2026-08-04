@@ -91,6 +91,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         val kotlinLogger = if (captureContext != null) CapturingKotlinLogger(resolvedLogger, captureContext) else resolvedLogger
         captureContext?.let {
             resolvedLogger.lifecycle("[BTA-CAPTURE] start module=${it.modulePath} build=${it.buildId}")
+            BtaEventCapture.recordTypedEvent(it.buildId, it.modulePath ?: "could not identify module", "START", "info", "---")
         }
         compilerArguments.reportRestrictedViolations(kotlinLogger)
         val result = if (compilerArguments.hasValidationErrors()) {
@@ -115,6 +116,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         }
         captureContext?.let {
             resolvedLogger.lifecycle("[BTA-CAPTURE] end module=${it.modulePath} build=${it.buildId} result=$result")
+            BtaEventCapture.recordTypedEvent(it.buildId, it.modulePath ?: "could not identify module", "END", "info", "---")
         }
         return result
     }
