@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.internal.capture
+package org.jetbrains.kotlin.daemon.capture
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -38,7 +38,7 @@ internal class EventContext(
  * compilations in one build interleave in the file; every line self-identifies its module via [EventContext.modulePath],
  * so a consumer can isolate the event sequence of any single module by filtering on that key.
  */
-internal object BtaEventCapture {
+internal object BtaTypedEventCapture {
     private val captureDir: Path? = run {
         val raw = System.getenv("KOTLIN_BTA_CAPTURE_DIR")
             ?: System.getProperty("kotlin.build-tools-api.capture.dir")
@@ -56,24 +56,22 @@ internal object BtaEventCapture {
     /**
      * Append a single event to this build's NDJSON file. Thread-safe. No-op when capture is disabled.
      */
-    fun record(context: EventContext, severity: String, message: String) {
+    fun record(projectId: String, outputPath: String, severity: String, message: String) {
         val dir = captureDir ?: return
         val line = buildString {
             append('{')
             appendField("ts", System.currentTimeMillis().toString(), quoted = false)
             append(',')
-            appendField("buildId", context.buildId)
+            appendField("buildId", projectId)
             append(',')
-            appendField("module", context.modulePath)
-            append(',')
-            appendField("moduleName", context.moduleName)
+            appendField("module", outputPath)
             append(',')
             appendField("severity", severity)
             append(',')
             appendField("message", message)
             append('}')
         }
-        val file = dir.resolve("bta-capture-${context.buildId.sanitizeForFileName()}.ndjson")
+        val file = dir.resolve("bta-capture-${projectId.sanitizeForFileName()}.ndjson")
         synchronized(lock) {
             Files.createDirectories(dir)
             Files.write(
@@ -84,7 +82,6 @@ internal object BtaEventCapture {
             )
         }
     }
-
 
     /**
      * Append a single event to this build's NDJSON file. Thread-safe. No-op when capture is disabled.

@@ -22,6 +22,15 @@ fun getBuildReporter(
     val root = (compilationOptions as? IncrementalCompilationOptions)?.rootProjectDir
     val reporters = ArrayList<RemoteICReporter>()
 
+    if (compilationOptions.projectId != null) {
+        reporters.add(
+            LoggingICReporter(
+                projectId = compilationOptions.projectId.toString(),
+                outputPath = compilationOptions.outputPath.toString()
+            )
+        )
+    }
+
     if (ReportCategory.IC_MESSAGE.code in compilationOptions.reportCategories) {
         reporters.add(
             DebugMessagesICReporter(
