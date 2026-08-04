@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.lombok.generators.kotlin.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.IrStatement
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.lombok.generators.BuilderDeclarationType
 import org.jetbrains.kotlin.lombok.generators.BuilderGeneratorKey
 import org.jetbrains.kotlin.lombok.LombokNames
+import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -58,7 +60,7 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         val builderFunctionType = key.type as? BuilderDeclarationType.Function ?: return
         when (builderFunctionType) {
             BuilderDeclarationType.Function.Setter -> buildSetter(declaration, regularParameters.single())
-            BuilderDeclarationType.Function.Build -> buildBuildMethod(declaration)
+            is BuilderDeclarationType.Function.Build -> buildBuildMethod(declaration, builderFunctionType.entitySymbol)
             BuilderDeclarationType.Function.Builder -> buildBuilderFactory(declaration)
             BuilderDeclarationType.Function.ToBuilder -> buildToBuilder(declaration)
             is BuilderDeclarationType.SingularFunction -> {
@@ -103,11 +105,11 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
      * builder setter call or from its own default — rather than re-reading a possibly-unset builder field.
      */
     @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun IrBlockBodyBuilder.buildBuildMethod(declaration: IrSimpleFunction) {
+    private fun IrBlockBodyBuilder.buildBuildMethod(declaration: IrSimpleFunction, entitySymbol: FirBasedSymbol<*>) {
         val builderClass = declaration.parent as IrClass
         val thisParameter = declaration.dispatchReceiverParameter!!
         val entityClass = declaration.returnType.classOrNull!!.owner
-        val constructor = entityClass.builderConstructor()
+        val constructor = entityClass.entityConstructorFor(entitySymbol)
         val singularFieldNames = builderClass.singularFieldNames()
         val regularParameters = constructor.parameters.filter { it.kind == IrParameterKind.Regular }
 
@@ -648,6 +650,27 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrClass.builderConstructor(): IrConstructor =
         primaryConstructor ?: constructors.first()
+
+    /**
+     * The entity constructor this builder's [build] should invoke. `@Builder` may annotate a secondary
+     * constructor instead of the class/primary constructor, so the primary-or-first fallback isn't always
+     * correct; [entitySymbol] (from [BuilderDeclarationType.Function.Build]) pins down exactly which one by
+     * matching against the symbol recorded on each constructor's metadata.
+     *
+     * A class-level `@Builder` contributes the class's own symbol, which matches no constructor and thereby
+     * leaves the fallback in charge - the right outcome, as such a builder builds via the primary one.
+     */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrClass.entityConstructorFor(entitySymbol: FirBasedSymbol<*>): IrConstructor {
+        return constructors.firstOrNull { it.firSymbol == entitySymbol } ?: builderConstructor()
+    }
+
+    /**
+     * The front-end symbol this declaration was produced from, as recorded on its metadata by fir2ir, or
+     * `null` for a declaration carrying no such metadata.
+     */
+    private val IrMetadataSourceOwner.firSymbol: DeclarationSymbolMarker?
+        get() = (metadata as? DeclarationSymbolOwner)?.symbol
 
     /**
      * Builds `constructor(...)` for the value this function returns, i.e. the entity in `build` or the
