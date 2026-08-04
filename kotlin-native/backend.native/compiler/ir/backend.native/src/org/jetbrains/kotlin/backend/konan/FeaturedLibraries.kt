@@ -42,7 +42,6 @@ internal fun getExportedLibraries(
         resolvedLibraries,
         resolver,
         FeaturedLibrariesReporter.forExportedLibraries(configuration),
-        allowDefaultLibs = false
 )
 
 internal fun getIncludedLibraries(
@@ -53,7 +52,6 @@ internal fun getIncludedLibraries(
         includedLibraryFiles.toSet(),
         resolvedLibraries,
         FeaturedLibrariesReporter.forIncludedLibraries(configuration),
-        allowDefaultLibs = false
 )
 
 private sealed class FeaturedLibrariesReporter {
@@ -125,19 +123,16 @@ private fun getFeaturedLibraries(
         resolvedLibraries: KotlinLibraryResolveResult,
         resolver: SearchPathResolver<KotlinLibrary>,
         reporter: FeaturedLibrariesReporter,
-        allowDefaultLibs: Boolean
 ) = getFeaturedLibraries(
         featuredLibraries.toUnresolvedLibraries.map { resolver.resolve(it).path }.toSet(),
         resolvedLibraries,
         reporter,
-        allowDefaultLibs
 )
 
 private fun getFeaturedLibraries(
         featuredLibraryPaths: Set<Path>,
         resolvedLibraries: KotlinLibraryResolveResult,
         reporter: FeaturedLibrariesReporter,
-        allowDefaultLibs: Boolean
 ) : List<KotlinLibrary> {
     val remainingFeaturedLibraries = featuredLibraryPaths.toMutableSet()
     val result = mutableListOf<KotlinLibrary>()
@@ -148,7 +143,7 @@ private fun getFeaturedLibraries(
         val libraryPath = library.path
         if (libraryPath in featuredLibraryPaths) {
             remainingFeaturedLibraries.remove(libraryPath)
-            if (library.isCInteropLibrary() || (!allowDefaultLibs && library.isFromKotlinNativeDistribution)) {
+            if (library.isCInteropLibrary() || library.isFromKotlinNativeDistribution) {
                 reporter.reportIllegalKind(library)
             } else {
                 result += library
