@@ -13,12 +13,21 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrBreak
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrContinue
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
+private const val FOR_EACH = KOTLIN_SEQUENCES_PREFIX + "forEach"
+private const val FOR_EACH_INDEXED = KOTLIN_SEQUENCES_PREFIX + "forEachIndexed"
+
+private val consumerFqNames = setOf(
+    FOR_EACH, FOR_EACH_INDEXED,
+)
+
+internal fun isConsumerFqName(fqName: String): Boolean = fqName in consumerFqNames
 
 /**
  * Each strategy consists of:
@@ -49,6 +58,19 @@ internal data class ConsumerData(
     val parent: IrDeclarationParent,
     val sequenceData: SequenceData,
 )
+
+internal fun createConsumerStrategy(
+    expression: IrCall,
+    functionFQName: String,
+    data: ConsumerData,
+    context: JvmBackendContext,
+): ConsumerStrategy? {
+    return when (functionFQName) {
+        FOR_EACH -> ForEachStrategy(data, expression, false, context)
+        FOR_EACH_INDEXED -> ForEachStrategy(data, expression, true, context)
+        else -> null
+    }
+}
 
 internal fun createConsumerStrategy(
     expression: IrBlock,

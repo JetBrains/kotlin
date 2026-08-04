@@ -24,8 +24,10 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.builders.irSet
 import org.jetbrains.kotlin.ir.builders.irString
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrGetField
@@ -51,11 +54,15 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.getAllSubstitutedSupertypes
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.substitute
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
@@ -223,11 +230,55 @@ internal fun IrExpression.replaceForLoopNextCall(replacement: IrExpression): IrE
 private fun lookupForLoopVariable(loopBody: IrBlock): IrVariable? = loopBody.statements.filterIsInstance<IrVariable>()
     .singleOrNull { it.initializer?.findForLoopNextCall() != null }
 
+private val sequenceScopeFqName = FqName("kotlin.sequences.SequenceScope")
+
+internal fun IrFunction.isSequenceScopeBuilderCall(): Boolean {
+    val receiverType = parameters.getOrNull(0)?.type as? IrSimpleType ?: return false
+    val receiverClass = receiverType.classOrNull?.owner ?: return false
+    return receiverClass.fqNameWhenAvailable == sequenceScopeFqName
+}
+
+internal fun IrFunction.isSequenceScopeYield(): Boolean =
+    name.asString().let { it == "yield" || it == "yieldAll" } && (parent as? IrClass)?.fqNameWhenAvailable == sequenceScopeFqName
+
+internal fun containsUnlowerableCalls(
+    body: IrBody,
+    allowSequenceYields: Boolean
+): Boolean {
+    var result = false
+
+    body.acceptVoid(object : IrVisitorVoid() {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitCall(expression: IrCall) {
+            val callee = expression.symbol.owner
+            val isSequenceScopeCall = callee.isSequenceScopeBuilderCall()
+            val isAllowedSequenceCall = allowSequenceYields && callee.isSequenceScopeYield()
+
+            if (callee.isSuspend && !isAllowedSequenceCall) {
+                result = true
+            }
+
+            if (isSequenceScopeCall && !isAllowedSequenceCall) {
+                result = true
+            }
+
+            super.visitCall(expression)
+        }
+    })
+    return result
+}
+
 internal fun getPredicateArgument(expression: IrCall, argument: Int, isEvaluatedOnce: Boolean = false): IrExpression? {
     val predicate = expression.arguments.getOrNull(argument) ?: return null
     // unless it is evaluated once before the iteration (see `evaluateFunctionArgumentOnce`), the predicate is copied to every place
     if (!isEvaluatedOnce && !predicate.isFunctionExpressionSafeToReevaluate()) return null
     if (predicate !is IrRichFunctionReference && !predicate.type.isFunctionOrKFunction()) return null
+
+    val body = predicate.asFunction()?.body
+    if (body != null && containsUnlowerableCalls(body, allowSequenceYields = false)) return null
     return predicate
 }
 
@@ -252,6 +303,19 @@ private fun IrExpression.isStableRead(): Boolean = when (this) {
     is IrTypeOperatorCall -> operator == IrTypeOperator.IMPLICIT_CAST && argument.isStableRead()
     else -> false
 }
+
+internal fun IrExpression.asFunction(): IrFunction? =
+    when (this) {
+        is IrTypeOperatorCall -> argument.asFunction()
+        is IrRichFunctionReference -> invokeFunction
+        is IrGetValue -> {
+            val variable = symbol.owner as? IrVariable
+                ?: return null
+            if (variable.isVar) return null
+            variable.initializer?.asFunction()
+        }
+        else -> null
+    }
 
 internal data class LoopData(
     val loop: IrLoop?,
@@ -288,6 +352,23 @@ private class SequenceFusionTransformer(val context: JvmBackendContext) : IrElem
         val sequenceData = receiver.sequenceDataOfExpression ?: return visitedExpression
         val data = ConsumerData(context, builder, parent, sequenceData)
         val consumerStrategy = createConsumerStrategy(visitedExpression, data) ?: return visitedExpression
+        return fuse(consumerStrategy, sequenceData, builder to parent) ?: visitedExpression
+    }
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        val visitedExpression = super.visitCall(expression) as? IrCall ?: return expression
+        val functionFQName = expression.symbol.owner.fqNameWhenAvailable?.asString() ?: return visitedExpression
+        if (!isConsumerFqName(functionFQName)) return visitedExpression
+        val parent = currentDeclarationParent ?: return visitedExpression
+        val builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
+        val receiver = expression.arguments.getOrNull(0) ?: return visitedExpression
+        val gatherer = SequenceDataGatherer(context)
+        receiver.accept(gatherer, null)
+        val sequenceData = receiver.sequenceDataOfExpression ?: return visitedExpression
+        val data = ConsumerData(context, builder, parent, sequenceData)
+        val consumerStrategy =
+            createConsumerStrategy(visitedExpression, functionFQName, data, context)
+                ?: return visitedExpression
         return fuse(consumerStrategy, sequenceData, builder to parent) ?: visitedExpression
     }
 

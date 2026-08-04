@@ -64,7 +64,16 @@ private fun isSafeToLowerFromSequenceOf(expression: IrExpression): Boolean = exp
 
 private fun isSafeToLowerGenerateSequencePredicate(
     predicate: IrExpression
-): Boolean = predicate.isFunctionExpressionSafeToReevaluate()
+): Boolean {
+    if (!predicate.isFunctionExpressionSafeToReevaluate()) return false
+    val function = predicate.asFunction() ?: return false
+    val body = function.body ?: return false
+
+    return !containsUnlowerableCalls(
+        body,
+        allowSequenceYields = true
+    )
+}
 
 internal fun gatherVarargArgumentFromSequenceOf(argument: IrExpression): List<IrExpression>? {
     return if (argument is IrVararg) {
