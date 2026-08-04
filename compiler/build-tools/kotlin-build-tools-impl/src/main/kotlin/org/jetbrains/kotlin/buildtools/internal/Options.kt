@@ -15,7 +15,7 @@ import kotlin.reflect.jvm.jvmName
 
 internal class Options(
     private val optionsName: String,
-) : DeepCopyable<Options> {
+) : DeepCopyable<Options>, Iterable<Map.Entry<String, Any?>> {
     constructor(typeForName: KClass<*>) : this(typeForName.qualifiedName ?: typeForName.jvmName)
 
     private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
@@ -57,6 +57,9 @@ internal class Options(
             })
         }
     }
+
+    override fun iterator(): Iterator<Map.Entry<String, Any?>> = optionsMap.entries.iterator()
+
 }
 
 @RequiresOptIn("Don't use from -impl package, as we're not allowed to access API classes for backward compatibility reasons.")

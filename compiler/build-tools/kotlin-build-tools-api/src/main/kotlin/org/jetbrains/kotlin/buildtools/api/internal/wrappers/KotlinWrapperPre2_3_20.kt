@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
+import org.jetbrains.kotlin.buildtools.api.jvm.KaptConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import java.lang.reflect.InvocationTargetException
@@ -210,6 +211,15 @@ internal class KotlinWrapperPre2_3_20(
                     shrunkClasspathSnapshot,
                     options
                 )
+            }
+
+            override fun kaptCompilerPluginBuilder(
+                kaptClasspath: List<Path>,
+                stubsOutputDir: Path,
+                sourcesOutputDir: Path,
+                annotationProcessorsClasspath: List<Path>,
+            ): KaptConfiguration.Builder {
+                error("Not available in this version")
             }
 
             inner class JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(
