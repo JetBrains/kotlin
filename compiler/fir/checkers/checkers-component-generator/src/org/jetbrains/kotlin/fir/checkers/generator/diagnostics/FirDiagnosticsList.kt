@@ -144,6 +144,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val UNRESOLVED_REFERENCE_WRONG_RECEIVER by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Symbol>("candidate")
+            parameter<String?>("operator")
         }
         val INACCESSIBLE_OUTER_CLASS_RECEIVER by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<FirBasedSymbol<*>>("symbol")

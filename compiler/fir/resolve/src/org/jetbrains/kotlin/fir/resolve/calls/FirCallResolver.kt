@@ -920,9 +920,6 @@ class FirCallResolver(
         expectedCandidates: Collection<Candidate>? = null
     ): FirNamedReference {
         val source = reference.source
-        val operatorToken = runIf(callInfo.origin == FirFunctionCallOrigin.Operator) {
-            OperatorNameConventions.TOKENS_BY_OPERATOR_NAME[name]
-        }
 
         fun diagnosticOrNull() = when {
             candidates.isEmpty() -> {
@@ -939,7 +936,7 @@ class FirCallResolver(
                             classLikeBySuperRef?.isExpect == true -> ConeNoImplicitDefaultConstructorOnExpectClass
                             else -> ConeUnresolvedNameError(
                                 name = name,
-                                operatorToken = operatorToken,
+                                operatorToken = callInfo.operatorToken(),
                                 receiverType = explicitReceiver?.takeIf { it !is FirResolvedQualifier }?.resolvedType,
                             )
                         }
@@ -1006,7 +1003,7 @@ class FirCallResolver(
                                         singleExpectedCandidate
                                     )
                                 }
-                                else -> ConeUnresolvedNameError(name, operatorToken)
+                                else -> ConeUnresolvedNameError(name, callInfo.operatorToken())
                             }
                         }
                     }
