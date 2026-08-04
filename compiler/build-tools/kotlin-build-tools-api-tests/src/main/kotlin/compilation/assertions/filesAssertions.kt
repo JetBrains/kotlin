@@ -102,8 +102,8 @@ fun CompilationOutcome.assertOutputs(vararg expectedOutputs: String) {
 }
 
 context(module: ModuleContext)
-fun CompilationOutcome.assertOutputsContains(vararg expectedOutputs: String) {
-    assertOutputs(expectedOutputs.toSet(), doNotFailOnExtraFiles = true)
+fun CompilationOutcome.assertOutputsContains(vararg expectedOutputs: String, addKotlinModuleFile: Boolean = true) {
+    assertOutputs(expectedOutputs.toSet(), doNotFailOnExtraFiles = true, addKotlinModuleFile = addKotlinModuleFile)
 }
 
 /**
@@ -111,11 +111,15 @@ fun CompilationOutcome.assertOutputsContains(vararg expectedOutputs: String) {
  * Unless there's explicit expected output for the module's Kotlin module files, the default matching [Module.moduleName] will be added automatically.
  */
 context(module: ModuleContext)
-fun CompilationOutcome.assertOutputs(expectedOutputs: Set<String>, doNotFailOnExtraFiles: Boolean = false) {
+fun CompilationOutcome.assertOutputs(
+    expectedOutputs: Set<String>,
+    doNotFailOnExtraFiles: Boolean = false,
+    addKotlinModuleFile: Boolean = true
+) {
     val filesLeft = expectedOutputs.map { module.outputDirectory.resolve(it).relativeTo(module.outputDirectory) }
         .toMutableSet()
         .apply {
-            if (module is JvmModule && none { it.fileName.toString().endsWith(".kotlin_module") }) {
+            if (module is JvmModule && none { it.fileName.toString().endsWith(".kotlin_module") } && addKotlinModuleFile) {
                 add(module.outputDirectory.resolve("META-INF/${module.moduleName}.kotlin_module").relativeTo(module.outputDirectory))
             }
         }
