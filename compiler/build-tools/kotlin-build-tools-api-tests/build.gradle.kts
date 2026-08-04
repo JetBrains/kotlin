@@ -10,40 +10,49 @@ plugins {
     id("test-inputs-check")
 }
 
-val noArgCompilerPlugin = configurations.dependencyScope("noArgCompilerPlugin")
-val assignmentCompilerPlugin = configurations.dependencyScope("assignmentCompilerPlugin")
-val serializationCompilerPlugin = configurations.dependencyScope("serializationCompilerPlugin")
-val serializationCore = configurations.dependencyScope("serializationCore")
-val pluginSandbox = configurations.dependencyScope("pluginSandbox")
-val kaptCompilerPlugin = configurations.dependencyScope("kaptCompilerPlugin")
-
-val noArgCompilerPluginResolvable = configurations.resolvable("noArgCompilerPluginResolvable") {
-    extendsFrom(noArgCompilerPlugin.get())
-}
-val assignmentCompilerPluginResolvable = configurations.resolvable("assignmentCompilerPluginResolvable") {
-    extendsFrom(assignmentCompilerPlugin.get())
-}
-val serializationCompilerPluginResolvable = configurations.resolvable("serializationCompilerPluginResolvable") {
-    extendsFrom(serializationCompilerPlugin.get())
-}
-val serializationCoreResolvable = configurations.resolvable("serializationCoreResolvable") {
-    extendsFrom(serializationCore.get())
-}
-val pluginSandboxResolvable = configurations.resolvable("pluginSandboxResolvable") {
-    extendsFrom(pluginSandbox.get())
-}
-val kaptCompilerPluginResolvable = configurations.resolvable("kaptCompilerPluginResolvable") {
-    extendsFrom(kaptCompilerPlugin.get())
+fun createResolvableConfiguration(
+    baseName: String,
+    dependenciesAction: DependencyHandlerScope.(NamedDomainObjectProvider<DependencyScopeConfiguration>) -> Unit,
+): NamedDomainObjectProvider<ResolvableConfiguration> {
+    val configuration = configurations.dependencyScope(baseName)
+    val resolvableConfiguration = configurations.resolvable("$baseName$resolvableSuffix") {
+        extendsFrom(configuration)
+    }
+    dependencies {
+        dependenciesAction(configuration)
+    }
+    return resolvableConfiguration
 }
 
-val buildToolsApiImpl = configurations.dependencyScope("buildToolsApiImpl")
-val buildToolsApiImplResolvable = configurations.resolvable("buildToolsApiImplResolvable") {
-    extendsFrom(buildToolsApiImpl.get())
-}
+val noArgCompilerPluginResolvable = createResolvableConfiguration("noArgCompilerPlugin") {
+    it(project(":kotlin-noarg-compiler-plugin.embeddable"))
 
-val scriptingCompilerPlugin = configurations.dependencyScope("scriptingCompilerPlugin")
-val scriptingCompilerPluginResolvable = configurations.resolvable("scriptingCompilerPluginResolvable") {
-    extendsFrom(scriptingCompilerPlugin.get())
+}
+val assignmentCompilerPluginResolvable = createResolvableConfiguration("assignmentCompilerPlugin") {
+    it(project(":kotlin-assignment-compiler-plugin.embeddable"))
+}
+val serializationCompilerPluginResolvable = createResolvableConfiguration("serializationCompilerPlugin") {
+    it(project(":kotlinx-serialization-compiler-plugin.embeddable"))
+}
+val serializationCoreResolvable = createResolvableConfiguration("serializationCore") {
+    it(libs.kotlinx.serialization.core)
+}
+val pluginSandboxResolvable = createResolvableConfiguration("pluginSandbox") {
+    it(project(":plugins:plugin-sandbox"))
+}
+val kaptCompilerPluginResolvable = createResolvableConfiguration("kaptCompilerPlugin") {
+    it(project(":kotlin-annotation-processing-embeddable"))
+}
+val buildToolsApiImplResolvable = createResolvableConfiguration("buildToolsApiImpl") {
+    it(project(":compiler:build-tools:kotlin-build-tools-compat"))
+    it(project(":compiler:build-tools:kotlin-build-tools-impl"))
+    it(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
+}
+val scriptingCompilerPluginResolvable = createResolvableConfiguration("scriptingCompilerPlugin") {
+    project(":kotlin-scripting-compiler-embeddable")
+}
+val exampleAnnotationProcessorResolvable = createResolvableConfiguration("exampleAnnotationProcessor") {
+    it(project(":examples:annotation-processor-example"))
 }
 
 val unpackedResources = configurations.dependencyScope("unpackedResources")
@@ -132,16 +141,7 @@ dependencies {
     compileOnly(libs.junit.jupiter.engine)
     compileOnly(libs.junit.jupiter.params)
     testRuntimeOnly(libs.junit.platform.launcher)
-    noArgCompilerPlugin(project(":kotlin-noarg-compiler-plugin.embeddable"))
-    assignmentCompilerPlugin(project(":kotlin-assignment-compiler-plugin.embeddable"))
-    scriptingCompilerPlugin(project(":kotlin-scripting-compiler-embeddable"))
-    serializationCompilerPlugin(project(":kotlinx-serialization-compiler-plugin.embeddable"))
-    serializationCore(libs.kotlinx.serialization.core)
-    pluginSandbox(project(":plugins:plugin-sandbox"))
-    kaptCompilerPlugin(project(":kotlin-annotation-processing-embeddable"))
-    buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-compat"))
-    buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-impl"))
-    buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
+
     unpackedResources(project(":compiler:build-tools:kotlin-build-tools-api-tests")) {
         isTransitive = false
     }
@@ -400,6 +400,7 @@ testing {
                     addClasspathProperty(serializationCoreResolvable.get(), "SERIALIZATION_CORE")
                     addClasspathProperty(pluginSandboxResolvable.get(), "PLUGIN_SANDBOX")
                     addClasspathProperty(kaptCompilerPluginResolvable.get(), "KAPT_COMPILER_PLUGIN")
+                    addClasspathProperty(exampleAnnotationProcessorResolvable.get(), "EXAMPLE_ANNOTATION_PROCESSOR")
 
                     // those classes use compileOnly dependency on scripting and should not be considered as containing test classes to avoid runtime failures
                     exclude(
