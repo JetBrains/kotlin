@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.java.direct
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.java.direct.model.JavaPackageOverAst
 import org.jetbrains.kotlin.java.direct.resolution.*
-import org.jetbrains.kotlin.java.direct.util.JavaSupertypeGraph
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -25,9 +24,8 @@ import org.jetbrains.kotlin.name.Name
  *  - [JavaPackageInfoIndexer] — `package-info.java` parsing and package-annotation aggregation.
  *  - [JavaClassCache] — `ClassId → JavaClass` memoization and on-demand file parsing.
  *
- * This class owns the [JavaClassFinder] / [LeanJavaClassFinder] contract and the
- * [JavaSupertypeGraph] used for inherited-inner-class resolution. All the state that is specific
- * to a single concern lives on the corresponding collaborator.
+ * This class owns the [JavaClassFinder] / [LeanJavaClassFinder] contract. All the state that is
+ * specific to a single concern lives on the corresponding collaborator.
  */
 class JavaClassFinderOverAstImpl internal constructor(
     private val session: FirSession,
@@ -60,11 +58,6 @@ class JavaClassFinderOverAstImpl internal constructor(
 
     private val classCache = JavaClassCache(
         resolutionContextFactory = { tree -> JavaResolutionContext.create(tree, classFinder = this, session = session) },
-    )
-
-    private val supertypeGraph = JavaSupertypeGraph(
-        packageIndexer = packageIndexer,
-        classCache = classCache,
     )
 
     override fun isClassInIndex(classId: ClassId): Boolean {
@@ -124,9 +117,6 @@ class JavaClassFinderOverAstImpl internal constructor(
 
     override fun canComputeKnownClassNamesInPackage(): Boolean = true
 
-    override fun collectInheritedInnerClasses(classId: ClassId): Map<String, Set<ClassId>> =
-        supertypeGraph.collectInheritedInnerClasses(classId)
-
     // ---- Internal API used by JavaPackageOverAst ----
 
     internal fun getPackageAnnotations(packageFqName: FqName): List<JavaAnnotation> {
@@ -151,7 +141,4 @@ class JavaClassFinderOverAstImpl internal constructor(
 
     internal fun subPackagesOf(fqName: FqName): Collection<FqName> =
         packageIndexer.subPackagesOf(fqName)
-
-    override fun getDirectSupertypes(classId: ClassId): List<ClassId> =
-        supertypeGraph.getDirectSupertypes(classId)
 }
