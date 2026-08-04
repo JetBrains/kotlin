@@ -12,12 +12,16 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.processAllDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.LombokNames
@@ -31,10 +35,24 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         val lombokService = context.session.lombokService
-        val hasBuilder = lombokService.getBuilder(declaration.symbol) != null ||
-                lombokService.getSuperBuilder(declaration.symbol) != null
-        if (!hasBuilder) return
 
+        val classHasBuilder = lombokService.getBuilder(declaration.symbol) != null ||
+                lombokService.getSuperBuilder(declaration.symbol) != null
+        if (classHasBuilder) {
+            checkClassProperties(declaration, lombokService)
+        }
+
+        // `@SuperBuilder` only allows `TYPE` as a target, so only plain `@Builder` can land on a constructor.
+        declaration.processAllDeclarations(context.session) { symbol ->
+            val constructorSymbol = symbol as? FirConstructorSymbol ?: return@processAllDeclarations
+            if (lombokService.getBuilder(constructorSymbol) != null) {
+                checkConstructorParameters(constructorSymbol, lombokService)
+            }
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkClassProperties(declaration: FirRegularClass, lombokService: LombokService) {
         val declaredMemberScope = context.session.declaredMemberScope(declaration.symbol, memberRequiredPhase = null)
         declaredMemberScope.processAllProperties { variableSymbol ->
             val property = variableSymbol as? FirPropertySymbol ?: return@processAllProperties
@@ -62,26 +80,45 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
         }
     }
 
+    /**
+     * `@Builder.Default` is `@Target(FIELD)`, so it can never land on a bare constructor parameter
+     * (Kotlin's own annotation-target checker rejects that) — only `@Singular` (`@Target(FIELD, PARAMETER)`)
+     * is possible here. A parameter's own default value (`= expr`) is still flagged as ignored, the same
+     * way a plain property initializer is for a class-level `@Builder`.
+     */
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkSingular(property: FirPropertySymbol, singularAnnotation: FirAnnotation, lombokService: LombokService) {
+    private fun checkConstructorParameters(constructor: FirConstructorSymbol, lombokService: LombokService) {
+        for (parameterSymbol in constructor.valueParameterSymbols) {
+            parameterSymbol.getAnnotationByClassId(LombokNames.SINGULAR_ID, context.session)?.let { singularAnnotation ->
+                checkSingular(parameterSymbol, singularAnnotation, lombokService)
+            }
+
+            parameterSymbol.defaultValueSource?.let { defaultValueSource ->
+                reporter.reportOn(defaultValueSource, LombokFirDiagnostics.BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION, context)
+            }
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkSingular(variable: FirVariableSymbol<*>, singularAnnotation: FirAnnotation, lombokService: LombokService) {
         val singular = ConeLombokAnnotations.Singular.extract(singularAnnotation, context.session)
         val source = singularAnnotation.source
 
         if (singular.singularName == null) {
             if (!lombokService.config.singularAuto) {
                 reporter.reportOn(source, LombokFirDiagnostics.SINGULAR_REQUIRES_EXPLICIT_NAME, context)
-            } else if (Singulars.autoSingularize(property.name.identifier) == null) {
+            } else if (Singulars.autoSingularize(variable.name.identifier) == null) {
                 reporter.reportOn(source, LombokFirDiagnostics.CANNOT_SINGULARIZE_NAME, context)
             }
         }
 
-        val classId = property.resolvedReturnType.classId
+        val classId = variable.resolvedReturnType.classId
         if (classId != null &&
             classId !in LombokNames.SUPPORTED_COLLECTION_IDS &&
             classId !in LombokNames.SUPPORTED_MAP_IDS &&
             classId !in LombokNames.SUPPORTED_TABLE_IDS
         ) {
-            reporter.reportOn(source, LombokFirDiagnostics.UNSUPPORTED_SINGULAR_TYPE, property.resolvedReturnType, context)
+            reporter.reportOn(source, LombokFirDiagnostics.UNSUPPORTED_SINGULAR_TYPE, variable.resolvedReturnType, context)
         }
     }
 

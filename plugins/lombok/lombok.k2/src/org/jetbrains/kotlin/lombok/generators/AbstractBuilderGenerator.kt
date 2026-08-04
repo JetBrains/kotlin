@@ -80,7 +80,23 @@ sealed class BuilderDeclarationType {
 
     sealed class Function : BuilderDeclarationType() {
         object Setter : Function()
-        object Build : Function()
+
+        /**
+         * [builderAnnStartOffset] links this generated `build()` to the exact entity constructor
+         * `@Builder` was placed on (needed because a class may have several `@Builder`-annotated secondary
+         * constructors/methods). It's `null` when `@Builder` annotated the class or a static factory
+         * function instead of a constructor, in which case the entity's primary/only constructor is
+         * unambiguous.
+         *
+         * The `@Builder` annotation *call*'s own start offset is captured here rather than, say, the
+         * annotated constructor's own offset — fir2ir re-anchors a constructor's IR `startOffset` to the
+         * `constructor` keyword (see `CONSTRUCTOR_KEYWORD_TOKENS` in `OffsetUtils.kt`), so it wouldn't
+         * match this FIR-side value. An annotation call gets no such special-casing — its IR `startOffset`
+         * is carried over from the `FirAnnotation`'s own source verbatim — so this is the offset guaranteed
+         * to line up between the value captured here and the corresponding `@Builder` annotation read back
+         * off the generated `IrConstructor` in IR.
+         */
+        class Build(val builderAnnStartOffset: Int?) : Function()
         object Builder : Function()
         object ToBuilder : Function()
     }
@@ -159,7 +175,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
         return buildSet {
-            if (isCompanionNeeded(classSymbol, context) && getBuilder(classSymbol) != null) {
+            if (isCompanionNeeded(classSymbol, context) && builderWithDeclarationsCache.getValue(classSymbol) != null) {
                 add(DEFAULT_NAME_FOR_COMPANION_OBJECT)
             }
 
@@ -204,7 +220,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         context: NestedClassGenerationContext,
     ): FirClassLikeSymbol<*>? {
         if (name == DEFAULT_NAME_FOR_COMPANION_OBJECT) {
-            return getBuilder(owner)?.let { BuilderGeneratorKey(BuilderDeclarationType.Class.Companion) }?.let { createCompanionObject(owner, it).symbol }
+            return builderWithDeclarationsCache.getValue(owner)?.let { BuilderGeneratorKey(BuilderDeclarationType.Class.Companion) }
+                ?.let { createCompanionObject(owner, it).symbol }
         }
 
         return builderClassesCache.getValue(BuilderKey(owner, name))

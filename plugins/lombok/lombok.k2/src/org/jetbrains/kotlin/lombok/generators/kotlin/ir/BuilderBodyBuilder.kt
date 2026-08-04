@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.findDeclaration
+import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
 import org.jetbrains.kotlin.ir.util.isNullable
@@ -58,7 +59,7 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         val builderFunctionType = key.type as? BuilderDeclarationType.Function ?: return
         when (builderFunctionType) {
             BuilderDeclarationType.Function.Setter -> buildSetter(declaration, regularParameters.single())
-            BuilderDeclarationType.Function.Build -> buildBuildMethod(declaration)
+            is BuilderDeclarationType.Function.Build -> buildBuildMethod(declaration, builderFunctionType.builderAnnStartOffset)
             BuilderDeclarationType.Function.Builder -> buildBuilderFactory(declaration)
             BuilderDeclarationType.Function.ToBuilder -> buildToBuilder(declaration)
             is BuilderDeclarationType.SingularFunction -> {
@@ -103,11 +104,11 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
      * builder setter call or from its own default — rather than re-reading a possibly-unset builder field.
      */
     @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun IrBlockBodyBuilder.buildBuildMethod(declaration: IrSimpleFunction) {
+    private fun IrBlockBodyBuilder.buildBuildMethod(declaration: IrSimpleFunction, builderAnnStartOffset: Int?) {
         val builderClass = declaration.parent as IrClass
         val thisParameter = declaration.dispatchReceiverParameter!!
         val entityClass = declaration.returnType.classOrNull!!.owner
-        val constructor = entityClass.builderConstructor()
+        val constructor = entityClass.entityConstructorFor(builderAnnStartOffset)
         val singularFieldNames = builderClass.singularFieldNames()
         val regularParameters = constructor.parameters.filter { it.kind == IrParameterKind.Regular }
 
@@ -648,6 +649,22 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrClass.builderConstructor(): IrConstructor =
         primaryConstructor ?: constructors.first()
+
+    /**
+     * The entity constructor this builder's [build] should invoke. `@Builder` may annotate a
+     * secondary constructor/method instead of the class/primary constructor, so the primary-or-first
+     * fallback isn't always correct; [builderAnnStartOffset] (from [BuilderDeclarationType.Function.Build])
+     * pins down exactly which one by matching against the start offset of that same
+     * constructor's own `@Builder` annotation call, read back here off its IR annotations.
+     */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrClass.entityConstructorFor(builderAnnStartOffset: Int?): IrConstructor {
+        return constructors.firstOrNull { constructor ->
+            constructor.getAnnotation(LombokNames.BUILDER)?.let {
+                it.startOffset == builderAnnStartOffset
+            } ?: false
+        } ?: builderConstructor()
+    }
 
     /**
      * Builds `constructor(...)` for the value this function returns, i.e. the entity in `build` or the
