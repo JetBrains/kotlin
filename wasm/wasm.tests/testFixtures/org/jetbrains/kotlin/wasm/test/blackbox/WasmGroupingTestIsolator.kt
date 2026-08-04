@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.test.blackbox
 
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -14,12 +15,16 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.GroupingTestIsolator
 import org.jetbrains.kotlin.test.model.GroupingTestIsolator.BatchToken.Custom
+import org.jetbrains.kotlin.test.services.IrCheckersDisabledByTestDirectives
+import org.jetbrains.kotlin.test.services.IrCheckersEnabledByTestDirectives
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
     override val directiveContainers: List<DirectivesContainer>
@@ -78,6 +83,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         val specificTokens = listOfNotNull(
             computeEHToken(moduleStructure),
             computeLanguageSettingsToken(moduleStructure),
+            computeToggledCheckersToken(moduleStructure.allDirectives),
         )
         return when (specificTokens.size) {
             0 -> BatchToken.Regular
@@ -114,6 +120,19 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         }
 
         return BatchToken.Custom("Lang settings: $languageFeatures, $optIns, $apiVersion, $languageVersion, $returnValueCheckerMode, progressive=$progressiveMode")
+    }
+
+    private fun computeToggledCheckersToken(registeredDirectives: RegisteredDirectives): ToggledCheckersToken? =
+        registeredDirectives.collectToggledCheckers().let { [additional, disabled] -> additional + disabled }
+            .ifNotEmpty { ToggledCheckersToken(this) }
+
+    private fun RegisteredDirectives.collectToggledCheckers(): Pair<Set<String>, Set<String>> {
+        val additionalCheckers = IrCheckersEnabledByTestDirectives.filter { it.key in this }.values.toSet()
+        val disabledIrCheckers = IrCheckersDisabledByTestDirectives.filter { dir ->
+            this[dir.key].any { it == TargetBackend.ANY || it.isTransitivelyCompatibleWith(TargetBackend.WASM) }
+        }.values.toSet()
+
+        return additionalCheckers to disabledIrCheckers
     }
 }
 

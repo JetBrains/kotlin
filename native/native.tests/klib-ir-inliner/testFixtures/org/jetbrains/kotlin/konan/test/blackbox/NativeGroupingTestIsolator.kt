@@ -83,6 +83,4 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
     private val packageKotlinInternalRegex = Regex("package\\s${StandardNames.KOTLIN_INTERNAL_FQ_NAME}")
 
     private data class FreeCompilerArgsToken(val freeArgs: Set<String>) : BatchToken()
-
-    private data class ToggledCheckersToken(val toggledCheckers: Set<String>) : BatchToken()
 }

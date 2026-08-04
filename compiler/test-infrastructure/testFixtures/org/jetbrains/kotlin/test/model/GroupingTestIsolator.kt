@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.test.model
 
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -35,4 +37,6 @@ abstract class GroupingTestIsolator(val testServices: TestServices, val affectsF
             }
         }
     }
+
+    protected data class ToggledCheckersToken(val toggledCheckers: Set<String>) : BatchToken()
 }
