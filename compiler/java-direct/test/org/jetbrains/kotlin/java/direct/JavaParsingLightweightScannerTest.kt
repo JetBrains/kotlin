@@ -10,7 +10,11 @@ import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertNotNull
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.writeText
@@ -213,6 +217,49 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
         assert("MyAnnotation" in info.topLevelClassNames) {
             "Expected MyAnnotation in class names, got ${info.topLevelClassNames}"
         }
+    }
+
+    @Test
+    fun testLightweightScannerToleratesUnbalancedClosingBrace(@TempDir tempDir: Path) {
+        // An unmatched `}` must not shift the remaining declarations out of the top-level frame:
+        // without clamping, `Foo` is missed and the file is dropped from the index entirely.
+        val file = tempDir.resolve("Foo.java")
+        file.writeText(
+            """
+            package com.example;
+
+            class Broken {
+            }
+            }
+
+            public class Foo {}
+        """.trimIndent()
+        )
+
+        val info = extractFileInfoLightweight(file.toFile())
+        assertNotNull(info)
+        assertEquals("com.example", info.packageName)
+        assertEquals(setOf("Broken", "Foo"), info.topLevelClassNames)
+    }
+
+    @Test
+    fun testLightweightScannerToleratesUnbalancedClosingParenthesis(@TempDir tempDir: Path) {
+        val file = tempDir.resolve("Foo.java")
+        file.writeText(
+            """
+            package com.example;
+
+            public class Foo {
+                void m() { f(1)); }
+            }
+
+            class Bar {}
+        """.trimIndent()
+        )
+
+        val info = extractFileInfoLightweight(file.toFile())
+        assertNotNull(info)
+        assertEquals(setOf("Foo", "Bar"), info.topLevelClassNames)
     }
 
     @Test

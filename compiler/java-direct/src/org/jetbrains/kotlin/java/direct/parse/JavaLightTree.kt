@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.java.direct.parse
 
+import com.intellij.java.syntax.JavaSyntaxDefinition
 import com.intellij.lang.LighterASTNode
 import com.intellij.platform.syntax.SyntaxElementType
 import com.intellij.platform.syntax.element.SyntaxTokenTypes
@@ -316,15 +317,9 @@ private fun buildCompositeAndTokenIndices(
 }
 
 /**
- * Pass 2 of [buildJavaLightTree]. Precomputes the children list for every composite node plus
- * the synthetic root. Whitespace tokens are excluded from children — they are never matched
- * positively by any caller (always filtered out), so including them only inflates children
- * lists and wastes `getType()` calls during `findChildByType` / `getChildrenByType` scans.
- *
- * The same buildChildrenFor helper covers both regular composites (`startIdx >= 0`) and the
- * synthetic root (`startIdx = -1`); buildChildrenFor's starting `i = startIdx + 1` naturally
- * becomes `i = 0` for root, and the `slot = if (startIdx < 0) rootIndex else startIdx` guard
- * selects the right output slot.
+ * Pass 2 of [buildJavaLightTree]: precompute children for each composite and the synthetic root.
+ * Drops whitespace and bad-character tokens everywhere; drops comments only under the synthetic
+ * root so declaration `DOC_COMMENT` children remain available for `isDeprecatedInJavaDoc`.
  */
 private fun buildChildrenIndex(
     productionMarkers: ProductionMarkerList,
@@ -336,20 +331,23 @@ private fun buildChildrenIndex(
     childrenByIndex: Array<List<JavaLightNode>>,
     emptyChildren: List<JavaLightNode>,
 ) {
-    fun isIncludedToken(t: Int): Boolean {
+    fun isIncludedToken(t: Int, isRoot: Boolean): Boolean {
         val type = tokens.getTokenType(t) ?: return false
         if (tokens.getTokenStart(t) == tokens.getTokenEnd(t)) return false
         if (type === SyntaxTokenTypes.WHITE_SPACE) return false
+        if (type === SyntaxTokenTypes.BAD_CHARACTER) return false
+        if (isRoot && type in JavaSyntaxDefinition.comments) return false
         return true
     }
 
-    fun addTokensInRange(childIndices: ArrayList<Int>, from: Int, to: Int) {
+    fun addTokensInRange(childIndices: ArrayList<Int>, from: Int, to: Int, isRoot: Boolean) {
         for (t in from until to) {
-            if (isIncludedToken(t)) childIndices.add(-(t + 1))
+            if (isIncludedToken(t, isRoot)) childIndices.add(-(t + 1))
         }
     }
 
     fun buildChildrenFor(startIdx: Int, doneIdx: Int, firstTokenIndex: Int, lastTokenIndex: Int) {
+        val isRoot = startIdx < 0
         val childIndices = ArrayList<Int>(8)
 
         var prevTokenIndex = firstTokenIndex
@@ -357,13 +355,13 @@ private fun buildChildrenIndex(
         while (i < doneIdx) {
             if (errorFlags[i]) {
                 val errTokenStart = productionMarkers.getMarker(i).getStartTokenIndex()
-                addTokensInRange(childIndices, prevTokenIndex, errTokenStart)
+                addTokensInRange(childIndices, prevTokenIndex, errTokenStart, isRoot)
                 childIndices.add(i)
                 prevTokenIndex = errTokenStart
                 i++
             } else if (!productionMarkers.isDoneMarker(i)) {
                 val childStartToken = productionMarkers.getMarker(i).getStartTokenIndex()
-                addTokensInRange(childIndices, prevTokenIndex, childStartToken)
+                addTokensInRange(childIndices, prevTokenIndex, childStartToken, isRoot)
                 childIndices.add(i)
                 val childDone = doneForStart[i]
                 prevTokenIndex = productionMarkers.getMarker(childDone).getEndTokenIndex()
@@ -372,7 +370,7 @@ private fun buildChildrenIndex(
                 i++
             }
         }
-        addTokensInRange(childIndices, prevTokenIndex, lastTokenIndex)
+        addTokensInRange(childIndices, prevTokenIndex, lastTokenIndex, isRoot)
 
         val slot = if (startIdx < 0) rootIndex else startIdx
         childrenByIndex[slot] = if (childIndices.isEmpty()) emptyChildren
