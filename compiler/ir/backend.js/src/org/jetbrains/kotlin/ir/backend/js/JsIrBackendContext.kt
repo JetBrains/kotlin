@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
@@ -50,7 +49,7 @@ class JsIrBackendContext(
 ) : JsCommonBackendContext {
     val phaseConfig = configuration.phaseConfig ?: PhaseConfig()
 
-    val polyfills = JsPolyfills()
+    val polyfills = JsPolyfills(configuration)
     val globalIrInterner = IrInterningService()
 
     val minimizedNameGenerator: MinimizedNameGenerator =
