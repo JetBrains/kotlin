@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
-import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
+import org.jetbrains.kotlin.java.direct.util.readJavaSourceFileText
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -31,7 +31,6 @@ import kotlin.contracts.contract
  * Java type parameters by object identity.
  */
 internal class JavaClassCache(
-    private val sourceFileReader: JavaSourceFileReader,
     private val resolutionContextFactory: (JavaLightTree) -> JavaResolutionContext,
 ) {
     private val classCache: MutableMap<ClassId, JavaClass> = ConcurrentHashMap()
@@ -54,7 +53,7 @@ internal class JavaClassCache(
         val classId = ClassId(fileEntry.packageFqName, FqName(simpleName), isLocal = false)
         classCache[classId]?.let { return it as? JavaClassOverAst }
 
-        val source = sourceFileReader.readFileContent(fileEntry.file) ?: return null
+        val source = readJavaSourceFileText(fileEntry.file) ?: return null
         val tree = parseJavaToLightTree(source, 0)
         val root = tree.getRoot()
         val resolutionContext = resolutionContextFactory(tree)

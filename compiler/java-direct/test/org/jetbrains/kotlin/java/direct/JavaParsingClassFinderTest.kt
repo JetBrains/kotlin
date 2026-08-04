@@ -49,7 +49,7 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         )
 
         // Create JavaClassFinder with this source root
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
         // Test package with classes - should return class names
         val comExampleClasses = finder.knownClassNamesInPackage(FqName("com.example"))
@@ -86,7 +86,7 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(helloFile.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(helloFile.toFile()))
 
         // Try to find example.Hello
         val classId = ClassId(
@@ -138,7 +138,7 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         )
 
         // Create class finder with tempDir as source root
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
         // Verify NotNull.java is indexed
         val annotationPackageClasses = finder.knownClassNamesInPackage(FqName("org.jetbrains.annotations"))
@@ -203,7 +203,7 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
         // Verify inherited inner class detection works cross-file
         val simpleDescId = ClassId(FqName("test"), Name.identifier("SimpleFunctionDescriptor"))
@@ -258,7 +258,7 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
         // Verify inherited inner class detection works cross-package
         val funcDescImplId = ClassId(FqName("base.impl"), Name.identifier("FunctionDescriptorImpl"))
@@ -290,7 +290,7 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
         // Access the class to populate cache (small files are already cached)
         val derivedId = ClassId(FqName("test"), Name.identifier("Derived"))
@@ -325,7 +325,7 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
         // Access both classes to populate cache
         val parentId = ClassId(FqName("test"), Name.identifier("Parent"))
@@ -354,7 +354,7 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
         // First lookup: Outer
         val outerId = ClassId(FqName("pkg"), Name.identifier("Outer"))
@@ -411,7 +411,7 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
         val subId = ClassId(FqName("pkg"), Name.identifier("Sub"))
         val sub = finder.findClass(JavaClassFinder.Request(subId)) as JavaClassOverAst
@@ -470,7 +470,7 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
         // Force D to be loaded so its supertype graph is built
         val dId = ClassId(FqName("pkg"), Name.identifier("D"))
@@ -516,7 +516,7 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
         val derivedId = ClassId(FqName("a"), Name.identifier("Derived"))
         finder.findClass(JavaClassFinder.Request(derivedId))
 
@@ -543,7 +543,7 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
         val targetId = ClassId(FqName("pkg"), Name.identifier("Target"))
         val direct = finder.findClass(JavaClassFinder.Request(targetId))
         assert(direct != null) { "Expected to find pkg.Target" }
@@ -571,7 +571,7 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         """.trimIndent()
         )
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
         // knownClassNamesInPackage should expose only "Main", not "Helper"
         val knownNames = finder.knownClassNamesInPackage(FqName("pkg"))

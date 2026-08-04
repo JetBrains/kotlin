@@ -37,12 +37,10 @@ import java.util.concurrent.ConcurrentHashMap
  *     ([JavaPackageIndexer.ensurePackageIndexed]).
  * @param classCache cache of already-parsed [org.jetbrains.kotlin.load.java.structure.JavaClass]
  *     instances (fast path, no I/O).
- * @param sourceFileReader reader used to fetch the text of a source file on the slow path.
  */
 internal class JavaSupertypeGraph(
     private val packageIndexer: JavaPackageIndexer,
     private val classCache: JavaClassCache,
-    private val sourceFileReader: JavaSourceFileReader,
 ) {
     // Cache: ClassId -> list of supertype ClassIds (direct only)
     private val supertypeCache: MutableMap<ClassId, List<ClassId>> = ConcurrentHashMap()
@@ -71,7 +69,7 @@ internal class JavaSupertypeGraph(
 
             // Slow path: reparse the file to extract supertype references.
             val file = packageIndexer.findFilesForClass(classId).firstOrNull()?.file ?: return@computeIfAbsent emptyList()
-            val source = sourceFileReader.readFileContent(file) ?: return@computeIfAbsent emptyList()
+            val source = readJavaSourceFileText(file) ?: return@computeIfAbsent emptyList()
             val tree = parseJavaToLightTree(source, 0)
             val root = tree.getRoot()
 
@@ -142,7 +140,7 @@ internal class JavaSupertypeGraph(
 
         // Slow path: reparse for inner class names.
         val file = packageIndexer.findFilesForClass(classId).firstOrNull()?.file ?: return emptySet()
-        val source = sourceFileReader.readFileContent(file) ?: return emptySet()
+        val source = readJavaSourceFileText(file) ?: return emptySet()
         val tree = parseJavaToLightTree(source, 0)
         val root = tree.getRoot()
 
