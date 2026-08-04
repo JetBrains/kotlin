@@ -37,6 +37,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-gradle-plugin-annotations",
     ":kotlin-gradle-plugin-idea",
     ":kotlin-gradle-plugin-idea-proto",
+    ":kotlin-import-models",
     ":kotlin-gradle-plugin",
     ":kotlin-tooling-metadata",
     ":kotlin-tooling-core",
