@@ -9,22 +9,45 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.FutureTask
 
-internal val Project.kotlinGradleTaskExecutionCache: Provider<KotlinGradleTaskExecutionCache>
-    get() = gradle.registerClassLoaderScopedBuildService(KotlinGradleTaskExecutionCache::class)
+internal val Project.kotlinGradleTaskExecutionCache: Provider<out KotlinGradleTaskExecutionCache>
+    get() {
+        val metricsFile = kotlinPropertiesProvider.taskExecutionCacheMetricsFile
+        return if (metricsFile == null) {
+            gradle.registerClassLoaderScopedBuildService(DefaultKotlinGradleTaskExecutionCache::class)
+        } else {
+            gradle.registerClassLoaderScopedBuildService(KotlinGradleTaskExecutionCacheWithMetrics::class) {
+                it.parameters.metricsOutputFile.set(rootDir.resolve(metricsFile))
+            }
+        }
+    }
 
 /**
- * Build service that can be used to memoize computation results between different task instances build-wide.
+ * Cache that can be used to memoize computation results between different task instances build-wide.
  * i.e. all subprojects can store and access shared instances in this storage service.
  */
-internal abstract class KotlinGradleTaskExecutionCache : BuildService<BuildServiceParameters.None> {
+internal interface KotlinGradleTaskExecutionCache {
+    fun <V> getOrCompute(
+        key: String,
+        compute: () -> V
+    ): V
+}
+
+/**
+ * Default [KotlinGradleTaskExecutionCache] implementation: a plain build service around
+ * [KotlinConcurrentGetOrComputeStorage] with no bookkeeping on top of it.
+ */
+internal abstract class DefaultKotlinGradleTaskExecutionCache :
+    KotlinGradleTaskExecutionCache,
+    BuildService<BuildServiceParameters.None> {
     private val storage = KotlinConcurrentGetOrComputeStorage()
 
-    fun <V> getOrCompute(
+    override fun <V> getOrCompute(
         key: String,
         compute: () -> V
     ): V = storage.getOrCompute(key, compute)
@@ -40,6 +63,23 @@ private val computingOnThread = ThreadLocal.withInitial { false }
  */
 internal class KotlinConcurrentGetOrComputeStorage {
     private val hashMap = ConcurrentHashMap<String, FutureTask<*>>()
+
+    /**
+     * Returns the values computed so far, for reporting purposes.
+     *
+     * Entries whose computation has failed are skipped: the failure is already propagated to whoever
+     * requested the value, and reporting must not fail the build on top of that.
+     */
+    fun snapshotCacheEntries(): Map<String, Any?> = buildMap {
+        hashMap.forEach { (key, task) ->
+            val value = try {
+                task.get()
+            } catch (_: ExecutionException) {
+                return@forEach
+            }
+            put(key, value)
+        }
+    }
 
     /**
      * Gets existing value by [key] or computes new one using [compute].
