@@ -85,13 +85,23 @@ public final class PropertyDeclarationKt : java/lang/Object {
     }
 
     public final static java.lang.String getM() {
-          ACONST_NULL
-          ATHROW
+          ICONST_0
+          ISTORE (0)
+        LABEL (L0)
+        LINENUMBER (41)
+          LDC (M)
+          ARETURN
+        LABEL (L1)
     }
 
     public final static java.lang.String getN() {
-          ACONST_NULL
-          ATHROW
+          ICONST_0
+          ISTORE (0)
+        LABEL (L0)
+        LINENUMBER (43)
+          LDC (N)
+          ARETURN
+        LABEL (L1)
     }
 
     private final static java.lang.String h_delegate$lambda$0() {

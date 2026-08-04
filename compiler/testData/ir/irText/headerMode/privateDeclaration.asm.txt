@@ -225,23 +225,58 @@ public final class TestClass : java/lang/Object {
 
     private final void privateBrokenChainStart() {
         LABEL (L0)
-          ACONST_NULL
-          ATHROW
+          ICONST_0
+          ISTORE (1)
         LABEL (L1)
+        LINENUMBER (101)
+          ALOAD (0)
+          INVOKESPECIAL (TestClass, privateNonInlineMiddle, ()V)
+        LABEL (L2)
+        LINENUMBER (102)
+          RETURN
+        LABEL (L3)
     }
 
     private final void privateInlineChainMiddle() {
         LABEL (L0)
-          ACONST_NULL
-          ATHROW
+          ICONST_0
+          ISTORE (1)
         LABEL (L1)
+        LINENUMBER (88)
+          NEW (TestClass$InlineChain)
+          DUP
+          INVOKESPECIAL (TestClass$InlineChain, <init>, ()V)
+          INVOKEVIRTUAL (TestClass$InlineChain, used, ()V)
+        LABEL (L2)
+        LINENUMBER (89)
+          RETURN
+        LABEL (L3)
     }
 
     private final void privateInlineChainStart() {
         LABEL (L0)
-          ACONST_NULL
-          ATHROW
+          ICONST_0
+          ISTORE (1)
         LABEL (L1)
+        LINENUMBER (91)
+          ALOAD (0)
+          ASTORE (2)
+        LABEL (L2)
+          ICONST_0
+          ISTORE (3)
+        LABEL (L3)
+        LINENUMBER (112)
+          NEW (TestClass$InlineChain)
+          DUP
+          INVOKESPECIAL (TestClass$InlineChain, <init>, ()V)
+          INVOKEVIRTUAL (TestClass$InlineChain, used, ()V)
+        LABEL (L4)
+        LINENUMBER (113)
+          NOP
+        LABEL (L5)
+        LINENUMBER (92)
+          RETURN
+        LABEL (L6)
     }
 
     private final void privateNonInlineMiddle() {
@@ -274,16 +309,36 @@ public final class TestClass : java/lang/Object {
 
     public final void useMixed() {
         LABEL (L0)
-          ACONST_NULL
-          ATHROW
+          ICONST_0
+          ISTORE (1)
         LABEL (L1)
+        LINENUMBER (71)
+          NEW (TestClass$MixedClass)
+          DUP
+          INVOKESPECIAL (TestClass$MixedClass, <init>, ()V)
+          INVOKEVIRTUAL (TestClass$MixedClass, used, ()V)
+        LABEL (L2)
+        LINENUMBER (72)
+          INVOKESTATIC (TestClass, access$getMixedCompanion$p, ()LTestClass$MixedCompanion;)
+          INVOKEVIRTUAL (TestClass$MixedCompanion, used, ()V)
+        LABEL (L3)
+        LINENUMBER (73)
+          RETURN
+        LABEL (L4)
     }
 
     public final void useNestedMixed() {
         LABEL (L0)
-          ACONST_NULL
-          ATHROW
+          ICONST_0
+          ISTORE (1)
         LABEL (L1)
+        LINENUMBER (81)
+          NEW (TestClass$NestedMixedOuter$Nested)
+          DUP
+          INVOKESPECIAL (TestClass$NestedMixedOuter$Nested, <init>, ()V)
+          INVOKEVIRTUAL (TestClass$NestedMixedOuter$Nested, used, ()V)
+          RETURN
+        LABEL (L2)
     }
 
     private final void usedByInline() {
@@ -295,29 +350,59 @@ public final class TestClass : java/lang/Object {
 
     public final void witnessForCompanion() {
         LABEL (L0)
-          ACONST_NULL
-          ATHROW
+          ICONST_0
+          ISTORE (1)
         LABEL (L1)
+        LINENUMBER (49)
+          INVOKESTATIC (TestClass, access$getUsedByInlineCompanion$p, ()LTestClass$UsedByInlineCompanion;)
+          INVOKEVIRTUAL (TestClass$UsedByInlineCompanion, companionFun, ()V)
+        LABEL (L2)
+        LINENUMBER (50)
+          RETURN
+        LABEL (L3)
     }
 
     public final void witnessForField() {
         LABEL (L0)
-          ACONST_NULL
-          ATHROW
+          ICONST_0
+          ISTORE (1)
         LABEL (L1)
+        LINENUMBER (37)
+          ALOAD (0)
+          BIPUSH (42)
+          INVOKESTATIC (TestClass, access$setUsedBackingFieldByInline$p, (LTestClass;I)V)
+        LABEL (L2)
+        LINENUMBER (38)
+          RETURN
+        LABEL (L3)
     }
 
     public final void witnessForFunction() {
         LABEL (L0)
-          ACONST_NULL
-          ATHROW
+          ICONST_0
+          ISTORE (1)
         LABEL (L1)
+        LINENUMBER (42)
+          ALOAD (0)
+          INVOKESTATIC (TestClass, access$usedByInline, (LTestClass;)V)
+        LABEL (L2)
+        LINENUMBER (43)
+          RETURN
+        LABEL (L3)
     }
 
     public final void witnessForProperty() {
         LABEL (L0)
-          ACONST_NULL
-          ATHROW
+          ICONST_0
+          ISTORE (1)
         LABEL (L1)
+        LINENUMBER (32)
+          ALOAD (0)
+          INVOKESTATIC (TestClass, access$getUsedPropertyByInline$p, (LTestClass;)Ljava/lang/String;)
+          ASTORE (2)
+        LABEL (L2)
+        LINENUMBER (33)
+          RETURN
+        LABEL (L3)
     }
 }

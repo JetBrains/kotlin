@@ -1,7 +1,28 @@
+public final class FunctionDeclarationKt$funG$classA : java/lang/Object {
+    public void <init>() {
+        LABEL (L0)
+        LINENUMBER (42)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public final java.lang.String funH() {
+        LABEL (L0)
+        LINENUMBER (43)
+          LDC (funH body)
+          ARETURN
+        LABEL (L1)
+    }
+}
+
 public final class FunctionDeclarationKt : java/lang/Object {
     public final static java.lang.String access$funE$funF() {
-          ACONST_NULL
-          ATHROW
+        LABEL (L0)
+        LINENUMBER (1)
+          INVOKESTATIC (FunctionDeclarationKt, funE$funF, ()Ljava/lang/String;)
+          ARETURN
     }
 
     public final static java.lang.String funA() {
@@ -10,8 +31,13 @@ public final class FunctionDeclarationKt : java/lang/Object {
     }
 
     public final static java.lang.String funB() {
-          ACONST_NULL
-          ATHROW
+          ICONST_0
+          ISTORE (0)
+        LABEL (L0)
+        LINENUMBER (12)
+          LDC (funB body)
+          ARETURN
+        LABEL (L1)
     }
 
     public final static int funD() {
@@ -20,18 +46,37 @@ public final class FunctionDeclarationKt : java/lang/Object {
     }
 
     public final static java.lang.String funE() {
-          ACONST_NULL
-          ATHROW
+          ICONST_0
+          ISTORE (0)
+        LABEL (L0)
+        LINENUMBER (37)
+          INVOKESTATIC (FunctionDeclarationKt, access$funE$funF, ()Ljava/lang/String;)
+          ARETURN
+        LABEL (L1)
     }
 
     private final static java.lang.String funE$funF() {
-          ACONST_NULL
-          ATHROW
+        LABEL (L0)
+        LINENUMBER (35)
+          LDC (funF body)
+          ARETURN
     }
 
     public final static java.lang.String funG() {
-          ACONST_NULL
-          ATHROW
+          ICONST_0
+          ISTORE (0)
+        LABEL (L0)
+        LINENUMBER (45)
+          NEW (FunctionDeclarationKt$funG$classA)
+          DUP
+          INVOKESPECIAL (FunctionDeclarationKt$funG$classA, <init>, ()V)
+          ASTORE (1)
+        LABEL (L1)
+        LINENUMBER (46)
+          ALOAD (1)
+          INVOKEVIRTUAL (FunctionDeclarationKt$funG$classA, funH, ()Ljava/lang/String;)
+          ARETURN
+        LABEL (L2)
     }
 
     public final static int funI() {
