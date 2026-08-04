@@ -237,6 +237,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveSymbolByFileTestGenerate
   }
 
   @Test
+  @TestMetadata("localLookupSafeQualifiedExpression.kt")
+  public void testLocalLookupSafeQualifiedExpression() {
+    run("localLookupSafeQualifiedExpression.kt");
+  }
+
+  @Test
   @TestMetadata("multiEquals.kt")
   public void testMultiEquals() {
     run("multiEquals.kt");
