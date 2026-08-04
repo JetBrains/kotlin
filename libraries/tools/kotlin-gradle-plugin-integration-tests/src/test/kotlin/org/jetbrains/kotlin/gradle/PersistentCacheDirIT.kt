@@ -15,13 +15,11 @@ import org.jetbrains.kotlin.gradle.testbase.buildScriptBuildscriptBlockInjection
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.projectPersistentCache
-import org.jetbrains.kotlin.gradle.testbase.settingsBuildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.source
 import org.jetbrains.kotlin.gradle.testbase.transferPluginRepositoriesIntoBuildScript
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
@@ -38,7 +36,6 @@ class PersistentCacheDirIT : KGPBaseTest() {
         project("empty", gradleVersion) {
             configureMultiModuleJvmProject(
                 kotlinProjectPersistentDir = null,
-                kotlinVersion = defaultBuildOptions.kotlinVersion,
             )
 
             build(":app:compileKotlin")
@@ -54,7 +51,6 @@ class PersistentCacheDirIT : KGPBaseTest() {
             val persistentDir = "custom-kotlin-persistent-dir"
             configureMultiModuleJvmProject(
                 kotlinProjectPersistentDir = persistentDir,
-                kotlinVersion = defaultBuildOptions.kotlinVersion,
             )
 
             build(":app:compileKotlin")
@@ -70,7 +66,6 @@ class PersistentCacheDirIT : KGPBaseTest() {
             val persistentDir = projectPath.parent.resolve("absolute-kotlin-persistent-dir")
             configureMultiModuleJvmProject(
                 kotlinProjectPersistentDir = persistentDir.pathString,
-                kotlinVersion = defaultBuildOptions.kotlinVersion,
             )
 
             build(":app:compileKotlin")
@@ -86,7 +81,6 @@ class PersistentCacheDirIT : KGPBaseTest() {
             val persistentDir = "../relative-outside-kotlin-persistent-dir"
             configureMultiModuleJvmProject(
                 kotlinProjectPersistentDir = persistentDir,
-                kotlinVersion = defaultBuildOptions.kotlinVersion,
             )
 
             build(":app:compileKotlin")
@@ -101,7 +95,6 @@ class PersistentCacheDirIT : KGPBaseTest() {
         project("empty", gradleVersion) {
             configureMultiModuleJvmProject(
                 kotlinProjectPersistentDir = "~/.kotlin-project-persistent-dir",
-                kotlinVersion = defaultBuildOptions.kotlinVersion,
             )
 
             build(":app:compileKotlin")
@@ -112,7 +105,6 @@ class PersistentCacheDirIT : KGPBaseTest() {
 
     private fun TestProject.configureMultiModuleJvmProject(
         kotlinProjectPersistentDir: String?,
-        kotlinVersion: String,
     ) {
         if (kotlinProjectPersistentDir != null) {
             gradleProperties.writeText(
@@ -123,44 +115,29 @@ class PersistentCacheDirIT : KGPBaseTest() {
             )
         }
 
-        settingsBuildScriptInjection {
-            settings.include(":lib", ":app")
-        }
-
         transferPluginRepositoriesIntoBuildScript()
+
+        val kotlinVersion = buildOptions.kotlinVersion
         buildScriptBuildscriptBlockInjection {
             buildscript.configurations.getByName("classpath").dependencies.add(
                 buildscript.dependencies.create("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
             )
         }
 
-        listOf("lib", "app").forEach { subprojectName ->
-            val subproject = projectPath.resolve(subprojectName)
-            subproject.source("build.gradle") { "" }
-            subproject.createDirectories()
-            subproject.resolve("src/main/kotlin").createDirectories()
-
-            subProject(subprojectName).buildScriptInjection {
+        includeOtherProjectAsSubmodule("empty", newSubmoduleName = "lib") {
+            buildScriptInjection {
                 project.plugins.apply("org.jetbrains.kotlin.jvm")
-                if (subprojectName == "app") {
-                    project.dependencies.add("implementation", project.dependencies.project(mapOf("path" to ":lib")))
-                }
             }
+            kotlinSourcesDir().source("Lib.kt") { """fun lib(): String = "lib"""" }
         }
 
-        projectPath.resolve("lib/src/main/kotlin/Lib.kt").writeText(
-            """
-            fun lib(): String = "lib"
-            
-            """.trimIndent()
-        )
-
-        projectPath.resolve("app/src/main/kotlin/App.kt").writeText(
-            """
-            fun app(): String = lib()
-            
-            """.trimIndent()
-        )
+        includeOtherProjectAsSubmodule("empty", newSubmoduleName = "app") {
+            buildScriptInjection {
+                project.plugins.apply("org.jetbrains.kotlin.jvm")
+                project.dependencies.add("implementation", project.dependencies.project(mapOf("path" to ":lib")))
+            }
+            kotlinSourcesDir().source("App.kt") { """fun app(): String = lib()""" }
+        }
     }
 
     private fun assertKotlinPersistentDirCreated(persistentDir: Path) {
