@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.java.direct.util
 
-import com.intellij.openapi.vfs.VirtualFile
+import java.io.File
 
 /**
  * Lightweight (no-parse) source index helpers for Java source files.
@@ -74,42 +74,36 @@ private fun stripLineComments(line: String, inBlockComment: Boolean): Pair<Strin
  *
  * This is much cheaper than full parsing and is used for indexing large files.
  */
-internal fun extractFileInfoLightweight(file: VirtualFile, reader: JavaSourceFileReader): LightweightFileInfo? {
+internal fun extractFileInfoLightweight(file: File): LightweightFileInfo? {
     var packageName: String? = null
     val classNames = mutableSetOf<String>()
     var inBlockComment = false
     var braceDepth = 0
 
-    val lineReader = reader.openLineReader(file) ?: return null
-    lineReader.use { br ->
-        var rawLine = br.readLine()
-        while (rawLine != null) {
-            val [effective, stillInComment] = stripLineComments(rawLine, inBlockComment)
-            inBlockComment = stillInComment
+    file.forEachLine { rawLine ->
+        val [effective, stillInComment] = stripLineComments(rawLine, inBlockComment)
+        inBlockComment = stillInComment
 
-            if (effective.isNotBlank()) {
-                val depthBeforeLine = braceDepth
-                for (ch in effective) {
-                    when (ch) {
-                        '{' -> braceDepth++
-                        '}' -> braceDepth--
-                    }
-                }
-
-                if (packageName == null && depthBeforeLine == 0) {
-                    PACKAGE_REGEX.find(effective)?.let {
-                        packageName = it.groupValues[1]
-                    }
-                }
-
-                if (depthBeforeLine == 0) {
-                    for (match in DECLARATION_REGEX.findAll(effective)) {
-                        classNames.add(match.groupValues[2])
-                    }
+        if (effective.isNotBlank()) {
+            val depthBeforeLine = braceDepth
+            for (ch in effective) {
+                when (ch) {
+                    '{' -> braceDepth++
+                    '}' -> braceDepth--
                 }
             }
 
-            rawLine = br.readLine()
+            if (packageName == null && depthBeforeLine == 0) {
+                PACKAGE_REGEX.find(effective)?.let {
+                    packageName = it.groupValues[1]
+                }
+            }
+
+            if (depthBeforeLine == 0) {
+                for (match in DECLARATION_REGEX.findAll(effective)) {
+                    classNames.add(match.groupValues[2])
+                }
+            }
         }
     }
 

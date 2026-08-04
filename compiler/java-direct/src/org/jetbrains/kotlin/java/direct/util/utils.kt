@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.Name
+import java.io.File
 
 /**
  * Returns `true` if [node] has a `DOC_COMMENT` child containing the `@deprecated` javadoc tag.
@@ -64,3 +65,5 @@ fun findTopLevelClassNode(tree: JavaLightTree, root: JavaLightNode, name: Name):
     }
     return null
 }
+
+internal fun readJavaSourceFileText(file: File): String? = file.takeIf { it.isFile }?.readText()

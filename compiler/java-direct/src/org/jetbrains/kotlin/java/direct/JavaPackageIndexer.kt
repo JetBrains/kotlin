@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
 import org.jetbrains.kotlin.java.direct.util.extractFileInfoLightweight
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -18,9 +17,9 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * `packagePrefix` mirrors `org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot.packagePrefix`
  */
-internal data class JavaSourceRootEntry(val root: VirtualFile, val packagePrefix: FqName) {
+internal data class JavaSourceRootEntry(val root: File, val packagePrefix: FqName) {
     companion object {
-        fun fromRootsWithoutPrefix(roots: List<VirtualFile>): List<JavaSourceRootEntry> =
+        fun fromRootsWithoutPrefix(roots: List<File>): List<JavaSourceRootEntry> =
             roots.map { JavaSourceRootEntry(it, FqName.ROOT) }
     }
 }
@@ -29,7 +28,8 @@ internal data class JavaSourceRootEntry(val root: VirtualFile, val packagePrefix
  * Indexes `.java` files on source roots into a `package → className → files` map.
  *
  * Indexing is **lazy per-package**: [ensurePackageIndexed] navigates to the directory corresponding
- * to a package on demand via [VirtualFile.findChild] and scans only that directory's `.java` files.
+ * to a package on demand by descending into the on-disk child directories and scans only that
+ * directory's `.java` files.
  * Each package is indexed at most once (via [ConcurrentHashMap.computeIfAbsent]). File-type source
  * roots (considered rare) are indexed eagerly in the constructor.
  *
@@ -45,11 +45,10 @@ internal data class JavaSourceRootEntry(val root: VirtualFile, val packagePrefix
  */
 internal class JavaPackageIndexer(
     sourceRoots: List<JavaSourceRootEntry>,
-    private val sourceFileReader: JavaSourceFileReader,
     private val packageInfoIndexer: JavaPackageInfoIndexer,
 ) {
     internal data class FileEntry(
-        val file: VirtualFile,
+        val file: File,
         val packageFqName: FqName,
         val topLevelClassNames: Set<String>,
         val fileBaseName: String = file.name.removeSuffix(".java"),
@@ -68,7 +67,7 @@ internal class JavaPackageIndexer(
     // Inner maps are immutable after creation — built atomically inside computeIfAbsent.
     private val index: ConcurrentHashMap<FqName, Map<String, List<FileEntry>>> = ConcurrentHashMap()
 
-    private val packageDirectoryCache: ConcurrentHashMap<FqName, List<VirtualFile>> = ConcurrentHashMap()
+    private val packageDirectoryCache: ConcurrentHashMap<FqName, List<File>> = ConcurrentHashMap()
 
     init {
         val [fileRoots, dirRoots] = sourceRoots.partition { !it.root.isDirectory }
@@ -95,7 +94,7 @@ internal class JavaPackageIndexer(
         // full scan for cases when file path does not match package structure.
         for (dirRootEntry in dirRoots) {
             val dirRoot = dirRootEntry.root
-            for (file in dirRoot.children ?: continue) {
+            for (file in dirRoot.listFiles() ?: continue) {
                 if (file.isDirectory) continue
                 if (!file.name.endsWith(".java")) continue
                 if (file.name == "package-info.java") continue
@@ -113,13 +112,13 @@ internal class JavaPackageIndexer(
 
     /**
      * Returns the directories corresponding to [packageFqName] across all directory source roots.
-     * Navigates via [VirtualFile.findChild] chains (e.g. `root/"com"/"example"` for `com.example`).
-     * Honours each root's `packagePrefix`: if a root has prefix `com.intellij`, then a request for
-     * package `com.intellij.foo` descends to `<root>/foo`, and the root contributes nothing for any
-     * package that is not equal to or under that prefix.
+     * Navigates by descending one path segment at a time (e.g. `root/"com"/"example"` for
+     * `com.example`). Honours each root's `packagePrefix`: if a root has prefix `com.intellij`,
+     * then a request for package `com.intellij.foo` descends to `<root>/foo`, and the root
+     * contributes nothing for any package that is not equal to or under that prefix.
      * Results are cached — each package is resolved at most once.
      */
-    private fun findPackageDirectories(packageFqName: FqName): List<VirtualFile> {
+    private fun findPackageDirectories(packageFqName: FqName): List<File> {
         if (packageFqName.isRoot) {
             // Only roots without a packagePrefix expose the unqualified root package — a prefixed
             // root's disk top-level lives in `<prefix>`, not in `<root-package>`.
@@ -134,12 +133,7 @@ internal class JavaPackageIndexer(
                     !packageStartsWithOrEquals(it, prefix) -> return@mapNotNull null
                     else -> requestedSegments.drop(prefix.pathSegments().size)
                 }
-                var dir: VirtualFile = entry.root
-                for (segment in relativeSegments) {
-                    dir = dir.findChild(segment) ?: return@mapNotNull null
-                    if (!dir.isDirectory) return@mapNotNull null
-                }
-                dir
+                descendDirectoriesCaseSensitive(entry.root, relativeSegments)
             }
         }
     }
@@ -178,7 +172,7 @@ internal class JavaPackageIndexer(
         val classesByName = HashMap<String, MutableList<FileEntry>>()
 
         for (dir in dirs) {
-            val children = dir.children ?: continue
+            val children = dir.listFiles() ?: continue
             for (file in children) {
                 if (file.isDirectory) continue
                 if (!file.name.endsWith(".java")) continue
@@ -232,7 +226,7 @@ internal class JavaPackageIndexer(
      * (`import priv.members.check.*`) need this recognition for source parity: the binary half
      * only consults binary roots and cannot see the source-only ancestor packages.
      *
-     * Cheaper than [ensurePackageIndexed]: walks `findChild` chains and `fileRootIndex.keys`,
+     * Cheaper than [ensurePackageIndexed]: walks disk directory chains and `fileRootIndex.keys`,
      * never reads file contents.
      */
     fun containsPackage(packageFqName: FqName): Boolean {
@@ -304,18 +298,28 @@ internal class JavaPackageIndexer(
         return result
     }
 
-    private fun findPackageDirectoryUnder(root: VirtualFile, relativeSegments: List<String>): VirtualFile? {
-        var dir: VirtualFile = root
-        for (segment in relativeSegments) {
-            dir = dir.findChild(segment) ?: return null
-            if (!dir.isDirectory) return null
+    private fun findPackageDirectoryUnder(root: File, relativeSegments: List<String>): File? =
+        descendDirectoriesCaseSensitive(root, relativeSegments)
+
+    /**
+     * Case-sensitive directory walk: uses [File.list] name equality, not `File(dir, name).isDirectory`,
+     * which would incorrectly match on case-insensitive filesystems (e.g. `Logger` vs `logger`).
+     */
+    private fun descendDirectoriesCaseSensitive(root: File, segments: List<String>): File? {
+        var dir = root
+        for (segment in segments) {
+            val childNames = dir.list() ?: return null
+            if (segment !in childNames) return null
+            val child = File(dir, segment)
+            if (!child.isDirectory) return null
+            dir = child
         }
         return dir
     }
 
-    private fun addSubdirsAsSubPackages(dir: VirtualFile?, fqName: FqName, result: MutableSet<FqName>) {
+    private fun addSubdirsAsSubPackages(dir: File?, fqName: FqName, result: MutableSet<FqName>) {
         if (dir == null) return
-        val children = dir.children ?: return
+        val children = dir.listFiles() ?: return
         for (child in children) {
             if (child.isDirectory) {
                 result.add(fqName.child(Name.identifier(child.name)))
@@ -331,8 +335,8 @@ internal class JavaPackageIndexer(
      * [JavaClassCache]. When [expectedPackage] is non-null, files whose declared package does not
      * match are skipped (matching javac's directory-mirrors-package rule).
      */
-    private fun tryBuildFileEntry(file: VirtualFile, expectedPackage: FqName? = null): FileEntry? {
-        val info = extractFileInfoLightweight(file, sourceFileReader) ?: return null
+    private fun tryBuildFileEntry(file: File, expectedPackage: FqName? = null): FileEntry? {
+        val info = extractFileInfoLightweight(file) ?: return null
         val packageFqName = if (info.packageName != null) FqName(info.packageName) else FqName.ROOT
 
         if (expectedPackage != null && packageFqName != expectedPackage) return null
