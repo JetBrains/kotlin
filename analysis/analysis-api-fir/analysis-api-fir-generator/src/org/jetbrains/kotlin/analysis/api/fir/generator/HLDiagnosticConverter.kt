@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.ConeReceiverInfo
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
@@ -234,6 +235,10 @@ internal object FirToKtConversionCreator {
             "{0}?.let { firSymbolBuilder.typeBuilder.buildKtType(it) }",
             KaType::class.createType(nullable = true)
         ),
+        ConeReceiverInfo::class to HLFunctionCallConversion(
+            "{0}?.let { firSymbolBuilder.typeBuilder.buildKtType(it.type) }",
+            KaType::class.createType(nullable = true),
+        )
     )
 
     private val typeMapping: Map<KClass<*>, HLFunctionCallConversion> = mapOf(
@@ -374,6 +379,10 @@ internal object FirToKtConversionCreator {
             importsToAdd = listOf(
                 "org.jetbrains.kotlin.analysis.api.fir.components.toKaWhenMissingCase"
             )
+        ),
+        ConeReceiverInfo::class to HLFunctionCallConversion(
+            "firSymbolBuilder.typeBuilder.buildKtType({0}.type)",
+            KaType::class.createType(),
         )
     )
 

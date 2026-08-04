@@ -60,7 +60,6 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.resolve.calls.tower.shouldStopResolve
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -937,7 +936,7 @@ class FirCallResolver(
                             else -> ConeUnresolvedNameError(
                                 name = name,
                                 operatorToken = callInfo.operatorToken(),
-                                receiverType = explicitReceiver?.takeIf { it !is FirResolvedQualifier }?.resolvedType,
+                                receiverInfo = explicitReceiver?.takeIf { it !is FirResolvedQualifier }?.toReceiverInfo(),
                             )
                         }
                     }

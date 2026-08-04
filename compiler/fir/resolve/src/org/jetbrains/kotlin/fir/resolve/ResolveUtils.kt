@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.hasStableParameterNames
+import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -59,9 +60,11 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.model.anySuperTypeConstructor
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
@@ -807,6 +810,36 @@ fun createConeDiagnosticForCandidateWithError(
 internal fun CallInfo.operatorToken(): String? {
     return runIf(origin == FirFunctionCallOrigin.Operator) {
         OperatorNameConventions.TOKENS_BY_OPERATOR_NAME[name]
+    }
+}
+
+context(holder: SessionHolder)
+internal fun FirExpression.toReceiverInfo(): ConeReceiverInfo {
+    val simplifiedType = resolvedType.simplifyForReceiverInfo()
+    val couldBePositionalDestructuring = source?.kind == KtFakeSourceElementKind.DesugaredNameBasedDestructuring &&
+            // Best effort check: we simply check if the receiver is a data class.
+            // Custom component members and extensions are missed.
+            context(holder.session.typeContext) {
+                resolvedType.anySuperTypeConstructor { it.asCone().toRegularClassSymbol()?.isData == true }
+            }
+    return ConeReceiverInfo(simplifiedType, couldBePositionalDestructuring)
+}
+
+context(holder: SessionHolder)
+private fun ConeKotlinType.simplifyForReceiverInfo(): ConeKotlinType {
+    return when (this) {
+        is ConeFlexibleType -> lowerBound.simplifyForReceiverInfo()
+        is ConeDefinitelyNotNullType -> original.simplifyForReceiverInfo()
+        is ConeCapturedType -> constructor.supertypes?.map { it.simplifyForReceiverInfo() }
+            ?.let { ConeTypeIntersector.intersectTypes(holder.session.typeContext, it) }
+            ?: this
+        is ConeIntegerLiteralType -> getApproximatedType()
+        is ConeIntersectionType -> this
+        is ConeClassLikeTypeImpl -> this
+        is ConeTypeParameterType -> ConeTypeIntersector.intersectTypes(holder.session.typeContext, this.lookupTag.symbol.resolvedBounds.map { it.coneType })
+        is ConeErrorType -> this
+        is ConeStubTypeForTypeVariableInSubtyping -> this
+        is ConeTypeVariableType -> this
     }
 }
 

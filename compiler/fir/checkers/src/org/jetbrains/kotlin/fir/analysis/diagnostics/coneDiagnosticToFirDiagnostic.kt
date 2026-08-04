@@ -562,8 +562,7 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
 
     is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.classId.asString(), null, null, session)
     is ConeUnresolvedNameError -> {
-        val receiverClassLikeType = receiverType?.unwrapToSimpleTypeUsingLowerBound() as? ConeClassLikeType
-        FirErrors.UNRESOLVED_REFERENCE.createOn(source, name.asString(), operatorToken, receiverClassLikeType, session)
+        FirErrors.UNRESOLVED_REFERENCE.createOn(source, name.asString(), operatorToken, receiverInfo, session)
     }
     is ConeUnresolvedTypeQualifierError -> {
         when {
