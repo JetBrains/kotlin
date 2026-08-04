@@ -150,7 +150,7 @@ class MainKtsTest {
             assertSucceeded(res)
         }.lines()
 
-        Assert.assertEquals(listOf("Ok"), out)
+        assertEquals(listOf("Ok"), out)
     }
 
     @Test
