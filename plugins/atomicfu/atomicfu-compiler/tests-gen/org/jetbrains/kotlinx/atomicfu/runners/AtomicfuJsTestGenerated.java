@@ -72,6 +72,12 @@ public class AtomicfuJsTestGenerated extends AbstractAtomicfuJsTest {
     }
 
     @Test
+    @TestMetadata("InlineExtensionProperties.kt")
+    public void testInlineExtensionProperties() {
+      run("InlineExtensionProperties.kt");
+    }
+
+    @Test
     @TestMetadata("InlineExtensionWithTypeParameterTest.kt")
     public void testInlineExtensionWithTypeParameterTest() {
       run("InlineExtensionWithTypeParameterTest.kt");
@@ -265,6 +271,12 @@ public class AtomicfuJsTestGenerated extends AbstractAtomicfuJsTest {
     @TestMetadata("DelegatedCompanionProperties.kt")
     public void testDelegatedCompanionProperties() {
       run("DelegatedCompanionProperties.kt");
+    }
+
+    @Test
+    @TestMetadata("InlineExtensionProperties.kt")
+    public void testInlineExtensionProperties() {
+      run("InlineExtensionProperties.kt");
     }
   }
 
