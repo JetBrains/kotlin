@@ -38,9 +38,11 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactSideca
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactSidecarProtoCodec
 
 /**
- * Reconstruction helpers for the stateless [ClasspathBackedFirReplHistoryProvider]: turning a
- * prior snippet's wrapper [FirRegularClassSymbol] plus its embedded [SnippetArtifactSidecar] into
- * a [FirReplSnippetSymbol] view usable by the FIR REPL-snippet resolve/codegen extensions.
+ * Reconstruction helpers for the stateless [ClasspathBackedFirReplHistoryProvider].
+ *
+ * These turn a previous snippet's wrapper [FirRegularClassSymbol] plus its embedded
+ * [SnippetArtifactSidecar] into a [FirReplSnippetSymbol] view usable by the FIR REPL-snippet
+ * resolve and codegen extensions.
  */
 
 private val STATELESS_REPL_DEBUG_ENABLED: Boolean =
@@ -51,10 +53,11 @@ internal fun statelessReplDebug(message: String) {
 }
 
 /**
- * Decode the [SnippetArtifactSidecar] embedded in [classSymbol]'s `.kotlin_metadata` via the
- * generic `ProtoBuf.CompilerPluginData` channel (keyed by [REPL_SIDECAR_PLUGIN_ID]), or `null` if
- * the prior snippet's wrapper class carries no such payload (e.g. it was produced by a compiler
- * version that predates the metadata-embedding write side).
+ * Decodes the [SnippetArtifactSidecar] embedded in [classSymbol]'s `.kotlin_metadata` via the
+ * generic `ProtoBuf.CompilerPluginData` channel (keyed by [REPL_SIDECAR_PLUGIN_ID]).
+ *
+ * Returns `null` if the previous snippet's wrapper class carries no such payload, for example
+ * when it was produced by a compiler version that predates the metadata-embedding write side.
  */
 @OptIn(SymbolInternals::class)
 internal fun readEmbeddedSidecar(classSymbol: FirRegularClassSymbol): SnippetArtifactSidecar? {
@@ -68,9 +71,9 @@ internal fun readEmbeddedSidecar(classSymbol: FirRegularClassSymbol): SnippetArt
 }
 
 /**
- * Map a sidecar [SnippetArtifactSidecar.MemberRef.Visibility] back to a FIR [Visibility]. Returns
- * `null` for [SnippetArtifactSidecar.MemberRef.Visibility.UNKNOWN] — "no opinion, leave the
- * materialised declaration's visibility alone".
+ * Maps a sidecar [SnippetArtifactSidecar.MemberRef.Visibility] back to a FIR [Visibility].
+ * Returns `null` for [SnippetArtifactSidecar.MemberRef.Visibility.UNKNOWN], meaning "no opinion,
+ * leave the materialized declaration's visibility alone".
  */
 internal fun SnippetArtifactSidecar.MemberRef.Visibility.toFirVisibility(): Visibility? = when (this) {
     SnippetArtifactSidecar.MemberRef.Visibility.PUBLIC -> Visibilities.Public
@@ -81,9 +84,9 @@ internal fun SnippetArtifactSidecar.MemberRef.Visibility.toFirVisibility(): Visi
 }
 
 /**
- * Restamp the visibility on a deserialised REPL-snippet member with [newVisibility], preserving
- * the existing modality and status flags, so it reflects the source-level visibility rather than
- * the `public` access the member is JVM-emitted with (see [SnippetArtifactSidecar.MemberRef]).
+ * Restamps the visibility on a deserialized REPL-snippet member with [newVisibility], preserving
+ * the existing modality and status flags. The result reflects the source-level visibility rather
+ * than the `public` access the member is JVM-emitted with (see [SnippetArtifactSidecar.MemberRef]).
  */
 internal fun restampVisibility(
     fir: FirMemberDeclaration,
@@ -100,7 +103,7 @@ internal fun restampVisibility(
     fir.replaceStatus(newStatus)
 }
 
-/** Look up `$$eval` on the deserialized wrapper class, if present. */
+/** Looks up `$$eval` on the deserialized wrapper class, if present. */
 @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
 internal fun findEvalSymbol(classSymbol: FirRegularClassSymbol): FirNamedFunctionSymbol? {
     for (decl in classSymbol.fir.declarations) {
@@ -113,8 +116,10 @@ internal fun findEvalSymbol(classSymbol: FirRegularClassSymbol): FirNamedFunctio
 
 /**
  * A minimal stub of [FirReplSnippet] sufficient for the resolve-extension code path that reads
- * `symbol.moduleData` and `symbol.snippetClassSymbol.declarationSymbols`. All other fields are
- * unused by prior-snippet consumers in the current pipeline; [source] throws if anyone reads it.
+ * `symbol.moduleData` and `symbol.snippetClassSymbol.declarationSymbols`.
+ *
+ * All other fields are unused by previous-snippet consumers in the current pipeline.
+ * [source] throws if anyone reads it.
  */
 @OptIn(FirImplementationDetail::class)
 internal class ReconstructedFirReplSnippet(
@@ -132,7 +137,7 @@ internal class ReconstructedFirReplSnippet(
     override val symbol: FirReplSnippetSymbol = snippetSymbol
     override val source: KtSourceElement
         get() = throw UnsupportedOperationException(
-            "ReconstructedFirReplSnippet has no source — reading source on a prior REPL snippet stub is not supported"
+            "ReconstructedFirReplSnippet has no source — reading source on a previous REPL snippet stub is not supported"
         )
     override val receivers: List<FirScriptReceiverParameter> = emptyList()
     override var snippetClass: FirRegularClass = snippetClassFir
@@ -144,7 +149,7 @@ internal class ReconstructedFirReplSnippet(
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
-        // no-op — stub
+        // no-op stub
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): ReconstructedFirReplSnippet = this

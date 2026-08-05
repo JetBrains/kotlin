@@ -34,11 +34,9 @@ import kotlin.script.experimental.util.add
 import kotlin.test.*
 
 /**
- * Tests exercising REPL-snippet chaining on the **regular** JVM frontend/backend, driven directly
- * through `K2JVMCompiler` -- the same `repl-snippet-regular-mode`/`repl-snippet-prior-class`
- * invocation shape `DaemonReplCompiler` (`libraries/examples/scripting/jsr223-daemon`) uses against a
- * compile daemon -- since that regular pipeline is what production callers (the on-daemon JSR-223
- * example) actually use, plus the [SnippetArtifactSidecar] wire-format round-trip that the pipeline's
+ * Exercises REPL-snippet chaining on the regular JVM frontend/backend via `K2JVMCompiler`, using
+ * the same `repl-snippet-regular-mode`/`repl-snippet-prior-class` invocation shape as
+ * `DaemonReplCompiler`, plus the [SnippetArtifactSidecar] wire-format round-trip that
  * `ClasspathBackedFirReplHistoryProvider` relies on.
  */
 class ReplSnippetRegularPipelineTest {
@@ -53,27 +51,20 @@ class ReplSnippetRegularPipelineTest {
         withTempDir { workRoot ->
             val compiler = RegularPipelineReplCompiler(workRoot)
 
-            // 1. Compile snippet 1 (no priors on the classpath yet): `val x = 42`.
             compiler.compile("val x = 42", "s1.repl.kts")
             val classFiles1 = compiler.lastOutputDir.classFileNames()
             assertTrue(classFiles1.isNotEmpty(), "snippet 1 must emit at least one .class file")
-            // Note: `x` being a recognised repl declaration is proven by snippet 2 resolving it below —
-            // the regular pipeline carries no artifact header; declarations are read straight from
-            // the wrapper class's own embedded `.kotlin_metadata` via `ClasspathBackedFirReplHistoryProvider`.
 
-            // 2. Compile snippet 2 against snippet 1's own `-d` output directory, fed back purely via
-            //    the classpath plus its predicted `ClassId` (see RegularPipelineReplCompiler): `x + 1`.
-            //    Successful compile = the entire regular-pipeline cross-snippet resolution chain worked.
+            // Snippet 2 resolving `x` proves cross-snippet declaration lookup: the regular pipeline
+            // carries no artifact header, so declarations come from snippet 1's own
+            // `.kotlin_metadata` via `ClasspathBackedFirReplHistoryProvider`.
             compiler.compile("x + 1", "s2.repl.kts")
             val classFiles2 = compiler.lastOutputDir.classFileNames()
             assertTrue(classFiles2.isNotEmpty(), "snippet 2 must emit at least one .class file")
-            // Snippet wrapper class names embed the source name; assert at least one classfile mentions `s2`.
             assertTrue(
                 classFiles2.any { it.contains("s2", ignoreCase = true) },
                 "snippet 2 classfiles should encode the source name `s2`; got: $classFiles2"
             )
-            // The predicted wrapper class (the same ClassId fed to the daemon-based compiler's
-            // `repl-snippet-prior-class` option) must actually be among the emitted classfiles.
             assertTrue(
                 classFiles2.any { it == "${compiler.lastClassId.shortClassName.asString()}.class" },
                 "snippet 2 wrapper class `${compiler.lastClassId}` must be among classfiles $classFiles2"
@@ -90,14 +81,8 @@ class ReplSnippetRegularPipelineTest {
             val evaluator = K2ReplEvaluator()
             var chain: LinkedSnippetImpl<CompiledSnippet>? = null
 
-            // Compile+evaluate a 3-snippet session, one snippet at a time -- exactly the same
-            // compile-then-eval loop `KotlinJsr223JvmScriptEngineBase` drives against
-            // `DaemonReplCompiler`/`K2ReplEvaluator` in the on-daemon JSR-223 example, just in-process
-            // (via `RegularPipelineReplCompiler`, calling `K2JVMCompiler` directly) and without a
-            // compile daemon.
-            //   s1: `val x = 42`
-            //   s2: `val y = x + 1`   (cross-snippet declaration reference)
-            //   s3: `x + y`           (cross-snippet expression — produces a result value)
+            // Mirrors the compile-then-eval loop `KotlinJsr223JvmScriptEngineBase` drives, in-process
+            // via `RegularPipelineReplCompiler` and without a compile daemon.
             chain = chain.add(compiler.compile("val x = 42", "s1.repl.kts"))
             val evaluated1 = evalOrThrow(evaluator, chain, "snippet 1 eval failed")
 
@@ -107,15 +92,9 @@ class ReplSnippetRegularPipelineTest {
             chain = chain.add(compiler.compile("x + y", "s3.repl.kts"))
             val evaluated3 = evalOrThrow(evaluator, chain, "snippet 3 eval failed")
 
-            // s1 introduced `x = 42`; reading its backing field on the snippet-1 instance must show 42.
             assertEquals(42, evaluated1.readDeclaredField("x"), "snippet 1 `x` must hold 42 after eval")
-
-            // s2 introduced `y = x + 1`; the cross-snippet read of `x` must have resolved to 42 at
-            // runtime, yielding `y == 43`.
             assertEquals(43, evaluated2.readDeclaredField("y"), "snippet 2 `y` must hold x+1 == 43 after eval")
 
-            // s3 is an expression `x + y`; 42 + 43 == 85 proves both prior snippets contributed at
-            // runtime.
             val resultValue = evaluated3.get().result as? ResultValue.Value
                 ?: fail("expected snippet 3 to produce a ResultValue.Value, got: ${evaluated3.get().result}")
             assertEquals(85, resultValue.value, "snippet 3 expression result `x + y` must be 85")
@@ -131,15 +110,12 @@ class ReplSnippetRegularPipelineTest {
             val evaluator = K2ReplEvaluator()
             var chain: LinkedSnippetImpl<CompiledSnippet>? = null
 
-            // Snippet 1 declares two *overloaded* functions sharing the name `f` — the exact case
-            // that name-only reconstruction (associateBy { it.name }) would collapse, dropping one of
-            // the two MemberRefs and re-tagging both `f` declarations from a single arbitrary one.
-            // Overload-safe reconstruction pairs each `f` with its own MemberRef via the serialized
-            // overload signature (MemberRef.descriptor), so both stay resolvable in snippet 2.
+            // Two overloads sharing name `f` — name-only reconstruction (associateBy { it.name })
+            // would collapse them; overload-safe reconstruction pairs each with its own MemberRef
+            // via the serialized overload signature (MemberRef.descriptor).
             chain = chain.add(compiler.compile("fun f(a: Int) = a + 1\nfun f(a: String) = a.length", "s1.repl.kts"))
             evalOrThrow(evaluator, chain, "snippet 1 eval failed")
 
-            // Snippet 2 calls *both* overloads of the prior `f`: f(10) == 11, f("abcd") == 4 -> 15.
             chain = chain.add(compiler.compile("f(10) + f(\"abcd\")", "s2.repl.kts"))
             val evaluated2 = evalOrThrow(evaluator, chain, "snippet 2 eval failed")
 
@@ -266,15 +242,13 @@ class ReplSnippetRegularPipelineTest {
 }
 
 /**
- * In-process counterpart of `DaemonReplCompiler` (`libraries/examples/scripting/jsr223-daemon`):
- * compiles a `.repl.kts` source as a chained REPL snippet on the **regular** JVM frontend/backend by
- * calling `K2JVMCompiler` directly instead of a compile daemon -- the same
+ * In-process counterpart of `DaemonReplCompiler`: compiles a `.repl.kts` source as a chained REPL
+ * snippet on the regular JVM frontend/backend via `K2JVMCompiler` directly, using the same
  * `-Xallow-any-scripts-in-source-roots`/`repl-snippet-regular-mode`/`repl-snippet-prior-class`
- * invocation shape (see `DaemonReplCompiler.buildSnippetCompilerArguments`'s KDoc for the full
- * design rationale), just without any daemon RMI plumbing. Each snippet's classes land in their own
- * `-d` output directory under [workRoot]; prior snippets are fed back to later compiles purely via
- * the classpath plus their predicted [ClassId] ([NameUtils.getSnippetTargetClassName]) -- no
- * artifact blob/header of any kind.
+ * invocation shape (see `DaemonReplCompiler.buildSnippetCompilerArguments`'s KDoc), without any
+ * daemon RMI plumbing. Each snippet's classes land in their own `-d` directory under [workRoot];
+ * prior snippets are fed back purely via the classpath plus their predicted [ClassId]
+ * ([NameUtils.getSnippetTargetClassName]).
  */
 private class RegularPipelineReplCompiler(private val workRoot: File) {
     private val priorOutputDirs = mutableListOf<File>()

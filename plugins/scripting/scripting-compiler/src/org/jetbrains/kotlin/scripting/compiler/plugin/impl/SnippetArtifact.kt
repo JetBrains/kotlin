@@ -4,26 +4,19 @@
  */
 
 /**
- * The REPL-only reconstruction payload of a compiled snippet — the information that is *not*
- * recoverable from stock `.kotlin_metadata` alone and which a stateless `FirReplHistoryProvider`
- * (`ClasspathBackedFirReplHistoryProvider`) needs to reconstruct a `FirReplSnippetSymbol` view of a
- * prior snippet during the next compile: the `isReplSnippetDeclaration` member refs (with their
- * source-level visibilities) and the file-level imports.
+ * REPL-only reconstruction payload embedded in a compiled snippet wrapper class's
+ * `.kotlin_metadata` via the generic `ProtoBuf.CompilerPluginData` channel (keyed by
+ * [REPL_SIDECAR_PLUGIN_ID]).
  *
- * This payload is carried **only** embedded inside the snippet wrapper class's own
- * `.kotlin_metadata` (via the generic `ProtoBuf.CompilerPluginData` channel, keyed by
- * [REPL_SIDECAR_PLUGIN_ID]). The read path (`ClasspathBackedFirReplHistoryProvider`) finds the
- * wrapper class via its `ClassId`, then reads this sidecar from the located class's metadata.
+ * It carries the `isReplSnippetDeclaration` member refs (with source-level visibilities) and
+ * file-level imports that a stateless `FirReplHistoryProvider`
+ * (`ClasspathBackedFirReplHistoryProvider`) needs but cannot recover from `.kotlin_metadata` alone.
  *
- * The wire format is **forward- and backward-compatible**: protobuf field *numbers* are append-only
- * and never reused, unknown fields are skipped on read, and fields absent from an older payload fall
- * back to their defaults. Bumping [sidecarVersion] is still mandatory on any structural change (so a
- * payload can be identified), but a version mismatch is no longer fatal within the supported range
- * (see [SnippetArtifactSidecar.MIN_SUPPORTED_VERSION]). This makes a sidecar safe to persist and
- * read back with a differing compiler version.
+ * The wire format is forward- and backward-compatible (see [SnippetArtifactSidecarProtoCodec]).
+ * [sidecarVersion] must still be bumped on any structural change, but only a version below
+ * [SnippetArtifactSidecar.MIN_SUPPORTED_VERSION] is rejected.
  *
- * Everything in this file is `internal` to `scripting-compiler`. It is **not** part of any public
- * API surface (`libraries/scripting/common`).
+ * Internal to `scripting-compiler`; not part of any public API surface.
  */
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
@@ -37,34 +30,20 @@ data class SnippetArtifactSidecar(
     val imports: List<ImportEntry>,
 ) {
     /**
-     * Reference to a top-level member of the snippet wrapper class that originated as a
-     * REPL-snippet declaration (i.e. carried `isReplSnippetDeclaration == true` at compile time).
+     * Reference to a top-level member of the snippet wrapper class that carried
+     * `isReplSnippetDeclaration == true` at compile time.
      *
-     * @property kind one of [Kind].
-     * @property name the source-level name (`Name.identifier`).
-     * @property descriptor an overload-discriminating signature for [Kind.FUNCTION] declarations
-     *   (see `replMemberOverloadSignature`) -- functions are the only declaration kind that can
-     *   share a name within one snippet. `null` for every other kind (whose name is already unique),
-     *   for a function whose signature cannot be derived, and for sidecars produced before v5 (which
-     *   never populated this field). The read path (`ClasspathBackedFirReplHistoryProvider`) uses it
-     *   to pair each deserialised overload with the correct [MemberRef]; a `null` descriptor falls
-     *   back to name-only matching. Despite the historical name, this is **not** a JVM descriptor.
-     * @property visibility source-level visibility of the declaration as seen at compile time.
-     *   Defaults to [Visibility.UNKNOWN] for compatibility with sidecars produced before v3.
-     *   Consumers (e.g. `ClasspathBackedFirReplHistoryProvider`) use this to decide whether to
-     *   re-tag the deserialised declaration as `isReplSnippetDeclaration` — private/protected
-     *   members must not be exposed to subsequent snippets via REPL-history scoping (else the
-     *   `property_visibility` diagnostic for cross-snippet private access is suppressed). See
-     *   `iterations/2026-05-27_stateless-repl-sidecar-v3.md`.
-     * @property returnTypeSignature for [Kind.PROPERTY] / [Kind.FUNCTION]: a *renderable* string
-     *   representation of the declared return type (FQ name + nullability + projected arguments,
-     *   as produced by `ConeKotlinType.toString()`). `null` for [Kind.CLASS] / [Kind.TYPEALIAS]
-     *   (the type *is* the declaration), or when the return type cannot be derived (e.g. error
-     *   type at compile time). Not consumed by `materialize()` today — the deserialised
-     *   `.kotlin_metadata` already carries the real type — but recorded so that downstream
-     *   tooling (debugger / IDE inspections / cross-snippet anonymous-object signature checks)
-     *   can reason about prior-snippet return types without re-loading the wrapper class. This
-     *   is the field that closes the schema-shaped gap behind `function_returns_anonymous_object`.
+     * @property descriptor Overload-discriminating signature for [Kind.FUNCTION] declarations
+     *   (see [replMemberOverloadSignature]). `null` for every other kind, whose name is already
+     *   unique within the snippet. Despite the name this is not a JVM descriptor; a `null`
+     *   descriptor falls back to name-only matching on the read side.
+     * @property visibility Source-level visibility at compile time. [Visibility.UNKNOWN] is
+     *   treated as PUBLIC by the consumer, so private or protected members are never accidentally
+     *   exposed to later snippets when re-tagged as `isReplSnippetDeclaration`.
+     * @property returnTypeSignature For [Kind.PROPERTY] and [Kind.FUNCTION], a renderable
+     *   return-type string (`ConeKotlinType.toString()`). `null` for [Kind.CLASS] /
+     *   [Kind.TYPEALIAS], or when the type cannot be derived. Not consumed by `materialize()`
+     *   yet; recorded so later cross-snippet type inspection can avoid reloading the wrapper class.
      */
     data class MemberRef(
         val kind: Kind,
@@ -76,18 +55,13 @@ data class SnippetArtifactSidecar(
         enum class Kind { PROPERTY, FUNCTION, CLASS, TYPEALIAS }
 
         /**
-         * Source-level visibility tag carried on a [MemberRef].
-         *
-         * Mirrors the subset of [org.jetbrains.kotlin.descriptors.Visibilities] that REPL
-         * declarations can plausibly use; everything else (e.g. `LocalVisibility`,
-         * `InvisibleFake`) maps to [UNKNOWN] on the producer side and is treated as PUBLIC by
-         * the consumer (safe default — extra leakage on unrecognised visibilities is preferable
-         * to dropping real declarations).
+         * Subset of [org.jetbrains.kotlin.descriptors.Visibilities] that REPL declarations can
+         * plausibly use. Anything else maps to [UNKNOWN], which the consumer treats as PUBLIC:
+         * safer to leak a declaration than to drop a real one.
          */
         enum class Visibility { PUBLIC, INTERNAL, PROTECTED, PRIVATE, UNKNOWN }
     }
 
-    /** A file-level `FirImport` entry of the snippet's containing file. */
     data class ImportEntry(
         val fqName: String,
         val isAllUnder: Boolean,
@@ -100,51 +74,27 @@ data class SnippetArtifactSidecar(
          *
          * | Version | Change |
          * |---------|--------|
-         * | 1       | Initial prototype shape. |
-         * | 2       | Added [isImplicit] for Q10b history-provider tagging. |
-         * | 3       | Added [MemberRef.visibility] + [MemberRef.returnTypeSignature]. Fixes the |
-         * |         | `property_visibility` (private members must not be re-tagged as REPL- |
-         * |         | snippet declarations on the consumer side) and unlocks the |
-         * |         | `function_returns_anonymous_object` diagnostic by carrying the function |
-         * |         | return type's renderable signature so cross-snippet anonymous return |
-         * |         | types can be reasoned about. |
-         * | 4       | Trimmed to the embedded-only reconstruction payload. Dropped the |
-         * |         | config-only fields (`snippetName`, `snippetClassInternalName`, |
-         * |         | `packageFqName`, `historyIndex`, `stateObjectFqName`, `resultPropertyName`, |
-         * |         | `isSynthetic`, `isImplicit`) that a caller already knows out-of-band |
-         * |         | (e.g. via the snippet's own `ClassId`). |
-         * | 5       | Began populating [MemberRef.descriptor] with an overload-discriminating |
-         * |         | signature (previously always `null`); the read side pairs function |
-         * |         | overloads by it instead of by simple name. Decode became forward- and |
-         * |         | backward-compatible (see [MIN_SUPPORTED_VERSION]) rather than exact-match. |
+         * | 1 | Initial shape. |
+         * | 2 | Added an `isImplicit` field (since dropped, see v4). |
+         * | 3 | Added [MemberRef.visibility] and [MemberRef.returnTypeSignature]. |
+         * | 4 | Trimmed to the embedded-only reconstruction payload, dropping config-only fields |
+         * |   | already known out-of-band via the snippet's `ClassId`. |
+         * | 5 | [MemberRef.descriptor] started carrying an overload-discriminating signature |
+         * |   | instead of always `null`. |
          */
         const val CURRENT_VERSION: Int = 5
 
-        /**
-         * The oldest [sidecarVersion] this codec still decodes. The format is forward- and
-         * backward-compatible within `[MIN_SUPPORTED_VERSION, ∞)`: field numbers are append-only
-         * and never reused, unknown fields are skipped on read, and fields absent from an older
-         * payload fall back to their defaults. A version below this bound is rejected (a field it
-         * carried has since been repurposed or dropped); a version *above* [CURRENT_VERSION] is
-         * accepted and decoded best-effort (any not-yet-known fields are simply skipped).
-         */
+        /** The oldest [sidecarVersion] this codec still decodes; see [SnippetArtifactSidecarProtoCodec]. */
         const val MIN_SUPPORTED_VERSION: Int = 1
     }
 }
 
 /**
- * Hand-rolled **protobuf wire-format** writer/reader for [SnippetArtifactSidecar].
+ * Hand-rolled protobuf wire-format writer/reader for [SnippetArtifactSidecar].
  *
- * This is the "protobuf sidecar cut" of the prototype's paired-JSON format. The bytes produced here
- * are a plain protobuf message (varints + length-delimited fields), written directly per the
- * protobuf spec rather than via a generated `.proto` message, so the codec stays self-contained
- * (no `.proto`-generation build wiring, no dependency on the relocated protobuf runtime's API) and
- * is unit-testable in isolation.
- *
- * These same bytes are what the stateless REPL embeds into the snippet wrapper class's
- * `.kotlin_metadata` via the generic `ProtoBuf.CompilerPluginData` channel (keyed by
- * [REPL_SIDECAR_PLUGIN_ID]) — so promoting the standalone blob to in-metadata storage is a
- * transport change, not a format change.
+ * Bytes are written directly per the protobuf spec (varints and length-delimited fields) rather
+ * than via a generated `.proto` message, so the codec stays dependency-free and unit-testable in
+ * isolation.
  *
  * ### Field schema (stable field numbers)
  *
@@ -156,10 +106,9 @@ data class SnippetArtifactSidecar(
  *
  * `ImportEntry`: `1` fqName, `2` isAllUnder (bool), `3` aliasName (optional).
  *
- * Unknown fields are skipped on read and absent fields fall back to their defaults, so the format is
- * forward- and backward-compatible across versions in `[SnippetArtifactSidecar.MIN_SUPPORTED_VERSION, ∞)`;
- * [SnippetArtifactSidecar.sidecarVersion] is validated only against that lower bound, not for an
- * exact match.
+ * Field numbers are append-only and never reused. Unknown fields are skipped on read and absent
+ * fields fall back to their defaults, so the format stays forward- and backward-compatible for
+ * any [SnippetArtifactSidecar.sidecarVersion] >= [SnippetArtifactSidecar.MIN_SUPPORTED_VERSION].
  */
 object SnippetArtifactSidecarProtoCodec {
 
@@ -246,13 +195,12 @@ object SnippetArtifactSidecarProtoCodec {
         if (version < SnippetArtifactSidecar.MIN_SUPPORTED_VERSION) {
             error(
                 "SnippetArtifactSidecar: sidecarVersion=$version is older than the minimum supported " +
-                        "version ${SnippetArtifactSidecar.MIN_SUPPORTED_VERSION}; rebuild the prior snippet " +
+                        "version ${SnippetArtifactSidecar.MIN_SUPPORTED_VERSION}; rebuild the previous snippet " +
                         "with a current compiler."
             )
         }
-        // Any version >= MIN_SUPPORTED_VERSION -- including one newer than CURRENT_VERSION -- is decoded
-        // best-effort: field numbers are append-only, unknown fields were skipped above, and fields
-        // absent from an older payload fall back to their defaults. No exact-version match is required.
+        // A version >= MIN_SUPPORTED_VERSION, even one newer than CURRENT_VERSION, is decoded
+        // best-effort; see MIN_SUPPORTED_VERSION's KDoc.
         return SnippetArtifactSidecar(
             sidecarVersion = version,
             replSnippetDeclarations = declarations,
@@ -380,7 +328,7 @@ object SnippetArtifactSidecarProtoCodec {
 
 /**
  * Plugin id under which the stateless REPL [SnippetArtifactSidecar] is embedded into the snippet
- * wrapper class's `.kotlin_metadata` (via the generic `ProtoBuf.CompilerPluginData` channel).
+ * wrapper class's `.kotlin_metadata` via the generic `ProtoBuf.CompilerPluginData` channel.
  */
 const val REPL_SIDECAR_PLUGIN_ID: String = "org.jetbrains.kotlin.scripting.repl.stateless"
 

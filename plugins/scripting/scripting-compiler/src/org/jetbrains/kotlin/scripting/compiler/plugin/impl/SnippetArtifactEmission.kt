@@ -4,12 +4,8 @@
  */
 
 /**
- * Emission helper: assembles the [SnippetArtifactSidecar] — the REPL-only reconstruction payload —
- * from the *just-resolved* `FirReplSnippet` and its producing `FirSession`, so it can be embedded
- * into the snippet wrapper class's own `.kotlin_metadata` on the write side.
- *
- * This file deliberately does **not** touch [K2ReplCompiler] or its `compileImpl`. It is a pure
- * function over the values `Fir2IrReplSnippetConfiguratorExtensionImpl` captures during a compile.
+ * Assembles the [SnippetArtifactSidecar] from a just-resolved `FirReplSnippet` and its producing
+ * `FirSession`, for embedding into the snippet wrapper class's `.kotlin_metadata` on the write side.
  */
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
@@ -32,16 +28,8 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 
 /**
- * Assembles the [SnippetArtifactSidecar] — the REPL-only reconstruction payload — from the
- * information that is reachable from the **frontend** alone: the resolved [firSnippet] and its
- * producing [session]. This is exactly what the read path (`ClasspathBackedFirReplHistoryProvider`)
- * sources from the embedded copy: the `isReplSnippetDeclaration` member refs (with their
- * source-level visibilities) and the file-level imports.
- *
- * The sole producer is the `.kotlin_metadata`-embedding write path
- * (`Fir2IrReplSnippetConfiguratorExtensionImpl.prepareSnippet`), which runs *before* code-gen; the
- * encoded bytes are embedded into the wrapper class's `.kotlin_metadata` via the generic
- * `ProtoBuf.CompilerPluginData` channel.
+ * Builds the sidecar from the frontend alone: [firSnippet]'s `isReplSnippetDeclaration` members
+ * (including their visibilities) and the file-level imports from [session] for that snippet.
  */
 @OptIn(DirectDeclarationsAccess::class)
 internal fun buildReplSidecarFromFir(
@@ -62,11 +50,8 @@ internal fun buildReplSidecarFromFir(
                 is FirNamedFunction -> SnippetArtifactSidecar.MemberRef(
                     kind = SnippetArtifactSidecar.MemberRef.Kind.FUNCTION,
                     name = decl.name.asString(),
-                    // Overload discriminator: only functions can share a name within one snippet,
-                    // so this is the sole kind that carries a non-null descriptor (see
-                    // replMemberOverloadSignature). The read side
-                    // (ClasspathBackedFirReplHistoryProvider) uses it to pair each deserialised
-                    // overload with the correct MemberRef when re-tagging visibilities.
+                    // Only functions may share a name within a snippet, so only this kind carries
+                    // a non-null descriptor.
                     descriptor = replMemberOverloadSignature(decl),
                     visibility = decl.toMemberRefVisibility(),
                     returnTypeSignature = decl.returnTypeRef.toRenderableSignature(),
@@ -106,13 +91,9 @@ internal fun buildReplSidecarFromFir(
 }
 
 /**
- * Project a FIR [KotlinVisibility][org.jetbrains.kotlin.descriptors.Visibility] onto the small
- * enum carried in the sidecar.
- *
- * Anything outside the four well-known visibilities (i.e. `Local`, `InvisibleFake`,
- * `Inherited`, …) is mapped to [SnippetArtifactSidecar.MemberRef.Visibility.UNKNOWN]; the consumer
- * defaults UNKNOWN to PUBLIC, which keeps unrecognised cases from accidentally hiding real
- * declarations from subsequent snippets.
+ * Projects a FIR visibility onto the sidecar's [SnippetArtifactSidecar.MemberRef.Visibility].
+ * Anything outside the four well-known visibilities maps to
+ * [UNKNOWN][SnippetArtifactSidecar.MemberRef.Visibility.UNKNOWN].
  */
 private fun FirMemberDeclaration.toMemberRefVisibility(): SnippetArtifactSidecar.MemberRef.Visibility {
     val v: KotlinVisibility = status.visibility
@@ -127,31 +108,23 @@ private fun FirMemberDeclaration.toMemberRefVisibility(): SnippetArtifactSidecar
 }
 
 /**
- * Render a [FirTypeRef] into the renderable string we carry on `MemberRef.returnTypeSignature`.
- *
- * Returns `null` when the type cannot be derived (e.g. unresolved / error type). This is a
- * best-effort prototype signature — it is *not* a JVM descriptor; protobuf promotion will replace
- * it with a structured type descriptor.
+ * Renders this type into the string carried on `MemberRef.returnTypeSignature`.
+ * Returns `null` if the type cannot be derived (for example an unresolved or error type).
+ * This is not a JVM descriptor.
  */
 private fun FirTypeRef.toRenderableSignature(): String? =
     coneTypeOrNull?.toString()?.takeIf { it.isNotBlank() }
 
 /**
- * A best-effort, overload-discriminating signature key for a REPL-snippet member declaration,
- * carried on [SnippetArtifactSidecar.MemberRef.descriptor] and computed **identically** on the
- * write side (from the just-resolved live FIR) and the read side (`ClasspathBackedFirReplHistoryProvider`,
- * from the prior snippet's deserialised `.kotlin_metadata` FIR).
+ * Best-effort overload-discriminating signature key carried on
+ * [SnippetArtifactSidecar.MemberRef.descriptor]. Computed identically on the write side (live
+ * FIR) and the read side (deserialized FIR) so both sides produce the same key for the same
+ * overload. Returns `null` for non-function declarations, whose name is already unique.
  *
- * Only functions can share a name within one snippet (overloads); for every other declaration kind
- * the name is already unique, so this returns `null` and the read side falls back to name-only
- * matching for it.
- *
- * The key is **not** a JVM descriptor -- it is a stable string built from the renderable cone types
- * (`ConeKotlinType.toString()`) of the function's extension receiver, context parameters and value
- * parameters. That is all that is needed to tell two same-named overloads apart, and both sides
- * render the same deserialised/resolved types, so the keys match. Value parameters whose type is
- * unresolved render as `?`; two overloads that differ only in an unresolvable type therefore cannot
- * be told apart, which is acceptable for this best-effort re-tagging (the fallback is name-only).
+ * This is not a JVM descriptor. It is a string built from the renderable cone types
+ * (`ConeKotlinType.toString()`) of the receiver, context parameters, and value parameters.
+ * Unresolved parameter types render as `?`, so overloads that differ only in an unresolvable type
+ * cannot be told apart; the read side then falls back to name-only matching.
  */
 internal fun replMemberOverloadSignature(declaration: FirCallableDeclaration): String? {
     if (declaration !is FirFunction) return null

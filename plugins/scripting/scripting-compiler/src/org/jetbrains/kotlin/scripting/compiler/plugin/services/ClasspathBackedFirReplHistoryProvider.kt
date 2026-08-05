@@ -30,46 +30,28 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactSideca
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.replMemberOverloadSignature
 
 /**
- * A [FirReplHistoryProvider] that serves two kinds of prior REPL snippets for the same compile
+ * A [FirReplHistoryProvider] that serves two kinds of previous REPL snippets for the same compile
  * session, combined in history order:
  *
- *  * **Classpath-reconstructed priors** ([priorClassIds]): snippets compiled in an *earlier*,
- *    already-finished daemon/CLI compile call. Their `FirReplSnippetSymbol` views are reconstructed
- *    purely from their [ClassId]s, with **no artifact blob or header of any kind** — the compiled
- *    classes reach the frontend through the regular classpath (`-cp`), and every other piece of
- *    reconstruction data (declarations, visibilities, imports) is read directly from the class's own
- *    embedded `.kotlin_metadata` sidecar via [readEmbeddedSidecar]/[restampVisibility]/[findEvalSymbol]/
- *    [ReconstructedFirReplSnippet] (`StatelessReplSnippetSupport.kt`). This is what a same-machine
- *    CLI/daemon caller uses to compile a `.kts` source as a *chained* REPL snippet through the
- *    compiler's regular frontend/backend (see `ScriptingProcessSourcesBeforeCompilingExtension` and
- *    the `repl-snippet-prior-class` plugin option): a snippet's own [ClassId] is fully deterministic
- *    from its source file name (`NameUtils.getSnippetTargetClassName`), so a caller that names the
- *    file it writes already knows, with zero round-trip, what to pass here for the next snippet.
- *  * **Live, same-batch siblings** ([putSnippet]): snippets compiled *in this very call*, alongside
- *    [priorClassIds]'s (or an empty list of) genuine priors -- e.g. a synthetic bindings-exposing
- *    snippet followed, in the same daemon compile invocation, by the main snippet that references
- *    its declarations. Unlike a classpath-reconstructed prior, such a sibling has **no compiled
- *    bytecode at all yet** (codegen for the whole module only happens once, after every file's body
- *    is resolved) -- it can never be resolved through the classpath+sidecar mechanism above. Instead,
- *    [putSnippet] is called with its *live* `FirReplSnippetSymbol` directly by the regular REPL body-resolve
- *    machinery ([org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer],
- *    via [org.jetbrains.kotlin.fir.extensions.FirReplSnippetResolveExtension.updateResolved]) as soon as that
- *    sibling's own body is resolved -- which, since FIR body resolve visits every file of one module
- *    sequentially, always happens before a *later* sibling's body resolve begins. No reconstruction
- *    of any kind is needed for these: their FIR is already fully live in this same session, so
- *    [org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplSnippetResolveExtensionImpl] can
- *    read declarations/imports straight off them.
+ *  * **Classpath-reconstructed** ([priorClassIds]): snippets compiled in an earlier,
+ *    already-finished compile call. Their `FirReplSnippetSymbol` views are reconstructed purely
+ *    from their [ClassId]s, which are reachable via the regular classpath. Declarations,
+ *    visibilities, and imports come from each class's embedded `.kotlin_metadata` sidecar (see
+ *    `readEmbeddedSidecar`, `restampVisibility`, and `findEvalSymbol` in
+ *    `StatelessReplSnippetSupport.kt`).
+ *  * **Live, same-batch siblings** ([putSnippet]): snippets compiled in this very call, whose FIR
+ *    is already live in this session. They have no compiled bytecode yet, so they cannot be
+ *    resolved through the classpath-and-sidecar mechanism above.
  *
- * [getSnippets] returns the classpath-reconstructed priors first, followed by the live same-batch
- * siblings observed so far, in the exact order [putSnippet] was called -- i.e. always in true history
- * order, regardless of which of the two mechanisms a given snippet came through.
+ * [getSnippets] returns the classpath-reconstructed snippets first, then the live same-batch
+ * siblings in the exact order [putSnippet] was called. That is always true history order,
+ * regardless of which mechanism a given snippet came through.
  *
- * @param priorClassIds ordered [ClassId]s of genuinely prior snippets (compiled in an earlier call);
- *   their compiled classes must already be on this compile's classpath.
- * @param sourceSessionProvider callback to obtain the source session that has the prior snippets'
- *   wrapper classes available via the library symbol provider. May return `null` until the session
- *   is built; in that case [getSnippets] returns only the live same-batch siblings observed so far,
- *   and re-attempts the classpath-based part on the next call.
+ * @param priorClassIds ordered [ClassId]s of previous snippets; their compiled classes must already
+ *   be on this compile's classpath.
+ * @param sourceSessionProvider callback for the source session that has the previous snippets'
+ *   wrapper classes available. May return `null` until the session is built; [getSnippets] then
+ *   returns only the live siblings observed so far and retries the classpath lookup on the next call.
  */
 internal class ClasspathBackedFirReplHistoryProvider(
     private val priorClassIds: List<ClassId>,
@@ -77,22 +59,20 @@ internal class ClasspathBackedFirReplHistoryProvider(
 ) : FirReplHistoryProvider() {
 
     @Volatile
-    private var classpathPriors: List<FirReplSnippetSymbol>? = null
+    private var classpathSnippets: List<FirReplSnippetSymbol>? = null
 
-    // Live, same-batch siblings -- see the class KDoc's "Live, same-batch siblings" section. Filled
-    // in history order purely by putSnippet (called once per sibling, as soon as its own body is
-    // resolved), never by materialize()/getSnippets() itself.
+    // Filled in history order by putSnippet only; never by materialize() or getSnippets().
     private val liveBatchSnippets = mutableListOf<FirReplSnippetSymbol>()
 
     private val symbolToEmbeddedSidecar: MutableMap<FirReplSnippetSymbol, SnippetArtifactSidecar?> = HashMap()
 
     override fun getSnippets(): Iterable<FirReplSnippetSymbol> {
-        val classpathList = classpathPriors ?: run {
+        val classpathList = classpathSnippets ?: run {
             val session = sourceSessionProvider() ?: run {
                 statelessReplDebug("getSnippets(): source session not ready yet — returning only the live same-batch siblings observed so far")
                 return liveBatchSnippets.toList()
             }
-            materialize(session).also { classpathPriors = it }
+            materialize(session).also { classpathSnippets = it }
         }
         return if (liveBatchSnippets.isEmpty()) classpathList else classpathList + liveBatchSnippets
     }
@@ -103,14 +83,14 @@ internal class ClasspathBackedFirReplHistoryProvider(
 
     override fun isFirstSnippet(symbol: FirReplSnippetSymbol): Boolean {
         if (priorClassIds.isEmpty() && liveBatchSnippets.isEmpty()) return true
-        val list = classpathPriors ?: return false
+        val list = classpathSnippets ?: return false
         return list.firstOrNull() === symbol
     }
 
     override fun getSnippetCount(): Int = priorClassIds.size + liveBatchSnippets.size
 
     override fun getSnippetImports(symbol: FirReplSnippetSymbol): List<FirImport>? {
-        classpathPriors ?: getSnippets()
+        classpathSnippets ?: getSnippets()
         val sidecar = symbolToEmbeddedSidecar[symbol] ?: return null
         return sidecar.imports.map { entry ->
             buildImport {
@@ -146,10 +126,7 @@ internal class ClasspathBackedFirReplHistoryProvider(
                 evalSymbol = evalSymbol,
             )
 
-            // Grouped by name (not associateBy, which would silently drop all but one MemberRef of
-            // an overloaded name): a snippet may declare several functions sharing a name, each with
-            // its own source-level visibility, and each must be paired with — and re-tagged from —
-            // its own MemberRef. See matchMemberRef for the overload-safe pairing.
+            // groupBy, not associateBy: an overloaded name has several MemberRefs (see matchMemberRef).
             val byName: Map<String, List<SnippetArtifactSidecar.MemberRef>> =
                 embeddedSidecar?.replSnippetDeclarations.orEmpty().groupBy { it.name }
             var tagged = 0
@@ -182,19 +159,11 @@ internal class ClasspathBackedFirReplHistoryProvider(
     }
 
     /**
-     * Pairs a deserialised wrapper-class declaration [fir] (named [name]) with the specific
-     * [SnippetArtifactSidecar.MemberRef] it originated from, among all [candidates] that share that
-     * name.
-     *
-     * The common case is a single candidate (a unique name) -- returned directly. When a name is
-     * shared by several declarations (function overloads), each declaration is paired with the
-     * candidate whose overload signature (see [replMemberOverloadSignature]) matches its own, so
-     * every overload is re-tagged from — and gets the source-level visibility of — its *own*
-     * MemberRef rather than an arbitrary same-named one. A non-callable declaration and a legacy
-     * sidecar (both rendering a `null` signature) pair with a `null`-descriptor candidate, so
-     * name-only entries still resolve. If no signature matches (e.g. a sidecar produced by an
-     * incompatible signature scheme), the first candidate is used as a best-effort fallback and the
-     * mismatch is surfaced via [statelessReplDebug].
+     * Pairs a deserialized declaration [fir] (named [name]) with the [SnippetArtifactSidecar.MemberRef]
+     * it originated from, among [candidates] that share that name. A single candidate is returned
+     * directly. Overloads are matched by their [replMemberOverloadSignature] so each gets its own
+     * visibility. If no signature matches, falls back to the first candidate and logs via
+     * [statelessReplDebug].
      */
     private fun matchMemberRef(
         name: String,
