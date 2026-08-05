@@ -131,12 +131,8 @@ import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal class JvmCompilerArgumentsImpl(
-  private val adapter: JvmCompilerArgumentValueAdapter? = null,
-) : CommonCompilerArgumentsImpl(adapter),
-    JvmCompilerArguments,
-    JvmCompilerArguments.Builder,
-    DeepCopyable<JvmCompilerArgumentsImpl> {
+internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCompilerArguments,
+    JvmCompilerArguments.Builder, DeepCopyable<JvmCompilerArgumentsImpl> {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
   init {
     applyCompilerArguments(K2JVMCompilerArguments())
@@ -154,7 +150,7 @@ internal class JvmCompilerArgumentsImpl(
   @Suppress("UNCHECKED_CAST")
   override operator fun <V> `get`(key: JvmCompilerArguments.JvmCompilerArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+    return optionsMap[key.id] as V
   }
 
   override operator fun <V> `set`(key: JvmCompilerArguments.JvmCompilerArgument<V>, `value`: V) {
@@ -162,7 +158,7 @@ internal class JvmCompilerArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(currentKotlinVersion.major, currentKotlinVersion.minor, currentKotlinVersion.patch)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+    optionsMap[key.id] = `value`
   }
 
   @Deprecated(
@@ -171,7 +167,7 @@ internal class JvmCompilerArgumentsImpl(
   )
   override operator fun contains(key: JvmCompilerArguments.JvmCompilerArgument<*>): Boolean = key.id in optionsMap
 
-  override fun deepCopy(): JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(adapter).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+  override fun deepCopy(): JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl().also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
   override fun build(): JvmCompilerArgumentsImpl = deepCopy()
 

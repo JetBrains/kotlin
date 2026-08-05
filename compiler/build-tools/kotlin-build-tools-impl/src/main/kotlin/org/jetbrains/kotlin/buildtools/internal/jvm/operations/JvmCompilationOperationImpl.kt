@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfig
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.LANGUAGE_VERSION
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_IC
-import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentValueAdapter
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.jvm.HasSnapshotBasedIcOptionsAccessor
@@ -54,7 +53,7 @@ internal class JvmCompilationOperationImpl private constructor(
     override val options: Options = Options(JvmCompilationOperation::class),
     override val sources: List<Path>,
     override val destinationDirectory: Path,
-    compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(JvmCompilerArgumentValueAdapter.getOrNull()),
+    compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
     private val compilerVersion: String,
 ) : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, K2JVMCompilerArguments>(compilerArguments),
     JvmCompilationOperation,
@@ -64,7 +63,7 @@ internal class JvmCompilationOperationImpl private constructor(
     constructor(
         sources: List<Path>,
         destinationDirectory: Path,
-        compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(JvmCompilerArgumentValueAdapter.getOrNull()),
+        compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
         compilerVersion: String,
     ) : this(
         options = Options(JvmCompilationOperation::class),
