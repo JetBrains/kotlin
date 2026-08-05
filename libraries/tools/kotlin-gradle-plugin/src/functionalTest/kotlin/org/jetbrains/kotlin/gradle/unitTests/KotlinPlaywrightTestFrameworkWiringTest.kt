@@ -16,12 +16,14 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
+import org.jetbrains.kotlin.gradle.targets.js.ir.getPwInstallBrowserTaskName
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.WebpackBundleKotlinJsTests
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PLAYWRIGHT_VERSION
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import java.io.File
@@ -147,23 +149,56 @@ class KotlinPlaywrightTestFrameworkWiringTest {
             webkit("my-webkit")
         }
 
-        val installTask = assertIs<PlaywrightBrowserInstall>(
-            setup.project.tasks.getByName("kotlinInstallPlaywrightBrowsers")
-        )
+        listOf(PwBrowserKind.CHROMIUM, PwBrowserKind.FIREFOX, PwBrowserKind.WEBKIT).forEach {
+            val installTask = assertIs<PlaywrightBrowserInstall>(
+                setup.project.tasks.getByName(it.getPwInstallBrowserTaskName())
+            )
 
-        assertNotNull(installTask, "Expected kotlinInstallPlaywrightBrowsers task to be registered")
-        assertEquals(
-            setOf("chromium", "firefox", "webkit"),
-            installTask.browsers.get().toSet()
-        )
+            assertNotNull(installTask, "Expected ${it.getPwInstallBrowserTaskName()} task to be registered to install ${it.browserName} browsers")
+        }
     }
 
     @Test
     fun `without runners no playwright install task is registered`() {
         val setup = buildBrowserTestProject {}
 
-        val installTask = setup.project.tasks.findByName("kotlinInstallPlaywrightBrowsers")
-        assertNull(installTask, "Expected no kotlinInstallPlaywrightBrowsers task when no runners declared")
+        PwBrowserKind.entries.forEach {
+            val installTask = setup.project.tasks.findByName(it.getPwInstallBrowserTaskName())
+            assertNull(installTask, "Expected no ${it.getPwInstallBrowserTaskName()} task when no runners declared")
+        }
+    }
+
+    @Test
+    fun `two js targets with playwright runners do not cause duplicate task registration`() {
+        // KT-87641: Multiple JS targets with Playwright tests must not fail with DuplicateTaskException
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                js("A") {
+                    browser {
+                        test.apply {
+                            firefox()
+                            chromium()
+                        }
+                    }
+                }
+                js("B") {
+                    browser {
+                        test.apply {
+                            firefox()
+                            chromium()
+                        }
+                    }
+                }
+            }
+        }
+        // Should not throw DuplicateTaskException
+        project.evaluate()
+
+        listOf(PwBrowserKind.CHROMIUM, PwBrowserKind.FIREFOX).forEach {
+            assertIs<PlaywrightBrowserInstall>(
+                project.tasks.getByName(it.getPwInstallBrowserTaskName())
+            )
+        }
     }
 
     @Test
