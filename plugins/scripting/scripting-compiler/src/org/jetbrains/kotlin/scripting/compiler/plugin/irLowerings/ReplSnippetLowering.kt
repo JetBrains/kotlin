@@ -37,9 +37,10 @@ import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.REPL_SIDECAR_PLUGIN_ID
+import kotlin.script.experimental.jvm.REPL_SNIPPET_EVAL_FUN_NAME_STRING
 
-val REPL_SNIPPET_EVAL_FUN_NAME = Name.identifier("\$\$eval")
 val REPL_SNIPPET_RESULT_PROP_NAME = Name.identifier("\$\$result")
+val REPL_SNIPPET_EVAL_FUN_NAME = Name.identifier(REPL_SNIPPET_EVAL_FUN_NAME_STRING)
 
 internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
