@@ -397,6 +397,7 @@ projectTests {
     val icTag = "wasmIc"
     val jsTag = "wasmJs"
     val wasiTag = "wasmWasi"
+    val jsMultiModuleTag = "wasmJsMultiModule"
     val extraTag = "wasmFirCompilerExtra"
 
     // Test everything
@@ -404,7 +405,7 @@ projectTests {
         smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
     }
 
-    // The five tasks below split the content of the `test` task into disjoint groups.
+    // The six tasks below split the content of the `test` task into disjoint groups.
     // Tests without any of the group tags are run by the `wasmMiscTest` task.
     // The `wasmFirCompilerExtraTest` task is excluded from aggregate `wasmFirCompilerTest` task.
     wasmProjectTest(
@@ -415,7 +416,13 @@ projectTests {
 
     wasmProjectTest(
         taskName = "wasmJsTest",
-        tags = "$jsTag & !$extraTag",
+        tags = "$jsTag & !$extraTag & !$jsMultiModuleTag",
+        skipInLocalBuild = true
+    )
+
+    wasmProjectTest(
+        taskName = "wasmJsMultiModuleTest",
+        tags = jsMultiModuleTag,
         skipInLocalBuild = true
     )
 
@@ -433,7 +440,7 @@ projectTests {
 
     wasmProjectTest(
         taskName = "wasmMiscTest",
-        tags = "!$icTag & !$jsTag & !$wasiTag & !$extraTag",
+        tags = "!$icTag & !$jsTag & !$wasiTag & !$extraTag & !$jsMultiModuleTag",
         skipInLocalBuild = true,
     )
 

@@ -11,13 +11,15 @@ import org.junit.jupiter.api.Tag
  * Tests of the `:wasm:wasm.tests` module are split into several Gradle test tasks by the JUnit 5 tags declared below.
  *
  * The tags are supposed to be put on the most common supertype of all tests belonging to the group, so generated test
- * suites inherit them automatically. The groups are disjoint: [WasmFirCompilerExtraTest] wins over the other three,
- * and everything which is left unannotated is run by the `wasmMiscTest` task.
+ * suites inherit them automatically. The groups are disjoint: [WasmFirCompilerExtraTest] and [WasmJsMultiModuleTest]
+ * win over [WasmIcTest], [WasmJsTest] and [WasmWasiTest], and everything which is left unannotated is run by the
+ * `wasmMiscTest` task.
  */
 
 const val WASM_IC_TEST_TAG = "wasmIc"
 const val WASM_JS_TEST_TAG = "wasmJs"
 const val WASM_WASI_TEST_TAG = "wasmWasi"
+const val WASM_JS_MULTI_MODULE_TEST_TAG = "wasmJsMultiModule"
 const val WASM_FIR_COMPILER_EXTRA_TEST_TAG = "wasmFirCompilerExtra"
 
 /**
@@ -36,6 +38,14 @@ annotation class WasmIcTest
 annotation class WasmJsTest
 
 /**
+ * Tests of the closed world multimodule mode for wasm-js. Executed by the `wasmJsMultiModuleTest` Gradle task.
+ *
+ * This tag takes precedence over [WasmJsTest]: a test annotated with it is run only by the `wasmJsMultiModuleTest` task.
+ */
+@Tag(WASM_JS_MULTI_MODULE_TEST_TAG)
+annotation class WasmJsMultiModuleTest
+
+/**
  * Tests which execute the compiled Wasm code in a WASI runtime. Executed by the `wasmWasiTest` Gradle task.
  *
  * Note that wasm-wasi tests which don't run the produced binary (diagnostic tests) are not a part of this group
@@ -49,7 +59,8 @@ annotation class WasmWasiTest
  * Executed by the `wasmFirCompilerExtraTest` Gradle task.
  *
  * This tag takes precedence over [WasmIcTest], [WasmJsTest] and [WasmWasiTest]: a test annotated with it is run
- * only by the `wasmFirCompilerExtraTest` task.
+ * only by the `wasmFirCompilerExtraTest` task. Multimodule codegen tests are carved out of this group by
+ * [WasmJsMultiModuleTest].
  */
 @Tag(WASM_FIR_COMPILER_EXTRA_TEST_TAG)
 annotation class WasmFirCompilerExtraTest
