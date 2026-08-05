@@ -13,7 +13,9 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isNumberedFunctionClassFqName
+import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -25,7 +27,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtSuperTypeList
-import org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
@@ -170,8 +171,6 @@ private class ClassClsStubBuilder(
             ProtoBuf.Class.Kind.ENUM_ENTRY -> error("Enum entries have to be created as members via '${::createEnumEntryStubs.name}'")
 
             else -> {
-                val inlineClassUnderlyingProperty = getInlineClassUnderlyingProperty()
-
                 KotlinClassStubImpl(
                     parent = parentStub,
                     qualifiedName = fqName.ref(),
@@ -183,30 +182,31 @@ private class ClassClsStubBuilder(
                     isLocal = false,
                     isTopLevel = isTopLevel,
                     kdocText = kdoc,
-                    valueClassRepresentation = inlineClassUnderlyingProperty?.let { KotlinValueClassRepresentation.INLINE_CLASS },
-                    inlineClassUnderlyingPropertyNameRef = inlineClassUnderlyingProperty?.name?.ref(),
-                    inlineClassUnderlyingType = inlineClassUnderlyingProperty?.type,
+                    valueClassRepresentation = createValueClassRepresentation(),
                 )
             }
         }
     }
 
-    private class InlineClassUnderlyingProperty(val name: Name, val type: KotlinTypeBean?)
-
     /**
-     * Returns the underlying property of an inline value class, or `null` when the class is not an inline value class.
+     * Returns how the class is unboxed by the compiler, or `null` when the class is not a value class,
+     * or when its representation cannot be restored from malformed metadata.
      *
-     * [InlineClassUnderlyingProperty.type] is `null` only for malformed metadata: the compiler either writes the type into the
-     * class itself, or serializes the underlying property it can be read from.
+     * [org.jetbrains.kotlin.descriptors.FullValueClassRepresentation] is not built yet.
+     * The stub format is already able to store them, so only this function has to be updated to support them.
      *
      * @see org.jetbrains.kotlin.serialization.deserialization.loadValueClassRepresentation
      */
-    private fun getInlineClassUnderlyingProperty(): InlineClassUnderlyingProperty? {
+    private fun createValueClassRepresentation(): ValueClassRepresentation<KotlinRigidTypeBean>? {
+        // TODO: build 'FullValueClassRepresentation' for full value classes
         if (!classProto.hasInlineClassUnderlyingPropertyName()) return null
 
         val name = c.nameResolver.getName(classProto.inlineClassUnderlyingPropertyName)
+
+        // The compiler writes the type into the class itself only when the underlying property is not a part of the ABI
         val typeProto = classProto.inlineClassUnderlyingType(c.typeTable) ?: findInlineClassUnderlyingPropertyTypeProto(name)
-        return InlineClassUnderlyingProperty(name, typeProto?.let(typeStubBuilder::createKotlinTypeBean))
+        val type = typeProto?.let(typeStubBuilder::createKotlinTypeBean) as? KotlinRigidTypeBean ?: return null
+        return InlineClassRepresentation(name, type)
     }
 
     private fun findInlineClassUnderlyingPropertyTypeProto(name: Name): ProtoBuf.Type? {

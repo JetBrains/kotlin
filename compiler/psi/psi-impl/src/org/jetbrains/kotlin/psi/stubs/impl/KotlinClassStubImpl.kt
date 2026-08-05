@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
-import org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @OptIn(KtImplementationDetail::class)
@@ -28,14 +28,11 @@ class KotlinClassStubImpl(
     override val isLocal: Boolean,
     override val isTopLevel: Boolean,
     override val kdocText: String?,
-    val valueClassRepresentation: KotlinValueClassRepresentation?,
-    private val inlineClassUnderlyingPropertyNameRef: StringRef?,
     /**
-     * The underlying type of an inline value class.
-     *
-     * `null` when [valueClassRepresentation] is `null`, or when the type cannot be determined from malformed metadata.
+     * How the class is unboxed by the compiler if it is a value class, or `null` if it is not a value class.
+     * Only stubs built from compiled metadata have this information; it is always `null` for stubs built from sources.
      */
-    val inlineClassUnderlyingType: KotlinTypeBean?,
+    val valueClassRepresentation: ValueClassRepresentation<KotlinRigidTypeBean>?,
 ) : KotlinStubBaseImpl<KtClass>(
     parent = parent,
     elementType = KtStubElementTypes.CLASS,
@@ -47,14 +44,6 @@ class KotlinClassStubImpl(
 
     override val superNames: List<String>
         get() = superNameRefs.map(StringRef::toString)
-
-    /**
-     * The name of the underlying property of an inline value class.
-     *
-     * Non-`null` exactly when [valueClassRepresentation] is non-`null`, as the name is always available in metadata.
-     */
-    val inlineClassUnderlyingPropertyName: String?
-        get() = StringRef.toString(inlineClassUnderlyingPropertyNameRef)
 
     @KtImplementationDetail
     override fun copyInto(newParent: StubElement<*>?): KotlinClassStubImpl = KotlinClassStubImpl(
@@ -68,8 +57,6 @@ class KotlinClassStubImpl(
         isLocal = isLocal,
         isTopLevel = isTopLevel,
         valueClassRepresentation = valueClassRepresentation,
-        inlineClassUnderlyingPropertyNameRef = inlineClassUnderlyingPropertyNameRef,
-        inlineClassUnderlyingType = inlineClassUnderlyingType,
         kdocText = kdocText,
     )
 
@@ -84,8 +71,13 @@ class KotlinClassStubImpl(
                 other.qualifiedName == qualifiedName &&
                 other.isInterface == isInterface &&
                 other.kdocText == kdocText &&
-                other.valueClassRepresentation == valueClassRepresentation &&
-                other.inlineClassUnderlyingPropertyNameRef == inlineClassUnderlyingPropertyNameRef &&
-                other.inlineClassUnderlyingType == inlineClassUnderlyingType &&
+                other.valueClassRepresentation.isEquivalentTo(valueClassRepresentation) &&
                 other.superNameRefs.contentEquals(superNameRefs)
+}
+
+private fun ValueClassRepresentation<KotlinRigidTypeBean>?.isEquivalentTo(
+    other: ValueClassRepresentation<KotlinRigidTypeBean>?,
+): Boolean = when {
+    this == null || other == null -> this == other
+    else -> javaClass == other.javaClass && underlyingPropertyNamesToTypes == other.underlyingPropertyNamesToTypes
 }

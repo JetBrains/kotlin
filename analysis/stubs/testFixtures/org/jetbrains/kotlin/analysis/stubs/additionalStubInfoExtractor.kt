@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.analysis.internal.utils.IndentedTextBuilder
 import org.jetbrains.kotlin.analysis.internal.utils.buildIndentedText
 import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.contracts.description.*
+import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
+import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProjectionKind
@@ -83,6 +86,7 @@ private fun IndentedTextBuilder.appendValue(value: Any?) {
         }
 
         is KotlinTypeBean -> appendTypeInfo(value)
+        is ValueClassRepresentation<*> -> appendValueClassRepresentation(value)
         is Name -> append(value.asString())
         is Enum<*> -> append(value.name)
         is String -> append("\"").append(value).append("\"")
@@ -96,6 +100,22 @@ private fun IndentedTextBuilder.appendValue(value: Any?) {
         null -> append("null")
         is ConstantValue<*>, is KotlinStubOrigin -> append(value.toString())
         else -> error("Unsupported type: ${value::class}")
+    }
+}
+
+private fun IndentedTextBuilder.appendValueClassRepresentation(representation: ValueClassRepresentation<*>) {
+    append(
+        when (representation) {
+            is InlineClassRepresentation -> "inline"
+            is FullValueClassRepresentation -> "full"
+        }
+    )
+
+    val properties = representation.underlyingPropertyNamesToTypes
+    if (properties == null) {
+        append(" null")
+    } else {
+        appendValue(properties.toMap())
     }
 }
 

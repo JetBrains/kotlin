@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinRigidTypeBean
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -297,26 +297,31 @@ internal fun deserializeClassToSymbol(
 private fun KotlinClassStubImpl.deserializeValueClassRepresentation(
     klass: FirRegularClass,
     typeDeserializer: StubBasedFirTypeDeserializer,
-): ValueClassRepresentation<ConeRigidType>? {
-    if (valueClassRepresentation != KotlinValueClassRepresentation.INLINE_CLASS) {
-        return null
+): ValueClassRepresentation<ConeRigidType>? = when (val representation = valueClassRepresentation) {
+    null -> null
+
+    is InlineClassRepresentation -> InlineClassRepresentation(
+        underlyingPropertyName = representation.underlyingPropertyName,
+        underlyingType = typeDeserializer.underlyingType(representation.underlyingType, klass),
+    )
+
+    is FullValueClassRepresentation -> FullValueClassRepresentation(
+        underlyingPropertyNamesToTypes = representation.underlyingPropertyNamesToTypes?.map { [name, type] ->
+            name to typeDeserializer.underlyingType(type, klass)
+        }
+    )
+}
+
+private fun StubBasedFirTypeDeserializer.underlyingType(bean: KotlinRigidTypeBean, klass: FirRegularClass): ConeRigidType {
+    val type = type(bean) ?: errorWithAttachment("Cannot determine the underlying type of a value class") {
+        withEntry("underlyingType", bean.toString())
+        withFirEntry("class", klass)
     }
 
-    val propertyName = inlineClassUnderlyingPropertyName
-        ?: errorWithAttachment("Inline value class must have an underlying property name") {
-            withFirEntry("class", klass)
-        }
-
-    val type = inlineClassUnderlyingType?.let { typeDeserializer.type(it) }
-        ?: errorWithAttachment("Cannot determine the underlying type of an inline value class") {
-            withEntry("underlyingPropertyName", propertyName)
-            withFirEntry("class", klass)
-        }
-
-    requireWithAttachment(type is ConeRigidType, { "Underlying type must be rigid type" }) {
+    requireWithAttachment(type is ConeRigidType, { "Underlying type must be a rigid type" }) {
         withConeTypeEntry("type", type)
         withFirEntry("class", klass)
     }
 
-    return InlineClassRepresentation(underlyingPropertyName = Name.identifier(propertyName), underlyingType = type)
+    return type
 }

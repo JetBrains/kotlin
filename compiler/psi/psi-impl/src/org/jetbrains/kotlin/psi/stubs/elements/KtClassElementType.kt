@@ -52,8 +52,6 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
             isTopLevel = isTopLevel,
             kdocText = null,
             valueClassRepresentation = null,
-            inlineClassUnderlyingPropertyNameRef = null,
-            inlineClassUnderlyingType = null,
         )
     }
 
@@ -75,12 +73,7 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
             dataStream.writeName(name)
         }
 
-        val representation = stub.valueClassRepresentation
-        dataStream.writeVarInt(if (representation == null) 0 else representation.ordinal + 1)
-        if (representation != null) {
-            dataStream.writeName(stub.inlineClassUnderlyingPropertyName)
-            serializeTypeBean(dataStream, stub.inlineClassUnderlyingType)
-        }
+        serializeValueClassRepresentation(dataStream, stub.valueClassRepresentation)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinClassStubImpl {
@@ -101,14 +94,7 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
             superNames[i] = dataStream.readName()
         }
 
-        val representationOrdinal = dataStream.readVarInt()
-        val representation: KotlinValueClassRepresentation? =
-            if (representationOrdinal == 0)
-                null
-            else
-                KotlinValueClassRepresentation.entries[representationOrdinal - 1]
-        val inlineClassUnderlyingPropertyName = if (representation != null) dataStream.readName() else null
-        val inlineClassUnderlyingType = if (representation != null) deserializeTypeBean(dataStream) else null
+        val valueClassRepresentation = deserializeValueClassRepresentation(dataStream)
 
         return KotlinClassStubImpl(
             parent = parentStub,
@@ -121,9 +107,7 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
             isLocal = isLocal,
             isTopLevel = isTopLevel,
             kdocText = kdocText,
-            valueClassRepresentation = representation,
-            inlineClassUnderlyingPropertyNameRef = inlineClassUnderlyingPropertyName,
-            inlineClassUnderlyingType = inlineClassUnderlyingType,
+            valueClassRepresentation = valueClassRepresentation,
         )
     }
 
