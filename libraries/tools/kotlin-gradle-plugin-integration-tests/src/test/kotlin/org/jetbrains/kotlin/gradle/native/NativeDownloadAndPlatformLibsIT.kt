@@ -130,14 +130,17 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
     @DisplayName("K/N distribution is marked read-only when the diagnostics property is enabled (KT-86251)")
     @GradleTest
     fun testReadOnlyDistributionDiagnostics(gradleVersion: GradleVersion) {
-        platformLibrariesProject("linuxX64", gradleVersion = gradleVersion) {
+        // Two native targets, so that 'nativeMain' becomes a shared commonizer target and the native distribution
+        // commonizer actually runs: it writes into the distribution itself, under 'klib/commonized'.
+        platformLibrariesProject("linuxX64", "linuxArm64", gradleVersion = gradleVersion) {
             val konanDataDir = workingDir.resolve(".konan")
             build(
-                "tasks",
+                "commonizeNativeDistribution",
                 "-Pkotlin.native.diagnostics.readOnlyDistribution=true",
                 buildOptions = defaultBuildOptions.copy(konanDataDir = konanDataDir),
             ) {
                 assertOutputContains("marked Kotlin/Native distribution read-only")
+                assertTasksExecuted(":commonizeNativeDistribution")
 
                 val distributionDir = konanDataDir.resolve("kotlin-native-prebuilt-$platformName-$currentCompilerVersion")
                 assertDirectoryExists(distributionDir)
@@ -150,12 +153,23 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
                     "Shipped Kotlin/Native distribution file must be read-only: $shippedFile",
                 )
 
+                val klibDir = distributionDir.resolve("klib")
+
                 // The runtime cache directory must stay writable so the compiler can still build its caches.
-                val cacheDir = distributionDir.resolve("klib").resolve("cache")
+                val cacheDir = klibDir.resolve("cache")
                 assertDirectoryExists(cacheDir)
                 assertTrue(
                     PosixFilePermission.OWNER_WRITE in Files.getPosixFilePermissions(cacheDir),
                     "Kotlin/Native distribution klib/cache directory must remain writable: $cacheDir",
+                )
+
+                // The commonizer output directory must stay writable, otherwise the commonizer cannot even create
+                // its '.lock' file and the build fails before any diagnostics can be collected.
+                val commonizedDir = klibDir.resolve("commonized")
+                assertDirectoryExists(commonizedDir)
+                assertTrue(
+                    PosixFilePermission.OWNER_WRITE in Files.getPosixFilePermissions(commonizedDir),
+                    "Kotlin/Native distribution klib/commonized directory must remain writable: $commonizedDir",
                 )
             }
         }

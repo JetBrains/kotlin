@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTyp
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
 import org.jetbrains.kotlin.gradle.targets.native.konanPropertiesBuildService
 import org.jetbrains.kotlin.internal.compilerRunner.native.nativeCompilerClasspath
+import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR
+import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_KLIB_DIR
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
@@ -111,6 +113,9 @@ class NativeCompilerDownloader(
         // freshly extracted distribution read-only, so any process overwriting shipped files fails with a stack trace.
         internal const val READ_ONLY_DISTRIBUTION_DIAGNOSTICS_PROPERTY = "kotlin.native.diagnostics.readOnlyDistribution"
 
+        // The distribution's runtime cache directory; there is no shared constant for it in `konan.library`.
+        private const val KONAN_DISTRIBUTION_CACHE_DIR = "cache"
+
         private val WRITE_PERMISSIONS = setOf(
             PosixFilePermission.OWNER_WRITE,
             PosixFilePermission.GROUP_WRITE,
@@ -123,8 +128,14 @@ class NativeCompilerDownloader(
          * stay runnable and directories stay listable). Any later attempt to overwrite or delete a *shipped*
          * distribution file then fails loudly with a permission error whose stack trace names the writer.
          *
-         * The `klib/cache` directory node is kept writable so the compiler can still create and rebuild its
-         * runtime caches (`klib/cache/<flavor>/...`) while the shipped tree stays read-only.
+         * Two build-time scratch locations inside the distribution are exempted, otherwise the build cannot run
+         * at all:
+         * - `klib/cache`: only the directory node, so the compiler can add new runtime cache flavors
+         *   (`klib/cache/<flavor>/...`). Its *shipped* children (the `-system` per-file caches) stay read-only —
+         *   they are the files reported as missing or corrupted in KT-86251.
+         * - `klib/commonized`: the whole subtree, because nothing there is shipped. It is where
+         *   `NativeDistributionCommonizerTask` writes, including the `.lock` file it needs before it can even
+         *   answer its own up-to-date check.
          *
          * POSIX-only; a no-op on filesystems without POSIX permissions (e.g. Windows).
          */
@@ -133,13 +144,22 @@ class NativeCompilerDownloader(
                 logger.info("KT-86251 diagnostics: read-only distribution requested, but the filesystem is not POSIX; skipping")
                 return
             }
-            // Create the runtime cache dir up front (while still writable) so it can be kept writable below.
-            val cacheDir = distribution.resolve("klib").resolve("cache").also { it.mkdirs() }
-            distribution.walkTopDown().forEach { setWritable(it.toPath(), writable = false, logger = logger) }
+            // Create the scratch dirs up front (while still writable) so they can be exempted below.
+            val klibDir = distribution.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
+            val cacheDir = klibDir.resolve(KONAN_DISTRIBUTION_CACHE_DIR).also { it.mkdirs() }
+            val commonizedDir = klibDir.resolve(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR).also { it.mkdirs() }
+
+            distribution.walkTopDown()
+                .filterNot { it.startsWith(commonizedDir) }
+                .forEach { setWritable(it.toPath(), writable = false, logger = logger) }
             // Re-grant write on the cache directory node only (not its shipped children), so the compiler can
             // still create new cache flavors while the shipped tree stays immutable.
             setWritable(cacheDir.toPath(), writable = true, logger = logger)
-            logger.lifecycle("KT-86251 diagnostics: marked Kotlin/Native distribution read-only at $distribution (klib/cache kept writable)")
+            logger.lifecycle(
+                "KT-86251 diagnostics: marked Kotlin/Native distribution read-only at $distribution " +
+                        "($KONAN_DISTRIBUTION_KLIB_DIR/$KONAN_DISTRIBUTION_CACHE_DIR and " +
+                        "$KONAN_DISTRIBUTION_KLIB_DIR/$KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR kept writable)"
+            )
         }
 
         /**
