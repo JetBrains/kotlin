@@ -23,14 +23,12 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
 
-internal class RedundantVariableDeclarationElimination(private val root: JsStatement) {
+internal class RedundantVariableDeclarationElimination(private val root: JsStatement) : FunctionPostProcessorStep() {
     private val usages = mutableSetOf<JsName>()
-    private var hasChanges = false
 
-    fun apply(): Boolean {
+    override fun apply() {
         analyze()
         perform()
-        return hasChanges
     }
 
     private fun analyze() {

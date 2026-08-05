@@ -19,14 +19,12 @@ package org.jetbrains.kotlin.js.inline.clean
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 
-internal class RedundantLabelRemoval(private val root: JsStatement) {
+internal class RedundantLabelRemoval(private val root: JsStatement) : FunctionPostProcessorStep() {
     private val labelUsages = mutableMapOf<JsName, Int>()
-    private var hasChanges = false
 
-    fun apply(): Boolean {
+    override fun apply() {
         analyze()
         perform()
-        return hasChanges
     }
 
     private fun analyze() {

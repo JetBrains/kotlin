@@ -19,27 +19,41 @@ package org.jetbrains.kotlin.js.inline.clean
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.JsName
 
-class FunctionPostProcessor(val root: JsFunction, private val voidName: JsName? = null) {
-    val optimizations = listOf(
-        { RedundantLabelRemoval(root.body).apply() },
-        { EmptyStatementElimination(root.body).apply() },
-        { DoWhileGuardElimination(root.body).apply() },
-        { TemporaryVariableElimination(root).apply() },
-        { RedundantCallElimination(root.body).apply() },
-        { IfStatementReduction(root.body).apply() },
-        { DeadCodeElimination(root.body).apply() },
-        { RedundantVariableDeclarationElimination(root.body).apply() },
-        { RedundantStatementElimination(root).apply() },
-        { BoxingUnboxingElimination(root.body).apply() },
-        { MoveTemporaryVariableDeclarationToAssignment(root.body).apply() },
-        { voidName?.let { VoidPropertiesElimination(root.body, voidName).apply() } ?: false }
+internal abstract class FunctionPostProcessorStep : Function0<Boolean> {
+    var hasChanges: Boolean = false
+        protected set
+
+    protected abstract fun apply()
+
+    final override fun invoke(): Boolean {
+        hasChanges = false
+        apply()
+        return hasChanges
+    }
+}
+
+class FunctionPostProcessor(val root: JsFunction, voidName: JsName? = null) {
+    private val optimizations: List<() -> FunctionPostProcessorStep> = listOfNotNull(
+        { RedundantLabelRemoval(root.body) },
+        { EmptyStatementElimination(root.body) },
+        { DoWhileGuardElimination(root.body) },
+        { TemporaryVariableElimination(root) },
+        { RedundantCallElimination(root.body) },
+        { IfStatementReduction(root.body) },
+        { DeadCodeElimination(root.body) },
+        { RedundantVariableDeclarationElimination(root.body) },
+        { RedundantStatementElimination(root) },
+        { BoxingUnboxingElimination(root.body) },
+        { MoveTemporaryVariableDeclarationToAssignment(root.body) },
+        voidName?.let { { VoidPropertiesElimination(root.body, voidName) } },
     )
     // TODO: reduce to A || B, A && B if possible
 
     fun apply() {
         do {
             var hasChanges = false
-            for (opt in optimizations) {
+            for (passFactory in optimizations) {
+                val opt = passFactory()
                 hasChanges = hasChanges or opt()
             }
         } while (hasChanges)
