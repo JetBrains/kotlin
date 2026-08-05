@@ -43,12 +43,10 @@ fun loadNativeKlibs(
     val loadStdlib = !configuration.konanNoStdlib
     val loadPlatformLibs = !configuration.konanNoDefaultLibs
 
-    val distributionLibrariesProvider: KlibNativeDistributionLibraryProvider? = runIf(loadStdlib || loadPlatformLibs) {
-        val nativeHome = configuration.konanHome?.let(::File) ?: KotlinNativePaths.homePath
-        KlibNativeDistributionLibraryProvider(nativeHome.absoluteFile) {
-            runIf(loadStdlib) { withStdlib() }
-            runIf(loadPlatformLibs) { withPlatformLibs(nativeTarget) }
-        }
+    val nativeHome = configuration.konanHome?.let(::File) ?: KotlinNativePaths.homePath
+    val distributionLibrariesProvider = KlibNativeDistributionLibraryProvider(nativeHome) {
+        runIf(loadStdlib) { withStdlib() }
+        runIf(loadPlatformLibs) { withPlatformLibs(nativeTarget) }
     }
 
     val platformChecker = if (configuration.metadataKlib)
@@ -57,7 +55,7 @@ fun loadNativeKlibs(
         KlibPlatformChecker.Native(nativeTarget.name)
 
     val result = KlibLoader {
-        libraryProviders(listOfNotNull(distributionLibrariesProvider))
+        libraryProviders(distributionLibrariesProvider)
         libraryPaths(configuration.konanLibraries)
         platformChecker(platformChecker)
         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
