@@ -71,7 +71,7 @@ object ScriptingConfigurationKeys {
     // of a client's own (otherwise process-local, non-serializable) `ScriptCompilationConfiguration`
     // that genuinely needs to cross the client/daemon process boundary for a snippet whose source
     // refers to such a receiver unqualified (e.g. a JSR-223 bindings-exposing synthetic snippet's
-    // `getBindings(...)` call, see `kotlin.script.experimental.jvmhost.jsr223.configureExposedJsr223Context`)
+    // `getBindings(...)` call, see `kotlin.script.experimental.jvm.jsr223.configureExposedJsr223Context`)
     // to actually *compile* here -- the receiver *instances* themselves are supplied purely
     // client-side at evaluation time (`ScriptEvaluationConfiguration.implicitReceivers`) and need no
     // such option.

@@ -26,8 +26,7 @@ import java.rmi.RemoteException
 import java.rmi.server.UnicastRemoteObject
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.impl._isSyntheticSnippet
-import kotlin.script.experimental.jvm.impl.KJvmCompiledModuleFromClassPath
-import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
+import kotlin.script.experimental.jvm.impl.compiledSnippetFromClassPath
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.util.LinkedSnippetImpl
 import kotlin.script.experimental.util.add
@@ -41,14 +40,15 @@ import kotlin.script.experimental.util.add
  * [org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler].
  *
  * This is the *only* substitution [KotlinJsr223DaemonScriptEngineImpl] makes on top of the stock
- * REPL infrastructure: state/eval-loop management ([kotlin.script.experimental.jvmhost.jsr223.base.KotlinJsr223JvmScriptEngineBase])
+ * REPL infrastructure: state/eval-loop management ([kotlin.script.experimental.jvm.jsr223.base.KotlinJsr223JvmScriptEngineBase])
  * and result evaluation ([org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator]) are
  * reused verbatim -- see that class's KDoc for the overall design rationale. Each snippet is
  * compiled straight to a **regular output directory** (`-d`, one per snippet, kept alive for this
- * compiler's whole lifetime) and wrapped into a real [KJvmCompiledScript] backed by a plain
- * [KJvmCompiledModuleFromClassPath] classloader over that directory -- no bespoke artifact
- * deserialization is involved -- so [K2ReplEvaluator] can evaluate it exactly as it would a snippet
- * compiled in-process, including its existing cross-snippet classloader chaining
+ * compiler's whole lifetime) and wrapped into a real
+ * [kotlin.script.experimental.jvm.impl.KJvmCompiledScript] by the stock
+ * [compiledSnippetFromClassPath] -- no bespoke artifact deserialization is involved -- so
+ * [K2ReplEvaluator] can evaluate it exactly as it would a snippet compiled in-process, including its
+ * existing cross-snippet classloader chaining
  * ([kotlin.script.experimental.jvm.impl.getOrCreateActualClassloader]'s `lastSnippetClassLoader`
  * handling), which this class does not need to (and does not) reimplement.
  *
@@ -58,8 +58,8 @@ import kotlin.script.experimental.util.add
  * exactly as a CLI invocation would (see `ScriptingCommandLineProcessor`). Priors are fed back
  * purely via the regular classpath (their `-d` output directories) plus their `ClassId`s -- the
  * compiler's FIR REPL machinery resolves their declarations straight from their compiled classes'
- * own embedded metadata (see `ClasspathBackedFirReplHistoryProvider`). [decodeCompiledSnippet]
- * predicts the wrapper class name from the source file name it wrote
+ * own embedded metadata (see `ClasspathBackedFirReplHistoryProvider`). [snippetClassId] predicts the
+ * wrapper class name from the source file name it wrote
  * ([NameUtils.getSnippetTargetClassName]) -- no round-trip needed to learn it.
  *
  * This class never has to synthesize a `-Xplugin` services jar re-declaring the scripting
@@ -76,7 +76,7 @@ import kotlin.script.experimental.util.add
  * given, exactly as the in-process
  * [org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler] does, so a definition wired
  * through a synthetic-snippet-producing `refineConfiguration` handler -- e.g.
- * `kotlin.script.experimental.jvmhost.jsr223.generateBindingSnippetIfNeeded` -- gets its synthetic
+ * `kotlin.script.experimental.jvm.jsr223.generateBindingSnippetIfNeeded` -- gets its synthetic
  * snippet(s) generated (as plain source text) and compiled *ahead of* the main snippet, chained into
  * [priorOutputDirs]/[priorClassIds] the same way any other snippet is, all within this single
  * [compile] call. This reuses the generic, already-existing mechanism unchanged -- no new daemon/CLI
@@ -87,7 +87,7 @@ import kotlin.script.experimental.util.add
  * against a `javax.script.ScriptContext` receiver): every snippet on this out-of-process path
  * compiles against the daemon's own fallback `.repl.<extension>` `ScriptDefinition` (see
  * `pluginRegisrar.kt`), which by default declares no implicit receivers at all -- a receiver added
- * client-side (e.g. via `kotlin.script.experimental.jvmhost.jsr223.configureExposedJsr223Context`)
+ * client-side (e.g. via `kotlin.script.experimental.jvm.jsr223.configureExposedJsr223Context`)
  * would never reach that session on its own. To close this gap, [compileSnippetBatch] additionally
  * runs `snippetConfiguration.refineBeforeCompiling(snippet)` itself (there being no local FIR
  * session here to run it implicitly) and passes the resulting
@@ -200,7 +200,7 @@ class DaemonReplCompiler(
             // the exact same generic mechanism K2ReplCompiler.compile uses for the in-process engine
             // -- see ScriptCompilationConfiguration.prependSyntheticSnippets's KDoc. This is what lets
             // a definition wired via KotlinJsr223DaemonScriptEngineImpl's baseCompilationConfiguration
-            // (e.g. reusing kotlin.script.experimental.jvmhost.jsr223.generateBindingSnippetIfNeeded)
+            // (e.g. reusing kotlin.script.experimental.jvm.jsr223.generateBindingSnippetIfNeeded)
             // work here without any daemon-side/CLI change: the synthetic snippet's *source text* is
             // produced entirely in this process.
             val [updatedConfiguration, syntheticSnippets] =
@@ -253,7 +253,7 @@ class DaemonReplCompiler(
         reports: MutableList<ScriptDiagnostic>,
     ): ResultWithDiagnostics<Unit> {
         // Runs any beforeCompiling refineConfiguration hooks (e.g.
-        // kotlin.script.experimental.jvmhost.jsr223.configureExposedJsr223Context) entirely
+        // kotlin.script.experimental.jvm.jsr223.configureExposedJsr223Context) entirely
         // client-side, exactly as the in-process K2ReplCompiler's session-side definition-matching
         // pipeline does -- there is no such in-process FIR session here to run them implicitly, for
         // every snippet of the batch. The one observable effect of this that matters on this
@@ -314,7 +314,16 @@ class DaemonReplCompiler(
             priorOutputDirs += outputDir
             for ([refinedSnippet, scriptFile] in refinedSnippets.zip(scriptFiles)) {
                 val classId = snippetClassId(scriptFile)
-                val compiledSnippet = decodeCompiledSnippet(outputDir, classId, refinedSnippet.snippet, refinedSnippet.configuration)
+                // The compiled snippet's classes are loaded through a plain classloader over its own
+                // `-d` output directory -- regular `.class` files, no bespoke deserialization
+                // involved -- so K2ReplEvaluator can evaluate it exactly as it would an in-process
+                // compilation result (see compiledSnippetFromClassPath's KDoc).
+                val compiledSnippet = compiledSnippetFromClassPath(
+                    classPath = listOf(outputDir),
+                    snippetClassFQName = classId.asSingleFqName().asString(),
+                    snippet = refinedSnippet.snippet,
+                    compilationConfiguration = refinedSnippet.configuration,
+                )
                 priorClassIds += classId
                 lastCompiledSnippetInternal = lastCompiledSnippetInternal.add(compiledSnippet)
             }
@@ -405,7 +414,7 @@ class DaemonReplCompiler(
             }
             // See compileSnippetBatch's KDoc for where this list comes from: this is the one piece
             // of a client-side refineConfiguration hook's effect (e.g.
-            // kotlin.script.experimental.jvmhost.jsr223.configureExposedJsr223Context) that needs to
+            // kotlin.script.experimental.jvm.jsr223.configureExposedJsr223Context) that needs to
             // reach the daemon for the compiled `.repl.<extension>` snippet classes to actually declare
             // a matching implicit-receiver parameter -- see `repl-snippet-implicit-receiver` in
             // `ScriptingCommandLineProcessor`.
@@ -510,39 +519,7 @@ class DaemonReplCompiler(
     private fun snippetClassId(scriptFile: File): ClassId =
         ClassId(FqName.ROOT, NameUtils.getSnippetTargetClassName(scriptFile.name))
 
-    /**
-     * Wraps a compiled snippet's `-d` output directory into a [KJvmCompiledScript]: its classes are
-     * loaded through a plain [KJvmCompiledModuleFromClassPath] classloader over [outputDir] --
-     * regular `.class` files, no bespoke deserialization involved. [classId] (from [snippetClassId])
-     * supplies the wrapper class name; the result field is always [RESULT_FIELD_NAME] -- the
-     * `ScriptCompilationConfiguration.resultField` default that the fallback `.repl.<extension>`
-     * `ScriptDefinition` (see `pluginRegisrar.kt`) leaves untouched, so the compiled bytecode
-     * always emits a field under exactly this name for the snippet's last-expression value.
-     */
-    private fun decodeCompiledSnippet(
-        outputDir: File,
-        classId: ClassId,
-        snippet: SourceCode,
-        configuration: ScriptCompilationConfiguration,
-    ): KJvmCompiledScript {
-        val compiledModule = KJvmCompiledModuleFromClassPath(listOf(outputDir))
-        return KJvmCompiledScript(
-            sourceLocationId = snippet.locationId,
-            compilationConfiguration = configuration,
-            scriptClassFQName = classId.asSingleFqName().asString(),
-            resultField = RESULT_FIELD_NAME to KotlinType(RESULT_FIELD_TYPE_NAME),
-            otherScripts = emptyList(),
-            compiledModule = compiledModule,
-        )
-    }
-
     companion object {
-        // The `ScriptCompilationConfigurationKeys.resultField` default (see `kotlin.script.experimental.api.resultField`),
-        // left untouched by the fallback `.repl.<extension>` ScriptDefinition -- so this is always
-        // the field name FirReplSnippetConfiguratorExtensionImpl emits the snippet's last-expression value under.
-        private const val RESULT_FIELD_NAME = "\$\$result"
-        private const val RESULT_FIELD_TYPE_NAME = "kotlin.Any"
-
         // One "client is alive" flag file per JVM, shared by every DaemonReplCompiler instance in it.
         private val clientIsAliveFile: File by lazy { makeAutodeletingFlagFile(keyword = "jsr223-daemon-client") }
     }

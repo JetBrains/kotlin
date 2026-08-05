@@ -13,7 +13,7 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.safeCast
-import kotlin.script.experimental.jvmhost.jsr223.base.InvokeWrapper
+import kotlin.script.experimental.jvm.jsr223.base.InvokeWrapper
 
 interface KotlinJsr223InvocableScriptEngine : Invocable {
 
