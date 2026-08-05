@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.stubs
 
 import org.jetbrains.kotlin.analysis.decompiler.psi.common.AbstractDecompiledCommonTextTest
 import org.jetbrains.kotlin.analysis.decompiler.psi.js.AbstractDecompiledJsTextTest
+import org.jetbrains.kotlin.analysis.decompiler.psi.jvm.AbstractDecompiledJvmAbiTextTest
 import org.jetbrains.kotlin.analysis.decompiler.psi.jvm.AbstractDecompiledJvmTextTest
 import org.jetbrains.kotlin.analysis.stubs.common.AbstractCompiledCommonStubsTest
 import org.jetbrains.kotlin.analysis.stubs.js.AbstractCompiledJsStubsTest
@@ -19,6 +20,10 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("analysis/stubs/tests-gen", "analysis/stubs/testData") {
             testClass<AbstractCompiledJvmAbiStubsTest> {
+                model("jvmAbi", pattern = TestGeneratorUtil.KT)
+            }
+
+            testClass<AbstractDecompiledJvmAbiTextTest> {
                 model("jvmAbi", pattern = TestGeneratorUtil.KT)
             }
         }

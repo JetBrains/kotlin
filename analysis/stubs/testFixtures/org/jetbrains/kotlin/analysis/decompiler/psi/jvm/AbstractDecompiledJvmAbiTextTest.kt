@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.stubs.jvm
+package org.jetbrains.kotlin.analysis.decompiler.psi.jvm
 
-import org.jetbrains.kotlin.analysis.stubs.AbstractCompiledStubsTest
+import org.jetbrains.kotlin.analysis.decompiler.psi.AbstractDecompiledTextTest
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.JvmAbiTestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 /**
  * Covers .class files from an ABI JAR produced by `jvm-abi-gen`
  *
- * @see org.jetbrains.kotlin.analysis.decompiler.psi.jvm.AbstractDecompiledJvmAbiTextTest
+ * @see org.jetbrains.kotlin.analysis.stubs.jvm.AbstractCompiledJvmAbiStubsTest
  */
-abstract class AbstractCompiledJvmAbiStubsTest : AbstractCompiledStubsTest(JvmPlatforms.defaultJvmPlatform) {
+abstract class AbstractDecompiledJvmAbiTextTest : AbstractDecompiledTextTest(JvmPlatforms.defaultJvmPlatform) {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         builder.useAdditionalService<TestModuleCompiler> { JvmAbiTestModuleCompiler }
