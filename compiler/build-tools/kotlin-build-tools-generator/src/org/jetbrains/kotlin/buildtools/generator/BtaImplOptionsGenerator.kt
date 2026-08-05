@@ -194,7 +194,7 @@ internal class BtaImplOptionsGenerator(
                 }
 
                 maybeAddApplyArgumentStringsFun(level, generateCompatLayer, compatLayerConfig?.currentKotlinVersion ?: kotlinVersion)
-                maybeAddApplyCommandLineArgumentsFun(level, generateCompatLayer)
+                maybeAddApplyCommandLineArgumentsFun(level, generateCompatLayer, targetPackage)
                 maybeAddToArgumentsStringFun(level, parentClass)
                 if (!generateCompatLayer) {
                     generateRestrictedArgViolationCollection(level, parentClass)
@@ -1041,6 +1041,7 @@ private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
 private fun TypeSpec.Builder.maybeAddApplyCommandLineArgumentsFun(
     level: KotlinCompilerArgumentsLevel,
     generateCompatLayer: Boolean,
+    targetPackage: String,
 ) {
     if (!level.isLeaf()) {
         return
@@ -1052,11 +1053,11 @@ private fun TypeSpec.Builder.maybeAddApplyCommandLineArgumentsFun(
         addModifiers(KModifier.OVERRIDE)
         addParameter("arguments", listTypeNameOf<String>())
         addStatement("val compilerArgs = toCompilerArguments()")
-        addStatement(
-            "%M(arguments, compilerArgs, false)",
-            MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments")
-        )
         if (!generateCompatLayer) {
+            addStatement(
+                "%M(arguments, compilerArgs, false)",
+                MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments")
+            )
             addStatement(
                 "%M(this, compilerArgs)",
                 MemberName("org.jetbrains.kotlin.buildtools.internal.arguments", "handleCustomPluginArguments")
@@ -1065,12 +1066,6 @@ private fun TypeSpec.Builder.maybeAddApplyCommandLineArgumentsFun(
             addStatement(
                 "%M(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }",
                 MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArgumentsAllErrors"),
-            )
-        } else {
-            addStatement(
-                "%M(compilerArgs.errors)?.let { throw %M(it) }",
-                MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArguments"),
-                MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
             )
         }
         addStatement("applyCompilerArguments(compilerArgs)")

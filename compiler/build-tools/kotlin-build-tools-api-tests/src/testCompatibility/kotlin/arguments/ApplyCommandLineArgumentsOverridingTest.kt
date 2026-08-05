@@ -15,19 +15,19 @@ import org.jetbrains.kotlin.buildtools.api.js.jsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.js.jsLinkingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.jvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain.Companion.metadata
+import org.jetbrains.kotlin.buildtools.api.metadata.metadataKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain.Companion.wasm
 import org.jetbrains.kotlin.buildtools.api.wasm.wasmKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.wasm.wasmLinkingOperation
-import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain.Companion.metadata
-import org.jetbrains.kotlin.buildtools.api.metadata.metadataKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
-import org.jetbrains.kotlin.tooling.core.compareTo
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertNotNull
 import java.io.File
 import kotlin.io.path.Path
 
@@ -132,13 +132,51 @@ class ApplyCommandLineArgumentsOverridingTest : BaseCompilationTest() {
                 emptySet()
             )
             this[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(plugin)
-            applyCommandLineArguments(listOf("-Xplugin=some-path.jar", "-P", "plugin:a:b=5"))
+            applyCommandLineArguments(listOf("-Xplugin=some-path.jar", "-Xplugin=other-path2.jar", "-P", "plugin:a:b=5"))
 
+            println(build().toArgumentStrings().joinToString() + " " + kotlinToolchains.getCompilerVersion())
             val plugins = this[CommonCompilerArguments.COMPILER_PLUGINS]
             assertEquals(listOf("___RAW_PLUGINS_APPLIED___"), plugins.map { it.pluginId })
             val pattern = """some\.jar""".toRegex()
             assertEquals(0, pattern.findAll(build().toArgumentStrings().single { it.startsWith("-Xplugin=") }).count()) {
                 build().toArgumentStrings().joinToString()
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("tests the behavior differences between compiler versions in how string parsing replaces or appends to existing arguments")
+    fun testOverrideBehaviorOfStringParsing() {
+        kotlinToolchains.jvm.jvmCompilationOperation(emptyList(), Path("")) {
+            with(compilerArguments) {
+                applyCommandLineArguments(listOf("-Xplugin=some-path.jar", "-P", "plugin:a:b=5"))
+                with(build().toArgumentStrings()) {
+                    assertTrue(contains("-Xplugin=some-path.jar"))
+                    assertNotNull(singleOrNull { it == "-P" })
+                    assertNotNull(singleOrNull { it == "plugin:a:b=5" })
+                }
+
+                applyCommandLineArguments(
+                    listOf(
+                        "-Xplugin=other-path.jar",
+                        "-Xplugin=other-path2.jar",
+                        "-P",
+                        "plugin:d:e=5",
+                        "-P",
+                        "plugin:c:d=10"
+                    )
+                )
+                with(build().toArgumentStrings()) {
+                    assertTrue(contains("-Xplugin=other-path.jar,other-path2.jar")) { kotlinToolchains.getCompilerVersion() + " " + this.joinToString() }
+                    assertFalse(any { "some-path.jar" in it })
+                    assertFalse(any { "plugin:a:b=5" in it })
+                    assertNotNull(singleOrNull { it == "-P" })
+                    assertNotNull(singleOrNull { it == "plugin:d:e=5,plugin:c:d=10" })
+                }
+                val pattern = """some\.jar""".toRegex()
+                assertEquals(0, pattern.findAll(build().toArgumentStrings().single { it.startsWith("-Xplugin=") }).count()) {
+                    build().toArgumentStrings().joinToString()
+                }
             }
         }
     }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.internal.compat.arguments
 
-import com.intellij.util.containers.stream
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import java.nio.file.Path
@@ -53,4 +52,34 @@ internal fun List<String>.checkNoneContains(other: CharSequence) {
                     "If you need its support, please let us know: https://youtrack.jetbrains.com/issue/KT-85553"
         )
     }
+}
+
+internal fun <A : CommonToolArguments> parseCommandLineArguments(
+    args: List<String>,
+    result: A,
+    overrideArguments: Boolean = false,
+    implClassloader: ClassLoader,
+) {
+    val parseCommandLineArgumentsClass =
+        implClassloader.loadClass("org.jetbrains.kotlin.buildtools.api.internal.backports.ParseCommandLineArgumentsKt")
+
+    fun parseCommandLineArguments(arguments: List<String>, compilerArgs: Any, overrideArguments: Boolean): Any? {
+        return parseCommandLineArgumentsClass.getMethod(
+            "parseCommandLineArguments",
+            List::class.java,
+            implClassloader.loadClass("org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments"),
+            Boolean::class.java
+        ).invoke(null, arguments, compilerArgs, overrideArguments)
+    }
+
+    fun validateArgumentsAllErrors(errors: Any?): List<String> {
+        @Suppress("UNCHECKED_CAST")
+        return parseCommandLineArgumentsClass.getMethod(
+            "validateArgumentsAllErrors",
+            implClassloader.loadClass("org.jetbrains.kotlin.buildtools.api.internal.backports.ArgumentParseErrors"),
+        ).invoke(null, errors) as List<String>
+    }
+
+    val errors = parseCommandLineArguments(args, result, overrideArguments)
+    validateArgumentsAllErrors(errors).firstOrNull()?.let { throw CompilerArgumentsParseException(it) }
 }

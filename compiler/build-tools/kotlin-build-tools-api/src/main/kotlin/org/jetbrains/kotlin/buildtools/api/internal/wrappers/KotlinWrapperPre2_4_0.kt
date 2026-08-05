@@ -30,8 +30,10 @@ import kotlin.io.path.Path
  */
 @Suppress("ClassName")
 internal class KotlinWrapperPre2_4_0(
-    private val base: KotlinToolchains,
-) : KotlinToolchains by base {
+    override val base: KotlinToolchains,
+) : KotlinToolchains by base, KotlinToolchainsWrapper {
+
+    override val implClassloader: ClassLoader by lazy { getImplClassloader() }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : KotlinToolchains.Toolchain> getToolchain(type: Class<T>): T = when (type) {

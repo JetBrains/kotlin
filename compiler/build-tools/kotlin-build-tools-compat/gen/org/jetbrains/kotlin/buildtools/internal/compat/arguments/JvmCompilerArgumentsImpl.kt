@@ -359,8 +359,6 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
   @DelicateBuildToolsApi
   override fun applyCommandLineArguments(arguments: List<String>) {
     val compilerArgs = toCompilerArguments()
-    parseCommandLineArguments(arguments, compilerArgs, false)
-    validateArguments(compilerArgs.errors)?.let { throw CompilerArgumentsParseException(it) }
     applyCompilerArguments(compilerArgs)
   }
 
