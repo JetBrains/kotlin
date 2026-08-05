@@ -24,15 +24,11 @@ var IrClass.scriptResultFieldDataAttr: ScriptResultFieldData? by irAttribute(cop
 var IrScript.scriptCompilationConfiguration: ScriptCompilationConfiguration? by irAttribute(copyByDefault = true)
 
 /**
- * Protobuf-wire-encoded `SnippetArtifactSidecar` bytes assembled from the **frontend** in
- * `Fir2IrReplSnippetConfiguratorExtensionImpl.prepareSnippet` (where the FIR session, snippet
- * declarations, and file-level imports are still reachable) and consumed by
+ * Protobuf-wire-encoded `SnippetArtifactSidecar` bytes assembled from the frontend in
+ * `Fir2IrReplSnippetConfiguratorExtensionImpl.prepareSnippet` and consumed by
  * `ReplSnippetsToClassesLowering.finalizeReplSnippetClass`, which embeds them into the snippet
- * wrapper class's `.kotlin_metadata` via the generic `ProtoBuf.CompilerPluginData` channel
- * (`metadataDeclarationRegistrar.addCustomMetadataExtension`).
+ * wrapper class's `.kotlin_metadata`.
  *
- * Only set on the **stateless** REPL compile path; `null` for the stateful/golden path, which is
- * therefore left bit-for-bit unchanged. See the stateless-REPL `.kotlin_metadata`-embedding
- * iteration.
+ * Set only when a sidecar was assembled for this snippet; otherwise left `null`.
  */
 var IrReplSnippet.replSidecarMetadataAttr: ByteArray? by irAttribute(copyByDefault = false)

@@ -129,13 +129,9 @@ class K2ReplCompiler(
                 add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(hostConfiguration))
             }
 
-            // Build a `ScriptCompilationConfigurationProvider` that resolves this REPL session's own
-            // (single, host-provided) script definition/configuration by the standard
-            // `ScriptDefinition.FromConfigurationsBase.isScript` extension check: every source compiled
-            // in this session -- including REPL snippets -- is named with a `.repl.<fileExtension>` (or
-            // plain `.<fileExtension>`) suffix that matches this definition's own
-            // [ScriptCompilationConfiguration.fileExtension] (e.g. `.repl.main.kts` for `MainKtsScript`),
-            // see `KotlinJsr223ScriptEngineImpl.compile`.
+            // Resolves this session's own script definition via the standard `isScript` extension
+            // check: every source here is named with a `.repl.<fileExtension>` (or plain) suffix
+            // matching this definition's `fileExtension` (e.g. `.repl.main.kts` for `MainKtsScript`).
             val compilerConfiguration = compilerContext.environment.configuration
             compilerConfiguration.add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
@@ -153,25 +149,21 @@ class K2ReplCompiler(
                 scriptCompilationConfigurationProvider(ScriptCompilationConfigurationProviderOverDefinitionProvider(scriptDefinitionProvider))
                 scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
             }
-            // `hostConfigurationWithProvider` is handed to each per-snippet FIR session directly via
-            // `FirScriptCompilationComponent` (see `compileImpl`) rather than stashed indirectly on
-            // `compilerConfiguration.scriptingHostConfiguration` -- `FirScriptDefinitionProviderService`
-            // (used e.g. by `FirReplSnippetConfiguratorExtensionImpl` to resolve implicit receivers for
-            // `$$eval`) prefers a session's own `scriptCompilationComponent.hostConfiguration` over its
-            // lazily-cached, classpath-discovery-based `defaultHostConfiguration` fallback -- so this way
-            // the correctly-wired configuration is always picked up unambiguously, the same direct
-            // mechanism `ScriptJvmK2CompilerImpl` already uses for one-shot script compiles.
+            // Passed directly via `FirScriptCompilationComponent` rather than via
+            // `compilerConfiguration.scriptingHostConfiguration`. `FirScriptDefinitionProviderService`
+            // prefers a session's own `scriptCompilationComponent.hostConfiguration` over its
+            // lazily cached, classpath-discovery-based fallback, so this is picked up unambiguously.
 
             val project = compilerContext.environment.project
             val languageVersionSettings = compilerContext.environment.configuration.languageVersionSettings
             val classpath = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty().flatMap {
                 when (it) {
                     is JvmDependency -> it.classpath
-                    // JvmDependencyFromClassLoader (e.g. when
+                    // JvmDependencyFromClassLoader (for example when
                     // `kotlin.jsr223.experimental.resolve.dependencies.from.context.classloader=true`)
-                    // is honored in K1 via PackageFragmentFromClassLoaderProviderExtension. K2 FIR doesn't
-                    // use that extension point, so eagerly extract the classpath from the classloader.
-                    // Drops the K1 laziness for K2 but lets stdlib (HashMap etc.) resolve in FIR.
+                    // is honored in K1 via PackageFragmentFromClassLoaderProviderExtension. K2 FIR does
+                    // not use that extension point, so eagerly extract the classpath from the classloader.
+                    // This drops the K1 laziness for K2, but lets stdlib (HashMap, etc.) resolve in FIR.
                     is JvmDependencyFromClassLoader -> scriptCompilationClasspathFromContext(
                         classLoader = it.getClassLoader(scriptCompilationConfiguration),
                         wholeClasspath = true,

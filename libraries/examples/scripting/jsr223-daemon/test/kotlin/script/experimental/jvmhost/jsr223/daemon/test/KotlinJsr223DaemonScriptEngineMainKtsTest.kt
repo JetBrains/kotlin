@@ -21,19 +21,14 @@ import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 
 /**
  * Ports a few jsr223-specific main-kts tests (see `MainKtsJsr223Test` in `kotlin-main-kts-test`) to
- * exercise [KotlinJsr223DaemonScriptEngineFactory]'s custom-script-definition support
- * (`baseCompilationConfiguration`/`baseEvaluationConfiguration` -- see
- * [kotlin.script.experimental.jvmhost.jsr223.daemon.KotlinJsr223DaemonScriptEngineImpl]'s "Supplying
- * a custom script definition" KDoc section) with a real, non-trivial script definition
- * ([MainKtsScript]), rather than the plain, definition-less default every other test in this module
- * uses.
+ * exercise [KotlinJsr223DaemonScriptEngineFactory]'s custom-script-definition support with a real,
+ * non-trivial script definition ([MainKtsScript]), rather than the plain, definition-less default
+ * every other test in this module uses.
  *
- * Unlike `MainKtsJsr223Test`, the engine here is **manually instantiated** via
- * [KotlinJsr223DaemonScriptEngineFactory] rather than looked up through
- * `javax.script.ScriptEngineManager` -- see [KotlinJsr223DaemonScriptEngineTest]'s KDoc for why. Only
- * the scenario that does not depend on functionality genuinely out of this engine/pipeline's scope
- * is actually run; the other two are ported as [Disabled] tests documenting exactly why (see each
- * test's own KDoc).
+ * The engine is manually instantiated via [KotlinJsr223DaemonScriptEngineFactory] rather than
+ * looked up through `javax.script.ScriptEngineManager`. See [KotlinJsr223DaemonScriptEngineTest]'s
+ * KDoc for why. Only the scenario that does not depend on functionality out of this pipeline's
+ * scope is actually run; the other two are ported as [Disabled] tests documenting why.
  */
 class KotlinJsr223DaemonScriptEngineMainKtsTest {
 
@@ -42,25 +37,21 @@ class KotlinJsr223DaemonScriptEngineMainKtsTest {
 
     private val compilerClasspath: List<File> = classpathFromSystemProperty("kotlinJsr223DaemonCompilerClasspath")
 
-    // See KotlinJsr223DaemonScriptEngineTest's identical property for why this, rather than a
-    // dedicated implementation classloader, is enough here.
     private val stdlib: File by lazy {
         File(KotlinVersion::class.java.protectionDomain.codeSource.location.toURI())
     }
 
     // With the main-kts script definition wired in, every snippet's synthetic bindings-exposing
-    // snippet (see KotlinJsr223DaemonScriptEngineImpl's KDoc) declares an implicit
-    // kotlin.script.templates.standard.ScriptTemplateWithBindings receiver, so kotlin-script-runtime
-    // (which defines that class) must also be on the daemon compile's classpath -- unlike the plain,
-    // definition-less tests in KotlinJsr223DaemonScriptEngineTest, which never reference it.
+    // snippet declares an implicit ScriptTemplateWithBindings receiver, so kotlin-script-runtime
+    // (which defines that class) must also be on the daemon compile classpath.
     private val scriptRuntime: File by lazy {
         File(kotlin.script.templates.standard.ScriptTemplateWithBindings::class.java.protectionDomain.codeSource.location.toURI())
     }
 
     private val mainKtsScriptDefinition = createJvmScriptDefinitionFromTemplate<MainKtsScript>()
 
-    // See KotlinJsr223DaemonScriptEngineTest's identical property for why engines must be explicitly
-    // shut down rather than relying on the daemon to wind itself down between tests.
+    // The daemon connection is leased once and cached for the engine's whole lifetime, so tests
+    // must shut it down explicitly.
     private val enginesToShutDown = mutableListOf<KotlinJsr223DaemonScriptEngineImpl>()
 
     private fun newEngine(): KotlinJsr223DaemonScriptEngineImpl {
@@ -86,9 +77,7 @@ class KotlinJsr223DaemonScriptEngineMainKtsTest {
         enginesToShutDown.clear()
     }
 
-    // Port of MainKtsJsr223Test.testSimpleEval: with the main-kts script definition wired in (rather
-    // than the plain default), a declaration-only snippet still evaluates to null and a later
-    // snippet can still reference an earlier one's declaration.
+    // Port of MainKtsJsr223Test.testSimpleEval.
     @Test
     fun testSimpleEval() {
         val engine = newEngine()
@@ -98,11 +87,8 @@ class KotlinJsr223DaemonScriptEngineMainKtsTest {
         assertEquals(5, res2)
     }
 
-    // Port of MainKtsJsr223Test.testWithDirectBindings: a value put directly into the engine's
-    // (default) ScriptContext's ENGINE_SCOPE Bindings -- rather than passed via constructorArgs or
-    // an explicit ScriptContext -- is visible to a snippet as an ordinary property, via the same
-    // getScriptContext/generateBindingSnippetIfNeeded/configureExposedJsr223Context machinery the
-    // in-process engine uses -- see KotlinJsr223DaemonScriptEngineImpl's "Bindings" KDoc section.
+    // Port of MainKtsJsr223Test.testWithDirectBindings. A value put directly into the engine's
+    // default ScriptContext ENGINE_SCOPE Bindings is visible to a snippet as an ordinary property.
     @Test
     fun testWithDirectBindings() {
         val engine = newEngine()
@@ -113,16 +99,11 @@ class KotlinJsr223DaemonScriptEngineMainKtsTest {
         assertEquals(42, res2)
     }
 
-    // Port of MainKtsJsr223Test.testWithImport: every snippet compiles as a plain, unmarked
-    // `.repl.main.kts` REPL snippet on the daemon's regular compile path (see DaemonReplCompiler's
-    // KDoc), so MainKtsScriptDefinition's own refineConfiguration hooks -- in particular
-    // MainKtsConfigurator's @file:Import/@file:DependsOn annotation handling -- never run: there is
-    // no in-process compile-configuration-refinement step on this path at all (see
-    // KotlinJsr223DaemonScriptEngineImpl's "Supplying a custom script definition" KDoc section).
+    // Port of MainKtsJsr223Test.testWithImport.
     @Test
     @Disabled(
         "MainKtsScriptDefinition's refineConfiguration hooks (MainKtsConfigurator's @file:Import " +
-            "handling among them) never run on this module's out-of-process compile path -- see " +
+            "handling among them) never run on this module's out-of-process compile path. See " +
             "KotlinJsr223DaemonScriptEngineImpl's KDoc."
     )
     fun testWithImport() {

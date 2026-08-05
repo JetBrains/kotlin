@@ -32,97 +32,60 @@ import kotlin.script.experimental.util.LinkedSnippetImpl
 import kotlin.script.experimental.util.add
 
 /**
- * A [ReplCompiler] that drives compilation through the compile daemon's **regular** compile path
- * -- a plain `.repl.<extension>` source-root file (the plain `kts` default, or e.g. `main.kts` for
- * a `MainKtsScript`-based definition -- see [compileSnippetBatch]'s KDoc), compiled by the
- * unmodified regular JVM frontend/backend (enabled by `-Xallow-any-scripts-in-source-roots`)
- * straight to a plain `-d` output -- instead of the in-process
- * [org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler].
+ * A [ReplCompiler] that compiles snippets out-of-process through the daemon's regular compile path.
+ * Each snippet represented as a plain `.repl.<extension>` source file, compiled to a plain `-d` output.
  *
- * This is the *only* substitution [KotlinJsr223DaemonScriptEngineImpl] makes on top of the stock
- * REPL infrastructure: state/eval-loop management ([kotlin.script.experimental.jvm.jsr223.base.KotlinJsr223JvmScriptEngineBase])
- * and result evaluation ([org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator]) are
- * reused verbatim -- see that class's KDoc for the overall design rationale. Each snippet is
- * compiled straight to a **regular output directory** (`-d`, one per snippet, kept alive for this
- * compiler's whole lifetime) and wrapped into a real
- * [kotlin.script.experimental.jvm.impl.KJvmCompiledScript] by the stock
- * [compiledSnippetFromClassPath] -- no bespoke artifact deserialization is involved -- so
- * [K2ReplEvaluator] can evaluate it exactly as it would a snippet compiled in-process, including its
- * existing cross-snippet classloader chaining
- * ([kotlin.script.experimental.jvm.impl.getOrCreateActualClassloader]'s `lastSnippetClassLoader`
- * handling), which this class does not need to (and does not) reimplement.
+ * Compiled snippets are wrapped by [compiledSnippetFromClassPath] into [kotlin.script.experimental.jvm.impl.KJvmCompiledScript], so
+ * [K2ReplEvaluator][org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator] can evaluate them.
  *
- * There is no REPL-specific RMI added to `CompileService`, and no artifact blob/header of any kind:
- * a snippet rides a plain `CompileService.compile(...)` call, switched into chained-REPL-snippet
- * mode by scripting-plugin options (`repl-snippet-regular-mode` / `repl-snippet-prior-class`),
- * exactly as a CLI invocation would (see `ScriptingCommandLineProcessor`). Priors are fed back
- * purely via the regular classpath (their `-d` output directories) plus their `ClassId`s -- the
- * compiler's FIR REPL machinery resolves their declarations straight from their compiled classes'
- * own embedded metadata (see `ClasspathBackedFirReplHistoryProvider`). [snippetClassId] predicts the
- * wrapper class name from the source file name it wrote
- * ([NameUtils.getSnippetTargetClassName]) -- no round-trip needed to learn it.
+ * There is no REPL-specific RMI or artifact protocol. A snippet compiles through a plain
+ * `CompileService.compile(...)` call, switched into chained-REPL-snippet mode by scripting-plugin
+ * CLI options (`repl-snippet-regular-mode`/`repl-snippet-prior-class`, see
+ * `ScriptingCommandLineProcessor`). Previous snippets are fed back purely via the regular classpath
+ * (their `-d` output directories) plus their [ClassId]s. [snippetClassId] predicts a snippet's
+ * wrapper class name from its source file name ([NameUtils.getSnippetTargetClassName]), with no
+ * round-trip needed. [compilerClasspath] must carry the plain, unshaded
+ * `kotlin-scripting-compiler` jar so the daemon discovers the scripting plugin as a `kotlinc`
+ * invocation would.
  *
- * This class never has to synthesize a `-Xplugin` services jar re-declaring the scripting
- * compiler plugin: [compilerClasspath] is expected to carry the **plain, unshaded**
- * `kotlin-scripting-compiler` jar (with its own, un-relocated `META-INF/services` entries), so
- * the daemon discovers the plugin the same way a `kotlinc` invocation would.
+ * A plain compile failure is reported as a [ResultWithDiagnostics.Failure], not a thrown exception.
+ * Exceptions are reserved for precondition and infrastructure errors (daemon connection failure).
  *
- * A plain compile failure is **not** signalled by a thrown exception -- exceptions are reserved
- * for precondition/infra errors (daemon connection failure).
+ * ### Synthetic snippets and implicit receivers
  *
- * ### Synthetic snippets (`prependSyntheticSnippets`)
- *
- * [compile] calls [ScriptCompilationConfiguration.prependSyntheticSnippets] for every snippet it is
- * given, exactly as the in-process
- * [org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler] does, so a definition wired
- * through a synthetic-snippet-producing `refineConfiguration` handler -- e.g.
- * `kotlin.script.experimental.jvm.jsr223.generateBindingSnippetIfNeeded` -- gets its synthetic
- * snippet(s) generated (as plain source text) and compiled *ahead of* the main snippet, chained into
- * [priorOutputDirs]/[priorClassIds] the same way any other snippet is, all within this single
- * [compile] call. This reuses the generic, already-existing mechanism unchanged -- no new daemon/CLI
- * surface is needed for the synthetic snippet's *content* to be produced and compiled.
- *
- * This alone is not quite enough for a synthetic snippet that (like `generateBindingSnippetIfNeeded`'s)
- * refers to an *implicit receiver* (e.g. an unqualified `getBindings(...)` call meant to resolve
- * against a `javax.script.ScriptContext` receiver): every snippet on this out-of-process path
- * compiles against the daemon's own fallback `.repl.<extension>` `ScriptDefinition` (see
- * `pluginRegisrar.kt`), which by default declares no implicit receivers at all -- a receiver added
- * client-side (e.g. via `kotlin.script.experimental.jvm.jsr223.configureExposedJsr223Context`)
- * would never reach that session on its own. To close this gap, [compileSnippetBatch] additionally
- * runs `snippetConfiguration.refineBeforeCompiling(snippet)` itself (there being no local FIR
- * session here to run it implicitly) and passes the resulting
+ * [compile] runs [ScriptCompilationConfiguration.prependSyntheticSnippets] for every snippet, so a
+ * definition wired through a synthetic-snippet-producing `refineConfiguration` handler (e.g.
+ * `generateBindingSnippetIfNeeded`) gets its synthetic snippet(s) compiled ahead of the main one,
+ * within the same [compile] call. There is no local FIR session here to run
+ * `refineConfiguration`'s `beforeCompiling` hooks implicitly, so [compileSnippetBatch] runs
+ * `refineBeforeCompiling` itself and forwards the resulting
  * [ScriptCompilationConfiguration.implicitReceivers] type names to the daemon via a dedicated,
- * repeatable CLI option (`repl-snippet-implicit-receiver`, in the same family as
- * `repl-snippet-prior-class`; see `ScriptingCommandLineProcessor`/`pluginRegisrar.kt`), which folds
- * them into that same `.repl.<extension>` `ScriptDefinition`'s own `implicitReceivers(...)`. The
- * matching receiver *instances* are supplied purely client-side, at evaluation time, via
- * [K2ReplEvaluator]'s own (unmodified) `refineBeforeEvaluation` handling of
- * `ScriptEvaluationConfiguration.implicitReceivers` -- no daemon/CLI involvement needed there at all.
+ * repeatable CLI option (`repl-snippet-implicit-receiver`). Without that, a snippet referring to
+ * such a receiver unqualified (e.g. an exposed `ScriptContext`) would fail to compile. The matching
+ * receiver *instances* are supplied purely client-side, at evaluation time, through
+ * [K2ReplEvaluator]'s own `refineBeforeEvaluation` handling.
  *
  * ### Daemon connection lifecycle
  *
- * The compile-daemon connection is created **lazily, once**, on the first [compile] call, and then
- * cached and reused for every subsequent snippet -- this is how a long-lived daemon client is
- * supposed to behave: a session is leased once and held for the client's whole lifetime, not
- * re-leased/released on every single request (which would otherwise make the daemon race its own
- * idle-shutdown timer between every snippet). [close] releases that session once this compiler is
- * no longer needed, letting the daemon decide -- per its own `daemonOptions` idle-shutdown
- * settings -- when to actually exit, since the daemon process may be shared with other, unrelated
- * clients. [forceShutdownDaemon] is a test-only escape hatch that kills the daemon process
- * outright, bypassing that wait -- see its KDoc.
+ * The daemon connection is created lazily on the first [compile] call and cached for this
+ * compiler's whole lifetime. Re-leasing it per snippet would race the daemon's own idle-shutdown
+ * timer. [close] releases that session, letting the daemon decide — per its own `daemonOptions`
+ * idle-shutdown settings — when to actually exit, since it may be shared with other clients.
+ * [forceShutdownDaemon] is a test-only escape hatch that kills the daemon process outright,
+ * bypassing that wait.
  *
  * @param compilerClasspath classpath (jars) the compile daemon is spawned/identified with; must
  *   contain the Kotlin compiler plus the (unshaded) `kotlin-scripting-compiler` plugin jar.
- * @param additionalClasspath extra classpath entries every snippet is compiled against -- most
- *   importantly the Kotlin stdlib, which the daemon compile does not add implicitly.
+ * @param additionalClasspath extra classpath entries every snippet is compiled against. Most
+ *   importantly this should include the Kotlin stdlib, which the daemon compile does not add
+ *   implicitly.
  * @param isDebugEnabled whether to surface the daemon's own debug-level connection report messages.
- * @param daemonJVMOptions the daemon's JVM options (heap size, extra JVM args, etc). `null` (the
- *   default) reproduces [KotlinCompilerRunnerUtils.newDaemonConnection]'s own global default -- a
- *   [configureDaemonJVMOptions] call inheriting this process's memory limits and properties.
+ * @param daemonJVMOptions the daemon's JVM options. When `null`, uses
+ *   [KotlinCompilerRunnerUtils.newDaemonConnection]'s global default.
  * @param daemonOptions the daemon's own options (run-files directory, idle-shutdown delay, etc).
- *   `null` (the default) reproduces `newDaemonConnection`'s own global default ([configureDaemonOptions]).
- * @param daemonLogOptions the daemon's log-file options. `null` (the default) reproduces
- *   `newDaemonConnection`'s own global default (a plain [DaemonLogOptions]).
+ *   When `null`, uses `newDaemonConnection`'s global default.
+ * @param daemonLogOptions the daemon's log-file options. When `null`, uses
+ *   `newDaemonConnection`'s global default.
  */
 class DaemonReplCompiler(
     private val compilerClasspath: List<File>,
@@ -136,22 +99,18 @@ class DaemonReplCompiler(
     private val compilerId = CompilerId.makeCompilerId(compilerClasspath)
     private val sessionIsAliveFlagFile = makeAutodeletingFlagFile(keyword = "jsr223-daemon-session")
 
-    // Root directory holding every compiled snippet's own `-d` output directory (see compile),
-    // kept alive for this compiler's whole lifetime -- unlike a compile-time-only temp dir, these
-    // must survive so their classes stay loadable for as long as the engine (and the classloader
-    // chain K2ReplEvaluator builds over them) is in use. Deleted in close().
+    // Holds every compiled snippet's own `-d` output directory; must survive for this compiler's
+    // whole lifetime since K2ReplEvaluator's classloader chain keeps referencing them. Deleted in close().
     private val workRoot = Files.createTempDirectory("jsr223-daemon-repl-work-").toFile()
     private var snippetCounter = 0
 
-    // Collects the daemon-reported compiler messages for the snippet currently being compiled --
-    // reset before every compile (see compile) so a later snippet's report never carries stale
-    // messages left over from an earlier one. Also serves as connectionLazy's own MessageCollector
-    // for its one-time daemon-connection setup.
+    // Collects the daemon-reported compiler messages for the current compile. Reset before each
+    // compile so messages don't leak into a later snippet's report. Also used as connectionLazy's
+    // own MessageCollector.
     private val messageCollector = CollectingMessageCollector()
 
-    // Lazily created on the first compile and cached for this compiler's whole lifetime -- see the
-    // "Daemon connection lifecycle" section of the class KDoc. kotlin.lazy's default SYNCHRONIZED
-    // mode provides all the thread-safety this needs.
+    // Lazily created and cached for this compiler's whole lifetime. See the class KDoc's "Daemon
+    // connection lifecycle" section.
     private val connectionLazy: Lazy<CompileServiceSession> = lazy {
         val effectiveDaemonOptions = daemonOptions ?: configureDaemonOptions()
         Files.createDirectories(File(effectiveDaemonOptions.runFilesPath).toPath())
@@ -177,11 +136,9 @@ class DaemonReplCompiler(
     }
     private val connection: CompileServiceSession by connectionLazy
 
-    // The `-d` output directory and ClassId of every snippet compiled so far, in history order --
-    // fed back to the daemon as classpath entries plus `repl-snippet-prior-class`es so it can
-    // resolve cross-snippet references at compile time (see compile). Distinct from
-    // lastCompiledSnippet below: that chain is what K2ReplEvaluator walks to *run* snippets; this
-    // list is what the *compiler* needs to resolve *new* snippets against.
+    // The `-d` output directory and ClassId of every snippet compiled so far. Fed back to the
+    // daemon as classpath entries plus `repl-snippet-prior-class`es so it can resolve cross-snippet
+    // references. Distinct from lastCompiledSnippet, which K2ReplEvaluator walks to *run* snippets.
     private val priorOutputDirs = mutableListOf<File>()
     private val priorClassIds = mutableListOf<ClassId>()
 
@@ -196,20 +153,13 @@ class DaemonReplCompiler(
     ): ResultWithDiagnostics<LinkedSnippet<CompiledSnippet>> {
         val reports = mutableListOf<ScriptDiagnostic>()
         for (mainSnippet in snippets) {
-            // Generates any bindings-exposing (or other) synthetic snippet(s) client-side, reusing
-            // the exact same generic mechanism K2ReplCompiler.compile uses for the in-process engine
-            // -- see ScriptCompilationConfiguration.prependSyntheticSnippets's KDoc. This is what lets
-            // a definition wired via KotlinJsr223DaemonScriptEngineImpl's baseCompilationConfiguration
-            // (e.g. reusing kotlin.script.experimental.jvm.jsr223.generateBindingSnippetIfNeeded)
-            // work here without any daemon-side/CLI change: the synthetic snippet's *source text* is
-            // produced entirely in this process.
+            // Generates any bindings-exposing (or other) synthetic snippet(s) client-side. See
+            // ScriptCompilationConfiguration.prependSyntheticSnippets's KDoc.
             val [updatedConfiguration, syntheticSnippets] =
                 configuration.prependSyntheticSnippets(mainSnippet).valueOr { return it }
 
-            // Every synthetic snippet, plus the main snippet itself, is collected into a single
-            // batch -- see compileSnippetBatch's KDoc for why they are then all compiled together,
-            // through one daemon call, rather than through a separate top-level compile() call (or
-            // even a separate daemon call) per synthetic snippet.
+            // Every synthetic snippet, plus the main snippet itself, is compiled together as one
+            // batch. See compileSnippetBatch's KDoc for why.
             val batch = buildList {
                 for (syntheticSnippet in syntheticSnippets) {
                     val syntheticConfiguration = updatedConfiguration.with {
@@ -229,41 +179,25 @@ class DaemonReplCompiler(
 
     /**
      * Compiles a whole batch of physical snippets (a synthetic-snippet-producing definition's
-     * synthetic snippet(s), immediately followed by the main snippet they were generated for) through
-     * a *single* [runDaemonCompile] call -- as multiple source-root files of the very same compile,
-     * not through a separate daemon call per snippet -- and, on success, chains every one of them
-     * into [priorOutputDirs]/[priorClassIds]/[lastCompiledSnippetInternal] so any following snippet
-     * (in this call or a later one) can reference any of them.
+     * synthetic snippet(s), followed by the main snippet they were generated for) through a single
+     * [runDaemonCompile] call, as multiple source-root files of the same compile. Every compiled
+     * snippet is then chained into [priorOutputDirs]/[priorClassIds]/[lastCompiledSnippetInternal].
      *
-     * A same-batch sibling that comes textually *before* another one in [batch] (e.g. a synthetic
-     * bindings-exposing snippet, before the main snippet that reads/writes what it declares) is
-     * resolved by [ClasspathBackedFirReplHistoryProvider]'s own live, same-session tracking (see its
-     * KDoc's "Live, same-batch siblings" section) -- *not* via [priorClassIds]/the regular classpath,
-     * since none of this batch's own snippets has any compiled bytecode yet at the point the daemon
-     * compiles them (codegen for the whole module only happens once, after every file's body is
-     * resolved). This is exactly why they must all be handed to the daemon as one, multi-source-file
-     * [runDaemonCompile] call: splitting them into several separate calls (one per snippet, as an
-     * earlier implementation of this class did) would make every sibling but the first both slower
-     * (a whole extra frontend/backend/codegen round-trip each) and impossible to resolve against
-     * each other on this out-of-process path, since a genuinely *separate* call's session
-     * only ever sees a prior snippet through its already-compiled classpath entry.
+     * They must be compiled together. A same-batch sibling that comes before another one in [batch]
+     * has no compiled bytecode yet at that point (codegen only happens once, after every file's body
+     * is resolved), so it is resolved through [ClasspathBackedFirReplHistoryProvider]'s live,
+     * same-session tracking rather than via [priorClassIds] and the classpath. Splitting them into
+     * separate calls would make that resolution impossible.
      */
     private fun compileSnippetBatch(
         batch: List<Pair<SourceCode, ScriptCompilationConfiguration>>,
         reports: MutableList<ScriptDiagnostic>,
     ): ResultWithDiagnostics<Unit> {
-        // Runs any beforeCompiling refineConfiguration hooks (e.g.
-        // kotlin.script.experimental.jvm.jsr223.configureExposedJsr223Context) entirely
-        // client-side, exactly as the in-process K2ReplCompiler's session-side definition-matching
-        // pipeline does -- there is no such in-process FIR session here to run them implicitly, for
-        // every snippet of the batch. The one observable effect of this that matters on this
-        // out-of-process path is ScriptCompilationConfiguration.implicitReceivers: every snippet of
-        // one batch shares the very same base ScriptCompilationConfiguration (see compile() above),
-        // so this hook's effect on that property is identical for all of them -- a single combined,
-        // de-duplicated list is handed to the daemon (see buildBatchCompilerArguments) so the
-        // compiled classes actually declare matching receiver parameters -- everything else a hook
-        // might do (it runs in this process, against this process's own live config) has no way to
-        // affect the daemon's separate compile.
+        // Runs beforeCompiling refineConfiguration hooks (e.g. configureExposedJsr223Context)
+        // client-side: there is no local FIR session here to run them implicitly. The one effect
+        // that matters on this path is implicitReceivers. A single combined, de-duplicated list is
+        // handed to the daemon (see buildBatchCompilerArguments) so the compiled classes actually
+        // declare matching receiver parameters.
         data class RefinedSnippet(val snippet: SourceCode, val name: String, val configuration: ScriptCompilationConfiguration)
 
         val refinedSnippets = batch.map { [snippet, snippetConfiguration] ->
@@ -276,29 +210,20 @@ class DaemonReplCompiler(
             .flatMap { it.configuration[ScriptCompilationConfiguration.implicitReceivers].orEmpty().map { r -> r.typeName } }
             .distinct()
 
-        // Every snippet of one batch shares the same base ScriptCompilationConfiguration (see
-        // compile() above), so its ScriptCompilationConfiguration.fileExtension (the plain "kts"
-        // default, or e.g. "main.kts" for a MainKtsScript-based definition supplied to
-        // KotlinJsr223DaemonScriptEngineImpl) is identical for all of them too -- this is exactly
-        // the value the batch's own snippet file names already end with (see
-        // KotlinJsr223DaemonScriptEngineImpl.compile/generateBindingSnippetIfNeeded), and is
-        // forwarded to the daemon (see buildBatchCompilerArguments) via a dedicated CLI option so
-        // both ScriptingProcessSourcesBeforeCompilingExtension's REPL-snippet-recognition check and
-        // the fallback ".repl.<extension>" ScriptDefinition in pluginRegisrar.kt use the very same,
-        // non-hardcoded extension instead of a fixed ".repl.kts" literal.
+        // Every snippet of the batch shares the same base ScriptCompilationConfiguration, so its
+        // fileExtension (the plain "kts" default, or e.g. "main.kts" for MainKtsScript) is identical
+        // for all of them. It is forwarded to the daemon via a dedicated CLI option instead of a
+        // hardcoded ".repl.kts" literal.
         val fileExtension = refinedSnippets.first().configuration[ScriptCompilationConfiguration.fileExtension] ?: "kts"
 
-        // The `-d` output directory: unlike the source-holding temp dir below, this one must
-        // survive past this compile call -- it backs the KJvmCompiledModuleFromClassPath
-        // classloader K2ReplEvaluator uses to run the snippets, and (as a prior) any later
-        // snippet's compile -- so it lives under workRoot and is only cleaned up in close(). Shared
-        // by every snippet of this one batch: they are all compiled into it by the very same call.
+        // The `-d` output directory must survive past this compile call: it backs the classloader
+        // K2ReplEvaluator uses to run the snippets, and any later snippet's compile. It lives under
+        // workRoot and is only cleaned up in close().
         val outputDir = File(workRoot, "snippet-batch-${snippetCounter++}-out").also { it.mkdirs() }
         val sourceDir = Files.createTempDirectory("jsr223-daemon-repl-snippet-src-").toFile()
         try {
-            // See buildBatchCompilerArguments's KDoc for why each snippet's source is written to its
-            // own temp file (named after the snippet itself) and delivered as a plain source-root
-            // file rather than smuggled through a `-expression` CLI argument or handed to `-script`.
+            // See buildBatchCompilerArguments's KDoc for why each snippet is written to its own
+            // source file rather than passed via `-expression`/`-script`.
             val scriptFiles = refinedSnippets.map { File(sourceDir, it.name).also { file -> file.writeText(it.snippet.text) } }
             val arguments =
                 buildBatchCompilerArguments(scriptFiles, priorOutputDirs, priorClassIds, outputDir, implicitReceiverTypeNames, fileExtension)
@@ -314,10 +239,6 @@ class DaemonReplCompiler(
             priorOutputDirs += outputDir
             for ([refinedSnippet, scriptFile] in refinedSnippets.zip(scriptFiles)) {
                 val classId = snippetClassId(scriptFile)
-                // The compiled snippet's classes are loaded through a plain classloader over its own
-                // `-d` output directory -- regular `.class` files, no bespoke deserialization
-                // involved -- so K2ReplEvaluator can evaluate it exactly as it would an in-process
-                // compilation result (see compiledSnippetFromClassPath's KDoc).
                 val compiledSnippet = compiledSnippetFromClassPath(
                     classPath = listOf(outputDir),
                     snippetClassFQName = classId.asSingleFqName().asString(),
@@ -327,8 +248,8 @@ class DaemonReplCompiler(
                 priorClassIds += classId
                 lastCompiledSnippetInternal = lastCompiledSnippetInternal.add(compiledSnippet)
             }
-            // messageCollector's own (non-error) messages -- e.g. warnings -- are surfaced here
-            // as reports on the successful result, rather than silently dropped.
+            // messageCollector's own (non-error) messages, e.g. warnings, are surfaced here as
+            // reports on the successful result rather than silently dropped.
             reports += messageCollector.messages.map {
                 ScriptDiagnostic(
                     ScriptDiagnostic.unspecifiedInfo, it, ScriptDiagnostic.Severity.WARNING,
@@ -342,52 +263,31 @@ class DaemonReplCompiler(
     }
 
     /**
-     * Builds the CLI argument list that compiles every one of [scriptFiles] (in order) as **chained
-     * REPL snippets on the regular compile path**, all within a single compile -- the same
-     * invocation shape a CLI `kotlinc a.repl.kts b.repl.kts ...` call would carry, so the daemon
-     * needs no REPL-specific transport, and every source flows unmodified into the regular
-     * frontend/backend (see `ScriptingProcessSourcesBeforeCompilingExtension`), as one module.
+     * Builds the CLI argument list that compiles every one of [scriptFiles] as chained REPL
+     * snippets on the regular compile path, all within one compile. The shape matches a CLI
+     * `kotlinc a.repl.kts b.repl.kts ...` call.
      *
-     * Every snippet's source is written to its own file in [scriptFiles] on disk and passed as a
-     * **plain source-root file** (a free/positional argument, *not* `-script <path>` and *not*
-     * `-expression <source>`), with `-Xallow-any-scripts-in-source-roots` letting a `.kts` file be
-     * accepted on that path. Three reasons, in order of importance:
-     *  * `-script`/`-expression` both route through `ScriptEvaluationExtension.eval()` -- the same
-     *    entry point `kotlinc script.kts` uses to *run* a script. The plain source-root pipeline
-     *    has no evaluation code path *at all*, so a snippet that throws can never risk running
-     *    inside the daemon, regardless of any flag.
-     *  * `-expression` hands the whole snippet body through as a single CLI argument string, which
-     *    a sufficiently pathological source (very long, or containing characters that a given
-     *    transport happens to be sensitive to) could in principle corrupt; a file path is always a
-     *    short, plain string.
-     *  * `-expression`/`-script` are both semantically "run this"; a plain source-root file is
-     *    unambiguously "compile this", matching what this call actually does.
+     * Each snippet's source is a plain source-root file, not `-script`/`-expression` (enabled by
+     * `-Xallow-any-scripts-in-source-roots`). Both of those route through
+     * `ScriptEvaluationExtension.eval()`, the same entry point that *runs* a script, so a plain
+     * source-root file is the only way to guarantee a snippet that throws can never risk running
+     * inside the daemon.
      *
-     * Every [scriptFiles] entry's name (`snippet_N.repl.<extension>`, see
-     * [KotlinJsr223DaemonScriptEngineImpl]) is what makes `ScriptingProcessSourcesBeforeCompilingExtension`
-     * mark it as a REPL snippet, what makes it match the `.repl.<extension>`-scoped `ScriptDefinition`
-     * (needed for the emitted result field, see `pluginRegisrar.kt`), and what [snippetClassId]
-     * predicts its wrapper class from -- [fileExtension] is forwarded to the daemon (see below) so
-     * both recognize the very same, non-hardcoded extension the caller actually named these files
-     * with (the plain `"kts"` default, or e.g. `"main.kts"` for a `MainKtsScript`-based definition).
+     * [scriptFiles] entries are named `snippet_N.repl.<extension>` (see
+     * [KotlinJsr223DaemonScriptEngineImpl]), which is what makes
+     * `ScriptingProcessSourcesBeforeCompilingExtension` recognize them as REPL snippets and match
+     * the `.repl.<extension>`-scoped `ScriptDefinition`. [fileExtension] forwards the same,
+     * non-hardcoded extension to the daemon.
      *
-     * [outputDir] is passed via the regular `-d` option, so every one of this batch's snippets'
-     * classes land as plain `.class` files under it, side by side; [priorOutputDirs] (genuinely
-     * prior -- i.e. from an earlier compile call, not this same batch -- snippets' own such
-     * directories) are added to the classpath, and [priorClassIds] tells the frontend's
-     * `ClasspathBackedFirReplHistoryProvider` which classes among that classpath are the actual
-     * prior snippets (see `repl-snippet-prior-class` in `ScriptingCommandLineProcessor`). This
-     * batch's own snippets need neither: they resolve against each other through that same
-     * provider's *live*, same-session tracking instead -- see its KDoc.
+     * [outputDir] backs `-d`. [priorOutputDirs] (from earlier compile calls, not this batch) go on
+     * the classpath, and [priorClassIds] tells `ClasspathBackedFirReplHistoryProvider` which of
+     * those classes are previous snippets (`repl-snippet-prior-class`). This batch's own snippets
+     * resolve against each other through that provider's live, same-session tracking instead.
      *
-     * `-Xuse-fir-lt=false` is still required: `ScriptingProcessSourcesBeforeCompilingExtension`
-     * (the plugin extension point that marks REPL-snippet sources) only ever runs on the
-     * *PSI-based* `KotlinCoreEnvironment.getSourceFiles()` source-collection path. The JVM
-     * pipeline's *other*, default (`useLightTree = true`) source-collection path has no equivalent
-     * extension point at all, so with the default light-tree mode the source would compile as a
-     * plain, unmarked script instead. This flag is deprecated (scheduled for removal once
-     * light-tree mode becomes the compiler's *only* mode) and is the one piece of this design most
-     * likely to need revisiting in a future compiler version.
+     * `-Xuse-fir-lt=false` is required: `ScriptingProcessSourcesBeforeCompilingExtension` only runs
+     * on the PSI-based source-collection path, not light-tree mode (the JVM pipeline's default).
+     * With light-tree mode a snippet would silently compile as a plain, unmarked script instead.
+     * This flag is deprecated and the piece of this design most likely to need revisiting.
      */
     private fun buildBatchCompilerArguments(
         scriptFiles: List<File>,
@@ -412,20 +312,14 @@ class DaemonReplCompiler(
                 add("-P")
                 add(pluginOption("repl-snippet-prior-class", classId.asString()))
             }
-            // See compileSnippetBatch's KDoc for where this list comes from: this is the one piece
-            // of a client-side refineConfiguration hook's effect (e.g.
-            // kotlin.script.experimental.jvm.jsr223.configureExposedJsr223Context) that needs to
-            // reach the daemon for the compiled `.repl.<extension>` snippet classes to actually declare
-            // a matching implicit-receiver parameter -- see `repl-snippet-implicit-receiver` in
-            // `ScriptingCommandLineProcessor`.
+            // See compileSnippetBatch's KDoc for where this list comes from. It reaches the daemon so
+            // compiled snippet classes declare a matching implicit-receiver parameter.
             for (implicitReceiverTypeName in implicitReceiverTypeNames) {
                 add("-P")
                 add(pluginOption("repl-snippet-implicit-receiver", implicitReceiverTypeName))
             }
-            // Not hardcoded to "kts": this is what makes ScriptingProcessSourcesBeforeCompilingExtension
-            // recognize this batch's own `snippet_N.repl.<extension>`-named [scriptFiles] as REPL
-            // snippets, and what makes the fallback ScriptDefinition in pluginRegisrar.kt match them
-            // too (needed for the emitted result field) -- see REPL_SNIPPET_FILE_EXTENSION's KDoc.
+            // Not hardcoded to "kts": lets ScriptingProcessSourcesBeforeCompilingExtension and the
+            // fallback ScriptDefinition in pluginRegisrar.kt recognize this batch's own extension.
             add("-P")
             add(pluginOption("repl-snippet-file-extension", fileExtension))
             add("-d")
@@ -460,14 +354,10 @@ class DaemonReplCompiler(
     }
 
     /**
-     * Releases the cached compile-daemon session, if one was ever created (a compiler that never
-     * compiled anything never opened a connection, so this is then a no-op). Well-behaved
-     * disposal: lets the daemon decide, per its own `daemonOptions.shutdownDelayMilliseconds`/
-     * idle-shutdown settings, when to actually exit -- appropriate since the daemon process may be
-     * shared with other, unrelated clients. Also deletes [workRoot], the root of every compiled
-     * snippet's `-d` output directory -- safe once this compiler (and its owning engine) is no
-     * longer needed; see [forceShutdownDaemon] for a test-only alternative that skips the daemon's
-     * own wait.
+     * Releases the cached compile-daemon session, if one was ever created, and deletes [workRoot].
+     * The daemon may be shared with other clients, so it decides when to exit according to its own
+     * idle-shutdown settings. See [forceShutdownDaemon] for a test-only alternative that skips that
+     * wait.
      */
     override fun close() {
         if (connectionLazy.isInitialized()) {
@@ -481,21 +371,14 @@ class DaemonReplCompiler(
     }
 
     /**
-     * Test-only hook: shuts the underlying compile-daemon process down immediately, bypassing
-     * `daemonOptions.shutdownDelayMilliseconds`/idle-shutdown entirely -- mirrors
-     * `BaseDaemonSessionTest.stopDaemons` (`compiler/daemon/daemon-tests`), so a test suite doesn't
-     * have to wait out a real idle-shutdown delay for a clean daemon exit between runs. Not meant
-     * for production use: an embedder sharing the daemon with other clients should use [close]
-     * instead, which only releases this compiler's own session.
+     * Test-only hook: shuts the compile-daemon process down immediately, bypassing idle-shutdown
+     * entirely. Not meant for production use; an embedder sharing the daemon with other clients
+     * should use [close] instead.
      *
-     * `CompileService.shutdown()` is asynchronous -- it only schedules the daemon process's own
-     * exit ([org.jetbrains.kotlin.daemon.CompileServiceImpl.shutdownWithDelay]) and returns before
-     * that exit actually happens, so this also waits a bit for the process to actually go away,
-     * exactly as `BaseDaemonSessionTest.stopDaemons` does. Without this, a caller relying on a
-     * JUnit `@TempDir` for `daemonOptions.runFilesPath`/`daemonLogOptions.logsPath` can have JUnit
-     * try to delete that directory while the daemon process is still exiting and holding its own
-     * log file open -- harmless on most platforms, but a real (and otherwise flaky) failure on
-     * Windows, where an open file cannot be deleted at all.
+     * `CompileService.shutdown()` only schedules the daemon's exit and returns before it actually
+     * happens, so this also waits a bit for the process to go away. Without that wait, a JUnit
+     * `@TempDir` for the daemon's run-files/logs directory can be deleted while the daemon is still
+     * exiting and holding its log file open, which is a flaky failure on Windows.
      */
     @TestOnly
     fun forceShutdownDaemon() {
@@ -509,12 +392,10 @@ class DaemonReplCompiler(
     }
 
     /**
-     * Predicts the [ClassId] a `.repl.<extension>` [scriptFile] compiles to, with **no round-trip
-     * to the compiler needed**: `KtScript.replSnippetClassId` (the actual mechanism the FIR
-     * REPL-snippet builder uses, see `PsiRawFirBuilder.kt`/`KtScript.kt`) derives it purely from
-     * the source file's own name via [NameUtils.getSnippetTargetClassName] -- extension-independent
-     * -- in the file's package -- always the root package here, since [scriptFile] is written with
-     * no package declaration.
+     * Predicts the [ClassId] a `.repl.<extension>` [scriptFile] compiles to, with no round-trip to
+     * the compiler. The FIR REPL-snippet builder derives it purely from the source file's own name
+     * via [NameUtils.getSnippetTargetClassName], in the root package since [scriptFile] has no
+     * package declaration.
      */
     private fun snippetClassId(scriptFile: File): ClassId =
         ClassId(FqName.ROOT, NameUtils.getSnippetTargetClassName(scriptFile.name))
@@ -526,8 +407,8 @@ class DaemonReplCompiler(
 }
 
 /**
- * A no-op [CompilationResults]: this module runs only non-incremental, single-snippet compiles, so
- * there is nothing to collect (no incremental-compilation iteration results, no build metrics).
+ * A no-op [CompilationResults]. This module runs only non-incremental compiles, so there is nothing
+ * to collect (no incremental-compilation iteration results, no build metrics).
  */
 private class NoOpCompilationResults : CompilationResults,
     UnicastRemoteObject(
@@ -539,8 +420,8 @@ private class NoOpCompilationResults : CompilationResults,
 }
 
 /**
- * A [MessageCollector] that captures the daemon-reported compiler messages as plain strings, so
- * [DaemonReplCompiler]'s daemon-compile call can return a structured diagnostics list on failure.
+ * A [MessageCollector] that captures the daemon-reported compiler messages as plain strings so
+ * [DaemonReplCompiler] can return a structured diagnostics list on failure.
  */
 private class CollectingMessageCollector : MessageCollector {
     private val collected = mutableListOf<String>()

@@ -225,10 +225,8 @@ class ScriptingProcessSourcesBeforeCompilingExtension : ProcessSourcesBeforeComp
 
         if (configuration.getBoolean(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS)) {
             // Regular-pipeline REPL-snippet compilation (see ScriptingConfigurationKeys.REPL_SNIPPET_REGULAR_MODE):
-            // a `.repl.<extension>` source (see REPL_SNIPPET_FILE_EXTENSION's KDoc for where
-            // <extension> comes from -- plain `kts` by default, i.e. `.repl.kts`) is marked as a
-            // REPL snippet before flowing on, unmodified, into the regular frontend/backend -- no
-            // interception, no bespoke artifact.
+            // mark each `.repl.<extension>` source (plain `kts` by default) as a REPL snippet, then
+            // let it continue unmodified into the regular frontend/backend.
             if (configuration.getBoolean(ScriptingConfigurationKeys.REPL_SNIPPET_REGULAR_MODE)) {
                 val replSnippetFileExtensionSuffix =
                     ".repl." + (configuration.get(ScriptingConfigurationKeys.REPL_SNIPPET_FILE_EXTENSION) ?: "kts")
