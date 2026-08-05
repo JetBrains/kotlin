@@ -54,3 +54,29 @@ internal fun List<String>.checkNoneContains(other: CharSequence) {
         )
     }
 }
+
+internal fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, result: A, overrideArguments: Boolean = false) {
+    val compilerArgsClass = result.javaClass
+    val parseCommandLineArgumentsClass =
+        compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.wrappers.ParseCommandLineArgumentsKt")
+
+    fun parseCommandLineArguments(arguments: List<String>, compilerArgs: Any, overrideArguments: Boolean): Any? {
+        return parseCommandLineArgumentsClass.getMethod(
+            "parseCommandLineArguments",
+            List::class.java,
+            compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments"),
+            Boolean::class.java
+        ).invoke(null, arguments, compilerArgs, overrideArguments)
+    }
+
+    fun validateArgumentsAllErrors(errors: Any?): List<String> {
+        @Suppress("UNCHECKED_CAST")
+        return parseCommandLineArgumentsClass.getMethod(
+            "validateArgumentsAllErrors",
+            compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.wrappers.ArgumentParseErrors"),
+        ).invoke(null, errors) as List<String>
+    }
+
+    val errors = parseCommandLineArguments(args, result, overrideArguments)
+    validateArgumentsAllErrors(errors).firstOrNull()?.let { throw CompilerArgumentsParseException(it) }
+}

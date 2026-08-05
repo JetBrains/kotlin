@@ -230,10 +230,10 @@ private fun applyCommandLineArgumentsImpl(base: CommonCompilerArguments.Builder,
     val compilerArgs = base.toCompilerArguments()
     val compilerArgsClass = compilerArgs.javaClass
     val parseCommandLineArgumentsClass =
-        compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.cli.common.arguments.ParseCommandLineArgumentsKt")
+        compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.wrappers.ParseCommandLineArgumentsKt")
 
-    fun parseCommandLineArguments(arguments: List<String>, compilerArgs: Any, overrideArguments: Boolean) {
-        parseCommandLineArgumentsClass.getMethod(
+    fun parseCommandLineArguments(arguments: List<String>, compilerArgs: Any, overrideArguments: Boolean): Any? {
+        return parseCommandLineArgumentsClass.getMethod(
             "parseCommandLineArguments",
             List::class.java,
             compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments"),
@@ -242,13 +242,18 @@ private fun applyCommandLineArgumentsImpl(base: CommonCompilerArguments.Builder,
     }
 
     fun toArgumentStrings(compilerArgs: Any, shortArgumentKeys: Boolean, compactArgumentValues: Boolean): List<String> {
+        val clazz = compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.compilerRunner.ArgumentsToStrings")
+        val methodName = "toArgumentStrings"
+        val parameterClass = compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments")
         @Suppress("UNCHECKED_CAST")
-        return compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.compilerRunner.ArgumentsToStrings").getMethod(
-            "toArgumentStrings",
-            compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments"),
-            Boolean::class.javaPrimitiveType,
-            Boolean::class.javaPrimitiveType,
-        ).invoke(null, compilerArgs, shortArgumentKeys, compactArgumentValues) as List<String>
+        return (
+                // >= 2.4.20
+                clazz.getMethodOrNull(methodName, parameterClass, Boolean::class.java, Boolean::class.java, Boolean::class.java)
+                    ?.invoke(null, compilerArgs, shortArgumentKeys, compactArgumentValues, true)
+                // < 2.4.20
+                    ?: clazz.getMethod(methodName, parameterClass, Boolean::class.java, Boolean::class.java)
+                        .invoke(null, compilerArgs, shortArgumentKeys, compactArgumentValues)
+                ) as List<String>
     }
 
     // validateArgumentsAllErrors(errors: ArgumentParseErrors?): List<String>
@@ -256,24 +261,24 @@ private fun applyCommandLineArgumentsImpl(base: CommonCompilerArguments.Builder,
         @Suppress("UNCHECKED_CAST")
         return parseCommandLineArgumentsClass.getMethod(
             "validateArgumentsAllErrors",
-            compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors"),
+            compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.wrappers.ArgumentParseErrors"),
         ).invoke(null, errors) as List<String>
     }
 
-    // validateArguments(errors: ArgumentParseErrors?): String?
-    fun validateArguments(errors: Any?): String? {
-        @Suppress("UNCHECKED_CAST")
-        return parseCommandLineArgumentsClass.getMethod(
-            "validateArguments",
-            compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors"),
-        ).invoke(null, errors) as String?
-    }
+//    // validateArguments(errors: ArgumentParseErrors?): String?
+//    fun validateArguments(errors: Any?): String? {
+//        @Suppress("UNCHECKED_CAST")
+//        return parseCommandLineArgumentsClass.getMethod(
+//            "validateArguments",
+//            compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.wrappers.ArgumentParseErrors"),
+//        ).invoke(null, errors) as String?
+//    }
 
-    fun containsAnyPluginsRelatedArguments(arguments: List<String>): Boolean = setOf(
+    val containsAnyPluginsRelatedArguments = setOf(
         "-Xplugin", "-P", "-Xcompiler-plugin-order"
     ).any { prefix -> arguments.any { it == prefix || it.startsWith("$prefix=") } }
 
-    if (!containsAnyPluginsRelatedArguments(arguments)) {
+    if (!containsAnyPluginsRelatedArguments) {
         // The caller is not setting any plugin-related arguments, so we need to clear the existing ones to avoid duplication.
         // If we didn't clear them here, they'd be set in `applyArgumentStrings` below and later _again_ from `this[COMPILER_PLUGINS]`
         // when running the compilation.
@@ -282,19 +287,20 @@ private fun applyCommandLineArgumentsImpl(base: CommonCompilerArguments.Builder,
         compilerArgsClass.getMethod("setPluginOrderConstraints", Array<String>::class.java).invoke(compilerArgs, emptyArray<String>())
     }
 
-    parseCommandLineArguments(arguments, compilerArgs, true)
+    val errors = parseCommandLineArguments(arguments, compilerArgs, false)
 
     //propagate errors
-    findArgumentValidationErrorsSet(base)?.let {
-        validateArgumentsAllErrors(findErrors(compilerArgs)).forEach { error -> it.add(error) }
-    } ?: validateArguments(findErrors(compilerArgs))?.let { throw CompilerArgumentsParseException(it) }
+    findArgumentValidationErrorsSet(base)?.let { argumentValidationErrors ->
+        validateArgumentsAllErrors(errors).forEach { error -> argumentValidationErrors.add(error) }
+    } ?: validateArgumentsAllErrors(errors).firstOrNull()?.let { throw CompilerArgumentsParseException(it) }
 
     @Suppress("UNCHECKED_CAST") val argumentStrings = toArgumentStrings(
         compilerArgs,
         shortArgumentKeys = false,
+
         compactArgumentValues = true
     )
-    if (containsAnyPluginsRelatedArguments(arguments)) {
+    if (containsAnyPluginsRelatedArguments) {
         // The caller is overriding at least some plugin-related arguments, so we need to clear the existing ones, as it's
         // impossible to guess the new COMPILER_PLUGINS value from the arguments (the transformation is not reversible).
         // Later, inside `applyArgumentStrings` (below), COMPILER_PLUGINS will be set to the "RAW_PLUGIN_ID" value, indicating
@@ -336,4 +342,10 @@ private fun findErrors(current: Any, currentClass: Class<*> = current::class.jav
     } catch (_: Exception) {
         null
     }
+}
+
+private fun Class<*>.getMethodOrNull(name: String, vararg parameterTypes: Class<*>) = try {
+    getMethod(name, *parameterTypes)
+} catch (_: NoSuchMethodException) {
+    null
 }
