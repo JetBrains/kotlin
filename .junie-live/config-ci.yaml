@@ -4,7 +4,7 @@ schema-version: 1
 profile: junie-live-ci-kotlin
 
 git:
-  allowed-branches: ["yana/*"]
+  allowed-branches: ["junie-live/*"]
   repositories:
     - url: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git
       auth: github-app
@@ -43,32 +43,13 @@ web-search:
   headers:
     X-Accept-EAP-License: "true"
 
-# Disable the sandbox filesystem protection layer. The Anthropic sandbox-runtime
-# otherwise hardcodes .git/hooks as non-writable, which breaks Kotlin's
-# kotlin-prepush-hook build script (it deletes .git/hooks/pre-push at configuration
-# time).
-# Add hosts whitelist to make build and tests work
-sandbox:
-  disable-filesystem: true
-  network:
-    allowed-domains:
-      - proxy.golang.org
-      - pypi.org
-      - repo.maven.apache.org
-      - repo1.maven.org
-      - services.gradle.org
-      - downloads.gradle.org
-      - plugins.gradle.org
-      - storage.googleapis.com
-      - dl.google.com
-      - cache-redirector.jetbrains.com
-      - redirector.kotlinlang.org
-      - packages.jetbrains.team
-      - download.jetbrains.com
-      - maven.pkg.jetbrains.space
-      - artifacts-caching-proxy.aws.intellij.net
-      - www.jetbrains.com
-      # some redirect from jetbrains.com
-      - d2cico3c979uwg.cloudfront.net
-    endpoint-proxies: []
+ingrazzio:
+  url: https://ingrazzio-cloud-prod.labs.jb.gg
+  api-key: ${JUNIE_API_KEY}
+
+# Sandbox is off in CI (--use-sandbox=false inside the agent container). The
+# former sandbox.disable-filesystem / network allow-list block is intentionally
+# omitted: current junie-live releases reject unknown sandbox fields, and with
+# SRT disabled the whole block is dead. Isolation is Docker (proxy netns +
+# separate agent mounts), not bubblewrap.
 

@@ -1,0 +1,76 @@
+# Junie Live on GitHub Actions: proxy + agent containers, no Anthropic sandbox.
+#
+# Same isolation model as local docker-compose.yaml:
+#   - secrets live ONLY in the proxy (secrets.env)
+#   - agent gets proxied.yaml (loopback URLs + capability tokens)
+#   - shared loopback via network_mode: service:proxy
+#   - --use-sandbox=false; Docker is the boundary, not SRT/bwrap
+#
+# Differs from local dev: the workspace is the Actions checkout of this repo
+# (JUNIE_LIVE_WORKSPACE), not a nested ./kotlin mount. config-ci.yaml + GitHub
+# App auth are used instead of config-dev.yaml + PAT.
+#
+# Required host env (set by the workflow):
+#   JUNIE_LIVE_WORKSPACE  absolute path to the kotlin checkout
+#   JUNIE_LIVE_RUN_DIR    absolute path with secrets.env + agent.env
+#   JL_RUN_ID             stable run id for this workflow attempt
+#   JUNIE_LIVE_VERSION    optional image build pin (default: latest)
+
+services:
+  proxy:
+    image: junie-live:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        JUNIE_LIVE_VERSION: ${JUNIE_LIVE_VERSION:-latest}
+    volumes:
+      - shared:/shared
+      - ./config-ci.yaml:/cfg/config-ci.yaml:ro
+      - ${JUNIE_LIVE_RUN_DIR}/secrets.env:/cfg/secrets.env:ro
+    command:
+      - /bin/bash
+      - -c
+      - |
+        # setup-proxy refuses to overwrite an existing output; drop any stale
+        # file (and its .lock) so a re-run regenerates from the current secrets.
+        rm -f /shared/proxied.yaml /shared/proxied.yaml.lock
+        exec /opt/junie-live/cli/junie-live setup-proxy \
+          --input-config=/cfg/config-ci.yaml \
+          --output-config=/shared/proxied.yaml \
+          --env-file=/cfg/secrets.env
+
+  agent:
+    image: junie-live:latest
+    network_mode: "service:proxy"
+    depends_on:
+      - proxy
+    environment:
+      JL_RUN_ID: ${JL_RUN_ID:-github-ci}
+    volumes:
+      - shared:/shared:ro
+      - ${JUNIE_LIVE_RUN_DIR}/agent.env:/cfg/agent.env:ro
+      - ${JUNIE_LIVE_RUN_DIR}/out:/out
+      # Normal GHA checkout of the kotlin repo (not the local-dev nested copy).
+      - ${JUNIE_LIVE_WORKSPACE}:/workspace/kotlin
+    working_dir: /workspace/kotlin
+    # No secrets in the agent environment. proxied.yaml carries cap-tokens for
+    # the proxied fields; non-proxied ${VAR} fields (ids) come from agent.env.
+    entrypoint:
+      - /bin/bash
+      - -lc
+      - |
+        for _ in $(seq 1 300); do [ -f /shared/proxied.yaml ] && break; sleep 0.2; done
+        [ -f /shared/proxied.yaml ] || { echo "proxied.yaml not ready" >&2; exit 1; }
+        # login shell resets PATH; re-add runtime dirs so start-agent finds hermes/junie.
+        # $$ keeps compose from interpolating the shell variables below.
+        export PATH=/opt/junie-live/bin:/opt/junie-live/cli:/root/.local/bin:$$PATH
+        exec /opt/junie-live/cli/junie-live start-agent \
+          --config /shared/proxied.yaml \
+          --use-sandbox=false \
+          --env-file /cfg/agent.env \
+          --log-file /out/agent.log \
+          --run-id "$$JL_RUN_ID"
+
+volumes:
+  shared:
