@@ -1397,7 +1397,13 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
                 currentAlias
             } else {
                 getValueMergedVariableAliases[variable] = multipleValuesMarker
-                variable
+                // This read sees different aliases on different loop iterations, so no alias of [variable] can be
+                // returned. Returning [variable] itself is not an option either: it is aliased too, and its alias
+                // keeps changing, so the callers (setVariable, in particular) would store an alias of an alias.
+                // Two variables assigned to each other could then close a cycle in variableAliases, making the
+                // transitive resolution in buildNullablePredicate/buildBooleanPredicate recurse forever (KT-88316).
+                // A phantom pinned to this read site is stable across the iterations and is never aliased itself.
+                createPhantomVariable(variable, createPhantomValueAt(variable, expression))
             }
             return VisitorResult(data, actualAlias)
         }
