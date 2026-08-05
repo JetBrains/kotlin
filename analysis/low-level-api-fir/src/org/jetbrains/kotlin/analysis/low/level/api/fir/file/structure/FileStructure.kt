@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,12 +9,12 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLDiagnostic
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.LLFirDiagnosticVisitor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.elementCanBeLazilyResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
-import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -141,22 +141,52 @@ internal class FileStructure private constructor(
         return false
     }
 
-    fun diagnostics(diagnosticCheckerFilter: DiagnosticCheckerFilter, ignoreSuppression: Boolean): Sequence<KtPsiDiagnostic> = sequence {
-        val structureElements = getAllStructureElements()
-        structureElements.forEach { structureElement ->
+    /**
+     * Returns diagnostics reported on [element] and on all its children.
+     *
+     * Only [FileStructureElement]s which may contain diagnostics of the [element]'s subtree are computed, so requesting diagnostics for a
+     * single declaration does not resolve the whole file.
+     *
+     * @see getStructureElementsFor
+     */
+    fun diagnostics(element: KtElement, filter: DiagnosticCheckerFilter): Sequence<LLDiagnostic> = sequence {
+        // A structure element of the whole file cannot contain diagnostics from the outside, so there is nothing to filter out.
+        val isWholeFile = element is KtFile
+
+        for (structureElement in getStructureElementsFor(element)) {
             ProgressManager.checkCanceled()
 
-            structureElement.diagnostics.forEach(diagnosticCheckerFilter, ignoreSuppression) { diagnostics ->
-                yieldAll(diagnostics)
+            structureElement.diagnostics.forEach(filter) { diagnostics ->
+                if (isWholeFile) {
+                    yieldAll(diagnostics)
+                } else {
+                    // A structure element may cover a wider piece of code than the requested element, and it may even own diagnostics
+                    // reported outside its own declaration (e.g., a primary constructor element owns diagnostics of the super type
+                    // call). So diagnostics reported outside the element have to be dropped.
+                    for (llDiagnostic in diagnostics) {
+                        if (element.isAncestor(llDiagnostic.diagnostic.psiElement, strict = false)) {
+                            yield(llDiagnostic)
+                        }
+                    }
+                }
             }
         }
     }
 
-    fun getAllStructureElements(): Collection<FileStructureElement> {
-        val structureElements = mutableSetOf<FileStructureElement>()
-        addStructureElementForTo(ktFile, structureElements)
+    fun getAllStructureElements(): Collection<FileStructureElement> = getStructureElementsFor(ktFile)
 
-        ktFile.accept(object : KtVisitorVoid() {
+    /**
+     * Returns all [FileStructureElement]s which may contain diagnostics reported on [element] or on its children:
+     * the structure element of the closest non-local container of [element], and structure elements of all declarations inside [element].
+     */
+    private fun getStructureElementsFor(element: KtElement): Collection<FileStructureElement> {
+        val structureElements = mutableSetOf<FileStructureElement>()
+
+        // The element is not necessarily visited by the collector below (e.g., a function literal is not visited as a declaration),
+        // and in any case it might belong to the structure element of its container.
+        addStructureElementForTo(element, structureElements)
+
+        element.accept(object : KtVisitorVoid() {
             override fun visitElement(element: PsiElement) {
                 element.acceptChildren(this)
             }
@@ -175,6 +205,28 @@ internal class FileStructure private constructor(
                 if (elementCanBeLazilyResolved(list)) {
                     addStructureElementForTo(list, structureElements)
                 }
+            }
+
+            /**
+             * A super type call is split between two structure elements: the super class type reference belongs to the class, while the
+             * rest of the call belongs to the primary constructor. Both halves have to be requested explicitly, as neither of them is a
+             * declaration.
+             *
+             * @see getStructureKtElement
+             */
+            override fun visitSuperTypeCallEntry(call: KtSuperTypeCallEntry) {
+                addStructureElementForTo(call, structureElements)
+
+                call.acceptChildren(this)
+            }
+
+            /** @see visitSuperTypeCallEntry */
+            override fun visitTypeReference(typeReference: KtTypeReference) {
+                if (typeReference.parent is KtConstructorCalleeExpression) {
+                    addStructureElementForTo(typeReference, structureElements)
+                }
+
+                typeReference.acceptChildren(this)
             }
         })
 

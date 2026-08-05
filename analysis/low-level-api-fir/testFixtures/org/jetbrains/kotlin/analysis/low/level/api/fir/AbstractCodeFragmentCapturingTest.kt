@@ -39,8 +39,12 @@ abstract class AbstractCodeFragmentCapturingTest : AbstractAnalysisApiBasedTest(
         val firCodeFragment = firFile.codeFragment
         firCodeFragment.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
-        val frontendDiagnostics = mainFile.diagnostics(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
-            .toList()
+        val frontendDiagnostics =
+            mainFile.diagnostics(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
+                .filter { !it.isSuppressed }
+                .map { it.diagnostic }
+                .toList()
+
         val frontendErrors = frontendDiagnostics.filter { it.severity == Severity.ERROR }
 
         require(frontendErrors.isEmpty()) {

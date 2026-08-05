@@ -35,7 +35,7 @@ internal sealed class FileStructureElementDiagnosticRetriever(
     private val file: FirFile,
     private val moduleComponents: LLFirModuleResolveComponents,
 ) {
-    fun retrieve(filter: DiagnosticCheckerFilter, ignoreSuppression: Boolean = false): FileStructureElementDiagnosticList {
+    fun retrieve(filter: DiagnosticCheckerFilter): FileStructureElementDiagnosticList {
         forceBodyResolve()
 
         val sessionHolder = SessionHolderImpl(moduleComponents.session, moduleComponents.scopeSessionProvider.getScopeSession())
@@ -46,7 +46,7 @@ internal sealed class FileStructureElementDiagnosticRetriever(
         }
 
         return withSourceCodeAnalysisExceptionUnwrapping {
-            collectForStructureElement(declaration, filter, ignoreSuppression) { components ->
+            collectForStructureElement(declaration, filter) { components ->
                 createVisitor(context, components)
             }
         }
