@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.wasm.config.wasmDebug
 import org.jetbrains.kotlin.wasm.config.wasmGenerateDwarf
@@ -48,8 +49,8 @@ import org.jetbrains.kotlin.wasm.config.wasmGenerateWat
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.wasm.test.AbstractWasmPartialLinkageTestCase
 import org.jetbrains.kotlin.wasm.test.WasmCompilerInvocationTestConfiguration
+import org.jetbrains.kotlin.wasm.test.WasmIcTest
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
-import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 
 @Suppress("OPT_IN_USAGE")
@@ -143,6 +144,7 @@ private class WasmICContextWholeWorldForTesting : WasmICContextWholeWorld(
     }
 }
 
+@WasmIcTest
 abstract class WasmAbstractInvalidationTest(
     targetBackend: TargetBackend,
     workingDirPath: String,

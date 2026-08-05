@@ -213,6 +213,7 @@ abstract class AbstractWasmJsCodegenCoroutinesStackSwitchingTest : AbstractWasmJ
     }
 }
 
+@WasmJsMultiModuleTest
 abstract class AbstractWasmJsCodegenMultiModuleTest : AbstractWasmJsCodegenBoxTest() {
     override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
         super.configure(this)

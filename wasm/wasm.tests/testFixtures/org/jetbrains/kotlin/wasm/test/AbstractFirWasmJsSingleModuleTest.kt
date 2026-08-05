@@ -47,6 +47,7 @@ abstract class AbstractWasmJsCodegenSingleModuleRegularStdTest(
     }
 }
 
+@WasmFirCompilerExtraTest
 abstract class AbstractWasmJsCodegenSingleModuleTestBase(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
