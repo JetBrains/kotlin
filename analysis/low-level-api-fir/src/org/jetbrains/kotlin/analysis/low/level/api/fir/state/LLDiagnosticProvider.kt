@@ -13,24 +13,16 @@ import org.jetbrains.kotlin.psi.KtElement
 @KaImplementationDetail
 interface LLDiagnosticProvider {
     /**
-     * Returns all compiler diagnostics reported on the [element] and on its children, matching the [filter].
+     * Returns all compiler diagnostics reported on the [element], matching the [filter].
+     *
+     * @param isRecursive Whether diagnostics reported on the element's children are included as well.
      */
-    fun diagnostics(element: KtElement, filter: DiagnosticCheckerFilter): Sequence<LLDiagnostic>
-
-    /**
-     * Returns all compiler diagnostics for the specific [element], matching the [filter].
-     * This function is not recursive; diagnostics for nested elements are not returned.
-     */
-    fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<LLDiagnostic>
+    fun diagnostics(element: KtElement, filter: DiagnosticCheckerFilter, isRecursive: Boolean): Sequence<LLDiagnostic>
 }
 
 internal object LLEmptyDiagnosticProvider : LLDiagnosticProvider {
-    override fun diagnostics(element: KtElement, filter: DiagnosticCheckerFilter): Sequence<LLDiagnostic> {
+    override fun diagnostics(element: KtElement, filter: DiagnosticCheckerFilter, isRecursive: Boolean): Sequence<LLDiagnostic> {
         return emptySequence()
-    }
-
-    override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<LLDiagnostic> {
-        return emptyList()
     }
 }
 
@@ -38,15 +30,9 @@ internal class LLSourceDiagnosticProvider(
     private val moduleProvider: LLModuleProvider,
     private val sessionProvider: LLSessionProvider,
 ) : LLDiagnosticProvider {
-    override fun diagnostics(element: KtElement, filter: DiagnosticCheckerFilter): Sequence<LLDiagnostic> {
+    override fun diagnostics(element: KtElement, filter: DiagnosticCheckerFilter, isRecursive: Boolean): Sequence<LLDiagnostic> {
         val module = moduleProvider.getModule(element)
         val moduleComponents = sessionProvider.getResolvableSession(module).moduleComponents
-        return moduleComponents.diagnosticsCollector.diagnosticsFor(element, filter)
-    }
-
-    override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<LLDiagnostic> {
-        val module = moduleProvider.getModule(element)
-        val moduleComponents = sessionProvider.getResolvableSession(module).moduleComponents
-        return moduleComponents.diagnosticsCollector.getDiagnosticsFor(element, filter)
+        return moduleComponents.diagnosticsCollector.diagnostics(element, filter, isRecursive)
     }
 }

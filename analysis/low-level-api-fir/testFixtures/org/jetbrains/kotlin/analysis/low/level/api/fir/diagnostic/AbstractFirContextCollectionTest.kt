@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getDiagnostics
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.diagnostics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.BeforeElementDiagnosticCollectionHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.beforeElementDiagnosticCollectionHandler
@@ -58,7 +58,11 @@ abstract class AbstractFirContextCollectionTest : AbstractAnalysisApiBasedTest()
             handler.elementsToCheckContext = allStructureElements.map(FileStructureElement::declaration)
             handler.firFile = mainFile.getOrBuildFirFile(resolutionFacade)
 
-            mainFile.getDiagnostics(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
+            mainFile.diagnostics(
+                resolutionFacade,
+                DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS,
+                isRecursive = false,
+            ).count()
         }
     }
 

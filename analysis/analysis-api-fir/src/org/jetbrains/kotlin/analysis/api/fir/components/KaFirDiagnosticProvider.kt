@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.diagnostics
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getDiagnostics
 import org.jetbrains.kotlin.psi.KtElement
 
 @OptIn(KaExperimentalApi::class)
@@ -71,13 +70,7 @@ internal class KaFirDiagnosticProvider(
         private fun compute(): Sequence<KaDiagnosticWithPsi<*>> = element.withPsiValidityAssertion {
             val filter = checkerKinds.asLLFilter()
 
-            val diagnostics = if (isRecursive) {
-                element.diagnostics(resolutionFacade, filter)
-            } else {
-                element.getDiagnostics(resolutionFacade, filter).asSequence()
-            }
-
-            diagnostics
+            element.diagnostics(resolutionFacade, filter, isRecursive)
                 .filter { includeSuppressed || !it.isSuppressed }
                 .map { it.asKaDiagnostic() }
         }

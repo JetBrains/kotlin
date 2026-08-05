@@ -80,24 +80,17 @@ fun PsiClass.resolveToFirSymbol(resolutionFacade: LLResolutionFacade): FirRegula
     resolutionFacade.resolveToFirSymbol(this)
 
 /**
- * Returns diagnostics which the compiler reports on the given [KtElement] itself.
- *
- * The function is not recursive: diagnostics of nested elements are not returned. Use [diagnostics] to get them as well.
- *
- * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase
- */
-@KaImplementationDetail
-fun KtElement.getDiagnostics(resolutionFacade: LLResolutionFacade, filter: DiagnosticCheckerFilter): Collection<LLDiagnostic> =
-    resolutionFacade.getDiagnostics(this, filter)
-
-/**
- * Returns a sequence of diagnostics which the compiler reports on the given [KtElement] and on all its children.
+ * Returns a sequence of diagnostics which the compiler reports on the given [KtElement], and, if [isRecursive] is `true`, on all its
+ * children as well (which is the default).
  *
  * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase
  */
 @KaImplementationDetail
-fun KtElement.diagnostics(resolutionFacade: LLResolutionFacade, filter: DiagnosticCheckerFilter): Sequence<LLDiagnostic> =
-    resolutionFacade.diagnostics(this, filter)
+fun KtElement.diagnostics(
+    resolutionFacade: LLResolutionFacade,
+    filter: DiagnosticCheckerFilter,
+    isRecursive: Boolean = true,
+): Sequence<LLDiagnostic> = resolutionFacade.diagnostics(this, filter, isRecursive)
 
 /**
  * Build [FirElement] node in its final resolved state for a requested element.
