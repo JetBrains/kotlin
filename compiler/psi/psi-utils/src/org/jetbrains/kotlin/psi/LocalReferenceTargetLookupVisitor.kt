@@ -46,6 +46,7 @@ private val KtSimpleNameExpression.contextKind: LocalReferenceTargetLookupVisito
             is KtPackageDirective,
             is KtCallableReferenceExpression,
             is KtValueArgumentName,
+            is KtLabelReferenceExpression,
                 -> null
             is KtDotQualifiedExpression,
             is KtSafeQualifiedExpression,
@@ -57,8 +58,31 @@ private val KtSimpleNameExpression.contextKind: LocalReferenceTargetLookupVisito
                     .takeIf { p.qualifier == null && (p.referenceExpression == this@contextKind) }
             }
             is KtClassLiteralExpression -> LocalReferenceTargetLookupVisitor.ContextKind.VALUE_OR_TYPE
+            is KtProperty -> {
+                LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.delegateExpressionOrInitializer == this@contextKind }
+            }
+            is KtDestructuringDeclaration -> {
+                LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.initializer == this@contextKind }
+            }
+            is KtNamedFunction -> {
+                LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.bodyExpression == this@contextKind }
+            }
+            is KtParameter -> {
+                LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.defaultValue == this@contextKind }
+            }
             is KtValueArgument,
-            is KtExpression,
+            is KtBinaryExpression,
+            is KtBinaryExpressionWithTypeRHS,
+            is KtUnaryExpression,
+            is KtIsExpression,
+            is KtArrayAccessExpression,
+            is KtParenthesizedExpression,
+            is KtReturnExpression,
+            is KtWhileExpression,
+            is KtForExpression,
+            is KtIfExpression,
+            is KtWhenExpression,
+            is KtBlockExpression,
             is KtExpressionCodeFragment,
             is KtWhenConditionInRange,
             is KtSimpleNameStringTemplateEntry,
