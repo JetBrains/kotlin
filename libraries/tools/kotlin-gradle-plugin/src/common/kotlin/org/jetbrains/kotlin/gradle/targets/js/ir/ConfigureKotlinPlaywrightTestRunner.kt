@@ -15,9 +15,12 @@ import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
-import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import kotlin.time.toJavaDuration
+
+internal fun PwBrowserKind.getPwInstallBrowserTaskName() = "kotlinInstallPlaywright${browserName.replaceFirstChar { it.uppercaseChar() }}"
 
 internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { target ->
     if (target !is KotlinJsIrTarget) return@KotlinTargetSideEffect
@@ -45,27 +48,36 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
         val testTaskProvider = testRun.executionTask
 
-        val playwrightBrowserInstallTask = project.registerTask<PlaywrightBrowserInstall>(
-            "kotlinInstallPlaywrightBrowsers", listOf(testCompilation)
-        ) {
-            it.browsers.set(browserTestDsl.allBrowserRunners.map { it.values.map {
-                when (it) {
-                    is KotlinFirefoxTestRunner -> "firefox"
-                    is KotlinWebkitTestRunner -> "webkit"
-                    is KotlinChromiumTestRunner -> "chromium"
-                    else -> throw IllegalArgumentException("Unsupported browser runner: ${it::class.simpleName}")
+        // KT-87641: Register one installation task per browser type so that multiple JS targets
+        // with overlapping browser configurations don't cause DuplicateTaskException.
+        // locateOrRegisterTask returns the existing task when already registered by another target.
+        val browserInstallTasks = browserTestDsl.allBrowserRunners.get().values
+            .map { runner ->
+                when (runner) {
+                    is KotlinFirefoxTestRunner -> PwBrowserKind.FIREFOX
+                    is KotlinWebkitTestRunner -> PwBrowserKind.WEBKIT
+                    is KotlinChromiumTestRunner -> PwBrowserKind.CHROMIUM
+                    else -> throw IllegalArgumentException("Unsupported browser runner: ${runner::class.simpleName}")
                 }
-            }.toSet() })
-        }
+            }
+            .distinct()
+            .map { browserType ->
+                project.locateOrRegisterTask<PlaywrightBrowserInstall>(browserType.getPwInstallBrowserTaskName(), args = listOf(testCompilation)) {
+                    browsers.add(browserType.browserName)
+                }
+            }
 
         testTaskProvider.configure { testTask ->
             val objects = project.objects
             val inputs = KotlinPlaywrightJsTestFramework.createInputs(objects)
 
-            // dependsOn is required because outputDir is internal and doesn't carry task dependencies
-            // FIXME: KT-87599 Design host-wide toolchain management
-            testTask.dependsOn(playwrightBrowserInstallTask)
-            inputs.playwrightBrowsersDirectory.set(playwrightBrowserInstallTask.flatMap { it.outputDir })
+            // dependsOn is required because outputDir is internal and doesn't carry task dependencies.
+            // Per-browser tasks are independent and can run in parallel.
+            // KT-87599: Design host-wide toolchain management
+            browserInstallTasks.forEach { installTask -> testTask.dependsOn(installTask) }
+
+            // All install tasks write to the same global browsers directory; any one is sufficient to derive the path.
+            inputs.playwrightBrowsersDirectory.set(browserInstallTasks.first().flatMap { it.outputDir })
 
             inputs.chromiumRunners.set(
                 browserTestDsl.chromiumRunners.values.map { runner ->
