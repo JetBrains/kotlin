@@ -8,7 +8,6 @@ package kotlin.script.experimental.jvmhost.jsr223.daemon
 import org.jetbrains.kotlin.daemon.common.DaemonJVMOptions
 import org.jetbrains.kotlin.daemon.common.DaemonLogOptions
 import org.jetbrains.kotlin.daemon.common.DaemonOptions
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator
 import java.io.File
 import java.nio.file.Path
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -18,6 +17,7 @@ import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.ScriptEvaluationConfiguration
 import kotlin.script.experimental.api.hostConfiguration
 import kotlin.script.experimental.host.withDefaultsFrom
+import kotlin.script.experimental.jvm.K2ReplEvaluator
 import kotlin.script.experimental.jvm.jsr223.base.KotlinJsr223JvmScriptEngineBase
 
 /**

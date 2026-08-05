@@ -1,20 +1,18 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.compiler.plugin.impl
+package kotlin.script.experimental.jvm
 
-import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.REPL_SNIPPET_EVAL_FUN_NAME
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.jvm.KJvmEvaluatedSnippet
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
-import kotlin.script.experimental.jvm.jvm
-import kotlin.script.experimental.jvm.lastSnippetClassLoader
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.util.LinkedSnippetImpl
+
+const val REPL_SNIPPET_EVAL_FUN_NAME_STRING = "\$\$eval"
 
 class K2ReplEvaluator : ReplEvaluator<CompiledSnippet, KJvmEvaluatedSnippet> {
 
@@ -75,7 +73,7 @@ class K2ReplEvaluator : ReplEvaluator<CompiledSnippet, KJvmEvaluatedSnippet> {
     }
 
     private fun evalSnippet(compiledSnippet: KJvmCompiledScript, snippetClass: KClass<*>, configuration: ScriptEvaluationConfiguration): ResultValue {
-        val evalFunName = REPL_SNIPPET_EVAL_FUN_NAME.asString()
+        val evalFunName = REPL_SNIPPET_EVAL_FUN_NAME_STRING
         val eval = snippetClass.java.methods.find { it.name == evalFunName }!!
 
         val snippet = snippetClass.java.getField("INSTANCE").get(null)
