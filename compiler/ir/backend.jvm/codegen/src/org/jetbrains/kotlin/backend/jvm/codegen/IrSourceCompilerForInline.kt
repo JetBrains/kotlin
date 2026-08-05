@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.Position
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -123,7 +122,6 @@ class IrSourceCompilerForInline(
         }
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val isCallInsideSameModuleAsCallee: Boolean
         get() {
             val inlineFunModule = callee.fileOrNull?.module
@@ -133,7 +131,7 @@ class IrSourceCompilerForInline(
             }
 
             return if (inlineFunModule == null) {
-                callee.module == codegen.irFunction.module
+                callee.moduleFragment.descriptor == codegen.irFunction.moduleFragment.descriptor
             } else {
                 // Check by IR is needed for the evaluate expression in IDE.
                 // When we compile some code fragment with inline function call
