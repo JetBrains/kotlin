@@ -101,7 +101,7 @@ public class KotlinModuleMetadata internal constructor(
      * Collection of methods for reading and writing [KotlinModuleMetadata].
      */
     public companion object {
-        @Deprecated(level = DeprecationLevel.ERROR, message = "Use readStrict instead", replaceWith = ReplaceWith("readStrict"))
+        @Deprecated(level = DeprecationLevel.ERROR, message = "Use readStrict instead", replaceWith = ReplaceWith("readStrict(bytes)"))
         @JvmStatic
         @UnstableMetadataApi
         public fun read(bytes: ByteArray): KotlinModuleMetadata {
