@@ -48,11 +48,11 @@ internal class KotlinIntersectionScopeMergeStrategy : KotlinGlobalSearchScopeMer
      */
     override val targetType: KClass<GlobalSearchScope> = GlobalSearchScope::class
 
-    override fun uniteScopes(scopes: List<GlobalSearchScope>): List<GlobalSearchScope> {
+    override fun uniteScopes(scopes: List<GlobalSearchScope>, project: Project): List<GlobalSearchScope> {
         if (!scopes.any(GlobalSearchScopeUtil::isIntersectionScope)) return scopes
 
         val [intersectionScopes, restScopes] = scopes.partition(GlobalSearchScopeUtil::isIntersectionScope)
-        return uniteIntersectionScopes(intersectionScopes) + restScopes
+        return uniteIntersectionScopes(intersectionScopes, project) + restScopes
     }
 
     /**
@@ -64,10 +64,8 @@ internal class KotlinIntersectionScopeMergeStrategy : KotlinGlobalSearchScopeMer
      * While this might not always result in the most optimal result, the strategy achieves near-optimal results for our particular use
      * cases. It also avoids the higher complexities of other possible algorithms, making the time to merge relatively predictable.
      */
-    private fun uniteIntersectionScopes(scopes: List<GlobalSearchScope>): List<GlobalSearchScope> {
+    private fun uniteIntersectionScopes(scopes: List<GlobalSearchScope>, project: Project): List<GlobalSearchScope> {
         if (scopes.size < 2) return scopes
-
-        val project = scopes.firstNotNullOfOrNull { it.project } ?: return scopes
 
         val scopesByMergeTargets = mutableMapOf<Set<GlobalSearchScope>, MutableList<GlobalSearchScope>>()
 

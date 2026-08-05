@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScopeUtil
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMergeStrategy
@@ -17,7 +18,7 @@ import kotlin.reflect.KClass
 internal class KotlinUnionScopeMergeStrategy : KotlinGlobalSearchScopeMergeStrategy<GlobalSearchScope> {
     override val targetType: KClass<GlobalSearchScope> = GlobalSearchScope::class
 
-    override fun uniteScopes(scopes: List<GlobalSearchScope>): List<GlobalSearchScope> {
+    override fun uniteScopes(scopes: List<GlobalSearchScope>, project: Project): List<GlobalSearchScope> {
         return scopes.flatMapTo(mutableSetOf()) { scope -> GlobalSearchScopeUtil.flattenUnionScope(scope) }.toList()
     }
 }

@@ -36,6 +36,6 @@ internal class KotlinOptimizingGlobalSearchScopeMerger(private val project: Proj
         }
 
         @Suppress("UNCHECKED_CAST")
-        return strategy.uniteScopes(applicableScopes as List<T>) + restScopes
+        return strategy.uniteScopes(applicableScopes as List<T>, project) + restScopes
     }
 }

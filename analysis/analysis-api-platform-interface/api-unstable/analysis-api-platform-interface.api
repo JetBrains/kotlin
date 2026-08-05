@@ -806,7 +806,7 @@ public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/K
 public abstract interface class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinGlobalSearchScopeMergeStrategy : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
 	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinGlobalSearchScopeMergeStrategy$Companion;
 	public abstract fun getTargetType ()Lkotlin/reflect/KClass;
-	public abstract fun uniteScopes (Ljava/util/List;)Ljava/util/List;
+	public abstract fun uniteScopes (Ljava/util/List;Lcom/intellij/openapi/project/Project;)Ljava/util/List;
 }
 
 public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinGlobalSearchScopeMergeStrategy$Companion {
