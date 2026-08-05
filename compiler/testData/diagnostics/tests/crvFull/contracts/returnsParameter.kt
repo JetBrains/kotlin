@@ -71,6 +71,8 @@ fun testChain() {
 fun testMultipleParams(c: Boolean) {
     choose(c, <!RETURN_VALUE_NOT_USED!>fooS<!>(), <!RETURN_VALUE_NOT_USED!>fooS<!>())
     choose(c, ign(), ign())
+    choose(c, ign(), <!RETURN_VALUE_NOT_USED!>fooS<!>())
+    choose(c, <!RETURN_VALUE_NOT_USED!>fooS<!>(), ign())
 }
 
 fun testSafeCall() {
