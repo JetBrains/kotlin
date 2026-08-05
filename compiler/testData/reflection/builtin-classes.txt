@@ -1367,6 +1367,7 @@ KClass: abstract interface kotlin.reflect.KCallable : KAnnotatedElement, Any
     public open fun kotlin.reflect.KCallable<R>.hashCode(): kotlin.Int
     public open fun kotlin.reflect.KCallable<R>.toString(): kotlin.String
     public abstract val kotlin.reflect.KCallable<R>.annotations: kotlin.collections.List<kotlin.Annotation>
+    public abstract val kotlin.reflect.KCallable<R>.companionExtensionClass: kotlin.reflect.KClass<*>?
     public abstract val kotlin.reflect.KCallable<R>.isAbstract: kotlin.Boolean
     public abstract val kotlin.reflect.KCallable<R>.isFinal: kotlin.Boolean
     public abstract val kotlin.reflect.KCallable<R>.isOpen: kotlin.Boolean
@@ -1379,6 +1380,7 @@ KClass: abstract interface kotlin.reflect.KCallable : KAnnotatedElement, Any
   declaredMembers:
     public abstract fun kotlin.reflect.KCallable<R>.call(kotlin.Array<out kotlin.Any?>): R
     public abstract fun kotlin.reflect.KCallable<R>.callBy(kotlin.collections.Map<kotlin.reflect.KParameter, kotlin.Any?>): R
+    public abstract val kotlin.reflect.KCallable<R>.companionExtensionClass: kotlin.reflect.KClass<*>?
     public abstract val kotlin.reflect.KCallable<R>.isAbstract: kotlin.Boolean
     public abstract val kotlin.reflect.KCallable<R>.isFinal: kotlin.Boolean
     public abstract val kotlin.reflect.KCallable<R>.isOpen: kotlin.Boolean
@@ -1451,6 +1453,7 @@ KClass: abstract interface kotlin.reflect.KFunction : KCallable, Function, Any
     public open fun kotlin.reflect.KFunction<R>.hashCode(): kotlin.Int
     public open fun kotlin.reflect.KFunction<R>.toString(): kotlin.String
     public abstract val kotlin.reflect.KFunction<R>.annotations: kotlin.collections.List<kotlin.Annotation>
+    public abstract val kotlin.reflect.KFunction<R>.companionExtensionClass: kotlin.reflect.KClass<*>?
     public abstract val kotlin.reflect.KFunction<R>.isAbstract: kotlin.Boolean
     public abstract val kotlin.reflect.KFunction<R>.isExternal: kotlin.Boolean
     public abstract val kotlin.reflect.KFunction<R>.isFinal: kotlin.Boolean
@@ -1478,6 +1481,7 @@ KClass: abstract interface kotlin.reflect.KMutableProperty : KProperty, Any
     public open fun kotlin.reflect.KMutableProperty<V>.hashCode(): kotlin.Int
     public open fun kotlin.reflect.KMutableProperty<V>.toString(): kotlin.String
     public abstract val kotlin.reflect.KMutableProperty<V>.annotations: kotlin.collections.List<kotlin.Annotation>
+    public abstract val kotlin.reflect.KMutableProperty<V>.companionExtensionClass: kotlin.reflect.KClass<*>?
     public abstract val kotlin.reflect.KMutableProperty<V>.getter: kotlin.reflect.KProperty.Getter<V>
     public abstract val kotlin.reflect.KMutableProperty<V>.isAbstract: kotlin.Boolean
     public abstract val kotlin.reflect.KMutableProperty<V>.isConst: kotlin.Boolean
@@ -1505,6 +1509,7 @@ KClass: abstract interface kotlin.reflect.KMutableProperty0 : KProperty0, KMutab
     public abstract fun kotlin.reflect.KMutableProperty0<V>.set(V): kotlin.Unit
     public open fun kotlin.reflect.KMutableProperty0<V>.toString(): kotlin.String
     public abstract val kotlin.reflect.KMutableProperty0<V>.annotations: kotlin.collections.List<kotlin.Annotation>
+    public abstract val kotlin.reflect.KMutableProperty0<V>.companionExtensionClass: kotlin.reflect.KClass<*>?
     public abstract val kotlin.reflect.KMutableProperty0<V>.getter: kotlin.reflect.KProperty0.Getter<V>
     public abstract val kotlin.reflect.KMutableProperty0<V>.isAbstract: kotlin.Boolean
     public abstract val kotlin.reflect.KMutableProperty0<V>.isConst: kotlin.Boolean
@@ -1533,6 +1538,7 @@ KClass: abstract interface kotlin.reflect.KMutableProperty1 : KProperty1, KMutab
     public abstract fun kotlin.reflect.KMutableProperty1<T, V>.set(T, V): kotlin.Unit
     public open fun kotlin.reflect.KMutableProperty1<T, V>.toString(): kotlin.String
     public abstract val kotlin.reflect.KMutableProperty1<T, V>.annotations: kotlin.collections.List<kotlin.Annotation>
+    public abstract val kotlin.reflect.KMutableProperty1<T, V>.companionExtensionClass: kotlin.reflect.KClass<*>?
     public abstract val kotlin.reflect.KMutableProperty1<T, V>.getter: kotlin.reflect.KProperty1.Getter<T, V>
     public abstract val kotlin.reflect.KMutableProperty1<T, V>.isAbstract: kotlin.Boolean
     public abstract val kotlin.reflect.KMutableProperty1<T, V>.isConst: kotlin.Boolean
@@ -1561,6 +1567,7 @@ KClass: abstract interface kotlin.reflect.KMutableProperty2 : KProperty2, KMutab
     public abstract fun kotlin.reflect.KMutableProperty2<D, E, V>.set(D, E, V): kotlin.Unit
     public open fun kotlin.reflect.KMutableProperty2<D, E, V>.toString(): kotlin.String
     public abstract val kotlin.reflect.KMutableProperty2<D, E, V>.annotations: kotlin.collections.List<kotlin.Annotation>
+    public abstract val kotlin.reflect.KMutableProperty2<D, E, V>.companionExtensionClass: kotlin.reflect.KClass<*>?
     public abstract val kotlin.reflect.KMutableProperty2<D, E, V>.getter: kotlin.reflect.KProperty2.Getter<D, E, V>
     public abstract val kotlin.reflect.KMutableProperty2<D, E, V>.isAbstract: kotlin.Boolean
     public abstract val kotlin.reflect.KMutableProperty2<D, E, V>.isConst: kotlin.Boolean
@@ -1585,6 +1592,7 @@ KClass: abstract interface kotlin.reflect.KProperty : KCallable, Any
     public open fun kotlin.reflect.KProperty<V>.hashCode(): kotlin.Int
     public open fun kotlin.reflect.KProperty<V>.toString(): kotlin.String
     public abstract val kotlin.reflect.KProperty<V>.annotations: kotlin.collections.List<kotlin.Annotation>
+    public abstract val kotlin.reflect.KProperty<V>.companionExtensionClass: kotlin.reflect.KClass<*>?
     public abstract val kotlin.reflect.KProperty<V>.getter: kotlin.reflect.KProperty.Getter<V>
     public abstract val kotlin.reflect.KProperty<V>.isAbstract: kotlin.Boolean
     public abstract val kotlin.reflect.KProperty<V>.isConst: kotlin.Boolean
@@ -1612,6 +1620,7 @@ KClass: abstract interface kotlin.reflect.KProperty0 : KProperty, Function0, Any
     public abstract operator fun kotlin.reflect.KProperty0<V>.invoke(): V
     public open fun kotlin.reflect.KProperty0<V>.toString(): kotlin.String
     public abstract val kotlin.reflect.KProperty0<V>.annotations: kotlin.collections.List<kotlin.Annotation>
+    public abstract val kotlin.reflect.KProperty0<V>.companionExtensionClass: kotlin.reflect.KClass<*>?
     public abstract val kotlin.reflect.KProperty0<V>.getter: kotlin.reflect.KProperty0.Getter<V>
     public abstract val kotlin.reflect.KProperty0<V>.isAbstract: kotlin.Boolean
     public abstract val kotlin.reflect.KProperty0<V>.isConst: kotlin.Boolean
@@ -1639,6 +1648,7 @@ KClass: abstract interface kotlin.reflect.KProperty1 : KProperty, Function1, Any
     public abstract operator fun kotlin.reflect.KProperty1<T, V>.invoke(T): V
     public open fun kotlin.reflect.KProperty1<T, V>.toString(): kotlin.String
     public abstract val kotlin.reflect.KProperty1<T, V>.annotations: kotlin.collections.List<kotlin.Annotation>
+    public abstract val kotlin.reflect.KProperty1<T, V>.companionExtensionClass: kotlin.reflect.KClass<*>?
     public abstract val kotlin.reflect.KProperty1<T, V>.getter: kotlin.reflect.KProperty1.Getter<T, V>
     public abstract val kotlin.reflect.KProperty1<T, V>.isAbstract: kotlin.Boolean
     public abstract val kotlin.reflect.KProperty1<T, V>.isConst: kotlin.Boolean
@@ -1666,6 +1676,7 @@ KClass: abstract interface kotlin.reflect.KProperty2 : KProperty, Function2, Any
     public abstract operator fun kotlin.reflect.KProperty2<D, E, V>.invoke(D, E): V
     public open fun kotlin.reflect.KProperty2<D, E, V>.toString(): kotlin.String
     public abstract val kotlin.reflect.KProperty2<D, E, V>.annotations: kotlin.collections.List<kotlin.Annotation>
+    public abstract val kotlin.reflect.KProperty2<D, E, V>.companionExtensionClass: kotlin.reflect.KClass<*>?
     public abstract val kotlin.reflect.KProperty2<D, E, V>.getter: kotlin.reflect.KProperty2.Getter<D, E, V>
     public abstract val kotlin.reflect.KProperty2<D, E, V>.isAbstract: kotlin.Boolean
     public abstract val kotlin.reflect.KProperty2<D, E, V>.isConst: kotlin.Boolean

@@ -11,6 +11,8 @@ import kotlin.jvm.internal.CallableReference
 import kotlin.metadata.*
 import kotlin.metadata.jvm.JvmMethodSignature
 import kotlin.metadata.jvm.signature
+import kotlin.reflect.ExperimentalCompanionExtensions
+import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KVisibility
 
@@ -65,6 +67,13 @@ internal class KotlinKNamedFunction(
     override val overridden: Collection<ReflectKFunction> by lazy(PUBLICATION) {
         computeOverriddenFunctions(this)
     }
+
+    @ExperimentalCompanionExtensions
+    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    override val companionExtensionClass: KClass<*>?
+        get() = (kmFunction.companionExtensionReceiverType?.classifier as KmClassifier.Class?)?.let {
+            container.jClass.safeClassLoader.loadKClass(it.name)
+        }
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> =
         KotlinKNamedFunction(container, signature, CallableReference.NO_RECEIVER, kmFunction, overriddenStorage)

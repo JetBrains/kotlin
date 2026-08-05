@@ -12,9 +12,12 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import kotlin.metadata.Modality
+import kotlin.reflect.ExperimentalCompanionExtensions
+import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
@@ -132,6 +135,10 @@ internal abstract class DescriptorKCallable<out R>(
 
     final override val isPackagePrivate: Boolean
         get() = descriptor.visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+
+    @ExperimentalCompanionExtensions
+    final override val companionExtensionClass: KClass<*>?
+        get() = (descriptor as? DeserializedCallableMemberDescriptor)?.companionExtensionClass?.toJavaClass()?.kotlin
 }
 
 private fun DescriptorModality.toMetadataModality(): Modality = when (this) {

@@ -9,6 +9,8 @@ import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier
 import kotlin.metadata.Modality
+import kotlin.reflect.ExperimentalCompanionExtensions
+import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
 
 internal abstract class JavaKCallable<out R>(
@@ -38,4 +40,7 @@ internal abstract class JavaKCallable<out R>(
             val member = caller.member as? AnnotatedElement ?: return emptyList()
             return member.annotations.toList().unwrapKotlinRepeatableAnnotations()
         }
+
+    @ExperimentalCompanionExtensions
+    final override val companionExtensionClass: KClass<*>? get() = null
 }
