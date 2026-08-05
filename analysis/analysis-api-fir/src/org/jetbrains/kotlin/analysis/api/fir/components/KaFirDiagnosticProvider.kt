@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticCheckerKind
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostics
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilt
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.diagnostics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getDiagnostics
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
 
 @OptIn(KaExperimentalApi::class)
 internal class KaFirDiagnosticProvider(
@@ -28,52 +26,6 @@ internal class KaFirDiagnosticProvider(
 ) : KaBaseSessionComponent<KaFirSession>(), KaInternalsDiagnosticProvider, KaFirSessionComponent {
     override fun diagnostics(element: KtElement, isRecursive: Boolean): KaDiagnostics = element.withPsiValidityAssertion {
         KaFirDiagnostics(element, isRecursive, DEFAULT_CHECKER_KINDS, includeSuppressed = false)
-    }
-
-    override fun directDiagnostics(
-        element: KtElement,
-        filter: KaDiagnosticCheckerFilter,
-    ): Collection<KaDiagnosticWithPsi<*>> = reportedDiagnostics(element, isRecursive = false, filter).toList()
-
-    override fun collectDiagnostics(
-        file: KtFile,
-        filter: KaDiagnosticCheckerFilter,
-    ): Collection<KaDiagnosticWithPsi<*>> = reportedDiagnostics(file, isRecursive = true, filter).toList()
-
-    override fun diagnostics(
-        file: KtFile,
-        filter: KaDiagnosticCheckerFilter,
-    ): Sequence<KaDiagnosticWithPsi<*>> = reportedDiagnostics(file, isRecursive = true, filter)
-
-    override fun diagnosticsIgnoringSuppression(
-        file: KtFile,
-        filter: KaDiagnosticCheckerFilter,
-    ): Sequence<KaDiagnosticWithPsi<*>> = KaFirDiagnostics(
-        file,
-        isRecursive = true,
-        checkerKinds = filter.asCheckerKinds(),
-        includeSuppressed = true,
-    )
-
-    private fun reportedDiagnostics(
-        element: KtElement,
-        isRecursive: Boolean,
-        filter: KaDiagnosticCheckerFilter,
-    ): Sequence<KaDiagnosticWithPsi<*>> = KaFirDiagnostics(
-        element,
-        isRecursive,
-        checkerKinds = filter.asCheckerKinds(),
-        includeSuppressed = false,
-    )
-
-    private fun KaDiagnosticCheckerFilter.asCheckerKinds(): Set<KaDiagnosticCheckerKind> = when (this) {
-        KaDiagnosticCheckerFilter.ONLY_COMMON_CHECKERS -> setOf(KaDiagnosticCheckerKind.COMMON)
-        KaDiagnosticCheckerFilter.ONLY_EXTENDED_CHECKERS -> setOf(KaDiagnosticCheckerKind.EXTENDED)
-        KaDiagnosticCheckerFilter.ONLY_EXPERIMENTAL_CHECKERS -> setOf(KaDiagnosticCheckerKind.EXPERIMENTAL)
-        KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS -> setOf(
-            KaDiagnosticCheckerKind.COMMON,
-            KaDiagnosticCheckerKind.EXTENDED,
-        )
     }
 
     /**
