@@ -5,19 +5,21 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.config.PartialLinkageConfig
-import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.PartialLinkageConfig
+import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.wasm.config.wasmGenerateClosedWorldMultimodule
 import org.jetbrains.kotlin.wasm.config.wasmIncludedModuleOnly
+import org.jetbrains.kotlin.wasm.test.WasmFirCompilerExtraTest
 
 abstract class AbstractFirWasmInvalidationTest :
     WasmAbstractInvalidationTest(TargetBackend.WASM, "incrementalOut/invalidationFir") {
 }
 
+@WasmFirCompilerExtraTest
 abstract class AbstractFirWasmInvalidationMultiModuleTestBase(workingDirPath: String) :
     WasmAbstractInvalidationTest(TargetBackend.WASM, workingDirPath)  {
 
@@ -66,6 +68,7 @@ abstract class AbstractFirWasmInvalidationSingleModuleTest :
 abstract class AbstractFirWasmInvalidationWithPLTest :
     AbstractWasmInvalidationWithPLTest("incrementalOut/invalidationFirWithPL")
 
+@WasmFirCompilerExtraTest
 abstract class AbstractFirWasmInvalidationWithPLMultiModuleTest :
     AbstractWasmInvalidationWithPLTest("incrementalOut/invalidationFirWithPLMultimodule") {
     override fun modifyConfig(configuration: CompilerConfiguration) {
@@ -74,6 +77,7 @@ abstract class AbstractFirWasmInvalidationWithPLMultiModuleTest :
     }
 }
 
+@WasmFirCompilerExtraTest
 abstract class AbstractFirWasmInvalidationWithPLSingleModuleTest :
     AbstractWasmInvalidationWithPLTest("incrementalOut/invalidationFirWithPLSinglemodule") {
     override fun modifyConfig(configuration: CompilerConfiguration) {

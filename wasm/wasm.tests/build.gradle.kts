@@ -348,7 +348,12 @@ projectTests {
         generateTestsInBuildDirectory = true,
     )
 
-    fun wasmProjectTest(taskName: String, skipInLocalBuild: Boolean = false, body: Test.() -> Unit = {}) {
+    fun wasmProjectTest(
+        taskName: String,
+        tags: String? = null,
+        skipInLocalBuild: Boolean = true,
+        body: Test.() -> Unit = {},
+    ) {
         testTask(
             taskName = taskName,
             skipInLocalBuild = skipInLocalBuild,
@@ -376,7 +381,10 @@ projectTests {
             setupSpiderMonkey()
             setupWasmEdge()
             setupJsc()
-            useJUnitPlatform()
+            // Note: arbitrary JUnit tag expressions can be used here.
+            useJUnitPlatform {
+                tags?.let { includeTags(it) }
+            }
             setupGradlePropertiesForwarding()
             addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
             addAbsoluteDirectoryProperty(node.nodeProjectDir, "kotlin.wasm.test.node.dir")
@@ -385,18 +393,38 @@ projectTests {
         }
     }
 
-    // Test everything
-    wasmProjectTest("test") {
-        include("**/*.class")
-        exclude("**/*SingleModule*TestGenerated.class")
-        exclude("**/*MultiModule*TestGenerated.class")
+    // The tags are declared in testFixtures/org/jetbrains/kotlin/wasm/test/WasmTestGroups.kt
+    val icTag = "wasmIc"
+    val jsBoxTag = "wasmJsBox"
+    val jsBoxInlinedTag = "wasmJsBoxInlined"
+    val jsSplittingTag = "wasmJsSplitting"
+    val jsMultiModuleTag = "wasmJsMultiModule"
+    val wasiBoxTag = "wasmWasiBox"
+    val wasiBoxInlinedTag = "wasmWasiBoxInlined"
+    val extraTag = "wasmFirCompilerExtra"
+
+    val allTags = listOf(
+        icTag, jsBoxTag, jsBoxInlinedTag, jsSplittingTag,
+        jsMultiModuleTag, wasiBoxTag, wasiBoxInlinedTag, extraTag
+    )
+
+    // Test everything, intended to use locally
+    wasmProjectTest("test", skipInLocalBuild = false) {
         smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
     }
 
-    wasmProjectTest("wasmFirCompilerExtraTest") {
-        include("**/*SingleModule*TestGenerated.class")
-        include("**/*MultiModule*TestGenerated.class")
-    }
+    // The nine tasks below split the content of the `test` task into disjoint groups.
+    // Tests without any of the group tags are run by the `wasmMiscTest` task.
+    // The `wasmFirCompilerExtraTest` task is excluded from aggregate `wasmFirCompilerTest` task.
+    wasmProjectTest("wasmFirCompilerExtraTest", tags = extraTag)
+    wasmProjectTest("wasmJsBoxTest", tags = jsBoxTag)
+    wasmProjectTest("wasmJsBoxInlinedTest", tags = jsBoxInlinedTag)
+    wasmProjectTest("wasmJsSplittingTest", tags = jsSplittingTag)
+    wasmProjectTest("wasmJsMultiModuleTest", tags = jsMultiModuleTag)
+    wasmProjectTest("wasmWasiBoxTest", tags = wasiBoxTag)
+    wasmProjectTest("wasmWasiBoxInlinedTest", tags = wasiBoxInlinedTag)
+    wasmProjectTest("wasmIcTest", tags = "$icTag & !$extraTag")
+    wasmProjectTest("wasmMiscTest", tags = allTags.joinToString(" & ") { "!$it" })
 
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/codegen")
