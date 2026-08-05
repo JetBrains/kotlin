@@ -27,5 +27,6 @@ class Box {
 
 fun test(bs: AtomicRef<Any?>) {
   bs as AtomicRef<Array<Array<Box>>> /*~> Unit */
-  CHECK_NOT_NULL<Box>(arg0 = bs /*as AtomicRef<Array<Array<Box>>> */.<get-value>().get(index = 0).get(index = 1)).<get-b>() /*~> Unit */
+  CHECK_NOT_NULL<Box>(arg0 = bs /*as AtomicRef<out Any?> */.<get-value>().get(index = 0).get(index = 1)).<get-b>() /*~> Unit */
 }
+

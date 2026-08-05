@@ -65,7 +65,7 @@ class JvmAtomicfuIrBuilder(
         functionName: String,
         valueArguments: List<IrExpression?>,
         valueType: IrType,
-    ): IrCall {
+    ): IrExpression {
         require(
             atomicHandlerType == AtomicHandlerType.ATOMIC_ARRAY ||
                     atomicHandlerType == AtomicHandlerType.ATOMIC_FIELD_UPDATER ||

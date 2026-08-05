@@ -36,6 +36,7 @@ public final class UncheckedCastTest {
     private synthetic final method setS$volatile(p0: java.lang.Object): void
     public final method testArrayValueUncheckedCast(): void
     public final method testArrayValueUncheckedCastInlineFunc(): void
+    public final method testAtomicRefUncheckedCastExtensionCall(): void
     public final method testAtomicRefUncheckedCastGetAndUpdate(): void
     public final method testAtomicRefUncheckedCastUpdate(): void
     public final method testAtomicRefUncheckedCastUpdateAndGet(): void
@@ -55,4 +56,7 @@ public final class UncheckedCastTestKt {
     public synthetic final static method access$getTopLevelS(): java.util.concurrent.atomic.AtomicReference
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     private synthetic final static method getTopLevelS(): java.util.concurrent.atomic.AtomicReference
+    private synthetic final static method loadViaExtension$atomicfu$ATOMIC_ARRAY$Any(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int): java.lang.Object
+    private synthetic final static method loadViaExtension$atomicfu$ATOMIC_FIELD_UPDATER$Any(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: java.lang.Object): java.lang.Object
+    private synthetic final static method loadViaExtension$atomicfu$BOXED_ATOMIC$Any(p0: java.util.concurrent.atomic.AtomicReference): java.lang.Object
 }

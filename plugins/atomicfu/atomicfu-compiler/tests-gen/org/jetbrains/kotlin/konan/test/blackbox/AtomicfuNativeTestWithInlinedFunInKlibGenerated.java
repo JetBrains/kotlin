@@ -149,6 +149,12 @@ public class AtomicfuNativeTestWithInlinedFunInKlibGenerated extends AbstractNat
     }
 
     @Test
+    @TestMetadata("CastWithTypeProjections.kt")
+    public void testCastWithTypeProjections() {
+      run("CastWithTypeProjections.kt");
+    }
+
+    @Test
     @TestMetadata("IndexArrayElementGetterTest.kt")
     public void testIndexArrayElementGetterTest() {
       run("IndexArrayElementGetterTest.kt");
