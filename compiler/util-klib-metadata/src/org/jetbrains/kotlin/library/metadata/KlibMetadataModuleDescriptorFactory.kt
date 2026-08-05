@@ -66,12 +66,4 @@ interface KlibMetadataModuleDescriptorFactory {
         builtIns: KotlinBuiltIns?,
         lookupTracker: LookupTracker
     ): ModuleDescriptorImpl
-
-    fun createCachedPackageFragmentProvider(
-        byteArrays: List<ByteArray>,
-        storageManager: StorageManager,
-        moduleDescriptor: ModuleDescriptor,
-        configuration: DeserializationConfiguration,
-        lookupTracker: LookupTracker
-    ): PackageFragmentProvider
 }
