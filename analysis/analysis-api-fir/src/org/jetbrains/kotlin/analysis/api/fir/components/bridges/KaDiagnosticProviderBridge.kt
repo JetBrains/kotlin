@@ -44,10 +44,10 @@ internal class KaDiagnosticProviderBridge(
         query(isRecursive = true, filter)
 
     override fun KtFile.diagnosticsIgnoringSuppression(filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>> =
-        query(isRecursive = true, filter).includingSuppressed()
+        query(isRecursive = true, filter).ignoreSuppressed(false)
 
     private fun KtElement.query(isRecursive: Boolean, filter: KaDiagnosticCheckerFilter): KaDiagnostics =
-        proxy.diagnostics(this, isRecursive).withCheckers(filter.asCheckerKinds())
+        proxy.diagnostics(this).withCheckers(filter.asCheckerKinds()).directOnly(direct = !isRecursive)
 
     private fun KaDiagnosticCheckerFilter.asCheckerKinds(): Set<KaDiagnosticCheckerKind> = when (this) {
         KaDiagnosticCheckerFilter.ONLY_COMMON_CHECKERS -> setOf(KaDiagnosticCheckerKind.COMMON)

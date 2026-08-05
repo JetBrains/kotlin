@@ -14,5 +14,5 @@ import org.jetbrains.kotlin.psi.KtElement
 @KaImplementationDetail
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaInternalsDiagnosticProvider {
-    public fun diagnostics(element: KtElement, isRecursive: Boolean): KaDiagnostics
+    public fun diagnostics(element: KtElement): KaDiagnostics
 }

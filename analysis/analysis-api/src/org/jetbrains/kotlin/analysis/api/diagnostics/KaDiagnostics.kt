@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.analysis.api.diagnostics
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.psi.KtElement
 
 /**
  * A description of a diagnostic query, which yields the requested [diagnostics][KaDiagnosticWithPsi] on iteration.
  *
- * [KaDiagnostics] is obtained from [diagnostics] or [directDiagnostics]. By default, the query yields diagnostics of
- * [common checkers][KaDiagnosticCheckerKind.COMMON] which are not [suppressed][KaDiagnostic.isSuppressed] at their use site – in other
- * words, exactly the diagnostics which the compiler reports:
+ * [KaDiagnostics] is obtained from [diagnostics]. By default, the query yields diagnostics of
+ * [common checkers][KaDiagnosticCheckerKind.COMMON] which are not [suppressed][KaDiagnostic.isSuppressed]
+ * at their use site recursively – in other words, exactly the diagnostics which the compiler reports:
  *
  * ```kotlin
  * for (diagnostic in file.diagnostics()) {
@@ -27,21 +28,20 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
  * ```kotlin
  * file.diagnostics()
  *     .withCheckers(KaDiagnosticCheckerKind.COMMON, KaDiagnosticCheckerKind.EXTENDED)
- *     .includingSuppressed()
+ *     .ignoreSuppressed(true)
+ *     .directOnly(true)
  *     .forEach { handle(it) }
  * ```
  *
  * #### Laziness
  *
- * Creating a [KaDiagnostics] and applying its modifiers does no work: diagnostics are computed during the iteration, and only as far as the
- * iteration goes. Therefore, short-circuiting operations such as [any][kotlin.sequences.any] or [first][kotlin.sequences.first] do not have
- * to analyze the whole requested scope.
+ * [KaDiagnostics] is a [Sequence]:
  *
- * Unlike a general [Sequence], [KaDiagnostics] can be iterated multiple times. Repeated iteration recomputes the result, although the
- * underlying analysis is usually cached.
+ * - Calling `diagnostics()` itself doesn't trigger code analysis. The operation is _intermediate_ and _stateless_.
+ * - Diagnostics are computed on-demand as the sequence is iterated over.
+ * - You can iterate over the same sequence multiple times.
  *
  * @see diagnostics
- * @see directDiagnostics
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
@@ -63,25 +63,25 @@ public interface KaDiagnostics : KaLifetimeOwner, Sequence<KaDiagnosticWithPsi<*
     public fun withCheckers(vararg kinds: KaDiagnosticCheckerKind): KaDiagnostics
 
     /**
-     * Returns a [KaDiagnostics] which also yields diagnostics that are [suppressed][KaDiagnostic.isSuppressed] at their use site, e.g., by a
-     * `@Suppress` annotation.
+     * Returns a [KaDiagnostics] which yields [suppressed][KaDiagnostic.isSuppressed] diagnostics depending on the value of [ignore].
      *
      * Suppressed diagnostics are not reported by the compiler, so they should not be presented to the user as is. They are useful for
      * tooling which analyzes suppressions themselves, such as an inspection which detects redundant `@Suppress` annotations.
      *
-     * Collecting suppressed diagnostics does not require additional analysis. The function is idempotent.
+     * Collecting suppressed diagnostics does not require additional analysis.
      *
-     * @see excludingSuppressed
+     * The default behavior is `true`.
      */
-    public fun includingSuppressed(): KaDiagnostics
+    public fun ignoreSuppressed(ignore: Boolean): KaDiagnostics
 
     /**
-     * Returns a [KaDiagnostics] which does not yield diagnostics that are [suppressed][KaDiagnostic.isSuppressed] at their use site.
+     * Returns a [KaDiagnostics] which yields diagnostics only on the given [KtElement] itself depending on [direct] flag.
      *
-     * This is the default behavior, so the function is only needed to undo [includingSuppressed], e.g., when a query is built elsewhere.
-     * The function is idempotent.
+     * If [direct] is `true`, [KaDiagnosticWithPsi] of the element's children are **not** included, so the result is not the complete set
+     * of diagnostics which concern the element: a diagnostic about the element might be reported on one of its children,
+     * or on a containing element. Prefer `false` unless the diagnostics of the exact element are required.
      *
-     * @see includingSuppressed
+     * The default behavior is `false`.
      */
-    public fun excludingSuppressed(): KaDiagnostics
+    public fun directOnly(direct: Boolean): KaDiagnostics
 }
