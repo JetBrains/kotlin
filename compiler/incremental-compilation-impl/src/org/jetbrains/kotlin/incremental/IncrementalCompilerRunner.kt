@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.toGeneratedFile
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.incremental.snapshots.librarySetRemovedSentinel
 import org.jetbrains.kotlin.incremental.storage.BasicFileToPathConverter
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
+import org.jetbrains.kotlin.incremental.util.BufferingMessageCollector
 import org.jetbrains.kotlin.incremental.util.ExceptionLocation
 import org.jetbrains.kotlin.incremental.util.reportException
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -604,7 +604,7 @@ abstract class IncrementalCompilerRunner<
             ).build()
 
             args.reportOutputFiles = true
-            val bufferingMessageCollector = MessageCollectorImpl()
+            val bufferingMessageCollector = BufferingMessageCollector()
 
             val compiledSources = reporter.measure(COMPILATION_ROUND) {
                 runCompiler(
