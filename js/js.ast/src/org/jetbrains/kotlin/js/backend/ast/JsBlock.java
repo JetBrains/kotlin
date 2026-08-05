@@ -4,10 +4,10 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
+import com.intellij.util.SmartList;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.util.AstUtil;
-import org.jetbrains.annotations.NotNull;
-import com.intellij.util.SmartList;
 
 import java.util.List;
 
@@ -80,7 +80,7 @@ public class JsBlock extends SourceInfoAwareJsNode implements JsStatement {
     @NotNull
     @Override
     public JsBlock deepCopy() {
-        JsBlock block = new JsBlock(AstUtil.deepCopy(statements)).withMetadataFrom(this);
+        JsBlock block = AbstractNodeKt.withMetadataFrom(new JsBlock(AstUtil.deepCopy(statements)), this);
         block.setClosingBraceSource(getClosingBraceSource());
         return block;
     }

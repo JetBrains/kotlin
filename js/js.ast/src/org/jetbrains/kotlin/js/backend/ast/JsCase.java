@@ -4,8 +4,8 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 /**
  * Represents the JavaScript case statement.
@@ -52,6 +52,6 @@ public final class JsCase extends JsSwitchMember {
         caseCopy.caseExpression = AstUtil.deepCopy(caseExpression);
         caseCopy.statements.addAll(AstUtil.deepCopy(statements));
 
-        return caseCopy.withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(caseCopy, this);
     }
 }

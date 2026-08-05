@@ -4,9 +4,9 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 import java.util.List;
 
@@ -49,6 +49,6 @@ public final class JsArrayLiteral extends JsLiteral {
     @NotNull
     @Override
     public JsArrayLiteral deepCopy() {
-        return new JsArrayLiteral(AstUtil.deepCopy(expressions)).withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsArrayLiteral(AstUtil.deepCopy(expressions)), this);
     }
 }

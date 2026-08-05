@@ -4,9 +4,9 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 public final class JsBinaryOperation extends JsExpression {
     private JsExpression arg1;
@@ -74,6 +74,6 @@ public final class JsBinaryOperation extends JsExpression {
     @NotNull
     @Override
     public JsExpression deepCopy() {
-        return new JsBinaryOperation(op, AstUtil.deepCopy(arg1), AstUtil.deepCopy(arg2)).withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsBinaryOperation(op, AstUtil.deepCopy(arg1), AstUtil.deepCopy(arg2)), this);
     }
 }
