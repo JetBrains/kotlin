@@ -6,27 +6,21 @@
 package org.jetbrains.kotlin.test;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.lang.JavaVersion;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt;
 import org.jetbrains.kotlin.cli.CompilerConfigurationCreationKt;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
-import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactory;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
@@ -47,32 +41,6 @@ public class KotlinTestUtils {
     private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*([A-Z_0-9]+)(:[ \\t]*(.*))?$", Pattern.MULTILINE);
 
     private KotlinTestUtils() {
-    }
-
-    @NotNull
-    public static KotlinCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable) {
-        return createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, ConfigurationKind.ALL);
-    }
-
-    @NotNull
-    public static KotlinCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable, @NotNull ConfigurationKind configurationKind) {
-        return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, configurationKind, TestJdkKind.MOCK_JDK);
-    }
-
-    @NotNull
-    public static KotlinCoreEnvironment createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-            @NotNull Disposable disposable,
-            @NotNull ConfigurationKind configurationKind,
-            @NotNull TestJdkKind jdkKind
-    ) {
-        return KotlinCoreEnvironment.createForTests(
-                disposable, newConfiguration(configurationKind, jdkKind, KtTestUtil.getAnnotationsJar()), EnvironmentConfigFiles.JVM_CONFIG_FILES
-        );
-    }
-
-    @NotNull
-    private static KotlinCoreEnvironment createEnvironmentWithFullJdkAndIdeaAnnotations(Disposable disposable) {
-        return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
     }
 
     @NotNull
@@ -170,34 +138,6 @@ public class KotlinTestUtils {
         return configuration;
     }
 
-    public static JavaCompilationResult compileKotlinWithJava(
-            @NotNull List<File> javaFiles,
-            @NotNull List<File> ktFiles,
-            @NotNull File outDir,
-            @NotNull Disposable disposable,
-            @Nullable Function1<CompilerConfiguration, Unit> updateConfiguration
-    ) {
-        if (!ktFiles.isEmpty()) {
-            KotlinCoreEnvironment environment = createEnvironmentWithFullJdkAndIdeaAnnotations(disposable);
-            CompilerTestLanguageVersionSettingsKt.setupLanguageVersionSettingsForMultifileCompilerTests(ktFiles, environment);
-            if (updateConfiguration != null) {
-                updateConfiguration.invoke(environment.getConfiguration());
-            }
-            LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment);
-        }
-        else {
-            boolean mkdirs = outDir.mkdirs();
-            assert mkdirs : "Not created: " + outDir;
-        }
-        if (javaFiles.isEmpty()) return JavaCompilationResult.Success.INSTANCE;
-
-        List<String> options = Arrays.asList(
-                "-classpath", outDir.getPath() + File.pathSeparator + ForTestCompileRuntime.runtimeJarForTests(),
-                "-d", outDir.getPath()
-        );
-        return JvmCompilationUtils.compileJavaFiles(javaFiles, options);
-    }
-
     @NotNull
     public static Directives parseDirectives(String expectedText) {
         return parseDirectives(expectedText, new Directives());
@@ -215,7 +155,7 @@ public class KotlinTestUtils {
     }
 
     @NotNull
-    public static KtFile loadKtFile(@NotNull Project project, @NotNull File ioFile) throws IOException {
+    private static KtFile loadKtFile(@NotNull Project project, @NotNull File ioFile) throws IOException {
         String text = FileUtil.loadFile(ioFile, true);
         return new KtPsiFactory(project).createPhysicalFile(ioFile.getName(), text);
     }
@@ -227,10 +167,5 @@ public class KotlinTestUtils {
             ktFiles.add(loadKtFile(environment.getProject(), file));
         }
         return ktFiles;
-    }
-
-    @NotNull
-    public static File replaceExtension(@NotNull File file, @Nullable String newExtension) {
-        return new File(file.getParentFile(), FileUtil.getNameWithoutExtension(file) + (newExtension == null ? "" : "." + newExtension));
     }
 }
