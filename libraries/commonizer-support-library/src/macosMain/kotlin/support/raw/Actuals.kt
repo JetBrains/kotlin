@@ -16,7 +16,3 @@ actual typealias AppleMatrixComponent = Double
 actual typealias AppleCGFloat = Double
 
 actual typealias AppleInoT = MacosInoT
-//actual --typealias AppleInoT_ReturnType = MacosInoT
-actual typealias AppleSInoT_Helper = MacosSInoT_Helper
-
-actual typealias AppleUInt16T = MacosUInt16T

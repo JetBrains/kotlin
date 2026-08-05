@@ -29,14 +29,8 @@ expect value class AndroidStNlink
  */
 expect value class AndroidFExceptT
 
-/** Similar to [SmallSignedNumber] */
-expect class AndroidFExceptT_Helper
-
 /**
  * Similar to [SmallUnsignedNumber] + With Var.
  * Modeled after [platform.posix.mode_t].
  */
 expect value class AndroidModeT
-
-/** Similar to [SmallSignedNumber] */
-expect class AndroidSModeT_Helper

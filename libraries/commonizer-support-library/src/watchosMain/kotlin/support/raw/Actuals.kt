@@ -16,7 +16,3 @@ actual typealias AppleMatrixComponent = Float
 actual typealias AppleCGFloat = WatchosCGFloat
 
 actual typealias AppleInoT = ULong
-//actual --typealias AppleInoT_ReturnType = ULong
-actual typealias AppleSInoT_Helper = Long
-
-actual typealias AppleUInt16T = UShort

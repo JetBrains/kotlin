@@ -14,7 +14,5 @@ actual typealias AndroidSSizeT = Int
 actual typealias AndroidStNlink = UInt
 
 actual typealias AndroidFExceptT = UShort
-actual typealias AndroidFExceptT_Helper = Short
 
 actual typealias AndroidModeT = UShort
-actual typealias AndroidSModeT_Helper = Short

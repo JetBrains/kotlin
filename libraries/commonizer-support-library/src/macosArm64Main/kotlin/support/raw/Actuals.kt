@@ -9,7 +9,3 @@ import kotlinx.cinterop.*
 import kotlinx.cinterop.value as valueFromCinterop
 
 actual typealias MacosInoT = ULong
-//actual --typealias MacosInoT_ReturnType = ULong
-actual typealias MacosSInoT_Helper = Long
-
-actual typealias MacosUInt16T = UShort

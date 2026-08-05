@@ -34,12 +34,3 @@ expect class AppleMatrixComponent
  * Modeled after [platform.posix.ino_t].
  */
 expect value class AppleInoT
-
-/** Similar to [IntOrLong] + With Var */
-expect class AppleSInoT_Helper
-
-/**
- * Similar to [SmallUnsignedNumber] + With Var.
- * Modeled after [platform.posix.uint16_t].
- */
-expect value class AppleUInt16T

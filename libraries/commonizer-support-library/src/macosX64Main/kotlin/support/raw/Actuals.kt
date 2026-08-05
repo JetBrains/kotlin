@@ -9,7 +9,3 @@ import kotlinx.cinterop.*
 import kotlinx.cinterop.value as valueFromCinterop
 
 actual typealias MacosInoT = UInt
-//actual --typealias MacosInoT_ReturnType = UInt
-actual typealias MacosSInoT_Helper = Int
-
-actual typealias MacosUInt16T = UByte

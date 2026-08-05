@@ -14,36 +14,25 @@ actual typealias NativeSSizeT = LinuxSSizeT
 actual typealias NativeOffT = LinuxSSizeT
 
 actual typealias NativeModeT = UInt
-actual typealias NativeSModeT_Helper = Int
 
 actual typealias NativeInoT = LinuxSizeT
-actual typealias NativeInoT_ReturnType = LinuxSizeT
-actual typealias NativeSInoT_Helper = LinuxSSizeT
 
 actual typealias NativeSaFamilyT = UShort
-actual typealias NativeSSaFamilyT_Helper = Short
-
-actual typealias NativeDispatchQueuePriorityT = Long
 
 actual typealias NativeIntFast32T = LinuxSSizeT
 actual typealias NativeUIntFast16T = LinuxSizeT
 actual typealias NativeIntFast16T = LinuxSSizeT
 
 actual typealias NativeULong = LinuxSizeT
-actual typealias NativeLong_Helper = LinuxSSizeT
 
 actual typealias NativeZlibULong = LinuxSizeT
 
 actual typealias NativePidT = Int
 
 actual typealias NativeFExceptT = LinuxFExceptT
-actual typealias NativeFExceptT_Helper = LinuxMutexSpins
 
 actual typealias NativeZCrcT = UInt
-actual typealias NativeSZCrcT = Int
 
 actual typealias NativeFsFilCntT = LinuxSizeT
-
-actual typealias NativeThOff = UByte
 
 actual typealias NativeStSize = LinuxSSizeT

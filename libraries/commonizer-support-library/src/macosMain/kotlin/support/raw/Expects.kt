@@ -10,9 +10,3 @@ package support.raw
  * Modeled after [platform.posix.ino_t].
  */
 expect value class MacosInoT
-
-/** Similar to [IntOrLong] + With Var */
-expect class MacosSInoT_Helper
-
-/** Similar to [SmallUnsignedNumber] + With Var */
-expect value class MacosUInt16T

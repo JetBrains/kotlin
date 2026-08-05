@@ -29,35 +29,17 @@ expect class NativeOffT
  */
 expect value class NativeModeT
 
-/** Similar to [SmallSignedNumber] */
-expect class NativeSModeT_Helper
-
 /**
  * Similar to [UShortOrULong] + With Var.
  * Modeled after [platform.posix.ino_t].
  */
 expect value class NativeInoT
 
-/** Similar to [UIntOrULong] */
-expect value class NativeInoT_ReturnType
-
-/** Similar to [ShortOrLong] */
-expect class NativeSInoT_Helper
-
 /**
  * Similar to [SmallUnsignedNumber] + With Var.
  * Modeled after [platform.posix.sa_family_t] (absent on MinGW).
  */
 expect value class NativeSaFamilyT
-
-/** Similar to [SmallSignedNumber] */
-expect class NativeSSaFamilyT_Helper
-
-/**
- * Similar to [IntOrLong].
- * Modeled after [platform.darwin.dispatch_queue_priority_t].
- */
-expect class NativeDispatchQueuePriorityT
 
 /**
  * Similar to [IntOrLong] + With Var.
@@ -83,9 +65,6 @@ expect class NativeIntFast16T
  */
 expect value class NativeULong
 
-/** Similar to [IntOrLong] */
-expect class NativeLong_Helper
-
 /**
  * Similar to [UIntOrULong].
  * Modeled after [platform.zlib.uLong].
@@ -104,26 +83,17 @@ expect class NativePidT
  */
 expect value class NativeFExceptT
 
-/** Similar to [SmallSignedNumber] */
-expect class NativeFExceptT_Helper
-
 /**
  * Similar to [UIntOrULong] + With Var.
  * Modeled after [platform.zlib.z_crc_t].
  */
 expect value class NativeZCrcT
 
-/** Similar to [IntOrLong] */
-expect class NativeSZCrcT
-
 /**
  * Similar to [UIntOrULong] + With Var.
  * Modeled after [platform.posix.fsfilcnt_t] (absent on MinGW).
  */
 expect value class NativeFsFilCntT
-
-/** Similar to [SmallUnsignedNumber] */
-expect value class NativeThOff
 
 /**
  * Similar to [IntOrLong].
