@@ -39,6 +39,7 @@ fun generateSimpleSuite(args: Array<String>, classNamePrefix: String = "") {
                 model("", extension = null, recursive = false)
             }
         }
+
         testGroup(testsRoot, "native/swift/swift-export-standalone-integration-tests/simple/testData/execution") {
             testClass<AbstractSwiftExportExecutionTest>(
                 suiteTestClassName = "${classNamePrefix}SwiftExportExecutionTestGenerated",
@@ -46,7 +47,15 @@ fun generateSimpleSuite(args: Array<String>, classNamePrefix: String = "") {
                     provider<UseExtTestCaseGroupProvider>(),
                 ),
             ) {
-                model(pattern = "^([^_](.+))$", recursive = false)
+                // The pattern matches directories only (no dots), because every test data entry here is a
+                // directory: the runner collects *all* `.swift` files inside it, so a bare file would compile an
+                // empty test executable.
+                model(
+                    pattern = "^([^_.][^.]*)$",
+                    excludedPattern = "^exitCode$",
+                    recursive = true,
+                    excludeParentDirs = true,
+                )
             }
         }
     }
