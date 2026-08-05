@@ -43,7 +43,7 @@ class DifferentClassloadersIT : KGPBaseTest() {
 
             // after enabling isolated projects support by default we should not fail the build
             buildAndFail("publish", "-PmppProjectDependency=true") {
-                assertHasPerProjectPluginLoadedInMultipleProjectsErrorDiagnostics()
+                assertHasPluginLoadedInMultipleProjectsErrorDiagnostics()
             }
         }
     }
@@ -61,7 +61,7 @@ class DifferentClassloadersIT : KGPBaseTest() {
 
             fun checkThatErrorIsThrown() {
                 build("-PmppProjectDependency=true") {
-                    assertHasPerProjectPluginLoadedInMultipleProjectsErrorDiagnostics()
+                    assertHasPluginLoadedInMultipleProjectsErrorDiagnostics()
                 }
             }
 
@@ -133,11 +133,7 @@ class DifferentClassloadersIT : KGPBaseTest() {
         )
     }
 
-    private fun BuildResult.assertHasPerProjectPluginLoadedInMultipleProjectsErrorDiagnostics() {
-        // The plugin is expected to first load in :jvm-app, which should succeed. Only the later
-        // attempts to load the plugin in other subprojects will fail.
-        assertNoDiagnostic(PluginLoadedInMultipleProjectsError, withSubstring = ":jvm-app")
-        assertHasDiagnostic(PluginLoadedInMultipleProjectsError, withSubstring = ":mpp-lib")
-        assertHasDiagnostic(PluginLoadedInMultipleProjectsError, withSubstring = ":mpp-lib-two")
+    private fun BuildResult.assertHasPluginLoadedInMultipleProjectsErrorDiagnostics() {
+        assertHasDiagnostic(PluginLoadedInMultipleProjectsError, withSubstring = "':jvm-app', ':mpp-lib', ':mpp-lib-two'")
     }
 }
