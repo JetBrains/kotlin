@@ -158,7 +158,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
     //region Light Facades
 
     private fun createLightFacade(fileSymbol: KaFileSymbol, module: KaModule): KtLightClassForFacade? {
-        val file = fileSymbol.psi as? KtFile ?: return null
+        val file = fileSymbol.realPsi as? KtFile ?: return null
         if (!file.facadeIsPossible()) return null
 
         val facadeFqName = file.javaFileFacadeFqName
@@ -281,7 +281,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
     //region Light Scripts
 
     private fun createLightScript(script: KaScriptSymbol, module: KaModule): KtLightClass? {
-        val scriptPsi = script.psi as? KtScript ?: return null
+        val scriptPsi = script.realPsi as? KtScript ?: return null
         val containingFile = scriptPsi.containingFile
         if (containingFile is KtCodeFragment) {
             // Avoid building light classes for code fragments
@@ -328,7 +328,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
             }
 
             DeclarationLocation.LibrarySources -> {
-                val classOrObjectPsi = classSymbol.psi as? KtClassOrObject ?: return null
+                val classOrObjectPsi = classSymbol.realPsi as? KtClassOrObject ?: return null
                 val originalClassOrObject = ApplicationManager.getApplication()
                     .getService(KotlinDeclarationNavigationPolicy::class.java)
                     ?.getOriginalElement(classOrObjectPsi) as? KtClassOrObject
@@ -343,7 +343,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
             null -> Unit
         }
 
-        val containingKtFile = classSymbol.containingFile?.psi as? KtFile ?: return null
+        val containingKtFile = classSymbol.containingFile?.realPsi as? KtFile ?: return null
 
         if (containingKtFile.analysisContext != null || containingKtFile.originalFile.virtualFile != null) {
             return createSymbolLightClassNoCache(classSymbol, module)
@@ -375,7 +375,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
 
     context(_: KaSession)
     private fun createInstanceOfDecompiledLightClass(classOrObject: KaClassSymbol, module: KaModule): KtLightClass? {
-        val ktClassOrObject = classOrObject.psi as? KtClassOrObject ?: return null
+        val ktClassOrObject = classOrObject.realPsi as? KtClassOrObject ?: return null
         val lightClass = DecompiledLightClassesFactory.getLightClassForDecompiledClassOrObject(ktClassOrObject, project)
         if (lightClass != null) {
             return lightClass
