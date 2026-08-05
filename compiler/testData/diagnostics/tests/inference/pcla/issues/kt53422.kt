@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // API_VERSION: 1.9
+// DUMP_INFERENCE_LOGS: MARKDOWN
 fun test() {
     foo(
         flow { emit(0) }
