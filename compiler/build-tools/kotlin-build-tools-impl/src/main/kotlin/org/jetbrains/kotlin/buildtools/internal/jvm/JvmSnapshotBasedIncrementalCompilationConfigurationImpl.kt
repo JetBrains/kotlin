@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.buildtools.internal.*
 import java.nio.file.Path
 
 @Suppress("DEPRECATION_ERROR")
-internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl @Suppress("DEPRECATION") private constructor(
+internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl private constructor(
     workingDirectory: Path,
     sourcesChanges: SourcesChanges,
     dependenciesSnapshotFiles: List<Path>,
@@ -163,7 +163,6 @@ internal interface HasSnapshotBasedIcOptionsAccessor {
     val workingDirectory: Path
     val sourcesChanges: SourcesChanges
     val dependenciesSnapshotFiles: List<Path>
-    val shrunkClasspathSnapshot: Path
     operator fun <V> get(key: BaseOptionWithDefault<V>): V
 }
 
@@ -192,10 +191,6 @@ internal fun JvmSnapshotBasedIncrementalCompilationConfiguration.toOptions(): Ha
                 this@toOptions::class.java.getMethod("getDependenciesSnapshotFiles").invoke(this@toOptions) as List<Path>
             }
 
-            override val shrunkClasspathSnapshot: Path by lazy(LazyThreadSafetyMode.PUBLICATION) {
-                this@toOptions::class.java.getMethod("getShrunkClasspathSnapshot").invoke(this@toOptions) as Path
-            }
-
             override fun <V> get(key: BaseOptionWithDefault<V>): V {
                 val baseOption = Option(key)
                 @Suppress("UNCHECKED_CAST")
@@ -216,10 +211,6 @@ internal fun JvmSnapshotBasedIncrementalCompilationConfiguration.toOptions(): Ha
                 get() = this@toOptions.sourcesChanges
             override val dependenciesSnapshotFiles: List<Path>
                 get() = this@toOptions.dependenciesSnapshotFiles
-
-            @Suppress("DEPRECATION")
-            override val shrunkClasspathSnapshot: Path
-                get() = this@toOptions.shrunkClasspathSnapshot
 
             override fun <V> get(key: BaseOptionWithDefault<V>): V {
                 return options[key]

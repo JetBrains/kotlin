@@ -33,7 +33,7 @@ public interface JvmIncrementalCompilationConfiguration
  * @property workingDirectory the working directory for the IC operation to store internal objects.
  * @property sourcesChanges changes in the source files, which can be unknown, to-be-calculated, or known.
  * @property dependenciesSnapshotFiles a list of paths to dependency snapshot files produced by [org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation].
- * @property shrunkClasspathSnapshot The path to the shrunk classpath snapshot file from a previous compilation.
+ * @property shrunkClasspathSnapshot Unused; the shrunk classpath snapshot file is managed internally under [workingDirectory].
  * @property options is deprecated and unused
  *
  * @see JvmCompilationOperation.Builder.snapshotBasedIcConfigurationBuilder
@@ -49,7 +49,7 @@ constructor(
     public val workingDirectory: Path,
     public val sourcesChanges: SourcesChanges,
     public val dependenciesSnapshotFiles: List<Path>,
-    @Deprecated("This property is no longer required and will be removed in a future release.")
+    @Deprecated("This property is no longer required and will be removed in a future release.", level = DeprecationLevel.ERROR)
     public val shrunkClasspathSnapshot: Path,
     @Deprecated("Use `get` directly instead or a `Builder` instance to set options. This property will be removed in a future release.", level = DeprecationLevel.ERROR)
     public open val options: JvmSnapshotBasedIncrementalCompilationOptions,
@@ -133,11 +133,11 @@ constructor(
 
         /**
          * The path to the shrunk classpath snapshot file from a previous compilation.
-         * @deprecated The property is no longer required. Will be promoted to an error in KT-83937.
+         * @deprecated The property is no longer required.
          *
          * @since 2.3.20
          */
-        @Deprecated("This property is no longer required and will be removed in a future release.")
+        @Deprecated("This property is no longer required and will be removed in a future release.", level = DeprecationLevel.ERROR)
         public val shrunkClasspathSnapshot: Path
 
         /**

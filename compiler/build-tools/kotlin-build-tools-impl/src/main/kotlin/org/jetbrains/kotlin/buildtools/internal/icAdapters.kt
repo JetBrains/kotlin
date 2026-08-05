@@ -78,7 +78,7 @@ internal val HasSnapshotBasedIcOptionsAccessor.classpathChanges: ClasspathChange
         val snapshotFiles =
             ClasspathSnapshotFiles(
                 options.dependenciesSnapshotFiles.map { it.toFile() },
-                options.shrunkClasspathSnapshot.toFile().parentFile
+                options.workingDirectory.toFile()
             )
         return when {
             !snapshotFiles.shrunkPreviousClasspathSnapshotFile.exists() -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot(

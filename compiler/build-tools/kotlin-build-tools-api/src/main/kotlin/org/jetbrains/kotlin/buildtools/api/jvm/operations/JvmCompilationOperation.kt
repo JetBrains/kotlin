@@ -130,14 +130,13 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
          * Creates the configuration object for snapshot-based incremental compilation (IC) in JVM projects.
          *
          * @deprecated The shrunkClasspathSnapshot parameter is no longer used. Use the 3-parameter overload instead.
-         * Will be promoted to an error in KT-83937.
          * @see org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
          * @since 2.3.20
          */
         @Deprecated(
             message = "The shrunkClasspathSnapshot parameter is no longer required",
             replaceWith = ReplaceWith("snapshotBasedIcConfigurationBuilder(workingDirectory, sourcesChanges, dependenciesSnapshotFiles)"),
-            level = DeprecationLevel.WARNING
+            level = DeprecationLevel.ERROR
         )
         public fun snapshotBasedIcConfigurationBuilder(
             workingDirectory: Path,
@@ -286,7 +285,6 @@ public inline fun JvmCompilationOperation.Builder.snapshotBasedIcConfiguration(
  * Convenience function for creating a [JvmSnapshotBasedIncrementalCompilationConfiguration] with options configured by [builderAction].
  *
  * @deprecated The shrunkClasspathSnapshot parameter is no longer required. Use the 3-parameter overload instead.
- * Will be promoted to an error in KT-83937.
  * @return an immutable `JvmSnapshotBasedIncrementalCompilationConfiguration`.
  * @see JvmCompilationOperation.Builder.snapshotBasedIcConfigurationBuilder
  * @since 2.3.20
@@ -294,7 +292,7 @@ public inline fun JvmCompilationOperation.Builder.snapshotBasedIcConfiguration(
 @Deprecated(
     message = "The shrunkClasspathSnapshot parameter is no longer required",
     replaceWith = ReplaceWith("snapshotBasedIcConfiguration(workingDirectory, sourcesChanges, dependenciesSnapshotFiles, builderAction)"),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR
 )
 @OptIn(ExperimentalContracts::class)
 @ExperimentalBuildToolsApi
@@ -308,7 +306,7 @@ public inline fun JvmCompilationOperation.Builder.snapshotBasedIcConfiguration(
     contract {
         callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
     }
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return snapshotBasedIcConfigurationBuilder(workingDirectory, sourcesChanges, dependenciesSnapshotFiles, shrunkClasspathSnapshot).apply(
         builderAction
     ).build()

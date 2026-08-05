@@ -50,8 +50,6 @@ internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl internal constr
         get() = error("should not be used")
     override val dependenciesSnapshotFiles: List<Path>
         get() = error("should not be used")
-    override val shrunkClasspathSnapshot: Path
-        get() = error("should not be used")
 
     override fun <V> get(key: BaseOptionWithDefault<V>): V {
         return options[key]

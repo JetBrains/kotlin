@@ -118,7 +118,7 @@ internal class JvmCompilationOperationImpl private constructor(
     @Deprecated(
         "The shrunkClasspathSnapshot parameter is no longer required.",
         replaceWith = ReplaceWith("snapshotBasedIcConfigurationBuilder(workingDirectory, sourcesChanges, dependenciesSnapshotFiles)"),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     override fun snapshotBasedIcConfigurationBuilder(
         workingDirectory: Path,

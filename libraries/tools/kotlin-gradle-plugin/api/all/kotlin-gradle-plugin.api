@@ -6145,7 +6145,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinCompile : org/jetb
 public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinCompile$ClasspathSnapshotProperties {
 	public fun <init> ()V
 	public abstract fun getClasspathSnapshot ()Lorg/gradle/api/file/ConfigurableFileCollection;
-	public abstract fun getClasspathSnapshotDir ()Lorg/gradle/api/file/DirectoryProperty;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinCompileCommon : org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompile, org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompile, org/jetbrains/kotlin/gradle/tasks/KotlinCompilationTask {

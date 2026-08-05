@@ -88,6 +88,7 @@ internal class KotlinWrapperPre2_4_0(
     ) : JvmCompilationOperation.Builder by base {
         override val compilerArguments: JvmCompilerArguments.Builder = JvmCompilerArgumentsBuilderWrapper(base.compilerArguments)
 
+        @Suppress("DEPRECATION_ERROR")
         override fun snapshotBasedIcConfigurationBuilder(
             workingDirectory: Path,
             sourcesChanges: SourcesChanges,
@@ -105,8 +106,9 @@ internal class KotlinWrapperPre2_4_0(
         @Deprecated(
             "The shrunkClasspathSnapshot parameter is no longer required",
             replaceWith = ReplaceWith("snapshotBasedIcConfigurationBuilder(workingDirectory, sourcesChanges, dependenciesSnapshotFiles)"),
-            level = DeprecationLevel.WARNING
+            level = DeprecationLevel.ERROR
         )
+        @Suppress("DEPRECATION_ERROR")
         override fun snapshotBasedIcConfigurationBuilder(
             workingDirectory: Path,
             sourcesChanges: SourcesChanges,

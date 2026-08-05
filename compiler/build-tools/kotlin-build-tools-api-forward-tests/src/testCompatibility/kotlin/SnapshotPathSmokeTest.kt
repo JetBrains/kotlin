@@ -16,19 +16,19 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.createDirectories
-import kotlin.io.path.exists
 
 /**
- * These tests verify the behavior documented in KT-75837:
- * - The deprecated 4-parameter `snapshotBasedIcConfigurationBuilder` accepts a custom snapshot path,
- *   but internally only the parent directory is used - the filename is always "shrunk-classpath-snapshot.bin"
- * - The new 3-parameter version auto-generates the path under workingDirectory
+ * These tests verify snapshot path handling, introduced in KT-75837 and finalized in KT-83937:
+ * - The deprecated 4-parameter `snapshotBasedIcConfigurationBuilder` (now a `DeprecationLevel.ERROR`) still accepts
+ *   a custom snapshot path, but the path is ignored entirely - the snapshot is always stored as
+ *   "shrunk-classpath-snapshot.bin" under workingDirectory
+ * - The new 3-parameter version stores the snapshot at that same location
  */
 class SnapshotPathSmokeTest : BaseCompilationTest() {
-    @DisplayName("Deprecated 4-parameter builder creates snapshot with hardcoded filename ignoring custom name")
+    @DisplayName("Deprecated 4-parameter builder ignores the custom snapshot path and uses workingDirectory")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testDeprecatedBuilderIgnoresCustomSnapshotFilename(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    fun testDeprecatedBuilderIgnoresCustomSnapshotPath(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module1 = module("basic-multimodule-project/module-1")
             val customSnapshotDir = module1.buildDirectory.resolve("my-custom-snapshot")
@@ -37,7 +37,7 @@ class SnapshotPathSmokeTest : BaseCompilationTest() {
 
             module1.compile(
                 compilationConfigAction = { compilationOperation ->
-                    @Suppress("DEPRECATION")
+                    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
                     val icConfig = compilationOperation.snapshotBasedIcConfiguration(
                         workingDirectory = module1.icCachesDir,
                         sourcesChanges = SourcesChanges.Unknown,
@@ -49,13 +49,13 @@ class SnapshotPathSmokeTest : BaseCompilationTest() {
                 }
             )
 
-            val expectedSnapshotFile = customSnapshotDir.resolve("shrunk-classpath-snapshot.bin")
+            val expectedSnapshotFile = module1.icCachesDir.resolve("shrunk-classpath-snapshot.bin")
             assertTrue(expectedSnapshotFile.exists()) {
                 "Expected snapshot file at $expectedSnapshotFile to exist. " +
-                        "The hardcoded filename 'shrunk-classpath-snapshot.bin' should be used, not the custom filename."
+                        "The snapshot is always stored as 'shrunk-classpath-snapshot.bin' under workingDirectory."
             }
             assertFalse(customSnapshotFile.exists()) {
-                "Custom snapshot path $customSnapshotFile should not exist - the filename is ignored."
+                "Custom snapshot path $customSnapshotFile should not exist - the configured path is ignored."
             }
         }
     }

@@ -194,7 +194,7 @@ internal class KotlinWrapperPre2_3_20(
             @Deprecated(
                 "The shrunkClasspathSnapshot parameter is no longer required",
                 replaceWith = ReplaceWith("snapshotBasedIcConfigurationBuilder(workingDirectory, sourcesChanges, dependenciesSnapshotFiles)"),
-                level = DeprecationLevel.WARNING
+                level = DeprecationLevel.ERROR
             )
             override fun snapshotBasedIcConfigurationBuilder(
                 workingDirectory: Path,

@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
@@ -866,8 +865,10 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
                     jsOptions = JsOptions(incrementalJs = false, incrementalJsKlib = false),
                 ),
             ) {
-                projectPath.resolve("lib/build/kotlin/${compileKotlinTaskName}/classpath-snapshot").let {
-                    assert(!it.exists() || it.listDirectoryEntries().isEmpty())
+                projectPath.resolve("lib/build/kotlin/$compileKotlinTaskName/cacheable").let {
+                    assert(!it.exists() || it.listDirectoryEntries().isEmpty()) {
+                        "No incremental state should be produced by a non-incremental build, but '$it' is not empty"
+                    }
                 }
             }
 

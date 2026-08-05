@@ -15,12 +15,15 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.compilerRunner.CompilerSystemPropertiesService
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinMultiplatformPluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.getTestedVariantData
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.tcs
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
 
@@ -87,9 +90,6 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
 
     private fun getKotlinBuildDir(task: TASK): Provider<Directory> =
         task.project.layout.buildDirectory.dir("$KOTLIN_BUILD_DIR_NAME/${task.name}")
-
-    protected fun getClasspathSnapshotDir(task: TASK): Provider<Directory> =
-        getKotlinBuildDir(task).map { it.dir("classpath-snapshot") }
 
     constructor(compilationInfo: KotlinCompilationInfo) : this(
         compilationInfo.project,
