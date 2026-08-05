@@ -44,6 +44,9 @@ internal class JavaEnumEntriesKProperty(
     override val typeParameters: List<KTypeParameter> get() = emptyList()
     override val annotations: List<Annotation> get() = emptyList()
 
+    @ExperimentalCompanionExtensions
+    override val companionExtensionClass: KClass<*>? get() = null
+
     override fun getDelegate(): Any? = null
 
     override fun shallowCopy(
@@ -97,6 +100,9 @@ internal class JavaEnumEntriesKProperty(
         override val parameters: List<KParameter> get() = property.parameters
         override val typeParameters: List<KTypeParameter> get() = property.typeParameters
         override val annotations: List<Annotation> get() = property.annotations
+
+        @ExperimentalCompanionExtensions
+        override val companionExtensionClass: KClass<*>? get() = null
 
         override val returnType: KType get() = property.returnType
 
