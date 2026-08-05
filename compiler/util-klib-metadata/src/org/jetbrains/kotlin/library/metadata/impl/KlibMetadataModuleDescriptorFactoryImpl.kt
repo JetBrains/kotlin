@@ -21,12 +21,9 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.library.metadata.*
-import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
@@ -183,29 +180,6 @@ class KlibMetadataModuleDescriptorFactoryImpl(
                 "CompositeProvider@KlibMetadataModuleDescriptorFactory for $moduleDescriptor"
             )
         } ?: provider
-    }
-
-    // Used from IDEA plugin.
-    fun createForwardDeclarationHackPackagePartProvider(
-        storageManager: StorageManager,
-        module: ModuleDescriptorImpl
-    ): PackageFragmentProviderImpl {
-        fun createPackage(kind: NativeForwardDeclarationKind) =
-            @OptIn(K1Deprecation::class)
-            ForwardDeclarationsPackageFragmentDescriptor(
-                storageManager,
-                module,
-                kind.packageFqName,
-                kind.superClassName,
-                kind.classKind,
-                isExpect = true
-            )
-
-        val packageFragmentProvider = PackageFragmentProviderImpl(
-            @OptIn(K1Deprecation::class)
-            NativeForwardDeclarationKind.entries.map { createPackage(it) }
-        )
-        return packageFragmentProvider
     }
 }
 
