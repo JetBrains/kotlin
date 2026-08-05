@@ -71,7 +71,11 @@ projectTests {
             systemProperty("kotlin.test.default.jvm.target", "${if (target <= 8) "1." else ""}$target")
             if (jdk.majorVersion >= 17 && kotlinBuildProperties.isTeamcityBuild.get()) {
                 // Reduce parallelism on JDK 17+ to allow test tasks to have more memory to avoid OOM (KTI-2491, KTI-3258).
-                systemProperty("junit.jupiter.execution.parallel.config.fixed.threshold", 2)
+                systemProperty("junit.jupiter.execution.parallel.config.fixed.threshold", 4)
+            }
+            if (jdk.majorVersion < 25) {
+                // Workaround https://bugs.openjdk.org/browse/JDK-8192647 to avoid OOM (KTI-2491, KTI-3258).
+                jvmArgs("-XX:+UnlockDiagnosticVMOptions", "-XX:GCLockerRetryAllocationCount=100")
             }
             body()
             doFirst {
