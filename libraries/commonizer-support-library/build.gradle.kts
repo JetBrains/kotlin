@@ -1,3 +1,4 @@
+import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.`maven-publish`
 import plugins.configureDefaultPublishing
@@ -12,6 +13,22 @@ plugins {
 
 group = "org.jetbrains.kotlin.commonizer"
 description = "Provides numeric expect classes covering inconsistent types in cinterops"
+
+// This library has no test sources. Prevent all test tasks from executing so that the allTests
+// lifecycle task (triggered by IntelliJ during debug runs) doesn't attempt to compile and run
+// empty native test binaries.
+//
+// Why onlyIf instead of enabled = false:
+//   KGP's KotlinNativeTestRunFactories sets `testTask.enabled = isEnabledOnCurrentHost` during
+//   task registration, which overwrites a prior `enabled = false`. onlyIf specs are accumulative
+//   — they cannot be cleared by a later `enabled = true`.
+//
+// Why AbstractTestTask instead of KotlinNativeTest:
+//   AbstractTestTask is a Gradle core type, immune to class-loader differences between the
+//   bootstrap KGP used to compile this build script and the KGP that actually creates the tasks.
+tasks.withType<AbstractTestTask>().configureEach {
+    onlyIf("This library has no test sources") { false }
+}
 
 configureDefaultPublishing()
 
