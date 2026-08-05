@@ -21,11 +21,10 @@ import java.nio.file.Path
 import javax.script.ScriptException
 
 /**
- * Exercises [KotlinJsr223DaemonScriptEngineImpl] end-to-end, against a **real Kotlin compile
- * daemon** (not an in-process/faked transport).
+ * Exercises [KotlinJsr223DaemonScriptEngineImpl] end-to-end against a real Kotlin compile daemon.
  *
- * The engine is **manually instantiated** via [KotlinJsr223DaemonScriptEngineFactory], not looked
- * up through `javax.script.ScriptEngineManager`: the factory is deliberately not registered as a
+ * The engine is manually instantiated via [KotlinJsr223DaemonScriptEngineFactory], not looked up
+ * through `javax.script.ScriptEngineManager`: the factory is deliberately not registered as a
  * `javax.script.ScriptEngineFactory` service (see its KDoc).
  */
 class KotlinJsr223DaemonScriptEngineTest {
@@ -35,19 +34,14 @@ class KotlinJsr223DaemonScriptEngineTest {
 
     private val compilerClasspath: List<File> = classpathFromSystemProperty("kotlinJsr223DaemonCompilerClasspath")
 
-    // The compiler needs the stdlib on the snippet's compile classpath. Resolved from this test
-    // JVM's own classpath (rather than a dedicated implementation classloader) since this module
-    // never loads a separate compiler implementation in-process -- the stdlib version used here is
-    // simply the one on this module's own compile/test classpath.
+    // The compiler needs the stdlib on the snippet compile classpath. Resolved from this test
+    // JVM's own classpath (the module's compile/test classpath).
     private val stdlib: File by lazy {
         File(KotlinVersion::class.java.protectionDomain.codeSource.location.toURI())
     }
 
-    // Every engine created by a test is tracked here and force-shut-down in tearDown -- see the
-    // "See daemon tests for the approaches to this" reasoning in DaemonReplCompiler.forceShutdownDaemon's
-    // KDoc: the daemon connection is now leased once and cached for the engine's whole lifetime
-    // (rather than re-leased/released per compile), so tests must explicitly dispose of it rather
-    // than rely on it winding itself down between snippets.
+    // The daemon connection is leased once and cached for the engine's whole lifetime, so every
+    // engine created by a test is tracked here and force-shut down in tearDown.
     private val enginesToShutDown = mutableListOf<KotlinJsr223DaemonScriptEngineImpl>()
 
     private fun newEngine(): KotlinJsr223DaemonScriptEngineImpl {
@@ -97,12 +91,9 @@ class KotlinJsr223DaemonScriptEngineTest {
         assertEquals(null, engine.eval("val onlyADeclaration = 1"))
     }
 
-    // A snippet that throws at *runtime* must fail at evaluation (surfacing as a `ScriptException`
-    // wrapping the thrown exception), never as a daemon-side compile failure -- compiling
-    // `throw RuntimeException(...)` always succeeds, only *running* it fails. Delivering the
-    // snippet as a plain source-root file (see `DaemonReplCompiler.buildBatchCompilerArguments`'s
-    // KDoc) makes this structural: there is no evaluation-capable entry point on the daemon side for
-    // this to go wrong on in the first place.
+    // A snippet that throws at runtime must fail at evaluation (a ScriptException wrapping the
+    // thrown exception), never as a daemon-side compile failure. Compiling
+    // `throw RuntimeException(...)` always succeeds; only running it fails.
     @Test
     fun testSnippetThatThrowsAtRuntimeFailsAtEvalNotCompile() {
         val engine = newEngine()
@@ -115,9 +106,7 @@ class KotlinJsr223DaemonScriptEngineTest {
         assertEquals("boom", cause?.message)
     }
 
-    // A genuine compile error, by contrast, must still be reported as a compile failure (with the
-    // 'Error compiling Kotlin snippet' diagnostic message), so this fix doesn't accidentally start
-    // treating compile errors as runtime failures (or vice versa).
+    // A genuine compile error must still be reported as a compile failure.
     @Test
     fun testSnippetWithCompileErrorFailsAtCompileNotEval() {
         val engine = newEngine()
@@ -127,11 +116,8 @@ class KotlinJsr223DaemonScriptEngineTest {
         assertTrue(exception.message.orEmpty().contains("Initializer type mismatch: expected 'Int', actual 'String'."))
     }
 
-    // The tests below exercise snippet sources that are awkward to smuggle through a single CLI
-    // argument (as `-expression` does): embedded quotes, backslashes, `$`, newlines, tabs and
-    // non-ASCII characters. If passing the source string as a raw CLI argument value ever regresses
-    // to something quoting-sensitive (e.g. a response/args file that splits on whitespace/newlines),
-    // these are the tests expected to catch it.
+    // The tests below exercise snippet sources that would be awkward to smuggle through a single
+    // CLI argument: embedded quotes, backslashes, `$`, newlines, tabs, and non-ASCII characters.
 
     @Test
     fun testMultilineSnippetWithQuotesAndEscapes() {

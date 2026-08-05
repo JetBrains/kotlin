@@ -216,6 +216,34 @@ When `target/40-jsr223-target.md` or `target/90-open-questions.md` is rewritten 
 
 ---
 
+## Source Comment Conventions
+
+These rules apply to **every** source comment or KDoc you add or edit — in `plugins/scripting/*` and `libraries/scripting/*`, and with extra strictness in the scripting-related parts of `compiler/fir/`, `compiler/ir/`, `compiler/cli/` shared with non-scripting code. Comments are reviewed alongside the code; write them for a future reader of the **merged** module (an experienced compiler developer), not as a development journal.
+
+**The default is no comment.** Human-maintained compiler code averages ~3% comment lines — treat an LLM-authored diff that lands noticeably above that as needing a cleanup pass before review. Before writing a comment, pass this gate — a comment is justified only when it:
+
+1. explains **why** a non-obvious decision was made, or how a genuinely difficult piece works when words do it better or shorter than the code itself (e.g. why a configurator EP takes an abstract `KtSourceFile`/`KtSourceElement` instead of `KtScript`, why `$$eval` / `$$result` are fixed names); or
+2. briefly states an **API contract** that saves the reader a detour into the implementation (e.g. refinement-callback ordering in `ScriptCompilationConfiguration`, what a `FirReplHistoryProvider` implementation must guarantee); or
+3. records a **real trap** (the K2 REPL inliner gap, a cycle hazard, a parser-agnostic seam that must stay generic), ideally with a KT-issue (e.g. `KT-83498`) or gotcha ID (e.g. `G9`) reference into [`current/80-known-gotchas.md`](current/80-known-gotchas.md).
+
+Everything else — delete. When in doubt, delete. Specific prohibitions:
+
+- **Don't comment the obvious.** If the code says it, or an experienced compiler developer sees it at a glance, no comment. This includes restating a function's body in prose, `@param`/`@property` entries that paraphrase the parameter or field name/type (document only non-obvious contracts, or none), and spelling out a default value that's already visible right there in the signature.
+- **No counterfactuals or filler comparisons.** Don't describe rejected designs, an earlier or alternative implementation, or how the current code relates to some other component ("unlike X", "just like Y", "behaves exactly as Z would") — unless the comparison reveals a real trap a maintainer is likely to fall into, in which case state it in one terse sentence, not a paragraph. A comparison whose conclusion is already obvious from the surrounding design is filler, not a trap, and should be cut.
+- **No caller inventories.** Don't enumerate which configurator EPs, refinement callbacks, or call sites use a given class/function ("used by X, Y and Z").
+- **One fact, one place.** State a fact at the declaration site only (e.g. on `FirScriptConfiguratorExtension` itself, not repeated at each override or call site).
+- **No references to `.ai/` docs.** Never cite `current/*.md`, `target/*.md`, `iterations/*.md`, or a migration-plan step name/number (`step 2`, `step 4–11`) in source comments — inline the (brief) explanation itself instead.
+- **Describe the current state only.** No narration of K1→K2 migration history, no "this used to live in the daemon REPL", no dated history.
+- **Don't reintroduce REMOVE-tagged concepts as if current.** Comments on live code shouldn't frame behavior in terms of `-Xrepl`, `cli-base/repl/*`, `GenericReplCompiler`, or `scripting-ide-common` unless the comment is specifically about the removal/migration seam itself (per [`current/90-legacy-inventory.md`](current/90-legacy-inventory.md)).
+- **Don't blur scripts and snippets.** A comment on `FirScript`-side code shouldn't describe `FirReplSnippet` behavior or vice versa — they're different shapes; cross-reference instead of merging the explanation.
+- **Use the codebase's own vocabulary.** Reuse the term a concept already has elsewhere — a property name, a neighboring KDoc in the same subsystem, established compiler terminology — instead of coining a fresh synonym for it. A comment that introduces new wording for something that already has a name forces the reader to mentally translate between two vocabularies for no benefit.
+- **Compact for clarity, not for brevity.** The gate above decides *what* survives; it isn't license to squeeze whatever survives into the fewest possible characters. Once a comment has earned its place, write it as natural, complete sentences — the way an experienced compiler developer would actually phrase it out loud — rather than a telegraphic run of noun-phrase fragments strung together with dashes or semicolons. A short, plainly readable sentence beats a denser one that has to be decoded; a little redundancy in service of readability is fine.
+- **Keep it short.** 1–3 lines is the norm. A short paragraph of full sentences is fine — and preferable to a cramped one-liner — for a genuinely tricky invariant that can't be compressed further (e.g. the K2 REPL inliner gap's list of unsafe constructs); even then, cut filler ("Note that", "It is worth mentioning").
+
+Self-check before finishing any change: reread the diff's comment lines alone and ask (a) does each one survive the gate above, or a reviewer asking "what does this tell me that the code doesn't?"; (b) does each use the terms this codebase already uses for the concept, rather than a new synonym; (c) does each read as natural, complete sentences rather than compressed fragments. If a comment fails any of these, fix or remove it.
+
+---
+
 ## Reference Documents
 
 Each doc has a "When to consult / Cache lifetime / Last verified" header — check it before loading.
@@ -253,4 +281,17 @@ See repo `CLAUDE.md` for commit guidelines, code-review conventions, and Build T
 
 ---
 
-*Last updated: 2026-05-18.*
+*Last updated: 2026-08-05 (refined the Source Comment Conventions section with two more general
+rules found while dogfooding it: match the codebase's existing terminology for a concept instead
+of coining a new synonym, and compact for clarity rather than raw brevity, so a kept comment reads
+as natural sentences rather than a telegraphic, dash-chained fragment; also broadened the
+counterfactual-comparison ban to cover filler comparisons in general, not only rejected designs.)*
+
+*Previously: 2026-08-05 (added the Source Comment Conventions section, adapted from
+`compiler/java-direct/AGENT_INSTRUCTIONS.md`: the "default is no comment" gate (why-decisions,
+API contracts, real traps only, with KT-issue/gotcha-ID references), bans on counterfactual
+"rather than the old K1 path" phrasing, caller inventories, and `.ai/` doc citations in source
+comments, plus a scripting-specific rule against blurring `FirScript` and `FirReplSnippet`
+comments.)*
+
+*Previously: 2026-05-18.*

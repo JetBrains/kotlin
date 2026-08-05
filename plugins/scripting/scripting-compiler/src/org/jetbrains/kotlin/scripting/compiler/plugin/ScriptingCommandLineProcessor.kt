@@ -74,8 +74,8 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
         val REPL_SNIPPET_REGULAR_MODE_OPTION = CliOption(
             "repl-snippet-regular-mode", "true/false",
             "Compile '.repl.kts' sources in this compile as chained REPL snippets on the regular " +
-                    "JVM frontend/backend (with '-Xallow-any-scripts-in-source-roots'); priors are " +
-                    "given via 'repl-snippet-prior-class'",
+                    "JVM frontend/backend (with '-Xallow-any-scripts-in-source-roots'); previous " +
+                    "snippets are given via 'repl-snippet-prior-class'",
             required = false, allowMultipleOccurrences = false
         )
         val REPL_SNIPPET_IMPLICIT_RECEIVER_OPTION = CliOption(

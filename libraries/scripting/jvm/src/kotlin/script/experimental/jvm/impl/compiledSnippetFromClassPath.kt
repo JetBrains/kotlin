@@ -11,31 +11,22 @@ import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCode
 
 /**
- * The [ScriptCompilationConfiguration.resultField] default (see `kotlin.script.experimental.api.resultField`)
- * -- so this is the field name a snippet's last-expression value is emitted under unless a script
- * definition overrides it.
+ * The default [ScriptCompilationConfiguration.resultField] name. A snippet's last-expression
+ * value is emitted under this field unless a script definition overrides it.
  */
 const val DEFAULT_SNIPPET_RESULT_FIELD_NAME = "\$\$result"
 
 private const val SNIPPET_RESULT_FIELD_TYPE_NAME = "kotlin.Any"
 
 /**
- * Wraps an already-compiled REPL snippet's plain output classes into a [KJvmCompiledScript] a REPL
- * evaluator can run: the classes are loaded through a plain [KJvmCompiledModuleFromClassPath]
- * classloader over [classPath] (regular `.class` files or jars -- no bespoke artifact
- * deserialization involved), so the result is indistinguishable from an in-process compilation
- * result, including the cross-snippet classloader chaining
- * [getOrCreateActualClassloader] performs.
+ * Wraps an already-compiled REPL snippet's output classes into a [KJvmCompiledScript], loading
+ * them through a plain [KJvmCompiledModuleFromClassPath] classloader over [classPath]. This goes
+ * through the same cross-snippet classloader chaining as [getOrCreateActualClassloader].
  *
- * Intended for an out-of-process (or otherwise "stateless") snippet compiler, which compiles a
- * snippet straight to an output directory and then only needs to name the resulting wrapper class
- * ([snippetClassFQName]) -- e.g. `kotlin.script.experimental.jvmhost.jsr223.daemon.DaemonReplCompiler`,
- * which predicts it from the source file name it wrote.
+ * Intended for an out-of-process snippet compiler that compiles straight to an output directory
+ * and only needs to name the resulting wrapper class ([snippetClassFQName]).
  *
- * [resultFieldName] is the name the compiled bytecode emits the snippet's last-expression value
- * under -- [DEFAULT_SNIPPET_RESULT_FIELD_NAME] unless the definition the snippet was actually
- * compiled with overrides [ScriptCompilationConfiguration.resultField]; `null` for a snippet
- * compiled without a result field at all.
+ * Pass `resultFieldName = null` for a snippet with no result field.
  */
 fun compiledSnippetFromClassPath(
     classPath: List<File>,

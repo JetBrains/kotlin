@@ -1,14 +1,8 @@
-// Q5c long-history reproducer (≥20 priors, shadowing). See
-// `iterations/2026-05-27_stateless-repl-sidecar-v3.md` and
-// `iterations/2026-05-28_stateless-repl-read-side-wiring.md`.
-//
-// The first 20 snippets each declare a unique `val aN` to populate the artifact-backed history
-// at scale; snippet 21 declares `val shadow` first; snippet 22 shadows it; snippet 23 reads
-// `shadow` (expected to bind to snippet 22's definition — REPL shadowing semantics) and the
-// scope-spanning sum of all 20 priors.
-//
-// SCHEMA-STABILITY INTENT: zero expected diagnostics. Any failure here surfaces a sidecar
-// field-set or scope-builder gap that the small-history golden suite cannot reach.
+// Long-history reproducer (20+ previous snippets, shadowing). The first 20 snippets each declare a
+// unique `val aN` to populate the artifact-backed history at scale; snippet 22 shadows snippet 21's
+// `val shadow`; snippet 23 reads `shadow` (must bind to snippet 22's definition) plus the sum of
+// all 20 earlier values. Zero expected diagnostics: a failure here surfaces a sidecar field-set or
+// scope-builder gap the small-history golden suite can't reach.
 
 // SNIPPET
 val a1 = 1

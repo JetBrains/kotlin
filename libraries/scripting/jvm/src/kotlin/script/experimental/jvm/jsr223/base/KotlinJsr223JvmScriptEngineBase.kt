@@ -52,23 +52,20 @@ interface InvokeWrapper {
 }
 
 /**
- * The JSR-223 scaffolding shared by every Kotlin JSR-223 engine: the `Bindings`-based session state
- * (see [getCurrentState]), the live-[ScriptContext] tracking the bindings-exposure machinery relies
- * on (see [jsr223HostConfiguration]), and the whole compile/eval loop over a [ReplCompiler] plus a
- * [ReplEvaluator].
+ * The JSR-223 scaffolding shared by every Kotlin JSR-223 engine. It covers the `Bindings`-based
+ * session state (see [getCurrentState]), the live [ScriptContext] the bindings-exposure machinery
+ * relies on (see [jsr223HostConfiguration]), and the compile/eval loop over a [ReplCompiler] and
+ * [ReplEvaluator] pair.
  *
- * Both the compiler and the evaluator are declared as the generic
- * [ReplCompiler]/[ReplEvaluator] interfaces rather than as the concrete in-process K2
- * implementations, so an alternative compiler -- e.g. one that drives snippet compilation through an
- * out-of-process compile daemon (see `kotlin.script.experimental.jvmhost.jsr223.daemon`) -- can
- * reuse everything here and substitute only the compiler.
+ * The compiler and evaluator are declared as the generic [ReplCompiler]/[ReplEvaluator] interfaces
+ * rather than concrete implementations, so an alternative compiler (for example one driving snippet
+ * compilation through an out-of-process compile daemon) can reuse everything here.
  *
- * A subclass supplies:
- *  * [replCompiler]/[replEvaluator] and the [State] holding them (see [createState]);
- *  * the [compilationConfiguration]/[evaluationConfiguration] the loop compiles/evaluates with --
- *    both are expected to be built with `hostConfiguration.update { it.withDefaultsFrom(jsr223HostConfiguration) }`,
- *    so that the bindings-exposure refinement hooks can reach this engine's live [ScriptContext];
- *  * [nextSnippetNo], which numbers the snippet sources this loop generates.
+ * A subclass supplies [replCompiler], [replEvaluator], and the [State] holding them (see
+ * [createState]). It also supplies [compilationConfiguration] and [evaluationConfiguration], which
+ * should be built with `hostConfiguration.update { it.withDefaultsFrom(jsr223HostConfiguration) }`
+ * so the bindings-exposure refinement hooks can reach this engine's live [ScriptContext], and
+ * [nextSnippetNo].
  */
 abstract class KotlinJsr223JvmScriptEngineBase<State>(
     protected val myFactory: ScriptEngineFactory
@@ -78,11 +75,10 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
     protected abstract val replEvaluator: ReplEvaluator<CompiledSnippet, KJvmEvaluatedSnippet>
 
     /**
-     * The compilation configuration every snippet is compiled with. Declared as a `var` because the
-     * configuration a snippet compiles to is threaded forward into the next compile (see
-     * [compileSnippet]): a synthetic-snippet-generating refinement hook (e.g.
-     * `generateBindingSnippetIfNeeded`) records its own state -- which bindings are already exposed
-     * as typed properties, and with which types -- in it.
+     * The compilation configuration every snippet is compiled with. It is a `var` because each
+     * compile's resulting configuration is threaded forward into the next (see [compileSnippet]).
+     * A synthetic-snippet-generating refinement hook (for example `generateBindingSnippetIfNeeded`)
+     * records which bindings are already exposed as typed properties, and with which types, in it.
      */
     protected abstract var compilationConfiguration: ScriptCompilationConfiguration
 
@@ -90,24 +86,21 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
 
     /**
      * The number the next compiled snippet's synthetic source name is built from (see
-     * [compileSnippet]). Expected to come from the *default* context's [State], so that snippet
-     * names stay unique across every compilation driven by the shared [replCompiler] -- taking it
-     * from a custom context's freshly created state would restart the numbering and collide with
-     * the names an outer session already compiled.
+     * [compileSnippet]). Must come from the *default* context's [State] so snippet names stay unique
+     * across the shared [replCompiler]. Taking it from a custom context's freshly created state would
+     * restart the numbering and collide with names an outer session already compiled.
      */
     protected abstract fun nextSnippetNo(): Int
 
-    // The ScriptContext active for the current compile/eval call: a custom Bindings-scoped
-    // ScriptContext passed to a given eval() call must be visible to that same call's
-    // synthetic-snippet generation (e.g. generateBindingSnippetIfNeeded), not just to the default
-    // context.
+    // The custom Bindings-scoped ScriptContext of the call currently in flight, if any. It must be
+    // visible to that call's synthetic-snippet generation (for example generateBindingSnippetIfNeeded),
+    // not just to the default context.
     @Volatile
     private var lastScriptContext: ScriptContext? = null
 
     /**
-     * Exposes this engine's live [ScriptContext] (the one the current compile/eval call was given,
-     * or the default one) to the compilation/evaluation configurations' refinement hooks -- this is
-     * what makes the JSR-223 bindings visible to a snippet as ordinary properties.
+     * Exposes this engine's live [ScriptContext] to the compilation and evaluation configurations'
+     * refinement hooks. This is what makes JSR-223 bindings visible to a snippet as properties.
      */
     val jsr223HostConfiguration: ScriptingHostConfiguration =
         ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
@@ -137,7 +130,7 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
             .getOrPut(
                 KOTLIN_SCRIPT_STATE_BINDINGS_KEY,
                 {
-                    // TODO: check why createBinding is not called on creating default context, so the engine is not set
+                    // TODO: createBindings is not called when the default context is created, so the engine key is missing there.
                     context.getBindings(ScriptContext.ENGINE_SCOPE).put(KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY, this@KotlinJsr223JvmScriptEngineBase)
                     createState()
                 }
@@ -170,19 +163,17 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
     }
 
     /**
-     * Hook for a compiler-specific per-snippet configuration tweak (e.g. the in-process engine's
-     * `repl.currentLineId`). Called for every snippet, with the (already threaded forward)
+     * Hook for a compiler-specific per-snippet configuration tweak (for example setting
+     * `repl.currentLineId`). Called for every snippet, with the already threaded-forward
      * [compilationConfiguration] as the base.
      */
     protected open fun snippetCompilationConfiguration(snippet: SourceCode, snippetNo: Int): ScriptCompilationConfiguration =
         compilationConfiguration
 
     private suspend fun compileSnippet(script: String, snippetNo: Int): ResultWithDiagnostics<LinkedSnippet<CompiledSnippet>> {
-        // The snippet's file extension is derived from (i.e. suffixed onto) the host template's own
-        // `fileExtension` (e.g. `main.kts` for `MainKtsScript`, or the default `kts`), so that the
-        // synthetic per-snippet source name still ends with an extension the host's own script
-        // definition matches (see `ScriptDefinition.FromConfigurationsBase.isScript`) instead of
-        // always hard-coding the default `.kts`.
+        // Suffixed onto the host template's own fileExtension (for example `main.kts`) rather than
+        // hard-coded to `.kts`, so the synthetic snippet name still matches the host's own script
+        // definition.
         val fileExtension = compilationConfiguration[ScriptCompilationConfiguration.fileExtension]
         val snippet = script.toScriptSource("snippet_$snippetNo.repl.$fileExtension")
         return replCompiler.compile(snippet, snippetCompilationConfiguration(snippet, snippetNo)).also {
@@ -230,9 +221,9 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
     }
 
     /**
-     * A [CompiledScript] produced by [compile]: the snippet has already been compiled (and recorded
-     * into [replCompiler]'s history for subsequent compiles), but not yet run -- [eval] runs it, via
-     * the same [replEvaluator] path [compileAndEval] uses.
+     * A [CompiledScript] produced by [compile]. The snippet is compiled and recorded into
+     * [replCompiler]'s history, but not yet run. [eval] runs it via the same [replEvaluator] path
+     * that [compileAndEval] uses.
      */
     class CompiledKotlinSnippet internal constructor(
         val engine: KotlinJsr223JvmScriptEngineBase<*>,

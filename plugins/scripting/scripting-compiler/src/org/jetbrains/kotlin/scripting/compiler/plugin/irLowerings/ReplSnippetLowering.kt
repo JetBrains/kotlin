@@ -59,9 +59,9 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
 
         // Patch IrExternalPackageFragment parents on external Kotlin top-level callees referenced from
         // each snippet's `$$eval` body. Mirrors the K2 JVM `ExternalPackageParentPatcherLowering`, but
-        // runs eagerly on the snippet's `targetClass` so that the JVM codegen's
+        // runs eagerly on the snippet's `targetClass` so the JVM codegen's
         // `require(callee.parent is IrClass)` check at `ExpressionCodegen.visitCall` does not fail
-        // when a snippet references e.g. a classpath-loaded Kotlin top-level `val`/`fun` or an
+        // when a snippet references a classpath-loaded Kotlin top-level `val`/`fun` or an
         // `@InlineOnly` stdlib operator.
         for (irSnippet in snippets) {
             val irSnippetClass = irSnippet.targetClass?.owner ?: continue
@@ -158,18 +158,9 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
     }
 
     /**
-     * On the **stateless** REPL compile path, embed the protobuf-wire `SnippetArtifactSidecar`
-     * bytes — assembled by `Fir2IrReplSnippetConfiguratorExtensionImpl.prepareSnippet` from the
-     * frontend and stashed on [irSnippet] via [replSidecarMetadataAttr] — into the snippet wrapper
-     * class's `.kotlin_metadata`. The bytes ride the generic `ProtoBuf.CompilerPluginData` channel
-     * keyed by [REPL_SIDECAR_PLUGIN_ID], so no metadata `.proto` is changed and no metadata-version
-     * bump is needed; every other metadata consumer ignores the unknown plugin id.
-     *
-     * The read side (`ClasspathBackedFirReplHistoryProvider.materialize`) recovers the bytes from a
-     * reconstructed prior snippet via `firClass.compilerPluginMetadata[REPL_SIDECAR_PLUGIN_ID]`.
-     *
-     * No-op when the attribute is absent (the stateful/golden path never sets it), leaving that
-     * path's metadata bit-for-bit unchanged.
+     * Embeds [irSnippet]'s [replSidecarMetadataAttr] bytes, if set, into the snippet wrapper
+     * class's `.kotlin_metadata` via the generic `ProtoBuf.CompilerPluginData` channel keyed by
+     * [REPL_SIDECAR_PLUGIN_ID]. Using that channel avoids a metadata `.proto` change or version bump.
      */
     private fun embedReplSidecarMetadata(irSnippet: IrReplSnippet, irSnippetClass: IrClass) {
         val sidecarBytes = irSnippet.replSidecarMetadataAttr ?: return
@@ -272,20 +263,13 @@ private class ReplSnippetToClassTransformer(
             expression.transformChildren(this, data)
             return expression
         }
-        // A same-batch sibling snippet compiled together with this one in a single daemon call (see
-        // ClasspathBackedFirReplHistoryProvider's "Live, same-batch siblings" KDoc) can end up with a
-        // declaration of this exact class tagged by the frontend as if it came from "another
-        // snippet" -- purely so that a *different*, later snippet in the same batch can correctly
-        // reference it (see FirReplSnippetResolveExtensionImpl.getSnippetScope). CallAndReferenceGenerator
-        // then unconditionally emits a placeholder IrErrorCallExpression ("No REPL snippet class
-        // instance.") for such a tagged declaration's dispatch receiver, with no way to tell a
-        // genuinely different snippet apart from this exact snippet's own declaration referencing
-        // itself (e.g. this snippet's own `eval()` helper reading its own `bindings` property).
-        // Since [declaration] is still a direct member of this very class (it was never re-parented
-        // -- that only happens for genuinely other-snippet declarations, handled above), it never
-        // needed any earlier-snippet lookup in the first place: patch the placeholder back into an
-        // ordinary access to this snippet's own instance before falling through to the regular
-        // member-access handling below.
+        // A same-batch sibling can tag one of this snippet's own declarations as "from another
+        // snippet" purely so a later sibling can reference it (see
+        // ClasspathBackedFirReplHistoryProvider's "Live, same-batch siblings").
+        // CallAndReferenceGenerator then emits a placeholder IrErrorCallExpression for its dispatch
+        // receiver regardless. Since [declaration] here is still a direct member of this class
+        // (never re-parented), patch the placeholder back into an ordinary self-access instead of
+        // a previous-snippet lookup.
         if (declaration != null && declaration.parent === irSnippet.targetClass?.owner && expression.dispatchReceiver is IrErrorCallExpression) {
             expression.dispatchReceiver =
                 accessCallsGenerator.getAccessCallForSelf(data, expression.startOffset, expression.endOffset, null, null)
@@ -342,7 +326,7 @@ private fun makeImplicitReceiversFieldsWithParameters(
  * `ExpressionCodegen.visitCall` does not fail the `require(callee.parent is IrClass)` check.
  *
  * Mirrors `org.jetbrains.kotlin.backend.jvm.lower.ExternalPackageParentPatcherLowering` (K2 JVM
- * file-class facade patching), but runs eagerly as part of REPL snippet→class lowering so the
+ * file-class facade patching), but runs eagerly as part of REPL snippet-to-class lowering so the
  * snippet body's IR is rewritten before any later JVM lowering observes the
  * `IrExternalPackageFragment` parent.
  *
@@ -351,7 +335,7 @@ private fun makeImplicitReceiversFieldsWithParameters(
  *  - have a [FacadeClassSource] container; and
  *  - currently have an [IrExternalPackageFragment] parent.
  *
- * The facade name is taken from the deserialised source's `className` / `facadeClassName`, so the
+ * The facade name is taken from the deserialized source's `className` / `facadeClassName`, so the
  * resulting JVM bytecode references the real `*Kt` (or multifile facade) class on the classpath.
  */
 private class ReplSnippetExternalPackageParentPatcher : IrVisitorVoid() {
