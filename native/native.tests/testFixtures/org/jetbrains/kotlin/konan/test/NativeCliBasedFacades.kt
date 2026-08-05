@@ -18,8 +18,11 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
+import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.name.Name.special
 import org.jetbrains.kotlin.native.pipeline.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
@@ -104,14 +107,14 @@ class KlibSerializerNativeCliFacade(
 
         val library = libraryLoadingResult.librariesStdlibFirst.single()
 
-        val moduleDescriptor = klibFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-            library,
-            languageVersionSettings,
-            // TODO: check safety of the approach of creating a separate storage manager per library
-            LockBasedStorageManager("ModulesStructure"),
-            builtIns,
-            lookupTracker = LookupTracker.DO_NOTHING
-        )
+        val storageManager = LockBasedStorageManager("ModulesStructure")
+        val moduleName = special("<${library.uniqueName}>")
+        val moduleOrigin = DeserializedKlibModuleOrigin(library)
+        val moduleDescriptor = if (builtIns != null)
+            klibFactories.DefaultDescriptorFactory.createDescriptor(moduleName, storageManager, builtIns, moduleOrigin)
+        else
+            klibFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(moduleName, storageManager, moduleOrigin)
+
         moduleDescriptor.setDependencies(dependencyModuleDescriptors + moduleDescriptor)
 
         testServices.libraryProvider.setDescriptorAndLibraryByName(outputKlibPath, moduleDescriptor, library)
