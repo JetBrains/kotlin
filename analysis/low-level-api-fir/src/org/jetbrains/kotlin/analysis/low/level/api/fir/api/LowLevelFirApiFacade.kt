@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLResolutionFacadeService
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLResolutionFacadeService
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -81,24 +80,24 @@ fun PsiClass.resolveToFirSymbol(resolutionFacade: LLResolutionFacade): FirRegula
     resolutionFacade.resolveToFirSymbol(this)
 
 /**
- * Returns a list of Diagnostics compiler finds for given [KtElement]
+ * Returns diagnostics which the compiler reports on the given [KtElement] itself.
+ *
+ * The function is not recursive: diagnostics of nested elements are not returned. Use [diagnostics] to get them as well.
+ *
  * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase
  */
 @KaImplementationDetail
-fun KtElement.getDiagnostics(resolutionFacade: LLResolutionFacade, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> =
+fun KtElement.getDiagnostics(resolutionFacade: LLResolutionFacade, filter: DiagnosticCheckerFilter): Collection<LLDiagnostic> =
     resolutionFacade.getDiagnostics(this, filter)
 
 /**
- * Returns a sequence of Diagnostics compiler finds for given [KtFile]
+ * Returns a sequence of diagnostics which the compiler reports on the given [KtElement] and on all its children.
+ *
  * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase
  */
 @KaImplementationDetail
-fun KtFile.diagnostics(
-    resolutionFacade: LLResolutionFacade,
-    filter: DiagnosticCheckerFilter,
-    ignoreSuppression: Boolean = false
-): Sequence<KtPsiDiagnostic> =
-    resolutionFacade.diagnostics(this, filter, ignoreSuppression)
+fun KtElement.diagnostics(resolutionFacade: LLResolutionFacade, filter: DiagnosticCheckerFilter): Sequence<LLDiagnostic> =
+    resolutionFacade.diagnostics(this, filter)
 
 /**
  * Build [FirElement] node in its final resolved state for a requested element.

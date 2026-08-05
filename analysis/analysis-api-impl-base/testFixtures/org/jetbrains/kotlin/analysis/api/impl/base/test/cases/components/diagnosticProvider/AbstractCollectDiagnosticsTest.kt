@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,12 +8,11 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagno
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
-import org.jetbrains.kotlin.analysis.api.components.collectDiagnostics
-import org.jetbrains.kotlin.analysis.api.components.diagnostics
-import org.jetbrains.kotlin.analysis.api.components.diagnosticsIgnoringSuppression
-import org.jetbrains.kotlin.analysis.api.components.directDiagnostics
+import org.jetbrains.kotlin.analysis.api.components.*
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticCheckerKind
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostics
+import org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.getLineAndColumnRangeInPsiFile
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.offsetToLineAndColumn
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -103,6 +103,10 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
                         checkDiagnosticsFromElements(ktFile, diagnosticsFromFile)
                         checkDiagnosticsFromSequence(ktFile, diagnosticsFromFile)
                         checkDiagnosticsIgnoringSuppressionSupersetOfRegular(ktFile, diagnosticsFromFile)
+                        checkDiagnosticsFromQuery(ktFile, diagnosticsFromFile)
+                        checkSubtreeDiagnostics(ktFile)
+                        checkSuppressionMarks(ktFile, diagnosticsFromFile)
+                        checkQuerySemantics(ktFile)
                     }
                 }
             }
@@ -200,6 +204,131 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
             "diagnosticsIgnoringSuppression() must include every diagnostic that collectDiagnostics() returns. Missing: $missing",
         )
     }
+
+    /**
+     * Diagnostics collected with a [KaDiagnostics] query must be the same as those collected with the legacy endpoints.
+     */
+    context(_: KaSession)
+    private fun checkDiagnosticsFromQuery(ktFile: KtFile, diagnosticsFromFile: List<DiagnosticKey>) {
+        assertEquals(
+            diagnosticsFromFile,
+            ktFile.commonAndExtendedDiagnostics().map { it.getDiagnosticKey() }.sorted().toList(),
+            "diagnostics collected via 'diagnostics()' should be the same as those collected from 'collectDiagnostics()'."
+        )
+    }
+
+    /**
+     * Diagnostics of an element's subtree must be exactly those file diagnostics which are reported inside the element.
+     */
+    context(_: KaSession)
+    private fun checkSubtreeDiagnostics(ktFile: KtFile) {
+        val fileDiagnostics = ktFile.commonAndExtendedDiagnostics().toList()
+
+        ktFile.accept(object : KtTreeVisitorVoid() {
+            override fun visitKtElement(element: KtElement) {
+                val expected = fileDiagnostics
+                    .filter { element.isAncestor(it.psi, strict = false) }
+                    .map { it.getDiagnosticKey() }
+                    .sorted()
+
+                val actual = element.commonAndExtendedDiagnostics()
+                    .map { it.getDiagnosticKey() }
+                    .sorted()
+                    .toList()
+
+                assertEquals(
+                    expected,
+                    actual,
+                    "diagnostics of the ${element::class.simpleName} subtree at ${element.getLineColumnRange()} should be the same as" +
+                            " the file diagnostics reported inside it."
+                )
+
+                super.visitKtElement(element)
+            }
+        })
+    }
+
+    /**
+     * Only [KaDiagnostics.includingSuppressed] may yield suppressed diagnostics, and every additionally yielded diagnostic must be marked
+     * as suppressed.
+     */
+    context(_: KaSession)
+    private fun checkSuppressionMarks(ktFile: KtFile, diagnosticsFromFile: List<DiagnosticKey>) {
+        val reported = ktFile.commonAndExtendedDiagnostics().filter { it.isSuppressed }.toList()
+        assertTrue(
+            reported.isEmpty(),
+            "diagnostics() must not yield suppressed diagnostics. Suppressed: ${reported.map { it.getDiagnosticKey() }}",
+        )
+
+        val reportedKeys = diagnosticsFromFile.toSet()
+        val additional = ktFile.commonAndExtendedDiagnostics()
+            .includingSuppressed()
+            .filter { it.getDiagnosticKey() !in reportedKeys }
+            .toList()
+
+        val notMarked = additional.filterNot { it.isSuppressed }
+        assertTrue(
+            notMarked.isEmpty(),
+            "every diagnostic which is only yielded by includingSuppressed() must be marked as suppressed." +
+                    " Not marked: ${notMarked.map { it.getDiagnosticKey() }}",
+        )
+    }
+
+    context(_: KaSession)
+    private fun KtElement.commonAndExtendedDiagnostics(): KaDiagnostics =
+        diagnostics().withCheckers(KaDiagnosticCheckerKind.COMMON, KaDiagnosticCheckerKind.EXTENDED)
+
+    /**
+     * Checks the contract of the [KaDiagnostics] query modifiers.
+     */
+    context(_: KaSession)
+    private fun checkQuerySemantics(ktFile: KtFile) {
+        val query = ktFile.diagnostics()
+
+        assertEquals(
+            query.diagnosticKeys(),
+            query.withCheckers(KaDiagnosticCheckerKind.COMMON).diagnosticKeys(),
+            "by default, a query must yield diagnostics of common checkers.",
+        )
+
+        assertTrue(
+            query.withCheckers(emptySet()).none(),
+            "a query without checkers must not yield any diagnostic.",
+        )
+
+        assertEquals(
+            query.withCheckers(KaDiagnosticCheckerKind.COMMON).diagnosticKeys(),
+            query.withCheckers(KaDiagnosticCheckerKind.EXPERIMENTAL).withCheckers(KaDiagnosticCheckerKind.COMMON).diagnosticKeys(),
+            "'withCheckers' must replace the requested checker kinds instead of adding to them.",
+        )
+
+        val allCheckers = ktFile.commonAndExtendedDiagnostics()
+        assertEquals(
+            allCheckers.diagnosticKeys(),
+            allCheckers.diagnosticKeys(),
+            "a query must be re-iterable.",
+        )
+
+        assertEquals(
+            allCheckers.includingSuppressed().diagnosticKeys(),
+            allCheckers.includingSuppressed().includingSuppressed().diagnosticKeys(),
+            "'includingSuppressed' must be idempotent.",
+        )
+
+        assertEquals(
+            allCheckers.diagnosticKeys(),
+            allCheckers.includingSuppressed().excludingSuppressed().diagnosticKeys(),
+            "'excludingSuppressed' must undo 'includingSuppressed'.",
+        )
+
+        assertEquals(
+            allCheckers.diagnosticKeys(),
+            allCheckers.excludingSuppressed().diagnosticKeys(),
+            "'excludingSuppressed' must be the default behavior.",
+        )
+    }
+
+    private fun KaDiagnostics.diagnosticKeys(): List<DiagnosticKey> = map { it.getDiagnosticKey() }.sorted().toList()
 
     private data class DiagnosticKey(
         val factoryName: String?,

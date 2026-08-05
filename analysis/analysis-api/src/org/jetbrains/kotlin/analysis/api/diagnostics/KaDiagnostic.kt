@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import kotlin.reflect.KClass
@@ -50,6 +51,29 @@ public interface KaDiagnostic : KaLifetimeOwner {
      * compiler's classification of the diagnostic.
      */
     public val severity: KaSeverity
+
+    /**
+     * Whether the diagnostic is suppressed at its use site, e.g., by a `@Suppress` annotation.
+     *
+     * Suppressed diagnostics are not reported by the compiler, so they should not be presented to the user as is. By default, diagnostic
+     * collection filters them out; [KaDiagnostics.includingSuppressed] yields them as well.
+     *
+     * The property is only meaningful for diagnostics obtained from diagnostic collection. For diagnostics obtained in another way, such as
+     * diagnostics of an unresolved call, the property is always `false`.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * @Suppress("UNUSED_VARIABLE")
+     * fun foo() {
+     *     val unused = 0
+     * }
+     * ```
+     *
+     * The `UNUSED_VARIABLE` diagnostic reported on `unused` is suppressed.
+     */
+    @KaExperimentalApi
+    public val isSuppressed: Boolean
 
     /**
      * The human-readable message rendered by the compiler to describe the error, warning, or info.

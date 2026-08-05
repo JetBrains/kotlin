@@ -29,7 +29,11 @@ abstract class AbstractErrorResistanceTest : AbstractAnalysisApiBasedTest() {
                     .count()
             }
 
-            val diagnostics = mainFile.diagnostics(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS).toList()
+            val diagnostics = mainFile.diagnostics(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
+                .filter { !it.isSuppressed }
+                .map { it.diagnostic }
+                .toList()
+
             assert(diagnostics.isEmpty()) {
                 val messages = diagnostics.map { it.factoryName }
                 "There should be no diagnostics, found:\n" + messages.joinToString("\n")
