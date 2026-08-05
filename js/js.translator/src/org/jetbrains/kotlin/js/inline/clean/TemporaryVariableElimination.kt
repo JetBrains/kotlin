@@ -96,14 +96,13 @@ import org.jetbrains.kotlin.js.translate.utils.splitToRanges
  * }
  *
  */
-internal class TemporaryVariableElimination(private val function: JsFunction) {
+internal class TemporaryVariableElimination(private val function: JsFunction) : FunctionPostProcessorStep() {
     private val root = function.body
     private val definitions = mutableMapOf<JsName, Int>()
     private val usages = mutableMapOf<JsName, Int>()
     private val definedValues = mutableMapOf<JsName, JsExpression>()
     private val temporary = mutableSetOf<JsName>()
     private val capturedInClosure = mutableSetOf<JsName>()
-    private var hasChanges = false
     private val localVariables = function.collectLocalVariables()
 
     // During `perform` phase we collect all variables we should substitute and all statements we should remove later,
@@ -113,11 +112,10 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
 
     private val namesWithSideEffects = mutableSetOf<JsName>()
 
-    fun apply(): Boolean {
+    override fun apply() {
         analyze()
         perform()
         cleanUp()
-        return hasChanges
     }
 
     private fun analyze() {
