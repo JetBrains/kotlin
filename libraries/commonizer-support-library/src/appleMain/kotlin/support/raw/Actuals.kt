@@ -45,3 +45,5 @@ actual typealias NativeSZCrcT = AppleSSizeT
 actual typealias NativeFsFilCntT = UInt
 
 actual typealias NativeThOff = UInt
+
+actual typealias NativeStSize = Long

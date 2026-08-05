@@ -45,3 +45,5 @@ actual typealias NativeSZCrcT = Int
 actual typealias NativeFsFilCntT = LinuxSizeT
 
 actual typealias NativeThOff = UByte
+
+actual typealias NativeStSize = LinuxSSizeT

@@ -124,3 +124,9 @@ expect value class NativeFsFilCntT
 
 /** Similar to [SmallUnsignedNumber] */
 expect value class NativeThOff
+
+/**
+ * Similar to [IntOrLong].
+ * Modeled after [platform.posix.stat.st_size].
+ */
+expect class NativeStSize
