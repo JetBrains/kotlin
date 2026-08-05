@@ -104,6 +104,19 @@ internal fun KotlinNativeCompilation.resolvableApiConfiguration(): Configuration
         }
 }
 
+internal fun KotlinNativeCompilation.resolvableImplConfiguration(): Configuration {
+    val implConfiguration = compilation.internal.configurations.implementationConfiguration
+    return project
+        .configurations.maybeCreateResolvable(lowerCamelCaseName("resolvable", implConfiguration.name)) {
+            extendsFrom(implConfiguration)
+            val compileConfiguration = compilation.internal.configurations.compileDependencyConfiguration
+            compileConfiguration.copyAttributesTo(project.providers, this)
+            if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
+                KlibPackaging.setAttributeTo(project, attributes, false)
+            }
+        }
+}
+
 private fun Project.createLinkTask(binary: NativeBinary) {
     // workaround for too late compilation compilerOptions creation
     // which leads to not able run project.afterEvaluate because of wrong context

@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exporte
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.normalizedSwiftExportModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.targets.native.resolvableApiConfiguration
+import org.jetbrains.kotlin.gradle.targets.native.resolvableImplConfiguration
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -139,6 +141,8 @@ private fun Project.registerSwiftExportRun(
     val files = outputs.map { it.dir("files") }
     val serializedModules = outputs.map { it.dir("modules").file("${swiftApiModuleName.get()}.json") }
     val configurationProvider = provider { LazyResolvedConfigurationWithArtifacts(exportConfiguration) }
+    val apiConfigProvider = provider { LazyResolvedConfigurationWithArtifacts(mainCompilation.resolvableApiConfiguration()) }
+    val implConfigProvider = provider { LazyResolvedConfigurationWithArtifacts(mainCompilation.resolvableImplConfiguration()) }
 
     return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
         task.description = "Run $taskNamePrefix Swift Export process"
@@ -157,6 +161,18 @@ private fun Project.registerSwiftExportRun(
                 configurationProvider,
                 exportedModules
             )
+        )
+        task.parameters.apiModules.set(
+            collectApiModules(apiConfigProvider, exportedModules).map {
+                logger.warn("api deps\n===\n\n$it")
+                it
+            }
+        )
+        task.parameters.implModules.set(
+            collectImplModules(implConfigProvider, exportedModules).map {
+                logger.warn("impl deps\n===\n\n$it")
+                it
+            }
         )
 
         task.ignoreExperimentalDiagnostic.set(kotlinPropertiesProvider.swiftExportIgnoreExperimental)

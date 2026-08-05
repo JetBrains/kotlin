@@ -7,8 +7,13 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleVersionIdentifier
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
+import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.artifacts.result.UnresolvedDependencyResult
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
@@ -62,6 +67,187 @@ internal fun Project.collectModules(
 ): Provider<List<SwiftExportedModule>> = swiftExportConfigurationProvider.zip(exportedModulesProvider) { configuration, modules ->
     configuration.swiftExportedModules(modules, project)
 }
+
+internal fun Project.collectApiModules(
+    apiConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts>,
+    exportedModulesProvider: Provider<Set<SwiftExportedDependency>>,
+): Provider<String> = apiConfigurationProvider.map { it.root.renderDependencyGraph(
+    hiddenDependencies = setOf(
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core",
+        "project :not-good-looking-project-name",
+    )
+) }
+
+internal fun Project.collectImplModules(
+    implConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts>,
+    exportedModulesProvider: Provider<Set<SwiftExportedDependency>>,
+): Provider<String> = implConfigurationProvider.map { it.root.renderDependencyGraph(
+    hiddenDependencies = setOf(
+        "com.squareup.okio:okio"
+    )
+) }
+
+fun ResolvedComponentResult.renderDependencyGraph(
+    hiddenDependencies: Set<String> = emptySet()
+): String {
+    val visited = linkedSetOf<ResolvedComponentResult>()
+    val builder = StringBuilder()
+
+    builder.appendLine(displayName())
+
+    val dependencies = dependencies.sortedForStableOutput()
+    dependencies.forEachIndexed { index, dependency ->
+        renderDependency(
+            dependency = dependency,
+            prefix = "",
+            isLast = index == dependencies.lastIndex,
+            depth = 1,
+            hiddenDependencies = hiddenDependencies,
+            parentIsHidden = false,
+            visited = visited,
+            builder = builder
+        )
+    }
+
+    return builder.toString()
+}
+
+private fun renderDependency(
+    dependency: DependencyResult,
+    prefix: String,
+    isLast: Boolean,
+    depth: Int,
+    hiddenDependencies: Set<String>,
+    parentIsHidden: Boolean,
+    visited: MutableSet<ResolvedComponentResult>,
+    builder: StringBuilder
+) {
+    val branch = if (isLast) "\\--- " else "+--- "
+    val childPrefix = prefix + if (isLast) "     " else "|    "
+    val directness = if (depth == 1) "direct" else "transitive"
+
+    when (dependency) {
+        is ResolvedDependencyResult -> {
+            val selected = dependency.selected
+            val requested = dependency.requested.displayName
+            val selectedName = selected.displayName()
+            val selectedHiddenName = selected.hiddenDependencyName()
+
+            val isHidden = selectedHiddenName in hiddenDependencies
+            val hiddenStatus = when {
+                isHidden -> "hidden"
+                parentIsHidden -> "transitively hidden"
+                else -> null
+            }
+
+            builder.append(prefix)
+                .append(branch)
+                .append(requested)
+
+            if (requested != selectedName) {
+                builder.append(" -> ").append(selectedName)
+            }
+
+            builder.append(" (").append(directness)
+
+            if (hiddenStatus != null) {
+                builder.append(", ").append(hiddenStatus)
+            }
+
+            builder.append(")")
+
+            if (!visited.add(selected)) {
+                builder.append(" (*)")
+                builder.appendLine()
+                return
+            }
+
+            builder.appendLine()
+
+            val children = selected.dependencies.sortedForStableOutput()
+            children.forEachIndexed { index, child ->
+                renderDependency(
+                    dependency = child,
+                    prefix = childPrefix,
+                    isLast = index == children.lastIndex,
+                    depth = depth + 1,
+                    hiddenDependencies = hiddenDependencies,
+                    parentIsHidden = parentIsHidden || isHidden,
+                    visited = visited,
+                    builder = builder
+                )
+            }
+        }
+
+        is UnresolvedDependencyResult -> {
+            val requested = dependency.requested.displayName
+            val isHidden = requested in hiddenDependencies
+            val hiddenStatus = when {
+                isHidden -> "hidden"
+                parentIsHidden -> "transitively hidden"
+                else -> null
+            }
+
+            builder.append(prefix)
+                .append(branch)
+                .append(requested)
+                .append(" FAILED")
+                .append(" (")
+                .append(directness)
+
+            if (hiddenStatus != null) {
+                builder.append(", ").append(hiddenStatus)
+            }
+
+            builder.append(")")
+
+            dependency.failure.message?.let { message ->
+                builder.append(" - ").append(message.lineSequence().firstOrNull().orEmpty())
+            }
+
+            builder.appendLine()
+        }
+
+        else -> {
+            builder.append(prefix)
+                .append(branch)
+                .append(dependency.requested.displayName)
+                .append(" (")
+                .append(directness)
+
+            if (parentIsHidden) {
+                builder.append(", transitively hidden")
+            }
+
+            builder.appendLine(")")
+        }
+    }
+}
+
+private fun Collection<DependencyResult>.sortedForStableOutput(): List<DependencyResult> =
+    sortedWith(
+        compareBy<DependencyResult> { it.requested.displayName }
+            .thenBy {
+                when (it) {
+                    is ResolvedDependencyResult -> it.selected.id.displayName
+                    else -> ""
+                }
+            }
+    )
+
+private fun ResolvedComponentResult.displayName(): String =
+    when (val id = id) {
+        is ModuleComponentIdentifier -> "${id.group}:${id.module}:${id.version}"
+        is ProjectComponentIdentifier -> "project '${id.projectPath}'"
+        else -> id.displayName
+    }
+
+private fun ResolvedComponentResult.hiddenDependencyName(): String =
+    when (val id = id) {
+        is ModuleComponentIdentifier -> "${id.group}:${id.module}"
+        is ProjectComponentIdentifier -> "project ${id.projectPath}"
+        else -> id.displayName
+    }
 
 private class ResolvedArtifactWithVersionIdentifier(
     val moduleVersion: ModuleVersionIdentifier,
