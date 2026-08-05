@@ -56,6 +56,12 @@ public class FirStandaloneNormalAnalysisSourceModuleFunctionalInterfaceBySamCons
   }
 
   @Test
+  @TestMetadata("samClassFromAnotherModule.kt")
+  public void testSamClassFromAnotherModule() {
+    run("samClassFromAnotherModule.kt");
+  }
+
+  @Test
   @TestMetadata("samClassWithTypeArguments.kt")
   public void testSamClassWithTypeArguments() {
     run("samClassWithTypeArguments.kt");

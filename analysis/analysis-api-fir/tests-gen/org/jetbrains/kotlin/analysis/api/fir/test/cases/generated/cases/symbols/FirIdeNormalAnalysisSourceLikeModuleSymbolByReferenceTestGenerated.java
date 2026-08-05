@@ -297,6 +297,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByReferenceTestGenerated 
   }
 
   @Test
+  @TestMetadata("intersectionOverrideFromAnotherModule.kt")
+  public void testIntersectionOverrideFromAnotherModule() {
+    run("intersectionOverrideFromAnotherModule.kt");
+  }
+
+  @Test
   @TestMetadata("javaClassWithEmptyAnnotationName.kt")
   public void testJavaClassWithEmptyAnnotationName() {
     run("javaClassWithEmptyAnnotationName.kt");
@@ -690,6 +696,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByReferenceTestGenerated 
   @TestMetadata("staticMethodFromJavaClassFromSuper.kt")
   public void testStaticMethodFromJavaClassFromSuper() {
     run("staticMethodFromJavaClassFromSuper.kt");
+  }
+
+  @Test
+  @TestMetadata("substitutionOverrideFromAnotherFile.kt")
+  public void testSubstitutionOverrideFromAnotherFile() {
+    run("substitutionOverrideFromAnotherFile.kt");
+  }
+
+  @Test
+  @TestMetadata("substitutionOverrideFromAnotherModule.kt")
+  public void testSubstitutionOverrideFromAnotherModule() {
+    run("substitutionOverrideFromAnotherModule.kt");
   }
 
   @Test

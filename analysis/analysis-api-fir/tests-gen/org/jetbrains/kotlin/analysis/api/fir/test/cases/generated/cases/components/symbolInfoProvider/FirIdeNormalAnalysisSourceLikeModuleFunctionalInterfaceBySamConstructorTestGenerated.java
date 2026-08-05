@@ -56,6 +56,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleFunctionalInterfaceBySamConstru
   }
 
   @Test
+  @TestMetadata("samClassFromAnotherModule.kt")
+  public void testSamClassFromAnotherModule() {
+    run("samClassFromAnotherModule.kt");
+  }
+
+  @Test
   @TestMetadata("samClassInScript.kts")
   public void testSamClassInScript() {
     run("samClassInScript.kts");
