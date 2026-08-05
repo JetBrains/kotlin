@@ -46,6 +46,14 @@ abstract class DefaultArgumentFunctionFactory(
      */
     protected open fun IrType.hasNullAsUndefinedValue(): Boolean = true
 
+    /**
+     * Annotations of the original function to keep on the generated default stub.
+     *
+     * By default, all of them are kept.
+     * TODO some annotations are needed (e.g. @JvmStatic), others need different values (e.g. @JvmName), the rest are redundant.
+     */
+    protected open fun filterCopiedAnnotations(annotations: List<IrAnnotation>): List<IrAnnotation> = annotations
+
     protected fun IrFunction.copyValueParametersFrom(original: IrFunction) {
         parameters = original.parameters.memoryOptimizedMap {
             val newType = it.type.remapTypeParameters(original.classIfConstructor, classIfConstructor)
@@ -217,8 +225,7 @@ abstract class DefaultArgumentFunctionFactory(
         return newFunction.apply {
             parent = declaration.parent
             generateDefaultArgumentStubFrom(declaration, useConstructorMarker)
-            // TODO some annotations are needed (e.g. @JvmStatic), others need different values (e.g. @JvmName), the rest are redundant.
-            annotations = annotations memoryOptimizedPlus copiedAnnotations
+            annotations = annotations memoryOptimizedPlus filterCopiedAnnotations(copiedAnnotations)
         }
     }
 }
