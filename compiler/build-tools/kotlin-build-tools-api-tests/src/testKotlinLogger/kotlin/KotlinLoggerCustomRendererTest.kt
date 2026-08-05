@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfigurat
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
@@ -59,6 +61,37 @@ class KotlinLoggerCustomRendererTest : BaseCompilationTest() {
             module.compile(compilationConfigAction = {
                 it[BaseCompilationOperation.COMPILER_MESSAGE_RENDERER] = renderer
             }) {
+                expectFail()
+                val errorLines = logLines[LogLevel.ERROR].orEmpty()
+                assertTrue(errorLines.any { "[CUSTOM ERROR][UNRESOLVED_REFERENCE]" in it }) {
+                    "Expected custom-rendered unresolved reference error at ERROR level, got: $errorLines"
+                }
+                assertEquals(listOf("UNRESOLVED_REFERENCE"), diagnosticIds.filterNotNull().distinct())
+            }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Custom renderer receives compiler diagnostic identifier during incremental compilation")
+    @TestMetadata("basic-multimodule-project/module-1")
+    fun customRendererReceivesDiagnosticIdentifierDuringIncrementalCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        val diagnosticIds = mutableListOf<String?>()
+        val renderer = object : CompilerMessageRendererWithDiagnosticId {
+            override fun render(severity: Severity, message: String, location: SourceLocation?, diagnosticId: String?): String {
+                diagnosticIds += diagnosticId
+                return "[CUSTOM $severity][$diagnosticId] $message"
+            }
+        }
+
+        jvmScenario(strategyConfig) {
+            val module = module("basic-multimodule-project/module-1", compilationConfigAction = {
+                it[BaseCompilationOperation.COMPILER_MESSAGE_RENDERER] = renderer
+            })
+            diagnosticIds.clear()
+
+            module.changeFile("bar.kt") { it.replace("foo()", "doesNotExist()") }
+
+            module.compile {
                 expectFail()
                 val errorLines = logLines[LogLevel.ERROR].orEmpty()
                 assertTrue(errorLines.any { "[CUSTOM ERROR][UNRESOLVED_REFERENCE]" in it }) {
