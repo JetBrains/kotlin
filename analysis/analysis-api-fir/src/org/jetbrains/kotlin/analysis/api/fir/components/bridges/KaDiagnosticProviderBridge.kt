@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.psi.KtFile
  * recursing back into the endpoints.
  */
 @OptIn(KaExperimentalApi::class)
+@Suppress("OVERRIDE_DEPRECATION")
 internal class KaDiagnosticProviderBridge(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseSessionComponent<KaFirSession>(), KaDiagnosticProvider {
     private val proxy: KaInternalsDiagnosticProvider
         get() = analysisSession.diagnosticProvider
 
-    @Suppress("OVERRIDE_DEPRECATION")
     override fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> =
         query(isRecursive = false, filter).toList()
 

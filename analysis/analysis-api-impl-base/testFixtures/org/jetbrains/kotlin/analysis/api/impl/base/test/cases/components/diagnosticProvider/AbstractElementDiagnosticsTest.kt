@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider
 
-import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
-import org.jetbrains.kotlin.analysis.api.components.directDiagnostics
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticCheckerKind
-import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.diagnostics.directDiagnostics
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -17,7 +14,6 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import kotlin.test.assertEquals
 
 /** @see AbstractCollectDiagnosticsTest */
 abstract class AbstractElementDiagnosticsTest : AbstractAnalysisApiBasedTest() {
@@ -29,16 +25,9 @@ abstract class AbstractElementDiagnosticsTest : AbstractAnalysisApiBasedTest() {
         ) as KtElement
 
         analyzeForTest(mainFile) {
-            val diagnostics = targetDeclaration.directDiagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)
-
-            assertEquals(
-                diagnostics.presentation(),
-                targetDeclaration.directDiagnostics()
-                    .withCheckers(KaDiagnosticCheckerKind.COMMON, KaDiagnosticCheckerKind.EXTENDED)
-                    .toList()
-                    .presentation(),
-                "diagnostics collected via 'directDiagnostics()' should be the same as those collected from the legacy endpoint."
-            )
+            val diagnostics = targetDeclaration.directDiagnostics()
+                .withCheckers(KaDiagnosticCheckerKind.COMMON, KaDiagnosticCheckerKind.EXTENDED)
+                .toList()
 
             val actualText = buildString {
                 if (diagnostics.isNotEmpty()) {
@@ -55,7 +44,4 @@ abstract class AbstractElementDiagnosticsTest : AbstractAnalysisApiBasedTest() {
             testServices.assertions.assertEqualsToTestOutputFile(actualText)
         }
     }
-
-    private fun Collection<KaDiagnosticWithPsi<*>>.presentation(): List<String> =
-        map { "${it.factoryName}: ${it.textRanges}" }.sorted()
 }

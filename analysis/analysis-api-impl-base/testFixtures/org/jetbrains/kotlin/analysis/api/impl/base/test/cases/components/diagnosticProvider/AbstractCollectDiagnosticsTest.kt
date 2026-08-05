@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagno
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.*
-import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticCheckerKind
-import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
-import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostics
-import org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics
+import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
+import org.jetbrains.kotlin.analysis.api.components.collectDiagnostics
+import org.jetbrains.kotlin.analysis.api.diagnostics.*
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.getLineAndColumnRangeInPsiFile
@@ -32,8 +30,7 @@ import kotlin.test.assertTrue
 
 /**
  * Checks the output of [KaDiagnosticProvider.collectDiagnostics][org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.collectDiagnostics]
- * and its consistency with [KaDiagnosticProvider.diagnostics][org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.diagnostics]
- * on all source files in the test data (in all test modules).
+ * and its consistency with the [KaDiagnostics] query on all source files in the test data (in all test modules).
  *
  * @see AbstractElementDiagnosticsTest
  */
@@ -101,7 +98,6 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
                     analyzeForTest(ktFile) {
                         val diagnosticsFromFile = collectFileDiagnostics(ktFile)
                         checkDiagnosticsFromElements(ktFile, diagnosticsFromFile)
-                        checkDiagnosticsFromSequence(ktFile, diagnosticsFromFile)
                         checkDiagnosticsIgnoringSuppressionSupersetOfRegular(ktFile, diagnosticsFromFile)
                         checkDiagnosticsFromQuery(ktFile, diagnosticsFromFile)
                         checkSubtreeDiagnostics(ktFile)
@@ -123,7 +119,8 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
     context(_: KaSession)
     private fun collectFileDiagnosticsIgnoringSuppression(ktFile: KtFile): List<DiagnosticKey> =
         ktFile
-            .diagnosticsIgnoringSuppression(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)
+            .commonAndExtendedDiagnostics()
+            .includingSuppressed()
             .map { it.getDiagnosticKey() }
             .sorted()
             .toList()
@@ -165,7 +162,8 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
             ktFile.accept(object : KtTreeVisitorVoid() {
                 override fun visitKtElement(element: KtElement) {
                     element
-                        .directDiagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)
+                        .directDiagnostics()
+                        .withCheckers(KaDiagnosticCheckerKind.COMMON, KaDiagnosticCheckerKind.EXTENDED)
                         .mapTo(this@buildList) { it.getDiagnosticKey() }
 
                     super.visitKtElement(element)
@@ -181,18 +179,6 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
     }
 
     context(_: KaSession)
-    private fun checkDiagnosticsFromSequence(ktFile: KtFile, diagnosticsFromFile: List<DiagnosticKey>) {
-        assertEquals(
-            diagnosticsFromFile,
-            ktFile.diagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)
-                .map { it.getDiagnosticKey() }
-                .sorted()
-                .toList(),
-            "diagnostics collected via diagnostics() should be the same as those collected from collectDiagnostics()."
-        )
-    }
-
-    context(_: KaSession)
     private fun checkDiagnosticsIgnoringSuppressionSupersetOfRegular(
         ktFile: KtFile,
         diagnosticsFromFile: List<DiagnosticKey>,
@@ -201,7 +187,7 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
         val missing = diagnosticsFromFile.filter { it !in ignoring }
         assertTrue(
             missing.isEmpty(),
-            "diagnosticsIgnoringSuppression() must include every diagnostic that collectDiagnostics() returns. Missing: $missing",
+            "includingSuppressed() must include every diagnostic that collectDiagnostics() returns. Missing: $missing",
         )
     }
 
