@@ -60,7 +60,12 @@ fun generateCoroutinesSuite(args: Array<String>, classNamePrefix: String = "") {
                     targetRestrictionAnnotation,
                 ),
             ) {
-                model(pattern = "^([^_](.+))$", recursive = false)
+                // Matches directories only (no dots): each test data entry is a directory whose *whole* set of
+                // `.swift` files is compiled together, so a bare file would produce an empty test executable.
+                // `excludeParentDirs` keeps `inheritance` — which only groups other test data directories — from
+                // also running as one big test, and `recursive` turns it into a nested test class with one method
+                // per child.
+                model(pattern = "^([^_.][^.]*)$", recursive = true, excludeParentDirs = true)
             }
         }
     }
