@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
+import org.jetbrains.kotlin.library.metadata.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 import java.nio.file.Path
@@ -112,7 +112,7 @@ class KonanIrLinker(
         }
     }
 
-    private val String.isForwardDeclarationModuleName: Boolean get() = this == KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME.asString()
+    private val String.isForwardDeclarationModuleName: Boolean get() = this == FORWARD_DECLARATIONS_MODULE_NAME.asString()
 
     val modules: Map<Path, IrModuleFragment>
         get() = mutableMapOf<Path, IrModuleFragment>().apply {

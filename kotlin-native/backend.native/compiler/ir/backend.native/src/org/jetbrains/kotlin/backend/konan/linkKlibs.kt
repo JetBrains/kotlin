@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isHeader
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
@@ -37,6 +36,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.utils.DFS
 import java.nio.file.Path
+import org.jetbrains.kotlin.library.metadata.isForwardDeclarationModule
 
 internal interface LinkKlibsContext : NativeBackendPhaseContext {
     val symbolTable: SymbolTable?

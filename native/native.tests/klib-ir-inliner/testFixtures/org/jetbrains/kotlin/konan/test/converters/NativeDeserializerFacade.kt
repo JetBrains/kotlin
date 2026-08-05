@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
-import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
+import org.jetbrains.kotlin.library.metadata.isForwardDeclarationModule
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.native.pipeline.NativeLoadedIrArtifact
 import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
