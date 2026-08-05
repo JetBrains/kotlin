@@ -134,7 +134,6 @@ abstract class AbstractWasmCodegenBoxTest(
     }
 }
 
-@WasmJsTest
 abstract class AbstractWasmJsCodegenBoxTest(pathToTestDir: String = "compiler/testData/codegen/") : AbstractWasmCodegenBoxTest(
     TargetBackend.WASM_JS,
     WasmPlatforms.wasmJs,
@@ -144,7 +143,6 @@ abstract class AbstractWasmJsCodegenBoxTest(pathToTestDir: String = "compiler/te
     override val additionalSourceProviders: List<Constructor<AdditionalSourceProvider>> = listOf(::WasmJsLauncherAdditionalSourceProvider)
 }
 
-@WasmWasiTest
 abstract class AbstractWasmWasiCodegenBoxTest : AbstractWasmCodegenBoxTest(TargetBackend.WASM_WASI, WasmPlatforms.wasmWasi, WasmTarget.WASI) {
     override val additionalSourceProviders: List<Constructor<AdditionalSourceProvider>> = listOf(
         ::WasmJsLauncherAdditionalSourceProvider,

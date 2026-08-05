@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationMultiModuleTest
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationSingleModuleTest
@@ -146,7 +147,7 @@ fun main(args: Array<String>) {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + "size")
             }
 
-            testClass<AbstractWasmJsCodegenBoxTest> {
+            testClass<AbstractWasmJsCodegenBoxTest>(annotations = listOf(annotation<WasmJsBoxTest>())) {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests, smokeTest = true)
                 model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
             }
@@ -175,12 +176,12 @@ fun main(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractWasmJsCodegenBoxInlinedTest> {
+            testClass<AbstractWasmJsCodegenBoxInlinedTest>(annotations = listOf(annotation<WasmJsBoxInlinedTest>())) {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
                 model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludedPattern = excludedPatternForBoxInlineTestsWithInliner)
             }
 
-            testClass<AbstractWasmJsCodegenSplittingTest> {
+            testClass<AbstractWasmJsCodegenSplittingTest>(annotations = listOf(annotation<WasmJsSplittingTest>())) {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
                 model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludedPattern = excludedPatternForBoxInlineTestsWithInliner)
             }
@@ -197,13 +198,13 @@ fun main(args: Array<String>) {
                 model("codegen/boxWasmJsInterop")
             }
 
-            testClass<AbstractWasmWasiCodegenBoxTest> {
+            testClass<AbstractWasmWasiCodegenBoxTest>(annotations = listOf(annotation<WasmWasiBoxTest>())) {
                 model("codegen/boxWasmWasi")
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractWasmWasiCodegenBoxInlinedTest> {
+            testClass<AbstractWasmWasiCodegenBoxInlinedTest>(annotations = listOf(annotation<WasmWasiBoxInlinedTest>())) {
                 model("codegen/boxWasmWasi")
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
                 model("codegen/boxInline")

@@ -395,9 +395,12 @@ projectTests {
 
     // The tags are declared in testFixtures/org/jetbrains/kotlin/wasm/test/WasmTestGroups.kt
     val icTag = "wasmIc"
-    val jsTag = "wasmJs"
-    val wasiTag = "wasmWasi"
+    val jsBoxTag = "wasmJsBox"
+    val jsBoxInlinedTag = "wasmJsBoxInlined"
+    val jsSplittingTag = "wasmJsSplitting"
     val jsMultiModuleTag = "wasmJsMultiModule"
+    val wasiBoxTag = "wasmWasiBox"
+    val wasiBoxInlinedTag = "wasmWasiBoxInlined"
     val extraTag = "wasmFirCompilerExtra"
 
     // Test everything
@@ -405,7 +408,7 @@ projectTests {
         smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
     }
 
-    // The six tasks below split the content of the `test` task into disjoint groups.
+    // The nine tasks below split the content of the `test` task into disjoint groups.
     // Tests without any of the group tags are run by the `wasmMiscTest` task.
     // The `wasmFirCompilerExtraTest` task is excluded from aggregate `wasmFirCompilerTest` task.
     wasmProjectTest(
@@ -415,8 +418,20 @@ projectTests {
     )
 
     wasmProjectTest(
-        taskName = "wasmJsTest",
-        tags = "$jsTag & !$extraTag & !$jsMultiModuleTag",
+        taskName = "wasmJsBoxTest",
+        tags = jsBoxTag,
+        skipInLocalBuild = true
+    )
+
+    wasmProjectTest(
+        taskName = "wasmJsBoxInlinedTest",
+        tags = jsBoxInlinedTag,
+        skipInLocalBuild = true
+    )
+
+    wasmProjectTest(
+        taskName = "wasmJsSplittingTest",
+        tags = jsSplittingTag,
         skipInLocalBuild = true
     )
 
@@ -427,8 +442,14 @@ projectTests {
     )
 
     wasmProjectTest(
-        taskName = "wasmWasiTest",
-        tags = "$wasiTag & !$extraTag",
+        taskName = "wasmWasiBoxTest",
+        tags = wasiBoxTag,
+        skipInLocalBuild = true
+    )
+
+    wasmProjectTest(
+        taskName = "wasmWasiBoxInlinedTest",
+        tags = wasiBoxInlinedTag,
         skipInLocalBuild = true
     )
 
@@ -440,7 +461,8 @@ projectTests {
 
     wasmProjectTest(
         taskName = "wasmMiscTest",
-        tags = "!$icTag & !$jsTag & !$wasiTag & !$extraTag & !$jsMultiModuleTag",
+        tags = "!$icTag & !$jsBoxTag & !$jsBoxInlinedTag & !$jsSplittingTag & " +
+                "!$wasiBoxTag & !$wasiBoxInlinedTag & !$jsMultiModuleTag & !$extraTag",
         skipInLocalBuild = true,
     )
 

@@ -101,7 +101,6 @@ abstract class AbstractFirWasmTest(
     }
 }
 
-@WasmJsTest
 open class AbstractFirWasmJsTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
