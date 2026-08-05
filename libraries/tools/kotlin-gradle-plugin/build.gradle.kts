@@ -150,6 +150,7 @@ dependencies {
     commonCompileOnly(project(":kotlin-gradle-statistics"))
     commonCompileOnly(project(":kotlin-gradle-build-metrics"))
     commonCompileOnly(project(":compiler:build-tools:kotlin-build-tools-jdk-utils"))
+    commonCompileOnly(libs.protobuf.java)
     commonCompileOnly(libs.android.gradle.plugin.gradle.api) {
         overrideTargetJvmVersion(11)
         isTransitive = false
@@ -613,6 +614,7 @@ testing {
                 runtimeOnly(libs.android.gradle.plugin.gradle.latest)
                 runtimeOnly(libs.android.gradle.plugin.gradle.api.latest)
                 compileOnly(libs.android.tools.common)
+                compileOnly(libs.protobuf.java)
 
                 implementation(gradleKotlinDsl())
                 implementation(project(":kotlin-gradle-plugin-tcs-android"))

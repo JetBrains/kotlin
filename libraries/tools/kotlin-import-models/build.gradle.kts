@@ -49,7 +49,10 @@ sourcesJar()
 
 runtimeJar(tasks.register<ShadowJar>("embeddable")) {
     from(mainSourceSet.output)
-    exclude("**/*.proto")
+    from("src/main/proto") {
+        into("META-INF/proto")
+    }
+    exclude("**/google/protobuf/**/*.proto")
     relocate(
         "com.google.protobuf",
         "org.jetbrains.kotlin.importmodels.internal.protobuf.com.google.protobuf",
