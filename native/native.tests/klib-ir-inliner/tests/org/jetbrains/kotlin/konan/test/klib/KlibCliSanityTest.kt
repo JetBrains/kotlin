@@ -299,7 +299,7 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    fun `Compiler rejects libraries from the distribution and C-interop libraries as included libs`() {
+    fun `Compiler rejects libraries from the distribution and C-interop libraries as included and exported libs`() {
         val librariesDir = testRunSettings.get<KotlinNativeHome>().librariesDir
         val target = testRunSettings.get<KotlinNativeTargets>().testTarget
 
@@ -322,25 +322,36 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         checkNotNull(regularLibPath)
         checkNotNull(cinteropLibPath)
 
-        // try it with different combinations of "-no..." flags:
         listOf(
-            emptyList(),
-            listOf("-nostdlib"),
-            listOf("-no-default-libs"),
-            listOf("-nostdlib", "-no-default-libs"),
-        ).forEach { extraNoSmthFlags ->
-            newSourceModules {
-                addRegularModule("test")
-            }.compileToKlibsViaCli(
-                extraCliArgs = extraNoSmthFlags + listOf(
-                    "-l", stdlibPath,
-                    "-l", posixPath,
-                    "-l", regularLibPath,
-                    "-l", cinteropLibPath,
-                    "-Xinclude=$stdlibPath,$posixPath,$regularLibPath,$cinteropLibPath",
-                )
-            ) { _, successKlib ->
-                successKlib.assertProblematicIncludedLibs(stdlibPath, posixPath, cinteropLibPath)
+            K2NativeCompilerArguments::includes.cliArgument,
+            K2NativeCompilerArguments::exportedLibraries.cliArgument,
+        ).forEach { testedCliParameter ->
+            // try it with different combinations of "-no..." flags:
+            listOf(
+                emptyList(),
+                listOf("-nostdlib"),
+                listOf("-no-default-libs"),
+                listOf("-nostdlib", "-no-default-libs"),
+            ).forEach { extraNoSmthFlags ->
+                newSourceModules {
+                    addRegularModule("test")
+                }.compileToKlibsViaCli(
+                    extraCliArgs = extraNoSmthFlags + listOf(
+                        "-l", stdlibPath,
+                        "-l", posixPath,
+                        "-l", regularLibPath,
+                        "-l", cinteropLibPath,
+                        "$testedCliParameter=$stdlibPath",
+                        "$testedCliParameter=$posixPath",
+                        "$testedCliParameter=$regularLibPath",
+                        "$testedCliParameter=$cinteropLibPath",
+                    )
+                ) { _, successKlib ->
+                    successKlib.assertProblematicIncludedOrExportedLibs(
+                        cliParameter = testedCliParameter,
+                        stdlibPath, posixPath, cinteropLibPath
+                    )
+                }
             }
         }
     }
@@ -442,7 +453,10 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         assertTrue(": $friendPath" in toolOutput[0])
     }
 
-    private fun TestCompilationResult.Success<out KLIB>.assertProblematicIncludedLibs(vararg pathsOfExpectedProblematicIncludes: String) {
+    private fun TestCompilationResult.Success<out KLIB>.assertProblematicIncludedOrExportedLibs(
+        cliParameter: String,
+        vararg pathsOfExpectedProblematicIncludes: String,
+    ) {
         val compilationToolCall = loggedData as LoggedData.CompilationToolCall
         assertEquals(ExitCode.OK, compilationToolCall.exitCode)
 
@@ -453,7 +467,7 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         assertEquals(pathsOfExpectedProblematicIncludes.size, toolOutput.size)
 
         val pathsOfActualProblematicIncludes = toolOutput.map { message ->
-            message.substringAfterLast("cannot be used in -Xinclude CLI argument: ").trim()
+            message.substringAfterLast("cannot be used in $cliParameter CLI argument: ").trim()
         }
 
         assertEquals(pathsOfExpectedProblematicIncludes.toSet(), pathsOfActualProblematicIncludes.toSet())
