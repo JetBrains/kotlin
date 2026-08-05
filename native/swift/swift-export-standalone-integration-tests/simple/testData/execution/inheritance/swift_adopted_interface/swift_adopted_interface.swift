@@ -1,5 +1,6 @@
 import Inheritance
 import Testing
+import KotlinRuntime
 
 @Test
 func swiftSubclassOfKotlinClassConformsToUnrelatedKotlinInterface() throws {
@@ -28,3 +29,27 @@ func swiftSubclassOfKotlinClassConformsToUnrelatedKotlinInterface() throws {
     #expect(callVolume(s: s) == 7)
     #expect(callGreet(base: s) == "Hello from Kotlin")
 }
+
+// KT-88251 — a Swift class that implements a Kotlin interface with no exported Kotlin class in its
+// hierarchy, written as `KotlinBase & <interface>`. It cannot be constructed today, because
+// `KotlinBase.init()` is NS_UNAVAILABLE:
+//
+//   error: 'init()' is unavailable
+//   KotlinRuntime/KotlinBase.h: note: 'init()' has been explicitly marked unavailable here
+//
+// `.disabled(...)` cannot be used here, because a disabled test is still compiled and this body does not
+// compile. Delete the `#if`/`#endif` (and add `import KotlinRuntime`) once KT-88251 is
+// fixed;
+#if KT88251_FIXED
+@Test(.disabled("KT-88251: cannot instantiate KotlinBase"))
+func swiftOnlyImplementationOfKotlinInterface() throws {
+    final class SwiftOnlySpeaker: KotlinBase & Speaker {
+        func speak() -> String { "swift-only speaks" }
+        func volume() -> Int32 { 3 }
+    }
+
+    let s = SwiftOnlySpeaker()
+    #expect(callSpeak(s: s) == "swift-only speaks")
+    #expect(callVolume(s: s) == 3)
+}
+#endif

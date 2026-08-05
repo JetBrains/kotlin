@@ -59,3 +59,48 @@ func swiftOverridesEachKotlinInterfaceOverloadSeparately() throws {
     #expect(callSay(s: k) == "kotlin-say")
     #expect(callSayTimes(s: k, times: 3) == "kotlin-say(3)")
 }
+
+@Test
+func kotlinDefaultsReachSwiftOverrideWithRichSignature() throws {
+    class SwiftDefaultSignature: DefaultSignatureBase {
+        override func format(
+            prefix: String,
+            payload: DataPayload,
+            mode: InheritanceMode,
+            note: String?,
+            `repeat`: Int32
+        ) -> String {
+            let modeText = mode == .kotlinMode ? "K" : "S"
+            return "\(prefix)|\(payload.text)|\(payload.number)|\(modeText)|\(note ?? "nil")|\(`repeat`)"
+        }
+    }
+
+    let value = SwiftDefaultSignature()
+    #expect(callFormatWithKotlinDefaults(value: value, prefix: "defaults") == "defaults|default-payload|7|K|nil|2")
+
+    let explicit = callFormatExplicitly(
+        value: value,
+        prefix: "explicit",
+        payload: DataPayload(text: "payload", number: 9),
+        mode: .swiftMode,
+        note: "note",
+        repeat: 4
+    )
+    #expect(explicit == "explicit|payload|9|S|note|4")
+}
+
+@Test
+func overloadedReverseBridgesSelectTheSwiftImplementation() throws {
+    class SwiftOverloadedSignature: OverloadedSignatureBase {
+        override func choose(value: String) -> String { "swift-one:\(value)" }
+        override func choose(value: String, count: Int32) -> String { "swift-two:\(value):\(count)" }
+        override func choose(value: String, count: Int32, mode: InheritanceMode) -> String {
+            "swift-three:\(value):\(count):\(mode == .swiftMode ? "S" : "K")"
+        }
+    }
+
+    let value = SwiftOverloadedSignature()
+    #expect(callChooseOne(value: value, text: "a") == "swift-one:a")
+    #expect(callChooseTwo(value: value, text: "b", count: 2) == "swift-two:b:2")
+    #expect(callChooseThree(value: value, text: "c", count: 3, mode: .swiftMode) == "swift-three:c:3:S")
+}

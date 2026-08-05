@@ -82,3 +82,23 @@ func kotlinExceptionThrownBySwiftOverrideSurfacesToSwift() throws {
         Issue.record("expected MyKotlinException, got \(type(of: error)): \(error)")
     }
 }
+
+@Test
+func kotlinThrowsSwiftBackedExceptionSubclass() throws {
+    // The thrown object is a *Swift* subclass of an exported Kotlin
+    // `Exception`.
+    class SwiftThrowableLeaf: ThrowableBranch {
+        override func throwableValue() -> String { "swift>" + super.throwableValue() }
+    }
+
+    let value = SwiftThrowableLeaf(origin: "primary")
+
+    do {
+        try throwProvided(value: value)
+        Issue.record("expected throwProvided to throw")
+    } catch let error as SwiftThrowableLeaf {
+        #expect(error === value)
+    } catch {
+        Issue.record("expected the original SwiftThrowableLeaf, got \(type(of: error))")
+    }
+}
