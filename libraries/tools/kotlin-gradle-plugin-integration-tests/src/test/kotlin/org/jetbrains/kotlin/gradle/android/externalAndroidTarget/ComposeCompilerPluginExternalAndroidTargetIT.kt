@@ -13,6 +13,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.gradle.kotlin.dsl.kotlin
+import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.listDirectoryEntries
 
 // Used AGP 9.0 as the minimal stable version supported for the android library compose setup.
@@ -21,6 +22,10 @@ import kotlin.io.path.listDirectoryEntries
 class ComposeCompilerPluginExternalAndroidTargetIT : KGPBaseTest() {
 
     @GradleAndroidTest
+    @OsCondition(
+        supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
+        enabledOnCI = [OS.LINUX, OS.MAC] //KT-85872 File descriptors not released fast enough before JUnit @TempDir cleanup on Windows
+    )
     fun `test - androidLibrary and host test with compose compiler plugin compile`(
         gradleVersion: GradleVersion,
         androidVersion: String,
