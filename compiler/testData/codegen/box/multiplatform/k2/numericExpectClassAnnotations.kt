@@ -4,6 +4,7 @@
 // ISSUE: KT-87284
 // ALLOW_KOTLIN_PACKAGE
 // LANGUAGE: +AllowExpectValueClassesWithNoPrimaryConstructor
+// NATIVE_STANDALONE
 
 // MODULE: stdlibextra
 // FILE: Annotations.kt

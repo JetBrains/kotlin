@@ -260,12 +260,15 @@ private fun Candidate.getExpectedTypeWithBuiltinToNumericClassConversion(
         .also { markUseOfNumericClassConversion() }
 }
 
+context(context: ResolutionContext)
 private fun Candidate.getExpectedTypeWithNumericClassToBuiltinConversion(
     session: FirSession,
     argument: FirExpression,
     candidateExpectedType: ConeKotlinType,
 ): ConeKotlinType? {
-    val argumentType = argument.toReference(session)?.toResolvedCallableSymbol()?.resolvedReturnType
+    val argumentType = argument.toReference(session)?.toResolvedCallableSymbol()
+        ?.let { context.bodyResolveComponents.returnTypeCalculator.tryCalculateReturnType(it) }
+        ?.coneType
     if (argumentType == null || argumentType.toSymbol(session)?.supportsNumericClassConversionTo(candidateExpectedType, session) != true) return null
     return argumentType.withNullabilityOf(candidateExpectedType, session.typeContext)
         .also { markUseOfNumericClassConversion() }
