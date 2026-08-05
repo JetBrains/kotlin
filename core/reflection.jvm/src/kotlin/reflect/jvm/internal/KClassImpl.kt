@@ -202,11 +202,11 @@ internal class KClassImpl<T : Any>(
         }
 
         @Suppress("UNCHECKED_CAST")
-        val constructors: Collection<KFunction<T>> by ReflectProperties.lazySoft {
+        val constructors: Collection<KFunction<T>> by lazy(PUBLICATION) {
             if (classKind == ClassKind.INTERFACE || classKind == ClassKind.OBJECT || classKind == ClassKind.COMPANION_OBJECT ||
                 classKind == ClassKind.ENUM_ENTRY || jClass.isSynthetic
             ) {
-                return@lazySoft emptyList()
+                return@lazy emptyList()
             }
 
             if (useK1Implementation) {

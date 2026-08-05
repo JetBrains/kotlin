@@ -139,7 +139,7 @@ internal fun KmType.toKType(
         (classifier as? KmClassifier.Class)?.name == "kotlin/Nothing",
         isSuspend,
         classifier.toMutableCollectionKClass(kClassifier),
-        computeJavaType,
+        computeJavaType?.let { lazy(PUBLICATION, it) },
     )
     if (isSuspend) {
         // Suspend function types are represented in metadata in a non-trivial way, see kdoc on [KmType.isSuspend].
@@ -169,7 +169,7 @@ private fun unwrapSuspendFunctionType(type: SimpleKType, computeJavaType: (() ->
         type.isNothingType,
         isSuspendFunctionType = true,
         type.mutableCollectionClass,
-        computeJavaType,
+        computeJavaType?.let { lazy(PUBLICATION, it) },
     )
 }
 
