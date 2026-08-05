@@ -76,9 +76,9 @@ internal class PwRunnerSpec(
 )
 
 internal class PwDebugOptions(
-    // A CDP-compatible debugger can attach to Chromium on this port.
+    // A CDP debugger can attach to Chromium on this port.
     val remoteDebuggingPort: Int,
-    // Present for sessions that wait for confirmed attachment before navigation.
+    // Set when the run should wait until a debugger is attached.
     val debuggerReadyPort: Int?,
     val debuggerReadyTimeoutMillis: Int,
 )
@@ -244,13 +244,16 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
         }
 
         val runnerDebugPort = runner.debugOptions?.remoteDebuggingPort
+        if (runnerDebugPort != null && runner.headless) {
+            log.info("Running '${runner.name}' headed instead of headless, because it is being debugged")
+        }
         val launchOptions = BrowserType.LaunchOptions()
             .setHeadless(runnerDebugPort == null && runner.headless)
             .apply {
                 val launchArgs = if (runnerDebugPort != null) {
-                    // The IDE debugger speaks CDP here; non-Chromium runners are converted before reaching the executor.
+                    // The debugger needs CDP, so non-Chromium runners are swapped out before we get here.
                     check(runner.browserKind == PwBrowserKind.CHROMIUM) {
-                        "IntelliJ browser test debugging for Playwright is supported only with Chromium runners"
+                        "Browser test debugging for Playwright is supported only with Chromium runners"
                     }
                     runner.launchArgs.withRemoteDebuggingPort(runnerDebugPort)
                 } else {
@@ -287,16 +290,28 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
         }
     }
 
+    // With no ready port we don't wait at all. The timeout covers the connect and the reply separately.
     private fun PwRunnerSpec.awaitDebuggerAttached() {
         val readyPort = debugOptions?.debuggerReadyPort ?: return
+        val timeoutMillis = debugOptions.debuggerReadyTimeoutMillis
+        log.info("Waiting up to $timeoutMillis ms for a debugger to attach to '$name'")
         try {
             Socket().use { socket ->
-                socket.connect(InetSocketAddress(InetAddress.getLoopbackAddress(), readyPort), debugOptions.debuggerReadyTimeoutMillis)
-                socket.soTimeout = debugOptions.debuggerReadyTimeoutMillis
-                check(socket.getInputStream().read() >= 0) { "Debugger readiness connection closed without acknowledgement" }
+                socket.connect(InetSocketAddress(InetAddress.getLoopbackAddress(), readyPort), timeoutMillis)
+                socket.soTimeout = timeoutMillis
+                check(socket.getInputStream().read() >= 0) {
+                    "The debugger readiness connection for '$name' on port $readyPort was closed without acknowledgement"
+                }
             }
         } catch (e: SocketTimeoutException) {
-            throw IllegalStateException("Timed out waiting for IntelliJ debugger to attach to '$name'", e)
+            throw IllegalStateException(
+                "Timed out after $timeoutMillis ms waiting for a debugger to attach to '$name' on port $readyPort", e
+            )
+        } catch (e: IOException) {
+            throw IllegalStateException(
+                "Could not reach the debugger readiness port $readyPort for '$name'. " +
+                        "The debugger is no longer waiting to attach.", e
+            )
         }
     }
 
@@ -306,7 +321,7 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
     }
 
     private fun List<String>.withRemoteDebuggingPort(port: Int): List<String> {
-        // User-provided CDP flags would conflict with the IDE-allocated port, so normalize them here.
+        // Drop any CDP port the user passed, it would clash with the one we were given.
         val args = mutableListOf<String>()
         var skipNext = false
         for (arg in this) {

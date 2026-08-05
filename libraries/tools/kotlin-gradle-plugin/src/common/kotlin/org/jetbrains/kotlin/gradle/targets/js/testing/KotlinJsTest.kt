@@ -12,6 +12,8 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.tasks.testing.TestExecuter
 import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.options.Option
 import org.gradle.process.ExecOperations
@@ -76,63 +78,48 @@ internal constructor(
     @Input
     var debug: Boolean = false
 
+    // Frameworks that can't debug just warn that these were ignored. Karma is set up by the IDE init script.
+    @get:Input
+    @get:Optional
+    @get:Option(
+        option = "browser-debug",
+        description = "Runs the browser tests of this task in debug mode.",
+    )
+    internal val browserDebug: Property<Boolean> = objects.property(Boolean::class.java)
+
+    @get:Input
+    @get:Optional
+    @get:Option(
+        option = "browser-debug-port",
+        description = "The port a CDP-compatible debugger can attach to. Implies --browser-debug.",
+    )
+    internal val browserDebugPort: Property<String> = objects.property(String::class.java)
+
+    @get:Input
+    @get:Optional
+    @get:Option(
+        option = "browser-debug-ready-port",
+        description = "The loopback port to connect to before running the tests, to wait for a debugger to attach. " +
+                "Implies --browser-debug.",
+    )
+    internal val browserDebugReadyPort: Property<String> = objects.property(String::class.java)
+
+    @get:Input
+    @get:Optional
+    @get:Option(
+        option = "browser-debug-ready-timeout",
+        description = "How long to wait for a debugger to attach, in milliseconds. Implies --browser-debug.",
+    )
+    internal val browserDebugReadyTimeout: Property<String> = objects.property(String::class.java)
+
+    // True if any browser debug option was passed.
     @get:Internal
-    internal var browserDebugOptions: KotlinJsBrowserDebugOptions = KotlinJsBrowserDebugOptions()
-
-    @Option(
-        option = "debug-browser",
-        description = "Runs this browser test task in debug mode.",
-    )
-    internal fun setBrowserDebug(enabled: Boolean) {
-        if (testFramework is KotlinJsBrowserDebuggableFramework) {
-            debug = enabled
-        }
-    }
-
-    @Option(
-        option = "debug-port",
-        description = "Sets the browser framework debug port and enables browser debugging.",
-    )
-    internal fun setBrowserDebugPort(value: String) = updateBrowserDebugOptions(value) {
-        browserDebugOptions.copy(debugPort = it)
-    }
-
-    @Option(
-        option = "ready-port",
-        description = "Sets the debugger attachment callback port used before Playwright navigation and enables browser debugging.",
-    )
-    internal fun setDebuggerReadyPort(value: String) = updateBrowserDebugOptions(value) {
-        browserDebugOptions.copy(debuggerReadyPort = it)
-    }
-
-    @Option(
-        option = "ready-timeout",
-        description = "Sets the debugger attachment timeout in milliseconds and enables browser debugging.",
-    )
-    internal fun setDebuggerReadyTimeout(value: String) {
-        val timeout = value.toIntOrNull()
-        if (timeout == null || timeout <= 0) {
-            throw GradleException("Browser debugger readiness timeout must be greater than 0 milliseconds")
-        }
-        browserDebugOptions = browserDebugOptions.copy(debuggerReadyTimeoutMillis = timeout)
-        enableBrowserDebug()
-    }
-
-    private fun updateBrowserDebugOptions(value: String, update: (Int) -> KotlinJsBrowserDebugOptions) {
-        val port = value.toIntOrNull()
-        if (port == null || port !in 1..65535) {
-            throw GradleException("Browser debug ports must be between 1 and 65535")
-        }
-        browserDebugOptions = update(port)
-        enableBrowserDebug()
-    }
-
-    private fun enableBrowserDebug() {
-        if (testFramework is KotlinJsBrowserDebuggableFramework) {
-            debug = true
-            configureBrowserDebug()
-        }
-    }
+    internal val browserDebugRequested: Provider<Boolean>
+        get() = browserDebugPort.map { true }
+            .orElse(browserDebugReadyPort.map { true })
+            .orElse(browserDebugReadyTimeout.map { true })
+            .orElse(browserDebug)
+            .orElse(false)
 
     @Suppress("unused")
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
@@ -243,11 +230,47 @@ internal constructor(
         return testExecuter
     }
 
-    private fun configureBrowserDebug() {
-        if (!debug) return
+    internal fun configureBrowserDebug() {
+        if (!browserDebugRequested.get()) return
 
-        // Karma debugging continues to be configured by the IDEA init script.
-        // Command-line browser debug options are consumed by Playwright only.
-        (testFramework as? KotlinJsBrowserDebuggableFramework)?.configureDebug(browserDebugOptions)
+        val debuggableFramework = testFramework as? KotlinJsBrowserDebuggableFramework
+        if (debuggableFramework == null) {
+            logger.warn(
+                "Browser debug options were passed to '$path', but its test framework does not support browser " +
+                        "debugging. The options are ignored."
+            )
+            return
+        }
+
+        debug = true
+        debuggableFramework.configureDebug(
+            KotlinJsBrowserDebugOptions(
+                debugPort = (browserDebugPort.orNull ?: browserDebugEnv(BROWSER_DEBUG_PORT_ENV))
+                    ?.let { parsePort(it, "--browser-debug-port") },
+                debuggerReadyPort = (browserDebugReadyPort.orNull ?: browserDebugEnv(BROWSER_DEBUG_READY_PORT_ENV))
+                    ?.let { parsePort(it, "--browser-debug-ready-port") },
+                debuggerReadyTimeoutMillis = (browserDebugReadyTimeout.orNull ?: browserDebugEnv(BROWSER_DEBUG_READY_TIMEOUT_ENV))
+                    ?.let { parseTimeoutMillis(it) },
+            )
+        )
     }
+
+    // Don't use providers.environmentVariable here. It would become a config cache input and the port
+    // is different on every run.
+    private fun browserDebugEnv(name: String): String? = System.getenv(name)
+
+    private fun parsePort(value: String, option: String): Int =
+        value.toIntOrNull()?.takeIf { it in 1..65535 }
+            ?: throw GradleException("$option must be an integer between 1 and 65535, but was '$value'")
+
+    private fun parseTimeoutMillis(value: String): Int =
+        value.toIntOrNull()?.takeIf { it > 0 }
+            ?: throw GradleException(
+                "--browser-debug-ready-timeout must be a positive number of milliseconds, but was '$value'"
+            )
 }
+
+// Set by the IDE with the ports it picked. The same names are in the IntelliJ plugin.
+internal const val BROWSER_DEBUG_PORT_ENV = "KOTLIN_BROWSER_DEBUG_PORT"
+internal const val BROWSER_DEBUG_READY_PORT_ENV = "KOTLIN_BROWSER_DEBUG_READY_PORT"
+internal const val BROWSER_DEBUG_READY_TIMEOUT_ENV = "KOTLIN_BROWSER_DEBUG_READY_TIMEOUT"

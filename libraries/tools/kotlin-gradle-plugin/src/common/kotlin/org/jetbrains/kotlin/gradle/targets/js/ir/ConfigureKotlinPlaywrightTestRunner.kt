@@ -51,10 +51,12 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         val playwrightBrowserInstallTask = project.registerTask<PlaywrightBrowserInstall>(
             "kotlinInstallPlaywrightBrowsers", listOf(testCompilation)
         ) {
+            // Kept opaque on purpose. flatMap would make the test task an input of the install task,
+            // and the test task already dependsOn it below.
             it.browsers.set(project.providers.provider {
                 val browsers = declaredPlaywrightBrowsers.get()
-                // Debug runs attach through Chromium CDP even when only Firefox or WebKit is declared.
-                if (testTaskProvider.get().debug) browsers + "chromium" else browsers
+                // Debug always goes through Chromium CDP, even if only Firefox or WebKit is set up.
+                if (testTaskProvider.get().browserDebugRequested.get()) browsers + "chromium" else browsers
             })
         }
 

@@ -39,7 +39,6 @@ import java.time.Duration
 import javax.inject.Inject
 import kotlin.time.toKotlinDuration
 
-
 /**
  * Kotlin/JS browser test framework backed by [Playwright][com.microsoft.playwright.Playwright]
  */
@@ -108,21 +107,14 @@ internal class KotlinPlaywrightJsTestFramework(
     override val executable: Property<String> = objects.property(nodeJs.executable)
 
     private val debugPort: Property<Int> = objects.property<Int>().convention(DEFAULT_DEBUG_PORT)
+
+    // null means we don't wait for a debugger before running the tests.
     private var debuggerReadyPort: Int? = null
     private var debuggerReadyTimeoutMillis: Int = DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS
 
-    @Suppress("unused")
-    fun getConfiguredDebugPort(): Int = debugPort.get()
-
-    @Suppress("unused")
-    fun getConfiguredDebuggerReadyPort(): Int? = debuggerReadyPort
-
-    @Suppress("unused")
-    fun getConfiguredDebuggerReadyTimeoutMillis(): Int = debuggerReadyTimeoutMillis
-
     override fun configureDebug(options: KotlinJsBrowserDebugOptions) {
         options.debugPort?.let { debugPort.set(it) }
-        debuggerReadyPort = options.debuggerReadyPort
+        options.debuggerReadyPort?.let { debuggerReadyPort = it }
         options.debuggerReadyTimeoutMillis?.let { debuggerReadyTimeoutMillis = it }
     }
 
@@ -135,16 +127,6 @@ internal class KotlinPlaywrightJsTestFramework(
     internal val npmToolingEnvDir: DirectoryProperty = objects.directoryProperty().convention(compilation.npmToolingDir())
 
     override fun createTestExecuter(): TestExecuter<*> = PlaywrightTestExecutor()
-
-    internal fun buildDebugUrl(task: KotlinJsTest): URI = buildDebugUrl(task, getDebugRunner())
-
-    private fun buildDebugUrl(task: KotlinJsTest, runner: BrowserRunnerInput): URI {
-        val cliArgs = KotlinTestRunnerCliArgs(
-            include = task.includePatterns,
-            exclude = task.excludePatterns,
-        ).toList()
-        return runner.buildRunnerUrl(runner.testsLocation.get().url.get(), cliArgs)
-    }
 
     private fun getDebugRunner(): ChromiumRunnerInput {
         frameworkTaskInputs.chromiumRunners.get().firstOrNull()?.let { return it }

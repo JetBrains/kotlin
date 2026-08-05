@@ -36,7 +36,8 @@ interface KotlinJsTestFramework : RequiresNpmDependencies {
     companion object
 }
 
-data class KotlinJsBrowserDebugOptions(
+// null means not set, so the framework uses its own default.
+internal data class KotlinJsBrowserDebugOptions(
     val debugPort: Int? = null,
     val debuggerReadyPort: Int? = null,
     val debuggerReadyTimeoutMillis: Int? = null,
