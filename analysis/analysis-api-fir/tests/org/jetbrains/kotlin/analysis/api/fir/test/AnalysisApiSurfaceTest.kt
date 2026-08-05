@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.services.TestServices
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("testData/surface") {
     override val configurator = LLSourceLikeTestConfigurator()
@@ -130,12 +130,12 @@ class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("testData/surfac
             val annotation = functionSymbol.annotations.single()
             val constructorSymbol = annotation.constructorSymbol ?: error("The constructor symbol is absent")
 
-            // BUG! It has to point to the JVM Stdlib. JVM session cannot depend on classes from klib
-            assertEquals("Library kotlin-stdlib-metadata", constructorSymbol.containingModule.moduleDescription)
+            // It has to point to the JVM Stdlib. JVM session cannot depend on classes from klib
+            assertEquals("Library kotlin-stdlib", constructorSymbol.containingModule.moduleDescription)
             val constructorPsi = constructorSymbol.realPsi ?: error("The real psi is not found")
 
-            // BUG! It has to be analyzable
-            assertFalse(constructorPsi.canBeAnalysed())
+            // It has to be analyzable
+            assertTrue(constructorPsi.canBeAnalysed())
         }
     }
 }
