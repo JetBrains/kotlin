@@ -2,8 +2,28 @@
 
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+import kotlin.native.internal.ImportedBridge
 import kotlin.native.internal.ExportedBridge
 import platform.darwin.NSObject
+
+// Link anchor for KotlinRuntimeSupport.swift
+
+/**
+ * Undefined reference that makes the linker select the object file of `KotlinRuntimeSupport.swift`,
+ * see `_kotlinRuntimeSupportLinkAnchor` there for why that file would otherwise be left out of the
+ * image. This declaration is never called; only the reference to it matters.
+ */
+@ImportedBridge("KotlinRuntimeSupport_linkAnchor")
+internal external fun KotlinRuntimeSupport_linkAnchor()
+
+/**
+ * Holds the reference to [KotlinRuntimeSupport_linkAnchor]. Exported so that it is an entry point and
+ * survives dead code elimination on the Kotlin side.
+ */
+@ExportedBridge("KotlinRuntimeSupport_ensureLinked")
+public fun KotlinRuntimeSupport_ensureLinked() {
+    KotlinRuntimeSupport_linkAnchor()
+}
 
 /**
  * Universal Kotlin wrapper for a Swift error that crosses into Kotlin through a reverse bridge.
