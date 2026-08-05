@@ -2,15 +2,16 @@ package org.jetbrains.kotlin.library.metadata
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.StorageManager
 import java.nio.file.Path
 import kotlin.io.path.Path
 
 interface KlibResolvedModuleDescriptorsFactory {
-
     val moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory
 
     @Deprecated(
@@ -84,3 +85,7 @@ class KotlinResolvedModuleDescriptors(
     val friendModules: Set<ModuleDescriptorImpl>,
     val refinesModules: Set<ModuleDescriptorImpl>
 )
+
+val FORWARD_DECLARATIONS_MODULE_NAME = Name.special("<forward declarations>")
+val ModuleDescriptor.isForwardDeclarationModule: Boolean
+    get() = name == FORWARD_DECLARATIONS_MODULE_NAME
