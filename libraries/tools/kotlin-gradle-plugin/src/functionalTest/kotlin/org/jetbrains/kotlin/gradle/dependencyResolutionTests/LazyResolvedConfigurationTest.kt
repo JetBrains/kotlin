@@ -191,10 +191,7 @@ class LazyResolvedConfigurationTest {
     fun `test - cachingGroupByToNonNullSet`() {
         val project = buildProject {
             enableDependencyVerification(false)
-            repositories.mavenLocal { repo ->
-                repo.mavenContent { it.includeGroupByRegex(".*jetbrains.*") }
-            }
-            repositories.mavenCentral()
+            repositories.mavenCentralCacheRedirector()
             applyMultiplatformPlugin()
         }
 
@@ -203,7 +200,7 @@ class LazyResolvedConfigurationTest {
         kotlin.linuxX64()
 
         kotlin.sourceSets.getByName("commonMain").dependencies {
-            implementation("com.squareup.okio:okio:3.3.0")
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
         }
 
         project.evaluate()
@@ -241,14 +238,14 @@ class LazyResolvedConfigurationTest {
 
         assertEquals(
             mapOf(
-                "com.squareup.okio:okio" to setOf(
-                    "metadataApiElements",
-                ),
-                "org.jetbrains.kotlin:kotlin-stdlib" to setOf(
-                    "metadataApiElements",
-                ),
                 "org.jetbrains.kotlin:kotlin-stdlib-common" to setOf(
                     "stdlibCommonElements",
+                ),
+                "org.jetbrains.kotlinx:atomicfu" to setOf(
+                    "metadataApiElements",
+                ),
+                "org.jetbrains.kotlinx:kotlinx-coroutines-core" to setOf(
+                    "metadataApiElements",
                 ),
             ).prettyPrinted,
             group.prettyPrinted
@@ -264,8 +261,8 @@ class LazyResolvedConfigurationTest {
         assertEquals(
             mapOf(
                 "metadataApiElements" to setOf(
-                    "com.squareup.okio:okio",
-                    "org.jetbrains.kotlin:kotlin-stdlib",
+                    "org.jetbrains.kotlinx:atomicfu",
+                    "org.jetbrains.kotlinx:kotlinx-coroutines-core",
                 ),
                 "stdlibCommonElements" to setOf(
                     "org.jetbrains.kotlin:kotlin-stdlib-common",
