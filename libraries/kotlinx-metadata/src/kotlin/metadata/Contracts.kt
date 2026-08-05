@@ -38,7 +38,7 @@ public class KmEffect(
 ) {
     /**
      * Arguments of the effect constructor, i.e., the constant value for the [KmEffectType.RETURNS_CONSTANT] effect,
-     * or the parameter reference for the [KmEffectType.CALLS] effect.
+     * or the parameter reference for the [KmEffectType.CALLS]/[KmEffectType.RETURNS_PARAMETER]/[KmEffectType.RETURNS_RESULT_OF] effects.
      */
     public val constructorArguments: MutableList<KmEffectExpression> = ArrayList(1)
 
