@@ -6,7 +6,7 @@ option java_multiple_files = true;
 import "google/protobuf/any.proto";
 
 enum ErrorType {
-  UNKNOWN_ERROR = 0;
+  ERROR_TYPE_UNSPECIFIED = 0;
   UNKNOWN_MODEL_ID = 1;
   UNKNOWN_MODEL_PARAMS = 2;
   UNSUPPORTED_MODEL_ID = 3;
@@ -35,7 +35,7 @@ message Version {
 }
 
 enum Capability {
-  UNKNOWN_CAPABILITY = 0;
+  CAPABILITY_UNSPECIFIED = 0;
   JVM_ONLY = 1;
   KAPT = 2;
 }

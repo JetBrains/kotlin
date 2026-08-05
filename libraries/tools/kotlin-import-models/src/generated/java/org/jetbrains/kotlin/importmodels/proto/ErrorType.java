@@ -11,9 +11,9 @@ package org.jetbrains.kotlin.importmodels.proto;
 public enum ErrorType
     implements com.google.protobuf.ProtocolMessageEnum {
   /**
-   * <code>UNKNOWN_ERROR = 0;</code>
+   * <code>ERROR_TYPE_UNSPECIFIED = 0;</code>
    */
-  UNKNOWN_ERROR(0),
+  ERROR_TYPE_UNSPECIFIED(0),
   /**
    * <code>UNKNOWN_MODEL_ID = 1;</code>
    */
@@ -51,9 +51,9 @@ public enum ErrorType
       ErrorType.class.getName());
   }
   /**
-   * <code>UNKNOWN_ERROR = 0;</code>
+   * <code>ERROR_TYPE_UNSPECIFIED = 0;</code>
    */
-  public static final int UNKNOWN_ERROR_VALUE = 0;
+  public static final int ERROR_TYPE_UNSPECIFIED_VALUE = 0;
   /**
    * <code>UNKNOWN_MODEL_ID = 1;</code>
    */
@@ -104,7 +104,7 @@ public enum ErrorType
    */
   public static ErrorType forNumber(int value) {
     switch (value) {
-      case 0: return UNKNOWN_ERROR;
+      case 0: return ERROR_TYPE_UNSPECIFIED;
       case 1: return UNKNOWN_MODEL_ID;
       case 2: return UNKNOWN_MODEL_PARAMS;
       case 3: return UNSUPPORTED_MODEL_ID;

@@ -11,9 +11,9 @@ package org.jetbrains.kotlin.importmodels.proto;
 public enum Capability
     implements com.google.protobuf.ProtocolMessageEnum {
   /**
-   * <code>UNKNOWN_CAPABILITY = 0;</code>
+   * <code>CAPABILITY_UNSPECIFIED = 0;</code>
    */
-  UNKNOWN_CAPABILITY(0),
+  CAPABILITY_UNSPECIFIED(0),
   /**
    * <code>JVM_ONLY = 1;</code>
    */
@@ -35,9 +35,9 @@ public enum Capability
       Capability.class.getName());
   }
   /**
-   * <code>UNKNOWN_CAPABILITY = 0;</code>
+   * <code>CAPABILITY_UNSPECIFIED = 0;</code>
    */
-  public static final int UNKNOWN_CAPABILITY_VALUE = 0;
+  public static final int CAPABILITY_UNSPECIFIED_VALUE = 0;
   /**
    * <code>JVM_ONLY = 1;</code>
    */
@@ -72,7 +72,7 @@ public enum Capability
    */
   public static Capability forNumber(int value) {
     switch (value) {
-      case 0: return UNKNOWN_CAPABILITY;
+      case 0: return CAPABILITY_UNSPECIFIED;
       case 1: return JVM_ONLY;
       case 2: return KAPT;
       default: return null;

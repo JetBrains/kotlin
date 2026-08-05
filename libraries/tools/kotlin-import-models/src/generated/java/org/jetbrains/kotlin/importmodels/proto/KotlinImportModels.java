@@ -102,14 +102,14 @@ public final class KotlinImportModels {
       "ompile_task_path\030\006 \001(\t\032e\n\nParameters\022W\n\023" +
       "compilation_unit_id\030\001 \001(\0132:.org.jetbrain" +
       "s.kotlin.importmodels.proto.CompilationU" +
-      "nitId*\255\001\n\tErrorType\022\021\n\rUNKNOWN_ERROR\020\000\022\024" +
-      "\n\020UNKNOWN_MODEL_ID\020\001\022\030\n\024UNKNOWN_MODEL_PA" +
-      "RAMS\020\002\022\030\n\024UNSUPPORTED_MODEL_ID\020\003\022\034\n\030UNSU" +
-      "PPORTED_MODEL_PARAMS\020\004\022\022\n\016INTERNAL_ERROR" +
-      "\020\005\022\021\n\rGENERIC_ERROR\020\006*<\n\nCapability\022\026\n\022U" +
-      "NKNOWN_CAPABILITY\020\000\022\014\n\010JVM_ONLY\020\001\022\010\n\004KAP" +
-      "T\020\002*-\n\010Platform\022\030\n\024PLATFORM_UNSPECIFIED\020" +
-      "\000\022\007\n\003JVM\020\001B\002P\001b\010editionsp\350\007"
+      "nitId*\266\001\n\tErrorType\022\032\n\026ERROR_TYPE_UNSPEC" +
+      "IFIED\020\000\022\024\n\020UNKNOWN_MODEL_ID\020\001\022\030\n\024UNKNOWN" +
+      "_MODEL_PARAMS\020\002\022\030\n\024UNSUPPORTED_MODEL_ID\020" +
+      "\003\022\034\n\030UNSUPPORTED_MODEL_PARAMS\020\004\022\022\n\016INTER" +
+      "NAL_ERROR\020\005\022\021\n\rGENERIC_ERROR\020\006*@\n\nCapabi" +
+      "lity\022\032\n\026CAPABILITY_UNSPECIFIED\020\000\022\014\n\010JVM_" +
+      "ONLY\020\001\022\010\n\004KAPT\020\002*-\n\010Platform\022\030\n\024PLATFORM" +
+      "_UNSPECIFIED\020\000\022\007\n\003JVM\020\001B\002P\001b\010editionsp\350\007"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
