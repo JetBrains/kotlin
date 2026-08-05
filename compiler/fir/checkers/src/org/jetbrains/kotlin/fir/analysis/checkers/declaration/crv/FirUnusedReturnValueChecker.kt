@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 
@@ -44,7 +46,7 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
             if (expression.origin == FirFunctionCallOrigin.Operator && resolvedSymbol?.name?.asString() == "set") return
 
             // returnsResultOf/returnsParameter contracts:
-            if (resolvedSymbol != null) {
+            if (resolvedSymbol is FirFunctionSymbol<*>) {
                 // If either of contracts is present, we don't need to report the function itself.
                 // However, they both should work correctly, so no short-cutting.
                 val hasReturnsResultOf = hasContractAndCanBeIgnored(expression, resolvedSymbol, data)
@@ -85,9 +87,13 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
     }
 
     context(context: CheckerContext, visitor: UsageVisitor)
-    private fun hasContractAndCanBeIgnored(functionCall: FirFunctionCall, resolvedSymbol: FirCallableSymbol<*>, data: UsageState): Boolean {
-        val fpIndices = resolvedSymbol.indicesOfPropagatingFunctionalParameters()
-        val functionalArguments = fpIndices.mapNotNull { functionCall.arguments.getOrNull(it) }
+    private fun hasContractAndCanBeIgnored(functionCall: FirFunctionCall, resolvedSymbol: FirFunctionSymbol<*>, data: UsageState): Boolean {
+        val fpSymbols = resolvedSymbol.indicesOfPropagatingFunctionalParameters()
+            .let { resolvedSymbol.declarationIndicesToValueParameters(it) }
+        if (fpSymbols.isEmpty()) return false
+        val resolvedArgumentMapping = functionCall.resolvedArgumentMapping ?: return false
+        val functionalArguments =
+            fpSymbols.mapNotNull { sym -> resolvedArgumentMapping.entries.firstOrNull { [_, param] -> param.symbol == sym }?.key }
         if (functionalArguments.isEmpty()) return false
 
         val functionToReportOn = if (data is UsageState.UsedInReturn) {
@@ -171,14 +177,17 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
 
             val storedIndices = returnsParameterIndices.orEmpty()
             returnsParameterIndices = null
+            val argMapping = functionCall.resolvedArgumentMapping ?: return
+            val resolvedSymbol = (functionCall.toResolvedCallableSymbol() as? FirFunctionSymbol<*>) ?: return
+            val storedValueParams = resolvedSymbol.declarationIndicesToValueParameters(storedIndices)
 
             functionCall.annotations.forEach { it.accept(this, UsageState.Used) }
+            argMapping.entries.forEach { [arg, param] ->
+                arg.accept(this, if (param.symbol in storedValueParams) data else UsageState.Used)
+            }
             // No need to visit dispatchReceiver, extensionReceiver, or contextArguments because they are implicit (or duplicated in explicitReceiver).
             val explicitReceiver = functionCall.explicitReceiver
             explicitReceiver?.accept(this, if (-1 in storedIndices) data else UsageState.Used)
-            functionCall.arguments.forEachIndexed { index, argument ->
-                argument.accept(this, if (index in storedIndices) data else UsageState.Used)
-            }
         }
 
         override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: UsageState) {

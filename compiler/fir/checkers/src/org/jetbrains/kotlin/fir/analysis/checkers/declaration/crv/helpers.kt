@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.mustUseReturnValueStatusComponent
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.functionTypeKind
 import org.jetbrains.kotlin.fir.types.isUnit
@@ -53,3 +54,6 @@ internal fun FirCallableSymbol<*>.indicesOfReturnsParameter(): List<Int> {
 
 internal fun ConeKotlinType.isFunctionalTypeThatReturnsUnit(session: FirSession): Boolean =
     functionTypeKind(session) != null && typeArguments.last().type?.isUnit == true
+
+internal fun FirFunctionSymbol<*>.declarationIndicesToValueParameters(indices: Collection<Int>): List<FirValueParameterSymbol> =
+    indices.mapNotNull { index -> valueParameterSymbols.getOrNull(index) }
