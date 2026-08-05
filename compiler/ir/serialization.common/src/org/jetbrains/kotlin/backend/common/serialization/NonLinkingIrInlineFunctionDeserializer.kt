@@ -80,7 +80,7 @@ class NonLinkingIrInlineFunctionDeserializer(
 
         val functionSignature: IdSignature = signatureComputer.computeSignature(function)
         // Inside the module deserializer "functionSignature" will be mapped to erased copy of inline function and this copy will be returned.
-        val originalFunctionModule = modules.getOrPut(library) { IrModuleFragmentImpl(function.module) }
+        val originalFunctionModule = modules.getOrPut(library) { function.moduleFragment }
         val deserializedFunction: IrSimpleFunction =
             moduleDeserializer.deserializeInlineFunction(functionSignature, function.getPackageFragment(), originalFunctionModule)
                 ?: return null

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -53,8 +52,7 @@ abstract class IrBasedDeclarationDescriptor<T : IrDeclaration>(val owner: T) : D
         }
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    protected fun IrType.toIrBasedKotlinType(): KotlinType = toIrBasedKotlinType(owner.module.builtIns)
+    protected fun IrType.toIrBasedKotlinType(): KotlinType = toIrBasedKotlinType(owner.moduleFragment.descriptor.builtIns)
 
     override fun getContainingDeclaration(): DeclarationDescriptor =
         getContainingDeclaration(owner)
