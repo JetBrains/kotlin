@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
@@ -36,6 +35,8 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.name.Name.special
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
@@ -161,15 +162,13 @@ internal class JsIrLinkerLoader(
 
             val isBuiltIns = current.isJsStdlib || current.isWasmStdlib
 
-            val lookupTracker = LookupTracker.DO_NOTHING
+            val moduleName = special("<${current.uniqueName}>")
+            val moduleOrigin = DeserializedKlibModuleOrigin(current)
+            val md = if (runtimeModule?.builtIns != null)
+                JsFactories.DefaultDescriptorFactory.createDescriptor(moduleName, LockBasedStorageManager.NO_LOCKS, runtimeModule!!.builtIns, moduleOrigin)
+            else
+                JsFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(moduleName, LockBasedStorageManager.NO_LOCKS, moduleOrigin)
 
-            val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-                current,
-                compilerConfiguration.languageVersionSettings,
-                LockBasedStorageManager.NO_LOCKS,
-                runtimeModule?.builtIns,
-                lookupTracker = lookupTracker
-            )
             if (isBuiltIns) runtimeModule = md
 
             descriptors[current] = md
