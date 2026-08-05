@@ -26,6 +26,7 @@ import java.util.Properties
 
 internal class KlibImpl(
     override val path: Path,
+    override val canonicalPath: Path,
     zipFileSystemAccessor: ZipFileSystemAccessor,
     manifestTransformer: KlibManifestTransformer?,
 ) : KotlinLibrary {

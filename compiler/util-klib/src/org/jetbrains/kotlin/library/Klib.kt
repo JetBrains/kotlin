@@ -31,9 +31,17 @@ interface Klib {
      * The [Path] that points to the library location on the file system.
      *
      * This path is exactly the same "raw" path as was supplied by the user in compiler's CLI invocation.
-     * To get the absolute path use an additional [Path.toAbsolutePath] call.
+     * To get the canonical path use [canonicalPath].
      */
     val path: Path
+
+    /**
+     * The canonical [Path] that points to the library location on the file system.
+     *
+     * This is the unique, normalized representation of [path] after resolving any ambiguities.
+     * It does not necessarily match to the "raw" path that was supplied by the user in compiler's CLI invocation.
+     */
+    val canonicalPath: Path
 
     /**
      * Read/write attributes associated with the current instance of [Klib].
