@@ -1,117 +1,71 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+package org.jetbrains.kotlin.js.backend.ast
 
-package org.jetbrains.kotlin.js.backend.ast;
+import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
+import org.jetbrains.kotlin.js.backend.ast.metadata.HasMetadata
+import org.jetbrains.kotlin.js.backend.ast.metadata.HasMetadataImpl
+import org.jetbrains.kotlin.js.util.TextOutputImpl
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor;
-import org.jetbrains.kotlin.js.backend.ast.metadata.HasMetadata;
-import org.jetbrains.kotlin.js.backend.ast.metadata.HasMetadataImpl;
-import org.jetbrains.kotlin.js.util.TextOutputImpl;
+abstract class AbstractNode : JsNode, HasMetadata {
+    private data class Internals(
+        var commentsBefore: MutableList<JsComment>? = null,
+        var commentsAfter: MutableList<JsComment>? = null,
+    ) : HasMetadataImpl()
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+    private var internals: Internals? = null
 
-abstract class AbstractNode implements JsNode, HasMetadata {
-    private static class Internals extends HasMetadataImpl {
-        List<JsComment> commentsBefore = null;
-        List<JsComment> commentsAfter = null;
+    private fun getInternals(): Internals {
+        internals?.let { return it }
+        return Internals().also { internals = it }
     }
 
-    private Internals internals = null;
-
-    private Internals getInternals() {
-        if (internals == null) {
-            internals = new Internals();
-        }
-        return internals;
+    override fun toString(): String {
+        val out = TextOutputImpl()
+        JsToStringGenerationVisitor(out).accept(this)
+        return out.toString()
     }
 
-    @Override
-    public String toString() {
-        TextOutputImpl out = new TextOutputImpl();
-        new JsToStringGenerationVisitor(out).accept(this);
-        return out.toString();
+    @Suppress("UNCHECKED_CAST")
+    fun <T> withMetadataFrom(other: T): T where T : HasMetadata, T : JsNode {
+        this.copyMetadataFrom(other)
+        other.source?.let { source = it }
+        commentsBeforeNode = other.commentsBeforeNode
+        commentsAfterNode = other.commentsAfterNode
+        return this as T
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends HasMetadata & JsNode> T withMetadataFrom(T other) {
-        this.copyMetadataFrom(other);
-        JsLocationWithSource otherSource = other.getSource();
-        if (otherSource != null) {
-            setSource(otherSource);
-        }
-        setCommentsBeforeNode(other.getCommentsBeforeNode());
-        setCommentsAfterNode(other.getCommentsAfterNode());
-        return (T) this;
+    override fun getCommentsBeforeNode(): MutableList<JsComment>? = internals?.commentsBefore
+
+    override fun getCommentsAfterNode(): MutableList<JsComment>? = internals?.commentsAfter
+
+    override fun setCommentsBeforeNode(comments: MutableList<JsComment>?) {
+        getInternals().commentsBefore = comments
     }
 
-    @Override
-    public List<JsComment> getCommentsBeforeNode() {
-        return internals == null ? null : internals.commentsBefore;
+    override fun setCommentsAfterNode(comments: MutableList<JsComment>?) {
+        getInternals().commentsAfter = comments
     }
 
-    @Override
-    public List<JsComment> getCommentsAfterNode() {
-        return internals == null ? null : internals.commentsAfter;
+    override fun <T> getData(key: String): T = getInternals().getData(key)
+
+    override fun <T> setData(key: String, value: T) {
+        getInternals().setData(key, value)
     }
 
-    @Override
-    public void setCommentsBeforeNode(List<JsComment> comments) {
-        getInternals().commentsBefore = comments;
+    override fun hasData(key: String): Boolean = internals?.hasData(key) ?: false
+
+    override fun removeData(key: String) {
+        internals?.removeData(key)
     }
 
-    @Override
-    public void setCommentsAfterNode(List<JsComment> comments) {
-        getInternals().commentsAfter = comments;
-    }
-
-    @Override
-    public <T> T getData(@NotNull String key) {
-        return getInternals().getData(key);
-    }
-
-    @Override
-    public <T> void setData(@NotNull String key, T value) {
-        getInternals().setData(key, value);
-    }
-
-    @Override
-    public boolean hasData(@NotNull String key) {
-        return internals != null && internals.hasData(key);
-    }
-
-    @Override
-    public void removeData(@NotNull String key) {
-        if (internals != null) {
-            internals.removeData(key);
+    override fun copyMetadataFrom(other: HasMetadata) {
+        if (other.getRawMetadata().isNotEmpty()) {
+            getInternals().copyMetadataFrom(other)
         }
     }
 
-    @Override
-    public void copyMetadataFrom(@NotNull HasMetadata other) {
-        if (!other.getRawMetadata().isEmpty()) {
-            getInternals().copyMetadataFrom(other);
-        }
-    }
-
-    @NotNull
-    @Override
-    public Map<String, Object> getRawMetadata() {
-        return internals != null ? internals.getRawMetadata() : Collections.emptyMap();
-    }
+    override fun getRawMetadata(): Map<String, Any?> = internals?.getRawMetadata() ?: emptyMap()
 }
