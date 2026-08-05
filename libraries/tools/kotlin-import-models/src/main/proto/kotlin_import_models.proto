@@ -57,7 +57,6 @@ message BaseModel {
 
 message ProjectModel {
   string id = 1;
-  string project_path = 2;
   repeated CompilationUnitId compilation_unit_ids = 3;
 }
 

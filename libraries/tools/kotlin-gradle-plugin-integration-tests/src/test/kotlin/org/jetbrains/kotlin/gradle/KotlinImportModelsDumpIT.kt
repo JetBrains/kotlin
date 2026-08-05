@@ -65,7 +65,6 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
 
         val project = parseProjectModel(root.resolve("project.json"))
         assertEquals(KotlinImportModelIds.PROJECT_INFORMATION, project.id)
-        assertEquals(":", project.projectPath)
 
         val main = readCompilationUnit(root, "main")
         val test = readCompilationUnit(root, "test")

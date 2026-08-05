@@ -43,7 +43,6 @@ class KotlinImportModelProviderTest {
         val mainId = CompilationUnitId.newBuilder().setValue(":|:|jvm|main").build()
         val testId = CompilationUnitId.newBuilder().setValue(":|:|jvm|test").build()
         assertEquals(KotlinImportModelIds.PROJECT_INFORMATION, firstProjectModel.id)
-        assertEquals(":", firstProjectModel.projectPath)
         assertEquals(listOf(mainId, testId), firstProjectModel.compilationUnitIdsList)
         assertEquals(firstProjectModel.compilationUnitIdsList, secondProjectModel.compilationUnitIdsList)
 

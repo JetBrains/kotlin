@@ -26,7 +26,6 @@ internal class KotlinImportModelProvider(
 
     fun projectInformation(): ProjectModel = ProjectModel.newBuilder()
         .setId(KotlinImportModelIds.PROJECT_INFORMATION)
-        .setProjectPath(project.path)
         .addAllCompilationUnitIds(supportedCompilations().map { compilationUnitId(it.name) })
         .build()
 

@@ -27,23 +27,6 @@ public interface ProjectModelOrBuilder extends
       getIdBytes();
 
   /**
-   * <code>string project_path = 2;</code>
-   * @return Whether the projectPath field is set.
-   */
-  boolean hasProjectPath();
-  /**
-   * <code>string project_path = 2;</code>
-   * @return The projectPath.
-   */
-  java.lang.String getProjectPath();
-  /**
-   * <code>string project_path = 2;</code>
-   * @return The bytes for projectPath.
-   */
-  com.google.protobuf.ByteString
-      getProjectPathBytes();
-
-  /**
    * <code>repeated .org.jetbrains.kotlin.importmodels.proto.CompilationUnitId compilation_unit_ids = 3;</code>
    */
   java.util.List<org.jetbrains.kotlin.importmodels.proto.CompilationUnitId> 

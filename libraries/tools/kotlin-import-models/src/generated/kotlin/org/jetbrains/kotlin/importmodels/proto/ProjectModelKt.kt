@@ -53,30 +53,6 @@ public object ProjectModelKt {
     }
 
     /**
-     * `string project_path = 2;`
-     */
-    public var projectPath: kotlin.String
-      @JvmName("getProjectPath")
-      get() = _builder.projectPath
-      @JvmName("setProjectPath")
-      set(value) {
-        _builder.projectPath = value
-      }
-    /**
-     * `string project_path = 2;`
-     */
-    public fun clearProjectPath() {
-      _builder.clearProjectPath()
-    }
-    /**
-     * `string project_path = 2;`
-     * @return Whether the projectPath field is set.
-     */
-    public fun hasProjectPath(): kotlin.Boolean {
-      return _builder.hasProjectPath()
-    }
-
-    /**
      * An uninstantiable, behaviorless type to represent the field in
      * generics.
      */

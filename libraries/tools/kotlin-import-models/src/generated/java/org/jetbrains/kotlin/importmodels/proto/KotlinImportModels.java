@@ -89,27 +89,27 @@ public final class KotlinImportModels {
       "\030\002 \001(\01320.org.jetbrains.kotlin.importmode" +
       "ls.proto.Version\022I\n\014capabilities\030\003 \003(\01623" +
       ".org.jetbrains.kotlin.importmodels.proto" +
-      ".Capability\"\212\001\n\014ProjectModel\022\n\n\002id\030\001 \001(\t" +
-      "\022\024\n\014project_path\030\002 \001(\t\022X\n\024compilation_un" +
-      "it_ids\030\003 \003(\0132:.org.jetbrains.kotlin.impo" +
-      "rtmodels.proto.CompilationUnitId\"\362\002\n\024Com" +
-      "pilationUnitModel\022\n\n\002id\030\001 \001(\t\022\\\n\nparamet" +
-      "ers\030\002 \001(\0132H.org.jetbrains.kotlin.importm" +
-      "odels.proto.CompilationUnitModel.Paramet" +
-      "ers\022\030\n\020compilation_name\030\003 \001(\t\022C\n\010platfor" +
-      "m\030\004 \001(\01621.org.jetbrains.kotlin.importmod" +
-      "els.proto.Platform\022\017\n\007is_test\030\005 \001(\010\022\031\n\021c" +
-      "ompile_task_path\030\006 \001(\t\032e\n\nParameters\022W\n\023" +
-      "compilation_unit_id\030\001 \001(\0132:.org.jetbrain" +
-      "s.kotlin.importmodels.proto.CompilationU" +
-      "nitId*\266\001\n\tErrorType\022\032\n\026ERROR_TYPE_UNSPEC" +
-      "IFIED\020\000\022\024\n\020UNKNOWN_MODEL_ID\020\001\022\030\n\024UNKNOWN" +
-      "_MODEL_PARAMS\020\002\022\030\n\024UNSUPPORTED_MODEL_ID\020" +
-      "\003\022\034\n\030UNSUPPORTED_MODEL_PARAMS\020\004\022\022\n\016INTER" +
-      "NAL_ERROR\020\005\022\021\n\rGENERIC_ERROR\020\006*@\n\nCapabi" +
-      "lity\022\032\n\026CAPABILITY_UNSPECIFIED\020\000\022\014\n\010JVM_" +
-      "ONLY\020\001\022\010\n\004KAPT\020\002*-\n\010Platform\022\030\n\024PLATFORM" +
-      "_UNSPECIFIED\020\000\022\007\n\003JVM\020\001B\002P\001b\010editionsp\350\007"
+      ".Capability\"t\n\014ProjectModel\022\n\n\002id\030\001 \001(\t\022" +
+      "X\n\024compilation_unit_ids\030\003 \003(\0132:.org.jetb" +
+      "rains.kotlin.importmodels.proto.Compilat" +
+      "ionUnitId\"\362\002\n\024CompilationUnitModel\022\n\n\002id" +
+      "\030\001 \001(\t\022\\\n\nparameters\030\002 \001(\0132H.org.jetbrai" +
+      "ns.kotlin.importmodels.proto.Compilation" +
+      "UnitModel.Parameters\022\030\n\020compilation_name" +
+      "\030\003 \001(\t\022C\n\010platform\030\004 \001(\01621.org.jetbrains" +
+      ".kotlin.importmodels.proto.Platform\022\017\n\007i" +
+      "s_test\030\005 \001(\010\022\031\n\021compile_task_path\030\006 \001(\t\032" +
+      "e\n\nParameters\022W\n\023compilation_unit_id\030\001 \001" +
+      "(\0132:.org.jetbrains.kotlin.importmodels.p" +
+      "roto.CompilationUnitId*\266\001\n\tErrorType\022\032\n\026" +
+      "ERROR_TYPE_UNSPECIFIED\020\000\022\024\n\020UNKNOWN_MODE" +
+      "L_ID\020\001\022\030\n\024UNKNOWN_MODEL_PARAMS\020\002\022\030\n\024UNSU" +
+      "PPORTED_MODEL_ID\020\003\022\034\n\030UNSUPPORTED_MODEL_" +
+      "PARAMS\020\004\022\022\n\016INTERNAL_ERROR\020\005\022\021\n\rGENERIC_" +
+      "ERROR\020\006*@\n\nCapability\022\032\n\026CAPABILITY_UNSP" +
+      "ECIFIED\020\000\022\014\n\010JVM_ONLY\020\001\022\010\n\004KAPT\020\002*-\n\010Pla" +
+      "tform\022\030\n\024PLATFORM_UNSPECIFIED\020\000\022\007\n\003JVM\020\001" +
+      "B\002P\001b\010editionsp\350\007"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -151,7 +151,7 @@ public final class KotlinImportModels {
     internal_static_org_jetbrains_kotlin_importmodels_proto_ProjectModel_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_importmodels_proto_ProjectModel_descriptor,
-        new java.lang.String[] { "Id", "ProjectPath", "CompilationUnitIds", });
+        new java.lang.String[] { "Id", "CompilationUnitIds", });
     internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitModel_descriptor =
       getDescriptor().getMessageTypes().get(6);
     internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitModel_fieldAccessorTable = new

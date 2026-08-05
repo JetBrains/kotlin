@@ -28,7 +28,6 @@ private static final long serialVersionUID = 0L;
   }
   private ProjectModel() {
     id_ = "";
-    projectPath_ = "";
     compilationUnitIds_ = java.util.Collections.emptyList();
   }
 
@@ -93,53 +92,6 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int PROJECT_PATH_FIELD_NUMBER = 2;
-  @SuppressWarnings("serial")
-  private volatile java.lang.Object projectPath_ = "";
-  /**
-   * <code>string project_path = 2;</code>
-   * @return Whether the projectPath field is set.
-   */
-  @java.lang.Override
-  public boolean hasProjectPath() {
-    return ((bitField0_ & 0x00000002) != 0);
-  }
-  /**
-   * <code>string project_path = 2;</code>
-   * @return The projectPath.
-   */
-  @java.lang.Override
-  public java.lang.String getProjectPath() {
-    java.lang.Object ref = projectPath_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      projectPath_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string project_path = 2;</code>
-   * @return The bytes for projectPath.
-   */
-  @java.lang.Override
-  public com.google.protobuf.ByteString
-      getProjectPathBytes() {
-    java.lang.Object ref = projectPath_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      projectPath_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
   public static final int COMPILATION_UNIT_IDS_FIELD_NUMBER = 3;
   @SuppressWarnings("serial")
   private java.util.List<org.jetbrains.kotlin.importmodels.proto.CompilationUnitId> compilationUnitIds_;
@@ -198,9 +150,6 @@ private static final long serialVersionUID = 0L;
     if (((bitField0_ & 0x00000001) != 0)) {
       com.google.protobuf.GeneratedMessage.writeString(output, 1, id_);
     }
-    if (((bitField0_ & 0x00000002) != 0)) {
-      com.google.protobuf.GeneratedMessage.writeString(output, 2, projectPath_);
-    }
     for (int i = 0; i < compilationUnitIds_.size(); i++) {
       output.writeMessage(3, compilationUnitIds_.get(i));
     }
@@ -215,9 +164,6 @@ private static final long serialVersionUID = 0L;
     size = 0;
     if (((bitField0_ & 0x00000001) != 0)) {
       size += com.google.protobuf.GeneratedMessage.computeStringSize(1, id_);
-    }
-    if (((bitField0_ & 0x00000002) != 0)) {
-      size += com.google.protobuf.GeneratedMessage.computeStringSize(2, projectPath_);
     }
     for (int i = 0; i < compilationUnitIds_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
@@ -243,11 +189,6 @@ private static final long serialVersionUID = 0L;
       if (!getId()
           .equals(other.getId())) return false;
     }
-    if (hasProjectPath() != other.hasProjectPath()) return false;
-    if (hasProjectPath()) {
-      if (!getProjectPath()
-          .equals(other.getProjectPath())) return false;
-    }
     if (!getCompilationUnitIdsList()
         .equals(other.getCompilationUnitIdsList())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -264,10 +205,6 @@ private static final long serialVersionUID = 0L;
     if (hasId()) {
       hash = (37 * hash) + ID_FIELD_NUMBER;
       hash = (53 * hash) + getId().hashCode();
-    }
-    if (hasProjectPath()) {
-      hash = (37 * hash) + PROJECT_PATH_FIELD_NUMBER;
-      hash = (53 * hash) + getProjectPath().hashCode();
     }
     if (getCompilationUnitIdsCount() > 0) {
       hash = (37 * hash) + COMPILATION_UNIT_IDS_FIELD_NUMBER;
@@ -405,14 +342,13 @@ private static final long serialVersionUID = 0L;
       super.clear();
       bitField0_ = 0;
       id_ = "";
-      projectPath_ = "";
       if (compilationUnitIdsBuilder_ == null) {
         compilationUnitIds_ = java.util.Collections.emptyList();
       } else {
         compilationUnitIds_ = null;
         compilationUnitIdsBuilder_.clear();
       }
-      bitField0_ = (bitField0_ & ~0x00000004);
+      bitField0_ = (bitField0_ & ~0x00000002);
       return this;
     }
 
@@ -447,9 +383,9 @@ private static final long serialVersionUID = 0L;
 
     private void buildPartialRepeatedFields(org.jetbrains.kotlin.importmodels.proto.ProjectModel result) {
       if (compilationUnitIdsBuilder_ == null) {
-        if (((bitField0_ & 0x00000004) != 0)) {
+        if (((bitField0_ & 0x00000002) != 0)) {
           compilationUnitIds_ = java.util.Collections.unmodifiableList(compilationUnitIds_);
-          bitField0_ = (bitField0_ & ~0x00000004);
+          bitField0_ = (bitField0_ & ~0x00000002);
         }
         result.compilationUnitIds_ = compilationUnitIds_;
       } else {
@@ -463,10 +399,6 @@ private static final long serialVersionUID = 0L;
       if (((from_bitField0_ & 0x00000001) != 0)) {
         result.id_ = id_;
         to_bitField0_ |= 0x00000001;
-      }
-      if (((from_bitField0_ & 0x00000002) != 0)) {
-        result.projectPath_ = projectPath_;
-        to_bitField0_ |= 0x00000002;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -488,16 +420,11 @@ private static final long serialVersionUID = 0L;
         bitField0_ |= 0x00000001;
         onChanged();
       }
-      if (other.hasProjectPath()) {
-        projectPath_ = other.projectPath_;
-        bitField0_ |= 0x00000002;
-        onChanged();
-      }
       if (compilationUnitIdsBuilder_ == null) {
         if (!other.compilationUnitIds_.isEmpty()) {
           if (compilationUnitIds_.isEmpty()) {
             compilationUnitIds_ = other.compilationUnitIds_;
-            bitField0_ = (bitField0_ & ~0x00000004);
+            bitField0_ = (bitField0_ & ~0x00000002);
           } else {
             ensureCompilationUnitIdsIsMutable();
             compilationUnitIds_.addAll(other.compilationUnitIds_);
@@ -510,7 +437,7 @@ private static final long serialVersionUID = 0L;
             compilationUnitIdsBuilder_.dispose();
             compilationUnitIdsBuilder_ = null;
             compilationUnitIds_ = other.compilationUnitIds_;
-            bitField0_ = (bitField0_ & ~0x00000004);
+            bitField0_ = (bitField0_ & ~0x00000002);
             compilationUnitIdsBuilder_ = 
               com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                  getCompilationUnitIdsFieldBuilder() : null;
@@ -550,11 +477,6 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000001;
               break;
             } // case 10
-            case 18: {
-              projectPath_ = input.readStringRequireUtf8();
-              bitField0_ |= 0x00000002;
-              break;
-            } // case 18
             case 26: {
               org.jetbrains.kotlin.importmodels.proto.CompilationUnitId m =
                   input.readMessage(
@@ -664,91 +586,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object projectPath_ = "";
-    /**
-     * <code>string project_path = 2;</code>
-     * @return Whether the projectPath field is set.
-     */
-    public boolean hasProjectPath() {
-      return ((bitField0_ & 0x00000002) != 0);
-    }
-    /**
-     * <code>string project_path = 2;</code>
-     * @return The projectPath.
-     */
-    public java.lang.String getProjectPath() {
-      java.lang.Object ref = projectPath_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        projectPath_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string project_path = 2;</code>
-     * @return The bytes for projectPath.
-     */
-    public com.google.protobuf.ByteString
-        getProjectPathBytes() {
-      java.lang.Object ref = projectPath_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        projectPath_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string project_path = 2;</code>
-     * @param value The projectPath to set.
-     * @return This builder for chaining.
-     */
-    public Builder setProjectPath(
-        java.lang.String value) {
-      if (value == null) { throw new NullPointerException(); }
-      projectPath_ = value;
-      bitField0_ |= 0x00000002;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string project_path = 2;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearProjectPath() {
-      projectPath_ = getDefaultInstance().getProjectPath();
-      bitField0_ = (bitField0_ & ~0x00000002);
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string project_path = 2;</code>
-     * @param value The bytes for projectPath to set.
-     * @return This builder for chaining.
-     */
-    public Builder setProjectPathBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) { throw new NullPointerException(); }
-      checkByteStringIsUtf8(value);
-      projectPath_ = value;
-      bitField0_ |= 0x00000002;
-      onChanged();
-      return this;
-    }
-
     private java.util.List<org.jetbrains.kotlin.importmodels.proto.CompilationUnitId> compilationUnitIds_ =
       java.util.Collections.emptyList();
     private void ensureCompilationUnitIdsIsMutable() {
-      if (!((bitField0_ & 0x00000004) != 0)) {
+      if (!((bitField0_ & 0x00000002) != 0)) {
         compilationUnitIds_ = new java.util.ArrayList<org.jetbrains.kotlin.importmodels.proto.CompilationUnitId>(compilationUnitIds_);
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000002;
        }
     }
 
@@ -898,7 +741,7 @@ private static final long serialVersionUID = 0L;
     public Builder clearCompilationUnitIds() {
       if (compilationUnitIdsBuilder_ == null) {
         compilationUnitIds_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
       } else {
         compilationUnitIdsBuilder_.clear();
@@ -975,7 +818,7 @@ private static final long serialVersionUID = 0L;
         compilationUnitIdsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
             org.jetbrains.kotlin.importmodels.proto.CompilationUnitId, org.jetbrains.kotlin.importmodels.proto.CompilationUnitId.Builder, org.jetbrains.kotlin.importmodels.proto.CompilationUnitIdOrBuilder>(
                 compilationUnitIds_,
-                ((bitField0_ & 0x00000004) != 0),
+                ((bitField0_ & 0x00000002) != 0),
                 getParentForChildren(),
                 isClean());
         compilationUnitIds_ = null;
