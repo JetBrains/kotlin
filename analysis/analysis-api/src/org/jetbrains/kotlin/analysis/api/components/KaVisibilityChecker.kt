@@ -27,7 +27,8 @@ public interface KaVisibilityChecker : KaSessionComponent {
     @KaExperimentalApi
     @Deprecated(
         "Use `createUseSiteVisibilityChecker` instead. It's much more performant for multiple visibility checks on the same use-site",
-        replaceWith = ReplaceWith("createUseSiteVisibilityChecker(useSiteFile, receiverExpression, position).isVisible(candidateSymbol)")
+        replaceWith = ReplaceWith("createUseSiteVisibilityChecker(useSiteFile, receiverExpression, position).isVisible(candidateSymbol)"),
+        level = DeprecationLevel.ERROR,
     )
     public fun isVisible(
         candidateSymbol: KaDeclarationSymbol,

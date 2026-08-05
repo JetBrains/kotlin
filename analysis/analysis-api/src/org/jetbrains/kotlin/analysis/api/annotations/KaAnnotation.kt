@@ -53,7 +53,7 @@ public interface KaAnnotation : KaLifetimeOwner {
      *
      * **Note**: in most cases it is `null` since the compiler drops it during transformations. Use [psi] instead if needed.
      */
-    @Deprecated("Use the underlying `(psi as? KtAnnotationEntry)?.useSiteTarget` instead if needed")
+    @Deprecated("Use the underlying `(psi as? KtAnnotationEntry)?.useSiteTarget` instead if needed", level = DeprecationLevel.ERROR)
     public val useSiteTarget: AnnotationUseSiteTarget?
 
     /**

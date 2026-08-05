@@ -60,7 +60,7 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
     private fun computeContextModule(file: KtFile): KaModule {
         val originalFile = file.copyOrigin
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         originalFile?.virtualFile?.analysisContextModule?.let { return it }
 
         file.contextModule?.let { return it }
@@ -89,7 +89,7 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
 
 @KaPlatformInterface
 @OptIn(KaExperimentalApi::class)
-@Deprecated("Use 'explicitModule' instead.")
+@Deprecated("Use 'explicitModule' instead.", level = DeprecationLevel.ERROR)
 public var KtCodeFragment.forcedSpecialModule: KaDanglingFileModule?
     get() = explicitModule as? KaDanglingFileModule
     set(value) {

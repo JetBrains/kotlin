@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.psi.KtExpression
         "KaVariableAccessCall.Kind",
         imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall"],
     ),
+    level = DeprecationLevel.ERROR,
 )
 public sealed interface KaSimpleVariableAccess {
     /**
@@ -29,9 +30,10 @@ public sealed interface KaSimpleVariableAccess {
             "KaVariableAccessCall.Kind.Read",
             imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall"],
         ),
+        level = DeprecationLevel.ERROR,
     )
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface Read : @Suppress("DEPRECATION") KaSimpleVariableAccess
+    public interface Read : @Suppress("DEPRECATION_ERROR") KaSimpleVariableAccess
 
     /**
      * The [variable access][KaSimpleVariableAccessCall] writes to the variable.
@@ -42,9 +44,10 @@ public sealed interface KaSimpleVariableAccess {
             "KaVariableAccessCall.Kind.Write",
             imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall"],
         ),
+        level = DeprecationLevel.ERROR,
     )
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface Write : @Suppress("DEPRECATION") KaSimpleVariableAccess {
+    public interface Write : @Suppress("DEPRECATION_ERROR") KaSimpleVariableAccess {
         /**
          * A [KtExpression] that represents the new value which is assigned to this variable, or `null` if the assignment is incomplete and
          * lacks the new value.

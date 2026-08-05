@@ -1231,6 +1231,7 @@ public interface KaResolver : KaSessionComponent {
     @Deprecated(
         message = "Use `KtSimpleNameExpression` instead",
         replaceWith = ReplaceWith("(this.element as? KtSimpleNameExpression)?.isImplicitReferenceToCompanion == true"),
+        level = DeprecationLevel.ERROR,
     )
     public fun KtReference.isImplicitReferenceToCompanion(): Boolean
 
@@ -1275,6 +1276,7 @@ public interface KaResolver : KaSessionComponent {
     @Deprecated(
         message = "Use `KtSimpleNameExpression` instead",
         replaceWith = ReplaceWith("(this.element as? KtSimpleNameExpression)?.usesContextSensitiveResolution == true"),
+        level = DeprecationLevel.ERROR,
     )
     @KaExperimentalApi
     public val KtReference.usesContextSensitiveResolution: Boolean
@@ -1302,6 +1304,7 @@ public interface KaResolver : KaSessionComponent {
             "this.contextSensitiveResolutionStatus is KaContextSensitiveResolutionStatus.Used",
             "org.jetbrains.kotlin.analysis.api.resolution.KaContextSensitiveResolutionStatus",
         ),
+        level = DeprecationLevel.ERROR,
     )
     @KaExperimentalApi
     public val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
@@ -3084,10 +3087,11 @@ public fun KtReference.resolveToSymbol(): KaSymbol? {
 @Deprecated(
     message = "Use `KtSimpleNameExpression` instead",
     replaceWith = ReplaceWith("(this.element as? KtSimpleNameExpression)?.isImplicitReferenceToCompanion == true"),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public fun KtReference.isImplicitReferenceToCompanion(): Boolean {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return with(session) {
         isImplicitReferenceToCompanion()
     }
@@ -3145,11 +3149,12 @@ public val KtSimpleNameExpression.isImplicitReferenceToCompanion: Boolean
 @Deprecated(
     message = "Use `KtSimpleNameExpression` instead",
     replaceWith = ReplaceWith("(this.element as? KtSimpleNameExpression)?.usesContextSensitiveResolution == true"),
+    level = DeprecationLevel.ERROR,
 )
 @KaExperimentalApi
 context(session: KaSession)
 public val KtReference.usesContextSensitiveResolution: Boolean
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     get() = with(session) { usesContextSensitiveResolution }
 
 /**
@@ -3175,11 +3180,12 @@ public val KtReference.usesContextSensitiveResolution: Boolean
         "this.contextSensitiveResolutionStatus is KaContextSensitiveResolutionStatus.Used",
         "org.jetbrains.kotlin.analysis.api.resolution.KaContextSensitiveResolutionStatus",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaExperimentalApi
 context(session: KaSession)
 public val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     get() = with(session) { usesContextSensitiveResolution }
 
 /**

@@ -105,7 +105,7 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
     /**
      * The [KaClassLikeSymbol] of the corresponding [functional (SAM) interface](https://kotlinlang.org/docs/fun-interfaces.html).
      */
-    @Deprecated("Use 'functionalInterface' instead", ReplaceWith("functionalInterface"))
+    @Deprecated("Use 'functionalInterface' instead", ReplaceWith("functionalInterface"), level = DeprecationLevel.ERROR)
     public val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
         get() = functionalInterface
 
@@ -599,11 +599,11 @@ public val KaSamConstructorSymbol.functionalInterface: KaClassLikeSymbol
 /**
  * The [KaClassLikeSymbol] of the corresponding [functional (SAM) interface](https://kotlinlang.org/docs/fun-interfaces.html).
  */
-@Deprecated("Use 'functionalInterface' instead", ReplaceWith("functionalInterface"))
+@Deprecated("Use 'functionalInterface' instead", ReplaceWith("functionalInterface"), level = DeprecationLevel.ERROR)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     get() = with(session) { constructedClass }
 
 /**
