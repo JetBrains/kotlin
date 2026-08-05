@@ -351,7 +351,7 @@ projectTests {
     fun wasmProjectTest(
         taskName: String,
         tags: String? = null,
-        skipInLocalBuild: Boolean = false,
+        skipInLocalBuild: Boolean = true,
         body: Test.() -> Unit = {},
     ) {
         testTask(
@@ -403,68 +403,28 @@ projectTests {
     val wasiBoxInlinedTag = "wasmWasiBoxInlined"
     val extraTag = "wasmFirCompilerExtra"
 
-    // Test everything
-    wasmProjectTest("test") {
+    val allTags = listOf(
+        icTag, jsBoxTag, jsBoxInlinedTag, jsSplittingTag,
+        jsMultiModuleTag, wasiBoxTag, wasiBoxInlinedTag, extraTag
+    )
+
+    // Test everything, intended to use locally
+    wasmProjectTest("test", skipInLocalBuild = false) {
         smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
     }
 
     // The nine tasks below split the content of the `test` task into disjoint groups.
     // Tests without any of the group tags are run by the `wasmMiscTest` task.
     // The `wasmFirCompilerExtraTest` task is excluded from aggregate `wasmFirCompilerTest` task.
-    wasmProjectTest(
-        taskName = "wasmFirCompilerExtraTest",
-        tags = extraTag,
-        skipInLocalBuild = true
-    )
-
-    wasmProjectTest(
-        taskName = "wasmJsBoxTest",
-        tags = jsBoxTag,
-        skipInLocalBuild = true
-    )
-
-    wasmProjectTest(
-        taskName = "wasmJsBoxInlinedTest",
-        tags = jsBoxInlinedTag,
-        skipInLocalBuild = true
-    )
-
-    wasmProjectTest(
-        taskName = "wasmJsSplittingTest",
-        tags = jsSplittingTag,
-        skipInLocalBuild = true
-    )
-
-    wasmProjectTest(
-        taskName = "wasmJsMultiModuleTest",
-        tags = jsMultiModuleTag,
-        skipInLocalBuild = true
-    )
-
-    wasmProjectTest(
-        taskName = "wasmWasiBoxTest",
-        tags = wasiBoxTag,
-        skipInLocalBuild = true
-    )
-
-    wasmProjectTest(
-        taskName = "wasmWasiBoxInlinedTest",
-        tags = wasiBoxInlinedTag,
-        skipInLocalBuild = true
-    )
-
-    wasmProjectTest(
-        taskName = "wasmIcTest",
-        tags = "$icTag & !$extraTag",
-        skipInLocalBuild = true
-    )
-
-    wasmProjectTest(
-        taskName = "wasmMiscTest",
-        tags = "!$icTag & !$jsBoxTag & !$jsBoxInlinedTag & !$jsSplittingTag & " +
-                "!$wasiBoxTag & !$wasiBoxInlinedTag & !$jsMultiModuleTag & !$extraTag",
-        skipInLocalBuild = true,
-    )
+    wasmProjectTest("wasmFirCompilerExtraTest", tags = extraTag)
+    wasmProjectTest("wasmJsBoxTest", tags = jsBoxTag)
+    wasmProjectTest("wasmJsBoxInlinedTest", tags = jsBoxInlinedTag)
+    wasmProjectTest("wasmJsSplittingTest", tags = jsSplittingTag)
+    wasmProjectTest("wasmJsMultiModuleTest", tags = jsMultiModuleTag)
+    wasmProjectTest("wasmWasiBoxTest", tags = wasiBoxTag)
+    wasmProjectTest("wasmWasiBoxInlinedTest", tags = wasiBoxInlinedTag)
+    wasmProjectTest("wasmIcTest", tags = "$icTag & !$extraTag")
+    wasmProjectTest("wasmMiscTest", tags = allTags.joinToString(" & ") { "!$it" })
 
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/codegen")
