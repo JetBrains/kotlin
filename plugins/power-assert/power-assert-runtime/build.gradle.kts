@@ -108,6 +108,7 @@ kotlin {
         @Suppress("DEPRECATION") iosX64()
         @Suppress("DEPRECATION") watchosX64()
         @Suppress("DEPRECATION") tvosX64()
+        @Suppress("DEPRECATION") linuxArm32Hfp()
     }
 
     sourceSets {
