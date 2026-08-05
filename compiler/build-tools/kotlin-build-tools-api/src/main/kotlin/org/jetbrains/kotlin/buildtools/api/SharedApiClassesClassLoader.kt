@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.api
 
 import org.jetbrains.kotlin.buildtools.internal.KotlinBuildToolsInternalJdkUtils
 import org.jetbrains.kotlin.buildtools.internal.getJdkClassesClassLoader
+import java.net.URL
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -21,7 +22,7 @@ import kotlin.reflect.KClass
 @JvmName("newInstance")
 public fun SharedApiClassesClassLoader(): ClassLoader = SharedApiClassesClassLoaderImpl(
     SharedApiClassesClassLoaderImpl::class.java.classLoader,
-    SharedApiClassesClassLoaderImpl::class.java.`package`.name,
+    SharedApiClassesClassLoaderImpl::class.java.`package`.name
 )
 
 internal fun <T : Any> loadImplementation(cls: KClass<T>, classLoader: ClassLoader): T {
@@ -43,6 +44,14 @@ private class SharedApiClassesClassLoaderImpl(
             parent.loadClass(name)
         } else {
             super.loadClass(name, resolve)
+        }
+    }
+
+    override fun getResource(name: String): URL? {
+        return if (name.startsWith(allowedPackage.replace(".", "/") + "/")) {
+            parent.getResource(name)
+        } else {
+            super.getResource(name)
         }
     }
 }
