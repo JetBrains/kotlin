@@ -24,7 +24,9 @@ jobs:
       SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
       # Workspace = normal Actions checkout of this repo (kotlin root).
       JUNIE_LIVE_WORKSPACE: ${{ github.workspace }}
-      JUNIE_LIVE_RUN_DIR: ${{ runner.temp }}/junie-live-cli
+      # NOTE: do not use ${{ runner.temp }} here — the runner context is not
+      # available in job-level env. RUNNER_TEMP is exported by the runner itself;
+      # JUNIE_LIVE_RUN_DIR is finalized in the prepare step via GITHUB_ENV.
       COMPOSE_FILE: .junie-live/docker-compose.ci.yaml
 
     steps:
@@ -62,6 +64,11 @@ jobs:
         run: |
           set -euo pipefail
           umask 077
+
+          # runner.temp is unavailable in job-level env; use the runner-provided
+          # RUNNER_TEMP env var and export for later steps (compose volumes, logs).
+          JUNIE_LIVE_RUN_DIR="${RUNNER_TEMP}/junie-live-cli"
+          echo "JUNIE_LIVE_RUN_DIR=${JUNIE_LIVE_RUN_DIR}" >> "$GITHUB_ENV"
 
           mkdir -p "$JUNIE_LIVE_RUN_DIR/out"
 
