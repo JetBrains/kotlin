@@ -81,7 +81,6 @@ internal class BtaImplOptionsGenerator(
 
                 if (parentClass != null) {
                     superclass(parentClass)
-                    addSuperclassConstructorParameter("adapter")
                     if (!generateCompatLayer) {
                         addSuperclassConstructorParameter("argumentValidationErrors")
                         addSuperclassConstructorParameter("restrictedArgViolations")
@@ -104,7 +103,7 @@ internal class BtaImplOptionsGenerator(
                 val argumentTypeNameString =
                     generateArgumentType(apiClassName, includeSinceVersion = false, registerAsKnownArgument = true)
                 val argumentImplTypeName = ClassName(targetPackage, implClassName, argumentTypeNameString)
-                val constructorSpecBuilder = constructorSpecBuilder(argumentTypeNameString)
+                val constructorSpecBuilder = constructorSpecBuilder()
 
                 val mapProperty = generateOptionsMap()
                 generateOwnGetPutFunctions(argumentImplTypeName, mapProperty, level)
@@ -146,7 +145,7 @@ internal class BtaImplOptionsGenerator(
                         addModifiers(KModifier.OVERRIDE)
                         returns(ClassName(targetPackage, implClassName))
                         val constructorArgs =
-                            if (!generateCompatLayer) "adapter, argumentValidationErrors.toSet(), restrictedArgViolations.toList()" else "adapter"
+                            if (!generateCompatLayer) "argumentValidationErrors.toSet(), restrictedArgViolations.toList()" else ""
                         addStatement(
                             "return %T($constructorArgs).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }",
                             ClassName(targetPackage, implClassName)
@@ -207,25 +206,7 @@ internal class BtaImplOptionsGenerator(
         return GeneratorOutputs(ClassName(targetPackage, implClassName), outputs)
     }
 
-    private fun TypeSpec.Builder.constructorSpecBuilder(
-        argumentTypeNameString: String,
-    ): FunSpec.Builder = FunSpec.constructorBuilder().apply {
-        val adapterType = ClassName(targetPackage, "${argumentTypeNameString}ValueAdapter")
-            .copy(nullable = true)
-
-        addParameter(
-            ParameterSpec.builder("adapter", adapterType)
-                .defaultValue("null")
-                .build()
-        )
-
-        addProperty(
-            PropertySpec.builder("adapter", adapterType)
-                .addModifiers(KModifier.PRIVATE)
-                .initializer("adapter")
-                .build()
-        )
-
+    private fun constructorSpecBuilder(): FunSpec.Builder = FunSpec.constructorBuilder().apply {
         if (!generateCompatLayer) {
             addParameter(
                 ParameterSpec.builder("argumentValidationErrors", setTypeNameOf<String>())
@@ -663,7 +644,11 @@ internal class BtaImplOptionsGenerator(
         initializer("%M()", MemberName("kotlin.collections", "mutableMapOf"))
     }
 
-    fun TypeSpec.Builder.generateOwnGetPutFunctions(implParameter: ClassName, mapProperty: PropertySpec, level: KotlinCompilerArgumentsLevel) {
+    fun TypeSpec.Builder.generateOwnGetPutFunctions(
+        implParameter: ClassName,
+        mapProperty: PropertySpec,
+        level: KotlinCompilerArgumentsLevel,
+    ) {
         function("get") {
             val typeParameter = TypeVariableName("V")
             annotation<Suppress> {
@@ -706,7 +691,7 @@ internal class BtaImplOptionsGenerator(
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
             addStatement($$"check(key.id in optionsMap) { \"Argument ${key.id} is not set and has no default value\" }")
-            addStatement("return adapter?.mapFrom(%N[key.id], key) ?: %N[key.id] as %T", mapProperty, mapProperty, typeParameter)
+            addStatement("return %N[key.id] as %T", mapProperty, typeParameter)
         }
         function("set") {
             if (targetPackage == IMPL_ARGUMENTS_PACKAGE) {
@@ -746,7 +731,7 @@ internal class BtaImplOptionsGenerator(
                     .endControlFlow()
                     .build()
             )
-            addStatement("%N[key.id] = adapter?.mapTo(%N, key) ?: %N", mapProperty, "value", "value")
+            addStatement("%N[key.id] = %N", mapProperty, "value")
         }
 
         if (levelsSince[level.name] == KDOC_SINCE_2_3_0) {
