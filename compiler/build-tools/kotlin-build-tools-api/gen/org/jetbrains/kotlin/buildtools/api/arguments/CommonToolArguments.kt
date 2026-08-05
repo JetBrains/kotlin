@@ -95,7 +95,9 @@ public interface CommonToolArguments {
      * Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
      *
      * When compiling with Kotlin compiler 2.4.20 and above, parsing errors are collected on this instance and reported as compilation errors when the compilation is executed.
-     * @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when compiling with Kotlin compiler below 2.4.20 and the `arguments` contain errors and cannot be parsed
+     *
+     * Some arguments are not supported through the Build Tools API. Passing one fails the compilation. A newly restricted argument is warned about first, and the warning names the version from which it will fail.
+     * @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when compiling with Kotlin compiler below 2.4.20 and the `arguments` contain errors and cannot be parsed, or when an unsupported argument has become an error
      *
      * @param arguments a list of arguments for the Kotlin CLI compiler
      */
