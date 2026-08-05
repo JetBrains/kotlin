@@ -8,7 +8,6 @@ package kotlin.script.experimental.jvmhost.jsr223
 import com.google.common.base.Throwables
 import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.currentLineId
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.withMessageCollectorAndDisposable
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -16,6 +15,7 @@ import javax.script.ScriptContext
 import javax.script.ScriptEngineFactory
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.withDefaultsFrom
+import kotlin.script.experimental.jvm.K2ReplEvaluator
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jsr223.base.InvokeWrapper
 import kotlin.script.experimental.jvm.jsr223.base.KOTLIN_SCRIPT_STATE_BINDINGS_KEY
