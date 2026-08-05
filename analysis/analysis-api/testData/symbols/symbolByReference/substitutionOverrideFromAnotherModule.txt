@@ -65,7 +65,7 @@ KaNamedFunctionSymbol:
         type: test/Foo
       typeParameters: []
       visibility: PUBLIC
-      getContainingFileSymbol: null
+      getContainingFileSymbol: KaFileSymbol(derived.kt)
       getContainingJvmClassName: test.ClassWithGenericBase
       getContainingModule: KaSourceModule "Sources of dep"
       deprecation: null
@@ -76,7 +76,7 @@ KaNamedFunctionSymbol:
     annotations: []
     typeArguments: []
     type: test/ClassWithGenericBase
-  getContainingFileSymbol: null
+  getContainingFileSymbol: KaFileSymbol(derived.kt)
   getContainingJvmClassName: test.ClassWithGenericBase
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dep"

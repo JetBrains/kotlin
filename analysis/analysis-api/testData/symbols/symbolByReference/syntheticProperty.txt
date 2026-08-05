@@ -37,7 +37,7 @@ KaSyntheticJavaPropertySymbol:
       annotations: []
       typeArguments: []
       type: Derived
-    getContainingFileSymbol: null
+    getContainingFileSymbol: KaFileSymbol(Derived.kt)
     getContainingJvmClassName: Derived
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
@@ -178,7 +178,7 @@ KaSyntheticJavaPropertySymbol:
       annotations: []
       typeArguments: []
       type: Derived
-    getContainingFileSymbol: null
+    getContainingFileSymbol: KaFileSymbol(Derived.kt)
     getContainingJvmClassName: Derived
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
@@ -190,7 +190,7 @@ KaSyntheticJavaPropertySymbol:
     annotations: []
     typeArguments: []
     type: Derived
-  getContainingFileSymbol: null
+  getContainingFileSymbol: KaFileSymbol(Derived.kt)
   getContainingJvmClassName: Derived
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null

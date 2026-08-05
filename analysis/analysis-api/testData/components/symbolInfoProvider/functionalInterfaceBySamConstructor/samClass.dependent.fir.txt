@@ -182,15 +182,15 @@ CONSTRUCTOR:
         hasFlexibleNullability: false
       typeParameters: []
       visibility: PUBLIC
-      getContainingFileSymbol: null
-      getContainingJvmClassName: null
+      getContainingFileSymbol: KaFileSymbol(samClass.kt)
+      getContainingJvmClassName: SamClassKt
       getContainingModule: KaDanglingFileModule "Temporary file"
       deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
-  getContainingFileSymbol: null
-  getContainingJvmClassName: null
+  getContainingFileSymbol: KaFileSymbol(samClass.kt)
+  getContainingJvmClassName: SamClassKt
   getContainingModule: KaDanglingFileModule "Temporary file"
   deprecation: null
   javaMethodName: null

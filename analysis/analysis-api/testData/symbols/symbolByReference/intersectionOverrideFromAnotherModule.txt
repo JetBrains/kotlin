@@ -37,7 +37,7 @@ KaNamedFunctionSymbol:
     annotations: []
     typeArguments: []
     type: test/C
-  getContainingFileSymbol: null
+  getContainingFileSymbol: KaFileSymbol(derived.kt)
   getContainingJvmClassName: test.C
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dep"
