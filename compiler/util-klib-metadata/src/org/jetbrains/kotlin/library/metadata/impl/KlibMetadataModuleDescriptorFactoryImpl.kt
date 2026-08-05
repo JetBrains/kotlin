@@ -92,7 +92,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             moduleDescriptor, configuration, null, lookupTracker)
     }
 
-    override fun createPackageFragmentProvider(
+    private fun createPackageFragmentProvider(
         library: KotlinLibrary,
         storageManager: StorageManager,
         moduleDescriptor: ModuleDescriptor,
