@@ -5,10 +5,22 @@
 
 package org.jetbrains.kotlin.light.classes.symbol
 
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiField
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiParameter
+import com.intellij.psi.PsiTypeParameter
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 
 /**
  * The internal bridge for utilities sharing.
@@ -31,4 +43,67 @@ interface KaInternalsLightClassBridge {
      */
     context(_: KaSession)
     fun hasMangledNameDueToValueClasses(symbol: KaCallableSymbol): Boolean
+
+    /**
+     * [PsiClass] for [classSymbol] in the context of [KaSession.useSiteModule].
+     * For the proper LC construction, use the endpoints from Analysis API surface.
+     *
+     * @see org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
+     */
+    context(session: KaSession)
+    fun getLightClass(classSymbol: KaClassSymbol): PsiClass?
+
+    /**
+     * [PsiClass] facade for [fileSymbol] in the context of [KaSession.useSiteModule].
+     * For the proper LC construction, use the endpoints from Analysis API surface.
+     *
+     * @see org.jetbrains.kotlin.analysis.api.javaInterop.asFacadePsiClass
+     */
+    context(session: KaSession)
+    fun getLightFacade(fileSymbol: KaFileSymbol): PsiClass?
+
+    /**
+     * [PsiClass] facade for [scriptSymbol] in the context of [KaSession.useSiteModule].
+     * For the proper LC construction, use the endpoints from Analysis API surface.
+     *
+     * @see org.jetbrains.kotlin.analysis.api.javaInterop.asFacadePsiClass
+     */
+    context(session: KaSession)
+    fun getLightFacade(scriptSymbol: KaScriptSymbol): PsiClass?
+
+    /**
+     * [PsiParameter]s for [parameterSymbol] in the context of [KaSession.useSiteModule].
+     * For the proper LC construction, use the endpoints from Analysis API surface.
+     *
+     * @see org.jetbrains.kotlin.analysis.api.javaInterop.asPsiParameters
+     */
+    context(session: KaSession)
+    fun getLightClassParameters(parameterSymbol: KaParameterSymbol): List<PsiParameter>
+
+    /**
+     * [PsiTypeParameter]s for [typeParameterSymbol] in the context of [KaSession.useSiteModule].
+     * For the proper LC construction, use the endpoints from Analysis API surface.
+     *
+     * @see org.jetbrains.kotlin.analysis.api.javaInterop.asPsiTypeParameters
+     */
+    context(session: KaSession)
+    fun getLightClassTypeParameter(typeParameterSymbol: KaTypeParameterSymbol): List<PsiTypeParameter>
+
+    /**
+     * [PsiField]s for [declarationSymbol] in the context of [KaSession.useSiteModule].
+     * For the proper LC construction, use the endpoints from Analysis API surface.
+     *
+     * @see org.jetbrains.kotlin.analysis.api.javaInterop.asPsiField
+     */
+    context(session: KaSession)
+    fun getLightClassBackingField(declarationSymbol: KaSymbol): PsiField?
+
+    /**
+     * [PsiMethod]s for [functionSymbol] in the context of [KaSession.useSiteModule].
+     * For the proper LC construction, use the endpoints from Analysis API surface.
+     *
+     * @see org.jetbrains.kotlin.analysis.api.javaInterop.asPsiMethods
+     */
+    context(session: KaSession)
+    fun getLightClassMethods(functionSymbol: KaFunctionSymbol): List<PsiMethod>
 }
