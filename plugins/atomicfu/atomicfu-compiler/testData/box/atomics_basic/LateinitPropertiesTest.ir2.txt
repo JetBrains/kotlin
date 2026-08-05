@@ -1,0 +1,253 @@
+FILE fqName:<root> fileName:/LateinitPropertiesTest.kt
+  CLASS CLASS name:LateinitPropertiesTest modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.LateinitPropertiesTest
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private
+        annotations:
+          Volatile
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a$volatile> visibility:private modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LateinitPropertiesTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<get-a$volatile>' type=<root>.LateinitPropertiesTest origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-a$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LateinitPropertiesTest'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<set-a$volatile>' type=<root>.LateinitPropertiesTest origin=null
+              value: GET_VAR 'value: kotlin.Int declared in <root>.LateinitPropertiesTest.<set-a$volatile>' type=kotlin.Int origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:head$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:head$volatile type:kotlin.Any? visibility:private
+        annotations:
+          Volatile
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-head$volatile> visibility:private modality:FINAL returnType:kotlin.Any?
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:head$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-head$volatile> (): kotlin.Any? declared in <root>.LateinitPropertiesTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:head$volatile type:kotlin.Any? visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Any? origin=null
+              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<get-head$volatile>' type=<root>.LateinitPropertiesTest origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-head$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:head$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-head$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LateinitPropertiesTest'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:head$volatile type:kotlin.Any? visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<set-head$volatile>' type=<root>.LateinitPropertiesTest origin=null
+              value: GET_VAR 'value: kotlin.Any? declared in <root>.LateinitPropertiesTest.<set-head$volatile>' type=kotlin.Any? origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:dataRef$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:dataRef$volatile type:kotlin.Any? visibility:private
+        annotations:
+          Volatile
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-dataRef$volatile> visibility:private modality:FINAL returnType:kotlin.Any?
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:dataRef$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-dataRef$volatile> (): kotlin.Any? declared in <root>.LateinitPropertiesTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:dataRef$volatile type:kotlin.Any? visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Any? origin=null
+              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<get-dataRef$volatile>' type=<root>.LateinitPropertiesTest origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-dataRef$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:dataRef$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-dataRef$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LateinitPropertiesTest'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:dataRef$volatile type:kotlin.Any? visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<set-dataRef$volatile>' type=<root>.LateinitPropertiesTest origin=null
+              value: GET_VAR 'value: kotlin.Any? declared in <root>.LateinitPropertiesTest.<set-dataRef$volatile>' type=kotlin.Any? origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateIntArr visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:lateIntArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final]
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-lateIntArr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerArray
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateIntArr visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-lateIntArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.LateinitPropertiesTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:lateIntArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final] declared in <root>.LateinitPropertiesTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<get-lateIntArr>' type=<root>.LateinitPropertiesTest origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateRefArr visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:lateRefArr type:java.util.concurrent.atomic.AtomicReferenceArray visibility:private [final]
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-lateRefArr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReferenceArray
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateRefArr visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-lateRefArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.LateinitPropertiesTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:lateRefArr type:java.util.concurrent.atomic.AtomicReferenceArray visibility:private [final] declared in <root>.LateinitPropertiesTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<get-lateRefArr>' type=<root>.LateinitPropertiesTest origin=null
+    ANONYMOUS_INITIALIZER isStatic=false
+      BLOCK_BODY
+        SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
+          receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest' type=<root>.LateinitPropertiesTest origin=IMPLICIT_ARGUMENT
+          value: CONST Int type=kotlin.Int value=0
+        SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:head$volatile type:kotlin.Any? visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
+          receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest' type=<root>.LateinitPropertiesTest origin=IMPLICIT_ARGUMENT
+          value: CONST String type=kotlin.String value="AAA"
+        SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:lateIntArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final] declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
+          receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest' type=<root>.LateinitPropertiesTest origin=IMPLICIT_ARGUMENT
+          value: CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int) declared in java.util.concurrent.atomic.AtomicIntegerArray' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+            ARG length: CONST Int type=kotlin.Int value=55
+        VAR name:data type:<root>.LateinitPropertiesTest.Data [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (n: kotlin.Int) declared in <root>.LateinitPropertiesTest.Data' type=<root>.LateinitPropertiesTest.Data origin=null
+            ARG n: CONST Int type=kotlin.Int value=77
+        SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:dataRef$volatile type:kotlin.Any? visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
+          receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest' type=<root>.LateinitPropertiesTest origin=IMPLICIT_ARGUMENT
+          value: GET_VAR 'val data: <root>.LateinitPropertiesTest.Data declared in <root>.LateinitPropertiesTest' type=<root>.LateinitPropertiesTest.Data origin=null
+        VAR name:size type:kotlin.Int [val]
+          CONST Int type=kotlin.Int value=10
+        SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:lateRefArr type:java.util.concurrent.atomic.AtomicReferenceArray visibility:private [final] declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
+          receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest' type=<root>.LateinitPropertiesTest origin=IMPLICIT_ARGUMENT
+          value: CONSTRUCTOR_CALL 'public constructor <init> <T> (length: kotlin.Int) declared in java.util.concurrent.atomic.AtomicReferenceArray' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+            TYPE_ARG T: <none>
+            ARG length: GET_VAR 'val size: kotlin.Int declared in <root>.LateinitPropertiesTest' type=kotlin.Int origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:a$volatile$FU type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="a$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LateinitPropertiesTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile$FU type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater visibility:private [final,static] declared in <root>.LateinitPropertiesTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:head$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:head$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, vclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG vclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="head$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-head$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReferenceFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:head$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-head$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LateinitPropertiesTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:head$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static] declared in <root>.LateinitPropertiesTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:dataRef$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:dataRef$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, vclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG vclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="dataRef$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-dataRef$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReferenceFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:dataRef$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-dataRef$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LateinitPropertiesTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:dataRef$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static] declared in <root>.LateinitPropertiesTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+    CLASS CLASS name:Data modality:FINAL visibility:private superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.LateinitPropertiesTest.Data
+      PROPERTY name:n visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:n type:kotlin.Int visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'n: kotlin.Int declared in <root>.LateinitPropertiesTest.Data.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-n> visibility:public modality:FINAL returnType:kotlin.Int
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest.Data
+          correspondingProperty: PROPERTY name:n visibility:public modality:FINAL [val]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-n> (): kotlin.Int declared in <root>.LateinitPropertiesTest.Data'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:n type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest.Data declared in <root>.LateinitPropertiesTest.Data.<get-n>' type=<root>.LateinitPropertiesTest.Data origin=null
+      CONSTRUCTOR visibility:public returnType:<root>.LateinitPropertiesTest.Data [primary]
+        VALUE_PARAMETER kind:Regular name:n index:0 type:kotlin.Int
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Data modality:FINAL visibility:private superTypes:[kotlin.Any]' type=kotlin.Unit
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+    CONSTRUCTOR visibility:public returnType:<root>.LateinitPropertiesTest [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LateinitPropertiesTest modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
+      BLOCK_BODY
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=0
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LateinitPropertiesTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+              ARG obj: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.test' type=<root>.LateinitPropertiesTest origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun compareAndSet <T> (obj: kotlin.Any, expect: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Boolean origin=null
+            TYPE_ARG T: <none>
+            ARG <this>: CALL 'private final fun <get-head$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LateinitPropertiesTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+            ARG obj: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.test' type=<root>.LateinitPropertiesTest origin=IMPLICIT_ARGUMENT
+            ARG expect: CONST String type=kotlin.String value="AAA"
+            ARG update: CONST String type=kotlin.String value="BBB"
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.String
+          ARG expected: CONST String type=kotlin.String value="BBB"
+          ARG actual: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+            CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+              TYPE_ARG T: <none>
+              ARG <this>: CALL 'private final fun <get-head$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LateinitPropertiesTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+              ARG obj: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.test' type=<root>.LateinitPropertiesTest origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=0
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-lateIntArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.LateinitPropertiesTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                ARG <this>: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.test' type=<root>.LateinitPropertiesTest origin=IMPLICIT_ARGUMENT
+              ARG i: CONST Int type=kotlin.Int value=35
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=77
+          ARG actual: CALL 'public final fun <get-n> (): kotlin.Int declared in <root>.LateinitPropertiesTest.Data' type=kotlin.Int origin=GET_PROPERTY
+            ARG <this>: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+              CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: CALL 'private final fun <get-dataRef$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LateinitPropertiesTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                ARG obj: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.test' type=<root>.LateinitPropertiesTest origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.String?
+          ARG expected: CONST Null type=kotlin.Nothing? value=null
+          ARG actual: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+            CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Any? origin=null
+              TYPE_ARG T: <none>
+              ARG <this>: CALL 'private final fun <get-lateRefArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.LateinitPropertiesTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+                ARG <this>: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.test' type=<root>.LateinitPropertiesTest origin=IMPLICIT_ARGUMENT
+              ARG i: CONST Int type=kotlin.Int value=5
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:testClass type:<root>.LateinitPropertiesTest [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.LateinitPropertiesTest' type=<root>.LateinitPropertiesTest origin=null
+      CALL 'public final fun test (): kotlin.Unit declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val testClass: <root>.LateinitPropertiesTest declared in <root>.box' type=<root>.LateinitPropertiesTest origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"

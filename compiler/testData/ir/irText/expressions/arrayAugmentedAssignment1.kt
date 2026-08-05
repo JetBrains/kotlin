@@ -1,3 +1,4 @@
+// DUMP_IR
 fun foo(): IntArray = intArrayOf(1, 2, 3)
 fun bar() = 42
 

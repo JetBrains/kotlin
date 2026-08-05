@@ -1,0 +1,201 @@
+--- a/LockFreeLongCounterTest.ir.txt
++++ b/LockFreeLongCounterTest.ir.js_ir.txt
+@@ -1,28 +1,18 @@
+ FILE fqName:<root> fileName:/LockFreeLongCounterTest.kt
+   CLASS CLASS name:LockFreeLongCounter modality:FINAL visibility:public superTypes:[kotlin.Any]
+     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.LockFreeLongCounter
+-    PROPERTY ATOMICFU_GENERATED_PROPERTY name:counter$volatile visibility:private modality:FINAL [var]
+-      FIELD ATOMICFU_GENERATED_FIELD name:counter$volatile type:kotlin.Long visibility:private
+-        annotations:
+-          Volatile
++    PROPERTY name:counter visibility:private modality:FINAL [val]
++      FIELD PROPERTY_BACKING_FIELD name:counter type:kotlinx.atomicfu.AtomicLong visibility:private [final]
+         EXPRESSION_BODY
+-          CONST Long type=kotlin.Long value=0
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-counter$volatile> visibility:private modality:FINAL returnType:kotlin.Long
+-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeLongCounter
+-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:counter$volatile visibility:private modality:FINAL [var]
++          CALL 'public final fun atomic (initial: kotlin.Long): kotlinx.atomicfu.AtomicLong declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicLong origin=null
++            ARG initial: CONST Long type=kotlin.Long value=0
++      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-counter> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicLong
++        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeLongCounter
++        correspondingProperty: PROPERTY name:counter visibility:private modality:FINAL [val]
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-counter$volatile> (): kotlin.Long declared in <root>.LockFreeLongCounter'
+-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:counter$volatile type:kotlin.Long visibility:private declared in <root>.LockFreeLongCounter' type=kotlin.Long origin=null
+-              receiver: GET_VAR '<this>: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounter.<get-counter$volatile>' type=<root>.LockFreeLongCounter origin=null
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-counter$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeLongCounter
+-        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Long
+-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:counter$volatile visibility:private modality:FINAL [var]
+-        BLOCK_BODY
+-          RETURN type=kotlin.Unit from='private final fun <set-counter$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.LockFreeLongCounter'
+-            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:counter$volatile type:kotlin.Long visibility:private declared in <root>.LockFreeLongCounter' type=kotlin.Unit origin=null
+-              receiver: GET_VAR '<this>: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounter.<set-counter$volatile>' type=<root>.LockFreeLongCounter origin=null
+-              value: GET_VAR 'value: kotlin.Long declared in <root>.LockFreeLongCounter.<set-counter$volatile>' type=kotlin.Long origin=null
++          RETURN type=kotlin.Nothing from='private final fun <get-counter> (): kotlinx.atomicfu.AtomicLong declared in <root>.LockFreeLongCounter'
++            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlinx.atomicfu.AtomicLong visibility:private [final]' type=kotlinx.atomicfu.AtomicLong origin=null
++              receiver: GET_VAR '<this>: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounter.<get-counter>' type=<root>.LockFreeLongCounter origin=null
+     CLASS CLASS name:Inner modality:FINAL visibility:private [inner] superTypes:[kotlin.Any]
+       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.LockFreeLongCounter.Inner
+       CONSTRUCTOR visibility:public returnType:<root>.LockFreeLongCounter.Inner [primary]
+@@ -47,11 +37,9 @@
+         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeLongCounter.Inner
+         BLOCK_BODY
+           RETURN type=kotlin.Nothing from='public final fun getFromOuter (): kotlin.Long declared in <root>.LockFreeLongCounter.Inner'
+-            TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
+-                TYPE_ARG T: kotlin.Long
+-                ARG <this>: PROPERTY_REFERENCE 'private final counter$volatile: kotlin.Long declared in <root>.LockFreeLongCounter' field='FIELD ATOMICFU_GENERATED_FIELD name:counter$volatile type:kotlin.Long visibility:private declared in <root>.LockFreeLongCounter' getter='private final fun <get-counter$volatile> (): kotlin.Long declared in <root>.LockFreeLongCounter' setter='private final fun <set-counter$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.LockFreeLongCounter' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+-                  ARG 1: GET_VAR '<this>: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounter' type=<root>.LockFreeLongCounter origin=IMPLICIT_ARGUMENT
++            CALL 'public final fun <get-value> (): kotlin.Long declared in kotlinx.atomicfu.AtomicLong' type=kotlin.Long origin=GET_PROPERTY
++              ARG <this>: CALL 'private final fun <get-counter> (): kotlinx.atomicfu.AtomicLong declared in <root>.LockFreeLongCounter' type=kotlinx.atomicfu.AtomicLong origin=GET_PROPERTY
++                ARG <this>: GET_VAR '<this>: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounter' type=<root>.LockFreeLongCounter origin=IMPLICIT_ARGUMENT
+     CONSTRUCTOR visibility:public returnType:<root>.LockFreeLongCounter [primary]
+       BLOCK_BODY
+         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+@@ -73,20 +61,17 @@
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeLongCounter
+       BLOCK_BODY
+         RETURN type=kotlin.Nothing from='public final fun add2 (): kotlin.Long declared in <root>.LockFreeLongCounter'
+-          CALL 'internal final fun getAndAddField (<this>: kotlin.reflect.KMutableProperty0<kotlin.Long>, delta: kotlin.Long): kotlin.Long declared in kotlin.concurrent' type=kotlin.Long origin=null
+-            ARG <this>: PROPERTY_REFERENCE 'private final counter$volatile: kotlin.Long declared in <root>.LockFreeLongCounter' field='FIELD ATOMICFU_GENERATED_FIELD name:counter$volatile type:kotlin.Long visibility:private declared in <root>.LockFreeLongCounter' getter='private final fun <get-counter$volatile> (): kotlin.Long declared in <root>.LockFreeLongCounter' setter='private final fun <set-counter$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.LockFreeLongCounter' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+-              ARG 1: GET_VAR '<this>: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounter.add2' type=<root>.LockFreeLongCounter origin=IMPLICIT_ARGUMENT
+-            ARG delta: TYPE_OP type=kotlin.Long origin=IMPLICIT_CAST typeOperand=kotlin.Long
+-              CONST Long type=kotlin.Long value=2
++          CALL 'public final fun getAndAdd (delta: kotlin.Long): kotlin.Long declared in kotlinx.atomicfu.AtomicLong' type=kotlin.Long origin=null
++            ARG <this>: CALL 'private final fun <get-counter> (): kotlinx.atomicfu.AtomicLong declared in <root>.LockFreeLongCounter' type=kotlinx.atomicfu.AtomicLong origin=GET_PROPERTY
++              ARG <this>: GET_VAR '<this>: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounter.add2' type=<root>.LockFreeLongCounter origin=IMPLICIT_ARGUMENT
++            ARG delta: CONST Long type=kotlin.Long value=2
+     FUN name:get visibility:public modality:FINAL returnType:kotlin.Long
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeLongCounter
+       BLOCK_BODY
+         RETURN type=kotlin.Nothing from='public final fun get (): kotlin.Long declared in <root>.LockFreeLongCounter'
+-          TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
+-              TYPE_ARG T: kotlin.Long
+-              ARG <this>: PROPERTY_REFERENCE 'private final counter$volatile: kotlin.Long declared in <root>.LockFreeLongCounter' field='FIELD ATOMICFU_GENERATED_FIELD name:counter$volatile type:kotlin.Long visibility:private declared in <root>.LockFreeLongCounter' getter='private final fun <get-counter$volatile> (): kotlin.Long declared in <root>.LockFreeLongCounter' setter='private final fun <set-counter$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.LockFreeLongCounter' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounter.get' type=<root>.LockFreeLongCounter origin=IMPLICIT_ARGUMENT
++          CALL 'public final fun <get-value> (): kotlin.Long declared in kotlinx.atomicfu.AtomicLong' type=kotlin.Long origin=GET_PROPERTY
++            ARG <this>: CALL 'private final fun <get-counter> (): kotlinx.atomicfu.AtomicLong declared in <root>.LockFreeLongCounter' type=kotlinx.atomicfu.AtomicLong origin=GET_PROPERTY
++              ARG <this>: GET_VAR '<this>: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounter.get' type=<root>.LockFreeLongCounter origin=IMPLICIT_ARGUMENT
+     FUN name:getInner visibility:public modality:FINAL returnType:kotlin.Long
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeLongCounter
+       BLOCK_BODY
+@@ -98,21 +83,16 @@
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeLongCounter
+       BLOCK_BODY
+         RETURN type=kotlin.Nothing from='public final fun increment (): kotlin.Long declared in <root>.LockFreeLongCounter'
+-          CALL 'public final fun plus (other: kotlin.Long): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=null
+-            ARG <this>: CALL 'internal final fun getAndAddField (<this>: kotlin.reflect.KMutableProperty0<kotlin.Long>, delta: kotlin.Long): kotlin.Long declared in kotlin.concurrent' type=kotlin.Long origin=null
+-              ARG <this>: PROPERTY_REFERENCE 'private final counter$volatile: kotlin.Long declared in <root>.LockFreeLongCounter' field='FIELD ATOMICFU_GENERATED_FIELD name:counter$volatile type:kotlin.Long visibility:private declared in <root>.LockFreeLongCounter' getter='private final fun <get-counter$volatile> (): kotlin.Long declared in <root>.LockFreeLongCounter' setter='private final fun <set-counter$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.LockFreeLongCounter' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounter.increment' type=<root>.LockFreeLongCounter origin=IMPLICIT_ARGUMENT
+-              ARG delta: TYPE_OP type=kotlin.Long origin=IMPLICIT_CAST typeOperand=kotlin.Long
+-                CONST Long type=kotlin.Long value=1
+-            ARG other: CONST Long type=kotlin.Long value=1
++          CALL 'public final fun incrementAndGet (): kotlin.Long declared in kotlinx.atomicfu.AtomicLong' type=kotlin.Long origin=null
++            ARG <this>: CALL 'private final fun <get-counter> (): kotlinx.atomicfu.AtomicLong declared in <root>.LockFreeLongCounter' type=kotlinx.atomicfu.AtomicLong origin=GET_PROPERTY
++              ARG <this>: GET_VAR '<this>: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounter.increment' type=<root>.LockFreeLongCounter origin=IMPLICIT_ARGUMENT
+     FUN name:setM2 visibility:public modality:FINAL returnType:kotlin.Unit
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeLongCounter
+       BLOCK_BODY
+-        CALL 'internal final fun atomicSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicSetField>, newValue: T of kotlin.concurrent.atomicSetField): kotlin.Unit declared in kotlin.concurrent' type=kotlin.Unit origin=null
+-          TYPE_ARG T: kotlin.Long
+-          ARG <this>: PROPERTY_REFERENCE 'private final counter$volatile: kotlin.Long declared in <root>.LockFreeLongCounter' field='FIELD ATOMICFU_GENERATED_FIELD name:counter$volatile type:kotlin.Long visibility:private declared in <root>.LockFreeLongCounter' getter='private final fun <get-counter$volatile> (): kotlin.Long declared in <root>.LockFreeLongCounter' setter='private final fun <set-counter$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.LockFreeLongCounter' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+-            ARG 1: GET_VAR '<this>: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounter.setM2' type=<root>.LockFreeLongCounter origin=IMPLICIT_ARGUMENT
+-          ARG newValue: CALL 'public final fun unaryMinus (): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=null
++        CALL 'public final fun <set-value> (<set-?>: kotlin.Long): kotlin.Unit declared in kotlinx.atomicfu.AtomicLong' type=kotlin.Unit origin=EQ
++          ARG <this>: CALL 'private final fun <get-counter> (): kotlinx.atomicfu.AtomicLong declared in <root>.LockFreeLongCounter' type=kotlinx.atomicfu.AtomicLong origin=GET_PROPERTY
++            ARG <this>: GET_VAR '<this>: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounter.setM2' type=<root>.LockFreeLongCounter origin=IMPLICIT_ARGUMENT
++          ARG <set-?>: CALL 'public final fun unaryMinus (): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=null
+             ARG <this>: CONST Long type=kotlin.Long value=2
+   CLASS CLASS name:LockFreeLongCounterTest modality:FINAL visibility:public superTypes:[kotlin.Any]
+     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.LockFreeLongCounterTest
+@@ -141,18 +121,18 @@
+         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+           CALL 'public final fun add2 (): kotlin.Long declared in <root>.LockFreeLongCounter' type=kotlin.Long origin=null
+             ARG <this>: GET_VAR 'val c: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounterTest.testAdd2' type=<root>.LockFreeLongCounter origin=null
+-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Long
+-          ARG expected: CONST Long type=kotlin.Long value=2
+-          ARG actual: CALL 'public final fun get (): kotlin.Long declared in <root>.LockFreeLongCounter' type=kotlin.Long origin=null
++          ARG a: CONST Long type=kotlin.Long value=2
++          ARG b: CALL 'public final fun get (): kotlin.Long declared in <root>.LockFreeLongCounter' type=kotlin.Long origin=null
+             ARG <this>: GET_VAR 'val c: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounterTest.testAdd2' type=<root>.LockFreeLongCounter origin=null
+         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+           CALL 'public final fun add2 (): kotlin.Long declared in <root>.LockFreeLongCounter' type=kotlin.Long origin=null
+             ARG <this>: GET_VAR 'val c: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounterTest.testAdd2' type=<root>.LockFreeLongCounter origin=null
+-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Long
+-          ARG expected: CONST Long type=kotlin.Long value=4
+-          ARG actual: CALL 'public final fun get (): kotlin.Long declared in <root>.LockFreeLongCounter' type=kotlin.Long origin=null
++          ARG a: CONST Long type=kotlin.Long value=4
++          ARG b: CALL 'public final fun get (): kotlin.Long declared in <root>.LockFreeLongCounter' type=kotlin.Long origin=null
+             ARG <this>: GET_VAR 'val c: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounterTest.testAdd2' type=<root>.LockFreeLongCounter origin=null
+     FUN name:testBasic visibility:public modality:FINAL returnType:kotlin.Unit
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeLongCounterTest
+@@ -187,11 +167,11 @@
+           CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.LockFreeLongCounter' type=<root>.LockFreeLongCounter origin=null
+         CALL 'public final fun setM2 (): kotlin.Unit declared in <root>.LockFreeLongCounter' type=kotlin.Unit origin=null
+           ARG <this>: GET_VAR 'val c: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounterTest.testSetM2' type=<root>.LockFreeLongCounter origin=null
+-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Long
+-          ARG expected: CALL 'public final fun unaryMinus (): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=null
++          ARG a: CALL 'public final fun unaryMinus (): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=null
+             ARG <this>: CONST Long type=kotlin.Long value=2
+-          ARG actual: CALL 'public final fun get (): kotlin.Long declared in <root>.LockFreeLongCounter' type=kotlin.Long origin=null
++          ARG b: CALL 'public final fun get (): kotlin.Long declared in <root>.LockFreeLongCounter' type=kotlin.Long origin=null
+             ARG <this>: GET_VAR 'val c: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounterTest.testSetM2' type=<root>.LockFreeLongCounter origin=null
+     FUN name:testWith visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeLongCounterTest
+@@ -199,32 +179,32 @@
+       BLOCK_BODY
+         VAR name:c type:<root>.LockFreeLongCounter [val]
+           CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.LockFreeLongCounter' type=<root>.LockFreeLongCounter origin=null
+-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Long
+-          ARG expected: CONST Long type=kotlin.Long value=0
+-          ARG actual: CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Long origin=INVOKE
++          ARG a: CONST Long type=kotlin.Long value=0
++          ARG b: CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Long origin=INVOKE
+             ARG <this>: GET_VAR 'g: @[ExtensionFunctionType] kotlin.Function1<<root>.LockFreeLongCounter, kotlin.Long> declared in <root>.LockFreeLongCounterTest.testWith' type=@[ExtensionFunctionType] kotlin.Function1<<root>.LockFreeLongCounter, kotlin.Long> origin=VARIABLE_AS_FUNCTION
+             ARG p1: GET_VAR 'val c: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounterTest.testWith' type=<root>.LockFreeLongCounter origin=null
+-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Long
+-          ARG expected: CONST Long type=kotlin.Long value=1
+-          ARG actual: CALL 'public final fun increment (): kotlin.Long declared in <root>.LockFreeLongCounter' type=kotlin.Long origin=null
++          ARG a: CONST Long type=kotlin.Long value=1
++          ARG b: CALL 'public final fun increment (): kotlin.Long declared in <root>.LockFreeLongCounter' type=kotlin.Long origin=null
+             ARG <this>: GET_VAR 'val c: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounterTest.testWith' type=<root>.LockFreeLongCounter origin=null
+-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Long
+-          ARG expected: CONST Long type=kotlin.Long value=1
+-          ARG actual: CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Long origin=INVOKE
++          ARG a: CONST Long type=kotlin.Long value=1
++          ARG b: CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Long origin=INVOKE
+             ARG <this>: GET_VAR 'g: @[ExtensionFunctionType] kotlin.Function1<<root>.LockFreeLongCounter, kotlin.Long> declared in <root>.LockFreeLongCounterTest.testWith' type=@[ExtensionFunctionType] kotlin.Function1<<root>.LockFreeLongCounter, kotlin.Long> origin=VARIABLE_AS_FUNCTION
+             ARG p1: GET_VAR 'val c: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounterTest.testWith' type=<root>.LockFreeLongCounter origin=null
+-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Long
+-          ARG expected: CONST Long type=kotlin.Long value=2
+-          ARG actual: CALL 'public final fun increment (): kotlin.Long declared in <root>.LockFreeLongCounter' type=kotlin.Long origin=null
++          ARG a: CONST Long type=kotlin.Long value=2
++          ARG b: CALL 'public final fun increment (): kotlin.Long declared in <root>.LockFreeLongCounter' type=kotlin.Long origin=null
+             ARG <this>: GET_VAR 'val c: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounterTest.testWith' type=<root>.LockFreeLongCounter origin=null
+-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Long
+-          ARG expected: CONST Long type=kotlin.Long value=2
+-          ARG actual: CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Long origin=INVOKE
++          ARG a: CONST Long type=kotlin.Long value=2
++          ARG b: CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Long origin=INVOKE
+             ARG <this>: GET_VAR 'g: @[ExtensionFunctionType] kotlin.Function1<<root>.LockFreeLongCounter, kotlin.Long> declared in <root>.LockFreeLongCounterTest.testWith' type=@[ExtensionFunctionType] kotlin.Function1<<root>.LockFreeLongCounter, kotlin.Long> origin=VARIABLE_AS_FUNCTION
+             ARG p1: GET_VAR 'val c: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounterTest.testWith' type=<root>.LockFreeLongCounter origin=null
+   FUN name:box visibility:public modality:FINAL returnType:kotlin.String

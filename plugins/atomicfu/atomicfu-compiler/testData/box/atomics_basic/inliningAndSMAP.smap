@@ -9,13 +9,13 @@ TestClass
 + 2 inliningAndSMAP.kt
 InliningAndSMAPKt
 *L
-1#1,21:1
-15#2:22
+1#1,23:1
+17#2:24
 *S KotlinDebug
 *F
 + 1 inliningAndSMAP.kt
 TestClass
 *L
-10#1:22
+12#1:24
 *E
 

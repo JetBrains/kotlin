@@ -1,0 +1,102 @@
+--- a/MultiInitTest.ir.txt
++++ b/MultiInitTest.ir.js_ir.txt
+@@ -1,50 +1,30 @@
+ FILE fqName:<root> fileName:/MultiInitTest.kt
+   CLASS CLASS name:MultiInit modality:FINAL visibility:public superTypes:[kotlin.Any]
+     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.MultiInit
+-    PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+-      FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private
+-        annotations:
+-          Volatile
++    PROPERTY name:a visibility:private modality:FINAL [val]
++      FIELD PROPERTY_BACKING_FIELD name:a type:kotlinx.atomicfu.AtomicInt visibility:private [final]
+         EXPRESSION_BODY
+-          CONST Int type=kotlin.Int value=0
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a$volatile> visibility:private modality:FINAL returnType:kotlin.Int
+-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.MultiInit
+-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
++          CALL 'public final fun atomic (initial: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicInt origin=null
++            ARG initial: CONST Int type=kotlin.Int value=0
++      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicInt
++        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MultiInit
++        correspondingProperty: PROPERTY name:a visibility:private modality:FINAL [val]
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.MultiInit'
+-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.MultiInit' type=kotlin.Int origin=null
+-              receiver: GET_VAR '<this>: <root>.MultiInit declared in <root>.MultiInit.<get-a$volatile>' type=<root>.MultiInit origin=null
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-a$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.MultiInit
+-        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+-        BLOCK_BODY
+-          RETURN type=kotlin.Unit from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.MultiInit'
+-            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.MultiInit' type=kotlin.Unit origin=null
+-              receiver: GET_VAR '<this>: <root>.MultiInit declared in <root>.MultiInit.<set-a$volatile>' type=<root>.MultiInit origin=null
+-              value: GET_VAR 'value: kotlin.Int declared in <root>.MultiInit.<set-a$volatile>' type=kotlin.Int origin=null
+-    PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile visibility:private modality:FINAL [var]
+-      FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private
+-        annotations:
+-          Volatile
++          RETURN type=kotlin.Nothing from='private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>.MultiInit'
++            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlinx.atomicfu.AtomicInt visibility:private [final]' type=kotlinx.atomicfu.AtomicInt origin=null
++              receiver: GET_VAR '<this>: <root>.MultiInit declared in <root>.MultiInit.<get-a>' type=<root>.MultiInit origin=null
++    PROPERTY name:b visibility:private modality:FINAL [val]
++      FIELD PROPERTY_BACKING_FIELD name:b type:kotlinx.atomicfu.AtomicInt visibility:private [final]
+         EXPRESSION_BODY
+-          CONST Int type=kotlin.Int value=0
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-b$volatile> visibility:private modality:FINAL returnType:kotlin.Int
+-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.MultiInit
+-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile visibility:private modality:FINAL [var]
++          CALL 'public final fun atomic (initial: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicInt origin=null
++            ARG initial: CONST Int type=kotlin.Int value=0
++      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicInt
++        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MultiInit
++        correspondingProperty: PROPERTY name:b visibility:private modality:FINAL [val]
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-b$volatile> (): kotlin.Int declared in <root>.MultiInit'
+-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private declared in <root>.MultiInit' type=kotlin.Int origin=null
+-              receiver: GET_VAR '<this>: <root>.MultiInit declared in <root>.MultiInit.<get-b$volatile>' type=<root>.MultiInit origin=null
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-b$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.MultiInit
+-        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile visibility:private modality:FINAL [var]
+-        BLOCK_BODY
+-          RETURN type=kotlin.Unit from='private final fun <set-b$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.MultiInit'
+-            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private declared in <root>.MultiInit' type=kotlin.Unit origin=null
+-              receiver: GET_VAR '<this>: <root>.MultiInit declared in <root>.MultiInit.<set-b$volatile>' type=<root>.MultiInit origin=null
+-              value: GET_VAR 'value: kotlin.Int declared in <root>.MultiInit.<set-b$volatile>' type=kotlin.Int origin=null
++          RETURN type=kotlin.Nothing from='private final fun <get-b> (): kotlinx.atomicfu.AtomicInt declared in <root>.MultiInit'
++            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlinx.atomicfu.AtomicInt visibility:private [final]' type=kotlinx.atomicfu.AtomicInt origin=null
++              receiver: GET_VAR '<this>: <root>.MultiInit declared in <root>.MultiInit.<get-b>' type=<root>.MultiInit origin=null
+     CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
+       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.MultiInit.Companion
+       CONSTRUCTOR visibility:private returnType:<root>.MultiInit.Companion [primary]
+@@ -88,22 +68,16 @@
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MultiInit
+       BLOCK_BODY
+         RETURN type=kotlin.Nothing from='public final fun incA (): kotlin.Int declared in <root>.MultiInit'
+-          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+-            ARG <this>: CALL 'internal final fun getAndAddField (<this>: kotlin.reflect.KMutableProperty0<kotlin.Int>, delta: kotlin.Int): kotlin.Int declared in kotlin.concurrent' type=kotlin.Int origin=null
+-              ARG <this>: PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.MultiInit' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.MultiInit' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.MultiInit' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.MultiInit' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.MultiInit declared in <root>.MultiInit.incA' type=<root>.MultiInit origin=IMPLICIT_ARGUMENT
+-              ARG delta: CONST Int type=kotlin.Int value=1
+-            ARG other: CONST Int type=kotlin.Int value=1
++          CALL 'public final fun incrementAndGet (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=null
++            ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>.MultiInit' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
++              ARG <this>: GET_VAR '<this>: <root>.MultiInit declared in <root>.MultiInit.incA' type=<root>.MultiInit origin=IMPLICIT_ARGUMENT
+     FUN name:incB visibility:public modality:FINAL returnType:kotlin.Int
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MultiInit
+       BLOCK_BODY
+         RETURN type=kotlin.Nothing from='public final fun incB (): kotlin.Int declared in <root>.MultiInit'
+-          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+-            ARG <this>: CALL 'internal final fun getAndAddField (<this>: kotlin.reflect.KMutableProperty0<kotlin.Int>, delta: kotlin.Int): kotlin.Int declared in kotlin.concurrent' type=kotlin.Int origin=null
+-              ARG <this>: PROPERTY_REFERENCE 'private final b$volatile: kotlin.Int declared in <root>.MultiInit' field='FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private declared in <root>.MultiInit' getter='private final fun <get-b$volatile> (): kotlin.Int declared in <root>.MultiInit' setter='private final fun <set-b$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.MultiInit' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.MultiInit declared in <root>.MultiInit.incB' type=<root>.MultiInit origin=IMPLICIT_ARGUMENT
+-              ARG delta: CONST Int type=kotlin.Int value=1
+-            ARG other: CONST Int type=kotlin.Int value=1
++          CALL 'public final fun incrementAndGet (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=null
++            ARG <this>: CALL 'private final fun <get-b> (): kotlinx.atomicfu.AtomicInt declared in <root>.MultiInit' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
++              ARG <this>: GET_VAR '<this>: <root>.MultiInit declared in <root>.MultiInit.incB' type=<root>.MultiInit origin=IMPLICIT_ARGUMENT
+   CLASS CLASS name:MultiInitTest modality:FINAL visibility:public superTypes:[kotlin.Any]
+     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.MultiInitTest
+     CONSTRUCTOR visibility:public returnType:<root>.MultiInitTest [primary]
