@@ -23,13 +23,13 @@ import java.time.Duration
 /**
  * LRU cache for [ClassLoader]s by class path.
  */
-public class LruClassLoadersCache private constructor(
+internal class LruClassLoadersCache private constructor(
     private val parentClassLoader: ClassLoader = ClassLoader.getSystemClassLoader(),
     private val logger: KotlinLogger? = null,
     private val cache: Cache<CacheKey, URLClassLoader>,
 ) : ClassLoadersCache, AutoCloseable {
 
-    public constructor(
+    constructor(
         size: Int,
         parentClassLoader: ClassLoader,
         ttl: Duration = Duration.ofHours(1),
@@ -45,9 +45,9 @@ public class LruClassLoadersCache private constructor(
             }.build()
     )
 
-    public fun withLogger(logger: KotlinLogger?): LruClassLoadersCache = LruClassLoadersCache(parentClassLoader, logger, cache)
+    fun withLogger(logger: KotlinLogger?): LruClassLoadersCache = LruClassLoadersCache(parentClassLoader, logger, cache)
 
-    public override fun getForClassPath(files: List<File>): URLClassLoader = getForClassPath(files, parentClassLoader)
+    override fun getForClassPath(files: List<File>): URLClassLoader = getForClassPath(files, parentClassLoader)
 
     private fun getForClassPath(files: List<File>, parent: ClassLoader): URLClassLoader {
         val key = makeKey(files)
@@ -63,7 +63,7 @@ public class LruClassLoadersCache private constructor(
      * Useful when you have internal and external artifacts and internal ones can be references from other internal artefacts only.
      * So you can safely cache [ClassLoader] from external artifacts and use it for internal ones.
      */
-    public fun getForSplitPaths(bottom: List<File>, top: List<File>): ClassLoader {
+    fun getForSplitPaths(bottom: List<File>, top: List<File>): ClassLoader {
         return if (bottom.isEmpty() || top.isEmpty()) {
             getForClassPath(bottom + top)
         } else {
@@ -96,7 +96,7 @@ public class LruClassLoadersCache private constructor(
     private data class CacheKey(val entries: List<ClasspathEntry>)
 
     @OptIn(ExperimentalCompilerApi::class)
-    public fun asPluginsLoader(): PluginsLoader = object : PluginsLoader {
+    fun asPluginsLoader(): PluginsLoader = object : PluginsLoader {
         override fun loadCompilerPluginRegistrars(
             pluginClasspath: Collection<String>,
             parentDisposable: Disposable,
