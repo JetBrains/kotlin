@@ -15,6 +15,7 @@ dependencies {
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
     compileOnly(kotlin("stdlib", coreDepsVersion))
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-jdk-utils"))
+    embedded(project(":compiler:build-tools:kotlin-build-tools-api-backports")) { isTransitive = false }
     embedded(project(":compiler:build-tools:kotlin-build-tools-jdk-utils"))
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)

@@ -13,13 +13,17 @@ import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperat
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataKlibCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmLinkingOperation
-import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain
-import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataKlibCompilationOperation
+import java.io.ByteArrayOutputStream
+import java.net.URL
+import java.net.URLClassLoader
 import java.nio.file.Path
-import kotlin.emptyArray
+import java.security.CodeSource
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * A wrapper class for `KotlinToolchains` to accommodate functionality
@@ -33,8 +37,10 @@ import kotlin.emptyArray
  */
 @Suppress("ClassName")
 internal class KotlinWrapperPre2_5_0(
-    private val base: KotlinToolchains,
-) : KotlinToolchains by base {
+    override val base: KotlinToolchains,
+) : KotlinToolchains by base, KotlinToolchainsWrapper {
+
+    override val implClassloader: ClassLoader by lazy { getImplClassloader() }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : KotlinToolchains.Toolchain> getToolchain(type: Class<T>): T = when (type) {
@@ -64,7 +70,7 @@ internal class KotlinWrapperPre2_5_0(
 
     private abstract class BuildOperationWrapper<R>(val baseOperation: BuildOperation<R>) : BuildOperation<R>
 
-    private class JvmPlatformToolchainWrapper(private val base: JvmPlatformToolchain) : JvmPlatformToolchain by base {
+    private inner class JvmPlatformToolchainWrapper(private val base: JvmPlatformToolchain) : JvmPlatformToolchain by base {
         override fun jvmCompilationOperationBuilder(
             sources: List<Path>,
             destinationDirectory: Path,
@@ -73,7 +79,7 @@ internal class KotlinWrapperPre2_5_0(
         )
     }
 
-    private class JvmCompilationOperationBuilderWrapper(
+    private inner class JvmCompilationOperationBuilderWrapper(
         private val base: JvmCompilationOperation.Builder,
     ) : JvmCompilationOperation.Builder by base {
         override val compilerArguments: JvmCompilerArguments.Builder = JvmCompilerArgumentsBuilderWrapper(base.compilerArguments)
@@ -85,14 +91,14 @@ internal class KotlinWrapperPre2_5_0(
         }
     }
 
-    private class JvmCompilationOperationWrapper(
+    private inner class JvmCompilationOperationWrapper(
         private val base: JvmCompilationOperation,
     ) : JvmCompilationOperation by base, BuildOperationWrapper<CompilationResult>(base) {
 
         override fun toBuilder(): JvmCompilationOperation.Builder = JvmCompilationOperationBuilderWrapper(base.toBuilder())
     }
 
-    internal class JvmCompilerArgumentsBuilderWrapper(
+    internal inner class JvmCompilerArgumentsBuilderWrapper(
         private val base: JvmCompilerArguments.Builder,
     ) : JvmCompilerArguments.Builder by base {
         override fun applyCommandLineArguments(arguments: List<String>) {
@@ -100,7 +106,7 @@ internal class KotlinWrapperPre2_5_0(
         }
     }
 
-    private class JsPlatformToolchainWrapper(private val base: JsPlatformToolchain) : JsPlatformToolchain by base {
+    private inner class JsPlatformToolchainWrapper(private val base: JsPlatformToolchain) : JsPlatformToolchain by base {
         override fun jsKlibCompilationOperationBuilder(sources: List<Path>, destination: Path): JsKlibCompilationOperation.Builder =
             JsKlibCompilationOperationBuilderWrapper(base.jsKlibCompilationOperationBuilder(sources, destination))
 
@@ -108,40 +114,42 @@ internal class KotlinWrapperPre2_5_0(
             JsLinkingOperationBuilderWrapper(base.jsLinkingOperationBuilder(klib, destination))
     }
 
-    private class JsKlibCompilationOperationBuilderWrapper(private val base: JsKlibCompilationOperation.Builder) :
+    private inner class JsKlibCompilationOperationBuilderWrapper(private val base: JsKlibCompilationOperation.Builder) :
         JsKlibCompilationOperation.Builder by base {
         override val compilerArguments: JsCompilerKlibArguments.Builder = JsKlibCompilerArgumentsBuilderWrapper(base.compilerArguments)
         override fun build() = JsKlibCompilationOperationWrapper(base.build())
     }
 
-    private class JsKlibCompilationOperationWrapper(private val base: JsKlibCompilationOperation) : JsKlibCompilationOperation by base,
+    private inner class JsKlibCompilationOperationWrapper(private val base: JsKlibCompilationOperation) :
+        JsKlibCompilationOperation by base,
         BuildOperationWrapper<CompilationResult>(base) {
         override fun toBuilder() = JsKlibCompilationOperationBuilderWrapper(base.toBuilder())
     }
 
-    private class JsKlibCompilerArgumentsBuilderWrapper(private val base: JsCompilerKlibArguments.Builder) :
+    private inner class JsKlibCompilerArgumentsBuilderWrapper(private val base: JsCompilerKlibArguments.Builder) :
         JsCompilerKlibArguments.Builder by base {
         override fun applyCommandLineArguments(arguments: List<String>) = applyCommandLineArgumentsImpl(base, arguments)
     }
 
-    private class JsLinkingOperationBuilderWrapper(private val base: JsLinkingOperation.Builder) : JsLinkingOperation.Builder by base {
+    private inner class JsLinkingOperationBuilderWrapper(private val base: JsLinkingOperation.Builder) :
+        JsLinkingOperation.Builder by base {
         override val compilerArguments: JsCompilerLinkingArguments.Builder =
             JsLinkingCompilerArgumentsBuilderWrapper(base.compilerArguments)
 
         override fun build() = JsLinkingOperationWrapper(base.build())
     }
 
-    private class JsLinkingOperationWrapper(private val base: JsLinkingOperation) : JsLinkingOperation by base,
+    private inner class JsLinkingOperationWrapper(private val base: JsLinkingOperation) : JsLinkingOperation by base,
         BuildOperationWrapper<CompilationResult>(base) {
         override fun toBuilder() = JsLinkingOperationBuilderWrapper(base.toBuilder())
     }
 
-    private class JsLinkingCompilerArgumentsBuilderWrapper(private val base: JsCompilerLinkingArguments.Builder) :
+    private inner class JsLinkingCompilerArgumentsBuilderWrapper(private val base: JsCompilerLinkingArguments.Builder) :
         JsCompilerLinkingArguments.Builder by base {
         override fun applyCommandLineArguments(arguments: List<String>) = applyCommandLineArgumentsImpl(base, arguments)
     }
 
-    private class WasmPlatformToolchainWrapper(private val base: WasmPlatformToolchain) : WasmPlatformToolchain by base {
+    private inner class WasmPlatformToolchainWrapper(private val base: WasmPlatformToolchain) : WasmPlatformToolchain by base {
         override fun wasmKlibCompilationOperationBuilder(sources: List<Path>, destination: Path): WasmKlibCompilationOperation.Builder =
             WasmKlibCompilationOperationBuilderWrapper(base.wasmKlibCompilationOperationBuilder(sources, destination))
 
@@ -149,23 +157,23 @@ internal class KotlinWrapperPre2_5_0(
             WasmLinkingOperationBuilderWrapper(base.wasmLinkingOperationBuilder(klib, destination))
     }
 
-    private class WasmKlibCompilationOperationBuilderWrapper(private val base: WasmKlibCompilationOperation.Builder) :
+    private inner class WasmKlibCompilationOperationBuilderWrapper(private val base: WasmKlibCompilationOperation.Builder) :
         WasmKlibCompilationOperation.Builder by base {
         override val compilerArguments: WasmCompilerKlibArguments.Builder = WasmKlibCompilerArgumentsBuilderWrapper(base.compilerArguments)
         override fun build() = WasmKlibCompilationOperationWrapper(base.build())
     }
 
-    private class WasmKlibCompilationOperationWrapper(private val base: WasmKlibCompilationOperation) :
+    private inner class WasmKlibCompilationOperationWrapper(private val base: WasmKlibCompilationOperation) :
         WasmKlibCompilationOperation by base, BuildOperationWrapper<CompilationResult>(base) {
         override fun toBuilder() = WasmKlibCompilationOperationBuilderWrapper(base.toBuilder())
     }
 
-    private class WasmKlibCompilerArgumentsBuilderWrapper(private val base: WasmCompilerKlibArguments.Builder) :
+    private inner class WasmKlibCompilerArgumentsBuilderWrapper(private val base: WasmCompilerKlibArguments.Builder) :
         WasmCompilerKlibArguments.Builder by base {
         override fun applyCommandLineArguments(arguments: List<String>) = applyCommandLineArgumentsImpl(base, arguments)
     }
 
-    private class WasmLinkingOperationBuilderWrapper(private val base: WasmLinkingOperation.Builder) :
+    private inner class WasmLinkingOperationBuilderWrapper(private val base: WasmLinkingOperation.Builder) :
         WasmLinkingOperation.Builder by base {
         override val compilerArguments: WasmCompilerLinkingArguments.Builder =
             WasmLinkingCompilerArgumentsBuilderWrapper(base.compilerArguments)
@@ -173,17 +181,17 @@ internal class KotlinWrapperPre2_5_0(
         override fun build() = WasmLinkingOperationWrapper(base.build())
     }
 
-    private class WasmLinkingOperationWrapper(private val base: WasmLinkingOperation) : WasmLinkingOperation by base,
+    private inner class WasmLinkingOperationWrapper(private val base: WasmLinkingOperation) : WasmLinkingOperation by base,
         BuildOperationWrapper<CompilationResult>(base) {
         override fun toBuilder() = WasmLinkingOperationBuilderWrapper(base.toBuilder())
     }
 
-    private class WasmLinkingCompilerArgumentsBuilderWrapper(private val base: WasmCompilerLinkingArguments.Builder) :
+    private inner class WasmLinkingCompilerArgumentsBuilderWrapper(private val base: WasmCompilerLinkingArguments.Builder) :
         WasmCompilerLinkingArguments.Builder by base {
         override fun applyCommandLineArguments(arguments: List<String>) = applyCommandLineArgumentsImpl(base, arguments)
     }
 
-    private class KotlinMetadataPlatformToolchainWrapper(private val base: KotlinMetadataPlatformToolchain) :
+    private inner class KotlinMetadataPlatformToolchainWrapper(private val base: KotlinMetadataPlatformToolchain) :
         KotlinMetadataPlatformToolchain by base {
         override fun metadataKlibCompilationOperationBuilder(
             sources: List<Path>,
@@ -192,120 +200,125 @@ internal class KotlinWrapperPre2_5_0(
             KotlinMetadataCompilationOperationBuilderWrapper(base.metadataKlibCompilationOperationBuilder(sources, destination))
     }
 
-    private class KotlinMetadataCompilationOperationBuilderWrapper(private val base: KotlinMetadataKlibCompilationOperation.Builder) :
+    private inner class KotlinMetadataCompilationOperationBuilderWrapper(private val base: KotlinMetadataKlibCompilationOperation.Builder) :
         KotlinMetadataKlibCompilationOperation.Builder by base {
         override val compilerArguments: MetadataArguments.Builder = KotlinMetadataCompilerArgumentsBuilderWrapper(base.compilerArguments)
         override fun build() = KotlinMetadataCompilationOperationWrapper(base.build())
     }
 
-    private class KotlinMetadataCompilationOperationWrapper(private val base: KotlinMetadataKlibCompilationOperation) :
+    private inner class KotlinMetadataCompilationOperationWrapper(private val base: KotlinMetadataKlibCompilationOperation) :
         KotlinMetadataKlibCompilationOperation by base, BuildOperationWrapper<CompilationResult>(base) {
         override fun toBuilder() = KotlinMetadataCompilationOperationBuilderWrapper(base.toBuilder())
     }
 
-    private class KotlinMetadataCompilerArgumentsBuilderWrapper(private val base: MetadataArguments.Builder) :
+    private inner class KotlinMetadataCompilerArgumentsBuilderWrapper(private val base: MetadataArguments.Builder) :
         MetadataArguments.Builder by base {
         override fun applyCommandLineArguments(arguments: List<String>) = applyCommandLineArgumentsImpl(base, arguments)
     }
+
+    private fun applyCommandLineArgumentsImpl(base: CommonCompilerArguments.Builder, arguments: List<String>) {
+        val compilerArgs = base.build().toCompilerArguments()
+        val compilerArgsClass = compilerArgs.javaClass
+        val parseCommandLineArgumentsClass =
+            implClassloader.loadClass("org.jetbrains.kotlin.buildtools.api.internal.backports.ParseCommandLineArgumentsKt")
+
+        fun parseCommandLineArguments(arguments: List<String>, compilerArgs: Any, overrideArguments: Boolean): Any? {
+            return parseCommandLineArgumentsClass.getMethod(
+                "parseCommandLineArguments",
+                List::class.java,
+                compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments"),
+                Boolean::class.java
+            ).invoke(null, arguments, compilerArgs, overrideArguments)
+        }
+
+        fun toArgumentStrings(compilerArgs: Any, shortArgumentKeys: Boolean, compactArgumentValues: Boolean): List<String> {
+            val clazz = compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.compilerRunner.ArgumentsToStrings")
+            val methodName = "toArgumentStrings"
+            val parameterClass = compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments")
+            @Suppress("UNCHECKED_CAST")
+            return (
+                    // >= 2.4.20
+                    clazz.getMethodOrNull(methodName, parameterClass, Boolean::class.java, Boolean::class.java, Boolean::class.java)
+                        ?.invoke(null, compilerArgs, shortArgumentKeys, compactArgumentValues, true)
+                    // < 2.4.20
+                        ?: clazz.getMethod(methodName, parameterClass, Boolean::class.java, Boolean::class.java)
+                            .invoke(null, compilerArgs, shortArgumentKeys, compactArgumentValues)
+                    ) as List<String>
+        }
+
+        // validateArgumentsAllErrors(errors: ArgumentParseErrors?): List<String>
+        fun validateArgumentsAllErrors(errors: Any?): List<String> {
+            @Suppress("UNCHECKED_CAST")
+            return parseCommandLineArgumentsClass.getMethod(
+                "validateArgumentsAllErrors",
+                implClassloader.loadClass("org.jetbrains.kotlin.buildtools.api.internal.backports.ArgumentParseErrors"),
+            ).invoke(null, errors) as List<String>
+        }
+
+        val containsAnyPluginsRelatedArguments = setOf(
+            "-Xplugin", "-P", "-Xcompiler-plugin-order"
+        ).any { prefix -> arguments.any { it == prefix || it.startsWith("$prefix=") } }
+
+        if (!containsAnyPluginsRelatedArguments) {
+            // The caller is not setting any plugin-related arguments, so we need to clear the existing ones to avoid duplication.
+            // If we didn't clear them here, they'd be set in `applyArgumentStrings` below and later _again_ from `this[COMPILER_PLUGINS]`
+            // when running the compilation.
+            compilerArgsClass.getMethod("setPluginClasspaths", Array<String>::class.java).invoke(compilerArgs, emptyArray<String>())
+            compilerArgsClass.getMethod("setPluginOptions", Array<String>::class.java).invoke(compilerArgs, emptyArray<String>())
+            compilerArgsClass.getMethod("setPluginOrderConstraints", Array<String>::class.java).invoke(compilerArgs, emptyArray<String>())
+        }
+
+        val errors = parseCommandLineArguments(arguments, compilerArgs, false)
+
+        //propagate errors
+        findArgumentValidationErrorsSet(base)?.let { argumentValidationErrors ->
+            validateArgumentsAllErrors(errors).forEach { error -> argumentValidationErrors.add(error) }
+        } ?: validateArgumentsAllErrors(errors).firstOrNull()?.let { throw CompilerArgumentsParseException(it) }
+
+        @Suppress("UNCHECKED_CAST") val argumentStrings = toArgumentStrings(
+            compilerArgs,
+            shortArgumentKeys = false,
+
+            compactArgumentValues = true
+        )
+        if (containsAnyPluginsRelatedArguments) {
+            // The caller is overriding at least some plugin-related arguments, so we need to clear the existing ones, as it's
+            // impossible to guess the new COMPILER_PLUGINS value from the arguments (the transformation is not reversible).
+            // Later, inside `applyArgumentStrings` (below), COMPILER_PLUGINS will be set to the "RAW_PLUGIN_ID" value, indicating
+            // that the raw values of compiler related arguments must be considered.
+            try {
+                base[CommonCompilerArguments.COMPILER_PLUGINS] = emptyList()
+            } catch (_: Exception) {
+                // some older compiler versions don't support COMPILER_PLUGINS
+            }
+        }
+        base.applyArgumentStrings(argumentStrings)
+    }
 }
 
-private fun CommonCompilerArguments.Builder.toCompilerArguments(): Any {
+internal fun KotlinToolchainsWrapper.getImplClassloader(): ClassLoader =
+    if (base is KotlinToolchainsWrapper) {
+        (base as KotlinToolchainsWrapper).implClassloader
+    } else {
+        BackportsClassLoader(emptyArray(), base.javaClass.classLoader)
+    }
+
+private fun CommonCompilerArguments.toCompilerArguments(): Any {
     var current: Any = this
     while (true) {
         val arguments =
             // > 2.4.20
-            current::class.java.methods.firstOrNull { it.name == "toCompilerArguments" && it.parameterCount == 0 }?.invoke(current)
+            current::class.java.declaredMethods.singleOrNull { it.name == "toCompilerArguments" && it.parameterCount == 0 }?.invoke(current)
             // < 2.4.20
-                ?: current::class.java.methods.firstOrNull { it.name == "toCompilerArguments" && it.parameterCount == 1 }?.let { method ->
-                    val arguments = method.parameterTypes[0].getDeclaredConstructor().newInstance()
-                    unwrapInvocationTargetException { method.invoke(current, arguments) }
-                    arguments
-                }
+                ?: current::class.java.declaredMethods.singleOrNull { it.name == "toCompilerArguments" && it.parameterCount == 1 }
+                    ?.let { method ->
+                        val arguments = method.parameterTypes[0].getDeclaredConstructor().newInstance()
+                        unwrapInvocationTargetException { method.invoke(current, arguments) }
+                        arguments
+                    }
         if (arguments != null) return arguments
         current = current::class.java.getDeclaredField("base").also { it.isAccessible = true }.get(current)
     }
-}
-
-private fun applyCommandLineArgumentsImpl(base: CommonCompilerArguments.Builder, arguments: List<String>) {
-    val compilerArgs = base.toCompilerArguments()
-    val compilerArgsClass = compilerArgs.javaClass
-    val parseCommandLineArgumentsClass =
-        compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.cli.common.arguments.ParseCommandLineArgumentsKt")
-
-    fun parseCommandLineArguments(arguments: List<String>, compilerArgs: Any, overrideArguments: Boolean) {
-        parseCommandLineArgumentsClass.getMethod(
-            "parseCommandLineArguments",
-            List::class.java,
-            compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments"),
-            Boolean::class.java
-        ).invoke(null, arguments, compilerArgs, overrideArguments)
-    }
-
-    fun toArgumentStrings(compilerArgs: Any, shortArgumentKeys: Boolean, compactArgumentValues: Boolean): List<String> {
-        @Suppress("UNCHECKED_CAST")
-        return compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.compilerRunner.ArgumentsToStrings").getMethod(
-            "toArgumentStrings",
-            compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments"),
-            Boolean::class.javaPrimitiveType,
-            Boolean::class.javaPrimitiveType,
-        ).invoke(null, compilerArgs, shortArgumentKeys, compactArgumentValues) as List<String>
-    }
-
-    // validateArgumentsAllErrors(errors: ArgumentParseErrors?): List<String>
-    fun validateArgumentsAllErrors(errors: Any?): List<String> {
-        @Suppress("UNCHECKED_CAST")
-        return parseCommandLineArgumentsClass.getMethod(
-            "validateArgumentsAllErrors",
-            compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors"),
-        ).invoke(null, errors) as List<String>
-    }
-
-    // validateArguments(errors: ArgumentParseErrors?): String?
-    fun validateArguments(errors: Any?): String? {
-        @Suppress("UNCHECKED_CAST")
-        return parseCommandLineArgumentsClass.getMethod(
-            "validateArguments",
-            compilerArgsClass.classLoader.loadClass("org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors"),
-        ).invoke(null, errors) as String?
-    }
-
-    fun containsAnyPluginsRelatedArguments(arguments: List<String>): Boolean = setOf(
-        "-Xplugin", "-P", "-Xcompiler-plugin-order"
-    ).any { prefix -> arguments.any { it == prefix || it.startsWith("$prefix=") } }
-
-    if (!containsAnyPluginsRelatedArguments(arguments)) {
-        // The caller is not setting any plugin-related arguments, so we need to clear the existing ones to avoid duplication.
-        // If we didn't clear them here, they'd be set in `applyArgumentStrings` below and later _again_ from `this[COMPILER_PLUGINS]`
-        // when running the compilation.
-        compilerArgsClass.getMethod("setPluginClasspaths", Array<String>::class.java).invoke(compilerArgs, emptyArray<String>())
-        compilerArgsClass.getMethod("setPluginOptions", Array<String>::class.java).invoke(compilerArgs, emptyArray<String>())
-        compilerArgsClass.getMethod("setPluginOrderConstraints", Array<String>::class.java).invoke(compilerArgs, emptyArray<String>())
-    }
-
-    parseCommandLineArguments(arguments, compilerArgs, true)
-
-    //propagate errors
-    findArgumentValidationErrorsSet(base)?.let {
-        validateArgumentsAllErrors(findErrors(compilerArgs)).forEach { error -> it.add(error) }
-    } ?: validateArguments(findErrors(compilerArgs))?.let { throw CompilerArgumentsParseException(it) }
-
-    @Suppress("UNCHECKED_CAST") val argumentStrings = toArgumentStrings(
-        compilerArgs,
-        shortArgumentKeys = false,
-        compactArgumentValues = true
-    )
-    if (containsAnyPluginsRelatedArguments(arguments)) {
-        // The caller is overriding at least some plugin-related arguments, so we need to clear the existing ones, as it's
-        // impossible to guess the new COMPILER_PLUGINS value from the arguments (the transformation is not reversible).
-        // Later, inside `applyArgumentStrings` (below), COMPILER_PLUGINS will be set to the "RAW_PLUGIN_ID" value, indicating
-        // that the raw values of compiler related arguments must be considered.
-        try {
-            base[CommonCompilerArguments.COMPILER_PLUGINS] = emptyList()
-        } catch (_: Exception) {
-            // some older compiler versions don't support COMPILER_PLUGINS
-        }
-    }
-    base.applyArgumentStrings(argumentStrings)
 }
 
 private fun findArgumentValidationErrorsSet(current: Any, currentClass: Class<*> = current::class.java): MutableSet<String>? {
@@ -335,5 +348,36 @@ private fun findErrors(current: Any, currentClass: Class<*> = current::class.jav
         }
     } catch (_: Exception) {
         null
+    }
+}
+
+private fun Class<*>.getMethodOrNull(name: String, vararg parameterTypes: Class<*>) = try {
+    getMethod(name, *parameterTypes)
+} catch (_: NoSuchMethodException) {
+    null
+}
+
+private class BackportsClassLoader(urls: Array<URL>, parent: ClassLoader) : URLClassLoader(urls, parent) {
+    private val definedClasses = ConcurrentHashMap<String, Class<*>>()
+
+    override fun loadClass(name: String): Class<*> {
+        return if (name.startsWith("org.jetbrains.kotlin.buildtools.api.internal.backports.")) {
+            definedClasses.computeIfAbsent(name) {
+                val resourceName = name.replace(".", "/") + ".class"
+                val resource = getResourceAsStream(resourceName) ?: error("Can't find resource file $resourceName")
+                val byteArray = ByteArrayOutputStream().apply {
+                    resource.copyTo(this)
+                }.toByteArray()
+                defineClass(
+                    name,
+                    byteArray,
+                    0,
+                    byteArray.size,
+                    null as CodeSource?
+                )
+            }
+        } else {
+            super.loadClass(name)
+        }
     }
 }
