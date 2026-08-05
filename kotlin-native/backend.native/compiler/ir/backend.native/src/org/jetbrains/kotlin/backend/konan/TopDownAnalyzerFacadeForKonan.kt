@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
@@ -53,7 +54,7 @@ internal object TopDownAnalyzerFacadeForKonan {
         builtIns.builtInsModule = module
         val moduleContext = MutableModuleContextImpl(module, projectContext)
 
-        val resolvedModuleDescriptors = nativeFactories.DefaultResolvedDescriptorsFactory.createResolved2(
+        val resolvedModuleDescriptors = KlibResolvedModuleDescriptorsFactoryImpl(nativeFactories.DefaultDeserializedDescriptorFactory).createResolved2(
                 // Note: The order of libraries is not important except for stdlib, which should go the first.
                 libraries = config.resolvedLibraries.getFullList(),
                 storageManager = projectContext.storageManager,
