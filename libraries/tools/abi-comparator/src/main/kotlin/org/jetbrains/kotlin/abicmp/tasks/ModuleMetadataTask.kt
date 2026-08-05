@@ -44,4 +44,4 @@ class ModuleMetadataTask(
 }
 
 @OptIn(UnstableMetadataApi::class)
-private fun ByteArray.toKmModule() = KotlinModuleMetadata.read(this).kmModule
+private fun ByteArray.toKmModule() = KotlinModuleMetadata.readStrict(this).kmModule
