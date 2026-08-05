@@ -122,7 +122,8 @@ private fun CirProvided.Classifier.isLeafWithin(classifiersForTargets: Map<CirEn
 
 internal fun CommonizerSupportLibraryRepository.toModulesProvider(targets: Iterable<CommonizerTarget>) =
     TargetDependent(targets.withAllLeaves()) { target ->
-        buildModulesProvider(this, target)
+        buildModulesProvider(this, target).takeIf { it.moduleInfos.isNotEmpty() }
+            ?: error("No expect classes loaded for $target.")
     }
 
 private fun buildModulesProvider(supportLibraryRepository: Repository, target: CommonizerTarget): ModulesProvider =
