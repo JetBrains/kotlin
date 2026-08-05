@@ -113,12 +113,9 @@ private fun AbstractTestDataModuleTask.wireOptions(peerTaskName: String) {
     jvmArgumentProviders += testTask.jvmArgumentProviders
         .filter { it !is JfrArgumentProvider }
 
-    // IDE integration: mark the task the same way as `Test` so IDEA's test runner picks it up
-    // and forwards `idea.active` to enable IDE integration in `TestDataManagerRunner`.
-    if (project.providers.systemProperty("idea.active").isPresent) {
-        extra["idea.internal.test"] = true
-        systemProperty("idea.active", "true")
-    }
+    markAsIdeaTestTask()
+    // Forward `idea.active` to enable IDE integration in `TestDataManagerRunner`
+    systemProperty("idea.active", project.providers.systemProperty("idea.active").getOrElse("false"))
 
     // Pass project name for unique test IDs when running multiple modules in parallel
     systemProperty(TestDataManagerOption.PROJECT_NAME, project.path)
