@@ -228,7 +228,7 @@ private class KlibLoaderImpl(
 
                 null -> {
                     // Has not been seen yet. Try to load it.
-                    val visitedStatus = loadSingleLibrary(rawPath, validPath)
+                    val visitedStatus = loadSingleLibrary(rawPath, validPath, canonicalPath)
                     visitedCanonicalPaths[canonicalPath] = visitedStatus
 
                     when (visitedStatus) {
@@ -246,13 +246,14 @@ private class KlibLoaderImpl(
         }
     }
 
-    private fun loadSingleLibrary(rawPath: String, validPath: Path): LibraryStatus {
+    private fun loadSingleLibrary(rawPath: String, validPath: Path, canonicalPath: Path): LibraryStatus {
         val library = try {
             // Important: Initialization of a KlibImpl instance always triggers reading and parsing
             // of the manifest file. If the manifest, which is the essential part of KLIB, is not available
             // or is corrupted, an exception is thrown. We immediately treat such library as problematic.
             KlibImpl(
                 path = validPath,
+                canonicalPath = canonicalPath,
                 zipFileSystemAccessor = zipFileSystemAccessor,
                 manifestTransformer = manifestTransformer,
             )
