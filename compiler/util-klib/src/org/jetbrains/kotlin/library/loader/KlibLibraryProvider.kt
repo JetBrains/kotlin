@@ -20,14 +20,18 @@ interface KlibLibraryProvider {
     fun getLibraryPaths(): List<String>
 
     /**
-     * Called for each library after it has been successfully loaded.
+     * Called for each library after it has been successfully loaded, including those libraries which have been
+     * suggested by other providers.
+     *
+     * @param wasLoadedByTheCurrentProvider If [klib] was loaded because 1) it was suggested by this provider via [getLibraryPaths]
+     *   and 2) the current library provider is the first provider that caused [klib] to be loaded.
      */
-    fun postProcessLoadedLibrary(klib: Klib)
+    fun postProcessLoadedLibrary(klib: Klib, wasLoadedByTheCurrentProvider: Boolean)
 }
 
 class DefaultKlibLibraryProvider(libraryPaths: List<String>) : KlibLibraryProvider {
     private val libraryPaths = libraryPaths.toList()
 
     override fun getLibraryPaths() = libraryPaths
-    override fun postProcessLoadedLibrary(klib: Klib) = Unit
+    override fun postProcessLoadedLibrary(klib: Klib, wasLoadedByTheCurrentProvider: Boolean) {}
 }

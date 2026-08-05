@@ -5,18 +5,33 @@
 
 package org.jetbrains.kotlin.konan.library
 
+import org.jetbrains.kotlin.io.listDirectoryEntriesIfDirectoryExists
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.Klib
 import org.jetbrains.kotlin.library.loader.KlibLibraryProvider
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
+import kotlin.io.path.name
+import kotlin.io.path.pathString
 
 /**
  * A component that helps to load libraries from the Kotlin/Native distribution.
  */
 class KlibNativeDistributionLibraryProvider(
-    private val nativeHome: File,
-    init: KlibNativeDistributionLibraryProviderSpec.() -> Unit
+    nativeHome: Path,
+    init: KlibNativeDistributionLibraryProviderSpec.() -> Unit,
 ) : KlibLibraryProvider {
+    constructor(
+        nativeHome: File,
+        init: KlibNativeDistributionLibraryProviderSpec.() -> Unit,
+    ) : this(nativeHome.toPath(), init)
+
+    // Only attempt to resolve the path to a canonical path if the directory exists.
+    // Otherwise, we might end up with a Java IO exception.
+    private val canonicalNativeHome: Path = if (nativeHome.exists()) nativeHome.toRealPath() else nativeHome
+
     private var withStdlib = false
     private var withPlatformLibsForTarget: KonanTarget? = null
 
@@ -34,23 +49,24 @@ class KlibNativeDistributionLibraryProvider(
 
     override fun getLibraryPaths(): List<String> = buildList {
         if (withStdlib) {
-            this += nativeHome.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
+            this += canonicalNativeHome.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
                 .resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
                 .resolve(KONAN_STDLIB_NAME)
-                .path
+                .pathString
         }
 
         withPlatformLibsForTarget?.let { target ->
-            nativeHome.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
+            canonicalNativeHome.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
                 .resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
                 .resolve(target.visibleName)
-                .listFiles()
-                ?.mapNotNullTo(this) { if (it.isDirectory && it.name.startsWith(KONAN_PLATFORM_LIBS_NAME_PREFIX)) it.path else null }
+                .listDirectoryEntriesIfDirectoryExists()
+                .mapNotNullTo(this) { if (it.isDirectory() && it.name.startsWith(KONAN_PLATFORM_LIBS_NAME_PREFIX)) it.pathString else null }
         }
     }
 
-    override fun postProcessLoadedLibrary(klib: Klib) {
-        klib.isImplicitlyLoadedFromKotlinNativeDistribution = true
+    override fun postProcessLoadedLibrary(klib: Klib, wasLoadedByTheCurrentProvider: Boolean) {
+        klib.isFromKotlinNativeDistribution = klib.canonicalPath.startsWith(canonicalNativeHome)
+        klib.isImplicitlyLoadedFromKotlinNativeDistribution = wasLoadedByTheCurrentProvider
     }
 }
 

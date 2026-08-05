@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.manifest
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -59,11 +61,15 @@ class KlibNativeDistributionLibraryProviderTest {
     }
 
     @Test
-    fun `Loading libs with isImplicitlyLoadedFromKotlinNativeDistribution flag`() {
+    fun `isFromKotlinNativeDistribution and isImplicitlyLoadedFromKotlinNativeDistribution flags`() {
         val nativeHome = emulateNativeDistribution(numberOfPlatformLibs = 3)
 
         val customKlib = tempDir.createMockKlib(generateRandomName(10))
 
+        // Load:
+        // - stdlib (implicitly)
+        // - platform libs (implicitly)
+        // - custom lib (explicitly via CLI arg)
         val libraries1 = loadLibs(
             nativeHome = nativeHome,
             loadStdlib = true,
@@ -72,13 +78,25 @@ class KlibNativeDistributionLibraryProviderTest {
         )
         assertEquals(5, libraries1.size)
         for (library in libraries1) {
-            val libraryShouldNotBeMarkedAsImplicitlyLoaded = library.path == customKlib
-            assertEquals(libraryShouldNotBeMarkedAsImplicitlyLoaded, !library.isImplicitlyLoadedFromKotlinNativeDistribution)
+            when (library.path) {
+                customKlib -> {
+                    assertFalse(library.isFromKotlinNativeDistribution)
+                    assertFalse(library.isImplicitlyLoadedFromKotlinNativeDistribution)
+                }
+                else -> {
+                    assertTrue(library.isFromKotlinNativeDistribution)
+                    assertTrue(library.isImplicitlyLoadedFromKotlinNativeDistribution)
+                }
+            }
         }
 
         val stdlib = libraries1.first().path
         val somePlatformLib = libraries1.last().path
 
+        // Load:
+        // - stdlib (explicitly via CLI arg, yet implicit loading is enabled by `loadStdlib = true`)
+        // - platform libs (all implicitly, but 1 lib is loaded explicitly via CLI arg)
+        // - custom lib (explicitly via CLI arg)
         val libraries2 = loadLibs(
             nativeHome = nativeHome,
             loadStdlib = true,
@@ -87,9 +105,47 @@ class KlibNativeDistributionLibraryProviderTest {
         )
         assertEquals(5, libraries2.size)
         for (library in libraries2) {
-            val libraryShouldNotBeMarkedAsImplicitlyLoaded =
-                library.path == customKlib || library.path == stdlib || library.path == somePlatformLib
-            assertEquals(libraryShouldNotBeMarkedAsImplicitlyLoaded, !library.isImplicitlyLoadedFromKotlinNativeDistribution)
+            when (library.path) {
+                customKlib -> {
+                    assertFalse(library.isFromKotlinNativeDistribution)
+                    assertFalse(library.isImplicitlyLoadedFromKotlinNativeDistribution)
+                }
+                stdlib, somePlatformLib -> {
+                    assertTrue(library.isFromKotlinNativeDistribution)
+                    assertFalse(library.isImplicitlyLoadedFromKotlinNativeDistribution)
+                }
+                else -> {
+                    assertTrue(library.isFromKotlinNativeDistribution)
+                    assertTrue(library.isImplicitlyLoadedFromKotlinNativeDistribution)
+                }
+            }
+        }
+
+        // Load:
+        // - stdlib (explicitly via CLI arg, implicit loading is disabled by `loadStdlib = false`)
+        // - 1 platform libs (explicitly via CLI arg, implicit loading is disabled by `loadPlatformLibs = false`)
+        // - custom lib (explicitly via CLI arg)
+        val libraries3 = loadLibs(
+            nativeHome = nativeHome,
+            loadStdlib = false,
+            loadPlatformLibs = false,
+            customLibraryPaths = listOf(customKlib, stdlib, somePlatformLib)
+        )
+        assertEquals(3, libraries3.size)
+        for (library in libraries3) {
+            when (library.path) {
+                customKlib -> {
+                    assertFalse(library.isFromKotlinNativeDistribution)
+                    assertFalse(library.isImplicitlyLoadedFromKotlinNativeDistribution)
+                }
+                stdlib, somePlatformLib -> {
+                    assertTrue(library.isFromKotlinNativeDistribution)
+                    assertFalse(library.isImplicitlyLoadedFromKotlinNativeDistribution)
+                }
+                else -> {
+                    fail("Unexpected library: ${library.path}")
+                }
+            }
         }
     }
 
@@ -101,7 +157,7 @@ class KlibNativeDistributionLibraryProviderTest {
     ): List<KotlinLibrary> {
         val result = KlibLoader {
             libraryProviders(
-                KlibNativeDistributionLibraryProvider(nativeHome.toFile()) {
+                KlibNativeDistributionLibraryProvider(nativeHome) {
                     if (loadStdlib) withStdlib()
                     if (loadPlatformLibs) withPlatformLibs(TEST_TARGET)
                 }
