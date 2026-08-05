@@ -2407,6 +2407,21 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object NonExistentCustomBrowserExecutable : ToolingDiagnosticFactory(
+        predefinedSeverity = ERROR,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(runnerName: String, executable: File) = build {
+            title { "Non-existent custom browser executable" }
+                .description {
+                    "Custom browser executable for runner '$runnerName' does not exist at path: $executable"
+                }
+                .solution {
+                    "Specify a path to an existing browser executable for runner '$runnerName'"
+                }
+        }
+    }
+
     internal object NewJsTestDslNotSupportedForWasmError : ToolingDiagnosticFactory(
         predefinedSeverity = ERROR,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,

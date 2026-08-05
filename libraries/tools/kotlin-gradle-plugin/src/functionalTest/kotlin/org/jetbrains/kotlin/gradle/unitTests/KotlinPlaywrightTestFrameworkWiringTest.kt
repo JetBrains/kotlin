@@ -26,8 +26,9 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrows
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import java.io.File
+import org.junit.jupiter.api.io.TempDir
 import java.net.URI
+import java.nio.file.Path
 import java.time.Duration
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -40,6 +41,9 @@ import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 
 class KotlinPlaywrightTestFrameworkWiringTest {
+
+    @TempDir
+    lateinit var tempDirectory: Path
 
     @Test
     fun `declaring a runner replaces the test framework with playwright`() {
@@ -214,7 +218,9 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         val mockLocation3 = mockLocation()
         val mockLocation4 = mockLocation()
 
-        val customChromeExecutable = File("custom-chrome-executable.txt").absoluteFile
+        val customChromeExecutable = tempDirectory.resolve("custom-chrome-executable").toFile().apply {
+            createNewFile()
+        }
 
         val setup = buildBrowserTestProject {
             testsLocation.set(mockLocation1)
@@ -266,6 +272,7 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         val webkit2Runner = inputs.webkitRunners.get().find { it.name.get() == "webki2" }!!
         assertEquals(mockLocation4, webkit2Runner.testsLocation.get())
     }
+
 }
 
 private class BrowserTestProject(
