@@ -89,6 +89,10 @@ internal abstract class JavaKProperty<out V>(
 
         override val annotations: List<Annotation>
             get() = emptyList()
+
+        @ExperimentalCompanionExtensions
+        override val companionExtensionClass: KClass<*>?
+            get() = null
     }
 
     abstract class Getter<out V> : Accessor<V, V>(), KProperty.Getter<V> {

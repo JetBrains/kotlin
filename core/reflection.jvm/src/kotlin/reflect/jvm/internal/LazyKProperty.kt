@@ -24,6 +24,9 @@ internal abstract class LazyKProperty<out V, out D : KProperty<V>>(computeProper
     override val isConst: Boolean get() = delegate.isConst
     override val annotations: List<Annotation> get() = delegate.annotations
 
+    @ExperimentalCompanionExtensions
+    override val companionExtensionClass: KClass<*>? get() = delegate.companionExtensionClass
+
     override fun equals(other: Any?): Boolean = delegate == other
     override fun hashCode(): Int = delegate.hashCode()
     override fun toString(): String = delegate.toString()

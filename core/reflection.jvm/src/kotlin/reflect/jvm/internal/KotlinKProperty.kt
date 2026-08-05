@@ -63,6 +63,13 @@ internal abstract class KotlinKProperty<out V>(
     override val isLateinit: Boolean get() = kmProperty.isLateinit
     override val isConst: Boolean get() = kmProperty.isConst
 
+    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    @ExperimentalCompanionExtensions
+    override val companionExtensionClass: KClass<*>?
+        get() = (kmProperty.companionExtensionReceiverType?.classifier as KmClassifier.Class?)?.let {
+            container.jClass.safeClassLoader.loadKClass(it.name)
+        }
+
     abstract override val getter: Getter<V>
 
     override val javaField: Field? by lazy(PUBLICATION) {
@@ -151,6 +158,9 @@ internal abstract class KotlinKProperty<out V>(
         override val isSuspend: Boolean get() = false
 
         override val isCompanionBlockMember: Boolean get() = property.isCompanionBlockMember
+
+        @ExperimentalCompanionExtensions
+        override val companionExtensionClass: KClass<*>? get() = property.companionExtensionClass
 
         final override fun shallowCopy(
             container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
