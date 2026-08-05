@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.diagnostics.SerializationErrors
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.testEnvironment
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
@@ -78,7 +79,7 @@ fun KlibLoaderResult.eliminateLibrariesWithDuplicatedUniqueNames(configuration: 
  */
 fun KlibLoaderResult.reportLoadingProblemsIfAny(
     configuration: CompilerConfiguration,
-    allAsErrors: Boolean = false,
+    allAsErrors: Boolean = configuration.testEnvironment,
 ) {
     reportLoadingProblemsIfAny { defaultSeverity, message ->
         val factory = if (allAsErrors) SerializationErrors.KLIB_LOADING_ERROR else when (defaultSeverity) {

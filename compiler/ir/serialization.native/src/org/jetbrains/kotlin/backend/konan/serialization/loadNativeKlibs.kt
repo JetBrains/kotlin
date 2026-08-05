@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.LoadedNativeKlibs
 import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqueNames
 import org.jetbrains.kotlin.backend.common.loadFriendLibraries
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
-import org.jetbrains.kotlin.cli.common.testEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
@@ -63,7 +62,7 @@ fun loadNativeKlibs(
         manifestTransformer(KlibNativeManifestTransformer(nativeTarget))
     }.load()
         .checkForUnknownIrProviders()
-        .apply { reportLoadingProblemsIfAny(configuration, allAsErrors = configuration.testEnvironment) }
+        .apply { reportLoadingProblemsIfAny(configuration) }
         // TODO (KT-76785): Handling of duplicated names is a workaround that needs to be removed in the future.
         .eliminateLibrariesWithDuplicatedUniqueNames(configuration)
 

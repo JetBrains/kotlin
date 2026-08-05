@@ -37,7 +37,7 @@ fun loadWebKlibs(
         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
         configuration.zipFileSystemAccessor?.let { zipFileSystemAccessor(it) }
     }.load()
-        .apply { reportLoadingProblemsIfAny(configuration, allAsErrors = configuration.testEnvironment) }
+        .apply { reportLoadingProblemsIfAny(configuration) }
         // TODO (KT-76785): Handling of duplicated names is a workaround that needs to be removed in the future.
         .eliminateLibrariesWithDuplicatedUniqueNames(configuration)
 
