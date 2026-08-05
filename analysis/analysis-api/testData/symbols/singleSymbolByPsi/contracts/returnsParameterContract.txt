@@ -226,4 +226,5 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: myApply
   importableFqName: myApply
