@@ -38,7 +38,7 @@ fun Ref(content: Function13<Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Co
       val tmp0_group = %composer.cache(false) {
         @Composable
         fun Fn(int1: Int, int2: Int, int3: Int, int4: Int, int5: Int, int6: Int, int7: Int, int8: Int, int9: Int, int10: Int, %composer: Composer?, %changed: Int) {
-          Fn(int1, int2, int3, int4, int5, int6, int7, int8, int9, int10, %composer, 0b1110 and %changed or 0b01110000 and %changed or 0b001110000000 and %changed or 0b0001110000000000 and %changed or 0b1110000000000000 and %changed or 0b01110000000000000000 and %changed or 0b001110000000000000000000 and %changed or 0b0001110000000000000000000000 and %changed or 0b1110000000000000000000000000 and %changed or 0b01110000000000000000000000000000 and %changed, 0)
+          return Fn(int1, int2, int3, int4, int5, int6, int7, int8, int9, int10, %composer, 0b1110 and %changed or 0b01110000 and %changed or 0b001110000000 and %changed or 0b0001110000000000 and %changed or 0b1110000000000000 and %changed or 0b01110000000000000000 and %changed or 0b001110000000000000000000 and %changed or 0b0001110000000000000000000000 and %changed or 0b1110000000000000000000000000 and %changed or 0b01110000000000000000000000000000 and %changed, 0)
         }
         ::Fn
       }
