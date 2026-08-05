@@ -3,13 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.script.experimental.jvmhost.jsr223
+package kotlin.script.experimental.jvm.jsr223
 
-import org.jetbrains.kotlin.name.Name
 import javax.script.ScriptContext
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.impl._isSyntheticSnippet
+import kotlin.script.experimental.jvm.jsr223.base.KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY
+import kotlin.script.experimental.jvm.jsr223.base.KOTLIN_SCRIPT_STATE_BINDINGS_KEY
 import kotlin.script.experimental.util.PropertiesCollection
 import kotlin.script.templates.standard.ScriptTemplateWithBindings
 
@@ -20,8 +21,8 @@ private const val SYNTHETIC_SNIPPET_PREFIX = "\$\$synthetic_jsr223_"
 
 // Engine-internal binding keys that must not be exposed as snippet properties.
 private val ENGINE_INTERNAL_BINDING_KEYS = setOf(
-    "kotlin.script.state",
-    "kotlin.script.engine",
+    KOTLIN_SCRIPT_STATE_BINDINGS_KEY,
+    KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY,
 )
 
 /**
@@ -105,6 +106,15 @@ private fun encodeBindingNameToKotlinIdentifier(name: String): String? =
     }
 
 /**
+ * Returns true if [name] is a valid JVM unqualified name, i.e. non-empty, not a special (`<...>`) name
+ * and containing none of the ASCII characters the JVM spec (4.2.2) forbids in a member name. A plain
+ * copy of `org.jetbrains.kotlin.name.Name.isValidIdentifier`, kept here so that this module does not
+ * need to depend on the compiler's name utilities.
+ */
+private fun isValidJvmUnqualifiedName(name: String): Boolean =
+    name.isNotEmpty() && !name.startsWith("<") && name.none { it == '.' || it == ';' || it == '[' || it == '/' }
+
+/**
  * Returns true if [qualifiedName] is a dot-separated chain of identifiers that the Kotlin parser
  * will accept as a type reference. Filters out synthetic / anonymous class names produced for
  * indy lambdas (e.g. `Foo$$Lambda$1`, `MyKt$f$lambda$1`, names containing `/` or `<`) which
@@ -112,7 +122,7 @@ private fun encodeBindingNameToKotlinIdentifier(name: String): String? =
  */
 private fun isParseableKotlinQualifiedName(qualifiedName: String): Boolean {
     if (qualifiedName.isEmpty()) return false
-    return qualifiedName.split('.').all { Name.isValidIdentifier(it) }
+    return qualifiedName.split('.').all { isValidJvmUnqualifiedName(it) }
 }
 
 /** Escapes a string for embedding inside a Kotlin regular string literal ("..."). */

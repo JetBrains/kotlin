@@ -17,34 +17,15 @@
 package kotlin.script.experimental.jvmhost.jsr223.base
 
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import javax.script.ScriptEngine
-import javax.script.ScriptEngineFactory
+import kotlin.script.experimental.jvm.jsr223.base.KotlinJsr223ScriptEngineFactoryBase
 
-abstract class KotlinJsr223JvmScriptEngineFactoryBase : ScriptEngineFactory {
+/**
+ * A [KotlinJsr223ScriptEngineFactoryBase] that reports the bundled Kotlin compiler's version -- the
+ * only part of the JSR-223 factory boilerplate that requires the compiler on the classpath, and
+ * hence the only part that is not in the `kotlin-scripting-jvm` artifact.
+ */
+abstract class KotlinJsr223JvmScriptEngineFactoryBase : KotlinJsr223ScriptEngineFactoryBase() {
 
-    override fun getLanguageName(): String = "kotlin"
     override fun getLanguageVersion(): String = KotlinCompilerVersion.VERSION
-    override fun getEngineName(): String = "kotlin"
     override fun getEngineVersion(): String = KotlinCompilerVersion.VERSION
-    override fun getExtensions(): List<String> = listOf("kts")
-    override fun getMimeTypes(): List<String> = listOf("text/x-kotlin")
-    override fun getNames(): List<String> = listOf("kotlin")
-
-    override fun getOutputStatement(toDisplay: String?): String = "print(\"$toDisplay\")"
-    override fun getMethodCallSyntax(obj: String, m: String, vararg args: String): String = "$obj.$m(${args.joinToString()})"
-
-    override fun getProgram(vararg statements: String): String {
-        val sep = System.getProperty("line.separator")
-        return statements.joinToString(sep) + sep
-    }
-
-    override fun getParameter(key: String?): Any? =
-            when (key) {
-                ScriptEngine.NAME -> engineName
-                ScriptEngine.LANGUAGE -> languageName
-                ScriptEngine.LANGUAGE_VERSION -> languageVersion
-                ScriptEngine.ENGINE -> engineName
-                ScriptEngine.ENGINE_VERSION -> engineVersion
-                else -> null
-            }
 }
