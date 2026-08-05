@@ -27,9 +27,11 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -166,27 +168,28 @@ internal class ComposableTypeTransformer(
         // case, we want to update those calls as well.
         if (
             containingClass != null &&
-            ownerFn.origin == IrDeclarationOrigin.FAKE_OVERRIDE && (
-                    // Fake override refers to composable if container is synthetic composable (K2)
-                    // or function type is composable (K1)
-                    containingClass.defaultType.isSyntheticComposableFunction() || (
-                            containingClass.defaultType.isFunction() &&
-                                    expression.dispatchReceiver?.type?.hasComposableAnnotation() == true
-                            )
-                    )
+            containingClass.isComposableFunction()
         ) {
-            val newFn = containingClass.invokeFunctionNForComposable(context, ownerFn)
+            val newFn = containingClass.matchingFunctionNForComposable(
+                context,
+                ownerFn,
+                isKFunction = containingClass.defaultType.isKComposableFunction()
+            )
             return super.visitCall(
                 IrCallImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    expression.type,
-                    newFn.symbol,
-                    expression.typeArguments.size,
-                    expression.origin,
-                    expression.superQualifierSymbol,
+                    startOffset = expression.startOffset,
+                    endOffset = expression.endOffset,
+                    type = expression.type,
+                    symbol = newFn.symbol,
+                    typeArgumentsCount = newFn.typeParameters.size,
+                    origin = expression.origin,
+                    superQualifierSymbol = expression.superQualifierSymbol,
                 ).apply {
                     copyTypeAndValueArgumentsFrom(expression)
+                    // pad new expression to ensure changed parameter slots are present
+                    while (arguments.size < newFn.parameters.size) {
+                        arguments.add(null)
+                    }
                 }
             )
         }
@@ -289,35 +292,43 @@ internal class ComposableTypeTransformer(
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        (expression.symbol.owner as? IrSimpleFunction)?.let { fn ->
-            if (fn.parentClassOrNull?.defaultType?.isSyntheticComposableFunction() == true && fn.isInvoke()) {
-                expression.symbol = fn.lambdaInvokeWithComposerParam(context).symbol
-            }
-        }
-        expression.reflectionTarget = expression.reflectionTarget?.let { targetSymbol ->
-            val containingClass = targetSymbol.owner.parentClassOrNull
-            val ownerFn = targetSymbol.owner
-            if (
-                ownerFn is IrSimpleFunction &&
-                    containingClass != null &&
-                    containingClass.defaultType.isSyntheticComposableFunction()
-            ) {
-                val newFn = containingClass.invokeFunctionNForComposable(context, ownerFn)
-                newFn.symbol
-            } else if (ownerFn.needsComposableRemapping()) {
-                val newFn = visitFunctionIfExternal(ownerFn)
-                newFn.symbol
-            } else {
-                targetSymbol
-            }
-        }
+        expression.symbol = remapLambdaInvoke(expression.symbol)
+        expression.reflectionTarget = expression.reflectionTarget?.let(::remapLambdaInvoke)
         return super.visitFunctionReference(expression)
     }
 
     override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
-        visitFunctionIfExternal(expression.overriddenFunctionSymbol.owner)
+        expression.overriddenFunctionSymbol = remapLambdaInvoke(expression.overriddenFunctionSymbol) as IrSimpleFunctionSymbol
+        expression.reflectionTargetSymbol = expression.reflectionTargetSymbol?.let(::remapLambdaInvoke)
         return super.visitRichFunctionReference(expression)
     }
+
+    private fun remapLambdaInvoke(targetSymbol: IrFunctionSymbol): IrFunctionSymbol {
+        val containingClass = targetSymbol.owner.parentClassOrNull
+        val ownerFn = targetSymbol.owner
+        return if (
+            ownerFn is IrSimpleFunction && ownerFn.isComposableFunctionInvoke()
+        ) {
+            containingClass!!.matchingFunctionNForComposable(
+                context,
+                ownerFn,
+                isKFunction = containingClass.defaultType.isKComposableFunction()
+            ).symbol
+        } else if (ownerFn.needsComposableRemapping()) {
+            val newFn = visitFunctionIfExternal(ownerFn)
+            newFn.symbol
+        } else {
+            targetSymbol
+        }
+    }
+
+    private fun IrSimpleFunction.isComposableFunctionInvoke(containingClass: IrClass? = symbol.owner.parentClassOrNull) =
+        containingClass != null &&
+                containingClass.isComposableFunction() &&
+                symbol.owner.isLambdaInvoke()
+
+    private fun IrClass.isComposableFunction(): Boolean =
+        defaultType.run { isSyntheticComposableFunction() || isKComposableFunction() }
 
     private fun IrType.remapType() = typeRemapper.remapType(this)
 }

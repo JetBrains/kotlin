@@ -260,7 +260,7 @@ class ComposableTargetAnnotationsTransformer(
 
         val target = (
                 if (
-                    expression.isInvoke() ||
+                    expression.isLambdaInvoke() ||
                     expression.dispatchReceiver?.type?.isSamComposable == true
                 ) {
                     expression.dispatchReceiver?.let {

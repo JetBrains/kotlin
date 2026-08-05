@@ -232,7 +232,39 @@ class FunctionReferenceTests {
             }
         }
     }
+
+    @Test
+    fun functionReferenceWithContext() = compositionTest {
+        val context = TextContext("Context")
+        compose {
+            with(context) {
+                val ref: @Composable (Int) -> Unit = ::TextWithContext
+                ref(10)
+            }
+        }
+
+        validate {
+            Text("Context 10")
+        }
+    }
+
+    @Test
+    fun extensionFunctionReferenceWithContext() = compositionTest {
+        val context = TextContext("Context")
+        compose {
+            with(context) {
+                val ref: @Composable String.(Int) -> Unit =
+                    String::TextExtensionWithContext
+                "Ext".ref(30)
+            }
+        }
+
+        validate {
+            Text("Context Ext 30")
+        }
+    }
 }
+
 
 @Composable
 private fun SimpleText() {
@@ -326,4 +358,24 @@ private class FunctionRefClass {
 @Composable
 private fun FunctionRefClass.TextDefaultExt(int: Int = 0) {
     Text("TextDefault $int")
+}
+
+private class TextContext(val prefix: String)
+
+context(ctx: TextContext)
+@Composable
+private fun TextWithContext(int: Int) {
+    Text("${ctx.prefix} $int")
+}
+
+@Composable
+private fun TextContext.TextExtWithContext(int: Int) {
+    Text("$prefix $int")
+}
+
+
+context(ctx: TextContext)
+@Composable
+private fun String.TextExtensionWithContext(int: Int) {
+    Text("${ctx.prefix} $this $int")
 }

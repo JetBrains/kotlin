@@ -12,15 +12,17 @@ import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -63,6 +65,20 @@ class AdaptedComposableReferenceTypePatcher(
             expression.type = type.toComposableFunctionType()
         }
         return super.visitFunctionReference(expression)
+    }
+
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+        val type = expression.type as? IrSimpleType
+        if (type != null && type.isKComposableFunction() && expression.targetWillBecomeAdaptedRef()) {
+            expression.type = type.toComposableFunctionType()
+        }
+        return super.visitRichFunctionReference(expression)
+    }
+
+    private fun IrRichFunctionReference.targetWillBecomeAdaptedRef(): Boolean {
+        if (invokeFunction.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE) return true
+        val fn = reflectionTargetSymbol?.owner as? IrSimpleFunction ?: return false
+        return fn.parameters.any { it.defaultValue != null }
     }
 
     private fun IrFunctionReference.targetWillBecomeAdaptedRef(): Boolean {
