@@ -1,4 +1,4 @@
-KtFile: inlineClassUnderlyingTypeFromProperty.kt
+KtFile: inlineClassWithTypeParameter.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST
@@ -21,11 +21,19 @@ KtFile: inlineClassUnderlyingTypeFromProperty.kt
     PsiWhiteSpace(' ')
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('PublicValue')
+    PsiElement(IDENTIFIER)('GenericValue')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
     PRIMARY_CONSTRUCTOR
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
+          MODIFIER_LIST
+            PsiElement(private)('private')
+          PsiWhiteSpace(' ')
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('value')
@@ -34,5 +42,5 @@ KtFile: inlineClassUnderlyingTypeFromProperty.kt
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('String')
+                PsiElement(IDENTIFIER)('T')
         PsiElement(RPAR)(')')
