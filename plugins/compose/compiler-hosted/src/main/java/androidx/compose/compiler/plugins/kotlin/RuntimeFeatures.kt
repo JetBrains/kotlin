@@ -31,5 +31,5 @@ enum class ComposeRuntimeFeature(val targetVersion: ComposeRuntimeVersion) {
 
 fun ComposeRuntimeVersion?.supportsFeature(
     feature: ComposeRuntimeFeature,
-    detector: () -> Boolean
+    detector: () -> Boolean,
 ): Boolean = this?.supportsFeature(feature) ?: detector()

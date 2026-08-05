@@ -26,11 +26,12 @@ fun <T> Ref(content: Function3<T, Composer, Int, Unit>, %composer: Composer?, %c
     Ref(<block>{
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
-        @Composable
-        fun <T> Fn(t: T?, %composer: Composer?, %changed: Int) {
-          Fn(t, %composer, 0b1000 and %changed or 0b1110 and %changed, 0)
+        ::Fn {
+          @Composable
+          fun <T> Fn(t: T?, %composer: Composer?, %changed: Int) {
+            Fn(t, %composer, 0b1000 and %changed or 0b1110 and %changed, 0)
+          }
         }
-        ::Fn
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group
@@ -38,11 +39,12 @@ fun <T> Ref(content: Function3<T, Composer, Int, Unit>, %composer: Composer?, %c
     Ref(<block>{
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp1_group = %composer.cache(false) {
-        @Composable
-        fun IntFn(t: Int, %composer: Composer?, %changed: Int) {
-          IntFn(t, %composer, 0b1110 and %changed, 0)
+        ::IntFn {
+          @Composable
+          fun IntFn(t: Int, %composer: Composer?, %changed: Int) {
+            IntFn(t, %composer, 0b1110 and %changed, 0)
+          }
         }
-        ::IntFn
       }
       sourceInformationMarkerEnd(%composer)
       tmp1_group

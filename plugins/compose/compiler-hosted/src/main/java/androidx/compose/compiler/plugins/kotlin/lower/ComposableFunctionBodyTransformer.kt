@@ -3090,7 +3090,7 @@ class ComposableFunctionBodyTransformer(
         val hasDefaults = ownerFn.parameters.any {
             it.kind == IrParameterKind.Regular && it.name == ComposeNames.DefaultParameter
         }
-        if (!hasDefaults && expression.isInvoke()) {
+        if (!hasDefaults && expression.isLambdaInvoke()) {
             // in the case of an invoke without any defaults, all of the parameters are going to
             // be type parameter args which won't have special names.
             // In this case, we know that the values cannot
