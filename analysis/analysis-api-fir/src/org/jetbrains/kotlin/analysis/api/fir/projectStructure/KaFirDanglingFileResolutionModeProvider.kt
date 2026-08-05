@@ -130,6 +130,7 @@ internal class KaFirDanglingFileResolutionModeProvider : KaDanglingFileResolutio
      *
      * @see getFlatTopLevelStubList
      */
+    @OptIn(KtImplementationDetail::class)
     private fun StubElement<*>.shouldAddChild(child: StubElement<*>): Boolean = when (this) {
         // Ignore everything in accessors, this will be handled by the PSI check
         is KotlinPropertyAccessorStub -> false
@@ -137,7 +138,7 @@ internal class KaFirDanglingFileResolutionModeProvider : KaDanglingFileResolutio
             // Ignore nested classes / callables in callable stubs
             child !is KotlinCallableStubBase<*> && child !is KotlinClassifierStub &&
                     // Ignore expressions since they hold initializers/body expressions
-                    child.elementType !in KtTokenSets.CONSTANT_EXPRESSIONS
+                    child.elementType !in KtTokenSets.STUBBED_EXPRESSIONS
 
         // Ignore everything in class initializers
         is KotlinPlaceHolderStub<*> if elementType == KtStubElementTypes.CLASS_INITIALIZER -> false

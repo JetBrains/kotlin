@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -137,7 +137,7 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     /**
      * The expressions this element holds, taken from its stub, or an empty array if the stub does not have them.
      *
-     * <p>An expression is stubbed only where {@link KtTokenSets#CONSTANT_EXPRESSIONS} covers its element type, so a
+     * <p>An expression is stubbed only where {@link KtTokenSets#STUBBED_EXPRESSIONS} covers its element type, so a
      * caller has to fall back to the AST when nothing is found: the expression may still be there, merely not stubbed.
      *
      * <p>The expression is told apart from the other children by its element type alone. No child of a declaration
@@ -152,7 +152,7 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
         T stub = getStub();
         if (stub == null) return KtExpression.EMPTY_ARRAY;
 
-        return stub.getChildrenByType(KtTokenSets.CONSTANT_EXPRESSIONS, KtExpression.EMPTY_ARRAY);
+        return stub.getChildrenByType(KtTokenSets.STUBBED_EXPRESSIONS, KtExpression.EMPTY_ARRAY);
     }
 
     /**

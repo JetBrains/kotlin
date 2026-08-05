@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi.stubs.elements;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.KtImplementationDetail;
 
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 
@@ -28,8 +29,12 @@ public interface KtTokenSets {
     @NotNull TokenSet POSTFIX_OPERATIONS = TokenSet.create(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS, KtTokens.EXCLEXCL, KtTokens.DOT, KtTokens.SAFE_ACCESS);
     @NotNull TokenSet PREFIX_OPERATIONS = TokenSet.create(KtTokens.MINUS, KtTokens.PLUS, KtTokens.MINUSMINUS, KtTokens.PLUSPLUS, KtTokens.EXCL);
 
+    /**
+     * The set of expressions which are stub-based.
+     */
+    @KtImplementationDetail
     @NotNull
-    TokenSet CONSTANT_EXPRESSIONS = TokenSet.create(
+    TokenSet STUBBED_EXPRESSIONS = TokenSet.create(
             NULL,
             BOOLEAN_CONSTANT,
             FLOAT_CONSTANT,
@@ -53,4 +58,8 @@ public interface KtTokenSets {
 
             OBJECT_LITERAL
     );
+
+    @Deprecated
+    @NotNull
+    TokenSet CONSTANT_EXPRESSIONS = STUBBED_EXPRESSIONS;
 }
