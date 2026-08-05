@@ -4,10 +4,10 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 import java.util.List;
 
@@ -90,6 +90,6 @@ public class JsTry extends SourceInfoAwareJsNode implements JsStatement {
         List<JsCatch> catchCopy = AstUtil.deepCopy(catches);
         JsBlock finallyCopy = AstUtil.deepCopy(finallyBlock);
 
-        return new JsTry(tryCopy, catchCopy, finallyCopy).withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsTry(tryCopy, catchCopy, finallyCopy), this);
     }
 }

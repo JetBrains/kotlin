@@ -4,8 +4,8 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 public final class JsPrefixOperation extends JsUnaryOperation {
     public JsPrefixOperation(JsUnaryOperator op, JsExpression arg) {
@@ -28,6 +28,6 @@ public final class JsPrefixOperation extends JsUnaryOperation {
     @NotNull
     @Override
     public JsPrefixOperation deepCopy() {
-        return new JsPrefixOperation(getOperator(), AstUtil.deepCopy(getArg())).withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsPrefixOperation(getOperator(), AstUtil.deepCopy(getArg())), this);
     }
 }

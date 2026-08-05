@@ -4,8 +4,8 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 public final class JsConditional extends JsExpression {
     private JsExpression testExpression;
@@ -74,6 +74,6 @@ public final class JsConditional extends JsExpression {
         JsExpression thenCopy = AstUtil.deepCopy(thenExpression);
         JsExpression elseCopy = AstUtil.deepCopy(elseExpression);
 
-        return new JsConditional(testCopy, thenCopy, elseCopy).withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsConditional(testCopy, thenCopy, elseCopy), this);
     }
 }

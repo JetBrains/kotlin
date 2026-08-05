@@ -1209,7 +1209,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
                     String value = stringLiteral.getValue();
                     if (IdentifierPolicyKt.isValidES5Identifier(value)) {
                         String escaped = IdentifierPolicyKt.getRESERVED_KEYWORDS().contains(value) ? "'" + value + "'" : value;
-                        labelExpr = new JsNameRef(escaped).withMetadataFrom(stringLiteral);
+                        labelExpr = AbstractNodeKt.withMetadataFrom(new JsNameRef(escaped), stringLiteral);
                     }
                     accept(labelExpr);
                 } else if (labelExpr instanceof JsNumberLiteral || labelExpr instanceof JsBigIntLiteral) {

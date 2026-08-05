@@ -4,8 +4,8 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 /**
  * Represents the JavaScript break statement.
@@ -38,6 +38,6 @@ public final class JsBreak extends JsContinue {
     @NotNull
     @Override
     public JsBreak deepCopy() {
-        return new JsBreak(AstUtil.deepCopy(label)).withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsBreak(AstUtil.deepCopy(label)), this);
     }
 }

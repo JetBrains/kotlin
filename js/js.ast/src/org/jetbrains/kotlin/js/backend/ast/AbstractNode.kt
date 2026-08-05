@@ -28,15 +28,6 @@ abstract class AbstractNode : JsNode, HasMetadata {
         return out.toString()
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun <T> withMetadataFrom(other: T): T where T : HasMetadata, T : JsNode {
-        this.copyMetadataFrom(other)
-        other.source?.let { source = it }
-        commentsBeforeNode = other.commentsBeforeNode
-        commentsAfterNode = other.commentsAfterNode
-        return this as T
-    }
-
     override fun getCommentsBeforeNode(): MutableList<JsComment>? = internals?.commentsBefore
 
     override fun getCommentsAfterNode(): MutableList<JsComment>? = internals?.commentsAfter
@@ -68,4 +59,16 @@ abstract class AbstractNode : JsNode, HasMetadata {
     }
 
     override fun getRawMetadata(): Map<String, Any?> = internals?.getRawMetadata() ?: emptyMap()
+}
+
+fun <Self, Other> Self.withMetadataFrom(other: Other): Self
+        where Self : HasMetadata,
+              Self : JsNode,
+              Other : HasMetadata,
+              Other : JsNode {
+    this.copyMetadataFrom(other)
+    other.source?.let { source = it }
+    commentsBeforeNode = other.commentsBeforeNode
+    commentsAfterNode = other.commentsAfterNode
+    return this
 }

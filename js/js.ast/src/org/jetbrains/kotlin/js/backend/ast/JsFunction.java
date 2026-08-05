@@ -150,6 +150,6 @@ public final class JsFunction extends JsLiteral implements HasName {
         functionCopy.modifiers = modifiers == null ? null : EnumSet.copyOf(modifiers);
         functionCopy.isEs6Arrow = isEs6Arrow;
 
-        return functionCopy.withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(functionCopy, this);
     }
 }

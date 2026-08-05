@@ -4,8 +4,8 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 public class JsThrow extends SourceInfoAwareJsNode implements JsStatement {
     private JsExpression expression;
@@ -46,6 +46,6 @@ public class JsThrow extends SourceInfoAwareJsNode implements JsStatement {
     @NotNull
     @Override
     public JsThrow deepCopy() {
-        return new JsThrow(AstUtil.deepCopy(expression)).withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsThrow(AstUtil.deepCopy(expression)), this);
     }
 }

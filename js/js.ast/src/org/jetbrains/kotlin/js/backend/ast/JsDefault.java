@@ -4,8 +4,8 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 /**
  * Represents the default option in a JavaScript swtich statement.
@@ -29,6 +29,6 @@ public final class JsDefault extends JsSwitchMember {
     public JsDefault deepCopy() {
         JsDefault defaultCopy = new JsDefault();
         defaultCopy.statements.addAll(AstUtil.deepCopy(statements));
-        return defaultCopy.withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(defaultCopy, this);
     }
 }

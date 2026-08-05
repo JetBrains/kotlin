@@ -24,6 +24,6 @@ public final class JsNullLiteral extends JsLiteral.JsValueLiteral {
     @NotNull
     @Override
     public JsNullLiteral deepCopy() {
-        return new JsNullLiteral().withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsNullLiteral(), this);
     }
 }

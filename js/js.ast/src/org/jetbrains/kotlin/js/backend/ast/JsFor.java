@@ -4,8 +4,8 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 /**
  * A <code>for</code> statement. If specified at all, the initializer part is
@@ -148,6 +148,6 @@ public class JsFor extends SourceInfoAwareJsNode implements JsLoop {
             result = new JsFor(initExpression != null ? initExpression.deepCopy() : null, conditionCopy, incrementalExprCopy, bodyCopy);
         }
 
-        return result.withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(result, this);
     }
 }
