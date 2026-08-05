@@ -112,17 +112,10 @@ class LLResolutionFacade internal constructor(
     }
 
     /**
-     * @see LLDiagnosticProvider.getDiagnostics
-     */
-    internal fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<LLDiagnostic> {
-        return diagnosticProvider.getDiagnostics(element, filter)
-    }
-
-    /**
      * @see LLDiagnosticProvider.diagnostics
      */
-    internal fun diagnostics(element: KtElement, filter: DiagnosticCheckerFilter): Sequence<LLDiagnostic> {
-        return diagnosticProvider.diagnostics(element, filter)
+    internal fun diagnostics(element: KtElement, filter: DiagnosticCheckerFilter, isRecursive: Boolean): Sequence<LLDiagnostic> {
+        return diagnosticProvider.diagnostics(element, filter, isRecursive)
     }
 
     internal fun resolveToFirSymbol(ktDeclaration: KtDeclaration, phase: FirResolvePhase): FirBasedSymbol<*> {

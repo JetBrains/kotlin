@@ -11,15 +11,16 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStruct
 import org.jetbrains.kotlin.psi.KtElement
 
 internal class DiagnosticsCollector(private val fileStructureCache: FileStructureCache) {
-    fun getDiagnosticsFor(element: KtElement, filter: DiagnosticCheckerFilter): List<LLDiagnostic> {
+    /**
+     * @see org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLDiagnosticProvider.diagnostics
+     */
+    fun diagnostics(element: KtElement, filter: DiagnosticCheckerFilter, isRecursive: Boolean): Sequence<LLDiagnostic> {
         val fileStructure = fileStructureCache.getFileStructure(element.containingKtFile)
-        val structureElement = fileStructure.getStructureElementFor(element)
-        val diagnostics = structureElement.diagnostics
-        return diagnostics.diagnosticsFor(filter, element)
-    }
+        if (isRecursive) {
+            return fileStructure.diagnostics(element, filter)
+        }
 
-    fun diagnosticsFor(element: KtElement, filter: DiagnosticCheckerFilter): Sequence<LLDiagnostic> {
-        val fileStructure = fileStructureCache.getFileStructure(element.containingKtFile)
-        return fileStructure.diagnostics(element, filter)
+        val structureElement = fileStructure.getStructureElementFor(element)
+        return structureElement.diagnostics.diagnosticsFor(filter, element).asSequence()
     }
 }
