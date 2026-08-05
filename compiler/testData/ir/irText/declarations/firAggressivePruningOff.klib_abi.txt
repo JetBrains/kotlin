@@ -1,0 +1,13 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Foo { // /Foo|null[0]
+    constructor <init>() // /Foo.<init>|<init>(){}[0]
+    final fun access$<get-privatePropertyReferencedByInline>(/Foo): kotlin/String // /Foo.access$<get-privatePropertyReferencedByInline>|access$<get-privatePropertyReferencedByInline>#static(Foo){}[0]
+    final fun access$privateFunReferencedByInline(/Foo): kotlin/String // /Foo.access$privateFunReferencedByInline|access$privateFunReferencedByInline#static(Foo){}[0]
+    final inline fun publicInlineFun(): kotlin/String // /Foo.publicInlineFun|publicInlineFun(){}[0]
+    final fun publicNonInlineFun(): kotlin/String // /Foo.publicNonInlineFun|publicNonInlineFun(){}[0]
+}
