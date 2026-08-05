@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.scopes.delegatedMemberScope
 import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -363,9 +364,12 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         if (!isRecord) return@cachedValue null
 
         val constructorPsi = (classOrObjectDeclaration as? KtClass)?.primaryConstructor
+        val constructorSymbolPointer = withClassSymbol { classSymbol ->
+            classSymbol.declaredMemberScope.constructors.singleOrNull { it.isPrimary }?.createPointer()
+        } ?: return@cachedValue null
         SymbolLightRecordHeader(
             kotlinOrigin = constructorPsi,
-            symbolPointer = analyzeForLightClasses(useSiteModule) { constructorPsi?.symbol?.createPointer() },
+            symbolPointer = constructorSymbolPointer,
             containingClass = this@SymbolLightClassForClassOrObject,
             useSiteModule = useSiteModule
         )

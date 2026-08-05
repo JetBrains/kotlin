@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 @OptIn(KaImplementationDetail::class)
 internal class SymbolLightRecordHeader(
     override val kotlinOrigin: KtPrimaryConstructor?,
-    override val symbolPointer: KaSymbolPointer<KaConstructorSymbol>?,
+    override val symbolPointer: KaSymbolPointer<KaConstructorSymbol>,
     private val containingClass: SymbolLightClassForClassOrObject,
     override val useSiteModule: KaModule,
 ) : KtLightElementBase(parent = containingClass), PsiRecordHeader, KtLightElement<KtPrimaryConstructor, PsiRecordHeader>,

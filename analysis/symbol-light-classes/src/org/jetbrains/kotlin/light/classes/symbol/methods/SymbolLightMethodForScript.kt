@@ -65,7 +65,7 @@ internal class SymbolLightMethodForScriptDefaultConstructor(
     ktScript: KtScript,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
-    override val symbolPointer: KaSymbolPointer<KaScriptSymbol>?,
+    override val symbolPointer: KaSymbolPointer<KaScriptSymbol>,
 ) : SymbolLightMethodForScript(
     ktScript,
     containingClass,
@@ -91,7 +91,7 @@ internal class SymbolLightMethodForScriptMain(
     ktScript: KtScript,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
-    override val symbolPointer: KaSymbolPointer<KaScriptSymbol>?,
+    override val symbolPointer: KaSymbolPointer<KaScriptSymbol>,
 ) : SymbolLightMethodForScript(
     ktScript,
     containingClass,

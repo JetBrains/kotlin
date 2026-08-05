@@ -36,7 +36,7 @@ public interface KaSymbolJavaView<out T : KaSymbol> : KaElementJavaView {
     /**
      * Pointer to the symbol represented by this view.
      */
-    public val symbolPointer: KaSymbolPointer<T>?
+    public val symbolPointer: KaSymbolPointer<T>
 
     /**
      * [KaModule] from which view is provided.

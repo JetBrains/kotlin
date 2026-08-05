@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
@@ -209,45 +208,37 @@ internal class SymbolLightConstructor private constructor(
                 else -> PsiModifier.PUBLIC
             }
 
-            return noArgConstructor(
-                visibility,
-                classOrObject,
-                METHOD_INDEX_FOR_DEFAULT_CTOR,
+            return SymbolLightDefaultNoArgConstructor(
+                lightMemberOrigin = classOrObject?.let {
+                    LightMemberOriginForDeclaration(
+                        originalElement = it,
+                        originKind = JvmDeclarationOriginKind.OTHER,
+                    )
+                },
+                containingClass = this,
+                visibility = visibility,
+                methodIndex = METHOD_INDEX_FOR_DEFAULT_CTOR,
                 isJvmExposedBoxed = false,
-                functionSymbolPointer = null,
             )
         }
 
         private fun SymbolLightClassBase.noArgConstructor(
             primaryConstructor: KaConstructorSymbol,
             isJvmExposedBoxed: Boolean,
-        ): KtLightMethod = noArgConstructor(
-            visibility = primaryConstructor.visibility.asJavaVisibilityModifier(),
-            declaration = primaryConstructor.sourcePsiSafe(),
-            methodIndex = METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR,
-            isJvmExposedBoxed = isJvmExposedBoxed,
-            functionSymbolPointer = primaryConstructor.createPointer(),
-        )
-
-        private fun SymbolLightClassBase.noArgConstructor(
-            visibility: String,
-            declaration: KtDeclaration?,
-            methodIndex: Int,
-            isJvmExposedBoxed: Boolean,
-            functionSymbolPointer: KaSymbolPointer<KaConstructorSymbol>?,
-        ): KtLightMethod = SymbolLightNoArgConstructor(
-            lightMemberOrigin = declaration?.let {
-                LightMemberOriginForDeclaration(
-                    originalElement = it,
-                    originKind = JvmDeclarationOriginKind.OTHER,
-                )
-            },
-            containingClass = this,
-            visibility = visibility,
-            methodIndex = methodIndex,
-            isJvmExposedBoxed = isJvmExposedBoxed,
-            symbolPointer = functionSymbolPointer,
-        )
+        ): KtLightMethod =
+            SymbolLightNoArgConstructor(
+                lightMemberOrigin = primaryConstructor.sourcePsiSafe<KtDeclaration>()?.let {
+                    LightMemberOriginForDeclaration(
+                        originalElement = it,
+                        originKind = JvmDeclarationOriginKind.OTHER,
+                    )
+                },
+                containingClass = this,
+                visibility = primaryConstructor.visibility.asJavaVisibilityModifier(),
+                methodIndex = METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR,
+                isJvmExposedBoxed = isJvmExposedBoxed,
+                symbolPointer = primaryConstructor.createPointer(),
+            )
     }
 }
 

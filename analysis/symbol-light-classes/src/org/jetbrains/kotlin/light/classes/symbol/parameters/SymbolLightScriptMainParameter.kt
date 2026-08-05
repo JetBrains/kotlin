@@ -23,7 +23,7 @@ internal class SymbolLightScriptMainParameter(
     private val name: String,
     private val containingMethod: SymbolLightMethodForScript,
 ) : SymbolLightParameterBase(containingMethod), KaSymbolJavaView<KaScriptSymbol> {
-    override val symbolPointer: KaSymbolPointer<KaScriptSymbol>?
+    override val symbolPointer: KaSymbolPointer<KaScriptSymbol>
         get() = containingMethod.symbolPointer
 
     override val kotlinOrigin: KtParameter? = null
