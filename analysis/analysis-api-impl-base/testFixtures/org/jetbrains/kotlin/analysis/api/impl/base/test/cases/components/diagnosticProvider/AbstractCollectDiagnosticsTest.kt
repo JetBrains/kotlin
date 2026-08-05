@@ -73,6 +73,11 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
                     val diagnosticsFromFile = collectFileDiagnostics(ktFile)
                     printFileDiagnostics(preparedFile, diagnosticsFromFile, preparedFiles.size > 1)
                     val ignoringSuppression = collectFileDiagnosticsIgnoringSuppression(ktFile)
+                    checkDiagnosticsIgnoringSuppressionSupersetOfRegular(
+                        withoutSuppression = diagnosticsFromFile,
+                        withSuppression = ignoringSuppression,
+                    )
+
                     val additionallyReported = ignoringSuppression.filter { it !in diagnosticsFromFile }
                     if (additionallyReported.isNotEmpty()) {
                         printFileDiagnostics(preparedFile, additionallyReported, preparedFiles.size > 1, ignoringSuppression = true)
@@ -97,9 +102,8 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
                     val ktFile = preparedFile.ktFile
                     analyzeForTest(ktFile) {
                         val diagnosticsFromFile = collectFileDiagnostics(ktFile)
+                        checkDiagnosticsConsistentWithObsoleteApi(ktFile, diagnosticsFromFile)
                         checkDiagnosticsFromElements(ktFile, diagnosticsFromFile)
-                        checkDiagnosticsIgnoringSuppressionSupersetOfRegular(ktFile, diagnosticsFromFile)
-                        checkDiagnosticsFromQuery(ktFile, diagnosticsFromFile)
                         checkSubtreeDiagnostics(ktFile)
                         checkSuppressionMarks(ktFile, diagnosticsFromFile)
                         checkQuerySemantics(ktFile)
@@ -112,15 +116,18 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
     context(_: KaSession)
     private fun collectFileDiagnostics(ktFile: KtFile): List<DiagnosticKey> =
         ktFile
-            .collectDiagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)
+            .diagnostics()
+            .withCommonAndExtendedDiagnostics()
             .map { it.getDiagnosticKey() }
             .sorted()
+            .toList()
 
     context(_: KaSession)
     private fun collectFileDiagnosticsIgnoringSuppression(ktFile: KtFile): List<DiagnosticKey> =
         ktFile
-            .commonAndExtendedDiagnostics()
-            .includingSuppressed()
+            .diagnostics()
+            .withCommonAndExtendedDiagnostics()
+            .ignoreSuppressed(false)
             .map { it.getDiagnosticKey() }
             .sorted()
             .toList()
@@ -162,8 +169,9 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
             ktFile.accept(object : KtTreeVisitorVoid() {
                 override fun visitKtElement(element: KtElement) {
                     element
-                        .directDiagnostics()
-                        .withCheckers(KaDiagnosticCheckerKind.COMMON, KaDiagnosticCheckerKind.EXTENDED)
+                        .diagnostics()
+                        .directOnly(true)
+                        .withCommonAndExtendedDiagnostics()
                         .mapTo(this@buildList) { it.getDiagnosticKey() }
 
                     super.visitKtElement(element)
@@ -180,26 +188,30 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
 
     context(_: KaSession)
     private fun checkDiagnosticsIgnoringSuppressionSupersetOfRegular(
-        ktFile: KtFile,
-        diagnosticsFromFile: List<DiagnosticKey>,
+        withoutSuppression: List<DiagnosticKey>,
+        withSuppression: List<DiagnosticKey>,
     ) {
-        val ignoring = collectFileDiagnosticsIgnoringSuppression(ktFile).toSet()
-        val missing = diagnosticsFromFile.filter { it !in ignoring }
+        val missing = withoutSuppression.filter { it !in withSuppression }
         assertTrue(
             missing.isEmpty(),
-            "includingSuppressed() must include every diagnostic that collectDiagnostics() returns. Missing: $missing",
+            "The set of diagnostics with `ignoreSuppressed(true)` must include every diagnostic that `ignoreSuppressed(true)` returns. Missing:\n$missing",
         )
     }
 
-    /**
-     * Diagnostics collected with a [KaDiagnostics] query must be the same as those collected with the legacy endpoints.
-     */
     context(_: KaSession)
-    private fun checkDiagnosticsFromQuery(ktFile: KtFile, diagnosticsFromFile: List<DiagnosticKey>) {
+    private fun checkDiagnosticsConsistentWithObsoleteApi(
+        file: KtFile,
+        fromFile: List<DiagnosticKey>,
+    ) {
+        val obsolete = file
+            .collectDiagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)
+            .map { it.getDiagnosticKey() }
+            .sorted()
+
         assertEquals(
-            diagnosticsFromFile,
-            ktFile.commonAndExtendedDiagnostics().map { it.getDiagnosticKey() }.sorted().toList(),
-            "diagnostics collected via 'diagnostics()' should be the same as those collected from 'collectDiagnostics()'."
+            fromFile,
+            obsolete,
+            "The output of the obsolete and actual API must be the same",
         )
     }
 
@@ -208,7 +220,7 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
      */
     context(_: KaSession)
     private fun checkSubtreeDiagnostics(ktFile: KtFile) {
-        val fileDiagnostics = ktFile.commonAndExtendedDiagnostics().toList()
+        val fileDiagnostics = ktFile.diagnostics().withCommonAndExtendedDiagnostics().toList()
 
         ktFile.accept(object : KtTreeVisitorVoid() {
             override fun visitKtElement(element: KtElement) {
@@ -217,7 +229,8 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
                     .map { it.getDiagnosticKey() }
                     .sorted()
 
-                val actual = element.commonAndExtendedDiagnostics()
+                val actual = element.diagnostics()
+                    .withCommonAndExtendedDiagnostics()
                     .map { it.getDiagnosticKey() }
                     .sorted()
                     .toList()
@@ -235,20 +248,21 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
     }
 
     /**
-     * Only [KaDiagnostics.includingSuppressed] may yield suppressed diagnostics, and every additionally yielded diagnostic must be marked
+     * Only [KaDiagnostics.ignoreSuppressed] with `false` parameter may yield suppressed diagnostics, and every additionally yielded diagnostic must be marked
      * as suppressed.
      */
     context(_: KaSession)
     private fun checkSuppressionMarks(ktFile: KtFile, diagnosticsFromFile: List<DiagnosticKey>) {
-        val reported = ktFile.commonAndExtendedDiagnostics().filter { it.isSuppressed }.toList()
+        val diagnostics = ktFile.diagnostics()
+        val reported = diagnostics.withCommonAndExtendedDiagnostics().filter { it.isSuppressed }.toList()
         assertTrue(
             reported.isEmpty(),
             "diagnostics() must not yield suppressed diagnostics. Suppressed: ${reported.map { it.getDiagnosticKey() }}",
         )
 
         val reportedKeys = diagnosticsFromFile.toSet()
-        val additional = ktFile.commonAndExtendedDiagnostics()
-            .includingSuppressed()
+        val additional = diagnostics.withCommonAndExtendedDiagnostics()
+            .ignoreSuppressed(false)
             .filter { it.getDiagnosticKey() !in reportedKeys }
             .toList()
 
@@ -261,8 +275,8 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
     }
 
     context(_: KaSession)
-    private fun KtElement.commonAndExtendedDiagnostics(): KaDiagnostics =
-        diagnostics().withCheckers(KaDiagnosticCheckerKind.COMMON, KaDiagnosticCheckerKind.EXTENDED)
+    private fun KaDiagnostics.withCommonAndExtendedDiagnostics(): KaDiagnostics =
+        withCheckers(KaDiagnosticCheckerKind.COMMON, KaDiagnosticCheckerKind.EXTENDED)
 
     /**
      * Checks the contract of the [KaDiagnostics] query modifiers.
@@ -288,7 +302,7 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
             "'withCheckers' must replace the requested checker kinds instead of adding to them.",
         )
 
-        val allCheckers = ktFile.commonAndExtendedDiagnostics()
+        val allCheckers = query.withCommonAndExtendedDiagnostics()
         assertEquals(
             allCheckers.diagnosticKeys(),
             allCheckers.diagnosticKeys(),
@@ -296,21 +310,21 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
         )
 
         assertEquals(
-            allCheckers.includingSuppressed().diagnosticKeys(),
-            allCheckers.includingSuppressed().includingSuppressed().diagnosticKeys(),
+            allCheckers.ignoreSuppressed(false).diagnosticKeys(),
+            allCheckers.ignoreSuppressed(false).ignoreSuppressed(false).diagnosticKeys(),
             "'includingSuppressed' must be idempotent.",
         )
 
         assertEquals(
             allCheckers.diagnosticKeys(),
-            allCheckers.includingSuppressed().excludingSuppressed().diagnosticKeys(),
-            "'excludingSuppressed' must undo 'includingSuppressed'.",
+            allCheckers.ignoreSuppressed(false).ignoreSuppressed(true).diagnosticKeys(),
+            "'exclude' must undo 'include'.",
         )
 
         assertEquals(
             allCheckers.diagnosticKeys(),
-            allCheckers.excludingSuppressed().diagnosticKeys(),
-            "'excludingSuppressed' must be the default behavior.",
+            allCheckers.ignoreSuppressed(true).diagnosticKeys(),
+            "'exclude' must be the default behavior.",
         )
     }
 

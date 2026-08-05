@@ -23,8 +23,13 @@ import org.jetbrains.kotlin.psi.KtElement
 internal class KaFirDiagnosticProvider(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseSessionComponent<KaFirSession>(), KaInternalsDiagnosticProvider, KaFirSessionComponent {
-    override fun diagnostics(element: KtElement, isRecursive: Boolean): KaDiagnostics = element.withPsiValidityAssertion {
-        KaFirDiagnostics(element, isRecursive, DEFAULT_CHECKER_KINDS, includeSuppressed = false)
+    override fun diagnostics(element: KtElement): KaDiagnostics = element.withPsiValidityAssertion {
+        KaFirDiagnostics(
+            element = element,
+            directOnly = false,
+            checkerKinds = DEFAULT_CHECKER_KINDS,
+            ignoreSuppressed = true,
+        )
     }
 
     /**
@@ -32,30 +37,45 @@ internal class KaFirDiagnosticProvider(
      */
     private inner class KaFirDiagnostics(
         private val element: KtElement,
-        private val isRecursive: Boolean,
+        private val directOnly: Boolean,
         private val checkerKinds: Set<KaDiagnosticCheckerKind>,
-        private val includeSuppressed: Boolean,
+        private val ignoreSuppressed: Boolean,
     ) : KaDiagnostics {
         override val token: KaLifetimeToken get() = analysisSession.token
 
         override fun withCheckers(kinds: Set<KaDiagnosticCheckerKind>): KaDiagnostics = withValidityAssertion {
             if (kinds == checkerKinds) return this
 
-            KaFirDiagnostics(element, isRecursive, kinds.toSet(), includeSuppressed)
+            KaFirDiagnostics(
+                element = element,
+                directOnly = directOnly,
+                checkerKinds = kinds.toSet(),
+                ignoreSuppressed = ignoreSuppressed,
+            )
         }
 
         override fun withCheckers(vararg kinds: KaDiagnosticCheckerKind): KaDiagnostics = withCheckers(kinds.toSet())
 
-        override fun includingSuppressed(): KaDiagnostics = withValidityAssertion {
-            if (includeSuppressed) return this
+        override fun ignoreSuppressed(ignore: Boolean): KaDiagnostics = withValidityAssertion {
+            if (ignoreSuppressed == ignore) return this
 
-            KaFirDiagnostics(element, isRecursive, checkerKinds, includeSuppressed = true)
+            KaFirDiagnostics(
+                element = element,
+                directOnly = directOnly,
+                checkerKinds = checkerKinds,
+                ignoreSuppressed = ignore,
+            )
         }
 
-        override fun excludingSuppressed(): KaDiagnostics = withValidityAssertion {
-            if (!includeSuppressed) return this
+        override fun directOnly(direct: Boolean): KaDiagnostics = withValidityAssertion {
+            if (directOnly == direct) return this
 
-            KaFirDiagnostics(element, isRecursive, checkerKinds, includeSuppressed = false)
+            KaFirDiagnostics(
+                element = element,
+                directOnly = direct,
+                checkerKinds = checkerKinds,
+                ignoreSuppressed = ignoreSuppressed,
+            )
         }
 
         override fun iterator(): Iterator<KaDiagnosticWithPsi<*>> = withValidityAssertion {
@@ -70,8 +90,8 @@ internal class KaFirDiagnosticProvider(
         private fun compute(): Sequence<KaDiagnosticWithPsi<*>> = element.withPsiValidityAssertion {
             val filter = checkerKinds.asLLFilter()
 
-            element.diagnostics(resolutionFacade, filter, isRecursive)
-                .filter { includeSuppressed || !it.isSuppressed }
+            element.diagnostics(resolutionFacade = resolutionFacade, filter = filter, isRecursive = !directOnly)
+                .filter { !ignoreSuppressed || !it.isSuppressed }
                 .map { it.asKaDiagnostic() }
         }
 

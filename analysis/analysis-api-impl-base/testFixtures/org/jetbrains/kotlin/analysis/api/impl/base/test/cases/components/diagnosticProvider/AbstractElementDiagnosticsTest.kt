@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider
 
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticCheckerKind
-import org.jetbrains.kotlin.analysis.api.diagnostics.directDiagnostics
+import org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -25,7 +25,8 @@ abstract class AbstractElementDiagnosticsTest : AbstractAnalysisApiBasedTest() {
         ) as KtElement
 
         analyzeForTest(mainFile) {
-            val diagnostics = targetDeclaration.directDiagnostics()
+            val diagnostics = targetDeclaration.diagnostics()
+                .directOnly(true)
                 .withCheckers(KaDiagnosticCheckerKind.COMMON, KaDiagnosticCheckerKind.EXTENDED)
                 .toList()
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compileTimeConstantProvider
 
-import org.jetbrains.kotlin.analysis.api.diagnostics.directDiagnostics
+import org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics
 import org.jetbrains.kotlin.analysis.api.evaluation.evaluate
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.renderFrontendIndependentKClassNameOf
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -26,7 +26,7 @@ abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractAnalysisApiBas
         if (elementToPreresolve != null) {
             copyAwareAnalyzeForTest(elementToPreresolve) {
                 // Trigger resolution implicitly
-                it.directDiagnostics().toList()
+                it.diagnostics().toList()
             }
         }
 

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.internals.internals
 import org.jetbrains.kotlin.psi.KtElement
 
 /**
- * Returns the [diagnostics][KaDiagnostics] reported on the given [KtElement] and on all its children.
+ * Returns the [diagnostics][KaDiagnostics] reported on the given [KtElement].
  *
  * The result is computed lazily, and only as far as it is iterated. See [KaDiagnostics] for the defaults and for the ways to adjust them.
  *
@@ -23,28 +23,10 @@ import org.jetbrains.kotlin.psi.KtElement
  *     handle(diagnostic)
  * }
  * ```
- *
- * @see directDiagnostics
  */
 @KaExperimentalApi
 context(session: KaSession)
 public fun KtElement.diagnostics(): KaDiagnostics {
     @OptIn(KaImplementationDetail::class)
-    return internals.diagnosticProvider.diagnostics(this, isRecursive = true)
-}
-
-/**
- * Returns the [diagnostics][KaDiagnostics] reported on the given [KtElement] itself.
- *
- * Diagnostics of the element's children are **not** included, so the result is not the complete set of diagnostics which concern the
- * element: a diagnostic about the element might be reported on one of its children, or on a containing element. Prefer [diagnostics] unless
- * the diagnostics of the exact element are required.
- *
- * @see diagnostics
- */
-@KaExperimentalApi
-context(session: KaSession)
-public fun KtElement.directDiagnostics(): KaDiagnostics {
-    @OptIn(KaImplementationDetail::class)
-    return internals.diagnosticProvider.diagnostics(this, isRecursive = false)
+    return internals.diagnosticProvider.diagnostics(this)
 }
