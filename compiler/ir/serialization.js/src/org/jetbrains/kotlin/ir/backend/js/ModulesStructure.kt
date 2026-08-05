@@ -6,16 +6,17 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.LoadedKlibs
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isJsStdlib
 import org.jetbrains.kotlin.library.isWasmStdlib
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.name.Name.special
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class ModulesStructure(
@@ -47,17 +48,14 @@ class ModulesStructure(
 
         val isBuiltIns = current.isJsStdlib || current.isWasmStdlib
 
-        val lookupTracker = compilerConfiguration[CommonConfigurationKeys.LOOKUP_TRACKER] ?: LookupTracker.DO_NOTHING
+        val moduleName = special("<${current.uniqueName}>")
+        val moduleOrigin = DeserializedKlibModuleOrigin(current)
+        val md = if (runtimeModule?.builtIns != null)
+            JsFactories.DefaultDescriptorFactory.createDescriptor(moduleName, storageManager, runtimeModule!!.builtIns, moduleOrigin)
+        else
+            JsFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(moduleName, storageManager, moduleOrigin)
 
-        val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-            current,
-            languageVersionSettings,
-            storageManager,
-            runtimeModule?.builtIns,
-            lookupTracker = lookupTracker
-        )
         if (isBuiltIns) runtimeModule = md
-
         descriptors[current] = md
 
         return md
