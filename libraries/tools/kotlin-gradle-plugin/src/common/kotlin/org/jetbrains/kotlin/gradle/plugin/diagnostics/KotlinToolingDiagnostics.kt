@@ -2467,13 +2467,14 @@ internal object KotlinToolingDiagnostics {
         ERROR,
         DiagnosticGroup.Kgp.Misconfiguration,
     ) {
-        operator fun invoke(loadedInProject: String) = build {
+        operator fun invoke(loadedInProjects: List<String>) = build {
             title {
                 "The Kotlin Gradle plugin was loaded multiple times in different subprojects, " +
                         "which is not supported and may break the build."
             }
                 .description {
-                    "The Kotlin plugin was loaded in the following subproject: $loadedInProject. " +
+                    "The Kotlin plugin was loaded in the following projects: " +
+                            loadedInProjects.joinToString(limit = 4, postfix = ".\n") { "'$it'" } +
                             "This might happen in subprojects that apply the Kotlin plugins with the Gradle " +
                             "'plugins { ... }' DSL if they specify explicit versions, even if the versions are equal."
                 }
