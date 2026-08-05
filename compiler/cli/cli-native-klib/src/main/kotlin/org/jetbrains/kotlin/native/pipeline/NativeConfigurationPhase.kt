@@ -86,9 +86,9 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         } ?: NativePlatforms.unspecifiedNativePlatform
 
         configuration.konanLibraries = arguments.libraries.toList()
+
         arguments.friendModules?.let {
             configuration.konanFriendLibraries = it.split(File.pathSeparator).filterNot(String::isEmpty)
-
             configuration.checkForUnexpectedKlibLibraries(
                 librariesToCheck = configuration.konanFriendLibraries,
                 librariesToCheckArgument = K2NativeCompilerArguments::friendModules.cliArgument,
@@ -96,6 +96,16 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
                 allLibrariesArgument = K2NativeCompilerArguments::libraries.cliArgument
             )
         }
+
+        configuration.exportedLibraries = arguments.exportedLibraries.toList()
+        configuration.checkForUnexpectedKlibLibraries(
+            librariesToCheck = configuration.exportedLibraries,
+            librariesToCheckArgument = K2NativeCompilerArguments::exportedLibraries.cliArgument,
+            allLibraries = configuration.konanLibraries,
+            allLibrariesArgument = K2NativeCompilerArguments::libraries.cliArgument
+        )
+
+        configuration.konanIncludedLibraries = arguments.includes.toList()
 
         configuration.konanNoStdlib = arguments.nostdlib
         configuration.konanNoDefaultLibs = arguments.nodefaultlibs
@@ -112,7 +122,6 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         arguments.manifestFile?.let { configuration.konanManifestAddend = it }
         arguments.headerKlibPath?.let { configuration.konanGeneratedHeaderKlibPath = it }
         arguments.shortModuleName?.let { configuration.konanShortModuleName = it }
-        configuration.konanIncludedLibraries = arguments.includes.toList()
 
         configuration.konanPrintIr = arguments.printIr
         configuration.konanPrintFiles = arguments.printFiles

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 import kotlin.io.path.pathString
+import kotlin.reflect.KProperty1
 
 /**
  * This is the entry point to load Kotlin/Native KLIBs.
@@ -82,8 +83,10 @@ fun loadNativeKlibs(
     return LoadedNativeKlibs(
         all = result.librariesStdlibFirst,
         friends = result.loadFriendLibraries(configuration.konanFriendLibraries),
+        exported = result.loadFriendLibraries(configuration.exportedLibraries)
+            .selectLibrariesEligibleToBeIncludedOrExported(configuration, K2NativeCompilerArguments::exportedLibraries),
         included = result.loadFriendLibraries(configuration.konanIncludedLibraries)
-            .selectLibrariesEligibleToBeIncluded(configuration)
+            .selectLibrariesEligibleToBeIncludedOrExported(configuration, K2NativeCompilerArguments::includes)
     )
 }
 
@@ -120,11 +123,14 @@ private class UnknownIrProvider(val irProviderName: String) : OtherCheckMismatch
 }
 
 /**
- * Select only those libraries that are eligible to be "included":
+ * Select only those libraries that are eligible to be "included" or "exported":
  * - each library should not be a C-interop library
  * - also there should not be libraries from the Kotlin/Native distribution
  */
-private fun List<KotlinLibrary>.selectLibrariesEligibleToBeIncluded(configuration: CompilerConfiguration): List<KotlinLibrary> {
+private fun List<KotlinLibrary>.selectLibrariesEligibleToBeIncludedOrExported(
+    configuration: CompilerConfiguration,
+    cliParameter: KProperty1<out K2NativeCompilerArguments, *>,
+): List<KotlinLibrary> {
     if (isEmpty()) return this
 
     fun reportIssue(library: KotlinLibrary, libraryKind: String) = configuration.report(
@@ -132,7 +138,7 @@ private fun List<KotlinLibrary>.selectLibrariesEligibleToBeIncluded(configuratio
             SerializationErrors.KLIB_LOADING_ERROR
         else
             SerializationErrors.KLIB_LOADING_WARNING,
-        message = "KLIB loader: $libraryKind cannot be used in ${K2NativeCompilerArguments::includes.cliArgument} CLI argument: ${library.path}"
+        message = "KLIB loader: $libraryKind cannot be used in ${cliParameter.cliArgument} CLI argument: ${library.path}"
     )
 
     return mapNotNull { library ->

@@ -44,11 +44,15 @@ class LoadedKlibs(
  * @property friends Only KLIBs having status of "friends" ([K2NativeCompilerArguments.friendModules] CLI option).
  *  Note: All [friends] are also included into [all].
  *
- * @property included Only the included KLIB ([K2NativeCompilerArguments.includes] CLI option), if there were any.
+ * @property exported Only the "exported" KLIBs ([K2NativeCompilerArguments.exportedLibraries] CLI option), if there were any.
+ *  Note: [exported] is also in [all].
+ *
+ * @property included Only the included KLIBs ([K2NativeCompilerArguments.includes] CLI option), if there were any.
  *  Note: [included] is also in [all].
  */
 class LoadedNativeKlibs(
     val all: List<KotlinLibrary>,
     val friends: List<KotlinLibrary> = emptyList(),
+    val exported: List<KotlinLibrary> = emptyList(),
     val included: List<KotlinLibrary> = emptyList(),
 )
