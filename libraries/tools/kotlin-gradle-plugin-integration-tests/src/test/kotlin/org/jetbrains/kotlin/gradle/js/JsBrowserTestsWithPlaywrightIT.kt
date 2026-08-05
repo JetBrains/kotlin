@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.junit.jupiter.api.condition.OS
 import java.net.URI
 import javax.inject.Inject
@@ -527,6 +528,33 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `verify playwright browsers installed once per module for multi-module project`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions,
+        ) {
+            val moduleA = jsBrowserModule(gradleVersion)
+            val moduleB = jsBrowserModule(gradleVersion)
+            include(moduleA, "moduleA")
+            include(moduleB, "moduleB")
+
+            build(":moduleA:jsBrowserTest", ":moduleB:jsBrowserTest") {
+                assertTasksExecuted(":moduleA:jsBrowserTest", ":moduleB:jsBrowserTest")
+                assertTasksExecuted(
+                    ":moduleA:kotlinInstallPlaywrightChromium",
+                    ":moduleB:kotlinInstallPlaywrightChromium",
+                )
+                // Each module owns its own installation task, so the browser is installed once per module.
+                // Cross-project (host-wide) toolchain sharing is not implemented yet, see KT-87599.
+                assertOutputContainsExactlyTimes("Task :moduleA:kotlinInstallPlaywrightChromium", 1)
+                assertOutputContainsExactlyTimes("Task :moduleB:kotlinInstallPlaywrightChromium", 1)
+                assertOutputContainsExactlyTimes("dummy test", 2)
+            }
+        }
+    }
+
+    @GradleTest
     fun `js smoke test when no browser is set`(gradleVersion: GradleVersion) {
         project(
             "empty",
@@ -569,6 +597,41 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
             }
         }
     }
+
+    private fun jsBrowserModule(gradleVersion: GradleVersion): TestProject =
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions,
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js().browser {
+                        test.apply {
+                            chromium()
+                        }
+                    }
+                    sourceSets.commonTest.dependencies {
+                        implementation(kotlin("test"))
+                    }
+                }
+
+                project.projectDir.resolve("src/commonTest/kotlin/DummyTest.kt").apply {
+                    parentFile.mkdirs()
+                    writeText(
+                        """
+                            class DummyTest {
+                              @kotlin.test.Test
+                              fun dummy() {
+                                println("dummy test")
+                              }
+                            }
+                        """.trimIndent()
+                    )
+                }
+            }
+        }
 }
 
 // expected report for gradle >=9.3
