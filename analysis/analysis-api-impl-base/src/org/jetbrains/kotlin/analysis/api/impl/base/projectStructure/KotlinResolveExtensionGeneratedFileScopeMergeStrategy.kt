@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMergeStrategy
 import kotlin.reflect.KClass
@@ -12,7 +13,7 @@ import kotlin.reflect.KClass
 internal class KotlinResolveExtensionGeneratedFileScopeMergeStrategy : KotlinGlobalSearchScopeMergeStrategy<KaBaseResolveExtensionGeneratedFilesScope> {
     override val targetType: KClass<KaBaseResolveExtensionGeneratedFilesScope> = KaBaseResolveExtensionGeneratedFilesScope::class
 
-    override fun uniteScopes(scopes: List<KaBaseResolveExtensionGeneratedFilesScope>): List<GlobalSearchScope> {
+    override fun uniteScopes(scopes: List<KaBaseResolveExtensionGeneratedFilesScope>, project: Project): List<GlobalSearchScope> {
         val useSiteModules =
             scopes.flatMap { scope ->
                 scope.useSiteModules

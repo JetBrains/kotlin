@@ -34,14 +34,12 @@ public interface KotlinGlobalSearchScopeMergeStrategy<T : Any> : KotlinPlatformC
      * - If [scopes] cannot be optimized, [uniteScopes] should return the same [scopes] list.
      * - If [scopes] can be merged into one [GlobalSearchScope.EMPTY_SCOPE], then [uniteScopes] should return an empty list.
      */
-    public fun uniteScopes(scopes: List<T>): List<GlobalSearchScope>
+    public fun uniteScopes(scopes: List<T>, project: Project): List<GlobalSearchScope>
 
     @KaPlatformInterface
     public companion object {
         public val EP_NAME: ExtensionPointName<KotlinGlobalSearchScopeMergeStrategy<*>> =
-            ExtensionPointName<KotlinGlobalSearchScopeMergeStrategy<*>>(
-                "org.jetbrains.kotlin.kotlinGlobalSearchScopeMergeStrategy"
-            )
+            ExtensionPointName("org.jetbrains.kotlin.kotlinGlobalSearchScopeMergeStrategy")
 
         public fun getMergeStrategies(
             project: Project,
