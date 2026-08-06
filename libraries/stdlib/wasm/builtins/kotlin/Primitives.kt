@@ -2274,7 +2274,7 @@ public actual class Float private constructor(private val value: Float) : Number
 
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun toString(): String =
-        dtoa(this.toDouble(), isSinglePrecision = true)
+        NumberConverter.convert(this)
 
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun equals(other: Any?): Boolean =
@@ -2676,7 +2676,7 @@ public actual class Double private constructor(private val value: Double) : Numb
 
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun toString(): String =
-        dtoa(this, isSinglePrecision = false)
+        NumberConverter.convert(this)
 
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun equals(other: Any?): Boolean =
