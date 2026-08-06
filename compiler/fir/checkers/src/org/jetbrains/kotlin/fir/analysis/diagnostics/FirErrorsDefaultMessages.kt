@@ -1607,7 +1607,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS,
             "Comparison might not be intended: neither type of left-hand side ''{0}'' is subtype of equality bound of right-hand side ''{3}'' " +
             "nor type of right-hand side ''{1}'' is subtype of equality bound of left-hand side ''{2}''. " +
-            "If the comparison is intended, you can suppress this warning or add an explicit ''is'' check before the comparison.",
+            "If the comparison is intended, suppress this warning or add an explicit ''is'' check before the comparison.",
             RENDER_TYPE,
             RENDER_TYPE,
             RENDER_TYPE,
