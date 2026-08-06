@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_EXPAND_TYPE_ALIASES_IN_CLASSPATH_SNAPSHOTS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_EXPERIMENTAL_TRY_NEXT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_GENERATE_COMPILER_REF_INDEX
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INCREMENTAL_FIR
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_ALLOW_MULTIPLATFORM_PUBLICATIONS_ON_UNSUPPORTED_HOST
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_DIAGNOSTICS_IGNORE_WARNING_MODE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_DIAGNOSTICS_SHOW_STACKTRACE
@@ -124,12 +123,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val incrementalJvm: Boolean?
         get() = booleanProperty("kotlin.incremental")
-
-    /**
-     * Enables new experimental "IncrementalFirJvmCompilerRunner" for incremental compilation.
-     */
-    val incrementalJvmFir: Provider<Boolean>
-        get() = booleanProvider(KOTLIN_INCREMENTAL_FIR).orElse(false)
 
     val separateKmpCompilation: Provider<Boolean>
         get() = booleanPropertyWithValueReporting(KOTLIN_KMP_SEPARATE_COMPILATION, setOf(true)) {

@@ -277,7 +277,6 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
         name: String,
         compilerOptions: KotlinCommonCompilerOptions,
         separateKmpCompilationEnabled: Boolean,
-        firRunnerEnabled: Boolean, // jvm only as of 2.2.20
         executionPolicy: KotlinCompilerExecutionStrategy,
         // both are null for anything that is not a multiplatform Kotlin/JVM compilation
         kmpJvmClasspathMetadataEnabled: Boolean?,
@@ -297,9 +296,6 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
             metricsContainer.report(BooleanMetrics.COMPILATION_STARTED, true)
         if (separateKmpCompilationEnabled) {
             metricsContainer.report(BooleanMetrics.KOTLIN_SEPARATE_KMP_COMPILATION_ENABLED, true)
-        }
-        if (firRunnerEnabled) {
-            metricsContainer.report(BooleanMetrics.KOTLIN_INCREMENTAL_FIR_RUNNER_ENABLED, true)
         }
         kmpJvmClasspathMetadataEnabled?.also {
             metricsContainer.report(BooleanMetrics.KMP_JVM_CLASSPATH_METADATA_ENABLED, it)

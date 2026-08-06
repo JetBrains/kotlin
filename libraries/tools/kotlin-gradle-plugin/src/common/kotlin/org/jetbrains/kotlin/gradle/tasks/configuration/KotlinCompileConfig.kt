@@ -51,7 +51,6 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
 
             taskProvider.configure { task ->
                 task.incremental = propertiesProvider.incrementalJvm ?: true
-                task.useFirRunner.convention(propertiesProvider.incrementalJvmFir)
                 task.enableJvmClasspathMetadata.convention(propertiesProvider.enableJvmClasspathMetadata)
                 task.enableUnsafeIncrementalCompilationForMultiplatform
                     .convention(propertiesProvider.enableJvmUnsafeOptimizationsForMultiplatform)
