@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.references
 
-import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
@@ -38,15 +37,11 @@ import org.jetbrains.kotlin.utils.yieldIfNotNull
 
 @Suppress("DuplicatedCode")
 internal object KDocReferenceResolver {
-    private val EP_NAME: ExtensionPointName<KaAdditionalKDocResolutionProvider> = ExtensionPointName(
-        "org.jetbrains.kotlin.kaAdditionalKDocResolutionProvider"
-    )
-
     fun resolveKdocFqName(
         analysisSession: KaSession,
         fqName: FqName,
         contextElement: KtElement,
-    ): Collection<KaSymbol> = EP_NAME.extensions.flatMap {
+    ): Collection<KaSymbol> = KaAdditionalKDocResolutionProvider.EP_NAME.extensions.flatMap {
         it.resolveKdocFqName(analysisSession, fqName, contextElement)
     }
 

@@ -923,7 +923,12 @@ public final class org/jetbrains/kotlin/analysis/api/symbols/AdditionalKDocResol
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/KaAdditionalKDocResolutionProvider {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/symbols/KaAdditionalKDocResolutionProvider$Companion;
 	public abstract fun resolveKdocFqName (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/psi/KtElement;)Ljava/util/Collection;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/symbols/KaAdditionalKDocResolutionProvider$Companion {
+	public final fun getEP_NAME ()Lcom/intellij/openapi/extensions/ExtensionPointName;
 }
 
 public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaAnonymousFunctionSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaFunctionSymbol {

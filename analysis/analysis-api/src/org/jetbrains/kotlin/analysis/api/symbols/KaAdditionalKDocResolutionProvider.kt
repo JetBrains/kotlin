@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import com.intellij.openapi.extensions.ExtensionPointName
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.KaSpi
 import org.jetbrains.kotlin.analysis.api.KaSpiExtensionPoint
@@ -48,4 +49,13 @@ public interface KaAdditionalKDocResolutionProvider {
      */
     @KaSpiExtensionPoint
     public fun resolveKdocFqName(analysisSession: KaSession, fqName: FqName, contextElement: KtElement): Collection<KaSymbol>
+
+    public companion object {
+        /**
+         * This [ExtensionPointName] can be used to register the provider in the type-safe manner
+         */
+        public val EP_NAME: ExtensionPointName<KaAdditionalKDocResolutionProvider> = ExtensionPointName(
+            "org.jetbrains.kotlin.kaAdditionalKDocResolutionProvider"
+        )
+    }
 }
