@@ -208,7 +208,7 @@ class RedundantStatementElimination(private val root: JsFunction) {
 
             is JsObjectLiteral -> expression.propertyInitializers
                 .flatMap {
-                    when (it) {
+                    when (it!!) {
                         is JsPropertyInitializer.KeyValue -> replace(it.labelExpr) + replace(it.valueExpr)
                         is JsPropertyInitializer.Spread -> replace(it.expression)
                     }
