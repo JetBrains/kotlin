@@ -110,6 +110,16 @@ abstract class AbstractSymbolLightClassesTestBase(
             checkDeclarationMatching(ktFiles, testServices)
         }
 
+        // Has to be the last one: the check repeatedly invalidates the global module or source state,
+        // so anything computed by the checks above would be stale afterwards
+        collectFailure(failures) {
+            checkLightClassesEquality(
+                lightClasses = lightClasses,
+                isTestAgainstCompiledCode = isTestAgainstCompiledCode,
+                assertions = testServices.assertions,
+            )
+        }
+
         if (failures.isNotEmpty()) {
             testServices.assertions.failAll(failures)
         }
