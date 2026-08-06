@@ -92,26 +92,3 @@ def step_through_current_frame(debugger, command, ctx, result, internal_dict):
         step = "//step " + "\u001f".join((file_path, str(line_number), function_name))
         steps.append(step)
         result.AppendMessage(step)
-
-
-@lldb.command()
-def get_native_func_type(debugger, command, ctx, result, internal_dict):
-    """Return the compiler-visible type of a function resolved by its full symbol name"""
-    symbol_name = command.strip()
-    if not symbol_name:
-        raise AssertionError("get_native_func_type expects a function name")
-
-    target = debugger.GetSelectedTarget()
-    matches = target.FindFunctions(symbol_name, lldb.eFunctionNameTypeFull)
-    if matches.GetSize() != 1:
-        raise AssertionError(f"Expected exactly 1 match for {symbol_name!r}, got {matches.GetSize()}")
-
-    function = matches.GetContextAtIndex(0).GetFunction()
-    if not function.IsValid():
-        raise AssertionError(f"Matched context for {symbol_name!r} does not contain a function")
-
-    func_type = function.GetType()
-    if not func_type.IsValid():
-        raise AssertionError(f"Failed to resolve function type for {symbol_name!r}")
-
-    result.AppendMessage(func_type.GetDisplayTypeName())

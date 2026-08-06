@@ -28,13 +28,6 @@ open class ResultHandler(
     }
 
     protected open fun processNonExpectedFailure(failedResults: List<TestRunCheck.Result.Failed>) {
-        failedResults.find { it.expectedFile != null && it.actual != null }?.let {
-            throwAssertionFailureWithExpectedFile(
-                it.expectedFile!!,
-                it.actual!!,
-                failedResults.joinToString("\n")
-            )
-        }
         verifyExpectation(failedResults.isEmpty(), failedResults) {
             failedResults.joinToString("\n")
         }

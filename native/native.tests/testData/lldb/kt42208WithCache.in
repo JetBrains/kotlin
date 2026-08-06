@@ -1,4 +1,0 @@
-br s -n ThrowException -s lldb_kt42208WithCache.kexe
-r
-bt
-q

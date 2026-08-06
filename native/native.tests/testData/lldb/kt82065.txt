@@ -1,0 +1,32 @@
+> b main.kt:11
+> r
+[..] stop reason = breakpoint 1.1
+[..] at main.kt:11:5
+
+> s
+[..] stop reason = step in
+[..] at lib.kt:6:25 [inlined]
+
+> s
+[..] stop reason = step in
+[..] at main.kt:12:9
+
+> s
+[..] stop reason = step in
+[..] at lib.kt:6:30 [inlined]
+
+> s
+[..] stop reason = step in
+[..] at main.kt:13:9
+
+> s
+[..] stop reason = step in
+[..] at lib.kt:7:33 [inlined]
+
+> s
+[..] stop reason = step in
+[..] at main.kt:14:9
+
+> s
+[..] stop reason = step in
+[..] at lib.kt:7:38 [inlined]

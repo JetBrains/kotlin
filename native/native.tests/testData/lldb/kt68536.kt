@@ -1,8 +1,6 @@
 // KIND: STANDALONE_LLDB
 // https://youtrack.jetbrains.com/issue/KT-72683
 // DISABLE_NATIVE: isAppleTarget=false
-// INPUT_DATA_FILE: kt68536.in
-// OUTPUT_DATA_FILE: kt68536.out
 
 fun main() {
     val c: I = C()

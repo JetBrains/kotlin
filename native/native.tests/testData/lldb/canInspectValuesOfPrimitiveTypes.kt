@@ -1,9 +1,4 @@
 // KIND: STANDALONE_LLDB
-// INPUT_DATA_FILE: canInspectValuesOfPrimitiveTypes.in
-// OUTPUT_DATA_FILE: canInspectValuesOfPrimitiveTypes.out
-
-
-
 
 fun main(args: Array<String>) {
     var a: Byte =  1

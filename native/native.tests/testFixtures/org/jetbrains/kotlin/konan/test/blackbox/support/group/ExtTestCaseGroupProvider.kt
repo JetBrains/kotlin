@@ -16,7 +16,6 @@ import com.intellij.psi.impl.source.tree.TreeCopyHandler
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -429,15 +428,12 @@ private class ExtTestDataFile(
         )
 
         val testFiltering = TestFiltering(
-            when (testKind) {
-                TestKind.REGULAR, TestKind.STANDALONE -> TCTestOutputFilter
-                TestKind.STANDALONE_LLDB -> LLDBTestOutputFilter
-                else -> TestOutputFilter.NO_FILTERING
-            }
+            if (testKind in listOf(TestKind.REGULAR, TestKind.STANDALONE)) TCTestOutputFilter
+            else TestOutputFilter.NO_FILTERING
         )
 
-        val inputDataFile = parseInputDataFile(baseDir = testDataFile.parentFile, structure.directives)
         val lldbSpec = when (testKind) {
+            TestKind.STANDALONE_LLDB -> parseReplLLDBSpec(testDataFile)
             TestKind.STANDALONE_STEPPING -> SteppingLLDBSessionSpec(structure.directives, testDataFile, originalTestSourceFiles)
             else -> null
         }
@@ -473,45 +469,14 @@ private class ExtTestDataFile(
                 TestKind.STANDALONE_NO_TR -> {
                     NoTestRunnerExtras(
                         entryPoint = parseEntryPoint(structure.directives),
-                        inputDataFile = inputDataFile,
+                        inputDataFile = parseInputDataFile(baseDir = testDataFile.parentFile, structure.directives),
                         arguments = parseProgramArguments(structure.directives)
                     )
                 }
                 TestKind.REGULAR, TestKind.STANDALONE -> {
                     WithTestRunnerExtras(runnerType = parseTestRunner(structure.directives))
                 }
-                TestKind.STANDALONE_LLDB -> {
-                    val locationFormat = "{ at \${line.file.basename}:\${line.number}{:\${line.column}}}"
-                    val nameFormat = "{ \${module.file.basename}{\\`\${function.name-with-args}{\${frame.no-debug}}}}"
-                    val stopReasonFormat = "{, stop reason = \${thread.stop-reason}}"
-                    val returnValFormat = "{\\nReturn value: \${thread.return-value}}{\\nCompleted expression: \${thread.completed-expression}}"
-                    val activityFormat = "{, activity = '\${thread.info.activity.name}'}{, \${thread.info.trace_messages} messages}"
-                    val lldbTestHelper = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/scripts/konan_lldb_test_helper.py")
-                    NoTestRunnerExtras(
-                        entryPoint = parseEntryPoint(structure.directives),
-                        arguments = buildList {
-                            this += "--no-lldbinit"
-                            this += "-b"
-                            this += "-o"
-                            this += "settings set stop-disassembly-display never"
-                            this += "-o"
-                            this += "settings set frame-format \"frame #\${frame.index}: <frame pc>$nameFormat$locationFormat\\n\""
-                            this += "-o"
-                            this += "settings set thread-format \"thread #<thread id>$nameFormat$locationFormat$stopReasonFormat$returnValFormat\\n\""
-                            this += "-o"
-                            this += "settings set thread-stop-format \"thread #<thread id>$activityFormat$stopReasonFormat$returnValFormat\\n\""
-                            this += "-o"
-                            this += "command script import ${settings.get<LLDB>().prettyPrinters.absolutePath}"
-                            this += "-o"
-                            this += "command script import ${lldbTestHelper.absolutePath}"
-                            inputDataFile?.readLines()?.filterNot { it.isBlank() }?.forEach {
-                                this += "-o"
-                                this += it
-                            }
-                        }
-                    )
-                }
-                TestKind.STANDALONE_STEPPING -> {
+                TestKind.STANDALONE_LLDB, TestKind.STANDALONE_STEPPING -> {
                     NoTestRunnerExtras(
                         entryPoint = parseEntryPoint(structure.directives),
                         arguments = lldbSpec!!.generateCLIArguments(settings.get<LLDB>().prettyPrinters)

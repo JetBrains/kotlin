@@ -1,9 +1,0 @@
-(lldb) target create <path to executable>
-Current executable set to <path to executable>.
-(lldb) settings set stop-disassembly-display never
-(lldb) command script import <path to lldb script>
-(lldb) b 10
-Breakpoint 1: where = lldb_kt33364.kexe`kfun:#main(){} + <breakpoint offset> at kt33364.kt:11:10, address = <memory address>
-(lldb) b 17
-Breakpoint 2: where = lldb_kt33364.kexe`kfun:#main(){} + <breakpoint offset> at kt33364.kt:18:5, address = <memory address>
-(lldb) q

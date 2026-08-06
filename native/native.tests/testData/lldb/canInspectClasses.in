@@ -1,6 +1,0 @@
-b main.kt:11
-r
-fr var
-v point->x
-v point->y
-q

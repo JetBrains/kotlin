@@ -1,9 +1,4 @@
 // KIND: STANDALONE_LLDB
-// INPUT_DATA_FILE: canInspectClasses.in
-// OUTPUT_DATA_FILE: canInspectClasses.out
-
-
-
 
 fun main(args: Array<String>) {
     val point = Point(1, 2)
