@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.sir.providers.impl
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.export.utilities.isAllSuperTypesExported
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -33,6 +34,7 @@ public class SirVisibilityCheckerImpl(
     private val sirSession: SirSession,
     private val unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
     private val enableCoroutinesSupport: Boolean,
+    private val hiddenModules: List<KaModule>
 ) : SirVisibilityChecker {
     @OptIn(KaExperimentalApi::class)
     override fun KaDeclarationSymbol.sirAvailability(): SirAvailability = sirSession.withSessions {
@@ -47,6 +49,10 @@ public class SirVisibilityCheckerImpl(
                 set(newValue) {
                     field = minOf(field, newValue)
                 }
+        }
+
+        if (hiddenModules.contains(ktSymbol.containingModule)) {
+            return@withSessions SirAvailability.Hidden("Declaration comes from a module excluded from Swift Export")
         }
 
         val containingModule = ktSymbol.containingModule.sirModule()

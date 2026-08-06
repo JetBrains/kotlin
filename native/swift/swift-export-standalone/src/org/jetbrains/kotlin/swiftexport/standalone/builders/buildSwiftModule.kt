@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.sir.providers.trampolineDeclarations
 import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleExportMode
 import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
+import kotlin.collections.List
 
 internal fun buildSirSession(
     mainModuleName: String,
@@ -45,6 +47,7 @@ internal fun buildSirSession(
     targetPackageFqName = moduleConfig.targetPackageFqName,
     referencedTypeHandler = referenceHandler,
     enableCoroutinesSupport = config.enableCoroutinesSupport,
+    hiddenModules = kaModules.hiddenModules,
 )
 
 /**
@@ -98,3 +101,8 @@ private fun extractAllTransitively(
 }.flatten()
 
 internal typealias KaModules = org.jetbrains.kotlin.analysis.api.klib.reader.KaModules<SwiftModuleConfig>
+
+internal val KaModules.hiddenModules
+    get() = inputsToModules
+        .filter { it.key.config.exportMode == SwiftModuleExportMode.Excluded }
+        .map { it.value }

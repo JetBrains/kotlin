@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.konan.test.testLibraryAKlibFile
 import org.jetbrains.kotlin.konan.test.testLibraryKotlinxSerializationCoreKlibFile
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleExportMode
 import org.jetbrains.kotlin.swiftexport.standalone.runSwiftExport
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -61,7 +62,7 @@ abstract class AbstractExternalProjectGenerationTest : AbstractSwiftExportWithBi
     ) {
         val config = klib.createConfig(outputPath = tmpdir.toPath().resolve(klib.swiftModuleName))
         val inputModule = klib.createInputModule(
-            SwiftModuleConfig(rootPackage = klib.rootPackage, shouldBeFullyExported = true)
+            SwiftModuleConfig(rootPackage = klib.rootPackage, exportMode = SwiftModuleExportMode.Full)
         )
         val result = runSwiftExport(setOf(inputModule), config).getOrThrow()
         validateSwiftExportOutput(testDataDir.resolve(goldenData), result, validateKotlinBridge)

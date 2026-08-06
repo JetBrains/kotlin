@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleExportMode
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.junit.jupiter.api.Assumptions
@@ -108,11 +109,25 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
         extraSwiftCompilerOptions = extraSwiftCompilerOptions +
             discoveredModuleMaps.flatMap { listOf("-Xcc", "-fmodule-map-file=${it.absolutePath}") }
 
+        val hiddenModules = (originalTestCase.rootModules + originalTestCase.modules).filter { it.hiddenFromSwiftExport() }
+        assertTrue(hiddenModules.none { it in originalTestCase.rootModules }) {
+            "A root module cannot be hidden from Swift Export: " +
+                    hiddenModules.filter { it in originalTestCase.rootModules }.map { it.name }
+        }
+        assertTrue(hiddenModules.none { it.shouldBeExportedToSwift() }) {
+            "Module is marked both EXPORT_TO_SWIFT and HIDE_FROM_SWIFT_EXPORT: " +
+                    hiddenModules.filter { it.shouldBeExportedToSwift() }.map { it.name }
+        }
+
         val inputModuleByTestModule = (originalTestCase.rootModules + originalTestCase.modules + givenModules).associateWith {
             createInputModule(
                 testModule = it,
                 originalTestCase = originalTestCase,
-                shouldBeFullyExported = it.shouldBeExportedToSwift() || originalTestCase.rootModules.contains(it)
+                exportMode = when {
+                    it.hiddenFromSwiftExport() -> SwiftModuleExportMode.Excluded
+                    it.shouldBeExportedToSwift() || originalTestCase.rootModules.contains(it) -> SwiftModuleExportMode.Full
+                    else -> SwiftModuleExportMode.Transitive
+                }
             )
         }
         val modulesToExport = inputModuleByTestModule.values.toSet()
@@ -122,8 +137,6 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
             stableDeclarationsOrder = true,
             distribution = Distribution(KonanHome.konanHomePath),
             konanTarget = targets.testTarget,
-            errorTypeStrategy = ErrorTypeStrategy.Fail,
-            unsupportedTypeStrategy = ErrorTypeStrategy.SpecialType,
         )
 
         // run swift export
@@ -167,7 +180,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
     private fun createInputModule(
         testModule: TestModule,
         originalTestCase: TestCase,
-        shouldBeFullyExported: Boolean
+        exportMode: SwiftModuleExportMode,
     ): InputModule {
         val config = (testModule as? TestModule.Exclusive)?.swiftExportConfigMap()
         // Whether a module is a cinterop re-export container is detected by Swift Export from the klib
@@ -177,7 +190,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
             SwiftModuleConfig(
                 rootPackage = config?.get(SwiftModuleConfig.ROOT_PACKAGE),
                 unsupportedDeclarationReporterKind = getUnsupportedDeclarationsReporterKind(config),
-                shouldBeFullyExported = shouldBeFullyExported,
+                exportMode = exportMode,
             )
         )
     }

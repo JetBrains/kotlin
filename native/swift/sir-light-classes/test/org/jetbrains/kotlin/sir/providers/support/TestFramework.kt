@@ -54,6 +54,7 @@ class TestSirSession(
         sirSession = sirSession,
         unsupportedDeclarationReporter = SilentUnsupportedDeclarationReporter,
         enableCoroutinesSupport = true,
+        hiddenModules = emptyList(),
     )
     override val childrenProvider: SirChildrenProvider = SirDeclarationChildrenProviderImpl(
         sirSession = sirSession,

@@ -482,6 +482,8 @@ internal class SirStubProtocol(
     sirSession
 ) {
     override val declarations: MutableList<SirDeclaration> = mutableListOf()
+
+    override val protocols: List<SirProtocol> get() = emptyList()
 }
 
 /**
