@@ -1,0 +1,559 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] overridePropertyVisibility.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Derived : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] get(): Int { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] fake.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Derived : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] get(): Int { LAZY_BLOCK }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(RAW_FIR)] overridePropertyVisibility.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Derived : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] get(): Int { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Derived : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] get(): Int { LAZY_BLOCK }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] overridePropertyVisibility.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Derived : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] get(): Int { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Derived : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public? open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val property: Int
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Derived] get(): Int { LAZY_BLOCK }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] overridePropertyVisibility.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Derived : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] get(): Int { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Derived : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public? open? override [ResolvedTo(COMPANION_GENERATION)] val property: Int
+            public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Derived] get(): Int { LAZY_BLOCK }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] overridePropertyVisibility.kt
+    public open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] class Derived : R|one/Base| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] get(): Int { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Derived : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public? open? override [ResolvedTo(SUPER_TYPES)] val property: Int
+            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Derived] get(): Int { LAZY_BLOCK }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] overridePropertyVisibility.kt
+    public open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(TYPES)] class Derived : R|one/Base| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] get(): Int { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Derived : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public? open? override [ResolvedTo(TYPES)] val property: R|kotlin/Int|
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] overridePropertyVisibility.kt
+    public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(STATUS)] val property: R|kotlin/Int|
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=Base] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(STATUS)] class Derived : R|one/Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<R|one/Base|>
+        }
+
+        protected open override [ResolvedTo(STATUS)] val property: R|kotlin/Int|
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Derived : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public open override [ResolvedTo(STATUS)] val property: R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] overridePropertyVisibility.kt
+    public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(STATUS)] val property: R|kotlin/Int|
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=Base] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(STATUS)] class Derived : R|one/Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<R|one/Base|>
+        }
+
+        protected open override [ResolvedTo(STATUS)] val property: R|kotlin/Int|
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Derived : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val property: R|kotlin/Int|
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] overridePropertyVisibility.kt
+    public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(STATUS)] val property: R|kotlin/Int|
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=Base] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(STATUS)] class Derived : R|one/Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<R|one/Base|>
+        }
+
+        protected open override [ResolvedTo(STATUS)] val property: R|kotlin/Int|
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Derived : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public open override [ResolvedTo(CONTRACTS)] val property: R|kotlin/Int|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] overridePropertyVisibility.kt
+    public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(STATUS)] val property: R|kotlin/Int|
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=Base] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(STATUS)] class Derived : R|one/Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<R|one/Base|>
+        }
+
+        protected open override [ResolvedTo(STATUS)] val property: R|kotlin/Int|
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Derived : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val property: R|kotlin/Int|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] overridePropertyVisibility.kt
+    public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(STATUS)] val property: R|kotlin/Int|
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=Base] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(STATUS)] class Derived : R|one/Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<R|one/Base|>
+        }
+
+        protected open override [ResolvedTo(STATUS)] val property: R|kotlin/Int|
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Derived : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public open override [ResolvedTo(CONSTANT_EVALUATION)] val property: R|kotlin/Int|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] overridePropertyVisibility.kt
+    public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(STATUS)] val property: R|kotlin/Int|
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=Base] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(STATUS)] class Derived : R|one/Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<R|one/Base|>
+        }
+
+        protected open override [ResolvedTo(STATUS)] val property: R|kotlin/Int|
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Derived : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] val property: R|kotlin/Int|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] overridePropertyVisibility.kt
+    public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(STATUS)] val property: R|kotlin/Int|
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=Base] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(STATUS)] class Derived : R|one/Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<R|one/Base|>
+        }
+
+        protected open override [ResolvedTo(STATUS)] val property: R|kotlin/Int|
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=Derived] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        protected open [ResolvedTo(RAW_FIR)] val property: Int
+            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Derived : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            LAZY_super<Base>
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] val property: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] get(): R|kotlin/Int| {
+                ^ Int(2)
+            }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fake.kt
+    public open [ResolvedTo(BODY_RESOLVE)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Base] constructor(): R|one/Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected open [ResolvedTo(BODY_RESOLVE)] val property: R|kotlin/Int|
+            protected [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Base] get(): R|kotlin/Int| {
+                ^ Int(1)
+            }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class Derived : R|one/Base| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] constructor(): R|one/Derived| {
+            super<R|one/Base|>()
+        }
+
+        protected open override [ResolvedTo(BODY_RESOLVE)] val property: R|kotlin/Int|
+            protected [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] get(): R|kotlin/Int| {
+                ^ Int(2)
+            }
+
+    }

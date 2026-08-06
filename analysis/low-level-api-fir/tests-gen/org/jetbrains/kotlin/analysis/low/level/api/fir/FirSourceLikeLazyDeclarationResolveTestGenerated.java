@@ -2195,6 +2195,18 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
       }
 
       @Test
+      @TestMetadata("overrideFunctionModifiers.kt")
+      public void testOverrideFunctionModifiers() {
+        run("overrideFunctionModifiers.kt");
+      }
+
+      @Test
+      @TestMetadata("overridePropertyVisibility.kt")
+      public void testOverridePropertyVisibility() {
+        run("overridePropertyVisibility.kt");
+      }
+
+      @Test
       @TestMetadata("regularFunction.kt")
       public void testRegularFunction() {
         run("regularFunction.kt");
