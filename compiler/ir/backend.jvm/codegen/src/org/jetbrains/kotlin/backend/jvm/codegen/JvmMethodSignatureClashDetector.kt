@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.linkage.issues.SignatureClashDetector
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.overrides.IrJavaIncompatibilityRulesOverridabilityCondition
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
@@ -119,7 +120,9 @@ class JvmMethodSignatureClashDetector(
             }
 
             else -> {
-                val overrideChecker = IrOverrideChecker(classCodegen.context.typeSystem, emptyList())
+                val overrideChecker = IrOverrideChecker(
+                    classCodegen.context.typeSystem, listOf(IrJavaIncompatibilityRulesOverridabilityCondition())
+                )
                 val canIgnoreConflict = declarations.all { a -> declarations.all { b -> overrideChecker.canIgnoreConflict(a, b) } }
                 if (!canIgnoreConflict) {
                     reportJvmSignatureClash(
