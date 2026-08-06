@@ -105,7 +105,9 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
             allLibrariesArgument = K2NativeCompilerArguments::libraries.cliArgument
         )
 
+        // TODO(KT-61096): Add a check when -Xinclude argument can be actually used!
         configuration.konanIncludedLibraries = arguments.includes.toList()
+        configuration.konanLibraries += configuration.konanIncludedLibraries
 
         configuration.konanNoStdlib = arguments.nostdlib
         configuration.konanNoDefaultLibs = arguments.nodefaultlibs
