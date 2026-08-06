@@ -31,9 +31,10 @@ internal fun prepareKlibArgumentsForOneStage(
     intermediateKlibPath: String
 ): K2NativeCompilerArguments {
     val klibArgs = original.copyOf()
-    // Override produce and output as we should produce an intermediate KLib
+    // Override produce, output and includes as we should produce an intermediate KLib
     klibArgs.produce = "library"
     klibArgs.outputName = intermediateKlibPath
+    klibArgs.includes = emptyArray()
     return klibArgs
 }
 
