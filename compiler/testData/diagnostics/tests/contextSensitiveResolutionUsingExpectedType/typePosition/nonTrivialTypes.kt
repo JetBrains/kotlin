@@ -20,7 +20,7 @@ sealed interface MyGenericSealed<E2> : MyGeneric<E2> {
 }
 
 fun main(mg: MyGeneric<Any>, cs: CharSequence) {
-    when (val foo = JavaClass.foo()) {
+    <!WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA!>when<!> (val foo = JavaClass.foo()) {
         is Left -> foo.x
         is Right -> foo.y
     }
