@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
+import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -96,6 +98,19 @@ class JvmMappedScope(
 
     private val isList: Boolean = firKotlinClass.classId == StandardClassIds.List
 
+    // Names of members coming from the java.lang.constant.Constable/ConstantDesc supertypes added
+    // by FirJvmDeserializationExtension (KT-29858). Such members are visible through the regular
+    // supertype scopes and bypass the JvmBuiltInsSignatures-based vetting below, so for final
+    // classes they must be materialized in this scope (with the corresponding hidden status) to
+    // shadow the ones inherited from the interfaces.
+    private val namesFromConstantInterfaces: Set<Name> by lazy {
+        val superClassIds = firKotlinClass.superConeTypes.mapTo(hashSetOf()) { it.lookupTag.classId }
+        buildSet {
+            if (JvmStandardClassIds.Java.Constable in superClassIds) add(DESCRIBE_CONSTABLE_NAME)
+            if (JvmStandardClassIds.Java.ConstantDesc in superClassIds) add(RESOLVE_CONSTANT_DESC_NAME)
+        }
+    }
+
     // It's ok to have a super set of actually available member names
     private val myCallableNames: Set<Name> by lazy {
         if (firKotlinClass.isFinal) {
@@ -109,7 +124,7 @@ class JvmMappedScope(
                 Name.identifier(signature.substring(signaturePrefix.length + 1, signature.indexOf("(")))
             }
 
-            declaredMemberScope.getCallableNames() + names
+            declaredMemberScope.getCallableNames() + names + namesFromConstantInterfaces
         } else {
             declaredMemberScope.getCallableNames() + javaMappedClassUseSiteScope.getCallableNames()
         }.let {
@@ -169,7 +184,9 @@ class JvmMappedScope(
 
             if (jdkMemberStatus == JDKMemberStatus.DROP) return@processor
             // hidden methods in final class can't be overridden or called with 'super'
-            if ((jdkMemberStatus == JDKMemberStatus.HIDDEN || jdkMemberStatus == JDKMemberStatus.HIDDEN_IN_DECLARING_CLASS_ONLY) && firKotlinClass.isFinal) return@processor
+            if ((jdkMemberStatus == JDKMemberStatus.HIDDEN || jdkMemberStatus == JDKMemberStatus.HIDDEN_IN_DECLARING_CLASS_ONLY) &&
+                firKotlinClass.isFinal && symbol.name !in namesFromConstantInterfaces
+            ) return@processor
 
             val newSymbol = mappedSymbolCache.mappedFunctions.getValue(symbol, this to jdkMemberStatus)
 
@@ -446,6 +463,8 @@ class JvmMappedScope(
 
         private val GET_FIRST_NAME = Name.identifier("getFirst")
         private val GET_LAST_NAME = Name.identifier("getLast")
+        private val DESCRIBE_CONSTABLE_NAME = Name.identifier("describeConstable")
+        private val RESOLVE_CONSTANT_DESC_NAME = Name.identifier("resolveConstantDesc")
     }
 
     override fun toString(): String {

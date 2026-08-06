@@ -80,7 +80,13 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
         if (shadowingMember != null) {
             val shadowingMemberDeprecation = shadowingMember.getDeprecation(context.session, declaration)
 
-            if (shadowingMemberDeprecation?.deprecationLevel != DeprecationLevelValue.HIDDEN) {
+            // A member that is not callable on the receiver (e.g., an unvetted JDK member of a
+            // JVM-mapped builtin class) does not actually shadow the extension
+            val hiddenStatus = shadowingMember.hiddenStatusOfCall(isSuperCall = false, isCallToOverride = false)
+
+            if (shadowingMemberDeprecation?.deprecationLevel != DeprecationLevelValue.HIDDEN &&
+                hiddenStatus != CallToPotentiallyHiddenSymbolResult.Hidden
+            ) {
                 reporter.reportOn(declaration.source, FirErrors.EXTENSION_SHADOWED_BY_MEMBER, shadowingMember)
                 return
             }

@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationExtension
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
@@ -23,6 +25,8 @@ import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -39,18 +43,44 @@ class FirJvmDeserializationExtension(session: FirSession) : FirDeserializationEx
 
     override fun FirRegularClassBuilder.configureDeserializedClass(classId: ClassId) {
         addSerializableIfNeeded(classId)
+        addConstableSupertypesIfNeeded(classId)
     }
 
     private fun FirRegularClassBuilder.addSerializableIfNeeded(classId: ClassId) {
         if (this.status.isExpect) return
         if (!JvmBuiltInsSignatures.isSerializableInJava(classId.asSingleFqName().toUnsafe())) return
-        superTypeRefs += buildResolvedTypeRef {
-            coneType = ConeClassLikeTypeImpl(
-                JAVA_IO_SERIALIZABLE.toLookupTag(),
-                typeArguments = ConeTypeProjection.EMPTY_ARRAY,
-                isMarkedNullable = false
-            )
+        superTypeRefs += resolvedSupertypeRef(JAVA_IO_SERIALIZABLE)
+    }
+
+    // On JDK 12 and later, the Java analogues of these builtin classes implement
+    // java.lang.constant.Constable and java.lang.constant.ConstantDesc (KT-29858).
+    // Whether the current JDK declares these interfaces is detected by resolving them
+    // through the session's symbol provider, so `-jdk-release` is respected as well.
+    private fun FirRegularClassBuilder.addConstableSupertypesIfNeeded(classId: ClassId) {
+        if (this.status.isExpect) return
+        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.JvmBuiltinsConstableSupertypes)) return
+        if (classId in CLASSES_WITH_CONSTABLE_SUPERTYPE && isConstableAvailable) {
+            superTypeRefs += resolvedSupertypeRef(JvmStandardClassIds.Java.Constable)
         }
+        if (classId in CLASSES_WITH_CONSTANT_DESC_SUPERTYPE && isConstantDescAvailable) {
+            superTypeRefs += resolvedSupertypeRef(JvmStandardClassIds.Java.ConstantDesc)
+        }
+    }
+
+    private val isConstableAvailable: Boolean by lazy {
+        session.symbolProvider.getClassLikeSymbolByClassId(JvmStandardClassIds.Java.Constable) != null
+    }
+
+    private val isConstantDescAvailable: Boolean by lazy {
+        session.symbolProvider.getClassLikeSymbolByClassId(JvmStandardClassIds.Java.ConstantDesc) != null
+    }
+
+    private fun resolvedSupertypeRef(classId: ClassId): FirResolvedTypeRef = buildResolvedTypeRef {
+        coneType = ConeClassLikeTypeImpl(
+            classId.toLookupTag(),
+            typeArguments = ConeTypeProjection.EMPTY_ARRAY,
+            isMarkedNullable = false
+        )
     }
 
     override fun loadModuleName(classProto: ProtoBuf.Class, nameResolver: NameResolver): String? =
@@ -71,5 +101,25 @@ class FirJvmDeserializationExtension(session: FirSession) : FirDeserializationEx
 
     companion object {
         private val JAVA_IO_SERIALIZABLE = ClassId.topLevel(FqName("java.io.Serializable"))
+
+        private val CLASSES_WITH_CONSTABLE_SUPERTYPE = setOf(
+            StandardClassIds.Byte, StandardClassIds.Short, StandardClassIds.Int, StandardClassIds.Long,
+            StandardClassIds.Float, StandardClassIds.Double, StandardClassIds.Char, StandardClassIds.Boolean,
+            StandardClassIds.String, StandardClassIds.Enum,
+        )
+
+        private val CLASSES_WITH_CONSTANT_DESC_SUPERTYPE = setOf(
+            StandardClassIds.Int, StandardClassIds.Long,
+            StandardClassIds.Float, StandardClassIds.Double,
+            StandardClassIds.String,
+        )
+
+        /**
+         * Builtin classes whose deserialized supertypes depend on the SDK the use-site module is compiled against
+         * (see [addConstableSupertypesIfNeeded]). Deserialized [FirRegularClass][org.jetbrains.kotlin.fir.declarations.FirRegularClass]
+         * instances of these classes must not be shared between modules with different SDKs.
+         */
+        val CLASSES_WITH_SDK_DEPENDENT_SUPERTYPES: Set<ClassId> =
+            CLASSES_WITH_CONSTABLE_SUPERTYPE + CLASSES_WITH_CONSTANT_DESC_SUPERTYPE
     }
 }

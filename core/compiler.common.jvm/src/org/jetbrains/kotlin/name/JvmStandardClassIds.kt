@@ -175,6 +175,8 @@ object JvmStandardClassIds {
 
     object Java {
         val Record = "Record".javaLangId()
+        val Constable = "Constable".javaConstantId()
+        val ConstantDesc = "ConstantDesc".javaConstantId()
     }
 
     object Callables {
@@ -206,6 +208,8 @@ private fun String.jvmId() = ClassId(JvmStandardClassIds.BASE_JVM_PACKAGE, Name.
 
 private val JAVA_LANG_PACKAGE = FqName("java.lang")
 private val JAVA_LANG_ANNOTATION_PACKAGE = JAVA_LANG_PACKAGE.child(Name.identifier("annotation"))
+private val JAVA_LANG_CONSTANT_PACKAGE = JAVA_LANG_PACKAGE.child(Name.identifier("constant"))
 
 private fun String.javaLangId() = ClassId(JAVA_LANG_PACKAGE, Name.identifier(this))
 private fun String.javaAnnotationId() = ClassId(JAVA_LANG_ANNOTATION_PACKAGE, Name.identifier(this))
+private fun String.javaConstantId() = ClassId(JAVA_LANG_CONSTANT_PACKAGE, Name.identifier(this))

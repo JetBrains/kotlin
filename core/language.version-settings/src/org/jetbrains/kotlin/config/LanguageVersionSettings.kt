@@ -562,6 +562,7 @@ enum class LanguageFeature(
     IrCrossModuleInlinerBeforeKlibSerialization(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_3, forcesPreReleaseBinaries = true, issue = "KT-71896"),
     JvmSupportRecursiveTypeOf(sinceVersion = KOTLIN_2_5, issue = "KT-87339"),
     JsAllowExportTypealiases(sinceVersion = KOTLIN_2_5, "KT-49795"),
+    JvmBuiltinsConstableSupertypes(sinceVersion = KOTLIN_2_5, issue = "KT-29858"),
 
     // 2.6
 

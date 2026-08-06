@@ -74,7 +74,7 @@ public final class Array<T> : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Seri
 
 }
 
-public final class Boolean : R|kotlin/Comparable<kotlin/Boolean>|, R|java/io/Serializable| {
+public final class Boolean : R|kotlin/Comparable<kotlin/Boolean>|, R|java/io/Serializable|, R|java/lang/constant/Constable| {
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun not(): R|kotlin/Boolean|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun and(other: R|kotlin/Boolean|): R|kotlin/Boolean|
@@ -90,6 +90,8 @@ public final class Boolean : R|kotlin/Comparable<kotlin/Boolean>|, R|java/io/Ser
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
+
+    public open fun describeConstable(): R|java/util/Optional<java/lang/constant/DynamicConstantDesc<kotlin/Boolean!>!>!|
 
     private constructor(): R|kotlin/Boolean|
 
@@ -130,7 +132,7 @@ public final class BooleanArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/
 
 }
 
-public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>|, R|java/io/Serializable| {
+public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>|, R|java/io/Serializable|, R|java/lang/constant/Constable| {
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Short|): R|kotlin/Int|
@@ -245,6 +247,8 @@ public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>|, R
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
+    public open fun describeConstable(): R|java/util/Optional<java/lang/constant/DynamicConstantDesc<kotlin/Byte!>!>!|
+
     public open fun hashCode(): R|kotlin/Int|
 
     private constructor(): R|kotlin/Byte|
@@ -298,7 +302,7 @@ public final class ByteArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Ser
 
 }
 
-public final class Char : R|kotlin/Comparable<kotlin/Char>|, R|java/io/Serializable| {
+public final class Char : R|kotlin/Comparable<kotlin/Char>|, R|java/io/Serializable|, R|java/lang/constant/Constable| {
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun compareTo(other: R|kotlin/Char|): R|kotlin/Int|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Int|): R|kotlin/Char|
@@ -334,6 +338,8 @@ public final class Char : R|kotlin/Comparable<kotlin/Char>|, R|java/io/Serializa
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
+
+    public open fun describeConstable(): R|java/util/Optional<java/lang/constant/DynamicConstantDesc<kotlin/Char!>!>!|
 
     private constructor(): R|kotlin/Char|
 
@@ -549,7 +555,7 @@ public final enum class DeprecationLevel : R|kotlin/Enum<kotlin/DeprecationLevel
 
 }
 
-public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>|, R|java/io/Serializable| {
+public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>|, R|java/io/Serializable|, R|java/lang/constant/Constable|, R|java/lang/constant/ConstantDesc| {
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Short|): R|kotlin/Int|
@@ -648,6 +654,10 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
+    public open fun describeConstable(): R|java/util/Optional<kotlin/Double!>!|
+
+    public open fun resolveConstantDesc(p0: R|java/lang/invoke/MethodHandles.Lookup!|): R|kotlin/Double!|
+
     public open fun hashCode(): R|kotlin/Int|
 
     private constructor(): R|kotlin/Double|
@@ -721,7 +731,7 @@ public final class DoubleArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/S
 
 }
 
-public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable| {
+public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|, R|java/lang/constant/Constable| {
     public final operator fun compareTo(other: R|E|): R|kotlin/Int|
 
     protected final fun clone(): R|kotlin/Any|
@@ -806,7 +816,7 @@ public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|j
 
 }
 
-public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>|, R|java/io/Serializable| {
+public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>|, R|java/io/Serializable|, R|java/lang/constant/Constable|, R|java/lang/constant/ConstantDesc| {
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Short|): R|kotlin/Int|
@@ -905,6 +915,10 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>|,
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
+    public open fun describeConstable(): R|java/util/Optional<kotlin/Float!>!|
+
+    public open fun resolveConstantDesc(p0: R|java/lang/invoke/MethodHandles.Lookup!|): R|kotlin/Float!|
+
     public open fun hashCode(): R|kotlin/Int|
 
     private constructor(): R|kotlin/Float|
@@ -987,7 +1001,7 @@ public abstract interface Function<out R> : R|kotlin/Any| {
 
 }
 
-public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>|, R|java/io/Serializable| {
+public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>|, R|java/io/Serializable|, R|java/lang/constant/Constable|, R|java/lang/constant/ConstantDesc| {
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Short|): R|kotlin/Int|
@@ -1116,6 +1130,10 @@ public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>|, R|j
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
+    public open fun describeConstable(): R|java/util/Optional<kotlin/Int!>!|
+
+    public open fun resolveConstantDesc(p0: R|java/lang/invoke/MethodHandles.Lookup!|): R|kotlin/Int!|
+
     public open fun hashCode(): R|kotlin/Int|
 
     private constructor(): R|kotlin/Int|
@@ -1169,7 +1187,7 @@ public final class IntArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Seri
 
 }
 
-public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>|, R|java/io/Serializable| {
+public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>|, R|java/io/Serializable|, R|java/lang/constant/Constable|, R|java/lang/constant/ConstantDesc| {
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Short|): R|kotlin/Int|
@@ -1297,6 +1315,10 @@ public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>|, R
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toString(): R|kotlin/String|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    public open fun describeConstable(): R|java/util/Optional<kotlin/Long!>!|
+
+    public open fun resolveConstantDesc(p0: R|java/lang/invoke/MethodHandles.Lookup!|): R|kotlin/Long!|
 
     public open fun hashCode(): R|kotlin/Int|
 
@@ -1513,7 +1535,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
 
 }
 
-public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>|, R|java/io/Serializable| {
+public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>|, R|java/io/Serializable|, R|java/lang/constant/Constable| {
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun compareTo(other: R|kotlin/Short|): R|kotlin/Int|
@@ -1628,6 +1650,8 @@ public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>|,
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
+    public open fun describeConstable(): R|java/util/Optional<java/lang/constant/DynamicConstantDesc<kotlin/Short!>!>!|
+
     public open fun hashCode(): R|kotlin/Int|
 
     private constructor(): R|kotlin/Short|
@@ -1695,7 +1719,7 @@ public final class ShortArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Se
 
 }
 
-public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSequence|, R|java/io/Serializable| {
+public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSequence|, R|java/io/Serializable|, R|java/lang/constant/Constable|, R|java/lang/constant/ConstantDesc| {
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun plus(other: R|kotlin/Any?|): R|kotlin/String|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun get(index: R|kotlin/Int|): R|kotlin/Char|
@@ -1710,6 +1734,10 @@ public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSe
 
     @PROPERTY:R|kotlin/internal/IntrinsicConstEvaluation|() public open val length: R|kotlin/Int|
         public get(): R|kotlin/Int|
+
+    public open fun describeConstable(): R|java/util/Optional<kotlin/String!>!|
+
+    public open fun resolveConstantDesc(p0: R|java/lang/invoke/MethodHandles.Lookup!|): R|kotlin/String!|
 
     public open fun hashCode(): R|kotlin/Int|
 
