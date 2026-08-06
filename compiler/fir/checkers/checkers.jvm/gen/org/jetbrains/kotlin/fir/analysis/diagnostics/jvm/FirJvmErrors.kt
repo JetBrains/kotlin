@@ -91,6 +91,7 @@ object FirJvmErrors : KtDiagnosticsContainer() {
     val JAVA_CLASS_ON_COMPANION: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("JAVA_CLASS_ON_COMPANION", WARNING, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, PsiElement::class, getRendererFactory())
     val JAVA_CLASS_PROPERTY_REFERENCE: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("JAVA_CLASS_PROPERTY_REFERENCE", ForbidJavaClassPropertyReferences, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
     val UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS", WARNING, SourceElementPositioningStrategies.WHEN_EXPRESSION, PsiElement::class, getRendererFactory())
+    val WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA", WARNING, SourceElementPositioningStrategies.WHEN_EXPRESSION, PsiElement::class, getRendererFactory())
 
     // Type parameters
     val UPPER_BOUND_CANNOT_BE_ARRAY: KtDiagnosticFactory0 = KtDiagnosticFactory0("UPPER_BOUND_CANNOT_BE_ARRAY", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())

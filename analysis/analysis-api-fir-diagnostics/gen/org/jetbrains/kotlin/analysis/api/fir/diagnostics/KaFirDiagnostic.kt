@@ -8627,6 +8627,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WhenSubjectCanBeNullInJava : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<WhenSubjectCanBeNullInJava>
+            get() = WhenSubjectCanBeNullInJava::class
+
+        public val subjectType: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface UpperBoundCannotBeArray : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<UpperBoundCannotBeArray>
             get() = UpperBoundCannotBeArray::class

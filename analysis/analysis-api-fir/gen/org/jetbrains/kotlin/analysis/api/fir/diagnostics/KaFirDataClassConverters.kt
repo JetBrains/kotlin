@@ -2974,6 +2974,13 @@ private fun KaDiagnosticConverterBuilder.addConversions65() {
             token,
         )
     }
+    add(FirJvmErrors.WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA) { firDiagnostic ->
+        WhenSubjectCanBeNullInJavaImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirWebCommonErrors.WRONG_BODY_OF_EXTERNAL_DECLARATION) { firDiagnostic ->
         WrongBodyOfExternalDeclarationImpl(
             firDiagnostic as KtPsiDiagnostic,

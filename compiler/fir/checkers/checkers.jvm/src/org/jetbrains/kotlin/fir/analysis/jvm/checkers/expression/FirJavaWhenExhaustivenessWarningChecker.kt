@@ -25,13 +25,19 @@ object FirJavaWhenExhaustivenessWarningChecker : FirWhenExpressionChecker(MppChe
         // Take the type of the initializer to account for smart casts.
         val initializerType = variable.initializer!!.resolvedType
         // Take the type of the variable to account for explicit variable types overriding the inferred type
-        val enhancedType = variable.returnTypeRef.coneType.enhancedTypeForWarning ?: return
-        if (!enhancedType.lowerBoundIfFlexible().canBeNull() ||
+        val variableType = variable.returnTypeRef.coneType
+        val enhancedType = variableType.enhancedTypeForWarning
+        if (enhancedType != null && !enhancedType.lowerBoundIfFlexible().canBeNull() ||
+            !variableType.hasFlexibleMarkedNullability ||
             !initializerType.hasFlexibleMarkedNullability
         ) return
 
         if (expression.branches.none { it.condition.handlesNull() && !it.hasGuard }) {
-            reporter.reportOn(expression.source, FirJvmErrors.UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS, enhancedType)
+            if (enhancedType != null) {
+                reporter.reportOn(expression.source, FirJvmErrors.UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS, enhancedType)
+            } else {
+                reporter.reportOn(expression.source, FirJvmErrors.WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA, initializerType)
+            }
         }
     }
 

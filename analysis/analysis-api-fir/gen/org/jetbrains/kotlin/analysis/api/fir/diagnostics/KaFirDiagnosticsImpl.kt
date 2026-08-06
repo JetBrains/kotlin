@@ -6095,6 +6095,12 @@ internal class UnexhaustiveWhenBasedOnJavaAnnotationsImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnexhaustiveWhenBasedOnJavaAnnotations
 
+internal class WhenSubjectCanBeNullInJavaImpl(
+    override val subjectType: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WhenSubjectCanBeNullInJava
+
 internal class UpperBoundCannotBeArrayImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
