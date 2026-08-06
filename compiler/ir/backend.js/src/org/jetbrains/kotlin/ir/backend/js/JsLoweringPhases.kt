@@ -246,6 +246,7 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::MainFunctionCallWrapperLowering,
     ::CleanupLowering,
     ::IrValidationAfterLoweringPhase,
+    ::EffectAnalysisLowering,
 )
 
 val optimizationLoweringList: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = createModulePhases(
@@ -259,4 +260,5 @@ val optimizationLoweringList: List<NamedCompilerPhase<JsIrBackendContext, IrModu
     ::MoveCallableFactoriesToDeclarationsLowering,
     ::DeduplicateCallableReferenceFactoriesLowering,
     ::WhileConditionFoldingLowering,
+    ::EffectAnalysisLowering,
 )

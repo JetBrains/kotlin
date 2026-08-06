@@ -21,6 +21,8 @@ import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
+import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
 import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestDataAssertions;
@@ -196,6 +198,34 @@ public class DirectiveTestUtils {
             if (match == null || replace == null) return code;
 
             return code.replaceAll(match, replace);
+        }
+    };
+
+    private static final DirectiveHandler FUNCTION_HAS_EFFECTS = new DirectiveHandler("FUNCTION_HAS_EFFECTS") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            String functionType = arguments.getPositionalArgument(0);
+            String functionName = arguments.getPositionalArgument(1);
+            String effectName = arguments.getPositionalArgument(2);
+            if (!functionType.equals("function") && !functionType.equals("class")) {
+                throw new IllegalArgumentException("Function type has to be 'class' or 'function' (got '" + functionType + "')");
+            }
+            JsFunction function;
+            if (functionType.equals("function")) {
+                function = AstSearchUtil.getFunction(ast, functionName);
+            } else {
+                function = AstSearchUtil.getClass(ast, functionName).getConstructor();
+            }
+            assert function != null: "No function or class found";
+            SideEffectKind actual = MetadataProperties.getSideEffects(function);
+            SideEffectKind expected;
+            switch (effectName) {
+                case "PURE": expected = SideEffectKind.PURE; break;
+                case "READ": expected = SideEffectKind.DEPENDS_ON_STATE; break;
+                case "WRITE": expected = SideEffectKind.AFFECTS_STATE; break;
+                default: throw new IllegalArgumentException("Invalid side effect name: " + effectName);
+            }
+            assertEquals(expected, actual, (functionType.equals("function") ? "Function " : "Constructor ") + functionName);
         }
     };
 
@@ -510,6 +540,7 @@ public class DirectiveTestUtils {
             FUNCTION_CALLED_IN_SCOPE,
             FUNCTION_NOT_CALLED_IN_SCOPE,
             FUNCTIONS_HAVE_SAME_LINES,
+            FUNCTION_HAS_EFFECTS,
             ONLY_THIS_QUALIFIED_REFERENCES,
             CHECK_COMMENT_EXISTS,
             COUNT_LABELS,
