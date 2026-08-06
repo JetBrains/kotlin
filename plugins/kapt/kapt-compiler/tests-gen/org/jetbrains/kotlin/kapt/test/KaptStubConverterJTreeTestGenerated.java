@@ -979,6 +979,32 @@ public class KaptStubConverterJTreeTestGenerated extends AbstractKaptStubConvert
   }
 
   @Nested
+  @TestMetadata("plugins/kapt/kapt-compiler/testData/converter/jvmExposeBoxed")
+  @TestDataPath("$PROJECT_ROOT")
+  public class JvmExposeBoxed {
+    private void run(String fileName) {
+      runTest("plugins/kapt/kapt-compiler/testData/converter/jvmExposeBoxed/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInJvmExposeBoxed() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt/kapt-compiler/testData/converter/jvmExposeBoxed"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("overrideFun.kt")
+    public void testOverrideFun() {
+      run("overrideFun.kt");
+    }
+
+    @Test
+    @TestMetadata("overrideProperty.kt")
+    public void testOverrideProperty() {
+      run("overrideProperty.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("plugins/kapt/kapt-compiler/testData/converter/versionOverloads")
   @TestDataPath("$PROJECT_ROOT")
   public class VersionOverloads {

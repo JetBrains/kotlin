@@ -1,0 +1,93 @@
+/**
+ * public open class A : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: openMethod-WZ4Q5Ns(I)Ljava/lang/String;
+ *   public open fun openMethod(a: kotlin/UInt): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public class A {
+
+    public A() {
+        super();
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class B : A {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: openMethod-WZ4Q5Ns(I)Ljava/lang/String;
+ *   @kotlin/jvm/JvmExposeBoxed
+ *   public open fun openMethod(a: kotlin/UInt): kotlin/String
+ *
+ *   // signature: ownMethod-WZ4Q5Ns(I)Ljava/lang/String;
+ *   @kotlin/jvm/JvmExposeBoxed
+ *   public final fun ownMethod(a: kotlin/UInt): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class B extends A {
+
+    public B() {
+        super();
+    }
+
+    @kotlin.jvm.JvmExposeBoxed()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String openMethod(@org.jetbrains.annotations.NotNull()
+    kotlin.UInt a) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmExposeBoxed()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String ownMethod(@org.jetbrains.annotations.NotNull()
+    kotlin.UInt a) {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class C : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   @kotlin/jvm/JvmExposeBoxed
+ *   public open fun toString(): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class C {
+
+    public C() {
+        super();
+    }
+
+    @java.lang.Override()
+    @kotlin.jvm.JvmExposeBoxed()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
