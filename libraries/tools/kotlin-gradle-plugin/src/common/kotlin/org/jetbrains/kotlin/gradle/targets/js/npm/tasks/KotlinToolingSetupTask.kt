@@ -77,7 +77,7 @@ internal constructor() :
                 ).apply {
                     private = true
                     dependencies.putAll(
-                        tools.get().map { it.name to it.requestedVersion }
+                        tools.get().map { it.name.get() to it.requestedVersion.get() }
                     )
                 }
 

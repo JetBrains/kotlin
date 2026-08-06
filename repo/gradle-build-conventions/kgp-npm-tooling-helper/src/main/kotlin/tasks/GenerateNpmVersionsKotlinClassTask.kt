@@ -158,7 +158,7 @@ internal constructor() : DefaultTask() {
             appendLine("// Generated class. Do not modify directly!")
             appendLine("class $npmVersionsClassName : Serializable {")
             dependencies.forEach { dep ->
-                appendLine("    val ${dep.displayName} = NpmPackageVersion(\"${dep.name}\", \"${dep.resolvedVersion}\")")
+                appendLine("    val ${dep.displayName} = NpmPackageVersion(\"${dep.name}\")")
             }
             appendLine()
             appendLine("    val allDependencies: List<NpmPackageVersion> = listOf(")
@@ -175,6 +175,29 @@ internal constructor() : DefaultTask() {
                 appendLine("        ${dep.displayName} to \"${dep.requestedVersion}\",")
             }
             appendLine("    )")
+            appendLine()
+            appendLine("    internal companion object {")
+            appendLine()
+            appendLine("        /**")
+            appendLine("         * Create a new [NpmPackageVersion], ")
+            appendLine("         * using the default version from [defaultVersions].")
+            appendLine("         */")
+            appendLine("        private fun NpmPackageVersion(name: String): NpmPackageVersion =")
+            appendLine("            NpmPackageVersion(")
+            appendLine("                name = name,")
+            appendLine("                version = defaultVersions.getValue(name),")
+            appendLine("            )")
+            appendLine()
+            appendLine("        /**")
+            appendLine("         * The default versions from KGP's `kotlin-npm-tooling/package.json`.")
+            appendLine("         * The values declared in [allDependencies] may be overwritten by users.")
+            appendLine("         */")
+            appendLine("        internal val defaultVersions: Map<String, String> = mapOf(")
+            dependencies.forEach { dep ->
+                appendLine("            \"${dep.name}\" to \"${dep.resolvedVersion}\",")
+            }
+            appendLine("        )")
+            appendLine("    }")
             appendLine("}")
         }
     }
