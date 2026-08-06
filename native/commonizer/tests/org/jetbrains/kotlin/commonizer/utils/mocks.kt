@@ -97,12 +97,35 @@ internal fun buildDummySupportLibraryModulesProvider(
     targets: Iterable<CommonizerTarget>,
     disposable: Disposable,
 ): TargetDependent<ModulesProvider> =
-    TargetDependent(targets.withAllLeaves()) {
+    TargetDependent(targets) {
         MockModulesProvider.create(listOf(), disposable)
     }
 
 internal fun buildDummySupportExpectClassSupplier(targets: Iterable<CommonizerTarget>, disposable: Disposable): SupportExpectClassSupplier =
-    SupportExpectClassSupplier(targets.toList(), buildDummySupportLibraryModulesProvider(targets, disposable))
+    SupportExpectClassSupplier(
+        targets = targets.toList(),
+        supportLibraryModulesProvider = buildDummySupportLibraryModulesProvider(
+            // For tests, we sometimes create generic commonizers with a few
+            // dummy targets, which we don't know how the individual tests will
+            // later use, so this code adds all possible shared combinations.
+            targets = buildSet {
+                targets.allLeaves().forAllPermutations { components ->
+                    this += when {
+                        components.size > 1 -> SharedCommonizerTarget(components.toSet())
+                        components.size == 1 -> components.first()
+                        else -> return@forAllPermutations
+                    }
+                }
+            },
+            disposable = disposable
+        )
+    )
+
+private fun <T> Collection<T>.forAllPermutations(onPermutation: (Set<T>) -> Unit) {
+    for (permutationIndex in 0 until (1 shl size)) {
+        onPermutation(filterIndexedTo(mutableSetOf()) { index, _ -> ((1 shl index) and permutationIndex) != 0 })
+    }
+}
 
 internal class MockModulesProvider private constructor(
     private val modules: Map<String, SerializedMetadata>,
