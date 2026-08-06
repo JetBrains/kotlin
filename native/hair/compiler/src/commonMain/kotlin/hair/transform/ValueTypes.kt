@@ -58,7 +58,7 @@ private fun ValueNode.typeRule(): HairType? = when (this) {
 
     is AnyNew -> HairType.REFERENCE
 
-    is IsInstanceOf -> HairType.INT
+    is IsInstanceOf -> HairType.BOOLEAN
     is CheckCast -> HairType.REFERENCE
 
     is TypeInfo -> HairType.REFERENCE
@@ -78,5 +78,10 @@ private fun ValueNode.typeRule(): HairType? = when (this) {
 
     is LoadArrayElement -> elementType
     is ArraySize -> HairType.INT
+
+    is Catch -> HairType.REFERENCE
+
+    is ReadVar,
+    is PhiPlaceholder -> error("$this should be eliminated before computing value types")
 }
 

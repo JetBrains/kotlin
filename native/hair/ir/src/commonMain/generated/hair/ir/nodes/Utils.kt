@@ -48,7 +48,7 @@ class UnitValue internal constructor(form: Form, ) : NodeBase(form, listOf()), V
 }
 
 
-sealed class StaticInit(form: Form, args: List<Node?>) : BlockBody(form, args) {
+sealed class StaticInit(form: Form, args: List<Node?>) : BlockBodyWithException(form, args) {
     abstract val initRoutine: HairStaticInitializer
     
     

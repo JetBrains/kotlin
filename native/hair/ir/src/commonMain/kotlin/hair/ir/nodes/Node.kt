@@ -63,8 +63,7 @@ sealed class NodeBase(final override val form: Form, args: List<Node?>) : Node {
 
 // FIXME move?
 class ControlFlowBuilder(at: Controlling) {
-    // TODO replace null with unreachable?? prob not a good idea. even better - add a reset to null method
-    var lastControl: Controlling? = at
+    var lastControl: Controlling = at
 
     // TODO make scoped?
     fun at(pos: Controlling) {
@@ -74,9 +73,9 @@ class ControlFlowBuilder(at: Controlling) {
     inline fun <N : Controlling> appendControl(next: () -> N): N = next().also { lastControl = it }
 
     inline fun <N : Node> appendControlled(next: (Controlling) -> N): N =
-        next(lastControl ?: error("No last control")).also {
+        next(lastControl).also {
             // TODO make separate appendBlockBody ?
-            lastControl = it as? Controlling
+            lastControl = it as? Controlling ?: it.session.unreachable
         }
 }
 

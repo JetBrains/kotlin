@@ -93,10 +93,10 @@ val PhiPlaceholder.blockOrNull: BlockEntry?
 val PhiPlaceholder.joinedValues: VarArgsList<Node>
     get() = VarArgsList(args, joinedValuesIndex, Node::class)
 
-val Catch.unwind: Node
-    get() = args[unwindIndex]
-val Catch.unwindOrNull: Node?
-    get() = args.getOrNull(unwindIndex)
+val Catch.block: BlockEntry
+    get() = args[blockIndex] as BlockEntry
+val Catch.blockOrNull: BlockEntry?
+    get() = args.getOrNull(blockIndex)?.let { it as BlockEntry }
 
 val BinaryOp.lhs: Node
     get() = args[lhsIndex]
@@ -361,11 +361,11 @@ interface ArgumentAccessor {
 
     
 
-    val Catch.unwind: Node
-        get() = args[unwindIndex]
+    val Catch.block: BlockEntry
+        get() = args[blockIndex] as BlockEntry
 
-    val Catch.unwindOrNull: Node?
-        get() = args.getOrNull(unwindIndex)
+    val Catch.blockOrNull: BlockEntry?
+        get() = args.getOrNull(blockIndex)?.let { it as BlockEntry }
 
     
 
@@ -683,13 +683,13 @@ interface ArgumentUpdater : ArgumentAccessor, ArgumentUpdaterBase {
 
     
 
-    override var Catch.unwind: Node
-        get() = args[unwindIndex]
-        set(value) { args[unwindIndex] = value }
+    override var Catch.block: BlockEntry
+        get() = args[blockIndex] as BlockEntry
+        set(value) { args[blockIndex] = value }
 
-    override var Catch.unwindOrNull: Node?
-        get() = args.getOrNull(unwindIndex)
-        set(value) { args[unwindIndex] = value }
+    override var Catch.blockOrNull: BlockEntry?
+        get() = args.getOrNull(blockIndex)?.let { it as BlockEntry }
+        set(value) { args[blockIndex] = value }
 
     
 

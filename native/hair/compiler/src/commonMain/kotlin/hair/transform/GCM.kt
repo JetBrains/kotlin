@@ -120,10 +120,10 @@ fun performGCM(session: Session): GCMResult {
                 is Phi -> if (use.block == n) {
                     listOf(use.block)
                 } else {
-                    use.inputs
-                        .filter { it.first == n }
-                        .filter { it.second !is Unreachable } // FIXME should be killed by GCM or normalizations earlier?
-                        .map { it.second.block }
+                    use.valuesAtExits
+                        .filter { it.value == n }
+                        .filter { it.exit !is Unreachable } // FIXME should be killed by GCM or normalizations earlier?
+                        .map { it.exit.block }
                 }
                 else -> listOf(late[use])
             }

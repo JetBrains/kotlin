@@ -46,9 +46,6 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.isUnsignedArray
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-
-internal fun IrSimpleFunction.shouldGenerateBody(): Boolean = modality != Modality.ABSTRACT && !isExternal
-
 private fun IrCall.isVirtual(): Boolean = superQualifierSymbol?.owner == null && symbol.owner.isOverridable
 
 internal val GenerateHairPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment, Map<IrFunction, FunctionCompilation>>(
@@ -66,10 +63,6 @@ internal fun generateHair(generationState: NativeGenerationState, irModule: IrMo
     hairGenerator.lower(irModule)
     return hairGenerator.funCompilations.toMap()
 }
-
-// FIXME move to utils?
-context(controlBuilder: ControlFlowBuilder)
-val controlBuilder get() = controlBuilder
 
 // FIXME copy-pasted from BCEFroLoopBodyTransformer
 private fun IrType.isBasicArray() = isPrimitiveArray() || isArray() || isUnsignedArray()
@@ -314,37 +307,13 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                     }
 
                     override fun visitWhen(expression: IrWhen, data: Unit): Node {
-                        // FIXME reuse convenience builder somehow
-                        var exhaustive = false
-                        val pairs = expression.branches.map {
-                            if (it.isUnconditional()) {
-                                exhaustive = true
-                                val value = it.result.accept(this, Unit)
-                                // FIXME check for unreachable instead?
-                                val exit = if (controlBuilder.lastControl != null) Goto() else null
-                                value to exit
-                            } else {
-                                val [trueExit, falseExit] = IfExits(it.condition.accept(this, Unit))
-
-                                BlockEntry(trueExit).ensuring { controlBuilder.lastControl == it }
-                                val trueValue = it.result.accept(this, Unit)
-                                val trueGoto = if (controlBuilder.lastControl != null) Goto() else null
-
-                                BlockEntry(falseExit).ensuring { controlBuilder.lastControl == it }
-
-                                trueValue to trueGoto
+                        return branch(expression.branches.map { irBranch ->
+                            val conditionBuilder: ExprBuilder? = if (irBranch.isUnconditional()) null else {
+                                { irBranch.condition.accept(this, Unit) }
                             }
-                        } + listOf(NoValue() to (if (exhaustive) null else Goto()))
-
-                        val [values, exits] = pairs.filter { it.second != null }.unzip()
-
-                        val result = if (exits.isNotEmpty()) {
-                            require(exits.size == values.size)
-                            val merge = BlockEntry(*exits.toTypedArray())
-                            Phi(merge, *((exits.map { it!! }).zip(values)).toTypedArray())
-                        } else NoValue()
-
-                        return result
+                            val resultBuilder: ExprBuilder = { irBranch.result.accept(this, Unit) }
+                            conditionBuilder to resultBuilder
+                        })
                     }
 
                     val loopBreaks = mutableMapOf<IrLoop, MutableList<BlockExit>>()
@@ -357,8 +326,7 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
 
                         BlockEntry(trueExit)
                         loop.body?.accept(this, Unit)
-                        val trueGoto = Goto()
-                        condBlock.preds[1] = trueGoto // FIXME sha t if no exit?
+                        condBlock.preds[1] = Goto()
 
                         val breakExits = loopBreaks[loop] ?: mutableListOf()
                         BlockEntry(falseExit, *breakExits.toTypedArray())
@@ -382,7 +350,7 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                         val [trueExit, falseExit] = IfExits(cond)
 
                         BlockEntry(trueExit)
-                        entryBlock.preds[1] = Goto() // FIXME what if no exit
+                        entryBlock.preds[1] = Goto()
 
                         val breakExits = loopBreaks[loop] ?: mutableListOf()
                         val exitBlock = BlockEntry(falseExit, *breakExits.toTypedArray())
@@ -410,14 +378,14 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                         return NoValue()
                     }
 
-                    val returns = mutableMapOf<IrReturnableBlockSymbol, MutableList<Pair<BlockExit, Node>>>()
+                    val returns = mutableMapOf<IrReturnableBlockSymbol, MutableList<ValueAndExit>>()
 
                     override fun visitReturn(expression: IrReturn, data: Unit): Node {
                         val value = expression.value.accept(this, Unit)
                         val target = expression.returnTargetSymbol
                         if (target is IrReturnableBlockSymbol) {
-                            val goto = Goto()
-                            returns.getOrPut(target) { mutableListOf() } += goto to value
+                            returns.getOrPut(target) { mutableListOf() }
+                                    .add(ValueAndExit(value, Goto()))
                         } else {
                             // FIXME what if return Unit?
                             Return(value)
@@ -429,10 +397,9 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                     override fun visitReturnableBlock(expression: IrReturnableBlock, data: Unit): Node {
                         returns[expression.symbol] = mutableListOf()
                         val mainResult = super.visitReturnableBlock(expression, data)
-                        val mainExit = if (controlBuilder.lastControl !is Unreachable) Goto() else null
-                        @Suppress("UNCHECKED_CAST")
-                        val results = (returns[expression.symbol]!! + listOf(mainExit to mainResult)).filter { it.first != null } as List<Pair<BlockExit, Node>>
-                        val exitBlock = BlockEntry(*results.map { it.first }.toTypedArray())
+                        val mainExit = Goto()
+                        val results = (returns[expression.symbol]!! + listOf(ValueAndExit(mainResult, mainExit)))
+                        val exitBlock = BlockEntry(*results.map { it.exit }.toTypedArray())
                         return Phi(exitBlock, *results.toTypedArray())
                     }
 
@@ -494,11 +461,26 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                     }
 
                     override fun visitTry(aTry: IrTry, data: Unit): Node {
-                        notImplemented(HairTODO.EXCEPTIONS)
+                        require(aTry.finallyExpression == null) { "HaIR: finally blocks must be lowered before HaIR generation" }
+
+                        return tryCatch(tryBody = {
+                            aTry.tryResult.accept(this, Unit)
+                        }, catches = aTry.catches.map { irCatch ->
+                            // FIXME can the type be null?
+                            val catchType = irCatch.catchParameter.type.getClass()!!.let { HairClassImpl(it) }
+                            val catchBuilder: CatchBuilder = { exception ->
+                                AssignVar(irCatch.catchParameter.symbol)(exception)
+                                irCatch.accept(this, Unit)
+                            }
+                            catchType to catchBuilder
+                        })
                     }
 
                     override fun visitThrow(expression: IrThrow, data: Unit): Node {
-                        notImplemented(HairTODO.EXCEPTIONS)
+                        val exceptionValue = expression.value.accept(this, Unit)
+                        Throw(exceptionValue) as Throw
+                        unreachable()
+                        return NoValue()
                     }
                 }, Unit)
             }

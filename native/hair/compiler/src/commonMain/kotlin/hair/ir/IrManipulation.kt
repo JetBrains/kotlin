@@ -168,7 +168,6 @@ fun BlockBody.replaceWithSubGraph(
         val replacementValue = build()
 
         val continuation = contextOf<ControlFlowBuilder>().lastControl
-            ?: error("The sub-graph replacing $original must fall through to its successor $successor")
         successor.control = continuation
 
         replacementValue?.let { original.replaceValueUses(it) }

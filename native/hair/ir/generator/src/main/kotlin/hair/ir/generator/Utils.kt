@@ -19,7 +19,7 @@ object Utils : ModelDSL() {
         interfaces(DataFlow.valueNode)
     }
 
-    val staticInit by abstractClass(ControlFlow.blockBody) {
+    val staticInit by abstractClass(ControlFlow.blockBodyWithException) {
         formParam("initRoutine", HairStaticInitializer::class)
     }
     val globalInit by node(staticInit)

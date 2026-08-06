@@ -7,7 +7,6 @@ import hair.ir.nodes.*
 import hair.utils.closure
 import hair.utils.indexOfSingle
 import hair.utils.isEmpty
-import hair.utils.printGraphvizNoGCM
 import kotlin.collections.set
 
 private typealias Var = Any
@@ -84,7 +83,7 @@ fun Session.buildSSA() {
 
         for (placeholder in allNodes().filterIsInstance<PhiPlaceholder>().toList()) {
             // TODO use Phi builder
-            val phi = Phi(placeholder.block, *placeholder.joinedValues.toTypedArray<Node>())
+            val phi = Phi(placeholder.block, *placeholder.joinedValues.toTypedArray())
             placeholder.replaceValueUsesAndKill(phi)
         }
     }
