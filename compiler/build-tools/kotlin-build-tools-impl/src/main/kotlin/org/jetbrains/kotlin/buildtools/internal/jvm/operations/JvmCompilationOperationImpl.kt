@@ -184,7 +184,6 @@ internal class JvmCompilationOperationImpl private constructor(
             buildDir = aggregatedIcConfigurationOptions[MODULE_BUILD_DIR]?.toFile(),
             kotlinScriptExtensions = get(KOTLINSCRIPT_EXTENSIONS),
             icFeatures = aggregatedIcConfigurationOptions.extractIncrementalCompilationFeatures(),
-            useJvmFirRunner = false,
             generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
             configurationInputs = makeConfigurationInputs(
                 aggregatedIcConfigurationOptions,

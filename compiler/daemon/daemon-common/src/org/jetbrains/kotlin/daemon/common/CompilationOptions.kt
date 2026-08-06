@@ -66,8 +66,6 @@ class IncrementalCompilationOptions(
     reportSeverity: Int,
     /** @See [CompilationResultCategory]] */
     requestedCompilationResults: Array<Int>,
-    /** Use new JvmBaseFirRunner */
-    val useJvmFirRunner: Boolean,
     /**
      * Directories that should be cleared when IC decides to rebuild
      */
@@ -93,7 +91,7 @@ class IncrementalCompilationOptions(
     generateCompilerRefIndex,
 ) {
     companion object {
-        const val serialVersionUID: Long = 5
+        const val serialVersionUID: Long = 6
     }
 
     override fun toString(): String {
