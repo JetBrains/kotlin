@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.generator.HLDiagnosticParameter
 import org.jetbrains.kotlin.analysis.api.fir.generator.printTypeWithShortNames
 import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.utils.withIndent
 import kotlin.reflect.KType
 
 object KaDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
@@ -20,7 +21,7 @@ object KaDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
     }
 
     private fun SmartPrinter.printDiagnosticClasses(diagnosticList: HLDiagnosticList) {
-        printBlock("sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI>") {
+        printBlock("public sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI>") {
             for (diagnostic in diagnosticList.diagnostics) {
                 printDiagnosticClass(diagnostic, diagnosticList)
                 println()
@@ -29,21 +30,30 @@ object KaDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
     }
 
     private fun SmartPrinter.printDiagnosticClass(diagnostic: HLDiagnostic, diagnosticList: HLDiagnosticList) {
-        print("interface ${diagnostic.className} : KaFirDiagnostic<")
+        print("public interface ${diagnostic.className} : KaFirDiagnostic<")
         printTypeWithShortNames(diagnostic.original.psiType)
         print(">")
         printBlock {
-            println("override val diagnosticClass get() = ${diagnostic.className}::class")
+            println("override val diagnosticClass: KClass<${diagnostic.className}>")
+            withIndent {
+                println("get() = ${diagnostic.className}::class")
+            }
+
             printDiagnosticParameters(diagnostic, diagnosticList)
         }
     }
 
     private fun SmartPrinter.printDiagnosticParameters(diagnostic: HLDiagnostic, diagnosticList: HLDiagnosticList) {
+        if (diagnostic.parameters.isEmpty()) return
+
+        println()
+
         diagnostic.parameters.forEach { parameter ->
-            print("val ${parameter.name}: ")
+            print("public val ${parameter.name}: ")
             printTypeWithShortNames(parameter.type) { type ->
                 diagnosticList.containsClashingBySimpleNameType(type)
             }
+
             println()
         }
     }
@@ -59,5 +69,6 @@ object KaDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
     override val defaultImports = listOf(
         "org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi",
         "com.intellij.psi.PsiElement",
+        "kotlin.reflect.KClass",
     )
 }
