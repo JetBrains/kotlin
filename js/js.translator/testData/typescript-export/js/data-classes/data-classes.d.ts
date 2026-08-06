@@ -145,5 +145,18 @@ declare namespace JS_TESTS {
             }
         }
         function createWithIgnoredPrimaryAndHiddenCopyWithoutSecondary(value?: number): foo.WithIgnoredPrimaryAndHiddenCopyWithoutSecondary;
+        class OnlyExportSupported {
+            private constructor();
+            get text(): string;
+            toString(): string;
+            hashCode(): number;
+            equals(other: Nullable<any>): boolean;
+        }
+        namespace OnlyExportSupported {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => OnlyExportSupported;
+            }
+        }
     }
 }
