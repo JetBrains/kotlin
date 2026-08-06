@@ -458,6 +458,7 @@ enum class LanguageFeature(
     // I'd consider removing it after 2.5 (KT-81144 for removal tracking)
     // Also remove org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext.isInsideAssignmentRhs with this one
     EqualityConstraintForOperatorsUnderAssignments(KOTLIN_2_3, "KT-77008"),
+    EliminateSecondKindIncorporation(sinceVersion = KOTLIN_2_3, issue = "KT-86022"),
 
     // 2.4
 
@@ -540,7 +541,6 @@ enum class LanguageFeature(
     ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-396"),
     FixApplicabilityOfEmptyIntersection(sinceVersion = KOTLIN_2_5, "KT-86740"),
     EnhancementsOfSecondIncorporationKind25(KOTLIN_2_5, "KT-85879"),
-    EliminateSecondKindIncorporation(sinceVersion = KOTLIN_2_5, issue = "KT-86022"),
     NoWhenBranchMatchedExceptionWithMessage(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, issue = "KT-86518"),
     NameBasedDestructuring(sinceVersion = KOTLIN_2_5, "KT-19627"),
     JsAllowExportingAnnotationClasses(sinceVersion = KOTLIN_2_5, "KT-85599"),
