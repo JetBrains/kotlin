@@ -1,6 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // LANGUAGE: +FullValueClasses
+// LANGUAGE: -StrictEquals
+//  ^^^ KT-88389
 
 // MODULE: m1-common
 // FILE: common.kt
