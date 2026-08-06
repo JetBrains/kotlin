@@ -1557,7 +1557,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         // EqualityBound
         map.put(
             UNRESOLVED_EQUALITY_BOUND_ARGUMENT,
-            "Type of '@EqualityBound' argument could not be resolved during type resolution. " +
+            "Type of '@EqualityBound' argument was not resolved during type resolution. " +
             "Try to specify its fully qualified name."
         )
         map.put(
