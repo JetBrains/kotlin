@@ -72,8 +72,7 @@ val SirType.swiftName
             typeDeclaration.swiftFqName,
             typeArguments.takeIf { it.isNotEmpty() }?.let { it.joinToString(prefix = "<", postfix = ">", separator = ",") { it.swiftName } }
         ).joinToString("")
-        is SirErrorType -> "ERROR_TYPE"
-        is SirUnsupportedType -> "Swift.Never"
+        is SirErrorType, is SirUnsupportedType -> "Swift.Never"
         is SirFunctionalType -> {
             val parameters = buildList {
                 contextType?.let(::add)
@@ -183,15 +182,14 @@ val SirType.unavailableTypes: List<SirType>
         } + protocols.flatMap { [_, types] -> types.flatMap { it.unavailableTypes } }
         is SirTupleType -> types.flatMap { it.second.unavailableTypes }
         is SirFunctionalType -> (contextTypes + parameterTypes + errorType + returnType).flatMap { it.unavailableTypes }
-        is SirUnsupportedType -> listOf(this)
-        is SirErrorType -> emptyList()
+        is SirUnsupportedType, is SirErrorType -> listOf(this)
     }
 
 inline fun MutableList<SirAttribute>.replaceOrAddPropagatedUnavailability(unavailableTypes: () -> List<SirType>) {
     if (this.any { it is SirAttribute.Available && it.unavailable }) return
     val unavailableTypes = unavailableTypes()
     if (unavailableTypes.isEmpty()) return
-    val message = if (unavailableTypes.any { it is SirUnsupportedType }) {
+    val message = if (unavailableTypes.any { it.rendersAsNever }) {
         "Declaration uses unsupported types"
     } else {
         unavailableTypes.joinToString(prefix = "Unavailable type(s): ") { it.swiftName }
@@ -199,3 +197,6 @@ inline fun MutableList<SirAttribute>.replaceOrAddPropagatedUnavailability(unavai
     removeAll { it is SirAttribute.Available }
     add(SirAttribute.Available(message, unavailable = true))
 }
+
+val SirType.rendersAsNever: Boolean
+    get() = this is SirUnsupportedType || this is SirErrorType

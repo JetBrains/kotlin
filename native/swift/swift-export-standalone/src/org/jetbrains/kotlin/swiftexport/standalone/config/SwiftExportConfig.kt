@@ -24,7 +24,7 @@ public data class SwiftExportConfig(
     val enableCoroutinesSupport: Boolean = false,
     val distribution: Distribution = Distribution(KotlinNativePaths.homePath.absolutePath),
     val konanTarget: KonanTarget,
-    val errorTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,
+    val errorTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.SpecialType,
     val unsupportedTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.SpecialType,
     val logger: SwiftExportLogger = createDummyLogger(),
 ) {

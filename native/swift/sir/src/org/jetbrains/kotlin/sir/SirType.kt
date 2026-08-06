@@ -197,7 +197,13 @@ val SirType.escaping: SirType get() = when (this) {
  */
 class SirErrorType(val reason: String) : SirType {
     override val attributes: List<SirAttribute> = emptyList()
+
+    override fun equals(other: Any?): Boolean = other is SirErrorType
+
+    override fun hashCode(): Int = ERROR_TYPE_HASH_CODE
 }
+
+private val ERROR_TYPE_HASH_CODE: Int = "org.jetbrains.kotlin.sir.SirErrorType".hashCode()
 
 /**
  * A synthetic type for not yet supported Kotlin types.
