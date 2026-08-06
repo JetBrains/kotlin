@@ -202,9 +202,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                 val cleanSwiftImportFingerprintArtifacts = locateOrRegisterCleanSwiftImportFingerprintArtifactsTask()
                 cleanSwiftImportFingerprintArtifacts.configure { cleanTaskProvider ->
                     cleanTaskProvider.syntheticPackageFingerprint.set(
-                        project.layout.buildDirectory.file(
-                            FingerprintSyntheticPackage.SYNTHETIC_PACKAGE_FINGERPRINT_PATH
-                        )
+                        fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprintFile.get() }
                     )
                     cleanTaskProvider.coordinationService.set(fingerprintCoordinationService)
                 }
@@ -364,9 +362,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                     val cleanSwiftImportFingerprintArtifacts = locateOrRegisterCleanSwiftImportFingerprintArtifactsTask()
                     cleanSwiftImportFingerprintArtifacts.configure {
                         it.xcodebuildFingerprints.from(
-                            project.layout.buildDirectory.file(
-                                FingerprintXcodeBuild.xcodebuildFingerprintPathForSdk(targetSdk)
-                            )
+                            fingerprintXcode.map { it.xcodebuildFingerprintFile.get() }
                         )
                     }
 
