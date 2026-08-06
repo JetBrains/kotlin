@@ -5,26 +5,23 @@
 
 package org.jetbrains.kotlin.generators.evaluate
 
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
+import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.full.memberFunctions
 
 val DEST_FILE: File = File("compiler/frontend.common/src/org/jetbrains/kotlin/resolve/constants/evaluate/OperationsMapGenerated.kt")
-private val EXCLUDED_FUNCTIONS: List<String> = listOf("rangeTo", "rangeUntil", "hashCode", "subSequence")
+private val EXCLUDED_FUNCTIONS: List<String> = listOf(
+    "rangeTo", "rangeUntil", "hashCode", "subSequence", "chars", "codePoints", "strip", "stripLeading", "stripTrailing",
+)
 
 fun main() {
     GeneratorsFileUtil.writeFileIfContentChanged(DEST_FILE, generate())
@@ -51,41 +48,34 @@ private fun getOperationMaps(): Pair<ArrayList<Operation>, ArrayList<Operation>>
     val unaryOperationsMap = arrayListOf<Operation>()
     val binaryOperationsMap = arrayListOf<Operation>()
 
-    val builtIns = DefaultBuiltIns.Instance
+    val integerTypes = listOf(Byte::class, Int::class, Long::class, Short::class)
+    val fpTypes = listOf(Double::class, Float::class)
+    val allPrimitiveTypes = (integerTypes + fpTypes + listOf(Boolean::class, Char::class)).sortedBy { it.simpleName }
 
-    @Suppress("UNCHECKED_CAST")
-    val allPrimitiveTypes = builtIns.builtInsPackageScope.getContributedDescriptors()
-        .filter { it is ClassDescriptor && KotlinBuiltIns.isPrimitiveType(it.defaultType) } as List<ClassDescriptor>
-
-    val integerTypes = allPrimitiveTypes.map { it.defaultType }.filter { it.isIntegerType() }
-    val fpTypes = allPrimitiveTypes.map { it.defaultType }.filter { it.isFpType() }
-
-    for (descriptor in allPrimitiveTypes + builtIns.string) {
-        @Suppress("UNCHECKED_CAST")
-        val functions = descriptor.getMemberScope(listOf()).getContributedDescriptors()
-            .filter { it is CallableDescriptor && !EXCLUDED_FUNCTIONS.contains(it.getName().asString()) } as List<CallableDescriptor>
+    for (klass in allPrimitiveTypes + String::class) {
+        val functions = klass.members.filter { it.name !in EXCLUDED_FUNCTIONS }
 
         for (function in functions) {
-            val parametersTypes = function.getParametersTypes().map { it.typeName }
+            val parametersTypes = function.parameters.map { (it.type.classifier as KClass<*>).simpleName!! }
 
             when (parametersTypes.size) {
                 1 -> unaryOperationsMap.add(
                     Operation(
-                        className = descriptor.name.asString(),
-                        name = function.name.asString(),
+                        className = klass.simpleName,
+                        name = function.name,
                         parameterTypes = parametersTypes,
-                        isFunction = function is FunctionDescriptor
+                        isFunction = function is KFunction<*>,
                     )
                 )
                 2 -> binaryOperationsMap.add(
                     Operation(
-                        className = descriptor.name.asString(),
-                        name = function.name.asString(),
+                        className = klass.simpleName,
+                        name = function.name,
                         parameterTypes = parametersTypes
                     )
                 )
                 else -> throw IllegalStateException(
-                    "Couldn't add following method from builtins to operations map: ${function.name} in class ${descriptor.name}"
+                    "Couldn't add following method from builtins to operations map: ${function.name} in class ${klass.simpleName}"
                 )
             }
         }
@@ -126,7 +116,7 @@ private fun getOperationMaps(): Pair<ArrayList<Operation>, ArrayList<Operation>>
 
     for (type in integerTypes) {
         for (otherType in integerTypes) {
-            val parameters = listOf(type, otherType).map { it.typeName }
+            val parameters = listOf(type, otherType).map { it.simpleName!! }
             binaryOperationsMap.add(Operation(className = null, name = "mod", parameterTypes = parameters))
             binaryOperationsMap.add(Operation(className = null, name = "floorDiv", parameterTypes = parameters))
         }
@@ -134,7 +124,7 @@ private fun getOperationMaps(): Pair<ArrayList<Operation>, ArrayList<Operation>>
 
     for (type in fpTypes) {
         for (otherType in fpTypes) {
-            val parameters = listOf(type, otherType).map { it.typeName }
+            val parameters = listOf(type, otherType).map { it.simpleName!! }
             binaryOperationsMap.add(Operation(className = null, name = "mod", parameterTypes = parameters))
         }
     }
@@ -392,24 +382,11 @@ private data class Operation(
         get() = CallableId(FqName(packageName), className?.let { FqName(it) }, Name.identifier(name))
 }
 
-private fun KotlinType.isIntegerType(): Boolean =
-    KotlinBuiltIns.isInt(this) || KotlinBuiltIns.isShort(this) || KotlinBuiltIns.isByte(this) || KotlinBuiltIns.isLong(this)
-
-private fun KotlinType.isFpType(): Boolean =
-    KotlinBuiltIns.isDouble(this) || KotlinBuiltIns.isFloat(this)
-
-private fun CallableDescriptor.getParametersTypes(): List<KotlinType> =
-    listOf((containingDeclaration as ClassDescriptor).defaultType) +
-            valueParameters.map { it.type.makeNotNullable() }
-
 // Formats the type to fit the Enum kotlin.resolve.constants.evaluateCompileTimeType which is all uppercase and doesn't have the concept of
 // nullability.
 private fun String.toCompilTimeTypeFormat(): String {
     return this.uppercase().removeSuffix("?")
 }
-
-private val KotlinType.typeName: String
-    get(): String = constructor.declarationDescriptor!!.name.asString()
 
 private fun getIrMethodSymbolByName(methodName: String): String? {
     return when (methodName) {
