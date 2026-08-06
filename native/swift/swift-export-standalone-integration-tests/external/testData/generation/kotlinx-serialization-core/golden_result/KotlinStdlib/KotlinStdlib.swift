@@ -71,6 +71,54 @@ extension ExportedKotlinPackages.kotlin {
             }
         }
     }
+    public final class ByteArray: KotlinRuntime.KotlinBase {
+        public var size: Swift.Int32 {
+            get {
+                return kotlin_ByteArray_size_get(self.__externalRCRef())
+            }
+        }
+        public func _get(
+            index: Swift.Int32
+        ) -> Swift.Int8 {
+            return kotlin_ByteArray_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index)
+        }
+        public func _set(
+            index: Swift.Int32,
+            value: Swift.Int8
+        ) -> Swift.Void {
+            return { kotlin_ByteArray_set__TypesOfArguments__Swift_Int32_Swift_Int8__(self.__externalRCRef(), index, value); return () }()
+        }
+        public func iterator() -> ExportedKotlinPackages.kotlin.collections.ByteIterator {
+            return ExportedKotlinPackages.kotlin.collections.ByteIterator.__createClassWrapper(externalRCRef: kotlin_ByteArray_iterator(self.__externalRCRef()))
+        }
+        public init(
+            size: Swift.Int32
+        ) {
+            fatalError()
+        }
+        public init(
+            size: Swift.Int32,
+            `init`: @escaping (Swift.Int32) -> Swift.Int8
+        ) {
+            fatalError()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+        public subscript(
+            index: Swift.Int32
+        ) -> Swift.Int8 {
+            get {
+                _get(index: index)
+            }
+            set(value) {
+                _set(index: index, value: value)
+            }
+        }
+    }
     public final class IntArray: KotlinRuntime.KotlinBase {
         public var size: Swift.Int32 {
             get {
@@ -6726,6 +6774,24 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
     }
 }
 extension ExportedKotlinPackages.kotlin.collections {
+    public protocol Collection: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Iterable, ExportedKotlinPackages.kotlin.collections._Collection {
+        var size: Swift.Int32 {
+            get
+        }
+        func isEmpty() -> Swift.Bool
+        func contains(
+            element: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool
+        func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator
+        func containsAll(
+            elements: any ExportedKotlinPackages.kotlin.collections.Collection
+        ) -> Swift.Bool
+    }
+    @objc(_Collection)
+    public protocol _Collection: ExportedKotlinPackages.kotlin.collections._Iterable {
+    }
+    public protocol __Collection: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__Iterable {
+    }
     public protocol Iterable: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections._Iterable {
         func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator
     }
@@ -6742,6 +6808,27 @@ extension ExportedKotlinPackages.kotlin.collections {
     public protocol _Iterator {
     }
     public protocol __Iterator: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    open class ByteIterator: KotlinRuntime.KotlinBase {
+        public final func next() -> Swift.Int8 {
+            return kotlin_collections_ByteIterator_next(self.__externalRCRef())
+        }
+        open func nextByte() -> Swift.Int8 {
+            if Self.self == ExportedKotlinPackages.kotlin.collections.ByteIterator.self {
+                return kotlin_collections_ByteIterator_nextByte(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.ByteIterator.nextByte': a Swift subclass must override it and must not call super.")
+            }
+        }
+        package init() {
+            fatalError()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
     }
     open class IntIterator: KotlinRuntime.KotlinBase {
         public final func next() -> Swift.Int32 {
@@ -7314,6 +7401,44 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Annotation, ExportedKotlinPackages.kotlin.__Annotation where Wrapped : ExportedKotlinPackages.kotlin._Annotation {
 }
 extension ExportedKotlinPackages.kotlin.Annotation {
+}
+@_documentation(visibility: internal)
+extension ExportedKotlinPackages.kotlin.collections.Collection where Self : ExportedKotlinPackages.kotlin.collections.__Collection {
+    public var size: Swift.Int32 {
+        get {
+            return kotlin_collections_Collection_size_get(self.__externalRCRef())
+        }
+    }
+    public func isEmpty() -> Swift.Bool {
+        return kotlin_collections_Collection_isEmpty(self.__externalRCRef())
+    }
+    public func contains(
+        element: (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Bool {
+        return kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
+    }
+    public static func ~=(
+        this: Self,
+        element: (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Bool {
+        this.contains(element: element)
+    }
+    public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Collection_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
+    }
+    public func containsAll(
+        elements: any ExportedKotlinPackages.kotlin.collections.Collection
+    ) -> Swift.Bool {
+        return kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection__(self.__externalRCRef(), elements.__externalRCRef())
+    }
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._Collection {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Collection, ExportedKotlinPackages.kotlin.collections.__Collection where Wrapped : ExportedKotlinPackages.kotlin.collections._Collection {
+}
+extension ExportedKotlinPackages.kotlin.collections.Collection {
 }
 @_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.collections.Iterable where Self : ExportedKotlinPackages.kotlin.collections.__Iterable {
@@ -7989,10 +8114,52 @@ package func kotlin_Throwable_toString__reverse_swift(_ `self`: Swift.UnsafeMuta
     return _result
 }
 
+@_cdecl("kotlin_collections_ByteIterator_nextByte__reverse_swift")
+package func kotlin_collections_ByteIterator_nextByte__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int8 {
+    let _self = ExportedKotlinPackages.kotlin.collections.ByteIterator.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int8 = _self.nextByte()
+    return _result
+}
+
 @_cdecl("kotlin_collections_CharIterator_nextChar__reverse_swift")
 package func kotlin_collections_CharIterator_nextChar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UInt16 {
     let _self = ExportedKotlinPackages.kotlin.collections.CharIterator.__createClassWrapper(externalRCRef: `self`)!
     let _result: Swift.Unicode.UTF16.CodeUnit = _self.nextChar()
+    return _result
+}
+
+@_cdecl("kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift")
+package func kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ elements: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Collection
+    let _result: Swift.Bool = _self.containsAll(elements: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: elements) as! any ExportedKotlinPackages.kotlin.collections.Collection)
+    return _result
+}
+
+@_cdecl("kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+package func kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ element: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Collection
+    let _result: Swift.Bool = _self.contains(element: { switch element { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    return _result
+}
+
+@_cdecl("kotlin_collections_Collection_isEmpty__reverse_swift")
+package func kotlin_collections_Collection_isEmpty__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Collection
+    let _result: Swift.Bool = _self.isEmpty()
+    return _result
+}
+
+@_cdecl("kotlin_collections_Collection_iterator__reverse_swift")
+package func kotlin_collections_Collection_iterator__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Collection
+    let _result: any ExportedKotlinPackages.kotlin.collections.Iterator = _self.iterator()
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlin_collections_Collection_size_get__reverse_swift")
+package func kotlin_collections_Collection_size_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Collection
+    let _result: Swift.Int32 = _self.size
     return _result
 }
 

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.sir.providers.generateFunctionBridge
 import org.jetbrains.kotlin.sir.providers.getSirParent
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionBuilder
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
+import org.jetbrains.kotlin.sir.providers.sirAvailability
 import org.jetbrains.kotlin.sir.providers.sirDeclarationName
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
@@ -86,15 +87,15 @@ internal abstract class SirAbstractVariableFromKtSymbol(
             it.parent = this@SirAbstractVariableFromKtSymbol
         }
     }
-    override val setter: SirSetter? by lazy {
+    override val setter: SirSetter? by lazyWithSessions {
         (ktSymbol as? KaPropertySymbol)
-            ?.takeIf { it.setter?.visibility == KaSymbolVisibility.PUBLIC }
+            ?.takeIf { it.setter?.sirAvailability()?.visibility == SirVisibility.PUBLIC }
             ?.takeUnless { it.setter?.deprecatedAnnotation?.level == DeprecationLevel.HIDDEN }
             ?.let {
                 it.setter?.let { SirSetterFromKtSymbol(it, sirSession) }
                     ?: if (!it.isVal) DefaultSetter(it, sirSession) else null
             }
-            ?.apply { parent = this@SirAbstractVariableFromKtSymbol }
+            ?.apply { parent = this@SirAbstractVariableFromKtSymbol } as SirSetter?
     }
     private val kdocElements: KDocElements? by lazyWithSessions {
         KDocElements(this)

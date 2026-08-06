@@ -230,6 +230,19 @@ public final class Holder: KotlinRuntime.KotlinBase {
         return { switch Holder_headOrNull(self.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
 }
+public final class HolderConstrained: KotlinRuntime.KotlinBase {
+    public var xs: ExportedKotlinPackages.kotlin.Array {
+        get {
+            return ExportedKotlinPackages.kotlin.Array.__createClassWrapper(externalRCRef: HolderConstrained_xs_get(self.__externalRCRef()))
+        }
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
 public final class IdentityProcessor: KotlinRuntime.KotlinBase {
     public init() {
         let __kt = __root___IdentityProcessor_init_allocate()
@@ -305,6 +318,16 @@ public final class TripleBox: main.Box {
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
+public var bar: main.Holder {
+    get {
+        return main.Holder.__createClassWrapper(externalRCRef: __root___bar_get())
+    }
+}
+public var baz: main.Holder {
+    get {
+        return main.Holder.__createClassWrapper(externalRCRef: __root___baz_get())
     }
 }
 public func a() -> any main.A {
