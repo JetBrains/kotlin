@@ -134,6 +134,7 @@ sealed class FirEqualityBoundOverrideChecker(mppKind: MppCheckerKind) : FirClass
         base: FirNamedFunctionSymbol,
         typeCheckerState: TypeCheckerState,
     ): Boolean {
+        if (override === base) return true
         val overrideEB = override.equalityBoundTypeOfParameter
         val baseEB = base.equalityBoundTypeOfParameter
         if (overrideEB == null && baseEB == null) return true
