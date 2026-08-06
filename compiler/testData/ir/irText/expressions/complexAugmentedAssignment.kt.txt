@@ -69,15 +69,17 @@ object X1 {
 
 fun test1(a: IntArray) {
   var i: Int = 0
-  val tmp_0: IntArray = a
-  val tmp_1: Int = { // BLOCK
-    val tmp_2: Int = i
-    i = tmp_2.inc()
-    tmp_2
-  }
-  val tmp_3: Int = tmp_0.get(index = tmp_1)
-  tmp_0.set(index = tmp_1, value = tmp_3.inc())
-  tmp_3 /*~> Unit */
+  { // BLOCK
+    val tmp_0: IntArray = a
+    val tmp_1: Int = { // BLOCK
+      val tmp_2: Int = i
+      i = tmp_2.inc()
+      tmp_2
+    }
+    val tmp_3: Int = tmp_0.get(index = tmp_1)
+    tmp_0.set(index = tmp_1, value = tmp_3.inc())
+    tmp_3
+  } /*~> Unit */
 }
 
 fun test2() {

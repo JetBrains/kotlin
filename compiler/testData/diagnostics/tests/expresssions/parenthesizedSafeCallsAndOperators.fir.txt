@@ -94,13 +94,19 @@ FILE: parenthesizedSafeCallsAndOperators.kt
         Unit
         R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.get|(Int(42)) }.R|/plusAssign|(String())
         Unit
-        lval <array>: R|Foo?| = R|<local>/arg|?.{ $subj$.R|/Foo.alias| }
-        lval <index_0>: R|kotlin/Int| = Int(42)
-        lval <unary>: R|Foo?| = R|<local>/<array>|.R|/get|(R|<local>/<index_0>|)
-        R|<local>/<array>|.R|/set|(R|<local>/<index_0>|, R|<local>/<unary>|.R|/inc|())
-        R|<local>/<unary>|
-        lval <array>: R|Foo?| = R|<local>/arg|?.{ $subj$.R|/Foo.alias| }
-        lval <index_0>: R|kotlin/Int| = Int(42)
-        R|<local>/<array>|.R|/set|(R|<local>/<index_0>|, R|<local>/<array>|.R|/get|(R|<local>/<index_0>|).R|/inc|())
-        R|<local>/<array>|.R|/get|(R|<local>/<index_0>|)
+         {
+            lval <array>: R|Foo?| = R|<local>/arg|?.{ $subj$.R|/Foo.alias| }
+            lval <index_0>: R|kotlin/Int| = Int(42)
+            lval <unary>: R|Foo?| = R|<local>/<array>|.R|/get|(R|<local>/<index_0>|)
+            R|<local>/<array>|.R|/set|(R|<local>/<index_0>|, R|<local>/<unary>|.R|/inc|())
+            R|<local>/<unary>|
+        }
+
+         {
+            lval <array>: R|Foo?| = R|<local>/arg|?.{ $subj$.R|/Foo.alias| }
+            lval <index_0>: R|kotlin/Int| = Int(42)
+            R|<local>/<array>|.R|/set|(R|<local>/<index_0>|, R|<local>/<array>|.R|/get|(R|<local>/<index_0>|).R|/inc|())
+            R|<local>/<array>|.R|/get|(R|<local>/<index_0>|)
+        }
+
     }

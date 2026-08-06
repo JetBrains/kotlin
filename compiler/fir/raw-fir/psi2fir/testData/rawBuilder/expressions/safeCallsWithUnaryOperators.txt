@@ -19,11 +19,14 @@ FILE: safeCallsWithUnaryOperators.kt
             R|<local>/<unary>|
         }
          }
-        lval <array>: <implicit> = a#?.{ $subj$.b# }.c#
-        lval <index_0>: <implicit> = IntegerLiteral(0)
-        lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|)
-        R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary>|.inc#())
-        R|<local>/<unary>|
+         {
+            lval <array>: <implicit> = a#?.{ $subj$.b# }.c#
+            lval <index_0>: <implicit> = IntegerLiteral(0)
+            lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|)
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary>|.inc#())
+            R|<local>/<unary>|
+        }
+
         a#?.{  {
             lval <array>: <implicit> = $subj$.b#.get#(IntegerLiteral(0))
             lval <index_0>: <implicit> = IntegerLiteral(0)
@@ -40,11 +43,14 @@ FILE: safeCallsWithUnaryOperators.kt
             R|<local>/<unary>|
         }
          }
-        lval <array>: <implicit> = a#?.{ $subj$.b# }.c#.get#(IntegerLiteral(0))
-        lval <index_0>: <implicit> = IntegerLiteral(0)
-        lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|)
-        R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary>|.inc#())
-        R|<local>/<unary>|
+         {
+            lval <array>: <implicit> = a#?.{ $subj$.b# }.c#.get#(IntegerLiteral(0))
+            lval <index_0>: <implicit> = IntegerLiteral(0)
+            lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|)
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary>|.inc#())
+            R|<local>/<unary>|
+        }
+
         a#?.{ $subj$.b# }.d#()++
     }
     public? final? fun foo2(): R|kotlin/Unit| {
@@ -65,10 +71,13 @@ FILE: safeCallsWithUnaryOperators.kt
             R|<local>/<array>|.get#(R|<local>/<index_0>|)
         }
          }
-        lval <array>: <implicit> = a#?.{ $subj$.b# }.c#
-        lval <index_0>: <implicit> = IntegerLiteral(0)
-        R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#())
-        R|<local>/<array>|.get#(R|<local>/<index_0>|)
+         {
+            lval <array>: <implicit> = a#?.{ $subj$.b# }.c#
+            lval <index_0>: <implicit> = IntegerLiteral(0)
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#())
+            R|<local>/<array>|.get#(R|<local>/<index_0>|)
+        }
+
         a#?.{  {
             lval <array>: <implicit> = $subj$.b#.get#(IntegerLiteral(0))
             lval <index_0>: <implicit> = IntegerLiteral(0)
@@ -83,9 +92,12 @@ FILE: safeCallsWithUnaryOperators.kt
             R|<local>/<array>|.get#(R|<local>/<index_0>|)
         }
          }
-        lval <array>: <implicit> = a#?.{ $subj$.b# }.c#.get#(IntegerLiteral(0))
-        lval <index_0>: <implicit> = IntegerLiteral(0)
-        R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#())
-        R|<local>/<array>|.get#(R|<local>/<index_0>|)
+         {
+            lval <array>: <implicit> = a#?.{ $subj$.b# }.c#.get#(IntegerLiteral(0))
+            lval <index_0>: <implicit> = IntegerLiteral(0)
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#())
+            R|<local>/<array>|.get#(R|<local>/<index_0>|)
+        }
+
         ++a#?.{ $subj$.b# }.d#()
     }
