@@ -200,6 +200,37 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     }
                 }
             }
+            // For State Machine:   (cont as? CoroutineImpl)?.intercepted() ?: cont
+            // For Stack Switching: (cont as? CoroutineImplStackSwitching<*, *>)?.intercepted() ?: cont
+            symbols.interceptedIntrinsic -> {
+                val cont = call.arguments[0]!!
+
+                val coroutineImpl =
+                    if (context.wasmUseStackSwitching)
+                        symbols.coroutinesStackSwitchingIntrinsics!!.coroutineImplStackSwitching
+                    else
+                        symbols.coroutineImpl
+
+                val interceptedFun =
+                    if (context.wasmUseStackSwitching)
+                        symbols.coroutinesStackSwitchingIntrinsics!!.intercepted
+                    else
+                        symbols.coroutinesStateMachineIntrinsics!!.intercepted
+
+                val coroutineImplType = coroutineImpl.starProjectedType
+
+                return builder.irComposite {
+                    val temporary = irTemporary(cont)
+                    +irIfThenElse(
+                        type = call.type,
+                        condition = irIs(irGet(temporary), coroutineImplType),
+                        thenPart = irCall(interceptedFun, call.type).apply {
+                            arguments[0] = irImplicitCast(irGet(temporary), coroutineImplType)
+                        },
+                        elsePart = irGet(temporary),
+                    )
+                }
+            }
             context.reflectionSymbols.getKClass -> {
                 val type = call.typeArguments[0]!!
                 val klass = type.classOrNull?.owner ?: error("Invalid type")
