@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.utils.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.ByteArrayOutputStream
@@ -80,34 +79,19 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
         val buildReporter = TestBuildReporter(testICReporter = reporter, buildMetricsReporter = DoNothingBuildMetricsReporter)
 
         withIncrementalCompilation(args) {
-            val k2Mode = (args.languageVersion ?: LanguageVersion.LATEST_STABLE.versionString) >= LanguageVersion.KOTLIN_2_0.versionString
-
-            val compiler =
-                @Suppress("DEPRECATION")
-                if (k2Mode && args.useFirIC && args.useFirLT /* TODO by @Ilya.Chernikov: move LT check into runner */) {
-                    IncrementalFirJvmCompilerTestRunner(
-                        cachesDir,
-                        buildReporter,
-                        outputDirs = null,
-                        classpathChanges,
-                        kotlinExtensions,
-                        lookupTrackerDelegate = testLookupTracker
-                    )
-                } else {
-                    val verifiedPreciseJavaTracking = args.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = true)
-                    IncrementalJvmCompilerTestRunner(
-                        cachesDir,
-                        buildReporter,
-                        classpathChanges,
-                        outputDirs = null,
-                        kotlinSourceFilesExtensions = kotlinExtensions,
-                        icFeatures = IncrementalCompilationFeatures(
-                            withAbiSnapshot = false,
-                            usePreciseJavaTracking = verifiedPreciseJavaTracking
-                        ),
-                        lookupTrackerDelegate = testLookupTracker
-                    )
-                }
+            val verifiedPreciseJavaTracking = args.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = true)
+            val compiler = IncrementalJvmCompilerTestRunner(
+                cachesDir,
+                buildReporter,
+                classpathChanges,
+                outputDirs = null,
+                kotlinSourceFilesExtensions = kotlinExtensions,
+                icFeatures = IncrementalCompilationFeatures(
+                    withAbiSnapshot = false,
+                    usePreciseJavaTracking = verifiedPreciseJavaTracking
+                ),
+                lookupTrackerDelegate = testLookupTracker
+            )
             //TODO by @Ilya.Chernikov: set properly
             compiler.compile(sourceFiles, args, messageCollector, changedFiles = ChangedFiles.DeterminableFiles.ToBeComputed)
         }

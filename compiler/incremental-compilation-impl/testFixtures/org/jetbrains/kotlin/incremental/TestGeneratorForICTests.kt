@@ -22,14 +22,6 @@ fun main(args: Array<String>) {
                 )
             )
 
-            testClass<AbstractIncrementalK2FirICJvmCompilerRunnerTest>(
-                init = incrementalJvmTestData(
-                    folderToExcludePatternMap = mapOf(
-                        PURE_KOTLIN to ExcludePattern.forK2,
-                        WITH_JAVA to "^classToPackageFacade" // KT-56698
-                    )
-                )
-            )
             testClass<AbstractIncrementalK2PsiJvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     folderToExcludePatternMap = mapOf(
