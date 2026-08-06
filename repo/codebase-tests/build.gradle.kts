@@ -75,4 +75,16 @@ projectTests {
     withTestJar()
 }
 
+tasks.withType<Test>().configureEach {
+    /* Nested/Deep debugging support */
+    val debuggerDispatchPort = providers.systemProperty("idea.debugger.dispatch.port")
+    inputs.property("idea.debugger.dispatch.port", debuggerDispatchPort).optional(true)
+
+    doFirst {
+        if (debuggerDispatchPort.isPresent) {
+            systemProperty("idea.debugger.dispatch.port", debuggerDispatchPort.get())
+        }
+    }
+}
+
 testsJar()
