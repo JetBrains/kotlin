@@ -67,7 +67,7 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => WithBooleanParam;
             }
         }
-        function useAnnotationClass(ac: any /*Class foo.WithStringParam with kind: ANNOTATION_CLASS*/): any /*Class foo.WithStringParam with kind: ANNOTATION_CLASS*/;
+        function useAnnotationClass(ac: foo.WithStringParam): foo.WithStringParam;
         function withIntroducedAt(x: number, y?: number, o1?: string, k?: string, o2?: string): string;
         function nonAscendingVersion(y?: number, o?: string, k?: string): void;
         function invalidParameterPosition(x: number | undefined, y: number | undefined, z: number): void;

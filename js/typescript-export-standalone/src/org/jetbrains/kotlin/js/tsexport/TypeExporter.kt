@@ -208,8 +208,7 @@ internal class TypeExporter(
 
                 when (symbol.classKind) {
                     KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> TypeOf(classType)
-                    KaClassKind.CLASS, KaClassKind.ENUM_CLASS, KaClassKind.INTERFACE -> classType
-                    KaClassKind.ANNOTATION_CLASS -> ErrorType("Annotation classes are not supported")
+                    KaClassKind.CLASS, KaClassKind.ANNOTATION_CLASS, KaClassKind.ENUM_CLASS, KaClassKind.INTERFACE -> classType
                     KaClassKind.ANONYMOUS_OBJECT -> ErrorType("Anonymous objects are not supported")
                 }.withImplicitlyExported(isImplicitlyExported, exportedSupertype)
             }
