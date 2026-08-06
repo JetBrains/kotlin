@@ -108,6 +108,12 @@ class KaBaseFunctionTypeFamily(
     override val nameBase: String
         get() = typeKind.classNamePrefix
 
+    override val typeRenderingPrefix: String?
+        get() = typeKind.prefixForTypeRender
+
+    override val markerAnnotationClassId: ClassId?
+        get() = typeKind.annotationOnInvokeClassId
+
     override fun classId(arity: Int): ClassId =
         typeKind.numberedClassId(arity)
 
