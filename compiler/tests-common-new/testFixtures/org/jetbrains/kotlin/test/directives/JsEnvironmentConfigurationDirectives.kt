@@ -96,7 +96,7 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     )
 
     val EXPORT_WITH_UNKNOWN_TYPE_INSTEAD_ANY by directive(
-        description = "Export 'dynamic' and 'Any' Kotlin types as 'unknown' TypeScript type",
+        description = "Export 'dynamic' and 'Any' Kotlin types as 'unknown' TypeScript type (instead of `any`).",
         applicability = DirectiveApplicability.Global
     )
 
