@@ -14,16 +14,20 @@ import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.WEB_COMMON_DIAGNO
 import java.nio.file.Paths
 
 fun main(args: Array<String>) {
-    require(args.size == 2) {
+    require(args.size == 3) {
         """
         Generator requires the following arguments (in this particular order):
         - generated classes package name
         - path to the directory where generated classes will be placed
+        - generation target, one of: ${DiagnosticGenerationTarget.entries.joinToString { it.id }}
         """.trimIndent()
     }
     val packageName = args.first()
-    val rootPath = Paths.get(args.last()).toAbsolutePath()
+    val rootPath = Paths.get(args[1]).toAbsolutePath()
+    val target = requireNotNull(DiagnosticGenerationTarget.findById(args[2])) {
+        "Unknown generation target '${args[2]}', expected one of: ${DiagnosticGenerationTarget.entries.joinToString { it.id }}"
+    }
     val diagnostics = DIAGNOSTICS_LIST + JVM_DIAGNOSTICS_LIST + JS_DIAGNOSTICS_LIST + SYNTAX_DIAGNOSTIC_LIST +
             WEB_COMMON_DIAGNOSTICS_LIST
-    generate(rootPath, diagnostics, packageName)
+    generate(rootPath, diagnostics, packageName, target)
 }

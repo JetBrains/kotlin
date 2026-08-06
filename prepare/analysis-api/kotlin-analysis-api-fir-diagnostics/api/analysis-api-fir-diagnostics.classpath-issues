@@ -1,0 +1,16 @@
+org/jetbrains/kotlin/builtins/functions/FunctionTypeKind
+org/jetbrains/kotlin/contracts/description/EventOccurrencesRange
+org/jetbrains/kotlin/descriptors/ClassKind
+org/jetbrains/kotlin/descriptors/EffectiveVisibility
+org/jetbrains/kotlin/descriptors/RelationToType
+org/jetbrains/kotlin/descriptors/Visibility
+org/jetbrains/kotlin/descriptors/annotations/KotlinTarget
+org/jetbrains/kotlin/fir/FirModuleData
+org/jetbrains/kotlin/fir/declarations/FirDeprecationInfo
+org/jetbrains/kotlin/fir/expressions/FirAnnotation
+org/jetbrains/kotlin/metadata/deserialization/VersionRequirement$Version
+org/jetbrains/kotlin/resolve/ForbiddenNamedArgumentsTarget
+org/jetbrains/kotlin/resolve/ReturnValueStatus
+org/jetbrains/kotlin/resolve/multiplatform/ExpectActualAnnotationsIncompatibilityType
+org/jetbrains/kotlin/resolve/multiplatform/ExpectActualMatchingCompatibility
+org/jetbrains/kotlin/serialization/deserialization/IncompatibleVersionErrorData

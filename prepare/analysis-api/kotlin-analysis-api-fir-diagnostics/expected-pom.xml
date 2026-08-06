@@ -3,10 +3,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
-  <artifactId>kotlin-analysis-api-implementation</artifactId>
+  <artifactId>kotlin-analysis-api-fir-diagnostics</artifactId>
   <version>@ARTIFACT_VERSION@</version>
-  <name>Kotlin Analysis Api Implementation</name>
-  <description>Kotlin Analysis Api Implementation</description>
+  <name>Kotlin Analysis Api Fir Diagnostics</name>
+  <description>Kotlin Analysis Api Fir Diagnostics</description>
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>
@@ -32,36 +32,6 @@
       <artifactId>kotlin-analysis-api-surface</artifactId>
       <version>@ARTIFACT_VERSION@</version>
       <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-analysis-api-platform-interface</artifactId>
-      <version>@ARTIFACT_VERSION@</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-analysis-api-intellij-implementation-components</artifactId>
-      <version>@ARTIFACT_VERSION@</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-analysis-api-fir-diagnostics</artifactId>
-      <version>@ARTIFACT_VERSION@</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlinx</groupId>
-      <artifactId>kotlinx-serialization-core</artifactId>
-      <version>1.9.0</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.antlr</groupId>
-      <artifactId>antlr4-runtime</artifactId>
-      <version>4.13.2</version>
-      <scope>runtime</scope>
     </dependency>
   </dependencies>
 </project>
