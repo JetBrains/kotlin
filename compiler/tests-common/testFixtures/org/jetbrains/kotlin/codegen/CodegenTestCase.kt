@@ -15,28 +15,20 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.createForTests
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.JvmTarget.Companion.fromString
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getFileClassInfoNoResolve
-import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
-import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
-import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.getTestName
 import org.jetbrains.kotlin.test.testFramework.disposeRootDisposable
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.KtTestUtil.getAnnotationsJar
-import org.jetbrains.kotlin.utils.rethrow
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 import java.io.File
 import java.io.IOException
 import java.lang.reflect.Method
-import java.net.MalformedURLException
-import java.net.URL
-import kotlin.script.experimental.api.valueOrNull
 
 abstract class CodegenTestCase {
     protected val testRootDisposable: Disposable = Disposer.newDisposable()
@@ -53,10 +45,6 @@ abstract class CodegenTestCase {
 
     @JvmField
     protected var initializedClassLoader: GeneratedClassLoader? = null
-
-    @JvmField
-    protected var javaClassesOutputDirectory: File? = null
-    protected var additionalDependencies: List<File> = emptyList()
 
     protected var configurationKind: ConfigurationKind = ConfigurationKind.JDK_ONLY
 
@@ -151,42 +139,8 @@ abstract class CodegenTestCase {
             ForTestCompileRuntime.runtimeJarClassLoader()
         }
 
-        return GeneratedClassLoader(
-            generateClassesInFile(),
-            classLoader,
-            *this.classPathURLs
-        )
+        return GeneratedClassLoader(generateClassesInFile(), classLoader)
     }
-
-    private val classPathURLs: Array<URL>
-        get() {
-            val files = mutableListOf<File>()
-            javaClassesOutputDirectory?.let { files.add(it) }
-            files.addAll(additionalDependencies)
-
-            val environment = myEnvironment
-            val externalImportsProvider: ScriptConfigurationsProvider? = environment?.configuration?.getCompilerExtensions(
-                ScriptConfigurationsProvider
-            )?.firstOrNull()
-            if (externalImportsProvider != null) {
-                environment.getSourceFiles().forEach { file ->
-                    @OptIn(K1SpecificScriptingServiceAccessor::class)
-                    externalImportsProvider.project = environment.project
-                    val refinedConfiguration = externalImportsProvider.getScriptCompilationConfiguration(
-                        KtFileScriptSource(file)
-                    )?.valueOrNull()
-                    if (refinedConfiguration != null) {
-                        files.addAll(refinedConfiguration.dependenciesClassPath)
-                    }
-                }
-            }
-
-            try {
-                return files.map { it.toURI().toURL() }.toTypedArray()
-            } catch (e: MalformedURLException) {
-                throw rethrow(e)
-            }
-        }
 
     protected fun generateToText(): String {
         if (classFileFactory == null) {
