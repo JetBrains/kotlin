@@ -842,7 +842,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         packageResolved,
                         checkoutRepoDir = checkoutDir,
                         listOf(
-                            packageRepo to "1.0.2",
+                            packageRepo to "1.0.1",
                         )
                     )
 
