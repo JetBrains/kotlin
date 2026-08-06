@@ -193,18 +193,13 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
                 val jsName = parent.getJsNameOrKotlinName().identifier
 
                 val deprecationMessage =
-                    "Accessing the companion object of external interface '$kotlinName'.\\n" +
+                    "Reading a companion object of an external interface '$kotlinName' currently produces an empty JS object.\\n" +
                     "\\n" +
-                    "An external interface has no counterpart in JavaScript, so this accessor currently " +
-                    "returns a new empty JS object. This is a temporary behaviour that supports the JavaScript " +
-                    "IDL emulation pattern (external interface + companion object + extension properties).\\n" +
+                    "This will change in the future: it will produce the JS value that the interface " +
+                    "name refers to ('$jsName'), and will fail at runtime if there is no such value." +
                     "\\n" +
-                    "In a future, the accessor will instead return the JS value the interface " +
-                    "name refers to ('$jsName'). If there is no such value in JavaScript, the access will fail at runtime.\\n" +
-                    "\\n" +
-                    "To keep IDL pattern working:\\n" +
-                    " - mark the interface with `@JsName(\\\"NaN\\\")`; or\\n" +
-                    " - drop the companion object and declare the constants as companion extensions " +
+                    " - To keep the current behavior, annotate the interface with `@JsName(\\\"NaN\\\")`.\\n" +
+                    " - To emulate JavaScript IDLs without a companion object, use companion extensions " +
                     "(experimental, -Xcompanion-blocks-and-extensions):\\n" +
                     "     external interface $kotlinName: JsAny\\n" +
                     "     companion val $kotlinName.ZERO: $kotlinName get() = ...\\n" +

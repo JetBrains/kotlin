@@ -95,6 +95,15 @@ abstract class FirWebCommonExternalChecker(
 
         val container = context.containingDeclarations.lastOrNull()
 
+        // KT-87862 K/Wasm: introduce a separate diagnostic ID for companion object inside external interface
+        if (
+            declaration is FirClass &&
+            !declaration.classKind.isInterface && (!allowCompanionInInterface && declaration.status.isCompanion) &&
+            container is FirClassSymbol<*> && container.classKind.isInterface
+        ) {
+            reporter.reportOn(declaration.source, FirWebCommonErrors.COMPANION_OBJECT_IN_EXTERNAL_INTERFACE)
+        }
+
         if (
             declaration is FirClass &&
             !declaration.classKind.isInterface && (!allowCompanionInInterface || !declaration.status.isCompanion) &&

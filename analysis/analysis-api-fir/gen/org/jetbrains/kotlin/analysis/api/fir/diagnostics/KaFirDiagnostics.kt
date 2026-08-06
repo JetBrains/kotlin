@@ -5540,6 +5540,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NestedClassInExternalInterface::class
     }
 
+    interface CompanionObjectInExternalInterface : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = CompanionObjectInExternalInterface::class
+    }
+
     interface InlineExternalDeclaration : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = InlineExternalDeclaration::class
     }
