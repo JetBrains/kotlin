@@ -81,7 +81,7 @@ class DwarfGenerator : DebugInformationGenerator {
 
     private val SourceLocation.DefinedLocation.fileId: FileId
         get() {
-            val [fileName, directoryPath] = directoryAndFileName()
+            val [directoryPath, fileName] = directoryAndFileName()
             return dwarf.lines.addFile(
                 dwarf.lineStrings.add(fileName),
                 dwarf.lineStrings.add(directoryPath),
