@@ -13,6 +13,7 @@ import org.gradle.tooling.GradleConnector
 import org.gradle.tooling.model.gradle.GradleBuild
 import org.jetbrains.kotlin.test.isTeamCityBuild
 import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.NightlyTest
 import org.jetbrains.kotlin.testFederation.fromArgumentStringOrThrow
 import org.jetbrains.kotlin.testFederation.toArgumentString
 import org.opentest4j.AssertionFailedError
@@ -27,6 +28,7 @@ import kotlin.time.Duration.Companion.seconds
  * Update it from IntelliJ's `Tools` run configurations with `Update testLifecycleTask.dump.txt`,
  * or use `Update all project dumps` to refresh every dump.
  */
+@NightlyTest
 @GradleLock
 class TestLifecycleTaskTest {
     private val projectDir = Path("").also { path ->
