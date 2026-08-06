@@ -13,7 +13,6 @@ import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.kotlin.dsl.withType
 import org.gradle.process.ExecOperations
-import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.allDependenciesInternal
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsEnvSpec
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.buildScriptReturn
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.Serializable
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.writeText
@@ -53,7 +53,9 @@ private fun KClass<*>.loadResource(path: String): String {
  *
  * @see [org.jetbrains.kotlin.gradle.targets.js.NpmVersions]
  */
-internal fun createKgpNpmToolingPackageJson(npmVersions: NpmVersions): String {
+private fun createKgpNpmToolingPackageJson(
+    defaultNpmVersions: List<NpmPackageVersionForTests>,
+): String {
     val json = Json {
         prettyPrint = true
     }
@@ -64,7 +66,7 @@ internal fun createKgpNpmToolingPackageJson(npmVersions: NpmVersions): String {
             put("version", "1.0.0")
             put("private", true)
             put("dependencies", buildJsonObject {
-                npmVersions.allDependenciesInternal().forEach { dep ->
+                defaultNpmVersions.forEach { dep ->
                     put(dep.name, dep.requestedVersion)
                 }
             })
@@ -81,10 +83,7 @@ internal fun TestProject.setupCustomKgpNpmToolingDependenciesDir(
     useYarn: Boolean,
 ) {
     // Use the same NpmVersions that KGP uses (which is important, because we're also using KGP's lockfiles)
-    val defaultNpmVersions =
-        buildScriptReturn {
-            project.extensions.getByName<WasmNodeJsRootExtension>(WasmNodeJsRootExtension.EXTENSION_NAME).versions
-        }.buildAndReturn()
+    val defaultNpmVersions = extractDefaultKgpNpmPackageVersions()
     val packageJson = createKgpNpmToolingPackageJson(defaultNpmVersions)
 
     createCustomKgpNpmToolingDependenciesDir(
@@ -98,6 +97,32 @@ internal fun TestProject.setupCustomKgpNpmToolingDependenciesDir(
         toolingCustomDir = toolingCustomDir,
     )
 }
+
+/**
+ * Extract KGP's default npm dependencies.
+ */
+private fun TestProject.extractDefaultKgpNpmPackageVersions(): List<NpmPackageVersionForTests> {
+    return buildScriptReturn {
+        val npmVersions = project.extensions.getByName<WasmNodeJsRootExtension>(WasmNodeJsRootExtension.EXTENSION_NAME).versions
+        @Suppress("INVISIBLE_REFERENCE")
+        npmVersions.allDependenciesInternal(project.objects, project.providers).map { npv ->
+            NpmPackageVersionForTests(
+                name = npv.name.get(),
+                requestedVersion = npv.requestedVersion.get(),
+            )
+        }
+    }.buildAndReturn()
+}
+
+/**
+ * Serializable copy of [org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersionInternal].
+ * (This class is required because `buildScriptReturn {}` can't serialize
+ * `NpmPackageVersionInternal` because it can't serialize [org.gradle.api.provider.Property].)
+ */
+private data class NpmPackageVersionForTests(
+    val name: String,
+    val requestedVersion: String,
+) : Serializable
 
 private fun createCustomKgpNpmToolingDependenciesDir(
     toolingCustomDir: Path,

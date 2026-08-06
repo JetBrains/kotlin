@@ -35,9 +35,13 @@ abstract class WasmNpmTooling internal constructor() {
         return allDeps.map { allDepsValue ->
             val md = MessageDigest.getInstance("MD5")
             allDepsValue.forEach { dep ->
-                md.update(dep.name.toByteArray(StandardCharsets.UTF_8))
-                md.update(dep.requestedVersion.toByteArray(StandardCharsets.UTF_8))
-                md.update(dep.resolvedVersion.toByteArray(StandardCharsets.UTF_8))
+                val name = dep.name.orNull.orEmpty()
+                val requestedVersion = dep.requestedVersion.orNull.orEmpty()
+                val resolvedVersion = dep.resolvedVersion.orNull.orEmpty()
+
+                md.update(name.toByteArray(StandardCharsets.UTF_8))
+                md.update(requestedVersion.toByteArray(StandardCharsets.UTF_8))
+                md.update(resolvedVersion.toByteArray(StandardCharsets.UTF_8))
             }
 
             val hashVersion = md.digest().toHexString()
