@@ -127,6 +127,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement>(PositioningStrategy.WHEN_EXPRESSION) {
             parameter<ConeKotlinType>("subjectType")
         }
+        val WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA by warning<PsiElement>(PositioningStrategy.WHEN_EXPRESSION) {
+            parameter<ConeKotlinType>("subjectType")
+        }
     }
 
     val TYPE_PARAMETERS by object : DiagnosticGroup("Type parameters") {

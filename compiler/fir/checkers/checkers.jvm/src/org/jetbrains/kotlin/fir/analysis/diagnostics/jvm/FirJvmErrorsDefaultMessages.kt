@@ -135,6 +135,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.UPPER_BOUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.USELESS_JVM_EXPOSE_BOXED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.WRONG_TYPE_FOR_JAVA_OVERRIDE
 
 object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
@@ -196,7 +197,12 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS,
-            "''when'' expression over a subject of type ''{0}'' is not exhaustive. Add a ''null'' or ''else'' branch.",
+            "''when'' expression over subject of type ''{0}'' does not handle ''null''. Add a ''null'' or ''else'' branch.",
+            RENDER_TYPE
+        )
+        map.put(
+            WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA,
+            "''when'' subject of type ''{0}'' can be null in Java, but null is not handled in any branch. Consider adding a ''null'' branch.",
             RENDER_TYPE
         )
         map.put(
