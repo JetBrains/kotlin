@@ -14,7 +14,14 @@ val jdkVersion = JdkMajorVersion.JDK_17_0
 configureJvmToolchain(jdkVersion)
 
 dependencies {
-    implementation(kotlinStdlib())
+    // The `reviewCode` task is used on TeamCity and might also be used locally in cold build scenarios
+    // (i.e. the reviewer switches to the branch and runs the task).
+    // So, it is important to make the cold build fast. Use the bootstrap stdlib instead of
+    // the snapshot one (`:kotlin-stdlib`), so that running the task doesn't require building the stdlib:
+    implementation(kotlin("stdlib"))
+    // Note: this won't help if there are other dependencies transitively depending on the snapshot stdlib.
+    // Keep this in mind when adding the dependencies below.
+
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.core.jvm)
     implementation(libs.kotlinx.serialization.json)
