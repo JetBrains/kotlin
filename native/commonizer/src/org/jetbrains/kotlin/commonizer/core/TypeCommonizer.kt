@@ -14,10 +14,9 @@ class TypeCommonizer(
     private val classifiers: CirKnownClassifiers,
     private val settings: CommonizerSettings,
     val context: Context = Context.default,
-    private val supportExpectClassSupplier: SupportExpectClassSupplier,
 ) : NullableSingleInvocationCommonizer<CirType> {
 
-    private val classOrTypeAliasTypeCommonizer = ClassOrTypeAliasTypeCommonizer(this, classifiers, settings, supportExpectClassSupplier)
+    private val classOrTypeAliasTypeCommonizer = ClassOrTypeAliasTypeCommonizer(this, classifiers, settings)
     private val flexibleTypeCommonizer = FlexibleTypeAssociativeCommonizer(this)
 
     override fun invoke(values: List<CirType>): CirType? {
@@ -68,7 +67,7 @@ class TypeCommonizer(
 
     fun withContext(context: Context): TypeCommonizer {
         return if (this.context == context) this
-        else TypeCommonizer(classifiers, settings, context, supportExpectClassSupplier)
+        else TypeCommonizer(classifiers, settings, context)
     }
 
     inline fun withContext(createNewContext: Context.() -> Context): TypeCommonizer {

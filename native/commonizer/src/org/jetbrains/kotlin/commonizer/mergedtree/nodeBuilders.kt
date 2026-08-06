@@ -52,19 +52,12 @@ internal fun buildPropertyNode(
     classifiers: CirKnownClassifiers,
     settings: CommonizerSettings,
     nodeRelationship: CirNodeRelationship? = null,
-    supportExpectClassSupplier: SupportExpectClassSupplier,
 ): CirPropertyNode = buildNode(
     storageManager = storageManager,
     size = size,
     nodeRelationship = nodeRelationship,
     commonizerProducer = {
-        PropertyCommonizer(
-            FunctionOrPropertyBaseCommonizer(
-                classifiers,
-                settings,
-                TypeCommonizer(classifiers, settings, supportExpectClassSupplier = supportExpectClassSupplier),
-            )
-        )
+        PropertyCommonizer(FunctionOrPropertyBaseCommonizer(classifiers, settings, TypeCommonizer(classifiers, settings)))
     },
     nodeProducer = ::CirPropertyNode
 )
@@ -75,13 +68,12 @@ internal fun buildFunctionNode(
     classifiers: CirKnownClassifiers,
     settings: CommonizerSettings,
     nodeRelationship: CirNodeRelationship?,
-    supportExpectClassSupplier: SupportExpectClassSupplier,
 ): CirFunctionNode = buildNode(
     storageManager = storageManager,
     size = size,
     nodeRelationship = nodeRelationship,
     commonizerProducer = {
-        val typeCommonizer = TypeCommonizer(classifiers, settings, supportExpectClassSupplier = supportExpectClassSupplier)
+        val typeCommonizer = TypeCommonizer(classifiers, settings)
         FunctionCommonizer(typeCommonizer, FunctionOrPropertyBaseCommonizer(classifiers, settings, typeCommonizer)).asCommonizer()
     },
     nodeProducer = ::CirFunctionNode
@@ -94,13 +86,12 @@ internal fun buildClassNode(
     settings: CommonizerSettings,
     nodeRelationship: CirNodeRelationship?,
     classId: CirEntityId,
-    supportExpectClassSupplier: SupportExpectClassSupplier,
 ): CirClassNode = buildNode(
     storageManager = storageManager,
     size = size,
     nodeRelationship = nodeRelationship,
     commonizerProducer = {
-        val typeCommonizer = TypeCommonizer(classifiers, settings, supportExpectClassSupplier = supportExpectClassSupplier)
+        val typeCommonizer = TypeCommonizer(classifiers, settings)
         ClassCommonizer(typeCommonizer, ClassSuperTypeCommonizer(classifiers, typeCommonizer))
     },
     recursionMarker = CirClassRecursionMarker,
@@ -118,20 +109,11 @@ internal fun buildClassConstructorNode(
     classifiers: CirKnownClassifiers,
     settings: CommonizerSettings,
     nodeRelationship: CirNodeRelationship?,
-    supportExpectClassSupplier: SupportExpectClassSupplier,
 ): CirClassConstructorNode = buildNode(
     storageManager = storageManager,
     size = size,
     nodeRelationship = nodeRelationship,
-    commonizerProducer = {
-        ClassConstructorCommonizer(
-            TypeCommonizer(
-                classifiers,
-                settings,
-                supportExpectClassSupplier = supportExpectClassSupplier,
-            )
-        )
-    },
+    commonizerProducer = { ClassConstructorCommonizer(TypeCommonizer(classifiers, settings)) },
     nodeProducer = ::CirClassConstructorNode
 )
 
@@ -141,18 +123,11 @@ internal fun buildTypeAliasNode(
     classifiers: CirKnownClassifiers,
     settings: CommonizerSettings,
     typeAliasId: CirEntityId,
-    supportExpectClassSupplier: SupportExpectClassSupplier,
 ): CirTypeAliasNode = buildNode(
     storageManager = storageManager,
     size = size,
     nodeRelationship = null,
-    commonizerProducer = {
-        TypeAliasCommonizer(
-            classifiers,
-            settings,
-            TypeCommonizer(classifiers, settings, supportExpectClassSupplier = supportExpectClassSupplier),
-        ).asCommonizer()
-    },
+    commonizerProducer = { TypeAliasCommonizer(classifiers, settings, TypeCommonizer(classifiers, settings)).asCommonizer() },
     recursionMarker = CirTypeAliasRecursionMarker,
     nodeProducer = { targetDeclarations, commonDeclaration ->
         CirTypeAliasNode(typeAliasId, targetDeclarations, commonDeclaration).also {

@@ -90,21 +90,21 @@ internal class InlineTypeAliasCirNodeTransformer(
         fromAliasedClassNode.constructors.forEach { [key, aliasedConstructorNode] ->
             val aliasedConstructor = aliasedConstructorNode.targetDeclarations[targetIndex] ?: return@forEach
             intoClassNode.constructors.getOrPut(key) {
-                buildClassConstructorNode(storageManager, targetSize, classifiers, settings, ParentNode(intoClassNode), supportExpectClassSupplier)
+                buildClassConstructorNode(storageManager, targetSize, classifiers, settings, ParentNode(intoClassNode))
             }.targetDeclarations[targetIndex] = aliasedConstructor.withContainingClass(intoClass)
         }
 
         fromAliasedClassNode.functions.forEach { [key, aliasedFunctionNode] ->
             val aliasedFunction = aliasedFunctionNode.targetDeclarations[targetIndex] ?: return@forEach
             intoClassNode.functions.getOrPut(key) {
-                buildFunctionNode(storageManager, targetSize, classifiers, settings, ParentNode(intoClassNode), supportExpectClassSupplier)
+                buildFunctionNode(storageManager, targetSize, classifiers, settings, ParentNode(intoClassNode))
             }.targetDeclarations[targetIndex] = aliasedFunction.withContainingClass(intoClass)
         }
 
         fromAliasedClassNode.properties.forEach { [key, aliasedPropertyNode] ->
             val aliasedProperty = aliasedPropertyNode.targetDeclarations[targetIndex] ?: return@forEach
             intoClassNode.properties.getOrPut(key) {
-                buildPropertyNode(storageManager, targetSize, classifiers, settings, ParentNode(intoClassNode), supportExpectClassSupplier)
+                buildPropertyNode(storageManager, targetSize, classifiers, settings, ParentNode(intoClassNode))
             }.targetDeclarations[targetIndex] = aliasedProperty.withContainingClass(intoClass)
         }
     }
@@ -121,7 +121,6 @@ internal class InlineTypeAliasCirNodeTransformer(
             nodeRelationship = ParentNode(this) + PreferredNode(typeAliasNode),
             classId = typeAliasNode.id,
             settings = settings,
-            supportExpectClassSupplier = supportExpectClassSupplier,
         )
         this.classes[typeAliasNode.classifierName] = classNode
         return classNode

@@ -21,19 +21,12 @@ internal class ClassOrTypeAliasTypeCommonizer(
     private val classifiers: CirKnownClassifiers,
     private val isOptimisticNumberTypeCommonizationEnabled: Boolean,
     private val isPlatformIntegerCommonizationEnabled: Boolean,
-    private val supportExpectClassSupplier: SupportExpectClassSupplier,
 ) : NullableSingleInvocationCommonizer<CirClassOrTypeAliasType> {
 
-    constructor(
-        typeCommonizer: TypeCommonizer,
-        classifiers: CirKnownClassifiers,
-        settings: CommonizerSettings,
-        supportExpectClassSupplier: SupportExpectClassSupplier,
-    ) : this(
+    constructor(typeCommonizer: TypeCommonizer, classifiers: CirKnownClassifiers, settings: CommonizerSettings) : this(
         typeCommonizer, classifiers,
         settings.getSetting(OptimisticNumberCommonizationEnabledKey),
         settings.getSetting(PlatformIntegerCommonizationEnabledKey),
-        supportExpectClassSupplier,
     )
 
     private val isMarkedNullableCommonizer = TypeNullabilityCommonizer(typeCommonizer.context)
@@ -48,7 +41,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
         val substitutedTypes = substituteTypesIfNecessary(values)
 
         if (substitutedTypes == null) {
-            supportExpectClassSupplier.buildSupportExpectTypeFor(expansions)?.let {
+            classifiers.supportExpectClassSupplier.buildSupportExpectTypeFor(expansions)?.let {
                 val arguments = TypeArgumentListCommonizer(typeCommonizer).commonize(expansions.map { it.arguments }) ?: return@let
                 return CirClassType.createInterned(it, outerType = null, arguments, isMarkedNullable)
             }

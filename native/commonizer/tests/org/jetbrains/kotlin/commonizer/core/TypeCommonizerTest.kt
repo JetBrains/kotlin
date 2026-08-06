@@ -105,12 +105,18 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
             targetDependencies = targetDependencies,
             commonizedNodes = CirCommonizedClassifierNodes.default(),
             commonDependencies = commonDependencies,
-            supportExpectClassSupplier = buildDummySupportExpectClassSupplier(roots.targets, testRootDisposable),
+            supportExpectClassSupplier = supportExpectClassSupplier,
         ).also { classifiers ->
-            mergeCirTree(LockBasedStorageManager.NO_LOCKS, classifiers, roots, settings = DefaultCommonizerSettings, supportExpectClassSupplier)
+            mergeCirTree(
+                LockBasedStorageManager.NO_LOCKS,
+                classifiers = classifiers,
+                roots = roots,
+                settings = DefaultCommonizerSettings,
+                supportExpectClassSupplier = supportExpectClassSupplier,
+            )
         }
 
-        return TypeCommonizer(classifiers, DefaultCommonizerSettings, supportExpectClassSupplier = supportExpectClassSupplier)
+        return TypeCommonizer(classifiers, DefaultCommonizerSettings)
     }
 
 
@@ -623,10 +629,8 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
 
 
     companion object {
-        fun areEqual(classifiers: CirKnownClassifiers, a: CirType, b: CirType): Boolean {
-            return TypeCommonizer(classifiers, DefaultCommonizerSettings, supportExpectClassSupplier = SupportExpectClassSupplier.empty())
-                .invoke(listOf(a, b)) != null
-        }
+        fun areEqual(classifiers: CirKnownClassifiers, a: CirType, b: CirType): Boolean =
+            TypeCommonizer(classifiers, DefaultCommonizerSettings).invoke(listOf(a, b)) != null
     }
 }
 
