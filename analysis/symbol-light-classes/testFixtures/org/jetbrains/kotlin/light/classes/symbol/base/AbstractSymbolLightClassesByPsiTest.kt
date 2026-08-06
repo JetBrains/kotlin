@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.base
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiEnumConstantInitializer
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.light.classes.symbol.base.service.getLightClassesFro
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.junit.jupiter.api.Assertions
 import java.nio.file.Path
 
@@ -24,6 +26,9 @@ abstract class AbstractSymbolLightClassesByPsiTest(
     configurator: AnalysisApiTestConfigurator,
     override val isTestAgainstCompiledCode: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = super.additionalDirectives + listOf(SymbolLightClassesParentingCheckDirectives)
+
     override fun getRenderResult(
         ktFile: KtFile,
         ktFiles: List<KtFile>,
@@ -64,5 +69,9 @@ abstract class AbstractSymbolLightClassesByPsiTest(
         }.joinToString("\n\n") {
             it.renderClass()
         }
+    }
+
+    override fun supplementaryLightClasses(ktFiles: List<KtFile>): Collection<PsiClass> {
+        return ktFiles.flatMap { getLightClassesFromFile(it) }
     }
 }
