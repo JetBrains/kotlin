@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-78002
 
 @Target(AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER)
@@ -7,9 +7,9 @@ annotation class Anno(val s: String)
 const val foo = "1"
 
 fun f1() {
-    @Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>foo<!>)
-    context(_: @Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>foo<!>) String)
-    fun <@Anno(foo) T> (@Anno(foo) String).foo(@Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>foo<!>) foo: String) : @Anno(foo) String {
+    @Anno(foo)
+    context(_: @Anno(foo) String)
+    fun <@Anno(foo) T> (@Anno(foo) String).foo(@Anno(foo) foo: String) : @Anno(foo) String {
         return this
     }
 }
