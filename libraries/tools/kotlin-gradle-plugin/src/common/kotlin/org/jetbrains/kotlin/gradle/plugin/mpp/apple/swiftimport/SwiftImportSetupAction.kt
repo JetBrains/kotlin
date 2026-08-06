@@ -579,7 +579,7 @@ private fun enableFingerprintCoordination(
             fingerprintSwiftPMDependencyGraph(
                 directMetadata,
                 transitiveMetadata,
-                normalizeVersions = false,
+                normalizeVersions = true,
             )
         }
 
