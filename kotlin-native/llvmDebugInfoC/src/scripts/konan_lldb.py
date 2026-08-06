@@ -537,13 +537,18 @@ def kotlin_object_type_summary(lldb_val, _):
 
     if lldb_val.unsigned == 0:
         return _NULL
-    value = lldb_val.GetValue()
-    return _NULL if value is None else value
+    summary = _render_object(lldb_val.unsigned)
+    return "\"\"" if summary == "" else summary
 
 
 def kotlin_object_pair_type_summary(lldb_val, _):
-    value = lldb_val.GetValue()
-    return "" if value is None else value
+    summaries = []
+    for index in range(2):
+        child = lldb_val.GetChildAtIndex(index)
+        summary = child.GetSummary()
+        value = summary if summary is not None else child.GetValue()
+        summaries.append(_NULL if value is None else value)
+    return " = ".join(summaries)
 
 
 def _select_provider(lldb_val, tip, internal_dict):
@@ -956,18 +961,11 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
                     + names_append_expr
                     + "  const char* typeName = \"\";"
                     "  const char* summary = \"\";"
-                    "  char summaryBuffer[1024];"
-                    "  summaryBuffer[0] = '\\0';"
                     "  if (fieldTypesData[i] == 1 && fieldAddress != 0) {"
                     "    void* child = *reinterpret_cast<void**>(fieldAddress);"
                     "    if (child != 0) {"
                     "      const char* candidateTypeName = (const char*)Konan_DebugGetTypeName(child);"
                     "      if (candidateTypeName != 0) typeName = candidateTypeName;"
-                    "      int written = (int)Konan_DebugObjectToUtf8Array(child, summaryBuffer, 1024);"
-                    "      if (written > 0) {"
-                    "        if (written >= 1024) summaryBuffer[1023] = '\\0';"
-                    "        summary = summaryBuffer;"
-                    "      }"
                     "    }"
                     "  }"
                     "  if (!appendCString(&typeNamesData, &typeNamesCapacity, &typeNamesUsed, typeName)) {"
@@ -1394,11 +1392,46 @@ def _object_field_unsigned(object_proxy, field_name):
         return None
     return value.GetValueAsUnsigned()
 
+
+def _synthetic_value_or_self(value):
+    if value is None or not value.IsValid():
+        return None
+    synthetic = value.GetSyntheticValue()
+    if synthetic is not None and synthetic.IsValid():
+        return synthetic
+    return value
+
+
+def _synthetic_child_index(value, name):
+    synthetic = _synthetic_value_or_self(value)
+    if synthetic is None:
+        return -1
+    for index in range(synthetic.GetNumChildren()):
+        child = synthetic.GetChildAtIndex(index)
+        if child is not None and child.IsValid() and child.GetName() == name:
+            return index
+    return -1
+
+
+def _synthetic_child_at_index(value, index):
+    synthetic = _synthetic_value_or_self(value)
+    if synthetic is None:
+        return None
+    child = synthetic.GetChildAtIndex(index)
+    return child if child is not None and child.IsValid() else None
+
+
+def _synthetic_num_children(value):
+    synthetic = _synthetic_value_or_self(value)
+    if synthetic is None:
+        return 0
+    return synthetic.GetNumChildren()
+
+
 class KonanListSyntheticProvider:
-    def __init__(self, valobj, backing, children_count, internal_dict):
+    def __init__(self, valobj, backing, children_count):
         self._valobj = valobj
         self._backing = backing
-        self._internal_dict = internal_dict
         self._children_count = (
             0 if children_count is None else children_count
         )
@@ -1412,61 +1445,38 @@ class KonanListSyntheticProvider:
         for field_name in ("backing", "$this_asList", "backingArray"):
             backing = _object_field(object_proxy, field_name)
             if backing is not None and backing.IsValid() and backing.unsigned != 0:
+                if visible_children_count is None:
+                    visible_children_count = _synthetic_num_children(backing)
                 return KonanListSyntheticProvider(
                     valobj,
                     backing,
                     visible_children_count,
-                    internal_dict,
                 )
         return None
-
-    def _backing_proxy(self):
-        return KonanProxyTypeProvider(self._backing, self._internal_dict)
 
     def num_children(self):
         return self._children_count
 
     def get_child_index(self, name):
-        child_index = self._backing_proxy().get_child_index(name)
+        child_index = _synthetic_child_index(self._backing, name)
         return child_index if 0 <= child_index < self.num_children() else -1
 
     def get_child_at_index(self, index):
         if not 0 <= index < self.num_children():
             return None
-        return self._backing_proxy().get_child_at_index(index)
+        return _synthetic_child_at_index(self._backing, index)
 
     def update(self):
         return False
 
 
 class KonanSetSyntheticProvider:
-    def __init__(self, valobj, keys, children_count, internal_dict):
+    def __init__(self, valobj, keys, children_count):
         self._valobj = valobj
         self._keys = keys
-        self._internal_dict = internal_dict
         self._children_count = (
             0 if children_count is None else children_count
         )
-        self._state = None
-
-    @staticmethod
-    def _is_valid_objheader_value(value):
-        return (
-            value is not None
-            and value.IsValid()
-            and value.GetTypeName() == "ObjHeader *"
-            and value.GetValue() is not None
-            and value.GetValueAsUnsigned() != 0
-        )
-
-    @staticmethod
-    def _raw_object_proxy(value, internal_dict):
-        if not KonanSetSyntheticProvider._is_valid_objheader_value(value):
-            return None
-        type_info = _type_info(value)
-        if not type_info:
-            return None
-        return _FACTORY["object"](value, type_info, internal_dict)
 
     @staticmethod
     def fromObjectProxy(valobj, object_proxy, internal_dict):
@@ -1474,17 +1484,17 @@ class KonanSetSyntheticProvider:
             return None
 
         backing = _object_field(object_proxy, "backing")
-        if not KonanSetSyntheticProvider._is_valid_objheader_value(backing):
+        if backing is None or not backing.IsValid() or backing.unsigned == 0:
             return None
 
-        backing_object_proxy = KonanSetSyntheticProvider._raw_object_proxy(
-            backing, internal_dict
+        backing_type_info = _type_info(backing)
+        if not backing_type_info:
+            return None
+        backing_object_proxy = _select_provider(
+            backing, backing_type_info, internal_dict
         )
-        if backing_object_proxy is None:
-            return None
-
         keys = _object_field(backing_object_proxy, "keysArray")
-        if not KonanSetSyntheticProvider._is_valid_objheader_value(keys):
+        if keys is None or not keys.IsValid() or keys.unsigned == 0:
             return None
 
         visible_children_count = _object_field_unsigned(
@@ -1494,96 +1504,30 @@ class KonanSetSyntheticProvider:
             valobj,
             keys,
             visible_children_count,
-            internal_dict,
         )
 
-    def _refresh_state(self):
-        self._state = self._current_state()
-        if not self._is_valid_objheader_value(self._valobj):
-            self._keys = None
-            self._children_count = 0
-            return
-
-        valobj_proxy = self._raw_object_proxy(self._valobj, self._internal_dict)
-        if valobj_proxy is None:
-            self._keys = None
-            self._children_count = 0
-            return
-
-        backing = _object_field(valobj_proxy, "backing")
-        if not self._is_valid_objheader_value(backing):
-            self._keys = None
-            self._children_count = 0
-            return
-
-        backing_proxy = self._raw_object_proxy(backing, self._internal_dict)
-        if backing_proxy is None:
-            self._keys = None
-            self._children_count = 0
-            return
-
-        keys = _object_field(backing_proxy, "keysArray")
-        if not self._is_valid_objheader_value(keys):
-            self._keys = None
-            self._children_count = 0
-            return
-
-        self._keys = keys
-        self._children_count = _object_field_unsigned(backing_proxy, "length") or 0
-
-    def _current_state(self):
-        if self._valobj is None or not self._valobj.IsValid():
-            return None
-        process = self._valobj.GetProcess()
-        if process is None or not process.IsValid():
-            return None
-        return process.GetUniqueID(), process.GetStopID(False)
-
-    def _ensure_fresh_state(self):
-        state = self._current_state()
-        if state != self._state:
-            self._refresh_state()
-            return
-        if not self._is_valid_objheader_value(self._keys):
-            self._refresh_state()
-
-    def _keys_proxy(self):
-        self._ensure_fresh_state()
-        if not self._is_valid_objheader_value(self._keys):
-            return None
-        return KonanProxyTypeProvider(self._keys, self._internal_dict)
-
     def num_children(self):
-        self._ensure_fresh_state()
         return self._children_count
 
     def get_child_index(self, name):
-        keys_proxy = self._keys_proxy()
-        if keys_proxy is None:
-            return -1
-        child_index = keys_proxy.get_child_index(name)
+        child_index = _synthetic_child_index(self._keys, name)
         return child_index if 0 <= child_index < self.num_children() else -1
 
     def get_child_at_index(self, index):
         if not 0 <= index < self.num_children():
             return None
-        keys_proxy = self._keys_proxy()
-        if keys_proxy is None:
-            return None
-        return keys_proxy.get_child_at_index(index)
+        return _synthetic_child_at_index(self._keys, index)
 
     def update(self):
-        self._refresh_state()
         return False
 
 
 class KonanMapSyntheticProvider:
-    def __init__(self, valobj, keys, values, children_count, internal_dict):
+    def __init__(self, valobj, keys, values, children_count):
         self._valobj = valobj
         self._target = lldb.debugger.GetSelectedTarget()
         self._keys = keys
         self._values = values
-        self._internal_dict = internal_dict
         self._children_count = (
             0 if children_count is None else children_count
         )
@@ -1612,15 +1556,7 @@ class KonanMapSyntheticProvider:
             if value is not None and value.IsValid():
                 visible_children_count = value.GetValueAsUnsigned()
                 break
-        return KonanMapSyntheticProvider(
-            valobj, keys, values, visible_children_count, internal_dict
-        )
-
-    def _keys_proxy(self):
-        return KonanProxyTypeProvider(self._keys, self._internal_dict)
-
-    def _values_proxy(self):
-        return KonanProxyTypeProvider(self._values, self._internal_dict)
+        return KonanMapSyntheticProvider(valobj, keys, values, visible_children_count)
 
     def num_children(self):
         return self._children_count
@@ -1636,8 +1572,8 @@ class KonanMapSyntheticProvider:
         if not 0 <= index < self.num_children():
             return None
 
-        key = self._keys_proxy().get_child_at_index(index)
-        value = self._values_proxy().get_child_at_index(index)
+        key = _synthetic_child_at_index(self._keys, index)
+        value = _synthetic_child_at_index(self._values, index)
         if key is None or value is None or not key.IsValid() or not value.IsValid():
             return None
 
