@@ -1075,13 +1075,12 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                     )
 
                     when (klass.kind) {
-                        ClassKind.ANNOTATION_CLASS,
-                        ClassKind.ENUM_ENTRY,
-                            -> ExportedType.ErrorType("Class $name with kind: ${klass.kind}")
+                        ClassKind.ENUM_ENTRY -> ExportedType.ErrorType("Class $name with kind: ${klass.kind}")
 
                         ClassKind.OBJECT -> ExportedType.TypeOf(classType)
 
                         ClassKind.CLASS,
+                        ClassKind.ANNOTATION_CLASS,
                         ClassKind.ENUM_CLASS,
                         ClassKind.INTERFACE,
                             -> classType
