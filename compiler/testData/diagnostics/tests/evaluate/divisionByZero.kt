@@ -26,15 +26,14 @@ val b1: Byte <!INITIALIZER_TYPE_MISMATCH!>=<!> <!DIVISION_BY_ZERO!>1 / 0<!>
 annotation class Ann(val i : Int)
 
 val div = <!DIVISION_BY_ZERO!>0.div(0)<!>
-val rem = 0.rem(0)
-val mod = 0.mod(0)
-val floorDiv = 0.floorDiv(0)
+val rem = <!DIVISION_BY_ZERO!>0.rem(0)<!>
+val mod = <!DIVISION_BY_ZERO!>0.mod(0)<!>
+val floorDiv = <!DIVISION_BY_ZERO!>0.floorDiv(0)<!>
 
 const val constDiv = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, DIVISION_BY_ZERO, DIVISION_BY_ZERO!>0.div(0)<!>
-const val constRem = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, DIVISION_BY_ZERO!>0.rem(0)<!>
-// Fails with error
-//const val constMod = 0.mod(0)
-//const val constFloorDiv = 0.floorDiv(0)
+const val constRem = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, DIVISION_BY_ZERO, DIVISION_BY_ZERO!>0.rem(0)<!>
+const val constMod = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, DIVISION_BY_ZERO, DIVISION_BY_ZERO!>0.mod(0)<!>
+const val constFloorDiv = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, DIVISION_BY_ZERO, DIVISION_BY_ZERO!>0.floorDiv(0)<!>
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, const, integerLiteral, multiplicativeExpression, primaryConstructor,
 propertyDeclaration */

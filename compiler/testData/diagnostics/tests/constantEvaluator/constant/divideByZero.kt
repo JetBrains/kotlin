@@ -59,22 +59,22 @@ val prop18 = <!DIVISION_BY_ZERO!>1.0 / 0<!> - <!DIVISION_BY_ZERO!>1.0 / 0<!>
 val prop19 = <!DIVISION_BY_ZERO!>1f / 0<!> - <!DIVISION_BY_ZERO!>1f / 0<!>
 
 // val prop20: NaN.toDouble()
-val prop20 = 1.0 % 0
+val prop20 = <!DIVISION_BY_ZERO!>1.0 % 0<!>
 
 // val prop21: NaN.toDouble()
-val prop21 = 0.0 % 0
+val prop21 = <!DIVISION_BY_ZERO!>0.0 % 0<!>
 
 // val prop22: NaN.toFloat()
-val prop22 = 1f % 0
+val prop22 = <!DIVISION_BY_ZERO!>1f % 0<!>
 
 // val prop23: NaN.toDouble()
-val prop23 = -1.0 % 0
+val prop23 = <!DIVISION_BY_ZERO!>-1.0 % 0<!>
 
 // val prop24: NaN.toDouble()
-val prop24 = -0.0 % 0
+val prop24 = <!DIVISION_BY_ZERO!>-0.0 % 0<!>
 
 // val prop26: NaN.toDouble()
-val prop26 = 1.0.rem(0)
+val prop26 = <!DIVISION_BY_ZERO!>1.0.rem(0)<!>
 
 // val prop27: Infinity.toDouble()
 val prop27 = <!DIVISION_BY_ZERO!>1.0.div(0)<!>
