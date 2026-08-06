@@ -37,7 +37,7 @@ class SnapshotPathSmokeTest : BaseCompilationTest() {
 
             module1.compile(
                 compilationConfigAction = { compilationOperation ->
-                    @Suppress("DEPRECATION")
+                    @Suppress("DEPRECATION_ERROR")
                     val icConfig = compilationOperation.snapshotBasedIcConfiguration(
                         workingDirectory = module1.icCachesDir,
                         sourcesChanges = SourcesChanges.Unknown,
