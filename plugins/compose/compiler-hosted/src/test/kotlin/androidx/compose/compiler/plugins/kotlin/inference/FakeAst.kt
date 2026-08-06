@@ -482,7 +482,7 @@ private fun List<Annotation>.item(): Item? {
     return when {
         targetsFromAnnotations.size == 1 -> Token(targetsFromAnnotations.first())
         targetsFromAnnotations.size > 1 -> Open(
-            explicitOpen ?: -1, allowedTokens = targetsFromAnnotations
+            explicitOpen ?: -1, constraints = Constraints.restrictedTo(targetsFromAnnotations)
         )
         explicitOpen != null -> Open(explicitOpen)
         else -> null

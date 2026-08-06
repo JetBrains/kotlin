@@ -37,18 +37,22 @@ class TestScheme {
     fun canCreateASchemeWithConstrainedOpenItems() {
         val scheme =
             Scheme(
-                Open(0, allowedTokens = setOf("W", "X")), listOf(Scheme(Open(0, allowedTokens = setOf("W", "X")))),
+                Open(0, constraints = Constraints.restrictedTo(setOf("W", "X"))),
+                listOf(Scheme(Open(0, constraints = Constraints.restrictedTo(setOf("W", "X"))))),
                 result =
-                    Scheme(Open(-1, allowedTokens = setOf("Y", "Z")), listOf(Scheme(Open(-1, allowedTokens = setOf("Y", "Z"))))),
+                    Scheme(
+                        Open(-1, constraints = Constraints.restrictedTo(setOf("Y", "Z"))),
+                        listOf(Scheme(Open(-1, constraints = Constraints.restrictedTo(setOf("Y", "Z")))))
+                    ),
             )
 
         assertEquals(
             "[" +
-                    "Open(0, allowedTokens = {W, X}), " +
-                    "[Open(0, allowedTokens = {W, X})]: " +
+                    "Open(0, constrainedTo = {W, X}), " +
+                    "[Open(0, constrainedTo = {W, X})]: " +
                     "[" +
-                    "Open(_, allowedTokens = {Y, Z}), " +
-                    "[Open(_, allowedTokens = {Y, Z})]" +
+                    "Open(_, constrainedTo = {Y, Z}), " +
+                    "[Open(_, constrainedTo = {Y, Z})]" +
                     "]" +
                     "]",
             scheme.toString()
@@ -155,16 +159,24 @@ class TestScheme {
             Scheme(a, listOf(aScheme, aScheme, aScheme)),
             Scheme(one, listOf(oneScheme, aScheme, oneScheme, aScheme)),
             Scheme(Open(Int.MIN_VALUE), listOf(Scheme(Open(Int.MIN_VALUE)))),
-            Scheme(Open(-1, allowedTokens = setOf("W", "X"))),
+            Scheme(Open(-1, constraints = Constraints.restrictedTo(setOf("W", "X")))),
             Scheme(
-                Open(-1, allowedTokens = setOf("W", "X")), listOf(Scheme(Open(-1, allowedTokens = setOf("Y", "Z")))),
+                Open(-1, constraints = Constraints.restrictedTo(setOf("W", "X"))),
+                listOf(Scheme(Open(-1, constraints = Constraints.restrictedTo(setOf("Y", "Z"))))),
                 result =
-                    Scheme(Open(-1, allowedTokens = setOf("W", "X")), listOf(Scheme(Open(-1, allowedTokens = setOf("Y", "Z"))))),
+                    Scheme(
+                        Open(-1, constraints = Constraints.restrictedTo(setOf("W", "X"))),
+                        listOf(Scheme(Open(-1, constraints = Constraints.restrictedTo(setOf("Y", "Z")))))
+                    ),
             ),
             Scheme(
-                Open(0, allowedTokens = setOf("W", "X")), listOf(Scheme(Open(0, allowedTokens = setOf("W", "X")))),
+                Open(0, constraints = Constraints.restrictedTo(setOf("W", "X"))),
+                listOf(Scheme(Open(0, constraints = Constraints.restrictedTo(setOf("W", "X"))))),
                 result =
-                    Scheme(Open(1, allowedTokens = setOf("Y", "Z")), listOf(Scheme(Open(1, allowedTokens = setOf("Y", "Z"))))),
+                    Scheme(
+                        Open(1, constraints = Constraints.restrictedTo(setOf("Y", "Z"))),
+                        listOf(Scheme(Open(1, constraints = Constraints.restrictedTo(setOf("Y", "Z")))))
+                    ),
             ),
         )
 

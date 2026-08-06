@@ -57,7 +57,7 @@ class LazyScheme(
         }
 
         fun itemOf(binding: Binding) = binding.token?.let { Token(it) }
-            ?: context[binding.value]?.let { Open(it, binding.allowedTokens) } ?: Open(-1, binding.allowedTokens)
+            ?: context[binding.value]?.let { Open(it, binding.constraints) } ?: Open(-1, binding.constraints)
 
         fun schemeOf(lazyScheme: LazyScheme): Scheme = Scheme(
             itemOf(lazyScheme.target),

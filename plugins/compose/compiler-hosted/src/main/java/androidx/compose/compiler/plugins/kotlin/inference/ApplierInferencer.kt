@@ -234,10 +234,14 @@ class ApplierInferencer<Type, Node>(
     private fun Bindings.unify(call: Node?, a: CallBindings, b: CallBindings): Boolean {
         if (!unify(a.target, b.target)) {
             if (call != null) {
-                // It's not possible for unification to fail when either `a` or `b` are allowed to
-                // be bound to every target, so within this if-branch, `effectiveAllowedTokens` must
-                // be non-null for both.
-                errorReporter.reportCallError(call, a.target.effectiveAllowedTokens!!, b.target.effectiveAllowedTokens!!)
+                // It's not possible for unification to fail when either `a.target` or `b.target`
+                // are allowed to be bound to every token, so within this if-branch,
+                // `.effectiveConstraints.allowedTokens` must be safe to access on both targets.
+                errorReporter.reportCallError(
+                    call,
+                    a.target.effectiveConstraints.allowedTokens,
+                    b.target.effectiveConstraints.allowedTokens
+                )
             }
             return false
         }
@@ -253,14 +257,14 @@ class ApplierInferencer<Type, Node>(
             val bp = b.parameters[i]
             if (!unify(null, ap, bp)) {
                 if (call != null) {
-                    // It's not possible for unification to fail when either `a` or `b` are allowed
-                    // to be bound to every target, so within this if-branch,
-                    // `effectiveAllowedTokens` must be non-null for both.
+                    // It's not possible for unification to fail when either `ap.target` or
+                    // `bp.target` are allowed to be bound to every token, so within this if-branch,
+                    // `.effectiveConstraints.allowedTokens` must be safe to access on both targets.
                     errorReporter.reportParameterError(
                         call,
                         i,
-                        bp.target.effectiveAllowedTokens!!,
-                        ap.target.effectiveAllowedTokens!!
+                        bp.target.effectiveConstraints.allowedTokens,
+                        ap.target.effectiveConstraints.allowedTokens
                     )
                 }
             }
