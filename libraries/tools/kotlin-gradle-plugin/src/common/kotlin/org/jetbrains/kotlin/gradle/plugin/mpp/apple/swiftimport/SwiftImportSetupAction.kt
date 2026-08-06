@@ -344,6 +344,9 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                         it.syntheticPackageFingerprint.fingerprintFile.set(
                             fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprintFile.get() }
                         )
+                        it.syntheticPackageFingerprint.coordinationService.set(fingerprintCoordinationService)
+                        // No coordination service on the xcodebuild fingerprint on purpose: it keys an unrelated, SDK scoped bucket that
+                        // DumpXcodeBuildArgs guards with its own finished marker check.
                         it.xcodebuildFingerprint.fingerprintFile.set(fingerprintXcode.map { it.xcodebuildFingerprintFile.get() })
                     }
 
@@ -566,6 +569,13 @@ private fun Project.updateDependenciesWithAggregatedResults(
     )
 }
 
+/**
+ * Wires the coordination service into the tasks that share synthetic package buckets.
+ *
+ * Setting it on their [SwiftImportFingerprintInput] is what enables [SwiftImportFingerprintInput.sharedGeneratedPackageExists] and
+ * [SwiftImportFingerprintInput.sharedResolvedPackagesExist]. [FingerprintSyntheticPackage] and [FingerprintXcodeBuild] only produce or
+ * read the hash and never touch the shared buckets, so they are intentionally left without the service.
+ */
 private fun enableFingerprintCoordination(
     fingerprintCoordinationService: Provider<SwiftImportFingerprintedCoordinationService>,
     generateSyntheticPackageTask: TaskProvider<GenerateSyntheticLinkageImportProject>,
@@ -589,6 +599,7 @@ private fun enableFingerprintCoordination(
         it.syntheticPackageFingerprint.fingerprintFile.set(
             fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprintFile.get() }
         )
+        it.syntheticPackageFingerprint.coordinationService.set(fingerprintCoordinationService)
         it.transitiveSwiftPMMetadata.set(fingerprintedSwiftPMDependencyGraph)
     }
 
@@ -597,6 +608,7 @@ private fun enableFingerprintCoordination(
             fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprintFile.get() }
         )
         it.coordinationService.set(fingerprintCoordinationService)
+        it.syntheticPackageFingerprint.coordinationService.set(fingerprintCoordinationService)
     }
 }
 

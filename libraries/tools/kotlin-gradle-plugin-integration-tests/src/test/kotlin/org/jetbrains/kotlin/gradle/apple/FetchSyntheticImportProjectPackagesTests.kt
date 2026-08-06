@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.gradle.testbase.assertFileNotExists
 import org.jetbrains.kotlin.gradle.testbase.assertFilesContentEquals
 import org.jetbrains.kotlin.gradle.testbase.assertFilesExist
 import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
+import org.jetbrains.kotlin.gradle.testbase.assertOutputContainsExactlyTimes
 import org.jetbrains.kotlin.gradle.testbase.assertOutputDoesNotContain
 import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.assertTasksUpToDate
@@ -191,6 +192,45 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
+    @GradleTest
+    fun `fetch task - re-executes redundantly after shared directory check`(version: GradleVersion) {
+        project("empty", version) {
+            withLockFileFixture {
+                val repoAName = "TestPackageA"
+
+                createRepo(repoAName, listOf("1.0.0"))
+
+                val repoA = repoRef(repoAName)
+                val fetchTask = ":${FetchSyntheticImportProjectPackages.TASK_NAME}"
+
+                initSwiftPmProject(cacheDirFile) {
+                    swiftPMDependencies {
+                        swiftPackage(
+                            url = url(repoA.url),
+                            version = from("1.0.0"),
+                            products = listOf(product(repoA.name)),
+                        )
+                    }
+                }
+
+                build(fetchTask) {
+                    assertTasksExecuted(fetchTask)
+                }
+
+                // This should not execute, should be UP-TO-DATE
+                build(fetchTask) {
+                    assertTasksExecuted(fetchTask)
+                }
+
+                build(fetchTask) {
+                    assertTasksUpToDate(fetchTask)
+                }
+            }
+        }
+    }
+
 
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
