@@ -607,7 +607,6 @@ Caused by: java.lang.AssertionError: assert
      * itself contains a space.
      */
     @Test
-    @Disabled
     fun testLauncherSymlinkedIntoDirectoryWithSpaces() {
         assumeFalse(SystemInfo.isWindows, "The launcher is a bash script")
 
