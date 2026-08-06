@@ -410,9 +410,6 @@ projectTests {
 
     // Test everything, intended to use locally
     wasmProjectTest("test", skipInLocalBuild = false) {
-        include("**/*.class")
-        exclude("**/*SingleModule*TestGenerated.class")
-        exclude("**/*MultiModule*TestGenerated.class")
         smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
     }
 
