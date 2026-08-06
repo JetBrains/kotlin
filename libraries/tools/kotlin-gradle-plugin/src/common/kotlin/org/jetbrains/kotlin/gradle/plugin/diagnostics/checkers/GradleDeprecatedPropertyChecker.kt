@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_DEPRECATED_TEST_PROPERTY
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INCREMENTAL_FIR
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JVM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION
@@ -142,6 +143,10 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
                     "$KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION or " +
                     "$KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION instead. " +
                     "See https://kotl.in/KT-87522 for details.",
+        ), // since 2.5.0
+        DeprecatedProperty(
+            propertyName = KOTLIN_INCREMENTAL_FIR,
+            details = "This property has no effect. The FIR incremental runner has been removed."
         ), // since 2.5.0
     )
 
