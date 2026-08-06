@@ -3,6 +3,8 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.domainsEnabled
 import java.nio.file.Paths
 
 plugins {
@@ -297,13 +299,15 @@ class TaskConfiguration(
     val taskName: String,
     val junitTag: JunitTag,
     val maxParallelForks: Int,
+    val domains: Set<Domain>,
 )
 
 fun JunitTag.taskConfiguration(
     description: String,
     taskName: String,
     maxParallelForks: Int = maxParallelTestForks,
-) = TaskConfiguration(description, taskName, this, maxParallelForks)
+    domains: Set<Domain> = emptySet(),
+) = TaskConfiguration(description, taskName, this, maxParallelForks, domains)
 
 val perTagJunitTasks = JunitTag.values().map { junitTag ->
     when (junitTag) {
@@ -314,6 +318,7 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
         JunitTag.SwiftExportKGP -> junitTag.taskConfiguration(
             "Run Swift Export Kotlin Gradle plugin tests",
             "kgpSwiftExportTests",
+            domains = setOf(Domain.SwiftExport)
         )
         JunitTag.SwiftPMImportKGP -> junitTag.taskConfiguration(
             "Run SwiftPM import Kotlin Gradle plugin tests",
@@ -322,19 +327,23 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
         JunitTag.JsKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/JS part of Gradle plugin",
             "kgpJsTests",
+            domains = setOf(Domain.Js)
         )
 
         JunitTag.JsBrowserKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/JS part of Gradle plugin",
             "kgpJsBrowserTests",
+            domains = setOf(Domain.Js)
         )
         JunitTag.NativeKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/Native part of Gradle plugin",
             "kgpNativeTests",
+            domains = setOf(Domain.Native)
         )
         JunitTag.MppKGP -> junitTag.taskConfiguration(
             "Run Multiplatform Kotlin Gradle plugin tests",
             "kgpMppTests",
+            domains = setOf(Domain.BuildToolsApi)
         )
         JunitTag.AndroidKGP -> junitTag.taskConfiguration(
             "Run Android Kotlin Gradle plugin tests",
@@ -343,11 +352,13 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
         JunitTag.OtherKGP -> junitTag.taskConfiguration(
             "Run tests for all support plugins, such as kapt, allopen, etc",
             "kgpOtherTests",
+            domains = setOf(Domain.CompilerPlugins)
         )
         JunitTag.DaemonsKGP -> junitTag.taskConfiguration(
             "Run only Gradle and Kotlin daemon tests for Kotlin Gradle Plugin",
             "kgpDaemonTests",
             maxParallelForks = 1,
+            domains = setOf(Domain.BuildToolsApi)
         )
     }
 }.map { junitTask ->
@@ -356,6 +367,7 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
         description = junitTask.description
         maxParallelForks = junitTask.maxParallelForks
 
+        domainsEnabled.addAll(junitTask.domains)
         useJUnitPlatform {
             includeTags(junitTask.junitTag.name)
             excludeTags(*JunitTag.values().filterNot { it == junitTask.junitTag }.map { it.name }.toTypedArray())

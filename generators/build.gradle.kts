@@ -1,4 +1,6 @@
 import GeneratorInputKind.RuntimeClasspath
+import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.domainsEnabled
 
 plugins {
     id("common-configuration")
@@ -94,6 +96,7 @@ dependencies {
 projectTests {
     testTask {
         workingDir = rootDir
+        domainsEnabled.add(Domain.CoreLibs)
     }
 }
 
