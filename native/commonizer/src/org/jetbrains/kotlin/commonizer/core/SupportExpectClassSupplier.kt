@@ -23,10 +23,6 @@ class SupportExpectClassSupplier internal constructor(
     internal constructor(targets: List<CommonizerTarget>, repository: CommonizerSupportLibraryRepository)
             : this(targets, repository.toModulesProvider(targets))
 
-    companion object {
-        fun empty() = SupportExpectClassSupplier(emptyList(), TargetDependent.empty())
-    }
-
     private fun supportLibraryModulesProviderFor(target: CommonizerTarget) =
         supportLibraryModulesProvider[target]
 

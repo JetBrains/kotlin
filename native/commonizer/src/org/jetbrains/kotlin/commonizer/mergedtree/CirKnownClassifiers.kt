@@ -15,7 +15,7 @@ class CirKnownClassifiers(
     val targetDependencies: TargetDependent<CirProvidedClassifiers>,
     val commonizedNodes: CirCommonizedClassifierNodes,
     val commonDependencies: CirProvidedClassifiers,
-    val supportExpectClassSupplier: SupportExpectClassSupplier,
+    val supportExpectClassSupplier: SupportExpectClassSupplier?,
     val associatedIdsResolver: AssociatedClassifierIdsResolver =
         AssociatedClassifierIdsResolver(classifierIndices, targetDependencies, supportExpectClassSupplier, commonDependencies),
 )

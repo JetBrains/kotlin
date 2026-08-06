@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.commonizer.utils.CommonizerSet
 internal fun AssociatedClassifierIdsResolver(
     classifierIndices: TargetDependent<CirClassifierIndex>,
     targetDependencies: TargetDependent<CirProvidedClassifiers>,
-    supportExpectClassSupplier: SupportExpectClassSupplier,
+    supportExpectClassSupplier: SupportExpectClassSupplier?,
     commonDependencies: CirProvidedClassifiers = CirProvidedClassifiers.EMPTY,
     cache: AssociatedClassifierIdsResolverCache = AssociatedClassifierIdsResolverCache.create()
 ): AssociatedClassifierIdsResolver {
@@ -63,7 +63,7 @@ internal interface AssociatedClassifierIdsResolverCache {
 private class AssociatedClassifierIdsResolverImpl(
     private val classifierIndices: TargetDependent<CirClassifierIndex>,
     private val targetDependencies: TargetDependent<CirProvidedClassifiers>,
-    private val supportExpectClassSupplier: SupportExpectClassSupplier,
+    private val supportExpectClassSupplier: SupportExpectClassSupplier?,
     private val commonDependencies: CirProvidedClassifiers,
     private val cache: AssociatedClassifierIdsResolverCache
 ) : AssociatedClassifierIdsResolver {
@@ -136,11 +136,10 @@ private class AssociatedClassifierIdsResolverImpl(
             }
 
             // See: `HierarchicalSupportLibraryCommonizerTest.testIncompleteHierarchyAmbiguity`
-            for (leaf in allLeaves) {
-                with(supportExpectClassSupplier) {
-                    val targetSupportDependencies = supportExpectClassSupplier.getProvidedClassifiers(leaf)
-                    nextClassifierId.expandThroughDependencies(targetSupportDependencies)
-                }.let { expandedClassifier ->
+            supportExpectClassSupplier?.run {
+                for (leaf in allLeaves) {
+                    val targetSupportDependencies = getProvidedClassifiers(leaf)
+                    val expandedClassifier = nextClassifierId.expandThroughDependencies(targetSupportDependencies)
                     if (visited.add(expandedClassifier)) {
                         queue.add(expandedClassifier)
                     }
