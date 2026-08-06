@@ -64,7 +64,6 @@ projectTests {
         dependsOn(":compileAll")
         workingDir = rootDir
         jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
-        withJunit5ParallelExecution(2)
 
         jvmArgumentProviders.add(objects.newInstance<TestSystemPropertiesProvider>().apply {
             spaceCodeOwnersFile.from(rootDir.resolve(".space/CODEOWNERS"))
