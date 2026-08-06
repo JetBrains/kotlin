@@ -80,7 +80,7 @@ internal object SwiftExportDomainInfo : DomainInfo {
 
 internal object CompilerPluginsDomainInfo : DomainInfo {
     override val domain = Domain.CompilerPlugins
-    override val include: List<String> = listOf("compiler/plugin-api", "plugins")
+    override val include: List<String> = listOf("compiler/plugin-api", "plugins", "libraries/tools/kotlin-main-kts", "libraries/tools/kotlin-main-kts-test", "libraries/scripting")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo) }
 }

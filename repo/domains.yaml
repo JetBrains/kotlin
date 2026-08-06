@@ -111,6 +111,9 @@ CompilerPlugins:
   include:
     - "compiler/plugin-api"
     - "plugins"
+    - "libraries/tools/kotlin-main-kts"
+    - "libraries/tools/kotlin-main-kts-test"
+    - "libraries/scripting"
   fullyAffectedBy:
     - Compiler
 

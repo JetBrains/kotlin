@@ -380,7 +380,7 @@ tasks {
         dependsOn(":compiler:fastJarFSLongTests")
     }
 
-    val scriptingJvmTest = testLifecycleTask("scriptingJvmTest") {
+    val scriptingTest = testLifecycleTask("scriptingJvmTest") {
         dependsOn(":kotlin-scripting-compiler:test")
         dependsOn(":kotlin-scripting-common:test")
         dependsOn(":kotlin-scripting-jvm:test")
@@ -393,10 +393,6 @@ tasks {
 //        dependsOn(":kotlin-scripting-jvm-host-test:embeddableTest")
         dependsOn(":kotlin-main-kts-test:test")
         dependsOn(":kotlin-scripting-jsr223-test:test")
-    }
-
-    val scriptingTest = testLifecycleTask("scriptingTest") {
-        dependsOn(scriptingJvmTest)
     }
 
     val incrementalCompilationTest = testLifecycleTask("incrementalCompilationTest") {
@@ -419,6 +415,7 @@ tasks {
         dependsOn(":kotlin-power-assert-compiler-plugin:test")
         dependsOn(":plugins:plugins-interactions-testing:test")
         dependsOn(":kotlin-dataframe-compiler-plugin:test")
+        dependsOn(scriptingTest)
     }
 
     val miscCompilerTest = testLifecycleTask("miscCompilerTest") {
@@ -427,7 +424,6 @@ tasks {
         dependsOn(":compiler:java-direct:test")
         dependsOn(":kotlin-compiler-embeddable:test")
         dependsOn(incrementalCompilationTest)
-        dependsOn(scriptingTest)
         dependsOn(jvmCompilerIntegrationTest)
         dependsOn(compilerPluginTest)
         dependsOn(":kotlin-daemon-tests:test")

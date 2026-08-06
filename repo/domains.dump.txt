@@ -179,6 +179,9 @@ SwiftExport:
 
 CompilerPlugins:
  - compiler/plugin-api
+ - libraries/scripting
+ - libraries/tools/kotlin-main-kts
+ - libraries/tools/kotlin-main-kts-test
  - plugins/allopen
  - plugins/assign-plugin
  - plugins/atomicfu
@@ -272,7 +275,6 @@ Unknown:
  - libraries/mvnw
  - libraries/mvnw.cmd
  - libraries/pom.xml
- - libraries/scripting
  - libraries/tools/abi-comparator
  - libraries/tools/abi-validation
  - libraries/tools/atomicfu
@@ -288,8 +290,6 @@ Unknown:
  - libraries/tools/kotlin-dataframe
  - libraries/tools/kotlin-dist-for-jps-meta
  - libraries/tools/kotlin-lombok
- - libraries/tools/kotlin-main-kts
- - libraries/tools/kotlin-main-kts-test
  - libraries/tools/kotlin-noarg
  - libraries/tools/kotlin-osgi-bundle
  - libraries/tools/kotlin-power-assert
