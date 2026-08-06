@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import org.gradle.api.file.Directory
+import org.gradle.api.file.RegularFile
 import kotlin.io.path.createParentDirectories
 import kotlin.io.path.writeText
 
@@ -35,6 +37,12 @@ tasks.register("generateDomainSources") {
     outputs.dir(outputDir)
 
     doLast {
+        DomainSourcesGenerator.generate(outputDir, declaredDomains)
+    }
+}
+
+private object DomainSourcesGenerator {
+    fun generate(outputDir: Directory, declaredDomains: RegularFile) {
         val mapper = ObjectMapper(YAMLFactory()).registerKotlinModule()
         val node = mapper.readTree(declaredDomains.asFile)
         val domains = node.properties().mapNotNull { (key, value) ->
@@ -79,24 +87,24 @@ tasks.register("generateDomainSources") {
             }.trimMargin()
         )
     }
-}
 
-private fun JsonNode.toDomainDTO(key: String): DomainDTO {
-    return DomainDTO(
-        name = key,
-        includes = get("include")?.valueStream()?.toList().orEmpty().map { it.asText() },
-        excludes = get("exclude")?.valueStream()?.toList().orEmpty().map { it.asText() },
-        fullyAffectedBy = get("fullyAffectedBy")?.valueStream()?.toList().orEmpty().map { it.asText() },
+    private fun JsonNode.toDomainDTO(key: String): DomainDTO {
+        return DomainDTO(
+            name = key,
+            includes = get("include")?.valueStream()?.toList().orEmpty().map { it.asText() },
+            excludes = get("exclude")?.valueStream()?.toList().orEmpty().map { it.asText() },
+            fullyAffectedBy = get("fullyAffectedBy")?.valueStream()?.toList().orEmpty().map { it.asText() },
+        )
+    }
+
+    private data class DomainDTO(
+        val name: String,
+        val includes: List<String>,
+        val excludes: List<String>,
+        val fullyAffectedBy: List<String>,
     )
-}
 
-private data class DomainDTO(
-    val name: String,
-    val includes: List<String>,
-    val excludes: List<String>,
-    val fullyAffectedBy: List<String>,
-)
-
-private operator fun StringBuilder.plusAssign(s: String) {
-    this.appendLine(s)
+    private operator fun StringBuilder.plusAssign(s: String) {
+        this.appendLine(s)
+    }
 }
