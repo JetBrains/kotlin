@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.importmodel
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.gradle.utils.currentBuildId
 import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
 import org.jetbrains.kotlin.importmodels.proto.*
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import java.io.File
 
 internal class KotlinImportModelProvider(
     private val project: Project,
@@ -42,13 +44,8 @@ internal class KotlinImportModelProvider(
             .setCompilationName(compilation.name)
             .setPlatform(Platform.PLATFORM_JVM)
             .setIsTest(compilation.name == KotlinCompilation.TEST_COMPILATION_NAME)
-            .addBuildActions(
-                Action.newBuilder()
-                    .setGradleAction(
-                        GradleTaskAction.newBuilder()
-                            .setTaskPath(compilation.compileTaskProvider.get().path)
-                    )
-            )
+            .addAllSourceRoots(sourceRoots(compilation))
+            .addBuildActions(gradleAction(compilation.compileTaskProvider.get().path))
             .build()
     }
 
@@ -56,6 +53,46 @@ internal class KotlinImportModelProvider(
         KotlinCompilation.MAIN_COMPILATION_NAME,
         KotlinCompilation.TEST_COMPILATION_NAME,
     ).map { name -> project.kotlinJvmExtension.target.compilations.getByName(name) }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    private fun sourceRoots(compilation: KotlinCompilation<*>): List<SourceRoot> {
+        fun roots(
+            kind: SourceRootKind,
+            paths: Iterable<File>,
+            producingActions: (File) -> List<Action> = { emptyList() },
+        ) = paths.map { path ->
+            SourceRoot.newBuilder()
+                .setPath(project.relativePath(path).replace(File.separatorChar, '/'))
+                .setKind(kind)
+                .addAllProducingActions(producingActions(path))
+                .build()
+        }
+
+        val generatedKotlin = compilation.defaultSourceSet.generatedKotlin
+        val generatedSourceProducers = generatedKotlin.buildDependencies.getDependencies(null)
+        return (
+                roots(
+                    SourceRootKind.SOURCE_ROOT_KIND_SOURCE,
+                    compilation.defaultSourceSet.kotlin.srcDirs
+                ) + roots(
+                    SourceRootKind.SOURCE_ROOT_KIND_GENERATED,
+                    generatedKotlin.srcDirs
+                ) { sourceRoot ->
+                    generatedSourceProducers
+                        .filter { sourceRoot in it.outputs.files.files }
+                        .sortedBy { it.path }
+                        .map { producer -> gradleAction(producer.path) }
+                })
+            .sortedWith(
+                compareBy(SourceRoot::getPath)
+                    .thenBy(SourceRoot::getKindValue)
+            )
+            .distinctBy(SourceRoot::getPath)
+    }
+
+    private fun gradleAction(taskPath: String): Action = Action.newBuilder()
+        .setGradleAction(GradleTaskAction.newBuilder().setTaskPath(taskPath))
+        .build()
 
     private fun compilationUnitId(compilationName: String): CompilationUnitId {
         val buildPath = project.currentBuildId().compatAccessor(project).buildPath

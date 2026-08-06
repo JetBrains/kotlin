@@ -45,6 +45,18 @@ enum Platform {
   PLATFORM_JVM = 1;
 }
 
+enum SourceRootKind {
+  SOURCE_ROOT_KIND_UNSPECIFIED = 0;
+  SOURCE_ROOT_KIND_SOURCE = 1;
+  SOURCE_ROOT_KIND_GENERATED = 2;
+}
+
+message SourceRoot {
+  string path = 1;
+  SourceRootKind kind = 2;
+  repeated Action producing_actions = 3;
+}
+
 message CompilationUnitId {
   string value = 1;
 }
@@ -81,4 +93,5 @@ message CompilationUnitModel {
   Platform platform = 4;
   bool is_test = 5;
   repeated Action build_actions = 6;
+  repeated SourceRoot source_roots = 7;
 }

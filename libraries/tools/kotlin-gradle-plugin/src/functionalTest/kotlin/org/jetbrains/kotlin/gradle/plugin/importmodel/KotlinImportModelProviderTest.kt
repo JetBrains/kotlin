@@ -6,14 +6,18 @@
 package org.jetbrains.kotlin.gradle.plugin.importmodel
 
 import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
+import org.jetbrains.kotlin.importmodels.proto.Action
 import org.jetbrains.kotlin.importmodels.proto.Capability
 import org.jetbrains.kotlin.importmodels.proto.CompilationUnitId
 import org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel
 import org.jetbrains.kotlin.importmodels.proto.GradleTaskAction
 import org.jetbrains.kotlin.importmodels.proto.Platform
+import org.jetbrains.kotlin.importmodels.proto.SourceRoot
+import org.jetbrains.kotlin.importmodels.proto.SourceRootKind
 import org.jetbrains.kotlin.importmodels.proto.Version
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,9 +25,14 @@ import kotlin.test.assertTrue
 
 class KotlinImportModelProviderTest {
     @Test
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
     fun `produces stable main and test JVM models`() {
         val project = buildProjectWithJvm {
             kotlinJvmExtension.target.compilations.create("deploy")
+            val generateMainSources = tasks.register("generateMainSources") {
+                it.outputs.dir(layout.projectDirectory.dir("src/main/generated-kotlin"))
+            }
+            kotlinJvmExtension.sourceSets.getByName("main").generatedKotlin.srcDir(generateMainSources)
         }
         project.evaluate()
         val provider = KotlinImportModelProvider(project)
@@ -70,5 +79,34 @@ class KotlinImportModelProviderTest {
             GradleTaskAction.newBuilder().setTaskPath(expectedBuildTaskPath).build(),
             action.gradleAction,
         )
+        assertEquals(
+            when (expectedName) {
+                "main" -> listOf(
+                    sourceRoot(
+                        "src/main/generated-kotlin",
+                        SourceRootKind.SOURCE_ROOT_KIND_GENERATED,
+                        gradleAction(":generateMainSources"),
+                    ),
+                    sourceRoot("src/main/java", SourceRootKind.SOURCE_ROOT_KIND_SOURCE),
+                    sourceRoot("src/main/kotlin", SourceRootKind.SOURCE_ROOT_KIND_SOURCE),
+                )
+                "test" -> listOf(
+                    sourceRoot("src/test/java", SourceRootKind.SOURCE_ROOT_KIND_SOURCE),
+                    sourceRoot("src/test/kotlin", SourceRootKind.SOURCE_ROOT_KIND_SOURCE),
+                )
+                else -> error("Unexpected compilation name: $expectedName")
+            },
+            model.sourceRootsList,
+        )
     }
+
+    private fun sourceRoot(path: String, kind: SourceRootKind, vararg producingActions: Action): SourceRoot = SourceRoot.newBuilder()
+        .setPath(path)
+        .setKind(kind)
+        .addAllProducingActions(producingActions.asIterable())
+        .build()
+
+    private fun gradleAction(taskPath: String): Action = Action.newBuilder()
+        .setGradleAction(GradleTaskAction.newBuilder().setTaskPath(taskPath))
+        .build()
 }

@@ -108,4 +108,28 @@ public interface CompilationUnitModelOrBuilder extends
    */
   org.jetbrains.kotlin.importmodels.proto.ActionOrBuilder getBuildActionsOrBuilder(
       int index);
+
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+   */
+  java.util.List<org.jetbrains.kotlin.importmodels.proto.SourceRoot> 
+      getSourceRootsList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+   */
+  org.jetbrains.kotlin.importmodels.proto.SourceRoot getSourceRoots(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+   */
+  int getSourceRootsCount();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+   */
+  java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.SourceRootOrBuilder> 
+      getSourceRootsOrBuilderList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+   */
+  org.jetbrains.kotlin.importmodels.proto.SourceRootOrBuilder getSourceRootsOrBuilder(
+      int index);
 }

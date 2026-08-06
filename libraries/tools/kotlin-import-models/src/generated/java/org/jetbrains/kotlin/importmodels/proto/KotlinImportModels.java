@@ -41,6 +41,11 @@ public final class KotlinImportModels {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_importmodels_proto_Version_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_importmodels_proto_SourceRoot_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_importmodels_proto_SourceRoot_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitId_descriptor;
   static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -94,39 +99,48 @@ public final class KotlinImportModels {
       ".kotlin.importmodels.proto.ErrorH\000B\010\n\006re" +
       "sult\"J\n\007Version\022\r\n\005major\030\001 \001(\r\022\r\n\005minor\030" +
       "\002 \001(\r\022\r\n\005patch\030\003 \001(\r\022\022\n\nclassifier\030\004 \001(\t" +
-      "\"\"\n\021CompilationUnitId\022\r\n\005value\030\001 \001(\t\"\254\001\n" +
-      "\tBaseModel\022\n\n\002id\030\001 \001(\t\022H\n\016plugin_version" +
-      "\030\002 \001(\01320.org.jetbrains.kotlin.importmode" +
-      "ls.proto.Version\022I\n\014capabilities\030\003 \003(\01623" +
-      ".org.jetbrains.kotlin.importmodels.proto" +
-      ".Capability\"t\n\014ProjectModel\022\n\n\002id\030\001 \001(\t\022" +
-      "X\n\024compilation_unit_ids\030\003 \003(\0132:.org.jetb" +
-      "rains.kotlin.importmodels.proto.Compilat" +
-      "ionUnitId\"q\n\006Action\022R\n\rgradle_action\030\001 \001" +
-      "(\01329.org.jetbrains.kotlin.importmodels.p" +
-      "roto.GradleTaskActionH\000B\023\n\021build_tool_ac" +
-      "tion\"%\n\020GradleTaskAction\022\021\n\ttask_path\030\001 " +
-      "\001(\t\"\237\003\n\024CompilationUnitModel\022\n\n\002id\030\001 \001(\t" +
-      "\022\\\n\nparameters\030\002 \001(\0132H.org.jetbrains.kot" +
-      "lin.importmodels.proto.CompilationUnitMo" +
-      "del.Parameters\022\030\n\020compilation_name\030\003 \001(\t" +
-      "\022C\n\010platform\030\004 \001(\01621.org.jetbrains.kotli" +
-      "n.importmodels.proto.Platform\022\017\n\007is_test" +
-      "\030\005 \001(\010\022F\n\rbuild_actions\030\006 \003(\0132/.org.jetb" +
-      "rains.kotlin.importmodels.proto.Action\032e" +
-      "\n\nParameters\022W\n\023compilation_unit_id\030\001 \001(" +
-      "\0132:.org.jetbrains.kotlin.importmodels.pr" +
-      "oto.CompilationUnitId*\370\001\n\tErrorType\022\032\n\026E" +
-      "RROR_TYPE_UNSPECIFIED\020\000\022\037\n\033ERROR_TYPE_UN" +
-      "KNOWN_MODEL_ID\020\001\022#\n\037ERROR_TYPE_UNKNOWN_M" +
-      "ODEL_PARAMS\020\002\022#\n\037ERROR_TYPE_UNSUPPORTED_" +
-      "MODEL_ID\020\003\022\'\n#ERROR_TYPE_UNSUPPORTED_MOD" +
-      "EL_PARAMS\020\004\022\035\n\031ERROR_TYPE_INTERNAL_ERROR" +
-      "\020\005\022\034\n\030ERROR_TYPE_GENERIC_ERROR\020\006*Q\n\nCapa" +
-      "bility\022\032\n\026CAPABILITY_UNSPECIFIED\020\000\022\022\n\016CA" +
-      "PABILITY_JVM\020\001\022\023\n\017CAPABILITY_KAPT\020\002*6\n\010P" +
-      "latform\022\030\n\024PLATFORM_UNSPECIFIED\020\000\022\020\n\014PLA" +
-      "TFORM_JVM\020\001B\002P\001b\010editionsp\350\007"
+      "\"\255\001\n\nSourceRoot\022\014\n\004path\030\001 \001(\t\022E\n\004kind\030\002 " +
+      "\001(\01627.org.jetbrains.kotlin.importmodels." +
+      "proto.SourceRootKind\022J\n\021producing_action" +
+      "s\030\003 \003(\0132/.org.jetbrains.kotlin.importmod" +
+      "els.proto.Action\"\"\n\021CompilationUnitId\022\r\n" +
+      "\005value\030\001 \001(\t\"\254\001\n\tBaseModel\022\n\n\002id\030\001 \001(\t\022H" +
+      "\n\016plugin_version\030\002 \001(\01320.org.jetbrains.k" +
+      "otlin.importmodels.proto.Version\022I\n\014capa" +
+      "bilities\030\003 \003(\01623.org.jetbrains.kotlin.im" +
+      "portmodels.proto.Capability\"t\n\014ProjectMo" +
+      "del\022\n\n\002id\030\001 \001(\t\022X\n\024compilation_unit_ids\030" +
+      "\003 \003(\0132:.org.jetbrains.kotlin.importmodel" +
+      "s.proto.CompilationUnitId\"q\n\006Action\022R\n\rg" +
+      "radle_action\030\001 \001(\01329.org.jetbrains.kotli" +
+      "n.importmodels.proto.GradleTaskActionH\000B" +
+      "\023\n\021build_tool_action\"%\n\020GradleTaskAction" +
+      "\022\021\n\ttask_path\030\001 \001(\t\"\352\003\n\024CompilationUnitM" +
+      "odel\022\n\n\002id\030\001 \001(\t\022\\\n\nparameters\030\002 \001(\0132H.o" +
+      "rg.jetbrains.kotlin.importmodels.proto.C" +
+      "ompilationUnitModel.Parameters\022\030\n\020compil" +
+      "ation_name\030\003 \001(\t\022C\n\010platform\030\004 \001(\01621.org" +
+      ".jetbrains.kotlin.importmodels.proto.Pla" +
+      "tform\022\017\n\007is_test\030\005 \001(\010\022F\n\rbuild_actions\030" +
+      "\006 \003(\0132/.org.jetbrains.kotlin.importmodel" +
+      "s.proto.Action\022I\n\014source_roots\030\007 \003(\01323.o" +
+      "rg.jetbrains.kotlin.importmodels.proto.S" +
+      "ourceRoot\032e\n\nParameters\022W\n\023compilation_u" +
+      "nit_id\030\001 \001(\0132:.org.jetbrains.kotlin.impo" +
+      "rtmodels.proto.CompilationUnitId*\370\001\n\tErr" +
+      "orType\022\032\n\026ERROR_TYPE_UNSPECIFIED\020\000\022\037\n\033ER" +
+      "ROR_TYPE_UNKNOWN_MODEL_ID\020\001\022#\n\037ERROR_TYP" +
+      "E_UNKNOWN_MODEL_PARAMS\020\002\022#\n\037ERROR_TYPE_U" +
+      "NSUPPORTED_MODEL_ID\020\003\022\'\n#ERROR_TYPE_UNSU" +
+      "PPORTED_MODEL_PARAMS\020\004\022\035\n\031ERROR_TYPE_INT" +
+      "ERNAL_ERROR\020\005\022\034\n\030ERROR_TYPE_GENERIC_ERRO" +
+      "R\020\006*Q\n\nCapability\022\032\n\026CAPABILITY_UNSPECIF" +
+      "IED\020\000\022\022\n\016CAPABILITY_JVM\020\001\022\023\n\017CAPABILITY_" +
+      "KAPT\020\002*6\n\010Platform\022\030\n\024PLATFORM_UNSPECIFI" +
+      "ED\020\000\022\020\n\014PLATFORM_JVM\020\001*o\n\016SourceRootKind" +
+      "\022 \n\034SOURCE_ROOT_KIND_UNSPECIFIED\020\000\022\033\n\027SO" +
+      "URCE_ROOT_KIND_SOURCE\020\001\022\036\n\032SOURCE_ROOT_K" +
+      "IND_GENERATED\020\002B\002P\001b\010editionsp\350\007"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -151,42 +165,48 @@ public final class KotlinImportModels {
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_importmodels_proto_Version_descriptor,
         new java.lang.String[] { "Major", "Minor", "Patch", "Classifier", });
-    internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitId_descriptor =
+    internal_static_org_jetbrains_kotlin_importmodels_proto_SourceRoot_descriptor =
       getDescriptor().getMessageTypes().get(3);
+    internal_static_org_jetbrains_kotlin_importmodels_proto_SourceRoot_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_importmodels_proto_SourceRoot_descriptor,
+        new java.lang.String[] { "Path", "Kind", "ProducingActions", });
+    internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitId_descriptor =
+      getDescriptor().getMessageTypes().get(4);
     internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitId_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitId_descriptor,
         new java.lang.String[] { "Value", });
     internal_static_org_jetbrains_kotlin_importmodels_proto_BaseModel_descriptor =
-      getDescriptor().getMessageTypes().get(4);
+      getDescriptor().getMessageTypes().get(5);
     internal_static_org_jetbrains_kotlin_importmodels_proto_BaseModel_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_importmodels_proto_BaseModel_descriptor,
         new java.lang.String[] { "Id", "PluginVersion", "Capabilities", });
     internal_static_org_jetbrains_kotlin_importmodels_proto_ProjectModel_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(6);
     internal_static_org_jetbrains_kotlin_importmodels_proto_ProjectModel_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_importmodels_proto_ProjectModel_descriptor,
         new java.lang.String[] { "Id", "CompilationUnitIds", });
     internal_static_org_jetbrains_kotlin_importmodels_proto_Action_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_org_jetbrains_kotlin_importmodels_proto_Action_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_importmodels_proto_Action_descriptor,
         new java.lang.String[] { "GradleAction", "BuildToolAction", });
     internal_static_org_jetbrains_kotlin_importmodels_proto_GradleTaskAction_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_org_jetbrains_kotlin_importmodels_proto_GradleTaskAction_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_importmodels_proto_GradleTaskAction_descriptor,
         new java.lang.String[] { "TaskPath", });
     internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitModel_descriptor =
-      getDescriptor().getMessageTypes().get(8);
+      getDescriptor().getMessageTypes().get(9);
     internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitModel_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitModel_descriptor,
-        new java.lang.String[] { "Id", "Parameters", "CompilationName", "Platform", "IsTest", "BuildActions", });
+        new java.lang.String[] { "Id", "Parameters", "CompilationName", "Platform", "IsTest", "BuildActions", "SourceRoots", });
     internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitModel_Parameters_descriptor =
       internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitModel_descriptor.getNestedTypes().get(0);
     internal_static_org_jetbrains_kotlin_importmodels_proto_CompilationUnitModel_Parameters_fieldAccessorTable = new

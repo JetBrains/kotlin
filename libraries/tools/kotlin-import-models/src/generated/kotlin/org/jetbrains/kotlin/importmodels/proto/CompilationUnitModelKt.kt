@@ -228,6 +228,78 @@ public object CompilationUnitModelKt {
       _builder.clearBuildActions()
     }
 
+
+    /**
+     * An uninstantiable, behaviorless type to represent the field in
+     * generics.
+     */
+    @kotlin.OptIn(com.google.protobuf.kotlin.OnlyForUseByGeneratedProtoCode::class)
+    public class SourceRootsProxy private constructor() : com.google.protobuf.kotlin.DslProxy()
+    /**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;`
+     */
+     public val sourceRoots: com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.SourceRoot, SourceRootsProxy>
+      @kotlin.jvm.JvmSynthetic
+      get() = com.google.protobuf.kotlin.DslList(
+        _builder.sourceRootsList
+      )
+    /**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;`
+     * @param value The sourceRoots to add.
+     */
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("addSourceRoots")
+    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.SourceRoot, SourceRootsProxy>.add(value: org.jetbrains.kotlin.importmodels.proto.SourceRoot) {
+      _builder.addSourceRoots(value)
+    }
+    /**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;`
+     * @param value The sourceRoots to add.
+     */
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("plusAssignSourceRoots")
+    @Suppress("NOTHING_TO_INLINE")
+    public inline operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.SourceRoot, SourceRootsProxy>.plusAssign(value: org.jetbrains.kotlin.importmodels.proto.SourceRoot) {
+      add(value)
+    }
+    /**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;`
+     * @param values The sourceRoots to add.
+     */
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("addAllSourceRoots")
+    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.SourceRoot, SourceRootsProxy>.addAll(values: kotlin.collections.Iterable<org.jetbrains.kotlin.importmodels.proto.SourceRoot>) {
+      _builder.addAllSourceRoots(values)
+    }
+    /**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;`
+     * @param values The sourceRoots to add.
+     */
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("plusAssignAllSourceRoots")
+    @Suppress("NOTHING_TO_INLINE")
+    public inline operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.SourceRoot, SourceRootsProxy>.plusAssign(values: kotlin.collections.Iterable<org.jetbrains.kotlin.importmodels.proto.SourceRoot>) {
+      addAll(values)
+    }
+    /**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;`
+     * @param index The index to set the value at.
+     * @param value The sourceRoots to set.
+     */
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("setSourceRoots")
+    public operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.SourceRoot, SourceRootsProxy>.set(index: kotlin.Int, value: org.jetbrains.kotlin.importmodels.proto.SourceRoot) {
+      _builder.setSourceRoots(index, value)
+    }
+    /**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;`
+     */
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("clearSourceRoots")
+    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.SourceRoot, SourceRootsProxy>.clear() {
+      _builder.clearSourceRoots()
+    }
+
   }
   @kotlin.jvm.JvmName("-initializeparameters")
   public inline fun parameters(block: org.jetbrains.kotlin.importmodels.proto.CompilationUnitModelKt.ParametersKt.Dsl.() -> kotlin.Unit): org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Parameters =

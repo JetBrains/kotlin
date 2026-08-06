@@ -11,12 +11,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.importmodels.KotlinGradleModel
 import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
 import org.jetbrains.kotlin.importmodels.ModelRequest
-import org.jetbrains.kotlin.importmodels.proto.BaseModel
-import org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel
-import org.jetbrains.kotlin.importmodels.proto.ErrorType
-import org.jetbrains.kotlin.importmodels.proto.Platform
-import org.jetbrains.kotlin.importmodels.proto.ProjectModel
-import org.jetbrains.kotlin.importmodels.proto.Result
+import org.jetbrains.kotlin.importmodels.proto.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -25,6 +20,7 @@ import kotlin.test.assertTrue
 class KotlinImportModelsToolingApiIT : KGPBaseTest() {
     @GradleTest
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_9_0)
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
     fun `Tooling API returns stable JVM import models`(gradleVersion: GradleVersion) {
         project(
             projectName = "simpleProject",
@@ -34,6 +30,12 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
                 isolatedProjects = BuildOptions.IsolatedProjectsMode.ENABLED,
             ),
         ) {
+            buildScriptInjection {
+                val generateImportModelSources = project.tasks.register("generateImportModelSources") {
+                    it.outputs.dir(project.layout.buildDirectory.dir("generated/import-models"))
+                }
+                kotlinJvm.sourceSets.getByName("main").generatedKotlin.srcDir(generateImportModelSources)
+            }
             val first = runBuildAction(KotlinImportModelsBuildAction())
             val second = runBuildAction(KotlinImportModelsBuildAction())
 
@@ -51,18 +53,56 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
             assertEquals(Platform.PLATFORM_JVM, main.platform)
             assertFalse(main.isTest)
             assertEquals(":compileKotlin", main.buildActionsList.single().gradleAction.taskPath)
+            assertEquals(
+                sourceRoots(
+                    sourceRoot("src/main/java"),
+                    sourceRoot("src/main/kotlin"),
+                    sourceRoot(
+                        "build/generated/import-models",
+                        SourceRootKind.SOURCE_ROOT_KIND_GENERATED,
+                        ":generateImportModelSources",
+                    ),
+                ),
+                main.sourceRootsList,
+            )
             assertEquals(Platform.PLATFORM_JVM, test.platform)
             assertTrue(test.isTest)
-            assertEquals(":compileTestKotlin", test.buildActionsList.single().gradleAction.taskPath)
+            assertEquals(
+                ":compileTestKotlin",
+                test.buildActionsList.single().gradleAction.taskPath,
+            )
+            assertEquals(
+                sourceRoots(sourceRoot("src/test/kotlin")),
+                test.sourceRootsList,
+            )
             assertEquals(
                 firstModels[1].model.unpack(ProjectModel::class.java).compilationUnitIdsList,
                 secondModels[1].model.unpack(ProjectModel::class.java).compilationUnitIdsList,
             )
             assertTrue(firstModels.last().hasError())
-            assertEquals(ErrorType.ERROR_TYPE_UNKNOWN_MODEL_ID, firstModels.last().error.errorType)
+            assertEquals(
+                ErrorType.ERROR_TYPE_UNKNOWN_MODEL_ID,
+                firstModels.last().error.errorType,
+            )
         }
     }
 }
+
+private fun sourceRoots(vararg roots: SourceRoot): List<SourceRoot> = roots.toList()
+
+private fun sourceRoot(
+    path: String,
+    kind: SourceRootKind = SourceRootKind.SOURCE_ROOT_KIND_SOURCE,
+    vararg producingTaskPaths: String,
+): SourceRoot = SourceRoot.newBuilder()
+    .setPath(path)
+    .setKind(kind)
+    .addAllProducingActions(producingTaskPaths.map(::gradleAction))
+    .build()
+
+private fun gradleAction(taskPath: String): Action = Action.newBuilder()
+    .setGradleAction(GradleTaskAction.newBuilder().setTaskPath(taskPath))
+    .build()
 
 private class KotlinImportModelsBuildAction : org.gradle.tooling.BuildAction<List<ByteArray>> {
     override fun execute(controller: BuildController): List<ByteArray> {

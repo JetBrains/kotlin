@@ -31,6 +31,7 @@ private static final long serialVersionUID = 0L;
     compilationName_ = "";
     platform_ = 0;
     buildActions_ = java.util.Collections.emptyList();
+    sourceRoots_ = java.util.Collections.emptyList();
   }
 
   public static final com.google.protobuf.Descriptors.Descriptor
@@ -822,6 +823,47 @@ private static final long serialVersionUID = 0L;
     return buildActions_.get(index);
   }
 
+  public static final int SOURCE_ROOTS_FIELD_NUMBER = 7;
+  @SuppressWarnings("serial")
+  private java.util.List<org.jetbrains.kotlin.importmodels.proto.SourceRoot> sourceRoots_;
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+   */
+  @java.lang.Override
+  public java.util.List<org.jetbrains.kotlin.importmodels.proto.SourceRoot> getSourceRootsList() {
+    return sourceRoots_;
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+   */
+  @java.lang.Override
+  public java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.SourceRootOrBuilder> 
+      getSourceRootsOrBuilderList() {
+    return sourceRoots_;
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+   */
+  @java.lang.Override
+  public int getSourceRootsCount() {
+    return sourceRoots_.size();
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+   */
+  @java.lang.Override
+  public org.jetbrains.kotlin.importmodels.proto.SourceRoot getSourceRoots(int index) {
+    return sourceRoots_.get(index);
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+   */
+  @java.lang.Override
+  public org.jetbrains.kotlin.importmodels.proto.SourceRootOrBuilder getSourceRootsOrBuilder(
+      int index) {
+    return sourceRoots_.get(index);
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -854,6 +896,9 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < buildActions_.size(); i++) {
       output.writeMessage(6, buildActions_.get(i));
     }
+    for (int i = 0; i < sourceRoots_.size(); i++) {
+      output.writeMessage(7, sourceRoots_.get(i));
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -884,6 +929,10 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < buildActions_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(6, buildActions_.get(i));
+    }
+    for (int i = 0; i < sourceRoots_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(7, sourceRoots_.get(i));
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -926,6 +975,8 @@ private static final long serialVersionUID = 0L;
     }
     if (!getBuildActionsList()
         .equals(other.getBuildActionsList())) return false;
+    if (!getSourceRootsList()
+        .equals(other.getSourceRootsList())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -961,6 +1012,10 @@ private static final long serialVersionUID = 0L;
     if (getBuildActionsCount() > 0) {
       hash = (37 * hash) + BUILD_ACTIONS_FIELD_NUMBER;
       hash = (53 * hash) + getBuildActionsList().hashCode();
+    }
+    if (getSourceRootsCount() > 0) {
+      hash = (37 * hash) + SOURCE_ROOTS_FIELD_NUMBER;
+      hash = (53 * hash) + getSourceRootsList().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -1094,6 +1149,7 @@ private static final long serialVersionUID = 0L;
               .alwaysUseFieldBuilders) {
         getParametersFieldBuilder();
         getBuildActionsFieldBuilder();
+        getSourceRootsFieldBuilder();
       }
     }
     @java.lang.Override
@@ -1116,6 +1172,13 @@ private static final long serialVersionUID = 0L;
         buildActionsBuilder_.clear();
       }
       bitField0_ = (bitField0_ & ~0x00000020);
+      if (sourceRootsBuilder_ == null) {
+        sourceRoots_ = java.util.Collections.emptyList();
+      } else {
+        sourceRoots_ = null;
+        sourceRootsBuilder_.clear();
+      }
+      bitField0_ = (bitField0_ & ~0x00000040);
       return this;
     }
 
@@ -1157,6 +1220,15 @@ private static final long serialVersionUID = 0L;
         result.buildActions_ = buildActions_;
       } else {
         result.buildActions_ = buildActionsBuilder_.build();
+      }
+      if (sourceRootsBuilder_ == null) {
+        if (((bitField0_ & 0x00000040) != 0)) {
+          sourceRoots_ = java.util.Collections.unmodifiableList(sourceRoots_);
+          bitField0_ = (bitField0_ & ~0x00000040);
+        }
+        result.sourceRoots_ = sourceRoots_;
+      } else {
+        result.sourceRoots_ = sourceRootsBuilder_.build();
       }
     }
 
@@ -1245,6 +1317,32 @@ private static final long serialVersionUID = 0L;
           }
         }
       }
+      if (sourceRootsBuilder_ == null) {
+        if (!other.sourceRoots_.isEmpty()) {
+          if (sourceRoots_.isEmpty()) {
+            sourceRoots_ = other.sourceRoots_;
+            bitField0_ = (bitField0_ & ~0x00000040);
+          } else {
+            ensureSourceRootsIsMutable();
+            sourceRoots_.addAll(other.sourceRoots_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.sourceRoots_.isEmpty()) {
+          if (sourceRootsBuilder_.isEmpty()) {
+            sourceRootsBuilder_.dispose();
+            sourceRootsBuilder_ = null;
+            sourceRoots_ = other.sourceRoots_;
+            bitField0_ = (bitField0_ & ~0x00000040);
+            sourceRootsBuilder_ = 
+              com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                 getSourceRootsFieldBuilder() : null;
+          } else {
+            sourceRootsBuilder_.addAllMessages(other.sourceRoots_);
+          }
+        }
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -1311,6 +1409,19 @@ private static final long serialVersionUID = 0L;
               }
               break;
             } // case 50
+            case 58: {
+              org.jetbrains.kotlin.importmodels.proto.SourceRoot m =
+                  input.readMessage(
+                      org.jetbrains.kotlin.importmodels.proto.SourceRoot.parser(),
+                      extensionRegistry);
+              if (sourceRootsBuilder_ == null) {
+                ensureSourceRootsIsMutable();
+                sourceRoots_.add(m);
+              } else {
+                sourceRootsBuilder_.addMessage(m);
+              }
+              break;
+            } // case 58
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1945,6 +2056,246 @@ private static final long serialVersionUID = 0L;
         buildActions_ = null;
       }
       return buildActionsBuilder_;
+    }
+
+    private java.util.List<org.jetbrains.kotlin.importmodels.proto.SourceRoot> sourceRoots_ =
+      java.util.Collections.emptyList();
+    private void ensureSourceRootsIsMutable() {
+      if (!((bitField0_ & 0x00000040) != 0)) {
+        sourceRoots_ = new java.util.ArrayList<org.jetbrains.kotlin.importmodels.proto.SourceRoot>(sourceRoots_);
+        bitField0_ |= 0x00000040;
+       }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilder<
+        org.jetbrains.kotlin.importmodels.proto.SourceRoot, org.jetbrains.kotlin.importmodels.proto.SourceRoot.Builder, org.jetbrains.kotlin.importmodels.proto.SourceRootOrBuilder> sourceRootsBuilder_;
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.importmodels.proto.SourceRoot> getSourceRootsList() {
+      if (sourceRootsBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(sourceRoots_);
+      } else {
+        return sourceRootsBuilder_.getMessageList();
+      }
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+     */
+    public int getSourceRootsCount() {
+      if (sourceRootsBuilder_ == null) {
+        return sourceRoots_.size();
+      } else {
+        return sourceRootsBuilder_.getCount();
+      }
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+     */
+    public org.jetbrains.kotlin.importmodels.proto.SourceRoot getSourceRoots(int index) {
+      if (sourceRootsBuilder_ == null) {
+        return sourceRoots_.get(index);
+      } else {
+        return sourceRootsBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+     */
+    public Builder setSourceRoots(
+        int index, org.jetbrains.kotlin.importmodels.proto.SourceRoot value) {
+      if (sourceRootsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureSourceRootsIsMutable();
+        sourceRoots_.set(index, value);
+        onChanged();
+      } else {
+        sourceRootsBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+     */
+    public Builder setSourceRoots(
+        int index, org.jetbrains.kotlin.importmodels.proto.SourceRoot.Builder builderForValue) {
+      if (sourceRootsBuilder_ == null) {
+        ensureSourceRootsIsMutable();
+        sourceRoots_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        sourceRootsBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+     */
+    public Builder addSourceRoots(org.jetbrains.kotlin.importmodels.proto.SourceRoot value) {
+      if (sourceRootsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureSourceRootsIsMutable();
+        sourceRoots_.add(value);
+        onChanged();
+      } else {
+        sourceRootsBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+     */
+    public Builder addSourceRoots(
+        int index, org.jetbrains.kotlin.importmodels.proto.SourceRoot value) {
+      if (sourceRootsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureSourceRootsIsMutable();
+        sourceRoots_.add(index, value);
+        onChanged();
+      } else {
+        sourceRootsBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+     */
+    public Builder addSourceRoots(
+        org.jetbrains.kotlin.importmodels.proto.SourceRoot.Builder builderForValue) {
+      if (sourceRootsBuilder_ == null) {
+        ensureSourceRootsIsMutable();
+        sourceRoots_.add(builderForValue.build());
+        onChanged();
+      } else {
+        sourceRootsBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+     */
+    public Builder addSourceRoots(
+        int index, org.jetbrains.kotlin.importmodels.proto.SourceRoot.Builder builderForValue) {
+      if (sourceRootsBuilder_ == null) {
+        ensureSourceRootsIsMutable();
+        sourceRoots_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        sourceRootsBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+     */
+    public Builder addAllSourceRoots(
+        java.lang.Iterable<? extends org.jetbrains.kotlin.importmodels.proto.SourceRoot> values) {
+      if (sourceRootsBuilder_ == null) {
+        ensureSourceRootsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, sourceRoots_);
+        onChanged();
+      } else {
+        sourceRootsBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+     */
+    public Builder clearSourceRoots() {
+      if (sourceRootsBuilder_ == null) {
+        sourceRoots_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000040);
+        onChanged();
+      } else {
+        sourceRootsBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+     */
+    public Builder removeSourceRoots(int index) {
+      if (sourceRootsBuilder_ == null) {
+        ensureSourceRootsIsMutable();
+        sourceRoots_.remove(index);
+        onChanged();
+      } else {
+        sourceRootsBuilder_.remove(index);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+     */
+    public org.jetbrains.kotlin.importmodels.proto.SourceRoot.Builder getSourceRootsBuilder(
+        int index) {
+      return getSourceRootsFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+     */
+    public org.jetbrains.kotlin.importmodels.proto.SourceRootOrBuilder getSourceRootsOrBuilder(
+        int index) {
+      if (sourceRootsBuilder_ == null) {
+        return sourceRoots_.get(index);  } else {
+        return sourceRootsBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.SourceRootOrBuilder> 
+         getSourceRootsOrBuilderList() {
+      if (sourceRootsBuilder_ != null) {
+        return sourceRootsBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(sourceRoots_);
+      }
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+     */
+    public org.jetbrains.kotlin.importmodels.proto.SourceRoot.Builder addSourceRootsBuilder() {
+      return getSourceRootsFieldBuilder().addBuilder(
+          org.jetbrains.kotlin.importmodels.proto.SourceRoot.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+     */
+    public org.jetbrains.kotlin.importmodels.proto.SourceRoot.Builder addSourceRootsBuilder(
+        int index) {
+      return getSourceRootsFieldBuilder().addBuilder(
+          index, org.jetbrains.kotlin.importmodels.proto.SourceRoot.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.SourceRoot source_roots = 7;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.importmodels.proto.SourceRoot.Builder> 
+         getSourceRootsBuilderList() {
+      return getSourceRootsFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilder<
+        org.jetbrains.kotlin.importmodels.proto.SourceRoot, org.jetbrains.kotlin.importmodels.proto.SourceRoot.Builder, org.jetbrains.kotlin.importmodels.proto.SourceRootOrBuilder> 
+        getSourceRootsFieldBuilder() {
+      if (sourceRootsBuilder_ == null) {
+        sourceRootsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+            org.jetbrains.kotlin.importmodels.proto.SourceRoot, org.jetbrains.kotlin.importmodels.proto.SourceRoot.Builder, org.jetbrains.kotlin.importmodels.proto.SourceRootOrBuilder>(
+                sourceRoots_,
+                ((bitField0_ & 0x00000040) != 0),
+                getParentForChildren(),
+                isClean());
+        sourceRoots_ = null;
+      }
+      return sourceRootsBuilder_;
     }
 
     // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel)
