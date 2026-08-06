@@ -78,6 +78,7 @@ internal abstract class KotlinGradleTaskExecutionCacheWithMetrics :
             buildString {
                 appendLine("Kotlin Gradle task execution cache:")
                 appendLine("  Total entries: ${entries.size}")
+                appendLine("  Number of threads accessed: ${storage.accessingThreadCount}")
                 appendLine("  Total hits: ${entries.sumOf { (_, entry) -> entry.hits }}")
                 appendLine("  Entries never reused: ${entries.count { (_, entry) -> entry.hits == 0 }}")
                 appendLine("  Sum of saved times: ${entries.fold(0.seconds) { acc, (_, entry) -> acc + entry.savedTime }}")
