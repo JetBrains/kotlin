@@ -16,11 +16,8 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiErrorElement;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -30,26 +27,13 @@ import org.jetbrains.kotlin.test.util.KtTestUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class CodegenTestFiles {
-
     @NotNull
     private final List<KtFile> psiFiles;
-    @NotNull
-    private final List<Pair<String, String>> expectedValues;
-    @NotNull
-    private final List<Object> scriptParameterValues;
 
-    private CodegenTestFiles(
-            @NotNull List<KtFile> psiFiles,
-            @NotNull List<Pair<String, String>> expectedValues,
-            @NotNull List<Object> scriptParameterValues
-    ) {
+    private CodegenTestFiles(@NotNull List<KtFile> psiFiles) {
         this.psiFiles = psiFiles;
-        this.expectedValues = expectedValues;
-        this.scriptParameterValues = scriptParameterValues;
     }
 
     @NotNull
@@ -59,24 +43,8 @@ public class CodegenTestFiles {
     }
 
     @NotNull
-    public List<Pair<String, String>> getExpectedValues() {
-        return expectedValues;
-    }
-
-    @NotNull
-    public List<Object> getScriptParameterValues() {
-        return scriptParameterValues;
-    }
-
-    @NotNull
     public List<KtFile> getPsiFiles() {
         return psiFiles;
-    }
-
-    @NotNull
-    public static CodegenTestFiles create(@NotNull List<KtFile> ktFiles) {
-        assert !ktFiles.isEmpty() : "List should have at least one file";
-        return new CodegenTestFiles(ktFiles, Collections.emptyList(), Collections.emptyList());
     }
 
     @NotNull
@@ -87,32 +55,6 @@ public class CodegenTestFiles {
         List<PsiErrorElement> ranges = AnalyzingUtils.getSyntaxErrorRanges(file);
         assert ranges.isEmpty() : "Syntax errors found in " + file + ": " + ranges;
 
-        List<Pair<String, String>> expectedValues = Lists.newArrayList();
-
-        Matcher matcher = Pattern.compile("// expected: (\\S+): (.*)").matcher(content);
-        while (matcher.find()) {
-            String fieldName = matcher.group(1);
-            String expectedValue = matcher.group(2);
-            expectedValues.add(Pair.create(fieldName, expectedValue));
-        }
-
-        List<Object> scriptParameterValues = Lists.newArrayList();
-
-        if (file.isScript()) {
-            Pattern scriptParametersPattern = Pattern.compile("param: (\\S.*)");
-            Matcher scriptParametersMatcher = scriptParametersPattern.matcher(file.getText());
-
-            if (scriptParametersMatcher.find()) {
-                String valueString = scriptParametersMatcher.group(1);
-                String[] values = valueString.split(" ");
-
-                scriptParameterValues.add(values);
-            }
-            else {
-                scriptParameterValues.add(ArrayUtil.EMPTY_STRING_ARRAY);
-            }
-        }
-
-        return new CodegenTestFiles(Collections.singletonList(file), expectedValues, scriptParameterValues);
+        return new CodegenTestFiles(Collections.singletonList(file));
     }
 }
