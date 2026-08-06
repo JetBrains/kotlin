@@ -6,42 +6,43 @@
 package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
+import kotlin.reflect.KClass
 
-interface KaCompilerPluginDiagnostic0 : KaFirDiagnostic<PsiElement> {
-    override val diagnosticClass
+public interface KaCompilerPluginDiagnostic0 : KaFirDiagnostic<PsiElement> {
+    override val diagnosticClass: KClass<KaCompilerPluginDiagnostic0>
         get() = KaCompilerPluginDiagnostic0::class
 }
 
-interface KaCompilerPluginDiagnostic1 : KaFirDiagnostic<PsiElement> {
-    val parameter1: Any?
+public interface KaCompilerPluginDiagnostic1 : KaFirDiagnostic<PsiElement> {
+    public val parameter1: Any?
 
-    override val diagnosticClass
+    override val diagnosticClass: KClass<KaCompilerPluginDiagnostic1>
         get() = KaCompilerPluginDiagnostic1::class
 }
 
-interface KaCompilerPluginDiagnostic2 : KaFirDiagnostic<PsiElement> {
-    val parameter1: Any?
-    val parameter2: Any?
+public interface KaCompilerPluginDiagnostic2 : KaFirDiagnostic<PsiElement> {
+    public val parameter1: Any?
+    public val parameter2: Any?
 
-    override val diagnosticClass
+    override val diagnosticClass: KClass<KaCompilerPluginDiagnostic2>
         get() = KaCompilerPluginDiagnostic2::class
 }
 
-interface KaCompilerPluginDiagnostic3 : KaFirDiagnostic<PsiElement> {
-    val parameter1: Any?
-    val parameter2: Any?
-    val parameter3: Any?
+public interface KaCompilerPluginDiagnostic3 : KaFirDiagnostic<PsiElement> {
+    public val parameter1: Any?
+    public val parameter2: Any?
+    public val parameter3: Any?
 
-    override val diagnosticClass
+    override val diagnosticClass: KClass<KaCompilerPluginDiagnostic3>
         get() = KaCompilerPluginDiagnostic3::class
 }
 
-interface KaCompilerPluginDiagnostic4 : KaFirDiagnostic<PsiElement> {
-    val parameter1: Any?
-    val parameter2: Any?
-    val parameter3: Any?
-    val parameter4: Any?
+public interface KaCompilerPluginDiagnostic4 : KaFirDiagnostic<PsiElement> {
+    public val parameter1: Any?
+    public val parameter2: Any?
+    public val parameter3: Any?
+    public val parameter4: Any?
 
-    override val diagnosticClass
+    override val diagnosticClass: KClass<KaCompilerPluginDiagnostic4>
         get() = KaCompilerPluginDiagnostic4::class
 }
