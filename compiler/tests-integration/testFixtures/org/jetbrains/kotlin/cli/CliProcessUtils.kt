@@ -25,6 +25,7 @@ object CliProcessUtils {
         environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
         testDataDirectory: String,
         tmpdir: File,
+        launcherFile: File? = null,
     ) {
         runProcess(
             executableName = executableName,
@@ -35,10 +36,14 @@ object CliProcessUtils {
             workDirectory = workDirectory,
             environment = environment,
             testDataDirectory = testDataDirectory,
-            tmpdir = tmpdir
+            tmpdir = tmpdir,
+            launcherFile = launcherFile,
         )
     }
 
+    /**
+     * @param launcherFile allows to replace default path to executable file with custom value
+     */
     fun runProcess(
         executableName: String,
         vararg args: String,
@@ -49,15 +54,17 @@ object CliProcessUtils {
         environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
         testDataDirectory: String,
         tmpdir: File,
+        launcherFile: File? = null,
     ) {
         val executableFileName = if (SystemInfo.isWindows) "$executableName.bat" else executableName
-        val launcherFile = File(PathUtil.kotlinPathsForDistDirectory.homePath, "bin/$executableFileName")
-        assertTrue(launcherFile.exists()) { "Launcher script not found, run dist task: ${launcherFile.absolutePath}" }
+        // Tests may need to run a launcher which is not the one from the dist directory, e.g. a symlink to it.
+        val launcher = launcherFile ?: File(PathUtil.kotlinPathsForDistDirectory.homePath, "bin/$executableFileName")
+        assertTrue(launcher.exists()) { "Launcher script not found, run dist task: ${launcher.absolutePath}" }
 
         // For some reason, IntelliJ's ExecUtil screws quotes up on windows.
         // So, use ProcessBuilder instead.
         val pb = ProcessBuilder(
-            launcherFile.absolutePath,
+            launcher.absolutePath,
             // In cmd, `=` is delimiter, so we need to surround parameter with quotes.
             *quoteIfNeeded(args)
         )

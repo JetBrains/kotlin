@@ -27,10 +27,14 @@ import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertExists
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
+import com.intellij.openapi.util.SystemInfo
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.nio.file.Files
 
 class LauncherScriptTest : TestCaseWithTmpdir() {
     private fun runProcess(
@@ -41,6 +45,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         expectedExitCode: Int,
         workDirectory: File? = null,
         environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
+        launcherFile: File? = null,
     ) {
         CliProcessUtils.runProcess(
             executableName,
@@ -52,6 +57,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             environment = environment,
             testDataDirectory = testDataDirectory,
             tmpdir = tmpdir,
+            launcherFile = launcherFile,
         )
     }
 
@@ -63,6 +69,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         expectedExitCode: Int = 0,
         workDirectory: File? = null,
         environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
+        launcherFile: File? = null,
     ) {
         CliProcessUtils.runProcess(
             executableName,
@@ -74,6 +81,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             environment = environment,
             testDataDirectory = testDataDirectory,
             tmpdir = tmpdir,
+            launcherFile = launcherFile,
         )
     }
 
@@ -567,6 +575,52 @@ Caused by: java.lang.AssertionError: assert
                 assertFalse(stdErr.contains("java.lang.NoClassDefFoundError"))
                 assertTrue(stdErr.contains("java.lang.StackOverflowError"))
             },
+        )
+    }
+
+    /**
+     * A classpath entry containing a space must reach the compiler as a plain path, not percent-encoded.
+     *
+     * The runner keeps the classpath as a list of [java.net.URL]s, so a space becomes `%20`; if that encoding is not undone
+     * before the classpath is passed to the compiler, every affected entry is reported as a non-existent location.
+     */
+    @Test
+    @Disabled
+    fun testClasspathEntryWithSpaces() {
+        val dirWithSpaces = tmpdir.resolve("dir with spaces")
+        kotlincInProcess(
+            "$testDataDirectory/helloWorld.kt",
+            K2JVMCompilerArguments::destination.cliArgument, dirWithSpaces.path
+        )
+
+        // `-e` goes through the compiler, unlike running a main class, which loads the classpath URLs directly.
+        runProcess(
+            "kotlinr",
+            K2JVMCompilerArguments::classpath.cliArgument, dirWithSpaces.path,
+            "-e", "test.main()",
+            expectedStdout = "Hello!\n",
+        )
+    }
+
+    /**
+     * `findKotlinHome` in the launcher script resolves symlinks by hand, and must not break if the path of the symlink
+     * itself contains a space.
+     */
+    @Test
+    @Disabled
+    fun testLauncherSymlinkedIntoDirectoryWithSpaces() {
+        assumeFalse(SystemInfo.isWindows, "The launcher is a bash script")
+
+        val symlink = tmpdir.resolve("dir with spaces").apply { mkdirs() }.resolve("kotlinc")
+        Files.createSymbolicLink(
+            symlink.toPath(),
+            File(PathUtil.kotlinPathsForDistDirectory.homePath, "bin/kotlinc").absoluteFile.toPath()
+        )
+
+        runProcess(
+            "kotlinc", "$testDataDirectory/helloWorld.kt",
+            K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
+            launcherFile = symlink,
         )
     }
 }
