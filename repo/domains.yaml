@@ -49,6 +49,7 @@ Js:
   fullyAffectedBy:
     - Compiler
     - CoreLibs
+    - AnalysisApi # for the standalone TypeScript export
 
 Native:
   include:
