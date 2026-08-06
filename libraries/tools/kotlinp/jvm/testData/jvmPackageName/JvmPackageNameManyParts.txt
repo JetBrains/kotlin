@@ -1,0 +1,36 @@
+// foo/jvm/Foo1Kt.class
+// ------------------------------------------
+package {
+
+  // signature: foo1()V
+  public final fun foo1(): kotlin/Unit
+
+  // module name: test-module
+}
+// foo/jvm/Foo2Kt.class
+// ------------------------------------------
+package {
+
+  // signature: foo2()V
+  public final fun foo2(): kotlin/Unit
+
+  // module name: test-module
+}
+// foo/jvm/Foo3Kt.class
+// ------------------------------------------
+package {
+
+  // signature: foo3()V
+  public final fun foo3(): kotlin/Unit
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package foo {
+    foo/jvm/Foo1Kt
+    foo/jvm/Foo2Kt
+    foo/jvm/Foo3Kt
+  }
+}
