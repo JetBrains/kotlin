@@ -33,7 +33,8 @@ import org.jetbrains.kotlin.wasm.test.blackbox.computeProxyLauncherClassName
  *     each failure against the specific test rather than against the whole batch.
  *
  * A test whose `ProxyLauncher_<hash>` id is missing from the reported results is failed with a sanity error, which
- * keeps a silently skipped test from being reported as passing.
+ * keeps a silently skipped test from being reported as passing, and a test that crashed a VM is failed even if another
+ * VM ran it to completion.
  */
 abstract class AbstractWasmGroupingStageBoxRunner(
     testServices: TestServices
@@ -145,7 +146,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
     /**
      * Attributes each per-test result to the grouping input it belongs to, by the test's stable `ProxyLauncher_<hash>`
      * id. A test the batch reported no result for is failed with a sanity error, so that a silently skipped test
-     * cannot masquerade as passing.
+     * cannot masquerade as passing, and one that crashed a VM is failed whatever the surviving VMs reported for it.
      */
     private fun attributeStructuredResults(
         parsedBatchResult: GroupedTestsResultProtocol.ParsedBatchResult,
@@ -179,7 +180,9 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         // is no batch-level failure sink, so that reason is prepended to the report of every missing test below.
         val emptyReportReason = (TestRunChecks.checkNonEmpty(testReport) as? TestRunChecks.Result.Failed)?.reason
         val missingIds = TestRunChecks.findMissingResults(expectedIds, testReport).toSet()
-        var anyFailureAttributed = false
+        // The ids a crash was blamed on below. A VM-level exception is accounted for once the test that was executing
+        // when that VM died has been named; anything else it reports is nobody's per-test failure.
+        val crashAttributedIds = mutableSetOf<String>()
 
         for (input in testServices.groupingStageInputs) {
             val id = computeProxyLauncherClassName(input.testServices.testInfo)
@@ -188,29 +191,61 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                     input.failWithCollectedOutputs(
                         texts,
                         emptyReportReason,
-                        "Sanity check failed: no per-test result was reported for '$id' in the grouped batch. " +
-                                "The test was expected to run as part of the batch, but produced no " +
-                                "'${GroupedTestsResultProtocol.LINE_PREFIX}' line. This typically indicates the test " +
-                                "was silently skipped (e.g. a stripped ProxyLauncher class), or that a VM crashed " +
-                                "before this test's launcher was reached.",
+                        "Sanity check failed: no per-test result was reported for '$id' in the grouped batch.",
+                        if (parsedBatchResult.crashedInProgress(id)) {
+                            crashDiagnosis(id, "the VM")
+                        } else {
+                            "The test was expected to run as part of the batch, but produced no " +
+                                    "'${GroupedTestsResultProtocol.LINE_PREFIX}' line, not even a " +
+                                    "'${GroupedTestsResultProtocol.STARTED}' one. This typically indicates the test " +
+                                    "was silently skipped (e.g. a stripped ProxyLauncher class), or that a VM crashed " +
+                                    "before this test's launcher was reached."
+                        },
                     )
-                    anyFailureAttributed = true
+                    if (parsedBatchResult.crashedInProgress(id)) crashAttributedIds += id
                 }
                 id in testReport.failedTests -> {
-                    // The reported message and stack trace say everything, so the collected outputs are not repeated.
                     val outcome = parsedBatchResult.outcomes.getValue(id)
-                    input.failWith(AssertionError(listOfNotNull(outcome.message, outcome.details).joinToString("\n")))
-                    anyFailureAttributed = true
+                    val reportedFailure = listOfNotNull(outcome.message, outcome.details).joinToString("\n")
+                    if (parsedBatchResult.crashedInProgress(id)) {
+                        // The test reported a failure on one VM and took another one down. Report both: the assertion
+                        // alone would hide that it crashes an engine, the crash alone what it actually asserted. And
+                        // the crash can only be diagnosed with the VM output.
+                        input.failWithCollectedOutputs(texts, reportedFailure, crashDiagnosis(id, "another VM"))
+                        crashAttributedIds += id
+                    } else {
+                        // Message and stack trace say everything, so the collected outputs are not repeated.
+                        input.failWith(AssertionError(reportedFailure))
+                    }
+                }
+                // Ran to completion on at least one VM, but took another one down. Without this branch the surviving
+                // VM's result would report it as passing, and the crash would surface only as the unattributed
+                // batch-level VM exception below.
+                parsedBatchResult.crashedInProgress(id) -> {
+                    input.failWithCollectedOutputs(texts, crashDiagnosis(id, "another VM"))
+                    crashAttributedIds += id
                 }
             }
         }
 
-        // A VM may have thrown (e.g. a hard trap) without that surfacing as a per-test failure above. Then surface the
-        // raw VM exception, so that the batch does not pass silently.
-        if (!anyFailureAttributed && exceptions.isNotEmpty()) {
-            throw exceptions.firstWithOthersSuppressed()
+        // Whatever a VM threw is only accounted for once the test it died in has been named above. An exception that no
+        // attributed crash explains — a VM that produced no parsable output at all, or one that died for a reason no
+        // test's start localizes — is surfaced as is, even when other tests of the batch already failed: keying this on
+        // "some test failed" instead would let an engine-specific crash disappear behind an unrelated assertion.
+        val unexplainedExceptions = exceptions.filter { exception ->
+            val crashedThere = GroupedTestsResultProtocol.parseMerged(collectExceptionTexts(exception)).crashedIds
+            crashedThere.none { it in crashAttributedIds }
+        }
+        if (unexplainedExceptions.isNotEmpty()) {
+            throw unexplainedExceptions.firstWithOthersSuppressed()
         }
     }
+
+    /** Explains that [id] printed no terminal result on [vm] after starting there, so it most likely took it down. */
+    private fun crashDiagnosis(id: String, vm: String): String =
+        "Test '$id' printed a '${GroupedTestsResultProtocol.STARTED}' line on $vm with no terminal " +
+                "'${GroupedTestsResultProtocol.PASSED}'/'${GroupedTestsResultProtocol.FAILED}' result — it most " +
+                "likely crashed that VM (a hard trap, OOM, or process exit) while executing."
 
     /**
      * Fails this specific test with [lines] (`null` ones are dropped) followed by every text the batch collected, so
