@@ -33,6 +33,10 @@ _Bool __root___setTag__TypesOfArguments__Swift_Array_Swift_String___(NSArray<NSS
 
 NSString * __root___simple__TypesOfArguments__Swift_Array_Swift_String__Vararg___(NSArray<NSString *> * s);
 
+_Bool __root___varargsWithClosure__TypesOfArguments__Swift_Array_U2829202D_U20Swift_Void__Vararg___(NSArray<id> * inp);
+
 _Bool __root___withDefault__TypesOfArguments__Swift_Array_Swift_String__Vararg__Swift_Int32__(NSArray<NSString *> * a, int32_t b);
+
+_Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToBlock);
 
 NS_ASSUME_NONNULL_END
