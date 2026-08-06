@@ -310,24 +310,22 @@ interface SuperOfSealed2 {
 @JsExport
 sealed interface Sealed : SuperOfSealed1, SuperOfSealed2 {
     val value: String
-}
 
-@JsExport.Ignore
-data class SealedA(override val value: String): Sealed {
-    override fun sos1() {}
-    override fun sos2() {}
+    data class A(override val value: String): Sealed {
+        override fun sos1() {}
+        override fun sos2() {}
+    }
+
+    interface B: Sealed, FunIFace
 }
 
 @JsExport
-interface SealedB: Sealed, FunIFace
-
-@JsExport
-interface InterfaceInheritingFromSealed : SealedB {
+interface InterfaceInheritingFromSealed : Sealed.B {
     val value2: String
 }
 
 @JsExport
-class ClassInheritingFromSealed : SealedB {
+class ClassInheritingFromSealed : Sealed.B {
     override val value: String
         get() = "ClassInheritingFromSealed"
 
@@ -382,3 +380,5 @@ data class SealedNoRuntimeWithNonExportedImplementorA(override val value: String
 
 @JsExport.Ignore
 interface SealedNoRuntimeWithNonExportedImplementorB: SealedNoRuntimeWithNonExportedImplementor
+
+

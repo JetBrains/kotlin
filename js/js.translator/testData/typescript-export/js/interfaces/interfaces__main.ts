@@ -6,9 +6,9 @@ import WithTheCompanion = JS_TESTS.foo.WithTheCompanion;
 import InterfaceWithJsStaticVar = JS_TESTS.foo.InterfaceWithJsStaticVar;
 import InterfaceWithNamedCompanion = JS_TESTS.foo.InterfaceWithNamedCompanion;
 import ImplementorOfInterfaceWithDefaultArguments = JS_TESTS.foo.ImplementorOfInterfaceWithDefaultArguments;
-import SomeSealedInterface = JS_TESTS.foo.SomeSealedInterface
-import NoRuntimeSimpleInterface = JS_TESTS.foo.NoRuntimeSimpleInterface
-import NRBase = JS_TESTS.foo.NRBase
+import SomeSealedInterface = JS_TESTS.foo.SomeSealedInterface;
+import NoRuntimeSimpleInterface = JS_TESTS.foo.NoRuntimeSimpleInterface;
+import NRBase = JS_TESTS.foo.NRBase;
 import WithDefaultSuspend = JS_TESTS.foo.WithDefaultSuspend;
 import WithDefaultSuspendImpl = JS_TESTS.foo.WithDefaultSuspendImpl;
 import AbstractAndDefaultSuspend = JS_TESTS.foo.AbstractAndDefaultSuspend;
@@ -50,6 +50,11 @@ import OverridableSuspend = JS_TESTS.foo.OverridableSuspend;
 import InheritingSuspendImpl = JS_TESTS.foo.InheritingSuspendImpl;
 import OverridingSuspendImpl = JS_TESTS.foo.OverridingSuspendImpl;
 import callOverrideSuspend = JS_TESTS.foo.callOverrideSuspend;
+import consumeNonClassNestedDeclarations = JS_TESTS.foo.consumeNonClassNestedDeclarations;
+import KotlinImplementsNestedI = JS_TESTS.foo.KotlinImplementsNestedI;
+import NestedObject = JS_TESTS.foo.NonClassNestedDeclarations.NestedObject;
+import NestedEnum = JS_TESTS.foo.NonClassNestedDeclarations.NestedEnum;
+import NestedAnnotation = JS_TESTS.foo.NonClassNestedDeclarations.NestedAnnotation;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -210,6 +215,15 @@ async function box(): Promise<string> {
     const overridingSuspend: OverridableSuspend = overridingSuspendImpl
     assert(await overridingSuspend.suspendDefault() === "OVERRIDDEN")
     assert(await callOverrideSuspend(overridingSuspend) === "OVERRIDDEN")
+
+    assert(
+        consumeNonClassNestedDeclarations(
+            new KotlinImplementsNestedI("KotlinImplementsNestedI"),
+            NestedObject,
+            NestedEnum.A,
+            new NestedAnnotation("NestedAnnotation")
+        ) == "KotlinImplementsNestedI NestedObject NestedEnum.A NestedAnnotation"
+    )
 
     return "OK";
 }

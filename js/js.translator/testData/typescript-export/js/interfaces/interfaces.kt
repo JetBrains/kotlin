@@ -352,3 +352,31 @@ external interface ExternalInterfaceWithIgnoredNonStaticCompanion {
         fun hidden(): String
     }
 }
+
+@JsExport
+interface NonClassNestedDeclarations {
+    interface NestedI {
+        val value: String
+    }
+
+    object NestedObject {
+        val value = "NestedObject"
+    }
+
+    enum class NestedEnum(val value: String) {
+        A("NestedEnum.A")
+    }
+
+    annotation class NestedAnnotation(val value: String)
+}
+
+@JsExport
+class KotlinImplementsNestedI(override val value: String) : NonClassNestedDeclarations.NestedI
+
+@JsExport
+fun consumeNonClassNestedDeclarations(
+    nestedI: NonClassNestedDeclarations.NestedI,
+    nestedObject: NonClassNestedDeclarations.NestedObject,
+    nestedEnum: NonClassNestedDeclarations.NestedEnum,
+    nestedAnnotation: NonClassNestedDeclarations.NestedAnnotation,
+): String = "${nestedI.value} ${nestedObject.value} ${nestedEnum.value} ${nestedAnnotation.value}"
