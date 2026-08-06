@@ -239,6 +239,6 @@ internal class TypeExporter(
     context(_: KaSession)
     fun exportTypeArgument(typeArgument: KaTypeProjection): ExportedType = when (typeArgument) {
         is KaTypeArgumentWithVariance -> exportType(typeArgument.type)
-        is KaStarTypeProjection -> Primitive.Any // we keep any as a supertype, otherwise it will not compile with there is an upper bound different from Any
+        is KaStarTypeProjection -> Primitive.Any // We keep `any` as the supertype; otherwise, the code won’t compile when the upper bound is something other than Any.
     }
 }

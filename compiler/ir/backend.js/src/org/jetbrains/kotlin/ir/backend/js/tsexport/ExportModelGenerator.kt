@@ -841,7 +841,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
     private fun exportTypeArgument(type: IrTypeArgument, typeOwner: IrDeclaration?, typeParameterScope: TypeParameterScope): ExportedType =
         when (type) {
             is IrTypeProjection -> exportType(type.type, typeParameterScope, typeOwner)
-            is IrStarProjection -> ExportedType.Primitive.Any // we keep any as a supertype, otherwise it will not compile with there is an upper bound different from Any
+            is IrStarProjection -> ExportedType.Primitive.Any // We keep `any` as the supertype; otherwise, the code won’t compile when the upper bound is something other than Any.
         }
 
     private typealias TypeParameterScope = Map<IrTypeParameterSymbol, ExportedTypeParameter>
