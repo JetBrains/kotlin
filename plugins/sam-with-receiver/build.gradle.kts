@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.domainsEnabled
+
 description = "Kotlin SamWithReceiver Compiler Plugin"
 
 plugins {
@@ -42,7 +45,9 @@ javadocJar()
 testsJar()
 
 projectTests {
-    testTask()
+    testTask {
+        domainsEnabled.add(Domain.Compiler)
+    }
 
     testGenerator("org.jetbrains.kotlin.samWithReceiver.TestGeneratorKt", generateTestsInBuildDirectory = true)
 

@@ -44,8 +44,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask {
-    }
+    testTask()
 
     testGenerator("org.jetbrains.kotlin.TestGeneratorForPsiImplKt")
 

@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.domainsEnabled
+
 plugins {
     id("common-configuration")
     id("test-federation-convention")
@@ -62,6 +65,7 @@ projectTests {
         )
     ) {
         useJUnitPlatform()
+        domainsEnabled.add(Domain.Compiler)
 
         addClasspathProperty(beforePluginClasspath, "plugin.classpath.before")
         addClasspathProperty(middlePluginClasspath, "plugin.classpath.middle")

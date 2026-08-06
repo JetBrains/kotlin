@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.domainsEnabled
+
 description = "Kotlin NoArg Compiler Plugin"
 
 plugins {
@@ -49,7 +52,9 @@ javadocJar()
 testsJar()
 
 projectTests {
-    testTask()
+    testTask {
+        domainsEnabled.add(Domain.Compiler)
+    }
 
     testGenerator("org.jetbrains.kotlin.noarg.TestGeneratorKt", generateTestsInBuildDirectory = true)
 

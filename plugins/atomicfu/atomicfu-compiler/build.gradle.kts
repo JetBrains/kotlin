@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.domainsEnabled
 
 description = "Atomicfu Compiler Plugin"
 
@@ -191,6 +193,7 @@ projectTests {
             // Exclude all tests with the "atomicfu-native" tag. They should be launched by another test task.
             excludeTags("atomicfu-native")
         }
+        domainsEnabled.addAll(Domain.Compiler, Domain.Js)
         useJsIrBoxTests(buildDir = layout.buildDirectory)
 
         addClasspathProperty(atomicfuJsIrRuntimeForTests, "atomicfuJsIrRuntimeForTests.classpath")

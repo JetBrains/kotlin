@@ -2,6 +2,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.domainsEnabled
 
 plugins {
     id("common-configuration")
@@ -76,11 +78,12 @@ sourceSets {
 }
 
 projectTests {
-    testTask() {
+    testTask {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         useJUnitPlatform {
             excludeTags("sandbox-native")
         }
+        domainsEnabled.addAll(Domain.Js, Domain.Compiler)
     }
 
     nativeTestTask(
