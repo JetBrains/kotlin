@@ -27,11 +27,10 @@ internal class JvmIncrementalConfigurationStrategy(
     override fun configureIncrementalCompilationConfiguration(buildOperation: JvmCompilationOperation.Builder) {
         val classpathChanges = icEnv.classpathChanges
         if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
-            @Suppress("DEPRECATION_ERROR") val classpathSnapshotsOptions = buildOperation.snapshotBasedIcConfigurationBuilder(
+            val classpathSnapshotsOptions = buildOperation.snapshotBasedIcConfigurationBuilder(
                 icEnv.workingDir.toPath(),
                 icEnv.changedFiles,
                 classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.map(File::toPath),
-                classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.toPath(),
             ).apply {
                 setupBaseIncrementalConfiguration(icEnv, outputDirs.toSet())
                 this[FORCE_RECOMPILATION] = classpathChanges !is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun
