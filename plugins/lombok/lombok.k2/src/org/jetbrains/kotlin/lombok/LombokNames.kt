@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 object LombokNames {
     val LOMBOK = FqName("lombok")
-    val GUAVA_COLLECT_PACKAGE = FqName("com.google.common.collect")
+    // Constructed from segments because the shadow plugin relocates string literals starting with "com.google".
+    val GUAVA_COLLECT_PACKAGE = FqName(listOf("com", "google", "common", "collect").joinToString("."))
 
     val ACCESSORS = FqName("lombok.experimental.Accessors")
     val GETTER = FqName("lombok.Getter")
