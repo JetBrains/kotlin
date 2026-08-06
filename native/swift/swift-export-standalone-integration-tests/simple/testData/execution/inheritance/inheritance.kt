@@ -22,6 +22,18 @@ open class SpeakerBase : Speaker {
 fun callSpeak(s: Speaker): String = s.speak()
 fun callVolume(s: Speaker): Int = s.volume()
 
+// KT-88042: probe the runtime type check directly, so a failure to discover an interface conformance
+// declared by an intermediate Swift class is distinguishable from a dispatch problem.
+fun isSpeaker(a: Any): Boolean = a is Speaker
+fun castAndSpeak(a: Any): String = (a as Speaker).speak()
+
+// KT-88042 verbatim from the issue. Kept separate from `Base`/`Speaker` above because `Root` declares
+// no open members of its own: the exported Kotlin class contributes zero reverse adapters, so the
+// whole patched itable comes from the interface. None of the other fixtures here have that shape.
+open class Root
+interface BaseInterface { fun added(): String }
+fun callAdded(value: BaseInterface): String = value.added()
+
 interface Reader { fun read(): String }
 interface Writer { fun write(s: String): Int }
 

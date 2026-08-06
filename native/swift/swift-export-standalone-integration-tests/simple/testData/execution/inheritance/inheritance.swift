@@ -161,6 +161,155 @@ func swiftSubclassOfKotlinClassConformsToUnrelatedKotlinInterface() throws {
     #expect(callVolume(s: s) == 7)
 }
 
+// KT-88042 as reported. `Mid` is at file scope only because `Leaf` has to derive from it.
+private class Mid: Root, BaseInterface {
+    func added() -> String { "mid" }
+}
+
+@Test
+func kt88042SwiftSubclassInheritsKotlinInterfaceConformance() throws {
+    // The issue's reproducer, transcribed. `Root` deliberately declares no open members, so every
+    // patched itable entry originates from `BaseInterface` rather than from the Kotlin class.
+    class Leaf: Mid {}
+
+    // Direct Swift calls — these always worked.
+    #expect(Mid().added() == "mid")
+    #expect(Leaf().added() == "mid")
+
+    // Kotlin-side interface dispatch. `Leaf` was the always-failing case; `Mid` failed in Debug only,
+    // due to a second, unrelated defect (swift-export type adapters dropped when the generated-bridges
+    // klib is compiled into a Kotlin/Native cache) that this harness cannot reproduce, because it
+    // compiles the bridges into the root module with caches disabled. See KT-88042-report.md.
+    #expect(callAdded(value: Mid()) == "mid")
+    #expect(callAdded(value: Leaf()) == "mid")
+}
+
+// KT-88042 fixture, shared by the two tests below. File scope, not function-local, because both a
+// non-overriding and an overriding leaf are derived from it.
+private class MidSpeaker: Base, Speaker {
+    func speak() -> String { "mid speaks" }
+    func volume() -> Int32 { 3 }
+}
+
+@Test
+func swiftGrandchildInheritsKotlinInterfaceConformance() throws {
+    // KT-88042. The Kotlin interface conformance is declared by an *intermediate Swift* class, and the
+    // leaf declares nothing — so `class_copyProtocolList(LeafSpeaker)`, which reports a class's own
+    // adopted protocols only, is empty; the `_Speaker` marker lives on `MidSpeaker`. Interface
+    // discovery has to walk the Swift superclass chain up to the bound Kotlin class, otherwise the
+    // synthesized TypeInfo carries no interfaces and every Kotlin-side Speaker check fails.
+    class LeafSpeaker: MidSpeaker {} // intentionally adds nothing
+
+    let leaf = LeafSpeaker()
+
+    // Pure Swift dispatch — worked before the fix too.
+    #expect(leaf.speak() == "mid speaks")
+
+    // The runtime type check itself: was `false` / ClassCastException before the fix.
+    #expect(isSpeaker(a: leaf))
+    #expect(castAndSpeak(a: leaf) == "mid speaks")
+
+    // Kotlin-side interface dispatch.
+    #expect(callSpeak(s: leaf) == "mid speaks")
+    #expect(callVolume(s: leaf) == 3)
+
+    // The direct-subclass case must keep working.
+    #expect(callSpeak(s: MidSpeaker()) == "mid speaks")
+}
+
+@Test
+func swiftGrandchildOverridingInheritedInterfaceMethod() throws {
+    // Same chain, but the leaf overrides. The itable slot inherited through the discovered conformance
+    // holds the Swift reverse trampoline, so Kotlin dispatch must land on the leaf's override rather
+    // than on the intermediate class's implementation.
+    class LoudLeaf: MidSpeaker {
+        override func speak() -> String { "leaf speaks" }
+        override func volume() -> Int32 { 9 }
+    }
+
+    let loud = LoudLeaf()
+    #expect(loud.speak() == "leaf speaks")
+    #expect(callSpeak(s: loud) == "leaf speaks")
+    #expect(callVolume(s: loud) == 9)
+}
+
+@Test
+func swiftGrandchildAddsItsOwnKotlinInterfaceConformance() throws {
+    // The *union* of the conformances across the chain has to be taken: `Reader` comes from the
+    // intermediate class, `Writer` from the leaf. Collecting from the leaf alone would drop `Reader`.
+    class MidReader: Base, Reader {
+        func read() -> String { "mid reads" }
+    }
+    class LeafWriter: MidReader, Writer {
+        func write(s: String) -> Int32 { Int32(s.count) }
+    }
+
+    let lw = LeafWriter()
+    #expect(callRead(r: lw) == "mid reads")
+    #expect(callWrite(w: lw, s: "abcd") == 4)
+
+    // Four levels: proves the walk is not bounded to a single step.
+    class LeafLeaf: LeafWriter {}
+    let ll = LeafLeaf()
+    #expect(callRead(r: ll) == "mid reads")
+    #expect(callWrite(w: ll, s: "abcd") == 4)
+}
+
+@Test
+func swiftGrandchildInheritsRefinedInterfaceConformance() throws {
+    // Protocol *refinement* walking (`_Dog` refines `_Animal`) must still happen when the worklist is
+    // seeded from a superclass rather than from the leaf, so a Kotlin caller typed as the parent
+    // interface reaches the Swift implementation.
+    class MidDog: Base, Dog {
+        func name() -> String { "mid-dog" }
+        func bark() -> String { "mid-woof" }
+    }
+    class LeafDog: MidDog {}
+
+    let leaf = LeafDog()
+    #expect(callName(a: leaf) == "mid-dog")
+    #expect(callBark(d: leaf) == "mid-woof")
+}
+
+@Test
+func swiftGrandchildInheritsKotlinInterfaceProperty() throws {
+    // Property accessors are ordinary itable entries, so an inherited conformance has to route the
+    // getter and the setter to the intermediate class's implementations as well.
+    class MidCounter: Base, Counter {
+        private var backing: Int32 = 0
+        var count: Int32 {
+            get { backing }
+            set { backing = newValue * 2 }
+        }
+    }
+    class LeafCounter: MidCounter {}
+
+    let c = LeafCounter()
+    setCount(c: c, n: 5)
+    #expect(getCount(c: c) == 10)
+    #expect(c.count == 10)
+}
+
+@Test
+func swiftGrandchildClassMethodDispatch() throws {
+    // Class/vtable analogue of the above, no interfaces involved: a three-level chain with the
+    // override in the middle, a non-overriding leaf and an overriding leaf. Also re-checks that a
+    // method overridden nowhere in the Swift part (`wheels`) stays reachable from Kotlin without
+    // recursing through the patched vtable slot.
+    class MidVehicle: Vehicle {
+        override func describe() -> String { "mid-vehicle" }
+    }
+    class LeafVehicle: MidVehicle {}
+    class LeafVehicle2: MidVehicle {
+        override func describe() -> String { "leaf-vehicle" }
+    }
+
+    #expect(callDescribe(v: LeafVehicle()) == "mid-vehicle")
+    #expect(callWheels(v: LeafVehicle()) == 4)
+    #expect(LeafVehicle2().describe() == "leaf-vehicle")
+    #expect(callDescribe(v: LeafVehicle2()) == "leaf-vehicle")
+}
+
 @Test
 func swiftInheritsKotlinInterfaceDefault() throws {
     // Swift inherits a Kotlin class and first-adopts `Defaulter`, without overriding the defaulted
