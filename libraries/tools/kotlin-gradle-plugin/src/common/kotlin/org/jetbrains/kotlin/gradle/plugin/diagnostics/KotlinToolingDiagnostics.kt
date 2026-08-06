@@ -1989,25 +1989,6 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object IcFirMisconfigurationLV : ToolingDiagnosticFactory(
-        predefinedSeverity = FATAL,
-        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration
-    ) {
-        operator fun invoke(
-            taskPath: String,
-            languageVersion: KotlinVersion,
-        ) = build {
-            title("FIR based incremental compilation Kotlin version 1.x compatibility")
-                .description {
-                    "FIR based incremental compilation is enabled for '$taskPath'" +
-                            " alongside with '${languageVersion.version}' Kotlin language version."
-                }
-                .solution {
-                    "Please update Kotlin language version in your build scripts at least to 2.0"
-                }
-        }
-    }
-
     object AbiValidationUnsupportedTarget : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Experimental) {
         operator fun invoke(targetType: KlibTargetType): ToolingDiagnostic = build {
             title("ABI Validation: unsupported target")

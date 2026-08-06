@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfigurati
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.PRECISE_JAVA_TRACKING
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.INCREMENTAL_COMPILATION
 import org.jetbrains.kotlin.compilerRunner.IncrementalCompilationEnvironment
@@ -35,8 +34,6 @@ internal class JvmIncrementalConfigurationStrategy(
                 setupBaseIncrementalConfiguration(icEnv, outputDirs.toSet())
                 this[FORCE_RECOMPILATION] = classpathChanges !is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun
                 this[PRECISE_JAVA_TRACKING] = icEnv.icFeatures.usePreciseJavaTracking
-                @Suppress("DEPRECATION_ERROR")
-                this[USE_FIR_RUNNER] = icEnv.useJvmFirRunner
 
                 when (classpathChanges) {
                     is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges -> {

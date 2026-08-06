@@ -90,9 +90,6 @@ abstract class KotlinCompile @Inject constructor(
     abstract override val libraries: ConfigurableFileCollection
 
     @get:Input
-    internal val useFirRunner: Property<Boolean> = objectFactory.propertyWithConvention(false)
-
-    @get:Input
     internal val enableJvmClasspathMetadata: Property<Boolean> = objectFactory.propertyWithConvention(false)
 
     @get:Nested
@@ -227,21 +224,6 @@ abstract class KotlinCompile @Inject constructor(
             overrideXJvmDefaultInPresenceOfKotlinDslPlugin(args)
 
             explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
-
-            if (useFirRunner.get()) {
-                @Suppress("DEPRECATION")
-                if (compilerOptions.languageVersion.orElse(KotlinVersion.DEFAULT).get() < KotlinVersion.KOTLIN_2_0) {
-                    reportDiagnostic(
-                        KotlinToolingDiagnostics.IcFirMisconfigurationLV(
-                            taskPath = path,
-                            languageVersion = compilerOptions.languageVersion.get()
-                        )
-                    )
-                }
-
-                @Suppress("DEPRECATION")
-                args.useFirIC = true
-            }
 
             args.separateKmpCompilationScheme = separateKmpCompilation.get()
         }
@@ -419,7 +401,6 @@ abstract class KotlinCompile @Inject constructor(
                 buildDir = projectLayout.buildDirectory.getFile(),
                 multiModuleICSettings = multiModuleICSettings,
                 icFeatures = makeIncrementalCompilationFeatures(),
-                useJvmFirRunner = useFirRunner.get(),
             )
         } else null
 
