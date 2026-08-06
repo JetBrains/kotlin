@@ -18,7 +18,7 @@ object DiagnosticClassGenerator {
         when (target) {
             DiagnosticGenerationTarget.Api -> {
                 KaDiagnosticClassRenderer.render(
-                    file = path.resolve("KaFirDiagnostics.kt"),
+                    file = path.resolve("KaFirDiagnostic.kt"),
                     diagnosticList = diagnosticList,
                     packageName = packageName,
                     starImportsToAdd = emptySet(),
