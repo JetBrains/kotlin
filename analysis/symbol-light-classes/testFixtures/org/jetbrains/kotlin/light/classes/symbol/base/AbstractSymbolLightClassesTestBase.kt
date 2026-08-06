@@ -73,6 +73,13 @@ abstract class AbstractSymbolLightClassesTestBase(
     protected open fun supplementaryLightClasses(ktFiles: List<KtFile>): Collection<PsiClass>? = null
 
     /**
+     * Slot for the declaration matching check, which is only meaningful for decompiled light classes.
+     *
+     * @see runSupplementaryChecks
+     */
+    protected open fun checkDeclarationMatching(ktFiles: List<KtFile>, testServices: TestServices) {}
+
+    /**
      * Runs additional checks over the light classes of the already prepared module.
      *
      * Such checks used to be separate test classes over the same test data, which meant compiling, indexing, and decompiling the very same
@@ -97,6 +104,10 @@ abstract class AbstractSymbolLightClassesTestBase(
                     assertions = testServices.assertions,
                 )
             }
+        }
+
+        collectFailure(failures) {
+            checkDeclarationMatching(ktFiles, testServices)
         }
 
         if (failures.isNotEmpty()) {
