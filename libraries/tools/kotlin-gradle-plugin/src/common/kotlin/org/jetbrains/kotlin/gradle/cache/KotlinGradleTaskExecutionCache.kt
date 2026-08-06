@@ -79,6 +79,14 @@ internal class KotlinConcurrentGetOrComputeStorage {
     }
 
     /**
+     * The number of threads that have accessed this cache storage.
+     *
+     * This count includes all threads that have called [getOrCompute], regardless of whether
+     * they computed a value or waited for another thread's computation to complete.
+     */
+    val accessingThreadCount: Int get() = computingThreads.size
+
+    /**
      * Gets existing value by [key] or computes new one using [compute].
      * Computation will happen once. If it failed, the failure will be stored forever.
      * This is expected and desired behavior for the [KotlinGradleTaskExecutionCache] usecases.
