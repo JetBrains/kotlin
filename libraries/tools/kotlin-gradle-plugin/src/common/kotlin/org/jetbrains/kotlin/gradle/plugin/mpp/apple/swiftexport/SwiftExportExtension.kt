@@ -171,10 +171,37 @@ abstract class SwiftExportExtension @Inject constructor(
     }
 
     /**
+     * Configure Swift Export modules export.
+     */
+    @ExperimentalSwiftExportDsl
+    fun hide(dependency: Any, configure: SwiftExportedModuleMetadata.() -> Unit = {}) {
+        when (dependency) {
+            is Provider<*> -> {
+                addDependencyToHiddenModules(dependency, configure)
+            }
+            else -> {
+                addDependencyToHiddenModules(providerFactory.provider { dependency }, configure)
+            }
+        }
+    }
+
+    /**
+     * Configure Swift Export modules export.
+     */
+    @ExperimentalSwiftExportDsl
+    fun hide(dependency: Any, configure: Action<SwiftExportedModuleMetadata>) = export(dependency) {
+        configure.execute(this)
+    }
+
+    /**
      * Returns a list of exported modules.
      */
     internal val exportedModules: Provider<Set<SwiftExportedDependency>> = providerFactory.provider {
         _exportedModules
+    }
+
+    internal val hiddenModules: Provider<Set<SwiftExportedDependency>> = providerFactory.provider {
+        _hiddenModules
     }
 
     /**
@@ -189,27 +216,39 @@ abstract class SwiftExportExtension @Inject constructor(
     }
 
     private val _exportedModules = objectFactory.namedDomainObjectSet<SwiftExportedDependency>()
+    private val _hiddenModules = objectFactory.namedDomainObjectSet<SwiftExportedDependency>()
 
     private fun addDependencyToExportedModules(
         dependency: Provider<*>,
         configure: SwiftExportedModuleMetadata.() -> Unit
     ) {
-        val dependencyId = dependency.map { dep ->
-            when (dep) {
-                is Project -> SwiftExportedDependency.Project(objectFactory, dep.path)
-                is ProjectDependency -> {
-                    val projectPath = dep.compatAccessor(projectDependencyAccessor, projectByPath).dependencyProject().path
-
-                    SwiftExportedDependency.Project(objectFactory, projectPath)
-                }
-                is Dependency -> SwiftExportedDependency.External(objectFactory, dep.moduleVersionIdentifier)
-                else -> SwiftExportedDependency.External(objectFactory, dependencyHandler.create(dep).moduleVersionIdentifier)
-            }.also {
-                it.configure()
-            }
-        }
-
+        val dependencyId = dependency.toSwiftExportedDependency(configure)
         _exportedModules.addLater(dependencyId)
+    }
+
+    private fun Provider<*>.toSwiftExportedDependency(
+        configure: SwiftExportedModuleMetadata.() -> Unit,
+    ): Provider<SwiftExportedDependency> = this.map { dep ->
+        when (dep) {
+            is Project -> SwiftExportedDependency.Project(objectFactory, dep.path)
+            is ProjectDependency -> {
+                val projectPath = dep.compatAccessor(projectDependencyAccessor, projectByPath).dependencyProject().path
+
+                SwiftExportedDependency.Project(objectFactory, projectPath)
+            }
+            is Dependency -> SwiftExportedDependency.External(objectFactory, dep.moduleVersionIdentifier)
+            else -> SwiftExportedDependency.External(objectFactory, dependencyHandler.create(dep).moduleVersionIdentifier)
+        }.also {
+            it.configure()
+        }
+    }
+
+    private fun addDependencyToHiddenModules(
+        dependency: Provider<*>,
+        configure: SwiftExportedModuleMetadata.() -> Unit
+    ) {
+        val dependencyId = dependency.toSwiftExportedDependency(configure)
+        _hiddenModules.addLater(dependencyId)
     }
 
     private fun addDependencyToExportConfiguration(dependency: Provider<Dependency>) {
