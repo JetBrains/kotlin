@@ -28,13 +28,10 @@ UnionScope
 
 Module MAIN:
 UnionScope
-    IntersectionScope
-        FilesScope
-            files:
-                MANIFEST.MF
-                main.kt
-        NotScope
-            EmptyScope
+    FilesScope
+        files:
+            MANIFEST.MF
+            main.kt
     IntersectionScope
         KaFirJvmLibraryRestrictionScope
         UnionScope

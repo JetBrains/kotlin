@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.isKtFile
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.takeIfNotEmpty
 
 /**
  * This test checks the membership of [content scopes][KaModule.contentScope] and [resolution scopes][KaResolutionScopeProvider] by using
@@ -408,13 +409,13 @@ private class DummyContentScopeRefiner : KotlinContentScopeRefiner {
     }
 
     override fun getEnlargementScopes(module: KaModule): List<GlobalSearchScope> {
-        val files = addedFilesByKaModule[module] ?: return emptyList()
+        val files = addedFilesByKaModule[module]?.takeIfNotEmpty() ?: return emptyList()
         val scope = GlobalSearchScope.filesScope(module.project, files)
         return listOf(scope)
     }
 
     override fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> {
-        val files = shadowedFilesByKaModule[module] ?: return emptyList()
+        val files = shadowedFilesByKaModule[module]?.takeIfNotEmpty() ?: return emptyList()
         val scope = GlobalSearchScope.filesScope(module.project, files)
         return listOf(GlobalSearchScope.notScope(scope))
     }

@@ -8,9 +8,6 @@ IntersectionScope
         FileScope: z.kt
 
 Module SOME_DEPENDENCY:
-IntersectionScope
-    NotScope
-        EmptyScope
-    UnionScope
-        FileScope: c.kt
-        FileScope: x.kt
+UnionScope
+    FileScope: c.kt
+    FileScope: x.kt

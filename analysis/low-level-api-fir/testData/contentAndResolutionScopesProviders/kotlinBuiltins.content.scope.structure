@@ -2,12 +2,7 @@ Resulting Content Scope Structure:
 Module LIBRARY:
 IntersectionScope
     KaFirJvmLibraryRestrictionScope
-    NotScope
-        EmptyScope
     ParentTraversalLibrarySearchScope
 
 Module MAIN:
-IntersectionScope
-    FileScope: main.kt
-    NotScope
-        EmptyScope
+FileScope: main.kt

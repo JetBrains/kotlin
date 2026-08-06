@@ -1,10 +1,7 @@
 Resulting Resolution Scope Structure:
 Module MAIN:
 UnionScope
-    IntersectionScope
-        FileScope: a.kt
-        NotScope
-            EmptyScope
+    FileScope: a.kt
     IntersectionScope
         KaFirJvmLibraryRestrictionScope
         UnionScope
