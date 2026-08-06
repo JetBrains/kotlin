@@ -17,11 +17,11 @@ abstract class AbstractSymbolLightClassesParentingTestByPsi(
     stopIfCompilationErrorDirectivePresent: Boolean,
 ) : AbstractSymbolLightClassesParentingTestBase(configurator, stopIfCompilationErrorDirectivePresent) {
     override fun doLightClassTest(ktFiles: List<KtFile>, module: KtTestModule, testServices: TestServices) {
-        val elementVisitor = createLightElementsVisitor(module.testModule.directives, testServices.assertions)
-        for (ktFile in ktFiles) {
-            for (psiClass in getLightClassesFromFile(ktFile)) {
-                psiClass.accept(elementVisitor)
-            }
-        }
+        checkLightClassesParenting(
+            lightClasses = ktFiles.flatMap { getLightClassesFromFile(it) },
+            isTestAgainstCompiledCode = isTestAgainstCompiledCode,
+            directives = module.testModule.directives,
+            assertions = testServices.assertions,
+        )
     }
 }
