@@ -233,18 +233,9 @@ class BackendWasmSymbols(
 
     val returnArgumentIfItIsKotlinAny by CallableIds.returnArgumentIfItIsKotlinAny.functionSymbol()
 
-    val startCoroutineUninterceptedOrReturnIntrinsics: List<IrSimpleFunctionSymbol> by run {
-        val startCoroutineUninterceptedOrReturnIntrinsic0 by CallableIds.startCoroutineUninterceptedOrReturnIntrinsic0.functionSymbol()
-        val startCoroutineUninterceptedOrReturnIntrinsic1 by CallableIds.startCoroutineUninterceptedOrReturnIntrinsic1.functionSymbol()
-        val startCoroutineUninterceptedOrReturnIntrinsic2 by CallableIds.startCoroutineUninterceptedOrReturnIntrinsic2.functionSymbol()
-        lazyOf(
-            listOf(
-                startCoroutineUninterceptedOrReturnIntrinsic0,
-                startCoroutineUninterceptedOrReturnIntrinsic1,
-                startCoroutineUninterceptedOrReturnIntrinsic2,
-            )
-        )
-    }
+    val startCoroutineUninterceptedOrReturnIntrinsic0 by CallableIds.startCoroutineUninterceptedOrReturnIntrinsic0.functionSymbol()
+    val startCoroutineUninterceptedOrReturnIntrinsic1 by CallableIds.startCoroutineUninterceptedOrReturnIntrinsic1.functionSymbol()
+    val startCoroutineUninterceptedOrReturnIntrinsic2 by CallableIds.startCoroutineUninterceptedOrReturnIntrinsic2.functionSymbol()
 
     val interceptedIntrinsic by CallableIds.interceptedIntrinsic.functionSymbol()
 
