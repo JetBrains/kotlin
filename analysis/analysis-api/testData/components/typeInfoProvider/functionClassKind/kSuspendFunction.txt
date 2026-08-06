@@ -1,3 +1,5 @@
 expression: xy
 expected type: kotlin.reflect.KSuspendFunction0<kotlin.Unit>
 functionTypeFamily: kotlin.reflect.KSuspendFunctionN
+typeRenderingPrefix: null
+markerAnnotationClassId: null
