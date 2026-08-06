@@ -94,7 +94,7 @@ private fun splitJarUrl(url: String): Pair<String, String>? {
     return Pair(jarPath, resourcePath)
 }
 
-private fun URL.toFileOrNull() =
+internal fun URL.toFileOrNull() =
     try {
         File(toURI())
     } catch (e: IllegalArgumentException) {

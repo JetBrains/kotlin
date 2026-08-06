@@ -64,7 +64,7 @@ abstract class AbstractRunner : Runner {
         }
 
         Thread.currentThread().contextClassLoader = classLoader
-        val savedClasspathProperty = System.setProperty("java.class.path", classpath.joinToString(File.pathSeparator))
+        val savedClasspathProperty = System.setProperty("java.class.path", classpath.toClasspathString())
 
         try {
             main.invoke(null, arguments.toTypedArray())
@@ -120,11 +120,20 @@ abstract class RunnerWithCompiler : Runner {
 private fun MutableList<String>.addClasspathArgIfNeeded(classpath: List<URL>) {
     if (classpath.isNotEmpty()) {
         add("-cp")
-        add(classpath.map {
-            if (it.protocol == "file") it.path
-            else it.toExternalForm()
-        }.joinToString(File.pathSeparator))
+        add(classpath.toClasspathString())
     }
+}
+
+/**
+ * Renders the classpath the way the JVM and the compiler expect it: as plain file paths joined by [File.pathSeparator].
+ *
+ * A [URL] percent-encodes everything that is not allowed in a URI, so a path such as `/Applications/IntelliJ IDEA.app`
+ * comes back from [URL.getPath] as `/Applications/IntelliJ%20IDEA.app`. That encoding has to be undone here, otherwise
+ * the entry no longer points to an existing file (KT-88222).
+ */
+private fun List<URL>.toClasspathString(): String = joinToString(File.pathSeparator) { url ->
+    if (url.protocol == "file") url.toFileOrNull()?.path ?: url.path
+    else url.toExternalForm()
 }
 
 private fun ArrayList<String>.addScriptArguments(arguments: List<String>) {
