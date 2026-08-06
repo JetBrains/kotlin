@@ -1,7 +1,9 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+@file:OptIn(KaUnstableDiagnosticApi::class)
 
 package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
@@ -58,47 +60,48 @@ internal class KaDiagnosticConverter(private val conversions: Map<KtDiagnosticFa
         }
     }
 
-    @Suppress("RemoveExplicitTypeArguments") // See KT-52838
-    private fun buildCreatorForPluginDiagnostic(factory: AbstractKtDiagnosticFactory): KaFirDiagnosticCreator {
-        return when (factory) {
-            is KtSourcelessDiagnosticFactory -> shouldNotBeCalled()
-            is KtDiagnosticFactory0 -> KaFirDiagnostic0Creator {
-                KaCompilerPluginDiagnostic0Impl(it as KtPsiSimpleDiagnostic, token)
-            }
-            is KtDiagnosticFactory1<*> -> KaFirDiagnostic1Creator<Any?> { // Type argument specified because of KT-55281
-                KaCompilerPluginDiagnostic1Impl(
-                    it as KtPsiDiagnosticWithParameters1<*>,
-                    token,
-                    convertArgument(it.a, this)
-                )
-            }
-            is KtDiagnosticFactory2<*, *> -> KaFirDiagnostic2Creator<Any?, Any?> {
-                KaCompilerPluginDiagnostic2Impl(
-                    it as KtPsiDiagnosticWithParameters2<*, *>,
-                    token,
-                    convertArgument(it.a, this),
-                    convertArgument(it.b, this)
-                )
-            }
-            is KtDiagnosticFactory3<*, *, *> -> KaFirDiagnostic3Creator<Any?, Any?, Any?> {
-                KaCompilerPluginDiagnostic3Impl(
-                    it as KtPsiDiagnosticWithParameters3<*, *, *>,
-                    token,
-                    convertArgument(it.a, this),
-                    convertArgument(it.b, this),
-                    convertArgument(it.c, this)
-                )
-            }
-            is KtDiagnosticFactory4<*, *, *, *> -> KaFirDiagnostic4Creator<Any?, Any?, Any?, Any?> {
-                KaCompilerPluginDiagnostic4Impl(
-                    it as KtPsiDiagnosticWithParameters4<*, *, *, *>,
-                    token,
-                    convertArgument(it.a, this),
-                    convertArgument(it.b, this),
-                    convertArgument(it.c, this),
-                    convertArgument(it.d, this)
-                )
-            }
+    private fun buildCreatorForPluginDiagnostic(factory: AbstractKtDiagnosticFactory): KaFirDiagnosticCreator = when (factory) {
+        is KtSourcelessDiagnosticFactory -> shouldNotBeCalled()
+        is KtDiagnosticFactory0 -> KaFirDiagnostic0Creator {
+            KaCompilerPluginDiagnostic0Impl(it as KtPsiSimpleDiagnostic, token)
+        }
+
+        is KtDiagnosticFactory1<*> -> KaFirDiagnostic1Creator<Any?> { // Type argument specified because of KT-55281
+            KaCompilerPluginDiagnostic1Impl(
+                it as KtPsiDiagnosticWithParameters1<*>,
+                token,
+                convertArgument(it.a, this)
+            )
+        }
+
+        is KtDiagnosticFactory2<*, *> -> KaFirDiagnostic2Creator<Any?, Any?> {
+            KaCompilerPluginDiagnostic2Impl(
+                it as KtPsiDiagnosticWithParameters2<*, *>,
+                token,
+                convertArgument(it.a, this),
+                convertArgument(it.b, this)
+            )
+        }
+
+        is KtDiagnosticFactory3<*, *, *> -> KaFirDiagnostic3Creator<Any?, Any?, Any?> {
+            KaCompilerPluginDiagnostic3Impl(
+                it as KtPsiDiagnosticWithParameters3<*, *, *>,
+                token,
+                convertArgument(it.a, this),
+                convertArgument(it.b, this),
+                convertArgument(it.c, this)
+            )
+        }
+
+        is KtDiagnosticFactory4<*, *, *, *> -> KaFirDiagnostic4Creator<Any?, Any?, Any?, Any?> {
+            KaCompilerPluginDiagnostic4Impl(
+                it as KtPsiDiagnosticWithParameters4<*, *, *, *>,
+                token,
+                convertArgument(it.a, this),
+                convertArgument(it.b, this),
+                convertArgument(it.c, this),
+                convertArgument(it.d, this)
+            )
         }
     }
 }
