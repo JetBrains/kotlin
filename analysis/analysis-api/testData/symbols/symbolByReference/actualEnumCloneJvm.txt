@@ -44,7 +44,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Enum
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib-jvm-minimal-for-test"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null

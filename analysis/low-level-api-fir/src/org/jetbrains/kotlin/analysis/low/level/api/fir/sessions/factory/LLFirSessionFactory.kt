@@ -103,7 +103,7 @@ internal class LLFirSessionFactory(
 
     fun createSourcesSession(module: KaSourceModule): LLFirSourcesSession {
         val platform = module.targetPlatform
-        val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
+        val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform, module.builtinsSessionSdkDependency())
         val languageVersionSettings = wrapLanguageVersionSettings(module.languageVersionSettings)
 
         val scopeProvider = platformConfiguration.createSourceScopeProvider()
@@ -196,7 +196,7 @@ internal class LLFirSessionFactory(
         }
 
         val platform = module.targetPlatform
-        val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
+        val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform, binaryModule.builtinsSessionSdkDependency())
         val languageVersionSettings = KotlinProjectStructureProvider.getInstance(project).libraryLanguageVersionSettings
 
         val scopeProvider = FirKotlinScopeProvider()
@@ -351,7 +351,7 @@ internal class LLFirSessionFactory(
 
     fun createScriptSession(module: KaScriptModule): LLFirScriptSession {
         val platform = module.targetPlatform
-        val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
+        val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform, module.builtinsSessionSdkDependency())
         val languageVersionSettings = wrapLanguageVersionSettings(module.languageVersionSettings)
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 
@@ -452,7 +452,8 @@ internal class LLFirSessionFactory(
     }
 
     fun createNotUnderContentRootResolvableSession(module: KaNotUnderContentRootModule): LLFirNotUnderContentRootResolvableModuleSession {
-        val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(JvmPlatforms.unspecifiedJvmPlatform)
+        val builtinsSession =
+            LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(JvmPlatforms.unspecifiedJvmPlatform, module.builtinsSessionSdkDependency())
         val languageVersionSettings = KotlinProjectStructureProvider.getInstance(project).globalLanguageVersionSettings
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
@@ -517,7 +518,10 @@ internal class LLFirSessionFactory(
     fun createDanglingFileSession(module: KaDanglingFileModule, contextSession: LLFirSession): LLFirSession {
         val platform = module.targetPlatform
 
-        val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
+        // Use the same builtins session as the context module would, so that the dangling file sees
+        // the same deserialized builtin classes as its context.
+        val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project)
+            .getBuiltinsSession(platform, module.builtinsSessionSdkDependency())
         val languageVersionSettings = wrapLanguageVersionSettings(contextSession.languageVersionSettings)
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 

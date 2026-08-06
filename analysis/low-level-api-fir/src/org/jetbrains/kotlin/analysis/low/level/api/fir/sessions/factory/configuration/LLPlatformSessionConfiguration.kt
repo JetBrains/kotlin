@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.configu
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModulePlatformKind
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.toModulePlatformKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
@@ -67,10 +68,14 @@ internal interface LLPlatformSessionConfiguration {
      *
      * Note that unlike source and library sessions, sessions for built-in modules are cached more aggressively on a project level.
      *
+     * [sdkModule] is the SDK the builtins session is keyed by, if any: deserialized builtin classes may depend on the SDK
+     * (e.g., JDK-dependent supertypes, KT-29858), so the session should be able to resolve SDK classes.
+     *
      * @see org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.LLFirBuiltinsSessionFactory
      */
     fun createPlatformSpecificSymbolProvidersForBuiltinsSession(
-        session: LLFirBuiltinsAndCloneableSession
+        session: LLFirBuiltinsAndCloneableSession,
+        sdkModule: KaLibraryModule?,
     ): List<FirSymbolProvider> = emptyList()
 
     /**

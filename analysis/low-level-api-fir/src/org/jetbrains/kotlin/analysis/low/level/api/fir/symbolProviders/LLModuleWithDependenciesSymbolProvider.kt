@@ -79,7 +79,13 @@ internal class LLModuleWithDependenciesSymbolProvider(
             ?: dependencyProvider.getClassLikeSymbolByClassId(classId)
 
     fun getClassLikeSymbolByClassIdWithoutDependencies(classId: ClassId): FirClassLikeSymbol<*>? =
-        providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
+        providers.firstNotNullOfOrNull { provider ->
+            when (provider) {
+                // Module-internal access should also see the classes hidden from dependent sessions
+                is LLPartiallyHidingSymbolProvider -> provider.getClassLikeSymbolByClassIdIncludingHidden(classId)
+                else -> provider.getClassLikeSymbolByClassId(classId)
+            }
+        }
 
     @LLModuleSpecificSymbolProviderAccess
     fun getClassLikeSymbolByPsiWithoutDependencies(

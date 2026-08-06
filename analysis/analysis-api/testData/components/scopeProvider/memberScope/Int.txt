@@ -70,7 +70,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -82,7 +82,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -159,7 +159,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -171,7 +171,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -248,7 +248,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -260,7 +260,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -337,7 +337,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -349,7 +349,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -426,7 +426,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -438,7 +438,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -515,7 +515,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -527,7 +527,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -604,7 +604,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -616,7 +616,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -663,7 +663,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -740,7 +740,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -752,7 +752,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -829,7 +829,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -841,7 +841,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -918,7 +918,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -930,7 +930,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -1007,7 +1007,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -1019,7 +1019,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -1096,7 +1096,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -1108,7 +1108,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -1185,7 +1185,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -1197,7 +1197,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -1274,7 +1274,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -1286,7 +1286,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -1333,7 +1333,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -1383,7 +1383,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -1460,7 +1460,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -1472,7 +1472,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -1549,7 +1549,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -1561,7 +1561,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -1638,7 +1638,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -1650,7 +1650,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -1727,7 +1727,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -1739,7 +1739,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -1816,7 +1816,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -1828,7 +1828,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -1905,7 +1905,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -1917,7 +1917,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -1994,7 +1994,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -2006,7 +2006,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -2083,7 +2083,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -2095,7 +2095,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -2172,7 +2172,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -2184,7 +2184,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -2261,7 +2261,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -2273,7 +2273,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -2350,7 +2350,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -2362,7 +2362,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -2439,7 +2439,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -2451,7 +2451,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -2528,7 +2528,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -2540,7 +2540,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -2614,7 +2614,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -2626,7 +2626,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -2700,7 +2700,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -2712,7 +2712,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -2786,7 +2786,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -2798,7 +2798,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -2872,7 +2872,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -2884,7 +2884,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -2963,7 +2963,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -2975,7 +2975,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -3054,7 +3054,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -3066,7 +3066,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -3145,7 +3145,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -3157,7 +3157,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -3236,7 +3236,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -3248,7 +3248,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -3327,7 +3327,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -3339,7 +3339,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -3418,7 +3418,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -3430,7 +3430,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -3509,7 +3509,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -3521,7 +3521,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -3600,7 +3600,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -3612,7 +3612,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -3691,7 +3691,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -3703,7 +3703,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -3782,7 +3782,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -3794,7 +3794,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -3871,7 +3871,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -3883,7 +3883,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -3960,7 +3960,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -3972,7 +3972,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -4049,7 +4049,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -4061,7 +4061,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -4138,7 +4138,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -4150,7 +4150,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -4227,7 +4227,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -4239,7 +4239,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -4316,7 +4316,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -4328,7 +4328,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -4405,7 +4405,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -4417,7 +4417,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -4494,7 +4494,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -4506,7 +4506,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -4556,7 +4556,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -4606,7 +4606,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -4656,7 +4656,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -4706,7 +4706,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -4756,7 +4756,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -4806,7 +4806,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -4856,7 +4856,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -4906,7 +4906,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -4956,7 +4956,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -5006,7 +5006,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -5083,7 +5083,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -5095,7 +5095,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -5172,7 +5172,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Int
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -5184,7 +5184,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -5265,7 +5265,7 @@ KaNamedClassSymbol:
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: null
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   applicableAnnotationTargets: null
   deprecation: null
   importableFqName: kotlin.Int.Companion
@@ -5299,6 +5299,6 @@ KaConstructorSymbol:
   visibility: PRIVATE
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Int
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   importableFqName: kotlin.Int

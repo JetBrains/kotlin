@@ -12,6 +12,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBuiltinsModuleImpl
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinsAndCloneableSessionProvider
@@ -47,7 +48,15 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
 
     private val builtinsModules = ConcurrentHashMap<TargetPlatform, KaBuiltinsModule>()
 
-    private val builtinsAndCloneableSessions = ConcurrentHashMap<TargetPlatform, CachedValue<LLFirBuiltinsAndCloneableSession>>()
+    private val builtinsAndCloneableSessions = ConcurrentHashMap<BuiltinsSessionKey, CachedValue<LLFirBuiltinsAndCloneableSession>>()
+
+    /**
+     * Builtins sessions are keyed not only by the platform but also by the SDK, because the deserialized
+     * builtin classes may depend on it: e.g., on JVM, `kotlin.Int` receives the `java.lang.constant.Constable`
+     * supertype only when the JDK declares this interface (KT-29858). Modules with different SDKs must therefore
+     * not share the deserialized builtin classes.
+     */
+    private data class BuiltinsSessionKey(val platform: TargetPlatform, val sdkModule: KaLibraryModule?)
 
     /**
      * Returns the [platform]'s [KaBuiltinsModule]. [getBuiltinsModule] should be used instead of [getBuiltinsSession] when a
@@ -58,10 +67,10 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
     fun getBuiltinsModule(platform: TargetPlatform): KaBuiltinsModule =
         builtinsModules.getOrPut(platform) { KaBuiltinsModuleImpl(platform, project) }
 
-    fun getBuiltinsSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession =
-        builtinsAndCloneableSessions.getOrPut(platform) {
+    fun getBuiltinsSession(platform: TargetPlatform, sdkModule: KaLibraryModule? = null): LLFirBuiltinsAndCloneableSession =
+        builtinsAndCloneableSessions.getOrPut(BuiltinsSessionKey(platform, sdkModule)) {
             CachedValuesManager.getManager(project).createCachedValue {
-                val session = createBuiltinsAndCloneableSession(platform)
+                val session = createBuiltinsAndCloneableSession(platform, sdkModule)
                 CachedValueProvider.Result(session, session.createValidityTracker())
             }
         }.value
@@ -87,7 +96,7 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
         builtinsAndCloneableSessions.clear()
     }
 
-    private fun createBuiltinsAndCloneableSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession {
+    private fun createBuiltinsAndCloneableSession(platform: TargetPlatform, sdkModule: KaLibraryModule?): LLFirBuiltinsAndCloneableSession {
         val builtinsModule = getBuiltinsModule(platform)
 
         val session = LLFirBuiltinsAndCloneableSession(builtinsModule, builtInTypes)
@@ -118,7 +127,7 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
                 )
 
                 add(FirExtensionSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider))
-                platformSessionConfiguration.createPlatformSpecificSymbolProvidersForBuiltinsSession(session).forEach(::add)
+                platformSessionConfiguration.createPlatformSpecificSymbolProvidersForBuiltinsSession(session, sdkModule).forEach(::add)
             }
 
             register(FirSymbolProvider::class, symbolProvider)

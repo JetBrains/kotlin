@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
+import org.jetbrains.kotlin.fir.java.deserialization.FirJvmDeserializationExtension
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -39,7 +40,7 @@ internal class LLJvmClassFileBasedSymbolProvider(
     packagePartProvider,
     kotlinClassFinder,
     javaFacade
-), LLPsiAwareSymbolProvider {
+), LLPsiAwareSymbolProvider, LLPartiallyHidingSymbolProvider {
     /**
      * We don't use [LLPsiAwareClassLikeSymbolCache][org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.caches.LLPsiAwareClassLikeSymbolCache]
      * here because we only need to cache Java ambiguities (see the comment below). This doesn't match up with the main cache: [classCache]
@@ -49,6 +50,17 @@ internal class LLJvmClassFileBasedSymbolProvider(
         session.firCachesFactory.createCache { psiClass, parentClassSymbol ->
             javaFacade.createPsiClassSymbol(psiClass, JavaClassImpl(psiClass), parentClassSymbol)
         }
+
+    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
+        // A library session is shared between all use-site modules which depend on the library, so builtin classes
+        // with SDK-dependent supertypes must not be resolved from it by dependent sessions. They are provided by the
+        // fallback builtins session instead, which is keyed by the use-site module's SDK (KT-29858).
+        if (classId.outermostClassId in FirJvmDeserializationExtension.CLASSES_WITH_SDK_DEPENDENT_SUPERTYPES) return null
+        return super.getClassLikeSymbolByClassId(classId)
+    }
+
+    override fun getClassLikeSymbolByClassIdIncludingHidden(classId: ClassId): FirClassLikeSymbol<*>? =
+        super.getClassLikeSymbolByClassId(classId)
 
     @LLModuleSpecificSymbolProviderAccess
     override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? {

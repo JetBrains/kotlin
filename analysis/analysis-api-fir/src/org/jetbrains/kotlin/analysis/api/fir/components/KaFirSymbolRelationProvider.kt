@@ -580,7 +580,9 @@ internal class KaFirSymbolRelationProvider(
         }
 
         val actualModule = containingModule(symbol)
-        if (actualModule is KaLibraryModule || actualModule is KaLibrarySourceModule) {
+        // Builtin classes with SDK-dependent supertypes are deserialized in the builtins session instead of the stdlib
+        // library session (KT-29858), so their symbols are treated the same way as library symbols here.
+        if (actualModule is KaLibraryModule || actualModule is KaLibrarySourceModule || actualModule is KaBuiltinsModule) {
             if (firSymbol.isExpect()) {
                 /** For libraries, we can safely rely on the [isExpect] flag. */
                 return emptyList()

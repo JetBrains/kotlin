@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.configu
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.moduleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirDanglingFileSession
@@ -44,8 +45,17 @@ internal class LLJvmSessionConfiguration(private val project: Project) : LLPlatf
         listOfNotNull(contextSession.nullableJavaSymbolProvider)
 
     override fun createPlatformSpecificSymbolProvidersForBuiltinsSession(
-        session: LLFirBuiltinsAndCloneableSession
-    ): List<FirSymbolProvider> = listOf(createCloneableSymbolProvider(session))
+        session: LLFirBuiltinsAndCloneableSession,
+        sdkModule: KaLibraryModule?,
+    ): List<FirSymbolProvider> = buildList {
+        add(createCloneableSymbolProvider(session))
+
+        // Deserialized builtin classes receive JDK-dependent supertypes (KT-29858), so the builtins session must be
+        // able to resolve classes of the SDK it is keyed by.
+        if (sdkModule != null) {
+            add(LLFirJavaSymbolProvider(session, sdkModule.contentScope))
+        }
+    }
 
     override fun createBinaryLibrarySymbolProviders(session: LLFirSession, scope: GlobalSearchScope): List<FirSymbolProvider> =
         createSymbolProvidersWithOptionalAnnotationClassesProvider(session, scope) { packagePartProvider ->

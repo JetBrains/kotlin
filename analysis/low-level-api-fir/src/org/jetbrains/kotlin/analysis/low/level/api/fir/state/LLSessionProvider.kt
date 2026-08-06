@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.builtinsSessionSdkDependency
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.cache.LLFirSessionCache
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.LLFirBuiltinsSessionFactory
 
 @KaImplementationDetail
 class LLSessionProvider(
@@ -47,6 +50,8 @@ class LLSessionProvider(
             return useSiteSession
         }
 
+        builtinsSessionOrNull(module)?.let { return it }
+
         val cache = LLFirSessionCache.getInstance(module.project)
         return cache.getSession(module, preferBinary)
     }
@@ -58,7 +63,21 @@ class LLSessionProvider(
     fun getDependencySession(module: KaModule): LLFirSession? {
         if (module == useSiteModule) return useSiteSession
 
+        builtinsSessionOrNull(module)?.let { return it }
+
         val cache = LLFirSessionCache.getInstance(module.project)
         return cache.getDependencySession(module)
+    }
+
+    /**
+     * Builtins sessions are keyed not only by the platform but also by the SDK, since deserialized builtin classes may
+     * depend on it (see [LLFirBuiltinsSessionFactory.getBuiltinsSession]). Within one analysis session, the builtins
+     * session of the use-site module must be used consistently, so the session for a [KaBuiltinsModule] is selected
+     * with the use-site module's platform and SDK — the same key the use-site session itself was created with.
+     */
+    private fun builtinsSessionOrNull(module: KaModule): LLFirSession? {
+        if (module !is KaBuiltinsModule) return null
+        return LLFirBuiltinsSessionFactory.getInstance(module.project)
+            .getBuiltinsSession(useSiteModule.targetPlatform, useSiteModule.builtinsSessionSdkDependency())
     }
 }

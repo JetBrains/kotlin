@@ -290,7 +290,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Enum
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -364,7 +364,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(enumEntryInitializerWithFinalEnumMember.kt)
       getContainingJvmClassName: test.E
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -450,7 +450,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Enum
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecation: null
       importableFqName: null
   ]
@@ -466,7 +466,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Enum
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -517,7 +517,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Enum
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -568,7 +568,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Enum
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
@@ -617,7 +617,7 @@ KaKotlinPropertySymbol:
       type: kotlin/Enum<E>
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.Enum
-    getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+    getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
     deprecation: null
     importableFqName: null
   callableId: kotlin/Enum.name
@@ -661,7 +661,7 @@ KaKotlinPropertySymbol:
       type: kotlin/Enum<E>
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.Enum
-    getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+    getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
     deprecation: null
     importableFqName: null
   hasBackingField: true
@@ -704,7 +704,7 @@ KaKotlinPropertySymbol:
     type: kotlin/Enum<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Enum
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   javaGetterName: getName
   javaSetterName: null
@@ -752,7 +752,7 @@ KaKotlinPropertySymbol:
       type: kotlin/Enum<E>
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.Enum
-    getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+    getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
     deprecation: null
     importableFqName: null
   callableId: kotlin/Enum.ordinal
@@ -796,7 +796,7 @@ KaKotlinPropertySymbol:
       type: kotlin/Enum<E>
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.Enum
-    getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+    getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
     deprecation: null
     importableFqName: null
   hasBackingField: true
@@ -839,7 +839,7 @@ KaKotlinPropertySymbol:
     type: kotlin/Enum<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Enum
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   javaGetterName: getOrdinal
   javaSetterName: null
@@ -938,7 +938,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Enum
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: KaDeprecation(level=HIDDEN, isPropagatedToOverrides=true)
   returnValueStatus: Unspecified
   importableFqName: null
@@ -972,7 +972,7 @@ KaNamedClassSymbol:
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: null
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   applicableAnnotationTargets: null
   deprecation: null
   importableFqName: kotlin.Enum.Companion
