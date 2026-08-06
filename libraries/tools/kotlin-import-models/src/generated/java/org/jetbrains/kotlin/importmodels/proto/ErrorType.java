@@ -15,29 +15,29 @@ public enum ErrorType
    */
   ERROR_TYPE_UNSPECIFIED(0),
   /**
-   * <code>UNKNOWN_MODEL_ID = 1;</code>
+   * <code>ERROR_TYPE_UNKNOWN_MODEL_ID = 1;</code>
    */
-  UNKNOWN_MODEL_ID(1),
+  ERROR_TYPE_UNKNOWN_MODEL_ID(1),
   /**
-   * <code>UNKNOWN_MODEL_PARAMS = 2;</code>
+   * <code>ERROR_TYPE_UNKNOWN_MODEL_PARAMS = 2;</code>
    */
-  UNKNOWN_MODEL_PARAMS(2),
+  ERROR_TYPE_UNKNOWN_MODEL_PARAMS(2),
   /**
-   * <code>UNSUPPORTED_MODEL_ID = 3;</code>
+   * <code>ERROR_TYPE_UNSUPPORTED_MODEL_ID = 3;</code>
    */
-  UNSUPPORTED_MODEL_ID(3),
+  ERROR_TYPE_UNSUPPORTED_MODEL_ID(3),
   /**
-   * <code>UNSUPPORTED_MODEL_PARAMS = 4;</code>
+   * <code>ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS = 4;</code>
    */
-  UNSUPPORTED_MODEL_PARAMS(4),
+  ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS(4),
   /**
-   * <code>INTERNAL_ERROR = 5;</code>
+   * <code>ERROR_TYPE_INTERNAL_ERROR = 5;</code>
    */
-  INTERNAL_ERROR(5),
+  ERROR_TYPE_INTERNAL_ERROR(5),
   /**
-   * <code>GENERIC_ERROR = 6;</code>
+   * <code>ERROR_TYPE_GENERIC_ERROR = 6;</code>
    */
-  GENERIC_ERROR(6),
+  ERROR_TYPE_GENERIC_ERROR(6),
   UNRECOGNIZED(-1),
   ;
 
@@ -55,29 +55,29 @@ public enum ErrorType
    */
   public static final int ERROR_TYPE_UNSPECIFIED_VALUE = 0;
   /**
-   * <code>UNKNOWN_MODEL_ID = 1;</code>
+   * <code>ERROR_TYPE_UNKNOWN_MODEL_ID = 1;</code>
    */
-  public static final int UNKNOWN_MODEL_ID_VALUE = 1;
+  public static final int ERROR_TYPE_UNKNOWN_MODEL_ID_VALUE = 1;
   /**
-   * <code>UNKNOWN_MODEL_PARAMS = 2;</code>
+   * <code>ERROR_TYPE_UNKNOWN_MODEL_PARAMS = 2;</code>
    */
-  public static final int UNKNOWN_MODEL_PARAMS_VALUE = 2;
+  public static final int ERROR_TYPE_UNKNOWN_MODEL_PARAMS_VALUE = 2;
   /**
-   * <code>UNSUPPORTED_MODEL_ID = 3;</code>
+   * <code>ERROR_TYPE_UNSUPPORTED_MODEL_ID = 3;</code>
    */
-  public static final int UNSUPPORTED_MODEL_ID_VALUE = 3;
+  public static final int ERROR_TYPE_UNSUPPORTED_MODEL_ID_VALUE = 3;
   /**
-   * <code>UNSUPPORTED_MODEL_PARAMS = 4;</code>
+   * <code>ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS = 4;</code>
    */
-  public static final int UNSUPPORTED_MODEL_PARAMS_VALUE = 4;
+  public static final int ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS_VALUE = 4;
   /**
-   * <code>INTERNAL_ERROR = 5;</code>
+   * <code>ERROR_TYPE_INTERNAL_ERROR = 5;</code>
    */
-  public static final int INTERNAL_ERROR_VALUE = 5;
+  public static final int ERROR_TYPE_INTERNAL_ERROR_VALUE = 5;
   /**
-   * <code>GENERIC_ERROR = 6;</code>
+   * <code>ERROR_TYPE_GENERIC_ERROR = 6;</code>
    */
-  public static final int GENERIC_ERROR_VALUE = 6;
+  public static final int ERROR_TYPE_GENERIC_ERROR_VALUE = 6;
 
 
   public final int getNumber() {
@@ -105,12 +105,12 @@ public enum ErrorType
   public static ErrorType forNumber(int value) {
     switch (value) {
       case 0: return ERROR_TYPE_UNSPECIFIED;
-      case 1: return UNKNOWN_MODEL_ID;
-      case 2: return UNKNOWN_MODEL_PARAMS;
-      case 3: return UNSUPPORTED_MODEL_ID;
-      case 4: return UNSUPPORTED_MODEL_PARAMS;
-      case 5: return INTERNAL_ERROR;
-      case 6: return GENERIC_ERROR;
+      case 1: return ERROR_TYPE_UNKNOWN_MODEL_ID;
+      case 2: return ERROR_TYPE_UNKNOWN_MODEL_PARAMS;
+      case 3: return ERROR_TYPE_UNSUPPORTED_MODEL_ID;
+      case 4: return ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS;
+      case 5: return ERROR_TYPE_INTERNAL_ERROR;
+      case 6: return ERROR_TYPE_GENERIC_ERROR;
       default: return null;
     }
   }

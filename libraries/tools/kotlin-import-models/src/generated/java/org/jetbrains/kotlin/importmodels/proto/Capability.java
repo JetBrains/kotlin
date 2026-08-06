@@ -15,13 +15,13 @@ public enum Capability
    */
   CAPABILITY_UNSPECIFIED(0),
   /**
-   * <code>JVM_ONLY = 1;</code>
+   * <code>CAPABILITY_JVM = 1;</code>
    */
-  JVM_ONLY(1),
+  CAPABILITY_JVM(1),
   /**
-   * <code>KAPT = 2;</code>
+   * <code>CAPABILITY_KAPT = 2;</code>
    */
-  KAPT(2),
+  CAPABILITY_KAPT(2),
   UNRECOGNIZED(-1),
   ;
 
@@ -39,13 +39,13 @@ public enum Capability
    */
   public static final int CAPABILITY_UNSPECIFIED_VALUE = 0;
   /**
-   * <code>JVM_ONLY = 1;</code>
+   * <code>CAPABILITY_JVM = 1;</code>
    */
-  public static final int JVM_ONLY_VALUE = 1;
+  public static final int CAPABILITY_JVM_VALUE = 1;
   /**
-   * <code>KAPT = 2;</code>
+   * <code>CAPABILITY_KAPT = 2;</code>
    */
-  public static final int KAPT_VALUE = 2;
+  public static final int CAPABILITY_KAPT_VALUE = 2;
 
 
   public final int getNumber() {
@@ -73,8 +73,8 @@ public enum Capability
   public static Capability forNumber(int value) {
     switch (value) {
       case 0: return CAPABILITY_UNSPECIFIED;
-      case 1: return JVM_ONLY;
-      case 2: return KAPT;
+      case 1: return CAPABILITY_JVM;
+      case 2: return CAPABILITY_KAPT;
       default: return null;
     }
   }

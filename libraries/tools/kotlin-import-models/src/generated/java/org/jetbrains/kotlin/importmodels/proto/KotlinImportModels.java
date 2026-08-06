@@ -101,15 +101,17 @@ public final class KotlinImportModels {
       "s_test\030\005 \001(\010\022\031\n\021compile_task_path\030\006 \001(\t\032" +
       "e\n\nParameters\022W\n\023compilation_unit_id\030\001 \001" +
       "(\0132:.org.jetbrains.kotlin.importmodels.p" +
-      "roto.CompilationUnitId*\266\001\n\tErrorType\022\032\n\026" +
-      "ERROR_TYPE_UNSPECIFIED\020\000\022\024\n\020UNKNOWN_MODE" +
-      "L_ID\020\001\022\030\n\024UNKNOWN_MODEL_PARAMS\020\002\022\030\n\024UNSU" +
-      "PPORTED_MODEL_ID\020\003\022\034\n\030UNSUPPORTED_MODEL_" +
-      "PARAMS\020\004\022\022\n\016INTERNAL_ERROR\020\005\022\021\n\rGENERIC_" +
-      "ERROR\020\006*@\n\nCapability\022\032\n\026CAPABILITY_UNSP" +
-      "ECIFIED\020\000\022\014\n\010JVM_ONLY\020\001\022\010\n\004KAPT\020\002*-\n\010Pla" +
-      "tform\022\030\n\024PLATFORM_UNSPECIFIED\020\000\022\007\n\003JVM\020\001" +
-      "B\002P\001b\010editionsp\350\007"
+      "roto.CompilationUnitId*\370\001\n\tErrorType\022\032\n\026" +
+      "ERROR_TYPE_UNSPECIFIED\020\000\022\037\n\033ERROR_TYPE_U" +
+      "NKNOWN_MODEL_ID\020\001\022#\n\037ERROR_TYPE_UNKNOWN_" +
+      "MODEL_PARAMS\020\002\022#\n\037ERROR_TYPE_UNSUPPORTED" +
+      "_MODEL_ID\020\003\022\'\n#ERROR_TYPE_UNSUPPORTED_MO" +
+      "DEL_PARAMS\020\004\022\035\n\031ERROR_TYPE_INTERNAL_ERRO" +
+      "R\020\005\022\034\n\030ERROR_TYPE_GENERIC_ERROR\020\006*Q\n\nCap" +
+      "ability\022\032\n\026CAPABILITY_UNSPECIFIED\020\000\022\022\n\016C" +
+      "APABILITY_JVM\020\001\022\023\n\017CAPABILITY_KAPT\020\002*6\n\010" +
+      "Platform\022\030\n\024PLATFORM_UNSPECIFIED\020\000\022\020\n\014PL" +
+      "ATFORM_JVM\020\001B\002P\001b\010editionsp\350\007"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

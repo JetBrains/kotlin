@@ -48,10 +48,10 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
             assertEquals(KotlinImportModelIds.BASE, base.id)
             assertEquals(listOf("main", "test"), compilationUnits.map { it.compilationName })
             assertEquals(project.compilationUnitIdsList, compilationUnits.map { it.parameters.compilationUnitId })
-            assertEquals(Platform.JVM, main.platform)
+            assertEquals(Platform.PLATFORM_JVM, main.platform)
             assertFalse(main.isTest)
             assertEquals(":compileKotlin", main.compileTaskPath)
-            assertEquals(Platform.JVM, test.platform)
+            assertEquals(Platform.PLATFORM_JVM, test.platform)
             assertTrue(test.isTest)
             assertEquals(":compileTestKotlin", test.compileTaskPath)
             assertEquals(
@@ -59,7 +59,7 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
                 secondModels[1].model.unpack(ProjectModel::class.java).compilationUnitIdsList,
             )
             assertTrue(firstModels.last().hasError())
-            assertEquals(ErrorType.UNKNOWN_MODEL_ID, firstModels.last().error.errorType)
+            assertEquals(ErrorType.ERROR_TYPE_UNKNOWN_MODEL_ID, firstModels.last().error.errorType)
         }
     }
 }

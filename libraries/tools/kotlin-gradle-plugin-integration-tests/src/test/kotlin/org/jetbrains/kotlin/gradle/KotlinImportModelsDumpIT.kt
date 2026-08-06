@@ -61,7 +61,7 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
         val base = parseBaseModel(root.resolve("base.json"))
         assertEquals(KotlinImportModelIds.BASE, base.id)
         assertEquals(KotlinToolingVersion(kotlinVersion).toImportModelVersion(), base.pluginVersion)
-        assertEquals(listOf(Capability.JVM_ONLY), base.capabilitiesList)
+        assertEquals(listOf(Capability.CAPABILITY_JVM), base.capabilitiesList)
 
         val project = parseProjectModel(root.resolve("project.json"))
         assertEquals(KotlinImportModelIds.PROJECT_INFORMATION, project.id)
@@ -91,7 +91,7 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
     ) {
         assertEquals(KotlinImportModelIds.COMPILATION_UNIT, model.id)
         assertEquals(expectedName, model.compilationName)
-        assertEquals(Platform.JVM, model.platform)
+        assertEquals(Platform.PLATFORM_JVM, model.platform)
         assertEquals(expectedIsTest, model.isTest)
         assertEquals(expectedCompileTaskPath, model.compileTaskPath)
     }

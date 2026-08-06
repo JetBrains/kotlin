@@ -57,12 +57,12 @@ class KotlinModelBuilderTest {
 
     @Test
     fun `reports an unknown model ID`() {
-        assertError("unknown", projectWithJvm(), ErrorType.UNKNOWN_MODEL_ID)
+        assertError("unknown", projectWithJvm(), ErrorType.ERROR_TYPE_UNKNOWN_MODEL_ID)
     }
 
     @Test
     fun `reports missing compilation parameters`() {
-        assertError(KotlinImportModelIds.COMPILATION_UNIT, projectWithJvm(), ErrorType.UNKNOWN_MODEL_PARAMS)
+        assertError(KotlinImportModelIds.COMPILATION_UNIT, projectWithJvm(), ErrorType.ERROR_TYPE_UNKNOWN_MODEL_PARAMS)
     }
 
     @Test
@@ -75,12 +75,12 @@ class KotlinModelBuilderTest {
             ) as KotlinGradleModel).kotlinModelResult
         )
 
-        assertEquals(ErrorType.UNKNOWN_MODEL_PARAMS, result.error.errorType)
+        assertEquals(ErrorType.ERROR_TYPE_UNKNOWN_MODEL_PARAMS, result.error.errorType)
     }
 
     @Test
     fun `reports malformed compilation parameters`() {
-        assertError(KotlinImportModelIds.COMPILATION_UNIT, projectWithJvm(), ErrorType.UNKNOWN_MODEL_PARAMS, byteArrayOf(10, 1))
+        assertError(KotlinImportModelIds.COMPILATION_UNIT, projectWithJvm(), ErrorType.ERROR_TYPE_UNKNOWN_MODEL_PARAMS, byteArrayOf(10, 1))
     }
 
     @Test
@@ -90,12 +90,12 @@ class KotlinModelBuilderTest {
             .build()
             .toByteArray()
 
-        assertError(KotlinImportModelIds.COMPILATION_UNIT, projectWithJvm(), ErrorType.UNSUPPORTED_MODEL_PARAMS, parameters)
+        assertError(KotlinImportModelIds.COMPILATION_UNIT, projectWithJvm(), ErrorType.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, parameters)
     }
 
     @Test
     fun `reports parameters for a parameterless model as unsupported`() {
-        assertError(KotlinImportModelIds.BASE, projectWithJvm(), ErrorType.UNSUPPORTED_MODEL_PARAMS, byteArrayOf(1))
+        assertError(KotlinImportModelIds.BASE, projectWithJvm(), ErrorType.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, byteArrayOf(1))
     }
 
     @Test
@@ -104,12 +104,12 @@ class KotlinModelBuilderTest {
             (builder.buildAll(KotlinGradleModel::class.java.name, projectWithJvm()) as KotlinGradleModel).kotlinModelResult
         )
 
-        assertEquals(ErrorType.UNKNOWN_MODEL_PARAMS, result.error.errorType)
+        assertEquals(ErrorType.ERROR_TYPE_UNKNOWN_MODEL_PARAMS, result.error.errorType)
     }
 
     @Test
     fun `reports unexpected provider failures as internal errors`() {
-        assertError(KotlinImportModelIds.PROJECT_INFORMATION, buildProject { }, ErrorType.INTERNAL_ERROR)
+        assertError(KotlinImportModelIds.PROJECT_INFORMATION, buildProject { }, ErrorType.ERROR_TYPE_INTERNAL_ERROR)
     }
 
     private fun assertError(modelId: String, project: Project, type: ErrorType, parameters: ByteArray = byteArrayOf()) {

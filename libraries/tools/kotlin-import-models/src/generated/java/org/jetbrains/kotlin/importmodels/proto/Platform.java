@@ -15,9 +15,9 @@ public enum Platform
    */
   PLATFORM_UNSPECIFIED(0),
   /**
-   * <code>JVM = 1;</code>
+   * <code>PLATFORM_JVM = 1;</code>
    */
-  JVM(1),
+  PLATFORM_JVM(1),
   UNRECOGNIZED(-1),
   ;
 
@@ -35,9 +35,9 @@ public enum Platform
    */
   public static final int PLATFORM_UNSPECIFIED_VALUE = 0;
   /**
-   * <code>JVM = 1;</code>
+   * <code>PLATFORM_JVM = 1;</code>
    */
-  public static final int JVM_VALUE = 1;
+  public static final int PLATFORM_JVM_VALUE = 1;
 
 
   public final int getNumber() {
@@ -65,7 +65,7 @@ public enum Platform
   public static Platform forNumber(int value) {
     switch (value) {
       case 0: return PLATFORM_UNSPECIFIED;
-      case 1: return JVM;
+      case 1: return PLATFORM_JVM;
       default: return null;
     }
   }

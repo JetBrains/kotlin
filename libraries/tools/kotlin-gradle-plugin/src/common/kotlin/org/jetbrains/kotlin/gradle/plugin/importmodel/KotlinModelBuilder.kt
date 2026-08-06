@@ -40,7 +40,7 @@ internal class KotlinModelBuilder : ParameterizedToolingModelBuilder<ModelReques
     override fun getParameterType(): Class<ModelRequest> = ModelRequest::class.java
 
     override fun buildAll(modelName: String, project: Project): KotlinGradleModel =
-        result(ErrorType.UNKNOWN_MODEL_PARAMS, "Kotlin import model parameters are required")
+        result(ErrorType.ERROR_TYPE_UNKNOWN_MODEL_PARAMS, "Kotlin import model parameters are required")
 
     override fun buildAll(modelName: String, parameter: ModelRequest, project: Project): KotlinGradleModel = try {
         val provider = KotlinImportModelProvider(project)
@@ -49,30 +49,30 @@ internal class KotlinModelBuilder : ParameterizedToolingModelBuilder<ModelReques
             KotlinImportModelIds.BASE -> parameterlessModel(parameters) { provider.baseInformation() }
             KotlinImportModelIds.PROJECT_INFORMATION -> parameterlessModel(parameters) { provider.projectInformation() }
             KotlinImportModelIds.COMPILATION_UNIT -> compilationUnitModel(parameters, provider)
-            else -> result(ErrorType.UNKNOWN_MODEL_ID, "Unknown Kotlin import model '${parameter.kotlinModelId}'")
+            else -> result(ErrorType.ERROR_TYPE_UNKNOWN_MODEL_ID, "Unknown Kotlin import model '${parameter.kotlinModelId}'")
         }
     } catch (failure: Exception) {
-        result(ErrorType.INTERNAL_ERROR, "Failed to produce Kotlin import model: ${failure.message}")
+        result(ErrorType.ERROR_TYPE_INTERNAL_ERROR, "Failed to produce Kotlin import model: ${failure.message}")
     }
 
     private fun parameterlessModel(parameters: ByteArray, producer: () -> Message): KotlinGradleModel =
         if (parameters.isEmpty()) {
             model(producer())
         } else {
-            result(ErrorType.UNSUPPORTED_MODEL_PARAMS, "Kotlin import model does not accept parameters")
+            result(ErrorType.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, "Kotlin import model does not accept parameters")
         }
 
     private fun compilationUnitModel(parameters: ByteArray, provider: KotlinImportModelProvider): KotlinGradleModel {
         val parsedParameters = try {
             CompilationUnitModel.Parameters.parseFrom(parameters)
         } catch (_: InvalidProtocolBufferException) {
-            return result(ErrorType.UNKNOWN_MODEL_PARAMS, "Malformed compilation unit parameters")
+            return result(ErrorType.ERROR_TYPE_UNKNOWN_MODEL_PARAMS, "Malformed compilation unit parameters")
         }
         if (!parsedParameters.hasCompilationUnitId() || parsedParameters.compilationUnitId.value.isEmpty()) {
-            return result(ErrorType.UNKNOWN_MODEL_PARAMS, "Compilation unit ID is required")
+            return result(ErrorType.ERROR_TYPE_UNKNOWN_MODEL_PARAMS, "Compilation unit ID is required")
         }
         if (parsedParameters.compilationUnitId !in provider.projectInformation().compilationUnitIdsList) {
-            return result(ErrorType.UNSUPPORTED_MODEL_PARAMS, "Unsupported compilation unit ID")
+            return result(ErrorType.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, "Unsupported compilation unit ID")
         }
         return model(provider.compilationUnit(parsedParameters.compilationUnitId))
     }

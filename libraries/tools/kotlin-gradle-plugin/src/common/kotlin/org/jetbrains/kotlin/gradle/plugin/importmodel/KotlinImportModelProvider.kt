@@ -21,7 +21,7 @@ internal class KotlinImportModelProvider(
     fun baseInformation(): BaseModel = BaseModel.newBuilder()
         .setId(KotlinImportModelIds.BASE)
         .setPluginVersion(project.kotlinToolingVersion.toImportModelVersion())
-        .addCapabilities(Capability.JVM_ONLY)
+        .addCapabilities(Capability.CAPABILITY_JVM)
         .build()
 
     fun projectInformation(): ProjectModel = ProjectModel.newBuilder()
@@ -40,7 +40,7 @@ internal class KotlinImportModelProvider(
                     .setCompilationUnitId(id)
             )
             .setCompilationName(compilation.name)
-            .setPlatform(Platform.JVM)
+            .setPlatform(Platform.PLATFORM_JVM)
             .setIsTest(compilation.name == KotlinCompilation.TEST_COMPILATION_NAME)
             .setCompileTaskPath(compilation.compileTaskProvider.get().path)
             .build()

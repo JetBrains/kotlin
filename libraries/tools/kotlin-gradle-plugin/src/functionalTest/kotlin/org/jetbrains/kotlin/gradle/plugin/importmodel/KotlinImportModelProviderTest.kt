@@ -36,7 +36,7 @@ class KotlinImportModelProviderTest {
             .build()
         assertEquals(KotlinImportModelIds.BASE, base.id)
         assertEquals(expectedVersion, base.pluginVersion)
-        assertEquals(listOf(Capability.JVM_ONLY), base.capabilitiesList)
+        assertEquals(listOf(Capability.CAPABILITY_JVM), base.capabilitiesList)
 
         val firstProjectModel = provider.projectInformation()
         val secondProjectModel = provider.projectInformation()
@@ -60,7 +60,7 @@ class KotlinImportModelProviderTest {
         assertEquals(KotlinImportModelIds.COMPILATION_UNIT, model.id)
         assertEquals(expectedId, model.parameters.compilationUnitId)
         assertEquals(expectedName, model.compilationName)
-        assertEquals(Platform.JVM, model.platform)
+        assertEquals(Platform.PLATFORM_JVM, model.platform)
         assertEquals(expectedIsTest, model.isTest)
         assertEquals(expectedCompileTaskPath, model.compileTaskPath)
     }
