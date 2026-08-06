@@ -71,6 +71,7 @@ run {
 
     apiValidation {
         ignoredPackages += "org.jetbrains.kotlin.importmodels.proto"
+        ignoredPackages += "org.jetbrains.kotlin.importmodels.internal"
     }
 
     tasks {

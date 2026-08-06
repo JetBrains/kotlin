@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.importmodels.KotlinGradleModel
 import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
 import org.jetbrains.kotlin.importmodels.ModelRequest
 import org.jetbrains.kotlin.importmodels.proto.*
+import org.jetbrains.kotlin.importmodels.proto.action as actionModel
+import org.jetbrains.kotlin.importmodels.proto.gradleTaskAction as gradleTaskActionModel
+import org.jetbrains.kotlin.importmodels.proto.sourceRoot as sourceRootModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -94,15 +97,15 @@ private fun sourceRoot(
     path: String,
     kind: SourceRootKind = SourceRootKind.SOURCE_ROOT_KIND_SOURCE,
     vararg producingTaskPaths: String,
-): SourceRoot = SourceRoot.newBuilder()
-    .setPath(path)
-    .setKind(kind)
-    .addAllProducingActions(producingTaskPaths.map(::gradleAction))
-    .build()
+): SourceRoot = sourceRootModel {
+    this.path = path
+    this.kind = kind
+    producingActions += producingTaskPaths.map(::gradleAction)
+}
 
-private fun gradleAction(taskPath: String): Action = Action.newBuilder()
-    .setGradleAction(GradleTaskAction.newBuilder().setTaskPath(taskPath))
-    .build()
+private fun gradleAction(taskPath: String): Action = actionModel {
+    gradleAction = gradleTaskActionModel { this.taskPath = taskPath }
+}
 
 private class KotlinImportModelsBuildAction : org.gradle.tooling.BuildAction<List<ByteArray>> {
     override fun execute(controller: BuildController): List<ByteArray> {
@@ -126,7 +129,7 @@ private class KotlinImportModelsBuildAction : org.gradle.tooling.BuildAction<Lis
         result += project.compilationUnitIdsList.map { compilationUnitId ->
             request(
                 KotlinImportModelIds.COMPILATION_UNIT,
-                CompilationUnitModel.Parameters.newBuilder().setCompilationUnitId(compilationUnitId).build().toByteArray(),
+                CompilationUnitModelKt.parameters { this.compilationUnitId = compilationUnitId }.toByteArray(),
             )
         }
         result += request("unknown")

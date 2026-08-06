@@ -20,33 +20,30 @@ import java.io.File
 internal class KotlinImportModelProvider(
     private val project: Project,
 ) {
-    fun baseInformation(): BaseModel = BaseModel.newBuilder()
-        .setId(KotlinImportModelIds.BASE)
-        .setPluginVersion(project.kotlinToolingVersion.toImportModelVersion())
-        .addCapabilities(Capability.CAPABILITY_JVM)
-        .build()
+    fun baseInformation(): BaseModel = baseModel {
+        id = KotlinImportModelIds.BASE
+        pluginVersion = project.kotlinToolingVersion.toImportModelVersion()
+        capabilities += Capability.CAPABILITY_JVM
+    }
 
-    fun projectInformation(): ProjectModel = ProjectModel.newBuilder()
-        .setId(KotlinImportModelIds.PROJECT_INFORMATION)
-        .addAllCompilationUnitIds(supportedCompilations().map { compilationUnitId(it.name) })
-        .build()
+    fun projectInformation(): ProjectModel = projectModel {
+        id = KotlinImportModelIds.PROJECT_INFORMATION
+        compilationUnitIds += supportedCompilations().map { compilationUnitId(it.name) }
+    }
 
     fun compilationUnit(id: CompilationUnitId): CompilationUnitModel {
         val compilation = supportedCompilations().singleOrNull { compilationUnitId(it.name) == id }
             ?: error("Unknown Kotlin import compilation unit '${id.value}' for project '${project.path}'")
 
-        return CompilationUnitModel.newBuilder()
-            .setId(KotlinImportModelIds.COMPILATION_UNIT)
-            .setParameters(
-                CompilationUnitModel.Parameters.newBuilder()
-                    .setCompilationUnitId(id)
-            )
-            .setCompilationName(compilation.name)
-            .setPlatform(Platform.PLATFORM_JVM)
-            .setIsTest(compilation.name == KotlinCompilation.TEST_COMPILATION_NAME)
-            .addAllSourceRoots(sourceRoots(compilation))
-            .addBuildActions(gradleAction(compilation.compileTaskProvider.get().path))
-            .build()
+        return compilationUnitModel {
+            this.id = KotlinImportModelIds.COMPILATION_UNIT
+            parameters = CompilationUnitModelKt.parameters { compilationUnitId = id }
+            compilationName = compilation.name
+            platform = Platform.PLATFORM_JVM
+            isTest = compilation.name == KotlinCompilation.TEST_COMPILATION_NAME
+            sourceRoots += sourceRoots(compilation)
+            buildActions += gradleAction(compilation.compileTaskProvider.get().path)
+        }
     }
 
     private fun supportedCompilations() = listOf(
@@ -61,11 +58,11 @@ internal class KotlinImportModelProvider(
             paths: Iterable<File>,
             producingActions: (File) -> List<Action> = { emptyList() },
         ) = paths.map { path ->
-            SourceRoot.newBuilder()
-                .setPath(project.relativePath(path).replace(File.separatorChar, '/'))
-                .setKind(kind)
-                .addAllProducingActions(producingActions(path))
-                .build()
+            sourceRoot {
+                this.path = project.relativePath(path).replace(File.separatorChar, '/')
+                this.kind = kind
+                this.producingActions += producingActions(path)
+            }
         }
 
         val generatedKotlin = compilation.defaultSourceSet.generatedKotlin
@@ -90,21 +87,21 @@ internal class KotlinImportModelProvider(
             .distinctBy(SourceRoot::getPath)
     }
 
-    private fun gradleAction(taskPath: String): Action = Action.newBuilder()
-        .setGradleAction(GradleTaskAction.newBuilder().setTaskPath(taskPath))
-        .build()
+    private fun gradleAction(taskPath: String): Action = action {
+        gradleAction = gradleTaskAction { this.taskPath = taskPath }
+    }
 
     private fun compilationUnitId(compilationName: String): CompilationUnitId {
         val buildPath = project.currentBuildId().compatAccessor(project).buildPath
         val targetKey = project.kotlinJvmExtension.target.targetName.ifEmpty { "jvm" }
         val value = listOf(buildPath, project.path, targetKey, compilationName).joinToString("|")
-        return CompilationUnitId.newBuilder().setValue(value).build()
+        return compilationUnitId { this.value = value }
     }
 }
 
-private fun KotlinToolingVersion.toImportModelVersion(): Version = Version.newBuilder()
-    .setMajor(major)
-    .setMinor(minor)
-    .setPatch(patch)
-    .apply { this@toImportModelVersion.classifier?.let(::setClassifier) }
-    .build()
+private fun KotlinToolingVersion.toImportModelVersion(): Version = version {
+    major = this@toImportModelVersion.major
+    minor = this@toImportModelVersion.minor
+    patch = this@toImportModelVersion.patch
+    this@toImportModelVersion.classifier?.let { classifier = it }
+}

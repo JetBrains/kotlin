@@ -13,13 +13,9 @@ import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.importmodels.KotlinGradleModel
 import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
 import org.jetbrains.kotlin.importmodels.ModelRequest
-import org.jetbrains.kotlin.importmodels.internal.protobuf.com.google.protobuf.Any
-import org.jetbrains.kotlin.importmodels.internal.protobuf.com.google.protobuf.InvalidProtocolBufferException
-import org.jetbrains.kotlin.importmodels.internal.protobuf.com.google.protobuf.Message
+import org.jetbrains.kotlin.importmodels.internal.KotlinImportModelSerialization
 import org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel
-import org.jetbrains.kotlin.importmodels.proto.Error as ImportModelError
 import org.jetbrains.kotlin.importmodels.proto.ErrorType
-import org.jetbrains.kotlin.importmodels.proto.Result
 import javax.inject.Inject
 
 internal val KotlinModelBuilderSetupAction = KotlinProjectSetupAction {
@@ -46,8 +42,12 @@ internal class KotlinModelBuilder : ParameterizedToolingModelBuilder<ModelReques
         val provider = KotlinImportModelProvider(project)
         val parameters = parameter.kotlinModelParameters ?: byteArrayOf()
         when (parameter.kotlinModelId) {
-            KotlinImportModelIds.BASE -> parameterlessModel(parameters) { provider.baseInformation() }
-            KotlinImportModelIds.PROJECT_INFORMATION -> parameterlessModel(parameters) { provider.projectInformation() }
+            KotlinImportModelIds.BASE -> parameterlessModel(parameters) {
+                KotlinImportModelSerialization.modelResult(provider.baseInformation())
+            }
+            KotlinImportModelIds.PROJECT_INFORMATION -> parameterlessModel(parameters) {
+                KotlinImportModelSerialization.modelResult(provider.projectInformation())
+            }
             KotlinImportModelIds.COMPILATION_UNIT -> compilationUnitModel(parameters, provider)
             else -> result(ErrorType.ERROR_TYPE_UNKNOWN_MODEL_ID, "Unknown Kotlin import model '${parameter.kotlinModelId}'")
         }
@@ -55,17 +55,15 @@ internal class KotlinModelBuilder : ParameterizedToolingModelBuilder<ModelReques
         result(ErrorType.ERROR_TYPE_INTERNAL_ERROR, "Failed to produce Kotlin import model: ${failure.message}")
     }
 
-    private fun parameterlessModel(parameters: ByteArray, producer: () -> Message): KotlinGradleModel =
+    private fun parameterlessModel(parameters: ByteArray, producer: () -> ByteArray): KotlinGradleModel =
         if (parameters.isEmpty()) {
-            model(producer())
+            KotlinGradleModelResult(producer())
         } else {
             result(ErrorType.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, "Kotlin import model does not accept parameters")
         }
 
     private fun compilationUnitModel(parameters: ByteArray, provider: KotlinImportModelProvider): KotlinGradleModel {
-        val parsedParameters = try {
-            CompilationUnitModel.Parameters.parseFrom(parameters)
-        } catch (_: InvalidProtocolBufferException) {
+        val parsedParameters = KotlinImportModelSerialization.parseCompilationUnitParameters(parameters) ?: run {
             return result(ErrorType.ERROR_TYPE_UNKNOWN_MODEL_PARAMS, "Malformed compilation unit parameters")
         }
         if (!parsedParameters.hasCompilationUnitId() || parsedParameters.compilationUnitId.value.isEmpty()) {
@@ -74,18 +72,11 @@ internal class KotlinModelBuilder : ParameterizedToolingModelBuilder<ModelReques
         if (parsedParameters.compilationUnitId !in provider.projectInformation().compilationUnitIdsList) {
             return result(ErrorType.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, "Unsupported compilation unit ID")
         }
-        return model(provider.compilationUnit(parsedParameters.compilationUnitId))
+        return KotlinGradleModelResult(KotlinImportModelSerialization.modelResult(provider.compilationUnit(parsedParameters.compilationUnitId)))
     }
 
-    private fun model(model: Message): KotlinGradleModel = KotlinGradleModelResult(
-        Result.newBuilder().setModel(Any.pack(model)).build().toByteArray()
-    )
-
     private fun result(type: ErrorType, message: String): KotlinGradleModel = KotlinGradleModelResult(
-        Result.newBuilder()
-            .setError(ImportModelError.newBuilder().setErrorType(type).setErrorMessage(message))
-            .build()
-            .toByteArray()
+        KotlinImportModelSerialization.errorResult(type, message)
     )
 }
 

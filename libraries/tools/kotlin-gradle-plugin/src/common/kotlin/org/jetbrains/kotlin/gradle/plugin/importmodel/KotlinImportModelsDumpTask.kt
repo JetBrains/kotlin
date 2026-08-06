@@ -13,8 +13,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
-import org.jetbrains.kotlin.importmodels.internal.protobuf.com.google.protobuf.Message
-import org.jetbrains.kotlin.importmodels.internal.protobuf.com.google.protobuf.util.JsonFormat
+import org.jetbrains.kotlin.importmodels.internal.KotlinImportModelSerialization
 import java.io.File
 
 private const val DUMP_KOTLIN_IMPORT_MODELS_TASK_NAME = "dumpKotlinImportModels"
@@ -48,13 +47,17 @@ internal abstract class KotlinImportModelsDumpTask : DefaultTask() {
             produce("compilationUnit[${id.value}]") { modelProvider.compilationUnit(id) }
         }
 
-        write(label = "base", jsonFile = outputRoot.resolve("base.json"), model = base)
-        write(label = "projectInformation", jsonFile = outputRoot.resolve("project.json"), model = projectModel)
+        write(label = "base", jsonFile = outputRoot.resolve("base.json"), json = KotlinImportModelSerialization.toJson(base))
+        write(
+            label = "projectInformation",
+            jsonFile = outputRoot.resolve("project.json"),
+            json = KotlinImportModelSerialization.toJson(projectModel),
+        )
         compilationUnits.forEach { model ->
             write(
                 label = "compilationUnit[${model.parameters.compilationUnitId.value}]",
                 jsonFile = outputRoot.resolve("compilation-units/${model.compilationName}.json"),
-                model = model,
+                json = KotlinImportModelSerialization.toJson(model),
             )
         }
     }
@@ -62,11 +65,11 @@ internal abstract class KotlinImportModelsDumpTask : DefaultTask() {
     private fun write(
         label: String,
         jsonFile: File,
-        model: Message,
+        json: String,
     ) {
         try {
             jsonFile.parentFile.mkdirs()
-            jsonFile.writeText(JsonFormat.printer().preservingProtoFieldNames().alwaysPrintFieldsWithNoPresence().print(model))
+            jsonFile.writeText(json)
         } catch (failure: Exception) {
             throw GradleException("Failed to write Kotlin import model '$label'", failure)
         }

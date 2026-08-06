@@ -12,11 +12,12 @@ import org.jetbrains.kotlin.importmodels.KotlinGradleModel
 import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
 import org.jetbrains.kotlin.importmodels.ModelRequest
 import org.jetbrains.kotlin.importmodels.proto.BaseModel
-import org.jetbrains.kotlin.importmodels.proto.CompilationUnitId
 import org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel
+import org.jetbrains.kotlin.importmodels.proto.CompilationUnitModelKt
 import org.jetbrains.kotlin.importmodels.proto.ErrorType
 import org.jetbrains.kotlin.importmodels.proto.ProjectModel
 import org.jetbrains.kotlin.importmodels.proto.Result
+import org.jetbrains.kotlin.importmodels.proto.compilationUnitId as compilationUnitIdModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -44,10 +45,7 @@ class KotlinModelBuilderTest {
     fun `returns the requested compilation model`() {
         val project = projectWithJvm()
         val compilationId = KotlinImportModelProvider(project).projectInformation().compilationUnitIdsList.first()
-        val parameters = CompilationUnitModel.Parameters.newBuilder()
-            .setCompilationUnitId(compilationId)
-            .build()
-            .toByteArray()
+        val parameters = CompilationUnitModelKt.parameters { compilationUnitId = compilationId }.toByteArray()
 
         val result = builder.buildResult(KotlinImportModelIds.COMPILATION_UNIT, project, parameters)
 
@@ -85,10 +83,9 @@ class KotlinModelBuilderTest {
 
     @Test
     fun `reports an unsupported compilation ID`() {
-        val parameters = CompilationUnitModel.Parameters.newBuilder()
-            .setCompilationUnitId(CompilationUnitId.newBuilder().setValue("unknown").build())
-            .build()
-            .toByteArray()
+        val parameters = CompilationUnitModelKt.parameters {
+            compilationUnitId = compilationUnitIdModel { value = "unknown" }
+        }.toByteArray()
 
         assertError(KotlinImportModelIds.COMPILATION_UNIT, projectWithJvm(), ErrorType.ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS, parameters)
     }

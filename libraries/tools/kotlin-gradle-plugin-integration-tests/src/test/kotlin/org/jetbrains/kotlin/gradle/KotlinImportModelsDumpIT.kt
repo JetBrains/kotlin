@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.google.protobuf.util.JsonFormat
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
-import org.jetbrains.kotlin.importmodels.internal.protobuf.com.google.protobuf.util.JsonFormat
 import org.jetbrains.kotlin.importmodels.proto.*
+import org.jetbrains.kotlin.importmodels.proto.action as actionModel
+import org.jetbrains.kotlin.importmodels.proto.gradleTaskAction as gradleTaskActionModel
+import org.jetbrains.kotlin.importmodels.proto.sourceRoot as sourceRootModel
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
 import kotlin.test.assertEquals
@@ -117,7 +120,7 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
         assertEquals(expectedIsTest, model.isTest)
         val action = model.buildActionsList.single()
         assertEquals(
-            GradleTaskAction.newBuilder().setTaskPath(expectedBuildTaskPath).build(),
+            gradleTaskActionModel { taskPath = expectedBuildTaskPath },
             action.gradleAction,
         )
         assertEquals(expectedSourceRoots, model.sourceRootsList)
@@ -130,16 +133,15 @@ private fun sourceRoot(
     path: String,
     kind: SourceRootKind = SourceRootKind.SOURCE_ROOT_KIND_SOURCE,
     vararg producingTaskPaths: String,
-): SourceRoot =
-    SourceRoot.newBuilder()
-        .setPath(path)
-        .setKind(kind)
-        .addAllProducingActions(producingTaskPaths.map(::gradleAction))
-        .build()
+): SourceRoot = sourceRootModel {
+    this.path = path
+    this.kind = kind
+    producingActions += producingTaskPaths.map(::gradleAction)
+}
 
-private fun gradleAction(taskPath: String): Action = Action.newBuilder()
-    .setGradleAction(GradleTaskAction.newBuilder().setTaskPath(taskPath))
-    .build()
+private fun gradleAction(taskPath: String): Action = actionModel {
+    gradleAction = gradleTaskActionModel { this.taskPath = taskPath }
+}
 
 private fun parseBaseModel(file: File): BaseModel {
     val builder = BaseModel.newBuilder()
@@ -153,9 +155,9 @@ private fun parseProjectModel(file: File): ProjectModel {
     return builder.build()
 }
 
-private fun KotlinToolingVersion.toImportModelVersion(): Version = Version.newBuilder()
-    .setMajor(major)
-    .setMinor(minor)
-    .setPatch(patch)
-    .apply { this@toImportModelVersion.classifier?.let(::setClassifier) }
-    .build()
+private fun KotlinToolingVersion.toImportModelVersion(): Version = version {
+    major = this@toImportModelVersion.major
+    minor = this@toImportModelVersion.minor
+    patch = this@toImportModelVersion.patch
+    this@toImportModelVersion.classifier?.let { classifier = it }
+}

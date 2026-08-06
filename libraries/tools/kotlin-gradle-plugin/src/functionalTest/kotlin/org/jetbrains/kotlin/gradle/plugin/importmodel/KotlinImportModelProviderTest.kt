@@ -10,15 +10,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.importmodels.KotlinImportModelIds
-import org.jetbrains.kotlin.importmodels.proto.Action
-import org.jetbrains.kotlin.importmodels.proto.Capability
-import org.jetbrains.kotlin.importmodels.proto.CompilationUnitId
-import org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel
-import org.jetbrains.kotlin.importmodels.proto.GradleTaskAction
-import org.jetbrains.kotlin.importmodels.proto.Platform
-import org.jetbrains.kotlin.importmodels.proto.SourceRoot
-import org.jetbrains.kotlin.importmodels.proto.SourceRootKind
-import org.jetbrains.kotlin.importmodels.proto.Version
+import org.jetbrains.kotlin.importmodels.proto.*
+import org.jetbrains.kotlin.importmodels.proto.sourceRoot as sourceRootModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -39,20 +32,20 @@ class KotlinImportModelProviderTest {
 
         val base = provider.baseInformation()
         val pluginVersion = project.kotlinToolingVersion
-        val expectedVersion = Version.newBuilder()
-            .setMajor(pluginVersion.major)
-            .setMinor(pluginVersion.minor)
-            .setPatch(pluginVersion.patch)
-            .apply { pluginVersion.classifier?.let(::setClassifier) }
-            .build()
+        val expectedVersion = version {
+            major = pluginVersion.major
+            minor = pluginVersion.minor
+            patch = pluginVersion.patch
+            pluginVersion.classifier?.let { classifier = it }
+        }
         assertEquals(KotlinImportModelIds.BASE, base.id)
         assertEquals(expectedVersion, base.pluginVersion)
         assertEquals(listOf(Capability.CAPABILITY_JVM), base.capabilitiesList)
 
         val firstProjectModel = provider.projectInformation()
         val secondProjectModel = provider.projectInformation()
-        val mainId = CompilationUnitId.newBuilder().setValue(":|:|jvm|main").build()
-        val testId = CompilationUnitId.newBuilder().setValue(":|:|jvm|test").build()
+        val mainId = compilationUnitId { value = ":|:|jvm|main" }
+        val testId = compilationUnitId { value = ":|:|jvm|test" }
         assertEquals(KotlinImportModelIds.PROJECT_INFORMATION, firstProjectModel.id)
         assertEquals(listOf(mainId, testId), firstProjectModel.compilationUnitIdsList)
         assertEquals(firstProjectModel.compilationUnitIdsList, secondProjectModel.compilationUnitIdsList)
@@ -76,7 +69,7 @@ class KotlinImportModelProviderTest {
         val action = model.buildActionsList.single()
         assertTrue(action.hasGradleAction())
         assertEquals(
-            GradleTaskAction.newBuilder().setTaskPath(expectedBuildTaskPath).build(),
+            gradleTaskAction { taskPath = expectedBuildTaskPath },
             action.gradleAction,
         )
         assertEquals(
@@ -100,13 +93,13 @@ class KotlinImportModelProviderTest {
         )
     }
 
-    private fun sourceRoot(path: String, kind: SourceRootKind, vararg producingActions: Action): SourceRoot = SourceRoot.newBuilder()
-        .setPath(path)
-        .setKind(kind)
-        .addAllProducingActions(producingActions.asIterable())
-        .build()
+    private fun sourceRoot(path: String, kind: SourceRootKind, vararg producingActions: Action): SourceRoot = sourceRootModel {
+        this.path = path
+        this.kind = kind
+        this.producingActions += producingActions.asIterable()
+    }
 
-    private fun gradleAction(taskPath: String): Action = Action.newBuilder()
-        .setGradleAction(GradleTaskAction.newBuilder().setTaskPath(taskPath))
-        .build()
+    private fun gradleAction(taskPath: String): Action = action {
+        gradleAction = gradleTaskAction { this.taskPath = taskPath }
+    }
 }

@@ -151,6 +151,7 @@ dependencies {
     commonCompileOnly(project(":kotlin-gradle-build-metrics"))
     commonCompileOnly(project(":compiler:build-tools:kotlin-build-tools-jdk-utils"))
     commonCompileOnly(libs.protobuf.java)
+    commonCompileOnly(libs.protobuf.kotlin)
     commonCompileOnly(libs.android.gradle.plugin.gradle.api) {
         overrideTargetJvmVersion(11)
         isTransitive = false
