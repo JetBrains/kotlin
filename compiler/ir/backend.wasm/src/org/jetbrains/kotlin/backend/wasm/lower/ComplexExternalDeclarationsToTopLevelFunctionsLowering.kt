@@ -170,20 +170,64 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
             // This is hack to support Kotlin/JS like implementation of IDL string enums bindings
             // with error suppression:
             //
-            //    @JsName("null")
             //    @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
             //    public external interface CanvasFillRule {
             //        companion object
             //    }
-            //    public inline val CanvasFillRule.Companion.NONZERO: CanvasFillRule get() = "nonzero".asDynamic().unsafeCast<CanvasFillRule>()
+            //    public inline val CanvasFillRule.Companion.NONZERO: CanvasFillRule get() = "nonzero".toJsString().unsafeCast<CanvasFillRule>()
             //
-            // Kotlin/JS translates access to CanvasFillRule.Companion as `null` due to @JsName("null"),
-            // but Kotlin/Wasm fails to do this due to stricter null checks on interop boundary.
+            // Kotlin/JS optimizes away access to CanvasFillRule.Companion.
             //
-            // Instead, as a temporary solution, we evaluate such companion object to an empty JS object.
-            // TODO: Optimize (KT-60661)
+            // As a temporary solution, Kotlin/Wasm evaluates companion object instance to an empty JS object.
+            // This doesn't allow to use companion objects properties, if they exist in runtime.
+            // At the next Kotlin versions, this hack should be removed.
+            //
+            // Libraries, implementing JavaScript IDLs, are advised to use companion blocks:
+            //
+            //    public external interface CanvasFillRule
+            //    companion val CanvasFillRule.NONZERO: CanvasFillRule get() = "nonzero".toJsString().unsafeCast<CanvasFillRule>()
+            //
+            // TODO: Remove (KT-76462)
             if (parent.isInterface) {
-                append("({})")
+                val kotlinName = parent.fqNameWhenAvailable?.asString() ?: parent.name.asString()
+                val jsName = parent.getJsNameOrKotlinName().identifier
+
+                val deprecationMessage =
+                    "Accessing the companion object of external interface '$kotlinName'.\\n" +
+                    "\\n" +
+                    "An external interface has no counterpart in JavaScript, so this accessor currently " +
+                    "returns a new empty JS object. This is a temporary behaviour that supports the JavaScript " +
+                    "IDL emulation pattern (external interface + companion object + extension properties).\\n" +
+                    "\\n" +
+                    "In a future, the accessor will instead return the JS value the interface " +
+                    "name refers to ('$jsName'). If there is no such value in JavaScript, the access will fail at runtime.\\n" +
+                    "\\n" +
+                    "To keep IDL pattern working:\\n" +
+                    " - mark the interface with `@JsName(\\\"NaN\\\")`; or\\n" +
+                    " - drop the companion object and declare the constants as companion extensions " +
+                    "(experimental, -Xcompanion-blocks-and-extensions):\\n" +
+                    "     external interface $kotlinName: JsAny\\n" +
+                    "     companion val $kotlinName.ZERO: $kotlinName get() = ...\\n" +
+                    "\\n" +
+                    "Details: https://youtrack.jetbrains.com/issue/KT-76462"
+
+                append(
+                    """
+                        (
+                            (() => {
+                                if (typeof console !== "undefined" &&
+                                    typeof console.error === "function") {
+                                    console.error("$deprecationMessage");
+                                } else if (typeof printErr === "function") {
+                                    printErr("$deprecationMessage");       // SpiderMonkey shell
+                                } else if (typeof print === "function") {
+                                    print("$deprecationMessage");          // JSC, d8, and many JS shells
+                                }
+                            })(),
+                            {}
+                        )
+                    """.trimIndent()
+                )
                 return
             }
 
