@@ -204,7 +204,6 @@
 /compiler/testData/diagnostics/klibSerializationTests/ "Kotlin Common Backend"
 /compiler/testData/diagnostics/irInliner/ "Kotlin Common Backend"
 /compiler/testData/diagnostics/testsWithAnyBackend/ "Kotlin Common Backend"
-/compiler/testData/ir/closureAnnotator/ "Kotlin JVM"
 /compiler/testData/ir/irText/ "Kotlin Compiler"
 /compiler/testData/ir/klibLayout/ "Kotlin Common Backend"
 /compiler/testData/ir/sourceRanges/ "Kotlin Frontend"
