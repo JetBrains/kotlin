@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.test.utils
 
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
-import kotlin.reflect.KClass
-import kotlin.reflect.full.isSuperclassOf
 
 /**
  * For each of these, *null means all*, e.g., if `os` is null, the config expects the test to fail regardless of the OS
@@ -17,7 +14,7 @@ data class WasmIgnoreForConfig(
     val mode: WasmCompilationMode? = null,
     val os: String? = null,
     val vmName: String? = null,
-    val runner: KClass<*>? = null,
+    val runner: String? = null,
 ) {
     override fun toString(): String {
         val props = listOfNotNull(
@@ -59,15 +56,16 @@ fun wasmIgnoreForParser(raw: String): WasmIgnoreForConfig? {
         System.err.println("Invalid OS specified in WASM_IGNORE_FOR directive: os=${parts["os"]}. Must be linux, windows, or mac (case insensitive)")
         return null
     }
-    val runnerKClass = if (parts["runner"] != null) {
+    val runnerFqName = parts["runner"]
+    if (runnerFqName != null) {
         try {
-            val runnerKClass = Class.forName(parts["runner"]).kotlin
-            runnerKClass
-        } catch (e: ClassNotFoundException) {
-            System.err.println("Invalid runner specified in WASM_IGNORE_FOR directive: runner=${parts["runner"]}. Must be a valid ***fully-qualified*** class name")
-            return null
+            Class.forName(runnerFqName)
+        } catch (_: ClassNotFoundException) {
+            // Only a warning: generated runner classes are not on the classpath of every module parsing this directive
+            // (e.g. `:wasm:wasm.tests:klib-compatibility`), so an unresolvable name is not necessarily a mistake.
+            System.err.println("WARNING: specified runner=$runnerFqName could not be found among loaded classes")
         }
-    } else null
+    }
 
     // NOTE: mode mismatch will be caught by WasmCompilationMode.valueOf
     // NOTE: vm mismatches will be caught by the test itself, i.e. it will fail, or warn that it should be unmuted,
@@ -79,7 +77,7 @@ fun wasmIgnoreForParser(raw: String): WasmIgnoreForConfig? {
         mode = parts["mode"]?.let { WasmCompilationMode.valueOf(it.uppercase().replace('-', '_')) },
         os = parts["os"]?.lowercase(),
         vmName = parts["vm"],
-        runner = runnerKClass
+        runner = runnerFqName
     )
 }
 

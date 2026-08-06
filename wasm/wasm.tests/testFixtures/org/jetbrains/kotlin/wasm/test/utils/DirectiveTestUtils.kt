@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.wasm.test.handlers.WasmVMException
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.function.Executable
-import kotlin.reflect.full.isSuperclassOf
 
 object DirectiveTestUtils {
 
@@ -386,10 +385,10 @@ private class WasmIgnoredTestSuppressorGroup(
         }
 
         private fun hasRunnerMismatch(): Boolean {
-            val expectedRunnerKClass = ignoreForConfig.runner
+            val expectedRunnerFqName = ignoreForConfig.runner
                 ?: return false
 
-            return !testServices.testInfo.className.contains(expectedRunnerKClass.qualifiedName!!)
+            return !testServices.testInfo.className.contains(expectedRunnerFqName)
         }
 
 
