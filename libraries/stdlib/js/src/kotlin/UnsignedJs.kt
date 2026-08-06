@@ -272,7 +272,7 @@ internal fun ulongToStringLarge(value: Long, base: Int): String {
     val d = entry.d
 
     // initial approximation of the quotient and remainder
-    val aHat = value.toULong().toDouble()
+    val aHat = ulongToDouble(value)
     var qHat = kotlin.math.floor(aHat * entry.mHat)
     var rHat = value.toInt() - d * jsToInt32(qHat)
 
