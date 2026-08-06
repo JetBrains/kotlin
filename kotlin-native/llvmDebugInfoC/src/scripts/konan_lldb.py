@@ -31,19 +31,9 @@ from enum import Enum
 import lldb
 
 _NULL = "null"
-_BENCH_LOGGING = False
-_FAST_ARRAY_PREFETCH_RADIUS = 200
-_INFERIOR_SCRATCH_BUFFER_SIZE = 10 * 1024 * 1024
-_FIELD_NAME_BATCH_BUFFER_SIZE_PER_ITEM = 128
-_TYPE_NAME_BATCH_BUFFER_SIZE_PER_ITEM = 128
-_SUMMARY_BATCH_BUFFER_SIZE_PER_ITEM = 512
-_MIN_BATCH_STRING_BUFFER_SIZE = 4096
 _RUNTIME_TYPE_INVALID = 0
 _RUNTIME_TYPE_OBJECT = 1
 _RUNTIME_TYPE_VECTOR128 = 10
-# Inferior scratch buffer is intentionally process-global and never deallocated.
-_INFERIOR_SCRATCH_BUFFER_PROCESS_KEY = None
-_INFERIOR_SCRATCH_BUFFER_ADDRESS = 0
 
 
 class CollectionKind(Enum):
@@ -69,10 +59,6 @@ _EXPRESSION_OPTIONS = initialize_expression_options()
 
 
 def _bench(start, msg):
-    return
-
-
-def _log_inspection_timing(name, start, detail=""):
     return
 
 
@@ -205,50 +191,34 @@ def _is_string_or_array(value):
     soa = _evaluate(expr).unsigned
     logging.debug("%s: %s", value_str, soa)
     _bench(start, lambda: f"is_string_or_array({value_str}) = {soa}")
-    _log_inspection_timing("is_string_or_array", start, f"value={value_str}")
     return soa
 
 
 def _is_kotlin_list(value):
-    start = time.monotonic()
     list_addr = _symbol_loaded_address("kclass:kotlin.collections.List")
     if list_addr == 0:
         return False
-    result = _evaluate(
+    return _evaluate(
         f"(int)Konan_DebugIsInstance({_hex(value.unsigned)}, {_hex(list_addr)})"
     ).unsigned != 0
-    _log_inspection_timing(
-        "is_kotlin_list", start, f"value={_hex(value.unsigned)}"
-    )
-    return result
 
 
 def _is_kotlin_map(value):
-    start = time.monotonic()
     map_addr = _symbol_loaded_address("kclass:kotlin.collections.Map")
     if map_addr == 0:
         return False
-    result = _evaluate(
+    return _evaluate(
         f"(int)Konan_DebugIsInstance({_hex(value.unsigned)}, {_hex(map_addr)})"
     ).unsigned != 0
-    _log_inspection_timing(
-        "is_kotlin_map", start, f"value={_hex(value.unsigned)}"
-    )
-    return result
 
 
 def _is_kotlin_set(value):
-    start = time.monotonic()
     set_addr = _symbol_loaded_address("kclass:kotlin.collections.Set")
     if set_addr == 0:
         return False
-    result = _evaluate(
+    return _evaluate(
         f"(int)Konan_DebugIsInstance({_hex(value.unsigned)}, {_hex(set_addr)})"
     ).unsigned != 0
-    _log_inspection_timing(
-        "is_kotlin_set", start, f"value={_hex(value.unsigned)}"
-    )
-    return result
 
 
 def _type_info(value):
@@ -370,12 +340,6 @@ def _get_cached_child_types_by_index(value):
     return None if responses is None else responses.child_types_by_index
 
 
-def _cache_child_address(value, index, address):
-    cached_addresses = _get_cached_child_addresses_by_index(value)
-    if cached_addresses is not None:
-        cached_addresses[index] = address
-
-
 def _cache_child_type(value, index, child_type):
     cached_types = _get_cached_child_types_by_index(value)
     if cached_types is not None:
@@ -423,25 +387,10 @@ def _get_cached_field_type_result_for_key(process, key):
 
 
 def _set_cached_field_type_result_for_key(process, key, type_name):
-    if key == 0 or type_name is None or len(type_name) == 0:
+    if key == 0 or type_name is None:
         return
     _get_or_create_cached_array_responses_for_key(process, key)
     _ARRAY_ELEMENT_FIELD_TYPE_RESULT_CACHE[key] = type_name
-
-
-def _type_name_for_runtime_type(runtime_type):
-    return {
-        1: "ObjHeader",
-        2: "Byte",
-        3: "Short",
-        4: "Int",
-        5: "Long",
-        6: "Float",
-        7: "Double",
-        8: "NativePtr",
-        9: "Boolean",
-        10: "Vector128",
-    }.get(runtime_type)
 
 
 def _object_type_info_from_memory(value):
@@ -479,10 +428,6 @@ def _children_count(value):
     )
 
 
-def _align_up(value, alignment):
-    return (value + alignment - 1) & ~(alignment - 1)
-
-
 def _allocate_inferior_memory(process, size, permissions, what):
     error = lldb.SBError()
     address = process.AllocateMemory(size, permissions, error)
@@ -501,54 +446,6 @@ def _deallocate_inferior_memory(process, address):
     if not address or address == lldb.LLDB_INVALID_ADDRESS:
         return
     process.DeallocateMemory(address)
-
-
-def _inferior_process_key(process):
-    if process is None or not process.IsValid():
-        return None
-    return process.GetUniqueID()
-
-
-def _ensure_inferior_scratch_buffer(process):
-    global _INFERIOR_SCRATCH_BUFFER_ADDRESS
-    global _INFERIOR_SCRATCH_BUFFER_PROCESS_KEY
-
-    process_key = _inferior_process_key(process)
-    if process_key is None:
-        raise DebuggerException("No valid process for inferior scratch buffer")
-
-    if (
-        _INFERIOR_SCRATCH_BUFFER_PROCESS_KEY == process_key
-        and _INFERIOR_SCRATCH_BUFFER_ADDRESS
-        and _INFERIOR_SCRATCH_BUFFER_ADDRESS != lldb.LLDB_INVALID_ADDRESS
-    ):
-        return _INFERIOR_SCRATCH_BUFFER_ADDRESS
-
-    permissions = lldb.ePermissionsReadable | lldb.ePermissionsWritable
-    _INFERIOR_SCRATCH_BUFFER_ADDRESS = _allocate_inferior_memory(
-        process,
-        _INFERIOR_SCRATCH_BUFFER_SIZE,
-        permissions,
-        "scratch buffer",
-    )
-    _INFERIOR_SCRATCH_BUFFER_PROCESS_KEY = process_key
-    return _INFERIOR_SCRATCH_BUFFER_ADDRESS
-
-
-def _inferior_scratch_slice(process, specs, what):
-    base_address = _ensure_inferior_scratch_buffer(process)
-    offset = 0
-    addresses = []
-    for alignment, size in specs:
-        offset = _align_up(offset, alignment)
-        end = offset + size
-        if end > _INFERIOR_SCRATCH_BUFFER_SIZE:
-            raise DebuggerException(
-                f"Inferior scratch buffer is too small for {what}"
-            )
-        addresses.append(base_address + offset)
-        offset = end
-    return addresses
 
 _TYPE_CONVERSION = [
     lambda obj, value, address, name: value.CreateValueFromExpression(
@@ -640,18 +537,13 @@ def kotlin_object_type_summary(lldb_val, _):
 
     if lldb_val.unsigned == 0:
         return _NULL
-    summary = _render_object(lldb_val.unsigned)
-    return "\"\"" if summary == "" else summary
+    value = lldb_val.GetValue()
+    return _NULL if value is None else value
 
 
 def kotlin_object_pair_type_summary(lldb_val, _):
-    summaries = []
-    for index in range(2):
-        child = lldb_val.GetChildAtIndex(index)
-        summary = child.GetSummary()
-        value = summary if summary is not None else child.GetValue()
-        summaries.append(_NULL if value is None else value)
-    return " = ".join(summaries)
+    value = lldb_val.GetValue()
+    return "" if value is None else value
 
 
 def _select_provider(lldb_val, tip, internal_dict):
@@ -692,7 +584,6 @@ def _select_provider(lldb_val, tip, internal_dict):
 
     logging.debug("%s = %s", value_str, ret)
     _bench(start, lambda: f"select_provider({value_str})")
-    _log_inspection_timing("select_provider", start, f"value={value_str}")
     return ret
 
 
@@ -854,9 +745,6 @@ class KonanStringSyntheticProvider(KonanHelperProvider):
     def num_children(self):
         return 1
 
-    def has_children(self):
-        return True
-
     def get_child_index(self, name):
         return 0 if name == "size_in_bytes" else -1
 
@@ -913,14 +801,6 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
         )
         return self._children_count
 
-    def has_children(self):
-        self._log.debug(
-            "%s = %s",
-            _hex(self._valobj.unsigned),
-            self._children_count > 0,
-        )
-        return self._children_count > 0
-
     def get_child_index(self, name):
         value_str = _hex(self._valobj.unsigned)
         self._log.debug("%s, %s", value_str, name)
@@ -943,7 +823,6 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
 class FastKonanObjectSyntheticProvider(KonanHelperProvider):
     def __init__(self, valobj, _, internal_dict):
         self._log = logging.getLogger(self.__class__.__name__)
-        self._log.debug(_hex(valobj.unsigned))
         self._children_count = 0
         self._children = None
         super(FastKonanObjectSyntheticProvider, self).__init__(
@@ -951,7 +830,6 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
         )
 
     def _field_name(self, index):
-        self._log.debug("%s, %s", _hex(self._valobj.unsigned), index)
         error = lldb.SBError()
         name = self._read_string(
             (
@@ -963,12 +841,6 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
         )
         if not error.Success():
             raise DebuggerException()
-        logging.debug(
-            "FastKonanObjectSyntheticProvider (%s, %s) = %s",
-            _hex(self._valobj.unsigned),
-            index,
-            name,
-        )
         return name
 
     def _run_batch_child_metadata_request(self, include_names=True):
@@ -1250,12 +1122,6 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
                         _set_cached_summary_for_key(
                             self._process, child_key, summary
                         )
-                elif field_address:
-                    derived_type_name = _type_name_for_runtime_type(child_type)
-                    if derived_type_name is not None:
-                        _set_cached_field_type_result_for_key(
-                            self._process, field_address, derived_type_name
-                        )
         finally:
             if (
                 field_names_addr
@@ -1280,7 +1146,6 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
         return names
 
     def _ensure_children(self, reason):
-        start = time.monotonic()
         if self._children is None:
             try:
                 self._children = self._run_batch_child_metadata_request()
@@ -1288,57 +1153,19 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
                 self._children = [
                     self._field_name(i) for i in range(self._children_count)
                 ]
-            self._log.debug(
-                "%s _children: %s",
-                _hex(self._valobj.unsigned),
-                self._children,
-            )
-        _log_inspection_timing(
-            "fast_object_ensure_children",
-            start,
-            f"value={_hex(self._valobj.unsigned)} reason={reason}",
-        )
         return self._children
 
     def num_children(self):
-        self._log.debug(
-            "%s = %s", _hex(self._valobj.unsigned), self._children_count
-        )
         return self._children_count
 
-    def has_children(self):
-        self._log.debug(
-            "%s = %s",
-            _hex(self._valobj.unsigned),
-            self._children_count > 0,
-        )
-        return self._children_count > 0
-
     def get_child_index(self, name):
-        start = time.monotonic()
-        value_str = _hex(self._valobj.unsigned)
-        self._log.debug("%s, %s", value_str, name)
         index = self._ensure_children(
             f"resolve requested field '{name}'"
         ).index(name)
-        self._log.debug("%s index=%s", value_str, name)
-        _log_inspection_timing(
-            "fast_object_get_child_index",
-            start,
-            f"value={value_str} name={name}",
-        )
         return index
 
     def get_child_at_index(self, index):
-        start = time.monotonic()
-        self._log.debug("%s, %s", _hex(self._valobj.unsigned), index)
-        result = self._read_value(index)
-        _log_inspection_timing(
-            "fast_object_get_child_at_index",
-            start,
-            f"value={_hex(self._valobj.unsigned)} index={index}",
-        )
-        return result
+        return self._read_value(index)
 
     def _field_address(self, index):
         cached_addresses = _get_cached_child_addresses_by_index(self._valobj)
@@ -1386,14 +1213,6 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
         )
         return self._children_count
 
-    def has_children(self):
-        self._log.debug(
-            "(%s) = %s",
-            _hex(self._valobj.unsigned),
-            self._children_count > 0,
-        )
-        return self._children_count > 0
-
     def get_child_index(self, name):
         self._log.debug("%s, %s", _hex(self._valobj.unsigned), name)
         index = int(name)
@@ -1422,7 +1241,6 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
         super(FastKonanArraySyntheticProvider, self).__init__(
             valobj, False, "FastArrayProvider", internal_dict
         )
-        self._log.debug("valobj: %s", _hex(valobj.unsigned))
         if self._valobj is None:
             return
         self._element_runtime_type = self._resolve_element_runtime_type()
@@ -1430,26 +1248,13 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
         valobj.SetSyntheticChildrenGenerated(True)
 
     def num_children(self):
-        self._log.debug(
-            "(%s) = %s", _hex(self._valobj.unsigned), self._children_count
-        )
         return self._children_count
 
-    def has_children(self):
-        self._log.debug(
-            "(%s) = %s",
-            _hex(self._valobj.unsigned),
-            self._children_count > 0,
-        )
-        return self._children_count > 0
-
     def get_child_index(self, name):
-        self._log.debug("%s, %s", _hex(self._valobj.unsigned), name)
         index = int(name)
         return index if (0 <= index < self._children_count) else -1
 
     def get_child_at_index(self, index):
-        self._log.debug("%s, %s", _hex(self._valobj.unsigned), index)
         if not (0 <= index < self._children_count):
             return None
 
@@ -1465,11 +1270,6 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
 
         child = self._create_child_value(index, address)
         return child if child.IsValid() else None
-
-    def _run_batch_child_metadata_request(self):
-        return FastKonanObjectSyntheticProvider._run_batch_child_metadata_request(
-            self, include_names=False
-        )
 
     def _field_address(self, index):
         cached_addresses = _get_cached_child_addresses_by_index(self._valobj)
@@ -1511,315 +1311,9 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
         has_type = cached_types is None or index in cached_types
         if has_address and has_type:
             return
-        self._run_batch_child_metadata_request()
-
-    def _string_batch_buffer_size(self, count, per_item_size):
-        return max(
-            _MIN_BATCH_STRING_BUFFER_SIZE,
-            count * per_item_size,
+        FastKonanObjectSyntheticProvider._run_batch_child_metadata_request(
+            self, include_names=False
         )
-
-    def _write_batch_indices(self, indices, count, prefix, indices_addr):
-        indices_bytes = struct.pack(f"{prefix}{count}i", *indices)
-        error = lldb.SBError()
-        bytes_written = self._process.WriteMemory(
-            indices_addr, indices_bytes, error
-        )
-        if not error.Success() or bytes_written != len(indices_bytes):
-            raise DebuggerException(
-                "Failed to write FastKonanArraySyntheticProvider indices"
-            )
-
-    def _run_batch_address_request(self, indices, count, prefix):
-        start = time.monotonic()
-        pointer_size = self._target.GetAddressByteSize()
-        indices_addr, result_addr = _inferior_scratch_slice(
-            self._process,
-            [
-                (4, count * 4),
-                (pointer_size, count * pointer_size),
-            ],
-            "address request",
-        )
-        self._write_batch_indices(indices, count, prefix, indices_addr)
-        _evaluate(
-            (
-                "([]() -> int {"
-                f"int32_t* indices = (int32_t *){_hex(indices_addr)};"
-                f"void** result = (void **){_hex(result_addr)};"
-                "auto getFieldAddress = "
-                "(void *(*)(void *, int32_t))Konan_DebugGetFieldAddress;"
-                f"void* obj = (void *){_hex(self._valobj.unsigned)};"
-                f"for (int i = 0; i < {count}; ++i) "
-                "{ result[i] = getFieldAddress(obj, indices[i]); }"
-                "return 0;"
-                "})()"
-            )
-        )
-        error = lldb.SBError()
-        raw_addresses = self._process.ReadMemory(
-            result_addr, count * pointer_size, error
-        )
-        if not error.Success():
-            raise DebuggerException(
-                "Failed to read FastKonanArraySyntheticProvider addresses"
-            )
-        pointer_format = "Q" if pointer_size == 8 else "I"
-        result = struct.unpack(
-            f"{prefix}{count}{pointer_format}", raw_addresses
-        )
-        _log_inspection_timing(
-            "batch_address_request", start, f"count={count}"
-        )
-        return result
-
-    def _run_batch_field_type_request(self, indices, count, prefix):
-        start = time.monotonic()
-        indices_addr, result_addr = _inferior_scratch_slice(
-            self._process,
-            [
-                (4, count * 4),
-                (4, count * 4),
-            ],
-            "field type request",
-        )
-        self._write_batch_indices(indices, count, prefix, indices_addr)
-        _evaluate(
-            (
-                "([]() -> int {"
-                f"int32_t* indices = (int32_t *){_hex(indices_addr)};"
-                f"int32_t* result = (int32_t *){_hex(result_addr)};"
-                "auto getFieldType = "
-                "(int32_t (*)(void *, int32_t))Konan_DebugGetFieldType;"
-                f"void* obj = (void *){_hex(self._valobj.unsigned)};"
-                f"for (int i = 0; i < {count}; ++i) "
-                "{ result[i] = getFieldType(obj, indices[i]); }"
-                "return 0;"
-                "})()"
-            )
-        )
-        error = lldb.SBError()
-        raw_types = self._process.ReadMemory(result_addr, count * 4, error)
-        if not error.Success():
-            raise DebuggerException(
-                "Failed to read FastKonanArraySyntheticProvider field types"
-            )
-        result = struct.unpack(f"{prefix}{count}i", raw_types)
-        _log_inspection_timing(
-            "batch_field_type_request", start, f"count={count}"
-        )
-        return result
-
-    def _run_batch_summary_request(self, indices, count, prefix):
-        if self._element_runtime_type != _RUNTIME_TYPE_OBJECT:
-            return ([-1] * count, [0] * count, None)
-
-        start = time.monotonic()
-        buffer_size = self._string_batch_buffer_size(
-            count, _SUMMARY_BATCH_BUFFER_SIZE_PER_ITEM
-        )
-        indices_addr, offsets_addr, lengths_addr, buffer_addr = (
-            _inferior_scratch_slice(
-                self._process,
-                [
-                    (4, count * 4),
-                    (4, count * 4),
-                    (4, count * 4),
-                    (1, buffer_size),
-                ],
-                "summary request",
-            )
-        )
-        self._write_batch_indices(indices, count, prefix, indices_addr)
-        _evaluate(
-            (
-                "([]() -> int {"
-                f"int32_t* indices = (int32_t *){_hex(indices_addr)};"
-                f"int32_t* offsets = (int32_t *){_hex(offsets_addr)};"
-                f"int32_t* lengths = (int32_t *){_hex(lengths_addr)};"
-                f"char* buffer = (char *){_hex(buffer_addr)};"
-                f"const int bufferSize = {buffer_size};"
-                "auto getFieldAddress = "
-                "(void *(*)(void *, int32_t))Konan_DebugGetFieldAddress;"
-                "auto getFieldType = "
-                "(int32_t (*)(void *, int32_t))Konan_DebugGetFieldType;"
-                "auto objectToUtf8Array = "
-                "(int32_t (*)(void *, char *, int32_t))Konan_DebugObjectToUtf8Array;"
-                f"void* obj = (void *){_hex(self._valobj.unsigned)};"
-                f"for (int i = 0; i < {count}; ++i) {{ offsets[i] = -1; lengths[i] = 0; }}"
-                "int used = 0;"
-                f"for (int i = 0; i < {count}; ++i) {{"
-                "  void* fieldAddress = getFieldAddress(obj, indices[i]);"
-                "  if (fieldAddress == nullptr) continue;"
-                f"  if (getFieldType(obj, indices[i]) != {_RUNTIME_TYPE_OBJECT}) continue;"
-                "  void* child = *reinterpret_cast<void**>(fieldAddress);"
-                "  if (child == nullptr || used >= bufferSize) continue;"
-                "  int written = objectToUtf8Array(child, buffer + used, bufferSize - used);"
-                "  if (written <= 0) continue;"
-                "  offsets[i] = used;"
-                "  lengths[i] = written;"
-                "  used += written;"
-                "}"
-                "return 0;"
-                "})()"
-            )
-        )
-
-        error = lldb.SBError()
-        raw_summary_offsets = self._process.ReadMemory(
-            offsets_addr, count * 4, error
-        )
-        if not error.Success():
-            raise DebuggerException(
-                "Failed to read FastKonanArraySyntheticProvider summary offsets"
-            )
-        raw_summary_lengths = self._process.ReadMemory(
-            lengths_addr, count * 4, error
-        )
-        if not error.Success():
-            raise DebuggerException(
-                "Failed to read FastKonanArraySyntheticProvider summary lengths"
-            )
-        summary_offsets = struct.unpack(
-            f"{prefix}{count}i", raw_summary_offsets
-        )
-        summary_lengths = struct.unpack(
-            f"{prefix}{count}i", raw_summary_lengths
-        )
-        max_summary_end = max(
-            (
-                offset + length
-                for offset, length in zip(summary_offsets, summary_lengths)
-                if offset >= 0 and length > 0
-            ),
-            default=0,
-        )
-        if max_summary_end <= 0:
-            _log_inspection_timing(
-                "batch_summary_request", start, f"count={count}"
-            )
-            return (summary_offsets, summary_lengths, None)
-
-        summary_data = self._process.ReadMemory(
-            buffer_addr, max_summary_end, error
-        )
-        if not error.Success():
-            raise DebuggerException(
-                "Failed to read FastKonanArraySyntheticProvider summaries"
-            )
-        result = (summary_offsets, summary_lengths, summary_data)
-        _log_inspection_timing(
-            "batch_summary_request", start, f"count={count}"
-        )
-        return result
-
-    def _run_batch_type_name_request(self, indices, count, prefix):
-        if self._element_runtime_type != _RUNTIME_TYPE_OBJECT:
-            return ([-1] * count, [0] * count, None)
-
-        start = time.monotonic()
-        buffer_size = self._string_batch_buffer_size(
-            count, _TYPE_NAME_BATCH_BUFFER_SIZE_PER_ITEM
-        )
-        indices_addr, offsets_addr, lengths_addr, buffer_addr = (
-            _inferior_scratch_slice(
-                self._process,
-                [
-                    (4, count * 4),
-                    (4, count * 4),
-                    (4, count * 4),
-                    (1, buffer_size),
-                ],
-                "type name request",
-            )
-        )
-        self._write_batch_indices(indices, count, prefix, indices_addr)
-        _evaluate(
-            (
-                "([]() -> int {"
-                f"int32_t* indices = (int32_t *){_hex(indices_addr)};"
-                f"int32_t* offsets = (int32_t *){_hex(offsets_addr)};"
-                f"int32_t* lengths = (int32_t *){_hex(lengths_addr)};"
-                f"char* buffer = (char *){_hex(buffer_addr)};"
-                f"const int bufferSize = {buffer_size};"
-                "auto getFieldAddress = "
-                "(void *(*)(void *, int32_t))Konan_DebugGetFieldAddress;"
-                "auto getFieldType = "
-                "(int32_t (*)(void *, int32_t))Konan_DebugGetFieldType;"
-                "auto getTypeName = "
-                "(const char *(*)(void *))Konan_DebugGetTypeName;"
-                f"void* obj = (void *){_hex(self._valobj.unsigned)};"
-                f"for (int i = 0; i < {count}; ++i) {{ offsets[i] = -1; lengths[i] = 0; }}"
-                "int used = 0;"
-                f"for (int i = 0; i < {count}; ++i) {{"
-                "  void* fieldAddress = getFieldAddress(obj, indices[i]);"
-                "  if (fieldAddress == nullptr) continue;"
-                f"  if (getFieldType(obj, indices[i]) != {_RUNTIME_TYPE_OBJECT}) continue;"
-                "  void* child = *reinterpret_cast<void**>(fieldAddress);"
-                "  if (child == nullptr || used >= bufferSize) continue;"
-                "  const char* typeName = getTypeName(child);"
-                "  if (typeName == nullptr) continue;"
-                "  int written = 0;"
-                "  while (used + written + 1 < bufferSize && typeName[written] != '\\0') {"
-                "    buffer[used + written] = typeName[written];"
-                "    ++written;"
-                "  }"
-                "  if (used + written >= bufferSize) continue;"
-                "  buffer[used + written] = '\\0';"
-                "  offsets[i] = used;"
-                "  lengths[i] = written + 1;"
-                "  used += written + 1;"
-                "}"
-                "return 0;"
-                "})()"
-            )
-        )
-
-        error = lldb.SBError()
-        raw_offsets = self._process.ReadMemory(offsets_addr, count * 4, error)
-        if not error.Success():
-            raise DebuggerException(
-                "Failed to read FastKonanArraySyntheticProvider type name offsets"
-            )
-        raw_lengths = self._process.ReadMemory(lengths_addr, count * 4, error)
-        if not error.Success():
-            raise DebuggerException(
-                "Failed to read FastKonanArraySyntheticProvider type name lengths"
-            )
-        offsets = struct.unpack(f"{prefix}{count}i", raw_offsets)
-        lengths = struct.unpack(f"{prefix}{count}i", raw_lengths)
-        max_end = max(
-            (
-                offset + length
-                for offset, length in zip(offsets, lengths)
-                if offset >= 0 and length > 0
-            ),
-            default=0,
-        )
-        if max_end <= 0:
-            _log_inspection_timing(
-                "batch_type_name_request", start, f"count={count}"
-            )
-            return (offsets, lengths, None)
-
-        type_name_data = self._process.ReadMemory(buffer_addr, max_end, error)
-        if not error.Success():
-            raise DebuggerException(
-                "Failed to read FastKonanArraySyntheticProvider type names"
-            )
-        result = (offsets, lengths, type_name_data)
-        _log_inspection_timing(
-            "batch_type_name_request", start, f"count={count}"
-        )
-        return result
-
-    def _prefetch_field_types(self, indices, count, prefix):
-        if self._element_runtime_type != _RUNTIME_TYPE_INVALID:
-            return [self._element_runtime_type] * count
-        return self._run_batch_field_type_request(indices, count, prefix)
-
-    def _struct_prefix(self):
-        return _struct_prefix_for_target(self._target)
 
     def _create_child_value(self, index, address):
         if self._element_lldb_type is None:
@@ -1844,25 +1338,13 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
         if fields_count is None or fields_count >= 0:
             return self._fallback_element_runtime_type()
 
-        runtime_type = -fields_count
-        self._log.debug(
-            "array runtime type for %s resolved from type info: %s",
-            _hex(self._valobj.unsigned),
-            runtime_type,
-        )
-        return runtime_type
+        return -fields_count
 
     def _fallback_element_runtime_type(self):
         if self._children_count <= 0:
             return _RUNTIME_TYPE_INVALID
 
-        runtime_type = self._field_type(0)
-        self._log.debug(
-            "array runtime type for %s resolved via fallback: %s",
-            _hex(self._valobj.unsigned),
-            runtime_type,
-        )
-        return runtime_type
+        return self._field_type(0)
 
     def _resolve_element_lldb_type(self):
         runtime_type = self._element_runtime_type
@@ -1888,104 +1370,38 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
             return self._valobj.type.GetBasicType(lldb.eBasicTypeBool)
         return None
 
-    def _read_pointer(self, address):
-        pointer_size = self._target.GetAddressByteSize()
-        error = lldb.SBError()
-        raw = self._process.ReadMemory(address, pointer_size, error)
-        if not error.Success():
-            return 0
-        pointer_format = "Q" if pointer_size == 8 else "I"
-        return struct.unpack(
-            f"{self._struct_prefix()}{pointer_format}", raw
-        )[0]
-
     def _read_int32(self, address):
         error = lldb.SBError()
         raw = self._process.ReadMemory(address, 4, error)
         if not error.Success():
             return None
-        return struct.unpack(f"{self._struct_prefix()}i", raw)[0]
-
-    @staticmethod
-    def _align_up(value, alignment):
-        return (value + alignment - 1) & ~(alignment - 1)
+        return struct.unpack(
+            f"{_struct_prefix_for_target(self._target)}i", raw
+        )[0]
 
 
 def _object_field(object_proxy, field_name):
-    start = time.monotonic()
     try:
         field_index = object_proxy.get_child_index(field_name)
     except (DebuggerException, ValueError):
-        _log_inspection_timing(
-            "object_field_lookup",
-            start,
-            f"proxy={object_proxy.__class__.__name__} field={field_name} missing",
-        )
         return None
-    result = object_proxy.get_child_at_index(field_index)
-    _log_inspection_timing(
-        "object_field_lookup",
-        start,
-        f"proxy={object_proxy.__class__.__name__} field={field_name}",
-    )
-    return result
+    return object_proxy.get_child_at_index(field_index)
 
 
 def _object_field_unsigned(object_proxy, field_name):
-    start = time.monotonic()
     value = _object_field(object_proxy, field_name)
     if value is None or not value.IsValid():
-        _log_inspection_timing(
-            "object_field_unsigned",
-            start,
-            f"proxy={object_proxy.__class__.__name__} field={field_name} missing",
-        )
         return None
-    result = value.GetValueAsUnsigned()
-    _log_inspection_timing(
-        "object_field_unsigned",
-        start,
-        f"proxy={object_proxy.__class__.__name__} field={field_name}",
-    )
-    return result
+    return value.GetValueAsUnsigned()
 
-
-class KonanDelegatingSyntheticProvider:
-    def __init__(self, valobj, proxy, children_count=None):
+class KonanListSyntheticProvider:
+    def __init__(self, valobj, backing, children_count, internal_dict):
         self._valobj = valobj
-        self._proxy = proxy
-        self._children_count = children_count
-
-    def num_children(self):
-        proxy_children_count = self._proxy.num_children()
-        children_count = proxy_children_count
-        if self._children_count is not None:
-            children_count = min(proxy_children_count, self._children_count)
-        return children_count
-
-    def has_children(self):
-        return self.num_children() > 0
-
-    def get_child_index(self, name):
-        child_index = self._proxy.get_child_index(name)
-        return child_index if 0 <= child_index < self.num_children() else -1
-
-    def get_child_at_index(self, index):
-        if not 0 <= index < self.num_children():
-            return None
-        return self._proxy.get_child_at_index(index)
-
-    def update(self):
-        return self._proxy.update()
-
-    def __getattr__(self, item):
-        return getattr(self._proxy, item)
-
-
-class KonanListSyntheticProvider(KonanDelegatingSyntheticProvider):
-    def __init__(self, valobj, backing_proxy, children_count):
-        super().__init__(valobj, backing_proxy, children_count)
-        self._log = logging.getLogger(self.__class__.__name__)
+        self._backing = backing
+        self._internal_dict = internal_dict
+        self._children_count = (
+            0 if children_count is None else children_count
+        )
 
     @staticmethod
     def fromObjectProxy(valobj, object_proxy, internal_dict):
@@ -1998,20 +1414,59 @@ class KonanListSyntheticProvider(KonanDelegatingSyntheticProvider):
             if backing is not None and backing.IsValid() and backing.unsigned != 0:
                 return KonanListSyntheticProvider(
                     valobj,
-                    KonanProxyTypeProvider(backing, internal_dict),
+                    backing,
                     visible_children_count,
+                    internal_dict,
                 )
-
-        logging.getLogger(KonanListSyntheticProvider.__name__).debug(
-            "%s has no supported List backing field", _hex(valobj.unsigned)
-        )
         return None
 
+    def _backing_proxy(self):
+        return KonanProxyTypeProvider(self._backing, self._internal_dict)
 
-class KonanSetSyntheticProvider(KonanDelegatingSyntheticProvider):
-    def __init__(self, valobj, keys_proxy, children_count):
-        super().__init__(valobj, keys_proxy, children_count)
-        self._log = logging.getLogger(self.__class__.__name__)
+    def num_children(self):
+        return self._children_count
+
+    def get_child_index(self, name):
+        child_index = self._backing_proxy().get_child_index(name)
+        return child_index if 0 <= child_index < self.num_children() else -1
+
+    def get_child_at_index(self, index):
+        if not 0 <= index < self.num_children():
+            return None
+        return self._backing_proxy().get_child_at_index(index)
+
+    def update(self):
+        return False
+
+
+class KonanSetSyntheticProvider:
+    def __init__(self, valobj, keys, children_count, internal_dict):
+        self._valobj = valobj
+        self._keys = keys
+        self._internal_dict = internal_dict
+        self._children_count = (
+            0 if children_count is None else children_count
+        )
+        self._state = None
+
+    @staticmethod
+    def _is_valid_objheader_value(value):
+        return (
+            value is not None
+            and value.IsValid()
+            and value.GetTypeName() == "ObjHeader *"
+            and value.GetValue() is not None
+            and value.GetValueAsUnsigned() != 0
+        )
+
+    @staticmethod
+    def _raw_object_proxy(value, internal_dict):
+        if not KonanSetSyntheticProvider._is_valid_objheader_value(value):
+            return None
+        type_info = _type_info(value)
+        if not type_info:
+            return None
+        return _FACTORY["object"](value, type_info, internal_dict)
 
     @staticmethod
     def fromObjectProxy(valobj, object_proxy, internal_dict):
@@ -2019,20 +1474,17 @@ class KonanSetSyntheticProvider(KonanDelegatingSyntheticProvider):
             return None
 
         backing = _object_field(object_proxy, "backing")
-        if backing is None or not backing.IsValid() or backing.unsigned == 0:
-            logging.getLogger(KonanSetSyntheticProvider.__name__).debug(
-                "%s has no supported Set backing field", _hex(valobj.unsigned)
-            )
+        if not KonanSetSyntheticProvider._is_valid_objheader_value(backing):
             return None
 
-        backing_type_info = _type_info(backing)
-        if not backing_type_info:
-            return None
-        backing_object_proxy = _select_provider(
-            backing, backing_type_info, internal_dict
+        backing_object_proxy = KonanSetSyntheticProvider._raw_object_proxy(
+            backing, internal_dict
         )
+        if backing_object_proxy is None:
+            return None
+
         keys = _object_field(backing_object_proxy, "keysArray")
-        if keys is None or not keys.IsValid() or keys.unsigned == 0:
+        if not KonanSetSyntheticProvider._is_valid_objheader_value(keys):
             return None
 
         visible_children_count = _object_field_unsigned(
@@ -2040,20 +1492,101 @@ class KonanSetSyntheticProvider(KonanDelegatingSyntheticProvider):
         )
         return KonanSetSyntheticProvider(
             valobj,
-            KonanProxyTypeProvider(keys, internal_dict),
+            keys,
             visible_children_count,
+            internal_dict,
         )
+
+    def _refresh_state(self):
+        self._state = self._current_state()
+        if not self._is_valid_objheader_value(self._valobj):
+            self._keys = None
+            self._children_count = 0
+            return
+
+        valobj_proxy = self._raw_object_proxy(self._valobj, self._internal_dict)
+        if valobj_proxy is None:
+            self._keys = None
+            self._children_count = 0
+            return
+
+        backing = _object_field(valobj_proxy, "backing")
+        if not self._is_valid_objheader_value(backing):
+            self._keys = None
+            self._children_count = 0
+            return
+
+        backing_proxy = self._raw_object_proxy(backing, self._internal_dict)
+        if backing_proxy is None:
+            self._keys = None
+            self._children_count = 0
+            return
+
+        keys = _object_field(backing_proxy, "keysArray")
+        if not self._is_valid_objheader_value(keys):
+            self._keys = None
+            self._children_count = 0
+            return
+
+        self._keys = keys
+        self._children_count = _object_field_unsigned(backing_proxy, "length") or 0
+
+    def _current_state(self):
+        if self._valobj is None or not self._valobj.IsValid():
+            return None
+        process = self._valobj.GetProcess()
+        if process is None or not process.IsValid():
+            return None
+        return process.GetUniqueID(), process.GetStopID(False)
+
+    def _ensure_fresh_state(self):
+        state = self._current_state()
+        if state != self._state:
+            self._refresh_state()
+            return
+        if not self._is_valid_objheader_value(self._keys):
+            self._refresh_state()
+
+    def _keys_proxy(self):
+        self._ensure_fresh_state()
+        if not self._is_valid_objheader_value(self._keys):
+            return None
+        return KonanProxyTypeProvider(self._keys, self._internal_dict)
+
+    def num_children(self):
+        self._ensure_fresh_state()
+        return self._children_count
+
+    def get_child_index(self, name):
+        keys_proxy = self._keys_proxy()
+        if keys_proxy is None:
+            return -1
+        child_index = keys_proxy.get_child_index(name)
+        return child_index if 0 <= child_index < self.num_children() else -1
+
+    def get_child_at_index(self, index):
+        if not 0 <= index < self.num_children():
+            return None
+        keys_proxy = self._keys_proxy()
+        if keys_proxy is None:
+            return None
+        return keys_proxy.get_child_at_index(index)
+
+    def update(self):
+        self._refresh_state()
+        return False
 
 
 class KonanMapSyntheticProvider:
     def __init__(self, valobj, keys, values, children_count, internal_dict):
-        self._log = logging.getLogger(self.__class__.__name__)
         self._valobj = valobj
         self._target = lldb.debugger.GetSelectedTarget()
+        self._keys = keys
+        self._values = values
         self._internal_dict = internal_dict
-        self._keys = KonanProxyTypeProvider(keys, internal_dict)
-        self._values = KonanProxyTypeProvider(values, internal_dict)
-        self._children_count = children_count
+        self._children_count = (
+            0 if children_count is None else children_count
+        )
         self._entry_type = None
 
     @staticmethod
@@ -2083,16 +1616,14 @@ class KonanMapSyntheticProvider:
             valobj, keys, values, visible_children_count, internal_dict
         )
 
-    def num_children(self):
-        keys_count = self._keys.num_children()
-        values_count = self._values.num_children()
-        count = min(keys_count, values_count)
-        if self._children_count is not None:
-            count = min(count, self._children_count)
-        return count
+    def _keys_proxy(self):
+        return KonanProxyTypeProvider(self._keys, self._internal_dict)
 
-    def has_children(self):
-        return self.num_children() > 0
+    def _values_proxy(self):
+        return KonanProxyTypeProvider(self._values, self._internal_dict)
+
+    def num_children(self):
+        return self._children_count
 
     def get_child_index(self, name):
         try:
@@ -2105,8 +1636,8 @@ class KonanMapSyntheticProvider:
         if not 0 <= index < self.num_children():
             return None
 
-        key = self._keys.get_child_at_index(index)
-        value = self._values.get_child_at_index(index)
+        key = self._keys_proxy().get_child_at_index(index)
+        value = self._values_proxy().get_child_at_index(index)
         if key is None or value is None or not key.IsValid() or not value.IsValid():
             return None
 
@@ -2150,10 +1681,6 @@ class KonanZerroSyntheticProvider(lldb.SBSyntheticValueProvider):
     def update(self):
         return False
 
-    def has_children(self):
-        self._log.debug("")
-        return False
-
     def get_child_index(self, name):
         self._log.debug("")
         return 0
@@ -2190,13 +1717,30 @@ class KonanProxyTypeProvider:
             self._valobj
         )
 
-    def _is_kotlin_string(self):
-        string_addr = _symbol_loaded_address("kclass:kotlin.String")
-        if string_addr == 0 or self._valobj.unsigned == 0:
-            return False
-        return _evaluate(
-            f"(int)Konan_DebugIsInstance({_hex(self._valobj.unsigned)}, {_hex(string_addr)})"
-        ).unsigned != 0
+    def type_name(self):
+        valobj = self._valobj
+        if valobj is None or not valobj.IsValid():
+            return ""
+        if valobj.GetTypeName() != "ObjHeader *":
+            return ""
+        if valobj.GetValueAsUnsigned() == 0:
+            return ""
+
+        cached_type_name = _get_cached_type_name(valobj)
+        if cached_type_name is not None:
+            return cached_type_name
+
+        type_name = _evaluate(
+            f"(char *)Konan_DebugGetTypeName({_hex(valobj.unsigned)})"
+        ).summary
+
+        type_name = "" if type_name is None else type_name.strip('"')
+        _set_cached_field_type_result_for_key(
+            valobj.GetProcess(),
+            valobj.GetValueAsUnsigned(),
+            type_name,
+        )
+        return type_name
 
     def _get_proxy(self):
         cached_proxy = _get_cached_resolved_proxy(self._valobj)
@@ -2208,7 +1752,6 @@ class KonanProxyTypeProvider:
         value_str = _hex(valobj.unsigned)
         value_name = valobj.name
 
-        # TODO: Check that we dont need to return the null provider if the value changed to 0 in the meantime
         if valobj.unsigned == 0:
             self._log.debug(
                 "%s, name: %s NULL syntectic %s",
@@ -2236,7 +1779,6 @@ class KonanProxyTypeProvider:
                 )
 
         _bench(start, lambda: f"KonanProxyTypeProvider({value_str})")
-        _log_inspection_timing("get_proxy", start, f"value={value_str}")
         self._log.debug(
             "%s _proxy: %s", value_str, proxy.__class__.__name__
         )
@@ -2245,7 +1787,6 @@ class KonanProxyTypeProvider:
 
     @staticmethod
     def _collection_kind(valobj, type_info):
-        start = time.monotonic()
         if _is_kotlin_list(valobj):
             result = CollectionKind.LIST
         elif _is_kotlin_map(valobj):
@@ -2254,9 +1795,6 @@ class KonanProxyTypeProvider:
             result = CollectionKind.SET
         else:
             result = None
-        _log_inspection_timing(
-            "collection_kind", start, f"value={_hex(valobj.unsigned)}"
-        )
         return result
 
     def get_value(self):
@@ -2269,7 +1807,11 @@ class KonanProxyTypeProvider:
         return False
 
     def has_children(self):
-        return True
+        return (
+            self._valobj is not None
+            and self._valobj.IsValid()
+            and self._valobj.GetValueAsUnsigned() != 0
+        )
 
     def get_child_index(self, name):
         proxy = self._get_proxy()
@@ -2286,86 +1828,16 @@ class KonanProxyTypeProvider:
         return getattr(self._get_proxy(), item)
 
 
-def _get_runtime_type(variable):
-    process = variable.GetProcess()
-    if process is None or not process.IsValid():
-        return ""
-    if variable is None or not variable.IsValid():
-        return ""
-    if variable.GetTypeName() != "ObjHeader *":
-        return ""
-    if variable.GetValueAsUnsigned() == 0:
-        return ""
-
-    buffer_size = 512
-    (buffer_addr,) = _inferior_scratch_slice(
-        process, [(1, buffer_size)], "runtime type buffer"
-    )
-
-    length = _evaluate(
-        (
-            "([]() -> int {"
-            f"char* dst = (char *){_hex(buffer_addr)};"
-            "const char* src = "
-            f"(const char*)Konan_DebugGetTypeName({_hex(variable.unsigned)});"
-            "if (src == nullptr) { dst[0] = '\\0'; return 0; }"
-            "int i = 0;"
-            f"for (; i < {buffer_size - 1} && src[i] != '\\0'; ++i) "
-            "{ dst[i] = src[i]; }"
-            "dst[i] = '\\0';"
-            "return i;"
-            "})()"
-        )
-    ).signed
-    if length <= 0:
-        return ""
-
-    error = lldb.SBError()
-    type_name = process.ReadCStringFromMemory(
-        int(buffer_addr), int(length + 1), error
-    )
-    if not error.Success():
-        raise DebuggerException()
-    return type_name
-
-
-_FALLBACK_DISPLAY_TYPES = {
-    "signed char": "Byte",
-    "char": "Byte",
-    "short": "Short",
-    "int": "Int",
-    "long": "Long",
-    "long long": "Long",
-    "float": "Float",
-    "double": "Double",
-    "bool": "Boolean",
-    "void *": "NativePtr",
-}
-
-
-def _fallback_display_type(variable):
-    if variable is None or not variable.IsValid():
-        return ""
-    return _FALLBACK_DISPLAY_TYPES.get(variable.GetTypeName(), "")
-
-
 def _cached_field_type_result_key(variable):
     if variable is None or not variable.IsValid():
         return None
-    if variable.GetTypeName() == "ObjHeader *":
-        key = variable.GetValueAsUnsigned()
-        return key if key != 0 else None
-    try:
-        address_of = variable.AddressOf()
-    except Exception:
-        address_of = None
-    if address_of is None or not address_of.IsValid():
+    if variable.GetTypeName() != "ObjHeader *":
         return None
-    key = address_of.GetValueAsUnsigned()
+    key = variable.GetValueAsUnsigned()
     return key if key != 0 else None
 
 
-def _get_cached_field_type_result(variable):
+def _get_cached_type_name(variable):
     key = _cached_field_type_result_key(variable)
     if key is None:
         return None
@@ -2373,6 +1845,11 @@ def _get_cached_field_type_result(variable):
 
 
 def field_type_command(_, field_address, exe_ctx, result, internal_dict):
+    """
+    Returns runtime type of foo.bar.baz field in the form of
+    '(foo.bar.baz <TYPE_NAME>)'. If requested field could not be traced,
+    then '<NO_FIELD_FOUND>' plug is used for type name.
+    """
     fields = field_address.split(".")
 
     variable = exe_ctx.GetFrame().FindVariable(fields[0])
@@ -2395,17 +1872,14 @@ def field_type_command(_, field_address, exe_ctx, result, internal_dict):
     desc = "<NO_FIELD_FOUND>"
 
     if variable is not None:
-        cached_type_name = _get_cached_field_type_result(variable)
-        if cached_type_name is not None:
-            desc = cached_type_name
+        if variable.GetTypeName() == "ObjHeader *":
+            type_name = KonanProxyTypeProvider(variable, internal_dict).type_name()
+            if len(type_name) > 0:
+                desc = type_name
         else:
-            rt = _get_runtime_type(variable)
-            if len(rt) > 0:
-                desc = rt
-            else:
-                fallback = _fallback_display_type(variable)
-                if len(fallback) > 0:
-                    desc = fallback
+            type_name = variable.GetTypeName()
+            if type_name is not None and len(type_name) > 0:
+                desc = type_name
 
     result.write(f"{desc}")
 
@@ -2517,13 +1991,6 @@ def _init_logger():
 
 def __lldb_init_module(debugger, _):
     _init_logger()
-    target = debugger.GetSelectedTarget()
-    process = None if not target or not target.IsValid() else target.GetProcess()
-    if process is not None and process.IsValid():
-        try:
-            _ensure_inferior_scratch_buffer(process)
-        except DebuggerException:
-            pass
     _FACTORY["object"] = lambda x, y, z: FastKonanObjectSyntheticProvider(
         x, y, z
     )
