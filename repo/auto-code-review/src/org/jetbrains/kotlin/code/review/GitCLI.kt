@@ -12,6 +12,8 @@ interface LocalGit {
 
     suspend fun getDiff(from: GitSHA1, to: GitWorkingTree): GitDiff
 
+    suspend fun findHead(tree: GitWorkingTree): GitSHA1
+
     suspend fun lsFiles(tree: GitWorkingTree): List<ProjectFilePath>
 }
 
@@ -43,6 +45,10 @@ object GitCLI : LocalGit {
 
         return GitDiff(changedFiles, GitDiff.Origin.Local(from, to))
     }
+
+    override suspend fun findHead(tree: GitWorkingTree): GitSHA1 = GitSHA1(
+        gitOutput(tree, "rev-parse", "HEAD")
+    )
 
     override suspend fun lsFiles(tree: GitWorkingTree): List<ProjectFilePath> =
         gitOutput(tree, "ls-files").lines().map { ProjectFilePath(it) }

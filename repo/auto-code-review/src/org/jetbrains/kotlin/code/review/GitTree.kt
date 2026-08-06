@@ -45,5 +45,7 @@ class GitWorkingTree(val root: File, private val git: LocalGit) : GitTree {
     override suspend fun countCommitsAfter(ancestor: GitRevision): Int = git.countCommitsUpTo(this, ancestor)
     override suspend fun getDiffFrom(revision: GitSHA1): GitDiff = git.getDiff(from = revision, to = this)
 
+    suspend fun findHead(): GitSHA1 = git.findHead(this)
+
     suspend fun lsFiles(): List<ProjectFilePath> = git.lsFiles(this)
 }
