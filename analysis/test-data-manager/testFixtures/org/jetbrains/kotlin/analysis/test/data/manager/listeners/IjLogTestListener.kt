@@ -104,7 +104,7 @@ internal class IjLogTestListener(
         val endTime = System.currentTimeMillis()
 
         val eventType = if (testIdentifier.isContainer) "afterSuite" else "afterTest"
-        val resultType = when (result.status) {
+        val resultType = when (result.status!!) {
             TestExecutionResult.Status.SUCCESSFUL -> "SUCCESS"
             TestExecutionResult.Status.FAILED -> "FAILURE"
             TestExecutionResult.Status.ABORTED -> "SKIPPED"
