@@ -16,6 +16,10 @@ private fun testOnNativeAndJvm(action: () -> Unit) {
     testOn({ p -> p == TestPlatform.Jvm || p == TestPlatform.Native }, action)
 }
 
+private fun testExceptOnNativeAndWasm(action: () -> Unit) {
+    testOn({ it !in listOf(TestPlatform.Native, TestPlatform.WasmJs, TestPlatform.WasmWasi) }, action)
+}
+
 class StringNumberConversionTest {
 
     @Test fun toBoolean() {
@@ -179,7 +183,7 @@ class StringNumberConversionTest {
                 assertFailsOrNull("-infinity")
             }
 
-            testExceptOn(TestPlatform.Native) {
+            testExceptOnNativeAndWasm {
                 assertProduces("123e2147483647", Double.POSITIVE_INFINITY)
                 assertProduces("-123e2147483647", Double.NEGATIVE_INFINITY)
 
@@ -382,7 +386,7 @@ class StringNumberConversionTest {
                 assertFailsOrNull("-infinity")
             }
 
-            testExceptOn(TestPlatform.Native) {
+            testExceptOnNativeAndWasm {
                 assertProduces("123e2147483647", Float.POSITIVE_INFINITY)
                 assertProduces("-123e2147483647", Float.NEGATIVE_INFINITY)
 

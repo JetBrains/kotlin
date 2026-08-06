@@ -5,7 +5,7 @@
 
 package kotlin.text
 
-import kotlin.native.internal.FloatingPointParser
+import kotlin.FloatingPointParser
 import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.escapeAnalysis.Escapes
 
