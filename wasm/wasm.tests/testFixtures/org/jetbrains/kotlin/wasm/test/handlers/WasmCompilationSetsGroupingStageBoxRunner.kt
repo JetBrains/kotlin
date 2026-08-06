@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.wasm.test.handlers
 
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
+import org.jetbrains.kotlin.test.grouping.hasGroupedTestsDriver
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -68,7 +69,15 @@ open class WasmCompilationSetsGroupingStageBoxRunner(
             "Unexpected artifact type: ${artifact::class}"
         }
         return if (isWasiTarget) {
-            wasiBoxRunner.runWasmCode(artifact, useUnitTestRunnerOnly, outputCollector, throwOnExceptions = false)
+            // `wasiBoxRunner` is built on the per-test services, so the driver-presence marker — recorded by the
+            // stage-2 facade on the batch-level services — has to be handed to it explicitly.
+            wasiBoxRunner.runWasmCode(
+                artifact,
+                useUnitTestRunnerOnly,
+                outputCollector,
+                throwOnExceptions = false,
+                callGroupedTestsDriver = testServices.hasGroupedTestsDriver,
+            )
         } else {
             wasmBoxRunner.runWasmCode(artifact, useUnitTestRunnerOnly, outputCollector, throwOnExceptions = false)
         }
