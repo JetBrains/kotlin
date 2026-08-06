@@ -92,7 +92,9 @@ projectTests {
         requirePlatformLibs = false,
         customTestDependencies = listOf(sandboxAnnotationsNativeRuntimeForTests),
         compilerPluginDependencies = listOf(sandboxPluginForTests)
-    )
+    ) {
+        domainsEnabled.add(Domain.Native)
+    }
 
     testGenerator("org.jetbrains.kotlin.plugin.sandbox.TestGeneratorKt", generateTestsInBuildDirectory = true)
 
