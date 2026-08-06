@@ -25,6 +25,8 @@ sourceSets {
 }
 
 kotlin {
+    explicitApiWarning()
+
     compilerOptions.optIn.addAll(
         listOf(
             "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
