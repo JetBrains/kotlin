@@ -9,6 +9,7 @@ package kotlin.wasm.internal
 
 import kotlin.coroutines.*
 import kotlin.internal.DoNotInlineOnFirstStage
+import kotlin.internal.InlineOnly
 import kotlin.internal.UsedFromCompilerGeneratedCode
 
 @PublishedApi
@@ -76,3 +77,17 @@ internal fun <R, P, T> startCoroutineUninterceptedOrReturnIntrinsic2(
 internal val EmptyContinuation: Continuation<Any?> = Continuation(EmptyCoroutineContext) { result ->
     val _ = result.getOrThrow()
 }
+
+// For State Machine:   (cont as? CoroutineImpl)?.intercepted() ?: cont
+// For Stack Switching: (cont as? CoroutineImplStackSwitching<*, *>)?.intercepted() ?: cont
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+@UsedFromCompilerGeneratedCode
+internal fun <T> interceptedIntrinsic(cont: Continuation<T>): Continuation<T> =
+    implementedAsIntrinsic
+
+@InlineOnly
+@PublishedApi
+@UsedFromCompilerGeneratedCode
+internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(noinline block: (Continuation<T>) -> Any?): T =
+    suspendCoroutineUninterceptedOrReturnIntrinsic(block)
