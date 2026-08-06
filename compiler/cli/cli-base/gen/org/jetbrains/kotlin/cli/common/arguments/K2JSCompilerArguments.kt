@@ -14,6 +14,16 @@ import org.jetbrains.kotlin.config.LanguageFeature
 @Suppress("DEPRECATION")
 class K2JSCompilerArguments : K2WasmCompilerArguments() {
     @Argument(
+        value = "-Xdts-use-unknown-instead-any",
+        description = "Export 'dynamic' and 'Any' Kotlin types as 'unknown' TypeScript type (instead of `any`).",
+    )
+    var useUnknownInsteadAny: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xenable-extension-functions-in-externals",
         description = "Enable extension function members in external interfaces.",
     )
@@ -214,16 +224,6 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
     )
     @Enables(LanguageFeature.JsExportingSuspendLambdas)
     var allowExportingSuspendLambdas: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xts-export-untyped-as-unknown",
-        description = "Export 'dynamic' and 'Any' Kotlin types as 'unknown' TypeScript type.",
-    )
-    var exportUntypedAsUnknown: Boolean = false
         set(value) {
             checkFrozen()
             field = value

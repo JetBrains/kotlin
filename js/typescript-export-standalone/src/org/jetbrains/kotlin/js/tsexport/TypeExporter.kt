@@ -39,6 +39,9 @@ internal class TypeExporter(
      */
     private val currentlyProcessedTypes = hashSetOf<KaType>()
 
+    private val anyOrUnknown: ExportedType
+        get() = if (config.useUnknownInsteadAny) Primitive.Unknown else Primitive.Any
+
     context(_: KaSession)
     internal fun exportType(type: KaType, inlineClassesShouldBeUnboxed: Boolean = false): ExportedType {
         val abbreviation = type.abbreviation
@@ -53,11 +56,8 @@ internal class TypeExporter(
 
     context(_: KaSession)
     private fun exportTypeOrAlias(type: KaType, inlineClassesShouldBeUnboxed: Boolean): ExportedType {
-        if (config.exportUntypedAsUnknown && (type is KaDynamicType || type.classId == KaStandardTypeClassIds.ANY))
-            return Primitive.Unknown
-
         if (type is KaDynamicType || type in currentlyProcessedTypes)
-            return Primitive.Any
+            return anyOrUnknown
 
         if (type !is KaClassType && type !is KaTypeParameterType)
             @OptIn(KaExperimentalApi::class)
@@ -101,7 +101,7 @@ internal class TypeExporter(
         if (type.classId == KaStandardTypeClassIds.STRING)
             return Primitive.String
         if (type.classId == KaStandardTypeClassIds.ANY)
-            return Primitive.Any
+            return anyOrUnknown
         if (type.classId == KaStandardTypeClassIds.UNIT)
             return Primitive.Unit
         if (type.classId == KaStandardTypeClassIds.NOTHING)
@@ -192,12 +192,12 @@ internal class TypeExporter(
                 val exportedSupertype = if (isImplicitlyExported && superTypeApproximator != null) {
                     val transitiveExportedTypes = superTypeApproximator.collectSuperTypesTransitiveHierarchyFor(type)
                     if (transitiveExportedTypes.isEmpty()) {
-                        Primitive.Any
+                        anyOrUnknown
                     } else {
                         transitiveExportedTypes.foldMap({ exportType(it) }, ExportedType::IntersectionType)
                     }
                 } else {
-                    Primitive.Any
+                    anyOrUnknown
                 }
 
                 val classType = ClassType(
@@ -239,6 +239,6 @@ internal class TypeExporter(
     context(_: KaSession)
     fun exportTypeArgument(typeArgument: KaTypeProjection): ExportedType = when (typeArgument) {
         is KaTypeArgumentWithVariance -> exportType(typeArgument.type)
-        is KaStarTypeProjection -> Primitive.Any
+        is KaStarTypeProjection -> Primitive.Any // we keep any as a supertype, otherwise it will not compile with there is an upper bound different from Any
     }
 }

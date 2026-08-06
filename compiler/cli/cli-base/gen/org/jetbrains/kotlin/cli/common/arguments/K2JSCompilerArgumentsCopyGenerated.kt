@@ -14,7 +14,6 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.allowExportingSuspendLambdas = from.allowExportingSuspendLambdas
     to.allowImplementableInterfacesExporting = from.allowImplementableInterfacesExporting
     to.compileLongAsBigInt = from.compileLongAsBigInt
-    to.exportUntypedAsUnknown = from.exportUntypedAsUnknown
     to.extensionFunctionsInExternals = from.extensionFunctionsInExternals
     to.generatePolyfills = from.generatePolyfills
     to.integerDivisionCheck = from.integerDivisionCheck
@@ -33,6 +32,7 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.useEsArrowFunctions = from.useEsArrowFunctions
     to.useEsClasses = from.useEsClasses
     to.useEsGenerators = from.useEsGenerators
+    to.useUnknownInsteadAny = from.useUnknownInsteadAny
 
     return to
 }
