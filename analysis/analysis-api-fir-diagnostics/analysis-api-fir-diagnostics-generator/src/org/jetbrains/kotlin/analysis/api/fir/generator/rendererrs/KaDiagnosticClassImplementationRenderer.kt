@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -64,4 +64,7 @@ object KaDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
         "org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic",
         "org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken",
     )
+
+    // The implementations are internal, so they opt in rather than propagate the requirement.
+    override val optInMarkers = listOf("org.jetbrains.kotlin.analysis.api.fir.diagnostics.KaUnstableDiagnosticApi")
 }

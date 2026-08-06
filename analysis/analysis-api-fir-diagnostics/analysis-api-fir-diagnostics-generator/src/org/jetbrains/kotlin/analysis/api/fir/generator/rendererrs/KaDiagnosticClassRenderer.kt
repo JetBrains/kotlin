@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,6 +21,7 @@ object KaDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
     }
 
     private fun SmartPrinter.printDiagnosticClasses(diagnosticList: HLDiagnosticList) {
+        println(KA_UNSTABLE_DIAGNOSTIC_API)
         println(SUBCLASS_OPT_IN_REQUIRED)
         printBlock("public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI>") {
             for (diagnostic in diagnosticList.diagnostics) {
@@ -31,6 +32,7 @@ object KaDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
     }
 
     private fun SmartPrinter.printDiagnosticClass(diagnostic: HLDiagnostic, diagnosticList: HLDiagnosticList) {
+        println(KA_UNSTABLE_DIAGNOSTIC_API)
         println(SUBCLASS_OPT_IN_REQUIRED)
         print("public interface ${diagnostic.className} : KaFirDiagnostic<")
         printTypeWithShortNames(diagnostic.original.psiType)
@@ -80,3 +82,10 @@ object KaDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
  * Diagnostics are not `sealed`: the list is driven by the compiler and changes freely, so the hierarchy cannot be closed.
  */
 private const val SUBCLASS_OPT_IN_REQUIRED = "@SubclassOptInRequired(KaImplementationDetail::class)"
+
+/**
+ * Every diagnostic is unstable, as the Analysis API does not control the compiler's set of diagnostics.
+ *
+ * The marker is declared in the generated package, so it needs no import.
+ */
+private const val KA_UNSTABLE_DIAGNOSTIC_API = "@KaUnstableDiagnosticApi"
