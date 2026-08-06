@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.putClassTypeArgument
 import org.jetbrains.kotlin.ir.util.toIrConst
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.ir.util.getArrayElementType
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.parentOrNull
-import org.jetbrains.kotlin.ir.util.isSubtypeOf
 
 class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
     private val irBuiltins = context.irBuiltIns
@@ -46,39 +46,56 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
         return klass.functions.single { it.isEqualsInheritedFromAny() }
     }
 
-    private fun generateStartCoroutineUninterceptedOrReturnIntrinsic(
+    private fun generateStartCoroutineUninterceptedOrReturnIntrinsicStackSwitching(
+        arity: Int,
         call: IrCall,
         builder: DeclarationIrBuilder,
-        arity: Int,
     ): IrExpression {
-        if (context.wasmUseStackSwitching) {
-            val stackSwitchingIntrinsics = symbols.coroutinesStackSwitchingIntrinsics!!
-            val wasmCont = builder.irCall(stackSwitchingIntrinsics.suspendFunctionToContrefImpl[arity]).apply {
-                copyTypeAndValueArgumentsFrom(call)
-            }
-            return builder.irCall(stackSwitchingIntrinsics.resumeWithImpl).apply {
-                arguments[0] = wasmCont
-            }
+        val stackSwitchingIntrinsics = symbols.coroutinesStackSwitchingIntrinsics!!
+
+        val suspendFunctionToContrefImpl = when (arity) {
+            0 -> stackSwitchingIntrinsics.suspendFunction0ToContrefImpl
+            1 -> stackSwitchingIntrinsics.suspendFunction1ToContrefImpl
+            2 -> stackSwitchingIntrinsics.suspendFunction2ToContrefImpl
+            else -> error("Unsupported suspend function arity: $arity")
         }
 
+        val wasmCont = builder.irCall(suspendFunctionToContrefImpl).apply {
+            copyTypeAndValueArgumentsFrom(call)
+        }
+        return builder.irCall(stackSwitchingIntrinsics.resumeWithImpl).apply {
+            arguments[0] = wasmCont
+        }
+    }
+
+    private fun generateStartCoroutineUninterceptedOrReturnIntrinsicStateMachine(
+        arity: Int,
+        call: IrCall,
+        builder: DeclarationIrBuilder,
+    ): IrExpression {
         val createSymbol = symbols.coroutinesStateMachineIntrinsics!!.createSimpleCoroutineFromSuspendFunction
-        val createdCoroutine = builder.irCall(createSymbol).apply {
-            typeArguments[0] = call.typeArguments.last()  // T
-            arguments[0] = call.arguments.last()!!        // completion
-        }
+        val invokeSymbol = irBuiltins.suspendFunctionN(arity).getSimpleFunction("invoke")!!
+        val coroutineImplType = symbols.coroutineImpl.starProjectedType
 
-        val fType = call.arguments[0]!!.type
-        val coroutineImplClass = symbols.coroutineImpl.owner
-        val wrappedCompletion =
-            if (fType.isSubtypeOf(coroutineImplClass.defaultType.type, context.typeSystem)) {
-                call.arguments.last()!!  // f is already a CoroutineImpl — pass completion directly
-            } else {
-                createdCoroutine
+        return builder.irComposite(resultType = call.type) {
+            val f = (call.arguments[0] as IrGetValue).symbol.owner
+            val completion = (call.arguments.last() as IrGetValue).symbol.owner
+
+            // If suspend function is not a CoroutineImpl, wrap Completion into CoroutineImpl.
+            val wrappedCompletion =
+                builder.irIfThenElse(
+                    type = completion.type,
+                    condition = irIs(irGet(f), coroutineImplType),
+                    thenPart = irGet(completion),
+                    elsePart = irCall(createSymbol).apply {
+                        typeArguments[0] = call.typeArguments.last()
+                        arguments[0] = irGet(completion)
+                    }
+                )
+
+            +irCall(call, invokeSymbol).apply {
+                arguments[arguments.lastIndex] = wrappedCompletion
             }
-
-        val functionSymbol = irBuiltins.suspendFunctionN(arity).getSimpleFunction("invoke")!!
-        return irCall(call, functionSymbol).apply {
-            arguments[arguments.lastIndex] = wrappedCompletion
         }
     }
 
@@ -200,14 +217,15 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     }
                 }
             }
-            symbols.startCoroutineUninterceptedOrReturnIntrinsic0 ->
-                return generateStartCoroutineUninterceptedOrReturnIntrinsic(call, builder, arity = 0)
-
-            symbols.startCoroutineUninterceptedOrReturnIntrinsic1 ->
-                return generateStartCoroutineUninterceptedOrReturnIntrinsic(call, builder, arity = 1)
-
-            symbols.startCoroutineUninterceptedOrReturnIntrinsic2 ->
-                return generateStartCoroutineUninterceptedOrReturnIntrinsic(call, builder, arity = 2)
+            symbols.startCoroutineUninterceptedOrReturnIntrinsic0,
+            symbols.startCoroutineUninterceptedOrReturnIntrinsic1,
+            symbols.startCoroutineUninterceptedOrReturnIntrinsic2 -> {
+                val arity = call.arguments.size - 2
+                return if (context.wasmUseStackSwitching)
+                    generateStartCoroutineUninterceptedOrReturnIntrinsicStackSwitching(arity, call, builder)
+                else
+                    generateStartCoroutineUninterceptedOrReturnIntrinsicStateMachine(arity, call, builder)
+            }
 
             // For State Machine:   (cont as? CoroutineImpl)?.intercepted() ?: cont
             // For Stack Switching: (cont as? CoroutineImplStackSwitching<*, *>)?.intercepted() ?: cont

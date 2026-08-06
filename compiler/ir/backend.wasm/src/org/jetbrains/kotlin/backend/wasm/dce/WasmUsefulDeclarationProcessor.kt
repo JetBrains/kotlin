@@ -90,11 +90,13 @@ internal class WasmUsefulDeclarationProcessor(
                 call.typeArguments[0]?.enqueueRuntimeClassOrAny(from, "intrinsic ${call.symbol.owner.name}")
                 true
             }
-            in context.wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendFunctionToContref ?: emptyList() -> {
-                val classType = call.arguments[0]!!.type
-                classType.classOrFail.functions.singleOrNull {
-                    it.owner.name.asString() == "invoke"
-                }!!.owner.enqueue(from, "suspend invoke")
+            context.wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendFunction0ToContref,
+            context.wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendFunction1ToContref,
+            context.wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendFunction2ToContref -> {
+                val arity = call.arguments.size - 2
+                context.irBuiltIns.suspendFunctionN(arity)
+                    .getSimpleFunction("invoke")!!
+                    .owner.enqueue(from, "suspend invoke")
                 true
             }
             context.wasmSymbols.boxIntrinsic -> {
