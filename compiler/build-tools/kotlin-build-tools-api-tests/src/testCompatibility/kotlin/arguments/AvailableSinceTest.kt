@@ -210,11 +210,6 @@ class AvailableSinceTest : BaseCompilationTest() {
                         trySet(JvmSnapshotBasedIncrementalCompilationConfiguration.ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES.availableSinceVersion) {
                             this[JvmSnapshotBasedIncrementalCompilationConfiguration.ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES] = false
                         }
-                        @OptIn(ExperimentalCompilerArgument::class)
-                        trySet(JvmSnapshotBasedIncrementalCompilationConfiguration.USE_FIR_RUNNER.availableSinceVersion) {
-                            @OptIn(ExperimentalCompilerArgument::class)
-                            this[JvmSnapshotBasedIncrementalCompilationConfiguration.USE_FIR_RUNNER] = false
-                        }
                     }
             }
         }

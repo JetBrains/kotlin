@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1
 import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1Adapter.JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter.Companion.OUTPUT_DIRS
 import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1Adapter.JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter.Companion.PRECISE_JAVA_TRACKING
 import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1Adapter.JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter.Companion.ROOT_PROJECT_DIR
-import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1Adapter.JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.internal.compat.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.incremental.isJavaFile
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -266,7 +265,6 @@ private class JvmCompilationOperationV1Adapter private constructor(
                     )
                 )
                 .forceNonIncrementalMode(icConfig[FORCE_RECOMPILATION])
-                .useFirRunner(icConfig[USE_FIR_RUNNER])
             config.useIncrementalCompilation(
                 icConfig.workingDirectory.toFile(),
                 icConfig.sourcesChanges,
@@ -383,8 +381,6 @@ private class JvmCompilationOperationV1Adapter private constructor(
 
             val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> =
                 Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES", false)
-
-            val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", false)
         }
     }
 
