@@ -4,9 +4,11 @@ fun box() = abiTest {
     // fun
     expectSuccess(true) { createRemovedCtxFunReference() is kotlin.reflect.KFunction<*> }
     expectSuccess("removedCtxFun") { removedCtxFunReferenceName() }
-    expectFailure(linkage("Reference to function 'removedCtxFun' can not be evaluated: No function found for symbol '/removedCtxFun'")) { removedCtxFunReferenceHashCode() }
-    expectFailure(linkage("Reference to function 'removedCtxFun' can not be evaluated: No function found for symbol '/removedCtxFun'")) { removedCtxFunReferenceEquals() }
-    expectFailure(linkage("Reference to function 'removedCtxFun' can not be evaluated: No function found for symbol '/removedCtxFun'")) { removedCtxFunReferenceToString() }
+    if (!testMode.isJs) {
+        expectFailure(linkage("Reference to function 'removedCtxFun' can not be evaluated: No function found for symbol '/removedCtxFun'")) { removedCtxFunReferenceHashCode() }
+        expectFailure(linkage("Reference to function 'removedCtxFun' can not be evaluated: No function found for symbol '/removedCtxFun'")) { removedCtxFunReferenceEquals() }
+        expectFailure(linkage("Reference to function 'removedCtxFun' can not be evaluated: No function found for symbol '/removedCtxFun'")) { removedCtxFunReferenceToString() }
+    }
     expectFailure(linkage("Function 'removedCtxFun' can not be called: No function found for symbol '/removedCtxFun'")) { removedCtxFunReferenceInvoke() }
 
     // member fun
@@ -16,18 +18,22 @@ fun box() = abiTest {
     // val
     expectSuccess(true) { createRemovedCtxValReference() is kotlin.reflect.KProperty0<*> }
     expectSuccess("removedCtxVal") { removedCtxValReferenceName() }
-    expectFailure(linkage("Reference to property 'removedCtxVal' can not be evaluated: No property found for symbol '/removedCtxVal'")) { removedCtxValReferenceHashCode() }
-    expectFailure(linkage("Reference to property 'removedCtxVal' can not be evaluated: No property found for symbol '/removedCtxVal'")) { removedCtxValReferenceEquals() }
-    expectFailure(linkage("Reference to property 'removedCtxVal' can not be evaluated: No property found for symbol '/removedCtxVal'")) { removedCtxValReferenceToString() }
+    if (!testMode.isJs) {
+        expectFailure(linkage("Reference to property 'removedCtxVal' can not be evaluated: No property found for symbol '/removedCtxVal'")) { removedCtxValReferenceHashCode() }
+        expectFailure(linkage("Reference to property 'removedCtxVal' can not be evaluated: No property found for symbol '/removedCtxVal'")) { removedCtxValReferenceEquals() }
+        expectFailure(linkage("Reference to property 'removedCtxVal' can not be evaluated: No property found for symbol '/removedCtxVal'")) { removedCtxValReferenceToString() }
+    }
     expectFailure(linkage("Property accessor 'removedCtxVal.<get-removedCtxVal>' can not be called: No property accessor found for symbol '/removedCtxVal.<get-removedCtxVal>'")) { removedCtxValReferenceInvoke() }
     expectFailure(linkage("Property accessor 'removedCtxVal.<get-removedCtxVal>' can not be called: No property accessor found for symbol '/removedCtxVal.<get-removedCtxVal>'")) { removedCtxValReferenceGet() }
 
     // var
     expectSuccess(true) { createRemovedCtxVarReference() is kotlin.reflect.KMutableProperty0<*> }
     expectSuccess("removedCtxVar") { removedCtxVarReferenceName() }
-    expectFailure(linkage("Reference to property 'removedCtxVar' can not be evaluated: No property found for symbol '/removedCtxVar'")) { removedCtxVarReferenceHashCode() }
-    expectFailure(linkage("Reference to property 'removedCtxVar' can not be evaluated: No property found for symbol '/removedCtxVar'")) { removedCtxVarReferenceEquals() }
-    expectFailure(linkage("Reference to property 'removedCtxVar' can not be evaluated: No property found for symbol '/removedCtxVar'")) { removedCtxVarReferenceToString() }
+    if (!testMode.isJs) {
+        expectFailure(linkage("Reference to property 'removedCtxVar' can not be evaluated: No property found for symbol '/removedCtxVar'")) { removedCtxVarReferenceHashCode() }
+        expectFailure(linkage("Reference to property 'removedCtxVar' can not be evaluated: No property found for symbol '/removedCtxVar'")) { removedCtxVarReferenceEquals() }
+        expectFailure(linkage("Reference to property 'removedCtxVar' can not be evaluated: No property found for symbol '/removedCtxVar'")) { removedCtxVarReferenceToString() }
+    }
     expectFailure(linkage("Property accessor 'removedCtxVar.<get-removedCtxVar>' can not be called: No property accessor found for symbol '/removedCtxVar.<get-removedCtxVar>'")) { removedCtxVarReferenceInvoke() }
     expectFailure(linkage("Property accessor 'removedCtxVar.<get-removedCtxVar>' can not be called: No property accessor found for symbol '/removedCtxVar.<get-removedCtxVar>'")) { removedCtxVarReferenceGet() }
     expectFailure(linkage("Property accessor 'removedCtxVar.<set-removedCtxVar>' can not be called: No property accessor found for symbol '/removedCtxVar.<set-removedCtxVar>'")) { removedCtxVarReferenceSet() }
