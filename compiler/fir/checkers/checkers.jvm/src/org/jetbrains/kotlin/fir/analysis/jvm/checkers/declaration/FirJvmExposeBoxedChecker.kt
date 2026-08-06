@@ -155,8 +155,8 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
 
     // If the inline class is not return type, it is safe to name both boxed and unboxed versions the same.
     private fun FirCallableDeclaration.canBeOverloadedByExposed(session: FirSession): Boolean {
-        if (receiverParameter?.typeRef?.isInline(session) == true) return true
-        if (contextParameters.any { it.returnTypeRef.isInline(session) }) return true
+        if (propertyIfAccessor.receiverParameter?.typeRef?.isInline(session) == true) return true
+        if (propertyIfAccessor.contextParameters.any { it.returnTypeRef.isInline(session) }) return true
         if (this is FirFunction && valueParameters.any { it.returnTypeRef.isInline(session) }) return true
         // Check dispatch receiver as well - we use `-impl` suffix for them
         if (this !is FirConstructor) {
