@@ -9,12 +9,14 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import kotlin.reflect.KClass
 
+@KaUnstableDiagnosticApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompilerPluginDiagnostic0 : KaFirDiagnostic<PsiElement> {
     override val diagnosticClass: KClass<KaCompilerPluginDiagnostic0>
         get() = KaCompilerPluginDiagnostic0::class
 }
 
+@KaUnstableDiagnosticApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompilerPluginDiagnostic1 : KaFirDiagnostic<PsiElement> {
     public val parameter1: Any?
@@ -23,6 +25,7 @@ public interface KaCompilerPluginDiagnostic1 : KaFirDiagnostic<PsiElement> {
         get() = KaCompilerPluginDiagnostic1::class
 }
 
+@KaUnstableDiagnosticApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompilerPluginDiagnostic2 : KaFirDiagnostic<PsiElement> {
     public val parameter1: Any?
@@ -32,6 +35,7 @@ public interface KaCompilerPluginDiagnostic2 : KaFirDiagnostic<PsiElement> {
         get() = KaCompilerPluginDiagnostic2::class
 }
 
+@KaUnstableDiagnosticApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompilerPluginDiagnostic3 : KaFirDiagnostic<PsiElement> {
     public val parameter1: Any?
@@ -42,6 +46,7 @@ public interface KaCompilerPluginDiagnostic3 : KaFirDiagnostic<PsiElement> {
         get() = KaCompilerPluginDiagnostic3::class
 }
 
+@KaUnstableDiagnosticApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompilerPluginDiagnostic4 : KaFirDiagnostic<PsiElement> {
     public val parameter1: Any?
