@@ -585,7 +585,6 @@ Caused by: java.lang.AssertionError: assert
      * before the classpath is passed to the compiler, every affected entry is reported as a non-existent location.
      */
     @Test
-    @Disabled
     fun testClasspathEntryWithSpaces() {
         val dirWithSpaces = tmpdir.resolve("dir with spaces")
         kotlincInProcess(
