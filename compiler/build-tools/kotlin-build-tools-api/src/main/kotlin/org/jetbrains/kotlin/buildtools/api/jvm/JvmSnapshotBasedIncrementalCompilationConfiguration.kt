@@ -314,12 +314,13 @@ constructor(
         public val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> = Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES", KotlinReleaseVersion(2, 3, 0))
 
         /**
-         * Controls whether the *experimental* incremental runner based on Kotlin compiler FIR is used.
-         * This runner only works with Kotlin Language Version 2.0+ and is disabled by default.
+         * Used to control whether the *experimental* incremental runner based on Kotlin compiler FIR is used.
+         *
+         * The option has no effect. The FIR runner has been removed in 2.5.0.
          */
         @JvmField
         @ExperimentalCompilerArgument
-        @Deprecated("The FIR runner is deprecated and will be removed in Kotlin 2.5.0.", level = DeprecationLevel.ERROR)
+        @Deprecated("The option has no effect. The FIR runner has been removed in 2.5.0.", level = DeprecationLevel.ERROR)
         public val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", KotlinReleaseVersion(2, 3, 0))
 
         /**
@@ -468,12 +469,13 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions : BaseIncremental
         public val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> = Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES")
 
         /**
-         * Controls whether the *experimental* incremental runner based on Kotlin compiler FIR is used.
-         * This runner only works with Kotlin Language Version 2.0+ and is disabled by default.
+         * Used to control whether the *experimental* incremental runner based on Kotlin compiler FIR is used.
+         *
+         * The option has no effect. The FIR runner has been removed in 2.5.0.
          */
         @JvmField
         @ExperimentalCompilerArgument
-        @Deprecated("The FIR runner is deprecated and will be removed in Kotlin 2.5.0.", level = DeprecationLevel.ERROR)
+        @Deprecated("The option has no effect. The FIR runner has been removed in 2.5.0.", level = DeprecationLevel.ERROR)
         public val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER")
 
         /**
