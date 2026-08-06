@@ -52,7 +52,6 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
                     buildDir = options.buildDir,
                     kotlinScriptExtensions = ktsExtensionsAsArray,
                     icFeatures = options.extractIncrementalCompilationFeatures(),
-                    useJvmFirRunner = false,
                 )
             }
             // no IC configuration -> non-incremental compilation
