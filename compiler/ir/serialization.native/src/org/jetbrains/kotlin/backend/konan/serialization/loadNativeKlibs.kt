@@ -86,7 +86,8 @@ fun loadNativeKlibs(
         exported = result.loadFriendLibraries(configuration.exportedLibraries)
             .selectLibrariesEligibleToBeIncludedOrExported(configuration, K2NativeCompilerArguments::exportedLibraries),
         included = result.loadFriendLibraries(configuration.konanIncludedLibraries)
-            .selectLibrariesEligibleToBeIncludedOrExported(configuration, K2NativeCompilerArguments::includes)
+            .selectLibrariesEligibleToBeIncludedOrExported(configuration, K2NativeCompilerArguments::includes),
+        toAddToCache = result.loadFriendLibraries(listOfNotNull(configuration.konanLibraryToAddToCache)).firstOrNull(),
     )
 }
 

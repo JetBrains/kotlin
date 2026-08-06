@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 
 /**
@@ -70,7 +71,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         configuration: CompilerConfiguration,
         arguments: K2NativeCompilerArguments,
     ) {
-        val commonSources = arguments.commonSources.toSet().map { java.io.File(it).absoluteFile.normalize() }
+        val commonSources = arguments.commonSources.toSet().map { File(it).absoluteFile.normalize() }
         val hmppModuleStructure = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
         arguments.freeArgs.forEach { path ->
             val normalizedPath = java.io.File(path).absoluteFile.normalize()
@@ -107,7 +108,15 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
 
         // TODO(KT-61096): Add a check when -Xinclude argument can be actually used!
         configuration.konanIncludedLibraries = arguments.includes.toList()
-        configuration.konanLibraries += configuration.konanIncludedLibraries
+
+        // TODO(KT-61096): Add a check when -Xadd-cache argument can be actually used!
+        arguments.libraryToAddToCache?.let { configuration.konanLibraryToAddToCache = it }
+
+        configuration.konanLibraries = buildList {
+            this += configuration.konanLibraries
+            this += configuration.konanIncludedLibraries
+            addIfNotNull(configuration.konanLibraryToAddToCache)
+        }
 
         configuration.konanNoStdlib = arguments.nostdlib
         configuration.konanNoDefaultLibs = arguments.nodefaultlibs

@@ -49,10 +49,14 @@ class LoadedKlibs(
  *
  * @property included Only the included KLIBs ([K2NativeCompilerArguments.includes] CLI option), if there were any.
  *  Note: [included] is also in [all].
+ *
+ * @property toAddToCache A library to add to Kotlin/Native static caches ([K2NativeCompilerArguments.libraryToAddToCache] CLI option), if there was any.
+ *  Note: [toAddToCache] is also in [all].
  */
 class LoadedNativeKlibs(
     val all: List<KotlinLibrary>,
     val friends: List<KotlinLibrary> = emptyList(),
     val exported: List<KotlinLibrary> = emptyList(),
     val included: List<KotlinLibrary> = emptyList(),
+    val toAddToCache: KotlinLibrary? = null,
 )
