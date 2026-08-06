@@ -46,6 +46,42 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
         return klass.functions.single { it.isEqualsInheritedFromAny() }
     }
 
+    private fun generateStartCoroutineUninterceptedOrReturnIntrinsic(
+        call: IrCall,
+        builder: DeclarationIrBuilder,
+        arity: Int,
+    ): IrExpression {
+        if (context.wasmUseStackSwitching) {
+            val stackSwitchingIntrinsics = symbols.coroutinesStackSwitchingIntrinsics!!
+            val wasmCont = builder.irCall(stackSwitchingIntrinsics.suspendFunctionToContrefImpl[arity]).apply {
+                copyTypeAndValueArgumentsFrom(call)
+            }
+            return builder.irCall(stackSwitchingIntrinsics.resumeWithImpl).apply {
+                arguments[0] = wasmCont
+            }
+        }
+
+        val createSymbol = symbols.coroutinesStateMachineIntrinsics!!.createSimpleCoroutineFromSuspendFunction
+        val createdCoroutine = builder.irCall(createSymbol).apply {
+            typeArguments[0] = call.typeArguments.last()  // T
+            arguments[0] = call.arguments.last()!!        // completion
+        }
+
+        val fType = call.arguments[0]!!.type
+        val coroutineImplClass = symbols.coroutineImpl.owner
+        val wrappedCompletion =
+            if (fType.isSubtypeOf(coroutineImplClass.defaultType.type, context.typeSystem)) {
+                call.arguments.last()!!  // f is already a CoroutineImpl — pass completion directly
+            } else {
+                createdCoroutine
+            }
+
+        val functionSymbol = irBuiltins.suspendFunctionN(arity).getSimpleFunction("invoke")!!
+        return irCall(call, functionSymbol).apply {
+            arguments[arguments.lastIndex] = wrappedCompletion
+        }
+    }
+
     private fun transformCall(
         call: IrCall,
         builder: DeclarationIrBuilder
@@ -164,42 +200,15 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     }
                 }
             }
-            in symbols.startCoroutineUninterceptedOrReturnIntrinsics -> {
-                val arity = symbols.startCoroutineUninterceptedOrReturnIntrinsics.indexOf(symbol)
-                if (context.wasmUseStackSwitching) {
-                    val suspendFunctionToWasmCont = symbols.coroutinesStackSwitchingIntrinsics!!.suspendFunctionToContrefImpl[arity]
-                    val wasmCont = builder.irCall(suspendFunctionToWasmCont).apply {
-                        for (i in 0 until call.typeArguments.size) typeArguments[i] = call.typeArguments[i]
-                        for (i in 0 until call.arguments.size) arguments[i] = call.arguments[i]
-                    }
-                    val functionSymbol = symbols.coroutinesStackSwitchingIntrinsics.resumeWithImpl
-                    return builder.irCall(functionSymbol).apply {
-                        arguments[0] = wasmCont
-                    }
-                } else {
-                    val createSymbol = symbols.coroutinesStateMachineIntrinsics!!.createSimpleCoroutineFromSuspendFunction
-                    val createdCoroutine = builder.irCall(createSymbol).apply {
-                        typeArguments[0] = call.typeArguments.last()  // T
-                        arguments[0] = call.arguments.last()!!        // completion
-                    }
+            symbols.startCoroutineUninterceptedOrReturnIntrinsic0 ->
+                return generateStartCoroutineUninterceptedOrReturnIntrinsic(call, builder, arity = 0)
 
-                    val fType = call.arguments[0]!!.type
-                    val coroutineImplClass = symbols.coroutineImpl.owner  // CoroutineImplStateMachine
-                    val wrappedCompletion =
-                        if (fType.isSubtypeOf(coroutineImplClass.defaultType.type, context.typeSystem)) {
-                            call.arguments.last()!!  // f is already a CoroutineImpl — pass completion directly
-                        } else {
-                            createdCoroutine
-                        }
+            symbols.startCoroutineUninterceptedOrReturnIntrinsic1 ->
+                return generateStartCoroutineUninterceptedOrReturnIntrinsic(call, builder, arity = 1)
 
-                    val functionSymbol = irBuiltins.suspendFunctionN(arity).getSimpleFunction("invoke")!!
-                    return irCall(call, functionSymbol).apply {
-                        for (i in 0 until call.typeArguments.size) typeArguments[i] = call.typeArguments[i]
-                        for (i in 0 until call.arguments.size - 1) arguments[i] = call.arguments[i]
-                        arguments[call.arguments.size - 1] = wrappedCompletion
-                    }
-                }
-            }
+            symbols.startCoroutineUninterceptedOrReturnIntrinsic2 ->
+                return generateStartCoroutineUninterceptedOrReturnIntrinsic(call, builder, arity = 2)
+
             // For State Machine:   (cont as? CoroutineImpl)?.intercepted() ?: cont
             // For Stack Switching: (cont as? CoroutineImplStackSwitching<*, *>)?.intercepted() ?: cont
             symbols.interceptedIntrinsic -> {
