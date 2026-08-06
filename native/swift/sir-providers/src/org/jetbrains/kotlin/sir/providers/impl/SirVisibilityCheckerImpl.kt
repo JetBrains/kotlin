@@ -74,7 +74,7 @@ public class SirVisibilityCheckerImpl(
         if (deprecatedAnnotation?.level == DeprecationLevel.ERROR && (ktSymbol.containingDeclaration as? KaNamedClassSymbol)?.classKind == KaClassKind.INTERFACE) {
             return@withSessions SirAvailability.Unavailable("Protocol members with DeprecationLevel.ERROR are unsupported")
         }
-        if (ktSymbol is KaNamedFunctionSymbol && hasUnsupportedInputTypeParameters(ktSymbol)) {
+        if (ktSymbol is KaCallableSymbol && hasUnsupportedInputTypeParameters(ktSymbol)) {
             return@withSessions SirAvailability.Unavailable("Callables with parameters unbound generic types are not supported yet")
         }
         if (containsHidesFromObjCAnnotation(ktSymbol)) {
@@ -111,6 +111,7 @@ public class SirVisibilityCheckerImpl(
                     exported.visibility
                 } else return@withSessions exported
             }
+            is KaPropertySetterSymbol -> SirVisibility.PUBLIC
             is KaTypeAliasSymbol -> ktSymbol.expandedType.fullyExpandedType.let { type ->
                 if (type is KaFunctionType) {
                     val types = buildList {
@@ -265,7 +266,7 @@ private fun containsHidesFromObjCAnnotation(symbol: KaAnnotatedSymbol): Boolean 
 private val SUPPORTED_SYMBOL_ORIGINS = setOf(KaSymbolOrigin.SOURCE, KaSymbolOrigin.LIBRARY)
 
 context(ka: KaSession, sirSession: SirSession)
-private fun hasUnsupportedInputTypeParameters(ktSymbol: KaFunctionSymbol): Boolean =
+private fun hasUnsupportedInputTypeParameters(ktSymbol: KaCallableSymbol): Boolean =
     ktSymbol.allParameters.map { it.returnType }.any {
         hasUnboundInputTypeParameters(it, false)
     } || hasUnboundInputTypeParameters(ktSymbol.returnType, true)
@@ -289,19 +290,31 @@ private fun hasUnboundInputTypeParameters(
     } else if (isReturnType) {
         return@let false
     }
-    val typeParamUpperBounds = classType.symbol.typeParameters.map { typeParam ->
+    fun getUpperBound(typeParam: KaTypeParameterSymbol): KaType? {
         val upperBounds = typeParam.upperBounds
-        if (upperBounds.isEmpty()) return@map ka.builtinTypes.nullableAny // no upperbound indicates Any?
-        upperBounds.singleOrNull() // null indicates multiple bounds
+        if (upperBounds.isEmpty()) return ka.builtinTypes.nullableAny // no upperbound indicates Any?
+        return upperBounds.singleOrNull() // null indicates multiple bounds
     }
+
+    val typeParamUpperBounds = classType.symbol.typeParameters.map(::getUpperBound)
     if (typeParamUpperBounds.isEmpty()) return@let false
     classType.typeArguments.zipIfSizesAreEqual(typeParamUpperBounds)?.any { [argument, bound] ->
-        argument.type?.let { it != bound } ?: false // .type == null indicates star projection
+        var type = argument.type
+        if (type is KaTypeParameterType) {
+            type = getUpperBound(type.symbol)
+        }
+        type?.let { it != bound } ?: false // .type == null indicates star projection
     } ?: false
 } ?: false
 
-@OptIn(KaExperimentalApi::class)
-private val KaFunctionSymbol.allParameters get() = valueParameters + listOfNotNull(receiverParameter, receiverParameter) + contextParameters
+private val KaCallableSymbol.allParameters: List<KaParameterSymbol>
+    get() = buildList {
+        addAll(contextParameters)
+        addIfNotNull(receiverParameter)
+        if (this@allParameters is KaFunctionSymbol) {
+            addAll(valueParameters)
+        }
+    }
 
 context(ka: KaSession)
 private fun isClone(symbol: KaNamedFunctionSymbol): Boolean = with(ka) { isClone(symbol) }

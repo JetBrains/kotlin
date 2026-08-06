@@ -5,6 +5,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 _Bool kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable value, void * continuation, void * exception, void * cancellation);
 
+_Bool kotlinx_coroutines_flow_Flow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector____reverse_swift(void * self, void * collector, void * continuation, void * exception, void * cancellation);
+
 _Bool kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable value, void * continuation, void * exception, void * cancellation);
 
 _Bool kotlinx_coroutines_flow_MutableSharedFlow_resetReplayCache__reverse_swift(void * self);
@@ -19,6 +21,8 @@ void * _Nullable kotlinx_coroutines_flow_MutableStateFlow_value_get__reverse_swi
 
 _Bool kotlinx_coroutines_flow_MutableStateFlow_value_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable newValue);
 
+_Bool kotlinx_coroutines_flow_SharedFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector____reverse_swift(void * self, void * collector, void * continuation, void * exception, void * cancellation);
+
 NSArray<id> * kotlinx_coroutines_flow_SharedFlow_replayCache_get__reverse_swift(void * self);
 
 void * _Nullable kotlinx_coroutines_flow_StateFlow_value_get__reverse_swift(void * self);
@@ -30,6 +34,8 @@ _Bool KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesO
 void * kotlinx_coroutines_flow_FlowCollector__TypesOfArguments__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(_Bool (^function)(void * _Nullable , void *, void *, void *));
 
 _Bool kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable value, _Bool (^continuation)(_Bool), _Bool (^exception)(void * _Nullable ), void * cancellation);
+
+_Bool kotlinx_coroutines_flow_Flow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(void * self, void * collector, _Bool (^continuation)(_Bool), _Bool (^exception)(void * _Nullable ), void * cancellation);
 
 _Bool kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable value, _Bool (^continuation)(_Bool), _Bool (^exception)(void * _Nullable ), void * cancellation);
 
@@ -44,6 +50,8 @@ _Bool kotlinx_coroutines_flow_MutableStateFlow_compareAndSet__TypesOfArguments__
 void * _Nullable kotlinx_coroutines_flow_MutableStateFlow_value_get(void * self);
 
 _Bool kotlinx_coroutines_flow_MutableStateFlow_value_set__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable newValue);
+
+_Bool kotlinx_coroutines_flow_SharedFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(void * self, void * collector, _Bool (^continuation)(_Bool), _Bool (^exception)(void * _Nullable ), void * cancellation);
 
 NSArray<id> * kotlinx_coroutines_flow_SharedFlow_replayCache_get(void * self);
 

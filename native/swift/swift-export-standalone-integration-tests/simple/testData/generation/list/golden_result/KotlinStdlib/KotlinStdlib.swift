@@ -15,6 +15,11 @@ extension ExportedKotlinPackages.kotlin.collections.Collection where Self : Expo
     ) -> Swift.Bool {
         return kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
     }
+    public func containsAll(
+        elements: any ExportedKotlinPackages.kotlin.collections.Collection
+    ) -> Swift.Bool {
+        return kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection__(self.__externalRCRef(), elements.__externalRCRef())
+    }
     public func isEmpty() -> Swift.Bool {
         return kotlin_collections_Collection_isEmpty(self.__externalRCRef())
     }
@@ -65,6 +70,11 @@ extension ExportedKotlinPackages.kotlin.collections.List where Self : ExportedKo
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
         return kotlin_collections_List_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
+    }
+    public func containsAll(
+        elements: any ExportedKotlinPackages.kotlin.collections.Collection
+    ) -> Swift.Bool {
+        return kotlin_collections_List_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection__(self.__externalRCRef(), elements.__externalRCRef())
     }
     public func indexOf(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
@@ -173,6 +183,9 @@ extension ExportedKotlinPackages.kotlin.collections {
         func contains(
             element: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool
+        func containsAll(
+            elements: any ExportedKotlinPackages.kotlin.collections.Collection
+        ) -> Swift.Bool
         func isEmpty() -> Swift.Bool
         func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator
     }
@@ -192,6 +205,9 @@ extension ExportedKotlinPackages.kotlin.collections {
         ) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
         func contains(
             element: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool
+        func containsAll(
+            elements: any ExportedKotlinPackages.kotlin.collections.Collection
         ) -> Swift.Bool
         func indexOf(
             element: (any KotlinRuntimeSupport._KotlinBridgeable)?
@@ -244,6 +260,13 @@ extension ExportedKotlinPackages.kotlin.collections {
     public protocol __ListIterator: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__Iterator {
     }
 }
+@_cdecl("kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift")
+package func kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ elements: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Collection
+    let _result: Swift.Bool = _self.containsAll(elements: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: elements) as! any ExportedKotlinPackages.kotlin.collections.Collection)
+    return _result
+}
+
 @_cdecl("kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 package func kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ element: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Collection
@@ -333,6 +356,13 @@ package func kotlin_collections_ListIterator_previous__reverse_swift(_ `self`: S
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.ListIterator
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.previous()
     return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("kotlin_collections_List_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift")
+package func kotlin_collections_List_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ elements: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.List
+    let _result: Swift.Bool = _self.containsAll(elements: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: elements) as! any ExportedKotlinPackages.kotlin.collections.Collection)
+    return _result
 }
 
 @_cdecl("kotlin_collections_List_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")

@@ -6,6 +6,27 @@ import KotlinRuntimeSupport
 
 @_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.Flow where Self : ExportedKotlinPackages.kotlinx.coroutines.flow.__Flow {
+    public func collect(
+        collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
+    ) async throws -> Swift.Void {
+        try await withKotlinContinuation { continuation, exception, cancellation in
+            let _: Bool = kotlinx_coroutines_flow_Flow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), {
+                let originalBlock: (Swift.Void) -> Swift.Void = continuation
+                return { (arg0: Swift.Bool) in
+                    let _arg0: Swift.Void = { arg0; return () }()
+                    let _result = originalBlock(_arg0)
+                    return { _result; return true }()
+                }
+            }(), {
+                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
+                return { (arg0: Swift.UnsafeMutableRawPointer?) in
+                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
+                    let _result = originalBlock(_arg0)
+                    return { _result; return true }()
+                }
+            }(), cancellation.__externalRCRef())
+        }
+    }
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.Flow {
 }
@@ -105,6 +126,27 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow where Self :
             return kotlinx_coroutines_flow_SharedFlow_replayCache_get(self.__externalRCRef()) as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
         }
     }
+    public func collect(
+        collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
+    ) async throws -> Swift.Never {
+        try await withKotlinContinuation { continuation, exception, cancellation in
+            let _: Bool = kotlinx_coroutines_flow_SharedFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), {
+                let originalBlock: (Swift.Never) -> Swift.Void = continuation
+                return { (arg0: Swift.Bool) in
+                    let _arg0: Swift.Never = { arg0; fatalError() }()
+                    let _result = originalBlock(_arg0)
+                    return { _result; return true }()
+                }
+            }(), {
+                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
+                return { (arg0: Swift.UnsafeMutableRawPointer?) in
+                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
+                    let _result = originalBlock(_arg0)
+                    return { _result; return true }()
+                }
+            }(), cancellation.__externalRCRef())
+        }
+    }
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow {
 }
@@ -156,6 +198,9 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.flow {
     public protocol Flow: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.flow._Flow, KotlinCoroutineSupport.KotlinFlow {
+        func collect(
+            collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
+        ) async throws -> Swift.Void
     }
     public protocol FlowCollector: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.flow._FlowCollector {
         func emit(
@@ -189,6 +234,9 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         var replayCache: [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
             get
         }
+        func collect(
+            collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
+        ) async throws -> Swift.Never
     }
     public protocol StateFlow: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow, ExportedKotlinPackages.kotlinx.coroutines.flow._StateFlow, KotlinCoroutineSupport.KotlinStateFlow {
         var value: (any KotlinRuntimeSupport._KotlinBridgeable)? {
@@ -267,6 +315,24 @@ package func kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift
     return true
 }
 
+@_cdecl("kotlinx_coroutines_flow_Flow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector____reverse_swift")
+package func kotlinx_coroutines_flow_Flow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ collector: Swift.UnsafeMutableRawPointer, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow
+    let __continuation: (Swift.Void) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock.__externalRCRef()!, { _1; return true }()); return () }() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await _self.collect(collector: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: collector) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector)
+    }
+    return true
+}
+
 @_cdecl("kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 package func kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.UnsafeMutableRawPointer?, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow
@@ -325,6 +391,24 @@ package func kotlinx_coroutines_flow_MutableStateFlow_value_set__TypesOfArgument
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow
     let _result: Swift.Void = { _self.value = { switch newValue { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }() }()
     return { _result; return true }()
+}
+
+@_cdecl("kotlinx_coroutines_flow_SharedFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector____reverse_swift")
+package func kotlinx_coroutines_flow_SharedFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ collector: Swift.UnsafeMutableRawPointer, _ continuation: Swift.UnsafeMutableRawPointer, _ exception: Swift.UnsafeMutableRawPointer, _ cancellation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow
+    let __continuation: (Swift.Never) -> Swift.Void = {
+    let _ = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: continuation, options: .asBestFittingWrapper)!
+    return { _ in fatalError() }
+}()
+    let __exception: (Swift.Optional<Swift.Error>) -> Swift.Void = {
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: exception, options: .asBestFittingWrapper)!
+    return { _1 in return { KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock.__externalRCRef()!, _1.map { it in KotlinRuntimeSupport.kotlinThrowableRCRef(for: it) } ?? nil); return () }() }
+}()
+    let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
+    withKotlinTask(__continuation, __exception, __cancellation) {
+        try await _self.collect(collector: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: collector) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector)
+    }
+    return true
 }
 
 @_cdecl("kotlinx_coroutines_flow_SharedFlow_replayCache_get__reverse_swift")
