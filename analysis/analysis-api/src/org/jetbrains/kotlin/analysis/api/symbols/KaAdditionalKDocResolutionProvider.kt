@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.psi.KtElement
  * }
  * ```
  *
- * The extension point name is `org.jetbrains.kotlin.analysis.kaAdditionalKDocResolutionProvider`.
+ * The extension point name is `org.jetbrains.kotlin.kaAdditionalKDocResolutionProvider`.
  */
 @KaSpi
 public interface KaAdditionalKDocResolutionProvider {
