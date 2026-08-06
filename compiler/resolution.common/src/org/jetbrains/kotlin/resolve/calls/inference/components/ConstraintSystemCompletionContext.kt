@@ -20,6 +20,9 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
     abstract override val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
     abstract override val postponedTypeVariables: List<TypeVariableMarker>
 
+    /** @see org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.syntheticCstTypeVariables */
+    abstract val syntheticCstTypeVariables: List<TypeVariableMarker>
+
     abstract fun getBuilder(): ConstraintSystemBuilder
 
     // type can be proper if it not contains not fixed type variables

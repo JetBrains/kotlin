@@ -28,10 +28,10 @@ FILE: add.kt
             this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/String|>(String(42)))
         }
         )
-        R|kotlin/collections/buildList|<R|kotlin/collections/Set<*>|>(<L> = buildList@fun R|kotlin/collections/MutableList<kotlin/collections/Set<*>>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|kotlin/collections/buildList|<R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>(<L> = buildList@fun R|kotlin/collections/MutableList<kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42)))
             this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/String|>(String(42)))
-            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|kotlin/collections/Set<*>|>|(Int(0)).R|SubstitutionOverride<kotlin/collections/Set.size: R|kotlin/Int|>|
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>|(Int(0)).R|SubstitutionOverride<kotlin/collections/Set.size: R|kotlin/Int|>|
         }
         )
     }

@@ -178,6 +178,12 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         return ConeTypeVariableForPostponedAtom(PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE)
     }
 
+    override fun createTypeVariableForCstResult(index: Int): TypeVariableMarker {
+        return ConeTypeVariable("_CST_$index")
+    }
+
+    override val supportsSyntheticCstTypeVariables: Boolean get() = true
+
     override val isForcedAllowForkingInferenceSystem: Boolean
         get() = true
 }

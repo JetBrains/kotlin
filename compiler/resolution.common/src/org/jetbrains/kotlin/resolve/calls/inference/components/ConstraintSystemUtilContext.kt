@@ -52,5 +52,13 @@ interface ConstraintSystemUtilContext {
         index: Int
     ): TypeVariableMarker
 
+    /**
+     * Creates a synthetic type variable standing for a common supertype of not-fixed type variables
+     * (see TypeSystemCommonSuperTypesContext.createSyntheticCstTypeVariable). Only implemented in K2.
+     */
+    fun createTypeVariableForCstResult(index: Int): TypeVariableMarker? = null
+
+    val supportsSyntheticCstTypeVariables: Boolean get() = false
+
     val isForcedAllowForkingInferenceSystem get() = false
 }

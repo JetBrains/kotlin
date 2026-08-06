@@ -222,6 +222,33 @@ class NewConstraintSystemImpl(
         constraintInjector.addInitialEqualityConstraint(a, b, position)
     }
 
+    override fun supportsSyntheticCstTypeVariables(): Boolean =
+        languageVersionSettings.supportsFeature(LanguageFeature.EliminateSecondKindIncorporation) &&
+                utilContext.supportsSyntheticCstTypeVariables &&
+                // Only for (semi-)fixation contexts that may produce results containing not-fixed variables
+                // (e.g. PCLA fixation on demand): there, the machinery resolving such results applies to the
+                // synthetic variable as well. In a regular completion the result must stay variable-free,
+                // so a synthetic variable would leak into expression types.
+                typeVariablesThatAreCountedAsProperTypes != null
+
+    override fun createSyntheticCstTypeVariable(): RigidTypeMarker? {
+        if (!supportsSyntheticCstTypeVariables()) return null
+        val variable = utilContext.createTypeVariableForCstResult(storage.syntheticCstTypeVariables.size) ?: return null
+        registerVariable(variable)
+        storage.syntheticCstTypeVariables.add(variable)
+        // The variable has to be usable inside the (semi-)fixation result being computed right now
+        typeVariablesThatAreCountedAsProperTypes?.let {
+            typeVariablesThatAreCountedAsProperTypes = it + variable.freshTypeConstructor()
+        }
+        return variable.defaultType()
+    }
+
+    override fun addLowerConstraintForSyntheticCstVariable(variableType: RigidTypeMarker, lowerType: KotlinTypeMarker) {
+        @OptIn(K2Only::class)
+        val lowerTypeWithVariables = createSubstitutionFromSubtypingStubTypesToTypeVariables().safeSubstitute(lowerType)
+        addSubtypeConstraint(lowerTypeWithVariables, variableType, SyntheticCstVariableConstraintPosition)
+    }
+
     @K1Deprecation
     override fun getProperSuperTypeConstructors(type: KotlinTypeMarker): List<TypeConstructorMarker> {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
@@ -455,6 +482,11 @@ class NewConstraintSystemImpl(
         storage.fixedTypeVariables.putAll(otherSystem.fixedTypeVariables)
         // K1-only, so merge isn't important here
         storage.postponedTypeVariables.addAll(otherSystem.postponedTypeVariables)
+        for (syntheticVariable in otherSystem.syntheticCstTypeVariables) {
+            if (storage.syntheticCstTypeVariables.none { it === syntheticVariable }) {
+                storage.syntheticCstTypeVariables.add(syntheticVariable)
+            }
+        }
 
         hasContradictionInForkPointsCache = null
     }
@@ -564,6 +596,12 @@ class NewConstraintSystemImpl(
         get() {
             checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
             return storage.postponedTypeVariables
+        }
+
+    override val syntheticCstTypeVariables: List<TypeVariableMarker>
+        get() {
+            checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+            return storage.syntheticCstTypeVariables
         }
 
     override val outerSystemVariablesPrefixSize: Int

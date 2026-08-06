@@ -222,6 +222,23 @@ object NewCommonSuperTypeCalculator {
 
         val nonTypeVariables = types.filter { !it.isStubTypeForVariableInSubtypingOrCaptured() }
 
+        // Not-fixed type variables can occur here either directly or as subtyping stub types,
+        // depending on whether ResultTypeResolver has substituted them (the PCLA slow path)
+        if (types.all {
+                it.isStubTypeForVariableInSubtypingOrCaptured() ||
+                        it.originalIfDefinitelyNotNullable().typeConstructor() is TypeVariableTypeConstructorMarker
+            }
+        ) {
+            // CST over not-fixed type variables only: approximating them away would lose the variables entirely,
+            // so represent the result with a synthetic type variable bounded by all of them from below.
+            c.createSyntheticCstTypeVariable()?.let { cstVariableType ->
+                for (type in types) {
+                    c.addLowerConstraintForSyntheticCstVariable(cstVariableType, type)
+                }
+                return cstVariableType
+            }
+        }
+
         assert(nonTypeVariables.isNotEmpty()) {
             "There should be at least one non-stub type to compute common supertype but there are: $types"
         }
@@ -351,6 +368,7 @@ object NewCommonSuperTypeCalculator {
         for (index in 0 until constructor.parametersCount()) {
             val parameter = constructor.getParameter(index)
             var thereIsStar = false
+            val stubTypeProjections = mutableListOf<TypeArgumentMarker>()
             val typeProjections = correspondingSuperTypes.mapNotNull {
                 val typeArgumentFromSupertype = it.getArgumentOrNull(index) ?: return@mapNotNull null
 
@@ -366,7 +384,10 @@ object NewCommonSuperTypeCalculator {
                         null
                     }
 
-                    type.lowerBoundIfFlexible().isStubTypeForVariableInSubtyping() -> null
+                    type.lowerBoundIfFlexible().isStubTypeForVariableInSubtyping() -> {
+                        stubTypeProjections.add(typeArgument)
+                        null
+                    }
 
                     else -> typeArgument
                 }
@@ -384,7 +405,14 @@ object NewCommonSuperTypeCalculator {
             }
 
             val argument =
-                if (thereIsStar || typeProjections.isEmpty() || checkRecursion(types, typeProjections, parameter)) {
+                if (!thereIsStar && typeProjections.isEmpty() && stubTypeProjections.isNotEmpty() &&
+                    c.supportsSyntheticCstTypeVariables()
+                ) {
+                    // All the arguments at this position are not-fixed type variables: instead of losing them behind
+                    // a star projection, compute their common supertype, representing it with a synthetic type variable
+                    // (see TypeSystemCommonSuperTypesContext.createSyntheticCstTypeVariable)
+                    calculateArgument(parameter, stubTypeProjections, depth)
+                } else if (thereIsStar || typeProjections.isEmpty() || checkRecursion(types, typeProjections, parameter)) {
                     c.createStarProjection(parameter)
                 } else {
                     collapseRecursiveArgumentIfPossible(calculateArgument(parameter, typeProjections, depth))
