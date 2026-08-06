@@ -112,8 +112,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
         configuration.perfManager = performanceManager
         try {
+            val rootDisposable = Disposer.newDisposable("Disposable for ${CLICompiler::class.simpleName}.execImpl")
             setupCommonArguments(configuration, arguments)
-            configuration.setupFromArguments(arguments)
+            configuration.setupFromArguments(arguments, rootDisposable)
             if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) {
                 return ExitCode.COMPILATION_ERROR
             }
@@ -121,7 +122,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             val canceledStatus = services[CompilationCanceledStatus::class.java]
             ProgressIndicatorAndCompilationCanceledStatus.setCompilationCanceledStatus(canceledStatus)
 
-            val rootDisposable = Disposer.newDisposable("Disposable for ${CLICompiler::class.simpleName}.execImpl")
             try {
                 setIdeaIoUseFallback()
 
@@ -310,7 +310,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     spawnedConfiguration.messageCollector = configuration.messageCollector
                     spawnedConfiguration.perfManager = spawnedPerfManager
                     spawnedConfiguration.setupCommonArguments(spawnedArguments, this@K2Native::createMetadataVersion)
-                    spawnedConfiguration.setupFromArguments(spawnedArguments)
+                    spawnedConfiguration.setupFromArguments(spawnedArguments, rootDisposable)
                     spawnedConfiguration.setupPartialLinkageConfig(configuration.partialLinkageConfig)
                     configuration.get(CommonConfigurationKeys.USE_FIR)?.let {
                         spawnedConfiguration.put(CommonConfigurationKeys.USE_FIR, it)
