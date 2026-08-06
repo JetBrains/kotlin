@@ -86,19 +86,26 @@ public interface CompilationUnitModelOrBuilder extends
   boolean getIsTest();
 
   /**
-   * <code>string compile_task_path = 6;</code>
-   * @return Whether the compileTaskPath field is set.
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
    */
-  boolean hasCompileTaskPath();
+  java.util.List<org.jetbrains.kotlin.importmodels.proto.Action> 
+      getBuildActionsList();
   /**
-   * <code>string compile_task_path = 6;</code>
-   * @return The compileTaskPath.
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
    */
-  java.lang.String getCompileTaskPath();
+  org.jetbrains.kotlin.importmodels.proto.Action getBuildActions(int index);
   /**
-   * <code>string compile_task_path = 6;</code>
-   * @return The bytes for compileTaskPath.
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
    */
-  com.google.protobuf.ByteString
-      getCompileTaskPathBytes();
+  int getBuildActionsCount();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
+   */
+  java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.ActionOrBuilder> 
+      getBuildActionsOrBuilderList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
+   */
+  org.jetbrains.kotlin.importmodels.proto.ActionOrBuilder getBuildActionsOrBuilder(
+      int index);
 }

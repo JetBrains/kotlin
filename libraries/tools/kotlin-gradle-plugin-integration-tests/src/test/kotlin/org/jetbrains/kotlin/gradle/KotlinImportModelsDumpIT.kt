@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.importmodels.proto.BaseModel
 import org.jetbrains.kotlin.importmodels.proto.Capability
 import org.jetbrains.kotlin.importmodels.proto.CompilationUnitId
 import org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel
+import org.jetbrains.kotlin.importmodels.proto.GradleTaskAction
 import org.jetbrains.kotlin.importmodels.proto.Platform
 import org.jetbrains.kotlin.importmodels.proto.ProjectModel
 import org.jetbrains.kotlin.importmodels.proto.Version
@@ -87,13 +88,17 @@ class KotlinImportModelsDumpIT : KGPBaseTest() {
         model: CompilationUnitModel,
         expectedName: String,
         expectedIsTest: Boolean,
-        expectedCompileTaskPath: String,
+        expectedBuildTaskPath: String,
     ) {
         assertEquals(KotlinImportModelIds.COMPILATION_UNIT, model.id)
         assertEquals(expectedName, model.compilationName)
         assertEquals(Platform.PLATFORM_JVM, model.platform)
         assertEquals(expectedIsTest, model.isTest)
-        assertEquals(expectedCompileTaskPath, model.compileTaskPath)
+        val action = model.buildActionsList.single()
+        assertEquals(
+            GradleTaskAction.newBuilder().setTaskPath(expectedBuildTaskPath).build(),
+            action.gradleAction,
+        )
     }
 }
 

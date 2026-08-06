@@ -60,6 +60,16 @@ message ProjectModel {
   repeated CompilationUnitId compilation_unit_ids = 3;
 }
 
+message Action {
+  oneof build_tool_action {
+    GradleTaskAction gradle_action = 1;
+  }
+}
+
+message GradleTaskAction {
+  string task_path = 1;
+}
+
 message CompilationUnitModel {
   message Parameters {
     CompilationUnitId compilation_unit_id = 1;
@@ -70,5 +80,5 @@ message CompilationUnitModel {
   string compilation_name = 3;
   Platform platform = 4;
   bool is_test = 5;
-  string compile_task_path = 6;
+  repeated Action build_actions = 6;
 }

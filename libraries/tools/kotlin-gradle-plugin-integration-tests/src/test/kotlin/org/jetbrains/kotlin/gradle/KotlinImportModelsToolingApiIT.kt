@@ -50,10 +50,10 @@ class KotlinImportModelsToolingApiIT : KGPBaseTest() {
             assertEquals(project.compilationUnitIdsList, compilationUnits.map { it.parameters.compilationUnitId })
             assertEquals(Platform.PLATFORM_JVM, main.platform)
             assertFalse(main.isTest)
-            assertEquals(":compileKotlin", main.compileTaskPath)
+            assertEquals(":compileKotlin", main.buildActionsList.single().gradleAction.taskPath)
             assertEquals(Platform.PLATFORM_JVM, test.platform)
             assertTrue(test.isTest)
-            assertEquals(":compileTestKotlin", test.compileTaskPath)
+            assertEquals(":compileTestKotlin", test.buildActionsList.single().gradleAction.taskPath)
             assertEquals(
                 firstModels[1].model.unpack(ProjectModel::class.java).compilationUnitIdsList,
                 secondModels[1].model.unpack(ProjectModel::class.java).compilationUnitIdsList,

@@ -30,7 +30,7 @@ private static final long serialVersionUID = 0L;
     id_ = "";
     compilationName_ = "";
     platform_ = 0;
-    compileTaskPath_ = "";
+    buildActions_ = java.util.Collections.emptyList();
   }
 
   public static final com.google.protobuf.Descriptors.Descriptor
@@ -781,51 +781,45 @@ private static final long serialVersionUID = 0L;
     return isTest_;
   }
 
-  public static final int COMPILE_TASK_PATH_FIELD_NUMBER = 6;
+  public static final int BUILD_ACTIONS_FIELD_NUMBER = 6;
   @SuppressWarnings("serial")
-  private volatile java.lang.Object compileTaskPath_ = "";
+  private java.util.List<org.jetbrains.kotlin.importmodels.proto.Action> buildActions_;
   /**
-   * <code>string compile_task_path = 6;</code>
-   * @return Whether the compileTaskPath field is set.
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
    */
   @java.lang.Override
-  public boolean hasCompileTaskPath() {
-    return ((bitField0_ & 0x00000020) != 0);
+  public java.util.List<org.jetbrains.kotlin.importmodels.proto.Action> getBuildActionsList() {
+    return buildActions_;
   }
   /**
-   * <code>string compile_task_path = 6;</code>
-   * @return The compileTaskPath.
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
    */
   @java.lang.Override
-  public java.lang.String getCompileTaskPath() {
-    java.lang.Object ref = compileTaskPath_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      compileTaskPath_ = s;
-      return s;
-    }
+  public java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.ActionOrBuilder> 
+      getBuildActionsOrBuilderList() {
+    return buildActions_;
   }
   /**
-   * <code>string compile_task_path = 6;</code>
-   * @return The bytes for compileTaskPath.
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
    */
   @java.lang.Override
-  public com.google.protobuf.ByteString
-      getCompileTaskPathBytes() {
-    java.lang.Object ref = compileTaskPath_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      compileTaskPath_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  public int getBuildActionsCount() {
+    return buildActions_.size();
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
+   */
+  @java.lang.Override
+  public org.jetbrains.kotlin.importmodels.proto.Action getBuildActions(int index) {
+    return buildActions_.get(index);
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
+   */
+  @java.lang.Override
+  public org.jetbrains.kotlin.importmodels.proto.ActionOrBuilder getBuildActionsOrBuilder(
+      int index) {
+    return buildActions_.get(index);
   }
 
   private byte memoizedIsInitialized = -1;
@@ -857,8 +851,8 @@ private static final long serialVersionUID = 0L;
     if (((bitField0_ & 0x00000010) != 0)) {
       output.writeBool(5, isTest_);
     }
-    if (((bitField0_ & 0x00000020) != 0)) {
-      com.google.protobuf.GeneratedMessage.writeString(output, 6, compileTaskPath_);
+    for (int i = 0; i < buildActions_.size(); i++) {
+      output.writeMessage(6, buildActions_.get(i));
     }
     getUnknownFields().writeTo(output);
   }
@@ -887,8 +881,9 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeBoolSize(5, isTest_);
     }
-    if (((bitField0_ & 0x00000020) != 0)) {
-      size += com.google.protobuf.GeneratedMessage.computeStringSize(6, compileTaskPath_);
+    for (int i = 0; i < buildActions_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(6, buildActions_.get(i));
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -929,11 +924,8 @@ private static final long serialVersionUID = 0L;
       if (getIsTest()
           != other.getIsTest()) return false;
     }
-    if (hasCompileTaskPath() != other.hasCompileTaskPath()) return false;
-    if (hasCompileTaskPath()) {
-      if (!getCompileTaskPath()
-          .equals(other.getCompileTaskPath())) return false;
-    }
+    if (!getBuildActionsList()
+        .equals(other.getBuildActionsList())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -966,9 +958,9 @@ private static final long serialVersionUID = 0L;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
           getIsTest());
     }
-    if (hasCompileTaskPath()) {
-      hash = (37 * hash) + COMPILE_TASK_PATH_FIELD_NUMBER;
-      hash = (53 * hash) + getCompileTaskPath().hashCode();
+    if (getBuildActionsCount() > 0) {
+      hash = (37 * hash) + BUILD_ACTIONS_FIELD_NUMBER;
+      hash = (53 * hash) + getBuildActionsList().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -1101,6 +1093,7 @@ private static final long serialVersionUID = 0L;
       if (com.google.protobuf.GeneratedMessage
               .alwaysUseFieldBuilders) {
         getParametersFieldBuilder();
+        getBuildActionsFieldBuilder();
       }
     }
     @java.lang.Override
@@ -1116,7 +1109,13 @@ private static final long serialVersionUID = 0L;
       compilationName_ = "";
       platform_ = 0;
       isTest_ = false;
-      compileTaskPath_ = "";
+      if (buildActionsBuilder_ == null) {
+        buildActions_ = java.util.Collections.emptyList();
+      } else {
+        buildActions_ = null;
+        buildActionsBuilder_.clear();
+      }
+      bitField0_ = (bitField0_ & ~0x00000020);
       return this;
     }
 
@@ -1143,9 +1142,22 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel buildPartial() {
       org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel result = new org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel(this);
+      buildPartialRepeatedFields(result);
       if (bitField0_ != 0) { buildPartial0(result); }
       onBuilt();
       return result;
+    }
+
+    private void buildPartialRepeatedFields(org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel result) {
+      if (buildActionsBuilder_ == null) {
+        if (((bitField0_ & 0x00000020) != 0)) {
+          buildActions_ = java.util.Collections.unmodifiableList(buildActions_);
+          bitField0_ = (bitField0_ & ~0x00000020);
+        }
+        result.buildActions_ = buildActions_;
+      } else {
+        result.buildActions_ = buildActionsBuilder_.build();
+      }
     }
 
     private void buildPartial0(org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel result) {
@@ -1172,10 +1184,6 @@ private static final long serialVersionUID = 0L;
       if (((from_bitField0_ & 0x00000010) != 0)) {
         result.isTest_ = isTest_;
         to_bitField0_ |= 0x00000010;
-      }
-      if (((from_bitField0_ & 0x00000020) != 0)) {
-        result.compileTaskPath_ = compileTaskPath_;
-        to_bitField0_ |= 0x00000020;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -1211,10 +1219,31 @@ private static final long serialVersionUID = 0L;
       if (other.hasIsTest()) {
         setIsTest(other.getIsTest());
       }
-      if (other.hasCompileTaskPath()) {
-        compileTaskPath_ = other.compileTaskPath_;
-        bitField0_ |= 0x00000020;
-        onChanged();
+      if (buildActionsBuilder_ == null) {
+        if (!other.buildActions_.isEmpty()) {
+          if (buildActions_.isEmpty()) {
+            buildActions_ = other.buildActions_;
+            bitField0_ = (bitField0_ & ~0x00000020);
+          } else {
+            ensureBuildActionsIsMutable();
+            buildActions_.addAll(other.buildActions_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.buildActions_.isEmpty()) {
+          if (buildActionsBuilder_.isEmpty()) {
+            buildActionsBuilder_.dispose();
+            buildActionsBuilder_ = null;
+            buildActions_ = other.buildActions_;
+            bitField0_ = (bitField0_ & ~0x00000020);
+            buildActionsBuilder_ = 
+              com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                 getBuildActionsFieldBuilder() : null;
+          } else {
+            buildActionsBuilder_.addAllMessages(other.buildActions_);
+          }
+        }
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -1270,8 +1299,16 @@ private static final long serialVersionUID = 0L;
               break;
             } // case 40
             case 50: {
-              compileTaskPath_ = input.readStringRequireUtf8();
-              bitField0_ |= 0x00000020;
+              org.jetbrains.kotlin.importmodels.proto.Action m =
+                  input.readMessage(
+                      org.jetbrains.kotlin.importmodels.proto.Action.parser(),
+                      extensionRegistry);
+              if (buildActionsBuilder_ == null) {
+                ensureBuildActionsIsMutable();
+                buildActions_.add(m);
+              } else {
+                buildActionsBuilder_.addMessage(m);
+              }
               break;
             } // case 50
             default: {
@@ -1670,83 +1707,244 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object compileTaskPath_ = "";
-    /**
-     * <code>string compile_task_path = 6;</code>
-     * @return Whether the compileTaskPath field is set.
-     */
-    public boolean hasCompileTaskPath() {
-      return ((bitField0_ & 0x00000020) != 0);
+    private java.util.List<org.jetbrains.kotlin.importmodels.proto.Action> buildActions_ =
+      java.util.Collections.emptyList();
+    private void ensureBuildActionsIsMutable() {
+      if (!((bitField0_ & 0x00000020) != 0)) {
+        buildActions_ = new java.util.ArrayList<org.jetbrains.kotlin.importmodels.proto.Action>(buildActions_);
+        bitField0_ |= 0x00000020;
+       }
     }
+
+    private com.google.protobuf.RepeatedFieldBuilder<
+        org.jetbrains.kotlin.importmodels.proto.Action, org.jetbrains.kotlin.importmodels.proto.Action.Builder, org.jetbrains.kotlin.importmodels.proto.ActionOrBuilder> buildActionsBuilder_;
+
     /**
-     * <code>string compile_task_path = 6;</code>
-     * @return The compileTaskPath.
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
      */
-    public java.lang.String getCompileTaskPath() {
-      java.lang.Object ref = compileTaskPath_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        compileTaskPath_ = s;
-        return s;
+    public java.util.List<org.jetbrains.kotlin.importmodels.proto.Action> getBuildActionsList() {
+      if (buildActionsBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(buildActions_);
       } else {
-        return (java.lang.String) ref;
+        return buildActionsBuilder_.getMessageList();
       }
     }
     /**
-     * <code>string compile_task_path = 6;</code>
-     * @return The bytes for compileTaskPath.
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
      */
-    public com.google.protobuf.ByteString
-        getCompileTaskPathBytes() {
-      java.lang.Object ref = compileTaskPath_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        compileTaskPath_ = b;
-        return b;
+    public int getBuildActionsCount() {
+      if (buildActionsBuilder_ == null) {
+        return buildActions_.size();
       } else {
-        return (com.google.protobuf.ByteString) ref;
+        return buildActionsBuilder_.getCount();
       }
     }
     /**
-     * <code>string compile_task_path = 6;</code>
-     * @param value The compileTaskPath to set.
-     * @return This builder for chaining.
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
      */
-    public Builder setCompileTaskPath(
-        java.lang.String value) {
-      if (value == null) { throw new NullPointerException(); }
-      compileTaskPath_ = value;
-      bitField0_ |= 0x00000020;
-      onChanged();
+    public org.jetbrains.kotlin.importmodels.proto.Action getBuildActions(int index) {
+      if (buildActionsBuilder_ == null) {
+        return buildActions_.get(index);
+      } else {
+        return buildActionsBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
+     */
+    public Builder setBuildActions(
+        int index, org.jetbrains.kotlin.importmodels.proto.Action value) {
+      if (buildActionsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureBuildActionsIsMutable();
+        buildActions_.set(index, value);
+        onChanged();
+      } else {
+        buildActionsBuilder_.setMessage(index, value);
+      }
       return this;
     }
     /**
-     * <code>string compile_task_path = 6;</code>
-     * @return This builder for chaining.
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
      */
-    public Builder clearCompileTaskPath() {
-      compileTaskPath_ = getDefaultInstance().getCompileTaskPath();
-      bitField0_ = (bitField0_ & ~0x00000020);
-      onChanged();
+    public Builder setBuildActions(
+        int index, org.jetbrains.kotlin.importmodels.proto.Action.Builder builderForValue) {
+      if (buildActionsBuilder_ == null) {
+        ensureBuildActionsIsMutable();
+        buildActions_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        buildActionsBuilder_.setMessage(index, builderForValue.build());
+      }
       return this;
     }
     /**
-     * <code>string compile_task_path = 6;</code>
-     * @param value The bytes for compileTaskPath to set.
-     * @return This builder for chaining.
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
      */
-    public Builder setCompileTaskPathBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) { throw new NullPointerException(); }
-      checkByteStringIsUtf8(value);
-      compileTaskPath_ = value;
-      bitField0_ |= 0x00000020;
-      onChanged();
+    public Builder addBuildActions(org.jetbrains.kotlin.importmodels.proto.Action value) {
+      if (buildActionsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureBuildActionsIsMutable();
+        buildActions_.add(value);
+        onChanged();
+      } else {
+        buildActionsBuilder_.addMessage(value);
+      }
       return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
+     */
+    public Builder addBuildActions(
+        int index, org.jetbrains.kotlin.importmodels.proto.Action value) {
+      if (buildActionsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureBuildActionsIsMutable();
+        buildActions_.add(index, value);
+        onChanged();
+      } else {
+        buildActionsBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
+     */
+    public Builder addBuildActions(
+        org.jetbrains.kotlin.importmodels.proto.Action.Builder builderForValue) {
+      if (buildActionsBuilder_ == null) {
+        ensureBuildActionsIsMutable();
+        buildActions_.add(builderForValue.build());
+        onChanged();
+      } else {
+        buildActionsBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
+     */
+    public Builder addBuildActions(
+        int index, org.jetbrains.kotlin.importmodels.proto.Action.Builder builderForValue) {
+      if (buildActionsBuilder_ == null) {
+        ensureBuildActionsIsMutable();
+        buildActions_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        buildActionsBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
+     */
+    public Builder addAllBuildActions(
+        java.lang.Iterable<? extends org.jetbrains.kotlin.importmodels.proto.Action> values) {
+      if (buildActionsBuilder_ == null) {
+        ensureBuildActionsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, buildActions_);
+        onChanged();
+      } else {
+        buildActionsBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
+     */
+    public Builder clearBuildActions() {
+      if (buildActionsBuilder_ == null) {
+        buildActions_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000020);
+        onChanged();
+      } else {
+        buildActionsBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
+     */
+    public Builder removeBuildActions(int index) {
+      if (buildActionsBuilder_ == null) {
+        ensureBuildActionsIsMutable();
+        buildActions_.remove(index);
+        onChanged();
+      } else {
+        buildActionsBuilder_.remove(index);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
+     */
+    public org.jetbrains.kotlin.importmodels.proto.Action.Builder getBuildActionsBuilder(
+        int index) {
+      return getBuildActionsFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
+     */
+    public org.jetbrains.kotlin.importmodels.proto.ActionOrBuilder getBuildActionsOrBuilder(
+        int index) {
+      if (buildActionsBuilder_ == null) {
+        return buildActions_.get(index);  } else {
+        return buildActionsBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.importmodels.proto.ActionOrBuilder> 
+         getBuildActionsOrBuilderList() {
+      if (buildActionsBuilder_ != null) {
+        return buildActionsBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(buildActions_);
+      }
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
+     */
+    public org.jetbrains.kotlin.importmodels.proto.Action.Builder addBuildActionsBuilder() {
+      return getBuildActionsFieldBuilder().addBuilder(
+          org.jetbrains.kotlin.importmodels.proto.Action.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
+     */
+    public org.jetbrains.kotlin.importmodels.proto.Action.Builder addBuildActionsBuilder(
+        int index) {
+      return getBuildActionsFieldBuilder().addBuilder(
+          index, org.jetbrains.kotlin.importmodels.proto.Action.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.importmodels.proto.Action.Builder> 
+         getBuildActionsBuilderList() {
+      return getBuildActionsFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilder<
+        org.jetbrains.kotlin.importmodels.proto.Action, org.jetbrains.kotlin.importmodels.proto.Action.Builder, org.jetbrains.kotlin.importmodels.proto.ActionOrBuilder> 
+        getBuildActionsFieldBuilder() {
+      if (buildActionsBuilder_ == null) {
+        buildActionsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+            org.jetbrains.kotlin.importmodels.proto.Action, org.jetbrains.kotlin.importmodels.proto.Action.Builder, org.jetbrains.kotlin.importmodels.proto.ActionOrBuilder>(
+                buildActions_,
+                ((bitField0_ & 0x00000020) != 0),
+                getParentForChildren(),
+                isClean());
+        buildActions_ = null;
+      }
+      return buildActionsBuilder_;
     }
 
     // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel)

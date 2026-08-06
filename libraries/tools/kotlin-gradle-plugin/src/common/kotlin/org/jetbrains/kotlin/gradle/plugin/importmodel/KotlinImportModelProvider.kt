@@ -42,7 +42,13 @@ internal class KotlinImportModelProvider(
             .setCompilationName(compilation.name)
             .setPlatform(Platform.PLATFORM_JVM)
             .setIsTest(compilation.name == KotlinCompilation.TEST_COMPILATION_NAME)
-            .setCompileTaskPath(compilation.compileTaskProvider.get().path)
+            .addBuildActions(
+                Action.newBuilder()
+                    .setGradleAction(
+                        GradleTaskAction.newBuilder()
+                            .setTaskPath(compilation.compileTaskProvider.get().path)
+                    )
+            )
             .build()
     }
 

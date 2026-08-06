@@ -158,28 +158,76 @@ public object CompilationUnitModelKt {
     }
 
     /**
-     * `string compile_task_path = 6;`
+     * An uninstantiable, behaviorless type to represent the field in
+     * generics.
      */
-    public var compileTaskPath: kotlin.String
-      @JvmName("getCompileTaskPath")
-      get() = _builder.compileTaskPath
-      @JvmName("setCompileTaskPath")
-      set(value) {
-        _builder.compileTaskPath = value
-      }
+    @kotlin.OptIn(com.google.protobuf.kotlin.OnlyForUseByGeneratedProtoCode::class)
+    public class BuildActionsProxy private constructor() : com.google.protobuf.kotlin.DslProxy()
     /**
-     * `string compile_task_path = 6;`
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;`
      */
-    public fun clearCompileTaskPath() {
-      _builder.clearCompileTaskPath()
+     public val buildActions: com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.Action, BuildActionsProxy>
+      @kotlin.jvm.JvmSynthetic
+      get() = com.google.protobuf.kotlin.DslList(
+        _builder.buildActionsList
+      )
+    /**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;`
+     * @param value The buildActions to add.
+     */
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("addBuildActions")
+    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.Action, BuildActionsProxy>.add(value: org.jetbrains.kotlin.importmodels.proto.Action) {
+      _builder.addBuildActions(value)
     }
     /**
-     * `string compile_task_path = 6;`
-     * @return Whether the compileTaskPath field is set.
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;`
+     * @param value The buildActions to add.
      */
-    public fun hasCompileTaskPath(): kotlin.Boolean {
-      return _builder.hasCompileTaskPath()
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("plusAssignBuildActions")
+    @Suppress("NOTHING_TO_INLINE")
+    public inline operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.Action, BuildActionsProxy>.plusAssign(value: org.jetbrains.kotlin.importmodels.proto.Action) {
+      add(value)
     }
+    /**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;`
+     * @param values The buildActions to add.
+     */
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("addAllBuildActions")
+    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.Action, BuildActionsProxy>.addAll(values: kotlin.collections.Iterable<org.jetbrains.kotlin.importmodels.proto.Action>) {
+      _builder.addAllBuildActions(values)
+    }
+    /**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;`
+     * @param values The buildActions to add.
+     */
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("plusAssignAllBuildActions")
+    @Suppress("NOTHING_TO_INLINE")
+    public inline operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.Action, BuildActionsProxy>.plusAssign(values: kotlin.collections.Iterable<org.jetbrains.kotlin.importmodels.proto.Action>) {
+      addAll(values)
+    }
+    /**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;`
+     * @param index The index to set the value at.
+     * @param value The buildActions to set.
+     */
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("setBuildActions")
+    public operator fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.Action, BuildActionsProxy>.set(index: kotlin.Int, value: org.jetbrains.kotlin.importmodels.proto.Action) {
+      _builder.setBuildActions(index, value)
+    }
+    /**
+     * `repeated .org.jetbrains.kotlin.importmodels.proto.Action build_actions = 6;`
+     */
+    @kotlin.jvm.JvmSynthetic
+    @kotlin.jvm.JvmName("clearBuildActions")
+    public fun com.google.protobuf.kotlin.DslList<org.jetbrains.kotlin.importmodels.proto.Action, BuildActionsProxy>.clear() {
+      _builder.clearBuildActions()
+    }
+
   }
   @kotlin.jvm.JvmName("-initializeparameters")
   public inline fun parameters(block: org.jetbrains.kotlin.importmodels.proto.CompilationUnitModelKt.ParametersKt.Dsl.() -> kotlin.Unit): org.jetbrains.kotlin.importmodels.proto.CompilationUnitModel.Parameters =
