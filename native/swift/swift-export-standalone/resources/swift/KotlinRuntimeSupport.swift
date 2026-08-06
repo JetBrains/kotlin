@@ -211,7 +211,11 @@ extension Swift.Dictionary: KotlinRuntimeSupport._KotlinBridgeable {
 // MARK: - __createBridgeable: unwraps bridgeable types from externalRCRef
 
 extension KotlinBase {
-    public static func __createBridgeable(externalRCRef ref: UnsafeMutableRawPointer!) -> any _KotlinBridgeable {
+    package static func __createBridgeable<T>(externalRCRef ref: UnsafeMutableRawPointer!, conformsTo type: T.Type) -> any _KotlinBridgeable {
+        __createBridgeable(externalRCRef: ref, conformsTo: { wrapperClass in wrapperClass is T })
+    }
+
+    package static func __createBridgeable(externalRCRef ref: UnsafeMutableRawPointer!, conformsTo: ((AnyClass?) -> Bool)? = nil) -> any _KotlinBridgeable {
         let tag = KotlinBridgeable_getTypeTag(ref)
         switch tag {
         case 1:  let v = KotlinBridgeable_String_unbox(ref);  KotlinBridgeable_disposeRef(ref); return v
@@ -234,8 +238,12 @@ extension KotlinBase {
             let v = Unmanaged<NSDictionary>.fromOpaque(KotlinBridgeable_Dictionary_unbox(ref)).takeUnretainedValue() as! [AnyHashable: Any]
             KotlinBridgeable_disposeRef(ref); return v
         default:
-            return __createProtocolWrapper(externalRCRef: ref) as! any _KotlinBridgeable
+            return __createProtocolWrapper(externalRCRef: ref, conformsTo: conformsTo)
         }
+    }
+
+    package static func __createProtocolWrapper<T>(externalRCRef ref: UnsafeMutableRawPointer!, conformsTo type: T.Type) -> KotlinBase {
+        return __createProtocolWrapper(externalRCRef: ref, conformsTo: { wrapperClass in wrapperClass is T })
     }
 }
 

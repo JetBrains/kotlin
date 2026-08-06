@@ -4,7 +4,7 @@ import KotlinRuntimeSupport
 
 public protocol Semaphore: KotlinRuntime.KotlinBase, main._Semaphore {
 }
-@objc(_Semaphore)
+@objc(_main_Semaphore)
 public protocol _Semaphore {
 }
 public protocol __Semaphore: KotlinRuntimeSupport._KotlinBridgeable {

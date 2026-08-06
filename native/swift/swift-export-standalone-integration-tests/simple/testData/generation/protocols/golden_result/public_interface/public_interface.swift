@@ -4,7 +4,7 @@ import KotlinRuntimeSupport
 
 public protocol DemoCrossModuleInterface: KotlinRuntime.KotlinBase, public_interface._DemoCrossModuleInterface {
 }
-@objc(_DemoCrossModuleInterface)
+@objc(_public_interface_DemoCrossModuleInterface)
 public protocol _DemoCrossModuleInterface {
 }
 public protocol __DemoCrossModuleInterface: KotlinRuntimeSupport._KotlinBridgeable {

@@ -7,7 +7,7 @@ public protocol MyComparable: KotlinRuntime.KotlinBase, f_bounded_type._MyCompar
         other: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Int32
 }
-@objc(_MyComparable)
+@objc(_f_bounded_type_MyComparable)
 public protocol _MyComparable {
 }
 public protocol __MyComparable: KotlinRuntimeSupport._KotlinBridgeable {
@@ -63,14 +63,14 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: f_bounded_type._MyCompa
 }
 @_cdecl("MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
 package func MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ other: Swift.UnsafeMutableRawPointer?) -> Swift.Int32 {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any f_bounded_type.MyComparable
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: f_bounded_type.MyComparable.Type.self) as! any f_bounded_type.MyComparable
     let _result: Swift.Int32 = _self.compareTo(other: { switch other { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
     return _result
 }
 
 @_cdecl("SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing____reverse_swift")
 package func SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ other: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any f_bounded_type.MyComparable
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: f_bounded_type.MyComparable.Type.self) as! any f_bounded_type.MyComparable
     let _result: Swift.Int32 = _self.compareTo(other: f_bounded_type.SelfReferencing.__createClassWrapper(externalRCRef: other))
     return _result
 }

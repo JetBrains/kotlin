@@ -1,9 +1,9 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(datetime.LocalDate::class, "22ExportedKotlinPackages8datetimeO10dependencyE9LocalDateC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(datetime.LocalDate.Companion::class, "22ExportedKotlinPackages8datetimeO10dependencyE9LocalDateC9CompanionC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(datetime.DateTimeFormat::class, "_DateTimeFormat")
-@file:kotlin.native.internal.objc.BindClassToObjCName(datetime.DateTimeFormatBuilder::class, "_DateTimeFormatBuilder")
-@file:kotlin.native.internal.objc.BindClassToObjCName(datetime.DateTimeFormatBuilder.WithDate::class, "__ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate")
+@file:kotlin.native.internal.objc.BindClassToObjCName(datetime.DateTimeFormat::class, "_ExportedKotlinPackages_datetime_DateTimeFormat")
+@file:kotlin.native.internal.objc.BindClassToObjCName(datetime.DateTimeFormatBuilder::class, "_ExportedKotlinPackages_datetime_DateTimeFormatBuilder")
+@file:kotlin.native.internal.objc.BindClassToObjCName(datetime.DateTimeFormatBuilder.WithDate::class, "_dependency__ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*

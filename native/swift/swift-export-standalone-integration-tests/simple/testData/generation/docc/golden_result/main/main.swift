@@ -12,7 +12,7 @@ public protocol Bar: KotlinRuntime.KotlinBase, main._Bar {
     /// A function inside an interface
     func foo() -> Swift.Void
 }
-@objc(_Bar)
+@objc(_main_Bar)
 public protocol _Bar {
 }
 public protocol __Bar: KotlinRuntimeSupport._KotlinBridgeable {
@@ -233,21 +233,21 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Bar {
 }
 @_cdecl("Bar_bar_get__reverse_swift")
 package func Bar_bar_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Bar
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Bar.Type.self) as! any main.Bar
     let _result: Swift.String = _self.bar
     return _result
 }
 
 @_cdecl("Bar_bar_set__TypesOfArguments__Swift_String____reverse_swift")
 package func Bar_bar_set__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.String) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Bar
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Bar.Type.self) as! any main.Bar
     let _result: Swift.Void = { _self.bar = newValue }()
     return { _result; return true }()
 }
 
 @_cdecl("Bar_foo__reverse_swift")
 package func Bar_foo__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Bar
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Bar.Type.self) as! any main.Bar
     let _result: Swift.Void = _self.foo()
     return { _result; return true }()
 }

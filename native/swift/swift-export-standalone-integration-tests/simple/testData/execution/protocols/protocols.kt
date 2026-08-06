@@ -119,3 +119,33 @@ open class InhBarWithIface : InhIface {
 internal class InhBaz2 : InhBarWithIface()
 
 fun returnInhIface(): InhIface = InhBaz2()
+
+// FILE: myinterfacea.kt
+
+package a
+
+interface MyInterface {
+    fun foo(): String
+}
+
+// FILE: myinterfaceb.kt
+
+package b
+
+interface MyInterface {
+    fun bar(): String
+}
+
+// FILE: myclass.kt
+
+open class MyClassA : a.MyInterface {
+    override fun foo() = "A"
+}
+
+internal class MyClassB : MyClassA(), b.MyInterface {
+    override fun bar() = "B"
+}
+
+fun returnMyClassBAsMyInterfaceA(): a.MyInterface = MyClassB()
+
+fun returnMyClassBAsMyInterfaceB(): b.MyInterface = MyClassB()

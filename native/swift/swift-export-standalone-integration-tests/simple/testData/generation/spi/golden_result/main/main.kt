@@ -4,7 +4,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(MyOptInClass::class, "4main12MyOptInClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(MySubClass::class, "4main10MySubClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(MySubInterface::class, "4main14MySubInterfaceC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(MyInterface::class, "_MyInterface")
+@file:kotlin.native.internal.objc.BindClassToObjCName(MyInterface::class, "_main_MyInterface")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge

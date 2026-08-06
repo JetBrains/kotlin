@@ -7,8 +7,8 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.SharedFoo::class, "22ExportedKotlinPackages9namespaceO14flow_overridesE9SharedFooC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.StateFoo::class, "22ExportedKotlinPackages9namespaceO14flow_overridesE8StateFooC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.Zar::class, "22ExportedKotlinPackages9namespaceO14flow_overridesE3ZarC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(namespace.I1::class, "_I1")
-@file:kotlin.native.internal.objc.BindClassToObjCName(namespace.I1.I2::class, "__ExportedKotlinPackages_namespace_I1_I2")
+@file:kotlin.native.internal.objc.BindClassToObjCName(namespace.I1::class, "_ExportedKotlinPackages_namespace_I1")
+@file:kotlin.native.internal.objc.BindClassToObjCName(namespace.I1.I2::class, "_flow_overrides__ExportedKotlinPackages_namespace_I1_I2")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge

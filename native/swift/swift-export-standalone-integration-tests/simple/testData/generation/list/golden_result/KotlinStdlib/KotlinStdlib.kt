@@ -1,8 +1,8 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.Collection::class, "_Collection")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.Iterable::class, "_Iterable")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.Iterator::class, "_Iterator")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.ListIterator::class, "_ListIterator")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.Collection::class, "_ExportedKotlinPackages_kotlin_collections_Collection")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.Iterable::class, "_ExportedKotlinPackages_kotlin_collections_Iterable")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.Iterator::class, "_ExportedKotlinPackages_kotlin_collections_Iterator")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.ListIterator::class, "_ExportedKotlinPackages_kotlin_collections_ListIterator")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge

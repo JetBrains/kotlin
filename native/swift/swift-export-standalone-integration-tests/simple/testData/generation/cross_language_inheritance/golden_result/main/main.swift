@@ -32,16 +32,16 @@ public protocol OverloadedInterface: KotlinRuntime.KotlinBase, main._OverloadedI
         times: Swift.Int32
     ) -> Swift.String
 }
-@objc(_Boxed)
+@objc(_main_Boxed)
 public protocol _Boxed {
 }
-@objc(_Defaulter)
+@objc(_main_Defaulter)
 public protocol _Defaulter {
 }
-@objc(_Greeter)
+@objc(_main_Greeter)
 public protocol _Greeter {
 }
-@objc(_OverloadedInterface)
+@objc(_main_OverloadedInterface)
 public protocol _OverloadedInterface {
 }
 public protocol __Boxed: KotlinRuntimeSupport._KotlinBridgeable {
@@ -440,42 +440,42 @@ package func Base_size_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointe
 
 @_cdecl("Boxed_boxLabel_get__reverse_swift")
 package func Boxed_boxLabel_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Boxed
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Boxed.Type.self) as! any main.Boxed
     let _result: Swift.String = _self.boxLabel
     return _result
 }
 
 @_cdecl("Boxed_label__reverse_swift")
 package func Boxed_label__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Boxed
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Boxed.Type.self) as! any main.Boxed
     let _result: Swift.String = _self.label()
     return _result
 }
 
 @_cdecl("Boxed_unbox__reverse_swift")
 package func Boxed_unbox__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Boxed
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Boxed.Type.self) as! any main.Boxed
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.unbox()
     return _result.map { it in it.__externalRCRef() } ?? nil
 }
 
 @_cdecl("Defaulter_describe__reverse_swift")
 package func Defaulter_describe__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Defaulter
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Defaulter.Type.self) as! any main.Defaulter
     let _result: Swift.String = _self.describe()
     return _result
 }
 
 @_cdecl("Defaulter_kind_get__reverse_swift")
 package func Defaulter_kind_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Defaulter
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Defaulter.Type.self) as! any main.Defaulter
     let _result: Swift.String = _self.kind
     return _result
 }
 
 @_cdecl("Defaulter_tag__reverse_swift")
 package func Defaulter_tag__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Defaulter
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Defaulter.Type.self) as! any main.Defaulter
     let _result: Swift.String = _self.tag()
     return _result
 }
@@ -510,42 +510,42 @@ package func GreeterBase_salutation__reverse_swift(_ `self`: Swift.UnsafeMutable
 
 @_cdecl("Greeter_greet__TypesOfArguments__Swift_String____reverse_swift")
 package func Greeter_greet__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ name: Swift.String) -> Swift.String {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Greeter
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Greeter.Type.self) as! any main.Greeter
     let _result: Swift.String = _self.greet(name: name)
     return _result
 }
 
 @_cdecl("Greeter_mood_get__reverse_swift")
 package func Greeter_mood_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Greeter
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Greeter.Type.self) as! any main.Greeter
     let _result: Swift.String = _self.mood
     return _result
 }
 
 @_cdecl("Greeter_mood_set__TypesOfArguments__Swift_String____reverse_swift")
 package func Greeter_mood_set__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.String) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Greeter
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Greeter.Type.self) as! any main.Greeter
     let _result: Swift.Void = { _self.mood = newValue }()
     return { _result; return true }()
 }
 
 @_cdecl("Greeter_salutation__reverse_swift")
 package func Greeter_salutation__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Greeter
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Greeter.Type.self) as! any main.Greeter
     let _result: Swift.String = _self.salutation()
     return _result
 }
 
 @_cdecl("OverloadedInterface_say__TypesOfArguments__Swift_Int32____reverse_swift")
 package func OverloadedInterface_say__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ times: Swift.Int32) -> Swift.String {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.OverloadedInterface
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.OverloadedInterface.Type.self) as! any main.OverloadedInterface
     let _result: Swift.String = _self.say(times: times)
     return _result
 }
 
 @_cdecl("OverloadedInterface_say__reverse_swift")
 package func OverloadedInterface_say__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.OverloadedInterface
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.OverloadedInterface.Type.self) as! any main.OverloadedInterface
     let _result: Swift.String = _self.say()
     return _result
 }

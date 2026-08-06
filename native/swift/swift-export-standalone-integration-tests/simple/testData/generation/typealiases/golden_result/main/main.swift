@@ -111,7 +111,7 @@ public typealias outerInterface = any main.OUTSIDE_PROTO
 public typealias sealedClass = main.SEALED
 public protocol OUTSIDE_PROTO: KotlinRuntime.KotlinBase, main._OUTSIDE_PROTO {
 }
-@objc(_OUTSIDE_PROTO)
+@objc(_main_OUTSIDE_PROTO)
 public protocol _OUTSIDE_PROTO {
 }
 public protocol __OUTSIDE_PROTO: KotlinRuntimeSupport._KotlinBridgeable {

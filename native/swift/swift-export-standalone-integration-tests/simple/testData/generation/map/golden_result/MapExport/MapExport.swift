@@ -4,7 +4,7 @@ import KotlinRuntimeSupport
 
 public protocol Bar: KotlinRuntime.KotlinBase, MapExport._Bar {
 }
-@objc(_Bar)
+@objc(_MapExport_Bar)
 public protocol _Bar {
 }
 public protocol __Bar: KotlinRuntimeSupport._KotlinBridgeable {
