@@ -51,14 +51,14 @@ internal annotation class BoxedLongApi
 @UsedFromCompilerGeneratedCode
 internal fun Long.toNumber(): Double {
     // JS Long paper, Section V.A.
-    return high.toDouble() * TWO_PWR_32_DBL_ + low.toUInt().toDouble()
+    return high.toDouble() * TWO_PWR_32_DBL_ + uintToDouble(low)
 }
 
 @BoxedLongApi
 @InlineOnly
 private inline fun toUnsignedNumber(low: Int, high: Int): Double {
     // JS Long paper, Section V.A.
-    return high.toUInt().toDouble() * TWO_PWR_32_DBL_ + low.toUInt().toDouble()
+    return uintToDouble(high) * TWO_PWR_32_DBL_ + uintToDouble(low)
 }
 
 @BoxedLongApi
@@ -155,7 +155,7 @@ internal fun Long.equalsLong(other: Long) = bothZero(high xor other.high, low xo
 @UsedFromCompilerGeneratedCode
 private fun Long.lessThan(other: Long): Boolean {
     if (high == other.high) {
-        return low.toUInt().toDouble() < other.low.toUInt().toDouble()
+        return uintToDouble(low) < uintToDouble(other.low)
     } else {
         return high < other.high
     }
@@ -165,7 +165,7 @@ private fun Long.lessThan(other: Long): Boolean {
 @UsedFromCompilerGeneratedCode
 private fun Long.greaterThan(other: Long): Boolean {
     if (high == other.high) {
-        return low.toUInt().toDouble() > other.low.toUInt().toDouble()
+        return uintToDouble(low) > uintToDouble(other.low)
     } else {
         return high > other.high
     }
@@ -175,7 +175,7 @@ private fun Long.greaterThan(other: Long): Boolean {
 @UsedFromCompilerGeneratedCode
 private fun Long.greaterThanOrEqual(other: Long): Boolean {
     if (high == other.high) {
-        return low.toUInt().toDouble() >= other.low.toUInt().toDouble()
+        return uintToDouble(low) >= uintToDouble(other.low)
     } else {
         return high > other.high
     }
@@ -185,7 +185,7 @@ private fun Long.greaterThanOrEqual(other: Long): Boolean {
 @UsedFromCompilerGeneratedCode
 internal fun Long.compare(other: Long): Int {
     if (high == other.high) {
-      return low.toUInt().compareTo(other.low.toUInt())
+      return uintCompare(low, other.low)
     } else {
       return if (high < other.high) -1 else 1
     }
@@ -199,7 +199,7 @@ internal fun Long.compare(other: Long): Int {
 internal fun Long.add(other: Long): Long {
     // JS Long paper, Algorithm 1
     val rlow = low + other.low
-    val rhigh = high + other.high + boolToInt(rlow.toUInt().toDouble() < low.toUInt().toDouble())
+    val rhigh = high + other.high + boolToInt(uintToDouble(rlow) < uintToDouble(low))
     return Long(rlow, rhigh)
 }
 
@@ -211,7 +211,7 @@ internal fun Long.add(other: Long): Long {
 internal fun Long.subtract(other: Long): Long {
     // JS Long paper, Algorithm 2
     val rlow = low - other.low
-    val rhigh = high - other.high - boolToInt(rlow.toUInt().toDouble() > low.toUInt().toDouble())
+    val rhigh = high - other.high - boolToInt(uintToDouble(rlow) > uintToDouble(low))
     return Long(rlow, rhigh)
 }
 

@@ -161,6 +161,8 @@ class PrimitiveLongTest {
         test("9007199254740992", TwoPow53)
         test("-9007199254740991", MinSafeDouble)
         test("-9007199254740992", NegTwoPow53)
+        test("-9223372036854775808", MinVal)
+        test("9223372036854775807", MaxVal)
 
         test("-86922", -86922L)
         test("0", 0L)
