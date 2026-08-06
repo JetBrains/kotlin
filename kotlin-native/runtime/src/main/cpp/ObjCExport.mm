@@ -754,14 +754,14 @@ static void addDefinedSelectors(Class clazz, std::unordered_set<SEL>& result) {
   if (objcMethods != nullptr) free(objcMethods);
 }
 
-static std::vector<const TypeInfo*> getProtocolsAsInterfaces(Class clazz) {
+static std::vector<const TypeInfo*> getProtocolsAsInterfaces(Class clazz, Class stopBeforeClass) {
   std::vector<const TypeInfo*> result;
   std::unordered_set<Protocol*> handledProtocols;
   std::vector<Protocol*> protocolsToHandle;
 
-  {
+  for (Class current = clazz; current != nullptr && current != stopBeforeClass; current = class_getSuperclass(current)) {
     unsigned int protocolCount;
-    Protocol** protocols = class_copyProtocolList(clazz, &protocolCount);
+    Protocol** protocols = class_copyProtocolList(current, &protocolCount);
     if (protocols != nullptr) {
       protocolsToHandle.insert(protocolsToHandle.end(), protocols, protocols + protocolCount);
       free(protocols);
@@ -812,7 +812,7 @@ static void throwIfCantBeOverridden(Class clazz, const KotlinToObjCMethodAdapter
   }
 }
 
-static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, const TypeInfo* fieldsInfo) {
+static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, const TypeInfo* fieldsInfo, Class protocolSearchStopClass = nil) {
   kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
 
   bool isSwiftExportSubclass = false;
@@ -870,7 +870,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
     }
   }
 
-  std::vector<const TypeInfo*> addedInterfaces = getProtocolsAsInterfaces(clazz);
+  std::vector<const TypeInfo*> addedInterfaces = getProtocolsAsInterfaces(clazz, protocolSearchStopClass ?: class_getSuperclass(clazz));
 
   std::vector<const TypeInfo*> supers(
         superType->implementedInterfaces_,
@@ -998,7 +998,7 @@ extern "C" const TypeInfo* Kotlin_ObjCExport_getOrCreateTypeInfo(Class clazz) {
   return result;
 }
 
-extern "C" const TypeInfo* Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass(Class swiftSubclass, const TypeInfo* kotlinSuperTypeInfo) {
+extern "C" const TypeInfo* Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass(Class swiftSubclass, Class boundClass, const TypeInfo* kotlinSuperTypeInfo) {
   const TypeInfo* result = Kotlin_ObjCExport_getAssociatedTypeInfo(swiftSubclass);
   if (result != nullptr) {
     return result;
@@ -1008,7 +1008,7 @@ extern "C" const TypeInfo* Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclas
 
   result = Kotlin_ObjCExport_getAssociatedTypeInfo(swiftSubclass); // double-checking.
   if (result == nullptr) {
-    result = createTypeInfo(swiftSubclass, kotlinSuperTypeInfo, nullptr);
+    result = createTypeInfo(swiftSubclass, kotlinSuperTypeInfo, nullptr, boundClass);
     setAssociatedTypeInfo(swiftSubclass, result);
   }
 
