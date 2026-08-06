@@ -54,6 +54,7 @@ public class IdeSirSession(
         sirSession = sirSession,
         unsupportedDeclarationReporter = unsupportedDeclarationReporter,
         enableCoroutinesSupport = false,
+        hiddenModules = emptyList(),
     )
     override val childrenProvider: SirChildrenProvider = SirDeclarationChildrenProviderImpl(
         sirSession = sirSession,

@@ -43,7 +43,7 @@ public data class SwiftExportConfig(
         InputModule(
             "KotlinStdlib",
             Path(distribution.stdlib),
-            SwiftModuleConfig(shouldBeFullyExported = false)
+            SwiftModuleConfig(exportMode = SwiftModuleExportMode.Transitive)
         )
 
     private fun createInputModuleForPlatformLibs(platformLibsRootFile: File) = platformLibsRootFile.list()!!
@@ -51,7 +51,7 @@ public data class SwiftExportConfig(
             InputModule(
                 name = it.split(".").last(),
                 platformLibsRootFile.resolve(it).toPath(),
-                SwiftModuleConfig(shouldBeFullyExported = false)
+                SwiftModuleConfig(exportMode = SwiftModuleExportMode.Transitive)
             )
         }.toSet()
 }

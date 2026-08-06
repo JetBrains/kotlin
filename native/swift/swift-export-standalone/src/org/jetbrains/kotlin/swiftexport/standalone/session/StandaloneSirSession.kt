@@ -31,6 +31,7 @@ internal class StandaloneSirSession(
     unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
     enableCoroutinesSupport: Boolean,
     override val moduleProvider: SirModuleProvider,
+    val hiddenModules: List<KaModule>,
     val targetPackageFqName: FqName? = null,
     val referencedTypeHandler: SirKaClassReferenceHandler? = null,
 ) : SirSession {
@@ -71,6 +72,7 @@ internal class StandaloneSirSession(
         sirSession,
         unsupportedDeclarationReporter = unsupportedDeclarationReporter,
         enableCoroutinesSupport = enableCoroutinesSupport,
+        hiddenModules = hiddenModules,
     )
     override val childrenProvider = SirDeclarationChildrenProviderImpl(sirSession)
 
