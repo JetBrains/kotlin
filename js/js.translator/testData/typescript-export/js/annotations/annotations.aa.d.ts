@@ -2,6 +2,7 @@ declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
     namespace foo {
+        function useAnnotationClass(ac: any /*Annotation classes are not supported*/): any /*Annotation classes are not supported*/;
         function withIntroducedAt(x: number, y?: number, o1?: string, k?: string, o2?: string): string;
         function nonAscendingVersion(y?: number, o?: string, k?: string): void;
         function invalidParameterPosition(x: number | undefined, y: number | undefined, z: number): void;
