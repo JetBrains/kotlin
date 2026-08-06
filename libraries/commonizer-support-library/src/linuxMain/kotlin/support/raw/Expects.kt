@@ -18,13 +18,16 @@ expect class LinuxSSizeT
 expect value class LinuxSizeT
 
 /**
+ * Similar to [UIntOrULong] + With Var.
+ * Modeled after [platform.posix.stat.st_nlink].
+ */
+expect value class LinuxStNlink
+
+/**
  * Similar to [IntOrLong] + With Var.
  * Modeled after [platform.posix.blksize_t].
  */
 expect class LinuxBlksize
-
-/** Similar to [UIntOrULong] + With Var */
-expect value class LinuxUBlksize
 
 /**
  * Similar to [SmallUnsignedNumber] + With Var.

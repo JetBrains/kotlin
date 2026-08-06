@@ -11,11 +11,12 @@ import kotlinx.cinterop.value as valueFromCinterop
 actual typealias LinuxSizeT = ULong
 actual typealias LinuxSSizeT = Long
 
+actual typealias LinuxStNlink = UInt
+
 actual typealias LinuxMutexSpins = Int
 actual typealias LinuxFExceptT = UInt
 
 actual typealias LinuxScalarT = Long
 actual typealias LinuxUScalarT = ULong
 
-actual typealias LinuxUBlksize = UInt
 actual typealias LinuxBlksize = Int
