@@ -12,7 +12,6 @@ class FirLombokJavaRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::AccessorGenerator
         +::WithGenerator
-        +::BuilderGenerator
         +::SuperBuilderGenerator
         +::DeclarationWithValueAnnStatusTransformer
     }
