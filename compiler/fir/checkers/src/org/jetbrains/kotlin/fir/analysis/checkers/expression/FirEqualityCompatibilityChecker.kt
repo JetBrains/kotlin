@@ -108,16 +108,18 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
     context(context: CheckerContext)
     private fun checkEqualityApplicabilityByEqualityBounds(l: TypeInfo, r: TypeInfo): Applicability {
         if (LanguageFeature.StrictEquals.isDisabled()) return Applicability.APPLICABLE
-        fun TypeInfo.toBoundTypeInfo(): TypeInfo {
-            return (type.calculateEqualityBoundType() ?: StandardTypes.NullableAny).toTypeInfo(context.session)
+        fun TypeInfo.toBoundTypeInfo(): TypeInfo? {
+            return type.calculateEqualityBoundType()?.toTypeInfo(context.session)
         }
 
         val lBound = l.toBoundTypeInfo()
         val rBound = r.toBoundTypeInfo()
         return when {
-            shouldReportAsPerRules1(lBound, r) -> Applicability.INAPPLICABLE_BY_EQUALITY_BOUNDS_STRONG_LEFT
-            shouldReportAsPerRules1(l, rBound) -> Applicability.INAPPLICABLE_BY_EQUALITY_BOUNDS_STRONG_RIGHT
-            shouldReportWeakEqualityBoundWarning(l, r, lBound, rBound) -> Applicability.INAPPLICABLE_BY_EQUALITY_BOUNDS_WEAK
+            lBound != null && shouldReportAsPerRules1(lBound, r) -> Applicability.INAPPLICABLE_BY_EQUALITY_BOUNDS_STRONG_LEFT
+            rBound != null && shouldReportAsPerRules1(l, rBound) -> Applicability.INAPPLICABLE_BY_EQUALITY_BOUNDS_STRONG_RIGHT
+            lBound != null && rBound != null && shouldReportWeakEqualityBoundWarning(l, r, lBound, rBound) -> {
+                Applicability.INAPPLICABLE_BY_EQUALITY_BOUNDS_WEAK
+            }
             else -> Applicability.APPLICABLE
         }
     }
