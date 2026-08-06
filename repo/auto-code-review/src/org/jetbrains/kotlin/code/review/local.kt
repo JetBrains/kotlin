@@ -14,12 +14,14 @@ suspend fun main(args: Array<String>) {
 
     val output = File(args[0])
     val repoRoot = File(args[1])
-    val baseRefString = args.getOrNull(2) ?: "origin/master"
+    val baseRevString = args.getOrNull(2) ?: "origin/master"
 
     val gitTree = GitWorkingTree(repoRoot, GitCLI)
+    val baseRev = GitRevision(baseRevString)
     val agent = LocalClaudeAgent.create(gitTree.project)
 
-    val reviewResult = runReview(gitTree, GitRevision(baseRefString), agent)
+    val diff = gitTree.getDiffFromMergeBase(baseRev)
+    val reviewResult = runReview(gitTree.project, diff, agent)
 
     writeLocalReport(output, gitTree.project, reviewResult)
 
@@ -34,6 +36,27 @@ suspend fun main(args: Array<String>) {
 
     println("Review generated:")
     println(outputUrl)
+}
+
+private suspend fun GitTree.getDiffFromMergeBase(revision: GitRevision): GitDiff {
+    val mergeBase = getMergeBase(revision)
+    if (revision.rev == "HEAD" || revision.rev.startsWith("HEAD~") || revision.rev.startsWith("HEAD^")) {
+        // The intention is clear, there is no room for mistake.
+    } else {
+        val numberOfCommits = countCommitsAfter(mergeBase)
+        if (numberOfCommits > 100) {
+            // Maybe the `revision` is the wrong branch. For example, it is `origin/master`,
+            // but the tree is branched off from a release branch.
+            error(
+                """
+                    Suspicious input: base=${revision.rev} effective base = ${mergeBase.sha1}.
+                    It is $numberOfCommits commits. Is it not too many?
+                    Run with base = HEAD~$numberOfCommits to indicate that it is intentional.
+                """.trimIndent()
+            )
+        }
+    }
+    return getDiffFrom(mergeBase)
 }
 
 private fun writeLocalReport(output: File, project: LocalProject, reviewResult: ReviewResult) {
