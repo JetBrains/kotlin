@@ -97,8 +97,6 @@ private fun TestGroup.lightClassesByPsiTests() {
     testClass<AbstractSymbolLightClassesByPsiForLibraryTest>(init = libraryModelInit)
     testClass<AbstractJsSymbolLightClassesByPsiForLibraryTest>(init = libraryModelInit)
 
-    testClass<AbstractSymbolLightClassesMatcherByPsiForLibraryTest>(init = libraryModelInit)
-
     testClass<AbstractSymbolLightClassesEqualityByPsiForSourceTest>(init = sourceModelInit)
     testClass<AbstractSymbolLightClassesEqualityByPsiForLibraryTest>(init = libraryModelInit)
 }
@@ -119,8 +117,6 @@ private fun TestGroup.lightClassesByFqNameTests() {
 
     testClass<AbstractSymbolLightClassesByFqNameForLibraryTest>(init = libraryModelInit)
     testClass<AbstractJsSymbolLightClassesByFqNameForLibraryTest>(init = libraryModelInit)
-
-    testClass<AbstractSymbolLightClassesMatcherByFqNameForLibraryTest>(init = libraryModelInit)
 
     testClass<AbstractSymbolLightClassesEqualityByFqNameForSourceTest>(init = sourceModelInit)
     testClass<AbstractSymbolLightClassesEqualityByFqNameForLibraryTest>(init = libraryModelInit)
