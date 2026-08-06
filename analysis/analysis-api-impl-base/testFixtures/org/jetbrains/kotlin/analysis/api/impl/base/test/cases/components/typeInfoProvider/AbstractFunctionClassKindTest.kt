@@ -32,6 +32,8 @@ abstract class AbstractFunctionClassKindTest : AbstractAnalysisApiBasedTest() {
             appendLine("expression: ${expressionAtCaret.text}")
             appendLine("expected type: $type")
             appendLine("functionTypeFamily: $functionTypeFamily")
+            appendLine("typeRenderingPrefix: ${functionTypeFamily?.typeRenderingPrefix}")
+            appendLine("markerAnnotationClassId: ${functionTypeFamily?.markerAnnotationClassId}")
         }
         testServices.assertions.assertEqualsToTestOutputFile(actual)
     }

@@ -1,3 +1,5 @@
 expression: xy
 expected type: suspend () -> kotlin.Unit
 functionTypeFamily: kotlin.coroutines.SuspendFunctionN
+typeRenderingPrefix: suspend
+markerAnnotationClassId: null

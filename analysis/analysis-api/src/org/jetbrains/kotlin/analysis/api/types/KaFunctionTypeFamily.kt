@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.types
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.name.ClassId
 
@@ -59,6 +60,23 @@ public interface KaFunctionTypeFamily {
      * For example, `"Function"` for the `Function` family, `"SuspendFunction"` for the `SuspendFunction` family.
      */
     public val nameBase: String
+
+    /**
+     * The prefix which precedes a function type of this family when the type is rendered, such as `"suspend"` for the `SuspendFunction`
+     * family, or `"@Composable"` for the `ComposableFunction` family provided by the Compose compiler plugin.
+     *
+     * `null` if types of this family are rendered without a prefix, which is the case for the `Function` family and for all reflection
+     * families.
+     */
+    public val typeRenderingPrefix: String?
+
+    /**
+     * The [ClassId] of the annotation which marks a function type as belonging to this family, such as
+     * `androidx.compose.runtime.Composable`.
+     *
+     * Families provided by a compiler plugin always have such an annotation, while built-in families have none.
+     */
+    public val markerAnnotationClassId: ClassId?
 
     /**
      * Returns the [ClassId] of the function type interface for the given [arity].
