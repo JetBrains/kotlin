@@ -78,7 +78,7 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         configuration.compileSuspendAsJsGenerator = arguments.useEsGenerators ?: isES2015PlusTarget
         configuration.compileLambdasAsEs6ArrowFunctions = arguments.useEsArrowFunctions ?: isES2015PlusTarget
         configuration.compileLongAsBigint = arguments.compileLongAsBigInt ?: isES2020
-        configuration.exportUntypedAsUnknown = arguments.exportUntypedAsUnknown
+        configuration.exportUntypedAsUnknown = arguments.useUnknownInsteadAny
 
         configuration.targetPlatform = JsPlatforms.defaultJsPlatform
 
