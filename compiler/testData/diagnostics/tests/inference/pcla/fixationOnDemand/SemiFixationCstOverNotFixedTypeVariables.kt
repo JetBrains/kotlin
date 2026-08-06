@@ -1,6 +1,6 @@
 // LANGUAGE: +EliminateSecondKindIncorporation
 // WITH_STDLIB
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // RENDER_DIAGNOSTIC_ARGUMENTS
 // DUMP_INFERENCE_LOGS: MARKDOWN
 
@@ -18,7 +18,7 @@ fun testWithSemifixation() {
         x = mySetOf1("1")
         x = mySetOf2("2")
         x.size
-    }.x.iterator().next().<!UNRESOLVED_REFERENCE("length;  on receiver of type 'Any?'")!>length<!> // Should work?
+    }.x.iterator().next().length // works: the element type is preserved via the synthetic _CST_ variable
 }
 
 /* GENERATED_FIR_TAGS: assignment, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,

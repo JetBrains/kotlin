@@ -466,6 +466,14 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             topLevelAtom.collectAllTypeVariables()
         }
 
+        // Synthetic variables created for common supertypes of not-fixed variables do not belong to any atom
+        for (syntheticVariable in syntheticCstTypeVariables) {
+            val constructor = syntheticVariable.freshTypeConstructor()
+            if (constructor in notFixedTypeVariables) {
+                result.add(constructor)
+            }
+        }
+
         return result.toList()
     }
 
