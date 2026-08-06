@@ -20,6 +20,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -52,6 +53,7 @@ private abstract class KonanJvmInteropAction @Inject constructor(
         val distributionRoot: DirectoryProperty
         val propertiesOverride: MapProperty<String, String>
         val platformManager: Property<PlatformManager>
+        val suppressions: ListProperty<String>
     }
 
     override fun execute() {
@@ -75,6 +77,18 @@ private abstract class KonanJvmInteropAction @Inject constructor(
             })
             args(parameters.compilerOpts.get().flatMap { listOf("-compiler-option", it) })
         }
+        parameters.suppressions.orNull.takeUnless { it.isNullOrEmpty() }?.let { suppressions ->
+            val suppressionString = suppressions.joinToString { "\"$it\"" }
+            val regex = "(@file:Suppress\\(.*)\\)".toRegex()
+            outputDirectory.asFile.walk().forEach { file ->
+                if (file.isFile && file.extension == "kt") {
+                    file.writeText(file.readText().replace(regex) {
+                        it.groupValues[1] + ", " + suppressionString + ")"
+                    })
+                }
+            }
+        }
+
     }
 }
 
@@ -133,6 +147,13 @@ open class KonanJvmInteropTask @Inject constructor(
     @get:Nested
     val platformManagerProvider = objectFactory.platformManagerProvider(project)
 
+    /**
+     * Additional suppressions to add to the generated Kotlin sources.
+     */
+    @get:Optional
+    @get:Input
+    val suppressions: ListProperty<String> = objectFactory.listProperty(String::class.java)
+
     @TaskAction
     fun run() {
         outputDirectory.get().asFile.prepareAsOutput()
@@ -148,6 +169,7 @@ open class KonanJvmInteropTask @Inject constructor(
             this.distributionRoot.set(platformManagerProvider.distributionRoot)
             this.propertiesOverride.set(platformManagerProvider.konanPropertiesOverride)
             this.platformManager.set(platformManagerProvider.platformManager)
+            this.suppressions.set(this@KonanJvmInteropTask.suppressions)
         }
     }
 }

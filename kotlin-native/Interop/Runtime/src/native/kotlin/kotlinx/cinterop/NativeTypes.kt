@@ -21,8 +21,8 @@ internal inline fun NativePtr.toNonNull() = this.reinterpret<NativePtr, NonNullN
 public inline val nativeNullPtr: NativePtr
     get() = NativePtr.NULL
 
-@Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-@Suppress("DEPRECATION")
+@Deprecated("Use sizeOf<T>() or alignOf<T>() instead.", level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 @ExperimentalForeignApi
 public fun <T : CVariable> typeOf(): CVariable.Type = throw Error("typeOf() is called with erased argument")
 

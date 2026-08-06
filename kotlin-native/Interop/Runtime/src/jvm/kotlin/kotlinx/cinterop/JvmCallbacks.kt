@@ -158,7 +158,7 @@ private fun getStructCType(structClass: KClass<*>): CType<*> = caches.structType
         }
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     val structType = structClass.companionObjectInstance as CVariable.Type
 
     Struct(structType.size, structType.align, fieldCTypes)

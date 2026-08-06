@@ -98,7 +98,8 @@ class StubIrTextEmitter(
             // on the String-accepting twin of functions with const char* parameters.
             add("INVISIBLE_REFERENCE")
             add("INVISIBLE_MEMBER")
-            add("DEPRECATION") // CVariable.Type and CEnum companion deprecations.
+            add("DEPRECATION") // CEnum deprecation.
+            add("DEPRECATION_ERROR") // CVariable.Type companion deprecations.
             if (context.configuration.library.language == Language.OBJECTIVE_C) {
                 add("CONFLICTING_OVERLOADS")
                 add("RETURN_TYPE_MISMATCH_ON_INHERITANCE")

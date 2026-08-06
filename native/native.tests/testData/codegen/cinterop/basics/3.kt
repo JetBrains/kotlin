@@ -19,7 +19,7 @@ fun box(): String {
     val values = intArrayOf(14, 12, 9, 13, 8)
     val count = values.size
 
-    qsort(values.refTo(0), count.convert(), IntVar.size.convert(), staticCFunction { a, b ->
+    qsort(values.refTo(0), count.convert(), sizeOf<IntVar>().convert(), staticCFunction { a, b ->
         val aValue = a!!.reinterpret<IntVar>()[0]
         val bValue = b!!.reinterpret<IntVar>()[0]
 
