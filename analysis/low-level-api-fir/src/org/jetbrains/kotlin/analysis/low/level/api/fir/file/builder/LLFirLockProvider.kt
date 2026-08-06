@@ -194,7 +194,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     }
 
     private fun FirElementWithResolveState.unlock(toPhase: FirResolvePhase) {
-        when (val stateSnapshotAfter = resolveStateFieldUpdater.getAndSet(this, FirResolvedToPhaseState(toPhase))) {
+        when (val stateSnapshotAfter = resolveStateFieldUpdater.getAndSet(this, FirResolvedToPhaseState(toPhase))!!) {
             is FirInProcessOfResolvingToPhaseStateWithoutBarrier -> {}
             is FirInProcessOfResolvingToPhaseStateWithBarrier -> {
                 stateSnapshotAfter.barrier.countDown()
