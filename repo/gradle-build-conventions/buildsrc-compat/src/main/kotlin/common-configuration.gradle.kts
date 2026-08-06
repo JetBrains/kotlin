@@ -34,6 +34,7 @@ project.configureJsCacheRedirector()
 project.configurePublishingRetry()
 project.exposeCompileAllConfiguration()
 project.configureJarEntryCompression()
+project.configureTestLifecycleTasksModelBuilder()
 
 // There are problems with common build dir:
 //  - some tests (in particular js and binary-compatibility-validator depend on the fixed (default) location

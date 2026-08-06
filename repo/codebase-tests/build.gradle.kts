@@ -24,6 +24,10 @@ dependencies {
 
     testImplementation(testFixtures("org.jetbrains.kotlin:repo-test-fixtures"))
     testImplementation("org.jetbrains.kotlin:test-federation-convention")
+    testImplementation(testFederationRuntime)
+    testImplementation("org.jetbrains.kotlin:buildsrc-compat") {
+        isTransitive = false
+    }
     testImplementation(gradleTestKit())
     testImplementation(libs.intellij.asm)
 }

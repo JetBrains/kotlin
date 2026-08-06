@@ -7,8 +7,16 @@ package org.jetbrains.kotlin.code
 
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
+import org.junit.jupiter.api.parallel.ResourceLock
 import java.nio.file.Path
 import kotlin.io.path.*
+
+/**
+ * Can be used to mark a test as 'Uses Gradle', using a [ResourceLock] under the hood.
+ * Only one test can be executed at a time, which uses Gradle.
+ */
+@ResourceLock("Gradle")
+internal annotation class GradleLock
 
 private val root = Path("")
 

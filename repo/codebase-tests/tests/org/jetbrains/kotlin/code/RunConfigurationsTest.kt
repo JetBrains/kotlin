@@ -22,6 +22,7 @@ import kotlin.io.path.inputStream
 import kotlin.io.path.listDirectoryEntries
 import kotlin.streams.asStream
 
+@GradleLock
 @NightlyTest
 class RunConfigurationsTest {
     @TestFactory

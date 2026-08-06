@@ -42,6 +42,10 @@ plugins {
     id("cache-redirector")
 }
 
+gradle.lifecycle.beforeProject {
+    group = "org.jetbrains.kotlin"
+}
+
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
