@@ -11,7 +11,6 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineImplStackSwitching
 import kotlin.coroutines.WasmContinuationBox
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
-import kotlin.internal.DoNotInlineOnFirstStage
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.reftypes.typedcontref
 
@@ -72,14 +71,9 @@ internal fun <T> checkNotPendingSuspend(blockKotlinContinuation: CoroutineImplSt
     }
 }
 
-// Uses internal non-inlined internal API:
-// getBlockKotlinContinuation,
-// checkNotPendingSuspend,
-// getBlockKotlinContinuationResult
-@DoNotInlineOnFirstStage
 @UsedFromCompilerGeneratedCode
 @Suppress("UNCHECKED_CAST")
-internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturnStackSwitching(block: (Continuation<T>) -> Any?): T {
+internal suspend fun <T> suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching(block: (Continuation<T>) -> Any?): T {
     val blockKotlinContinuation = getBlockKotlinContinuation<T>()
 
     val blockResult = block(blockKotlinContinuation)
