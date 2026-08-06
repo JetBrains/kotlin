@@ -12,7 +12,13 @@ dependencies {
 publish {
     artifactId = artifactId.replace(".", "-")
 }
-runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
+runtimeJar(
+    rewriteDefaultJarDepsToShadedCompiler(
+        /* Referencing classifiers by FQN which shall not be relocated (KT-88353) */
+        skipRelocatingStringConstants = true
+    )
+)
+
 sourcesJarWithSourcesFromEmbedded(
     project(":kotlin-lombok-compiler-plugin").tasks.named<Jar>("sourcesJar")
 )
