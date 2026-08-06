@@ -29,6 +29,7 @@ dependencies {
     api(project(":analysis:light-classes-base"))
     implementation(project(":compiler:backend.jvm.entrypoint"))
     api(intellijCore())
+    implementation(project(":analysis:analysis-api-fir-diagnostics"))
     implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:symbol-light-classes"))
     implementation(project(":native:native.config"))
@@ -122,14 +123,21 @@ kotlin {
     )
 }
 
-generatedSourcesTask(
+val generateDiagnostics = generatedSourcesTask(
     taskName = "generateDiagnostics",
-    generatorProject = ":analysis:analysis-api-fir:analysis-api-fir-generator",
+    generatorProject = ":analysis:analysis-api-fir-diagnostics:analysis-api-fir-diagnostics-generator",
     generatorMainClass = "org.jetbrains.kotlin.analysis.api.fir.generator.MainKt",
     argsProvider = { generationRoot ->
         listOf(
             "org.jetbrains.kotlin.analysis.api.fir.diagnostics",
             generationRoot.toString(),
+            "implementation",
         )
     }
 )
+
+generateDiagnostics.configure {
+//  The generated implementations implement the interfaces generated into 'analysis-api-fir-diagnostics'. Regenerating one half
+//  without the other yields red code in the IDE. For convenience, the interfaces are always regenerated together with them.
+    dependsOn(":analysis:analysis-api-fir-diagnostics:generateDiagnostics")
+}

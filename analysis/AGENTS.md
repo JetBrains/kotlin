@@ -85,6 +85,7 @@ For full options, see [test-data-manager-convention](../repo/gradle-build-conven
 - [`analysis-api-platform-interface/`](analysis-api-platform-interface) - Platform abstraction (declaration providers, project structure, lifetime)
 - [`analysis-api-standalone/`](analysis-api-standalone) - CLI-based implementation of the Analysis API
 - [`analysis-api-fir/`](analysis-api-fir) - K2 implementation based on FIR
+- [`analysis-api-fir-diagnostics/`](analysis-api-fir-diagnostics) - `KaFirDiagnostic` interfaces generated from the compiler's diagnostics
 - [`analysis-api-impl-base/`](analysis-api-impl-base) - Shared implementation utilities
 - [`low-level-api-fir/`](low-level-api-fir) - K2-specific infrastructure for lazy/incremental analysis
 - [`symbol-light-classes/`](symbol-light-classes) - Java PSI view of Kotlin declarations for interop

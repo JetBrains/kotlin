@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.codebaseTest
 import org.jetbrains.kotlin.AbstractAnalysisApiInternalApiTest
 import org.jetbrains.kotlin.AnalysisApiNonPublicMarkers.KA_IMPLEMENTATION_DETAIL_ANNOTATION
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.junit.jupiter.api.Test
 
 /**
@@ -25,20 +24,4 @@ class AnalysisApiFirInternalApiTest : AbstractAnalysisApiInternalApiTest() {
         listOf(SourceDirectory.ForValidation(sourcePaths = listOf("src")))
 
     override fun suggestedAnnotation(declaration: KtDeclaration): String = KA_IMPLEMENTATION_DETAIL_ANNOTATION
-
-    override fun isExempt(declaration: KtDeclaration): Boolean {
-        // The `KaCompilerPluginDiagnostic*` interfaces (and the legacy `Kt*` aliases) are part of the public Analysis API surface even
-        // though they live in `analysis-api-fir`.
-        val fqName = (declaration as? KtNamedDeclaration)?.fqName?.asString() ?: return false
-        return fqName in EXEMPT_PUBLIC_DECLARATION_NAMES
-    }
-
-    companion object {
-        private val EXEMPT_PUBLIC_DECLARATION_NAMES: Set<String> = buildSet {
-            for (i in 0..4) {
-                add("org.jetbrains.kotlin.analysis.api.fir.diagnostics.KaCompilerPluginDiagnostic$i")
-                add("org.jetbrains.kotlin.analysis.api.fir.diagnostics.KtCompilerPluginDiagnostic$i")
-            }
-        }
-    }
 }
