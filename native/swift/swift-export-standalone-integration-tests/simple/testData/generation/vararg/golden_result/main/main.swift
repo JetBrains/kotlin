@@ -97,6 +97,17 @@ public func simple(
 ) -> Swift.String {
     return __root___simple__TypesOfArguments__Swift_Array_Swift_String__Vararg___(s)
 }
+public func varargsWithClosure(
+    inp: () -> Swift.Void...
+) -> Swift.Void {
+    return { __root___varargsWithClosure__TypesOfArguments__Swift_Array_U2829202D_U20Swift_Void__Vararg___(inp.map { it in { () -> Swift.Int in let __block: @convention(block) () -> Swift.Bool = {
+        let originalBlock: () -> Swift.Void = it
+        return {
+            let _result = originalBlock()
+            return { _result; return true }()
+        }
+    }(); return Int(bitPattern: Unmanaged.passRetained(__block as AnyObject).toOpaque()) }() }); return () }()
+}
 public func withDefault(
     a: Swift.String...,
     b: Swift.Int32

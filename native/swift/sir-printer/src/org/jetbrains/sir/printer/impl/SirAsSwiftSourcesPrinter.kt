@@ -622,7 +622,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
     private val SirParameter.swiftRender: String
         get() = (argumentName?.swiftIdentifier ?: "_") +
                 (parameterName?.swiftIdentifier?.let { " $it" } ?: "") + ": " +
-                type.swiftRender((SirTypeVariance.CONTRAVARIANT)) +
+                type.swiftRender(if (isVariadic) SirTypeVariance.INVARIANT else SirTypeVariance.CONTRAVARIANT) +
                 if (isVariadic) "..." else ""
 }
 
