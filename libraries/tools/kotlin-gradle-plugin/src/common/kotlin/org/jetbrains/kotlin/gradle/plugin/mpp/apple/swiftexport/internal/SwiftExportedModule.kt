@@ -59,9 +59,11 @@ internal fun createTransitiveSwiftExportedModule(
 internal fun Project.collectModules(
     swiftExportConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts>,
     exportedModulesProvider: Provider<Set<SwiftExportedDependency>>,
-): Provider<List<SwiftExportedModule>> = swiftExportConfigurationProvider.zip(exportedModulesProvider) { configuration, modules ->
-    configuration.swiftExportedModules(modules, project)
-}
+    hiddenModulesProvider: Provider<Set<SwiftExportedDependency>>,
+): Provider<List<SwiftExportedModule>> = exportedModulesProvider.zip(hiddenModulesProvider, ::Pair)
+    .zip(swiftExportConfigurationProvider) { (exportedModules, hiddenModules), configuration ->
+        configuration.swiftExportedModules(exportedModules, hiddenModules)
+    }
 
 private class ResolvedArtifactWithVersionIdentifier(
     val moduleVersion: ModuleVersionIdentifier,
@@ -82,10 +84,11 @@ private class ResolvedArtifactWithVersionIdentifier(
     }
 }
 
+context(project: Project)
 private fun LazyResolvedConfigurationWithArtifacts.swiftExportedModules(
     exportedModules: Set<SwiftExportedDependency>,
-    project: Project,
-) = project.findAndCreateSwiftExportedModules(exportedModules, filteredArtifacts())
+    hiddenModules: Set<SwiftExportedDependency>,
+) = project.findAndCreateSwiftExportedModules(exportedModules, hiddenModules, filteredArtifacts())
 
 private fun LazyResolvedConfigurationWithArtifacts.filteredArtifacts(): Set<ResolvedArtifactWithVersionIdentifier> {
     return allResolvedDependencies.mapNotNullTo(mutableSetOf()) { dependency ->
@@ -108,35 +111,17 @@ private val File.isJavaJar get() = extension == "jar"
 
 private fun Project.findAndCreateSwiftExportedModules(
     exportedModules: Set<SwiftExportedDependency>,
+    hiddenModules: Set<SwiftExportedDependency>,
     resolvedArtifacts: Set<ResolvedArtifactWithVersionIdentifier>,
 ): List<SwiftExportedModule> {
     val result = mutableListOf<SwiftExportedModule>()
     val processedComponents = mutableSetOf<ResolvedArtifactWithVersionIdentifier>()
+    val hiddenComponents = mutableSetOf<ResolvedArtifactWithVersionIdentifier>()
     val missingModules = mutableListOf<SwiftExportedDependency>()
 
     // Process all explicitly exported modules
     for (explicitModule in exportedModules) {
-        val matchingArtifact = resolvedArtifacts.find { artifact ->
-            val componentId = artifact.artifact.id.componentIdentifier
-
-            when (explicitModule) {
-                is SwiftExportedDependency.External -> {
-                    // It's a regular external dependency. Match by group and name.
-                    artifact.moduleVersion.group == explicitModule.coordinates.group &&
-                            artifact.moduleVersion.name == explicitModule.coordinates.name
-                }
-                is SwiftExportedDependency.Project -> {
-                    // For project dependencies, we match by project path.
-                    if (componentId is ProjectComponentIdentifier) {
-                        // Check if the artifact's project path matches the path stored in our module's name.
-                        componentId.projectPath == explicitModule.projectPath
-                    } else {
-                        // This artifact is not from a project, so it cannot be a match.
-                        false
-                    }
-                }
-            }
-        }
+        val matchingArtifact = resolvedArtifacts.findMatchingArtifactFor(explicitModule)
 
         if (matchingArtifact != null) {
             result.add(
@@ -156,6 +141,16 @@ private fun Project.findAndCreateSwiftExportedModules(
         }
     }
 
+    for (hiddenModule in hiddenModules) {
+        val matchingArtifact = resolvedArtifacts.findMatchingArtifactFor(hiddenModule)
+
+        if (matchingArtifact != null) {
+            hiddenComponents.add(matchingArtifact)
+        } else {
+            missingModules.add(hiddenModule)
+        }
+    }
+
     if (missingModules.isNotEmpty()) {
         reportDiagnostic(
             KotlinToolingDiagnostics.SwiftExportModuleResolutionError(
@@ -166,6 +161,7 @@ private fun Project.findAndCreateSwiftExportedModules(
     // Then process remaining components as transitive
     resolvedArtifacts
         .filterNot { artifact -> artifact in processedComponents }
+        .filterNot { artifact -> artifact in hiddenComponents }
         .forEach { artifact ->
             result.add(
                 createTransitiveSwiftExportedModule(
@@ -176,6 +172,29 @@ private fun Project.findAndCreateSwiftExportedModules(
         }
 
     return result
+}
+
+private fun Set<ResolvedArtifactWithVersionIdentifier>.findMatchingArtifactFor(
+    module: SwiftExportedDependency,
+): ResolvedArtifactWithVersionIdentifier? = find { artifact ->
+    when (module) {
+        is SwiftExportedDependency.External -> {
+            // It's a regular external dependency. Match by group and name.
+            artifact.moduleVersion.group == module.coordinates.group &&
+                    artifact.moduleVersion.name == module.coordinates.name
+        }
+        is SwiftExportedDependency.Project -> {
+            val componentId = artifact.artifact.id.componentIdentifier
+            // For project dependencies, we match by project path.
+            if (componentId is ProjectComponentIdentifier) {
+                // Check if the artifact's project path matches the path stored in our module's name.
+                componentId.projectPath == module.projectPath
+            } else {
+                // This artifact is not from a project, so it cannot be a match.
+                false
+            }
+        }
+    }
 }
 
 private data class SwiftExportedModuleImp(
