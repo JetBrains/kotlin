@@ -21,7 +21,8 @@ object KaDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
     }
 
     private fun SmartPrinter.printDiagnosticClasses(diagnosticList: HLDiagnosticList) {
-        printBlock("public sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI>") {
+        println(SUBCLASS_OPT_IN_REQUIRED)
+        printBlock("public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI>") {
             for (diagnostic in diagnosticList.diagnostics) {
                 printDiagnosticClass(diagnostic, diagnosticList)
                 println()
@@ -30,6 +31,7 @@ object KaDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
     }
 
     private fun SmartPrinter.printDiagnosticClass(diagnostic: HLDiagnostic, diagnosticList: HLDiagnosticList) {
+        println(SUBCLASS_OPT_IN_REQUIRED)
         print("public interface ${diagnostic.className} : KaFirDiagnostic<")
         printTypeWithShortNames(diagnostic.original.psiType)
         print(">")
@@ -68,7 +70,13 @@ object KaDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
 
     override val defaultImports = listOf(
         "org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi",
+        "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
         "com.intellij.psi.PsiElement",
         "kotlin.reflect.KClass",
     )
 }
+
+/**
+ * Diagnostics are not `sealed`: the list is driven by the compiler and changes freely, so the hierarchy cannot be closed.
+ */
+private const val SUBCLASS_OPT_IN_REQUIRED = "@SubclassOptInRequired(KaImplementationDetail::class)"
