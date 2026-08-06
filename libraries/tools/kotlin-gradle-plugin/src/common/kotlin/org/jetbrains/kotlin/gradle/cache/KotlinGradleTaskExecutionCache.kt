@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.FutureTask
+import java.util.concurrent.atomic.AtomicBoolean
 
 internal val Project.kotlinGradleTaskExecutionCache: Provider<out KotlinGradleTaskExecutionCache>
     get() {
@@ -54,15 +55,11 @@ internal abstract class DefaultKotlinGradleTaskExecutionCache :
 }
 
 /**
- * Flag to prevent from double entries, even with different keys.
- */
-private val computingOnThread = ThreadLocal.withInitial { false }
-
-/**
  * Should be used only in [KotlinGradleTaskExecutionCache], extracted to separate class for testing needs
  */
 internal class KotlinConcurrentGetOrComputeStorage {
     private val hashMap = ConcurrentHashMap<String, FutureTask<*>>()
+    private val computingThreads = ConcurrentHashMap<Thread, AtomicBoolean>()
 
     /**
      * Returns the values computed so far, for reporting purposes.
@@ -107,7 +104,9 @@ internal class KotlinConcurrentGetOrComputeStorage {
          * but, according to its Javadoc, when [compute] is too slow, it will cause unnecessary blocks even for different keys.
          * */
 
+        val computingOnThread = computingThreads.getOrPut(Thread.currentThread()) { AtomicBoolean(false) }
         check(!computingOnThread.get()) { "Double entry is not accepted!" }
+
         var existingTask = hashMap[key]
         val task = if (existingTask != null) {
             // Round 1: try getting fast
