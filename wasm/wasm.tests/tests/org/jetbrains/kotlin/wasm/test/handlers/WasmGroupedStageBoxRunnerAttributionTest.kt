@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.wasm.test.handlers
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.test.GroupingStageInputsHolder
 import org.jetbrains.kotlin.test.NonGroupingStageOutput
-import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
 import org.jetbrains.kotlin.test.grouping.markGroupedTestsDriverGenerated
@@ -20,7 +19,9 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.wasm.test.blackbox.computeProxyLauncherClassName
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -44,8 +45,10 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         // leftover if the driver did not prefix every line with '\n'.
         val vmStdout = buildString {
             appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(passing.id, GroupedTestsResultProtocol.STARTED)
             append("box() output with no trailing newline")
             appendProtocolLine(passing.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolLine(failing.id, GroupedTestsResultProtocol.STARTED)
             appendProtocolLine(
                 failing.id,
                 GroupedTestsResultProtocol.FAILED,
@@ -78,7 +81,9 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         // captured stdout embedded in its message, rather than through the output collector.
         val crashedVmStdout = buildString {
             appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(passing.id, GroupedTestsResultProtocol.STARTED)
             appendProtocolLine(passing.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolLine(failing.id, GroupedTestsResultProtocol.STARTED)
             appendProtocolLine(
                 failing.id,
                 GroupedTestsResultProtocol.FAILED,
@@ -87,18 +92,80 @@ class WasmGroupedStageBoxRunnerAttributionTest {
             )
             // No END sentinel: the VM died right here.
         }
-        val crashedVmFailure = WasmVMException(
-            AssertionError(
-                "Command \"js --module ./test.mjs\" terminated with exit code 133 in working dir \"/tmp/batch\"\n" +
-                        "OUTPUT:\n$crashedVmStdout\n---"
-            ),
-            vmName = "SpiderMonkey",
-        )
-
-        runner(listOf(passing, failing), vmStdout = emptyList(), vmFailures = listOf(crashedVmFailure))
-            .processArtifact(FakeWasmArtifact)
+        // Both tests had already reported when the VM went down, so no test's start localizes the crash and it is
+        // surfaced against the batch — while the results it did print are still attributed to their tests.
+        val vmFailure = vmCrash(crashedVmStdout, vmName = "SpiderMonkey")
+        val thrown = assertThrows(Throwable::class.java) {
+            runner(listOf(passing, failing), vmStdout = emptyList(), vmFailures = listOf(vmFailure))
+                .processArtifact(FakeWasmArtifact)
+        }
+        assertEquals(vmFailure, thrown)
 
         assertNull(passing.reportedFailure, "A passing test was failed: ${passing.reportedFailure?.message}")
+        assertEquals("$FAILURE_MESSAGE\n$FAILURE_DETAILS", failing.reportedFailure?.message)
+    }
+
+    @Test
+    fun `given a test that took the only VM down before reporting anything then it is named as the crash cause`() {
+        // The plain crash: no engine ever reported an outcome for `crasher`, so it is both absent from the report and
+        // the last test the VM started. It has to be named, and with the crash diagnosis rather than with the
+        // "silently skipped" one that a test the VM never reached gets — those two are indistinguishable by the report
+        // alone, and only the STARTED line tells them apart.
+        val passing = GroupedTest("testPassing")
+        val crasher = GroupedTest("testCrasher")
+
+        val crashedVmStdout = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(passing.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(passing.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolLine(crasher.id, GroupedTestsResultProtocol.STARTED)
+            // Neither a terminal line nor an END sentinel: the VM went down inside `crasher`.
+        }
+
+        runner(
+            listOf(passing, crasher),
+            vmStdout = emptyList(),
+            vmFailures = listOf(vmCrash(crashedVmStdout, vmName = "V8")),
+        ).processArtifact(FakeWasmArtifact)
+
+        assertNull(passing.reportedFailure, "A passing test was failed: ${passing.reportedFailure?.message}")
+
+        val message = crasher.reportedFailure?.message.orEmpty()
+        assertTrue("no per-test result was reported for '${crasher.id}'" in message, message)
+        assertTrue("it most likely crashed that VM" in message, message)
+        assertFalse("was silently skipped" in message, message)
+        // The crash is only diagnosable with the VM output, so it has to come along.
+        assertTrue("Collected outputs:" in message, message)
+    }
+
+    @Test
+    fun `given a VM that died without parsable output then its crash surfaces next to an unrelated test failure`() {
+        val failing = GroupedTest("testFailing")
+
+        // One engine ran the batch and reported the failure; the other died so early that it printed no block at all,
+        // so no test's start localizes it and nothing above can be blamed for it.
+        val finishedVmStdout = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(failing.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(
+                failing.id,
+                GroupedTestsResultProtocol.FAILED,
+                GroupedTestsResultProtocol.escape(FAILURE_MESSAGE),
+                GroupedTestsResultProtocol.escape(FAILURE_DETAILS),
+            )
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+        val vmCrash = vmCrash("startup output with no structured block", vmName = "SpiderMonkey")
+
+        // Reported against the batch rather than against a test, since no test can be blamed — but reported, which is
+        // the point: gating this on "some test failed" dropped it behind the assertion failure below.
+        val thrown = assertThrows(Throwable::class.java) {
+            runner(listOf(failing), vmStdout = listOf(finishedVmStdout), vmFailures = listOf(vmCrash))
+                .processArtifact(FakeWasmArtifact)
+        }
+        assertEquals(vmCrash, thrown)
+
+        // ...and the test that did report a failure is still failed with its own assertion.
         assertEquals("$FAILURE_MESSAGE\n$FAILURE_DETAILS", failing.reportedFailure?.message)
     }
 
@@ -156,6 +223,76 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         assertTrue("not a single test reported a result" in message, message)
     }
 
+    @Test
+    fun `given a test crashing one VM and passing on another then the crash is still reported`() {
+        val crasher = GroupedTest("testCrasher")
+        val other = GroupedTest("testOther")
+
+        val finishedVmStdout = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(other.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(other.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolLine(crasher.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(crasher.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+        // On the second VM `crasher` never got to report anything: it took the VM down while executing.
+        val crashedVmStdout = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(other.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(other.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolLine(crasher.id, GroupedTestsResultProtocol.STARTED)
+        }
+
+        runner(
+            listOf(other, crasher),
+            vmStdout = listOf(finishedVmStdout),
+            vmFailures = listOf(vmCrash(crashedVmStdout, vmName = "SpiderMonkey")),
+        ).processArtifact(FakeWasmArtifact)
+
+        assertNull(other.reportedFailure, "A passing test was failed: ${other.reportedFailure?.message}")
+
+        // Passing on one VM does not hide the crash of another.
+        val message = crasher.reportedFailure?.message.orEmpty()
+        assertTrue("it most likely crashed that VM" in message, message)
+        // The crash is only diagnosable with the VM output, so it has to come along.
+        assertTrue("Collected outputs:" in message, message)
+    }
+
+    @Test
+    fun `given a test failing on one VM and crashing another then the failure and the crash are both reported`() {
+        val failingCrasher = GroupedTest("testFailingCrasher")
+
+        val finishedVmStdout = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(failingCrasher.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(
+                failingCrasher.id,
+                GroupedTestsResultProtocol.FAILED,
+                GroupedTestsResultProtocol.escape(FAILURE_MESSAGE),
+                GroupedTestsResultProtocol.escape(FAILURE_DETAILS),
+            )
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+        val crashedVmStdout = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(failingCrasher.id, GroupedTestsResultProtocol.STARTED)
+        }
+
+        runner(
+            listOf(failingCrasher),
+            vmStdout = listOf(finishedVmStdout),
+            vmFailures = listOf(vmCrash(crashedVmStdout, vmName = "WasmEdge")),
+        ).processArtifact(FakeWasmArtifact)
+
+        // One report carrying both halves: the assertion alone would hide that this test takes an engine down, and the
+        // crash alone would hide what it actually asserted.
+        val message = failingCrasher.reportedFailure?.message.orEmpty()
+        assertTrue(FAILURE_MESSAGE in message, message)
+        assertTrue(FAILURE_DETAILS in message, message)
+        assertTrue("it most likely crashed that VM" in message, message)
+    }
+
     /**
      * One test of the batch: its [KotlinTestInfo], the `ProxyLauncher_<hash>` [id] the protocol keys it by, and the
      * failure the runner attributed to it, if any.
@@ -178,7 +315,7 @@ class WasmGroupedStageBoxRunnerAttributionTest {
             },
             // Stands in for the test engine's executor: the runner reports a per-test failure by throwing inside this
             // block, so capturing it is exactly what the engine would attribute to this single test.
-            catchingExecutor = NonGroupingStageOutput.CatchingExecutor { _: (Throwable) -> WrappedException, block: () -> Unit ->
+            catchingExecutor = { _, block ->
                 try {
                     block()
                 } catch (e: Throwable) {
@@ -226,7 +363,7 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         const val FAILURE_MESSAGE = "Test failed with: FAIL|1. Expected <OK>, actual <FAIL|1>."
 
         /** A multi-line stack trace, which the protocol has to keep on a single wire line. */
-        val FAILURE_DETAILS =
+        const val FAILURE_DETAILS =
             "AssertionError: boom | with a pipe\n\tat Foo.box(foo.kt:1)\n\tat ProxyLauncher.runTest(ProxyBatchLauncher.kt:3)"
 
         /** Reproduces how the generated driver prints a sentinel: on its own line, prefixed with a newline. */
@@ -243,6 +380,15 @@ class WasmGroupedStageBoxRunnerAttributionTest {
             }
             append("\n")
         }
+
+        /** How a crashed VM reports: `ExternalTool.run` raises the non-zero exit code with the captured stdout in it. */
+        fun vmCrash(capturedStdout: String, vmName: String): Throwable = WasmVMException(
+            AssertionError(
+                "Command \"$vmName ./test.mjs\" terminated with exit code 133 in working dir \"/tmp/batch\"\n" +
+                        "OUTPUT:\n$capturedStdout\n---"
+            ),
+            vmName = vmName,
+        )
 
         /** Every grouped test must have a `box()`, or the runner rejects the batch as an infrastructure error. */
         val SingleBoxFileModuleStructure = object : TestModuleStructure() {

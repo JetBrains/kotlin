@@ -15,9 +15,12 @@ import org.jetbrains.kotlin.test.report.TestRunChecks
  * Line format (`KGTI` = **K**otlin **G**rouping **T**est **I**nfra):
  * ```
  * ##KGTI_BEGIN##
- * ##KGTI##|<id>|<PASSED|FAILED>|<escaped-message>|<escaped-details>
+ * ##KGTI##|<id>|<STARTED|PASSED|FAILED>|<escaped-message>|<escaped-details>
  * ##KGTI_END##
  * ```
+ * [STARTED] is printed before a test runs and [PASSED]/[FAILED] after it, so a start without a terminal line
+ * localizes the test that took the VM down mid-run, while neither line means the test never ran.
+ *
  * `id` is the test's `ProxyLauncher_<hash>` class name (see `computeProxyLauncherClassName`), so the JVM side
  * attributes an outcome to its test by a map lookup. `message` and `details` are escaped so that no field can hold a
  * raw [SEP] or line break, which keeps a multi-line stack trace on one splittable line.
@@ -36,6 +39,7 @@ object GroupedTestsResultProtocol {
     const val END: String = "##KGTI_END##"
     const val LINE_PREFIX: String = "##KGTI##"
     const val SEP: String = "|"
+    const val STARTED: String = "STARTED"
     const val PASSED: String = "PASSED"
     const val FAILED: String = "FAILED"
 
@@ -58,11 +62,21 @@ object GroupedTestsResultProtocol {
     /**
      * Aggregated parse result over one or more VM outputs. [sawStructuredBlock] is `true` when at least one output
      * contained a [BEGIN] line, even if no valid per-test line was parsed.
+     *
+     * [crashedIds] is computed per output and only then unioned, since a test that passes on V8 and takes SpiderMonkey
+     * down still has a `PASSED` outcome from V8: deriving it from the merged results would mask that.
      */
     data class ParsedBatchResult(
         val outcomes: Map<String, Outcome>,
         val sawStructuredBlock: Boolean,
+        val crashedIds: Set<String>,
     ) {
+        /**
+         * `true` if [id] started on some VM without reporting a terminal result there: it took that VM down while
+         * executing. A test that was never reached has neither a start nor a result anywhere.
+         */
+        fun crashedInProgress(id: String): Boolean = id in crashedIds
+
         /**
          * The per-test pass/fail status as a shared [TestReport], keyed by test id. Messages and stack traces stay in
          * [outcomes], so verification over the report ([TestRunChecks]) is decoupled from the wire protocol.
@@ -85,24 +99,53 @@ object GroupedTestsResultProtocol {
     fun parseMerged(outputs: Iterable<String>): ParsedBatchResult {
         var sawStructuredBlock = false
         val merged = LinkedHashMap<String, Outcome>()
+        val crashedIds = LinkedHashSet<String>()
         for (output in outputs) {
             val parsed = parseSingleOutput(output)
             sawStructuredBlock = sawStructuredBlock || parsed.sawStructuredBlock
+            crashedIds += parsed.crashedIds
             for (outcome in parsed.outcomes.values) {
                 putFailureWins(merged, outcome)
             }
         }
-        return ParsedBatchResult(outcomes = merged, sawStructuredBlock = sawStructuredBlock)
+        return ParsedBatchResult(outcomes = merged, sawStructuredBlock = sawStructuredBlock, crashedIds = crashedIds)
     }
 
-    /** What a single captured text — one VM's stdout, or the output a VM-failure exception embeds — reported. */
+    /**
+     * What a single captured text — one VM's stdout, or the output a VM-failure exception embeds — reported. Kept per
+     * output, so that [crashedIds] compares the starts and the results of the very same VM.
+     */
     private class SingleOutputParse(
         val outcomes: LinkedHashMap<String, Outcome>,
+        val startedIds: LinkedHashSet<String>,
         val sawStructuredBlock: Boolean,
-    )
+        val blockLeftOpen: Boolean,
+    ) {
+        /**
+         * The id this output started but never reported a terminal result for, i.e. the test it died while running.
+         *
+         * Two conditions have to hold, and each one alone would otherwise blame a test that in fact completed:
+         *
+         *  - the block is still open at the end of this output. A printed [END] proves the driver ran the batch to its
+         *    last test, so a start with no result is a lost or garbled line there, not a crash.
+         *  - it is the *last* start of this output. The driver runs the batch sequentially, so exactly one test can be
+         *    executing when the VM goes down; a start followed by another start means that test finished, whatever
+         *    happened to its result line — stdout buffered and never flushed, which is what `process.exit()` does to a
+         *    Node pipe, or a line garbled by interleaved output.
+         *
+         * A test whose result went missing without a crash to explain it is still failed by the runner, just through the
+         * unreported-result path rather than blamed for taking the VM down.
+         */
+        val crashedIds: Set<String>
+            get() {
+                if (!blockLeftOpen) return emptySet()
+                return setOfNotNull(startedIds.lastOrNull()?.takeIf { it !in outcomes })
+            }
+    }
 
     private fun parseSingleOutput(output: String): SingleOutputParse {
         val outcomes = LinkedHashMap<String, Outcome>()
+        val startedIds = LinkedHashSet<String>()
         val linePrefix = "$LINE_PREFIX$SEP"
         var insideBlock = false
         var sawStructuredBlock = false
@@ -123,19 +166,26 @@ object GroupedTestsResultProtocol {
             if (!insideBlock || !rawLine.startsWith(linePrefix)) continue
             val parts = rawLine.removePrefix(linePrefix).split(SEP, limit = 4)
             if (parts.size < 4) continue
-            val status = parts[1]
-            if (status != PASSED && status != FAILED) continue
-            putFailureWins(
-                outcomes,
-                Outcome(
-                    id = parts[0],
-                    passed = status == PASSED,
-                    message = unescape(parts[2]).ifEmpty { null },
-                    details = unescape(parts[3]).ifEmpty { null },
+            val id = parts[0]
+            when (val status = parts[1]) {
+                // A pre-test marker only: it never contributes an outcome, but a start without a terminal result
+                // localizes the test that crashed the VM.
+                STARTED -> startedIds += id
+                PASSED, FAILED -> putFailureWins(
+                    outcomes,
+                    Outcome(
+                        id = id,
+                        passed = status == PASSED,
+                        message = unescape(parts[2]).ifEmpty { null },
+                        details = unescape(parts[3]).ifEmpty { null },
+                    )
                 )
-            )
+                // Any other status is a malformed line: ignore it.
+            }
         }
-        return SingleOutputParse(outcomes, sawStructuredBlock)
+        // `insideBlock` at the end of the output: no END sentinel arrived, so the driver did not reach the end of the
+        // batch — either the VM died mid-run or the captured output lost its tail.
+        return SingleOutputParse(outcomes, startedIds, sawStructuredBlock, blockLeftOpen = insideBlock)
     }
 
     /** Matches a sentinel on the exact raw line, tolerating only a trailing CR from CRLF-captured stdout. */
@@ -230,12 +280,19 @@ object GroupedTestsResultProtocol {
     /**
      * Generates the Kotlin source of the result-collecting driver appended to the synthesized batch launcher:
      *  - `__kgtiEscape` — the emitting side of [escape]/[unescape], generated from the shared [ESCAPE_RULES];
-     *  - `__kgtiReport` — runs one test body in a `try`/`catch` and prints its [PASSED]/[FAILED] line;
+     *  - `__kgtiReport` — prints a [STARTED] line, runs one test body in a `try`/`catch`, then prints its terminal
+     *    [PASSED]/[FAILED] line;
      *  - `__kgtiRunAll` — prints [BEGIN], reports every test of [proxyClassNames], prints [END];
      *  - the target-specific exported entry point from [exportedEntryPointGenerator], calling `__kgtiRunAll`.
      *
      * The generated code builds strings via `+` concatenation rather than `"$..."` interpolation, so that no `$`
      * handling leaks into the emitted source.
+     *
+     * There is no flush after a protocol line, and none is available: `println` on wasm-wasi is a direct
+     * `fd_write` syscall and on wasm-js a `console.log` call, so nothing is buffered on the Kotlin side to flush,
+     * and Kotlin/Wasm exposes no flush API to emit here anyway. A line can therefore still be lost to the *host* —
+     * `process.exit()` truncating a Node pipe — which is what [ParsedBatchResult.crashedIds] compensates for by
+     * trusting only the last start of an output.
      */
     fun generateResultCollectingRunnerSource(
         proxyClassNames: List<String>,
@@ -253,6 +310,7 @@ object GroupedTestsResultProtocol {
         appendLine(
             """
             private fun __kgtiReport(id: String, body: () -> Unit) {
+                println("$LEADING_NEWLINE$LINE_PREFIX$SEP" + id + "$SEP$STARTED$SEP$SEP")
                 try {
                     body()
                     println("$LEADING_NEWLINE$LINE_PREFIX$SEP" + id + "$SEP$PASSED$SEP$SEP")
