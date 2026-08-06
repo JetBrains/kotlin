@@ -1009,6 +1009,24 @@ class BodyGenerator(
         return typeCodegenContext.referenceWasmFunctionType(WasmFunctionType(emptyList(), listOf(anyRefNull, cont0RefNull)))
     }
 
+    // `invokeArity` is the number of `SuspendFunctionN.invoke` parameters:
+    // the suspend function object itself, N arguments and `completion`.
+    private fun generateSuspendFunToContref(
+        function: IrFunction,
+        invokeArity: Int,
+        location: SourceLocation
+    ) {
+        val suspendFunctionClassType = function.parameters[0].type
+        val suspendFunctionInvoke = irBuiltIns.suspendFunctionN(invokeArity).getSimpleFunction("invoke")!!
+        val contType = typeCodegenContext.referenceContType(invokeArity + 2)
+        val bindContType = typeCodegenContext.referenceContType(0)
+
+        body.buildGetLocal(functionContext.referenceLocal(0), location)
+        castAnyToInvokable(suspendFunctionInvoke.owner, suspendFunctionClassType.classOrFail.owner, location)
+        body.buildContNew(contType, location)
+        body.buildContBind(contType, bindContType, location)
+    }
+
     // Return true if generated.
     // Assumes call arguments are already on the stack
     private fun tryToGenerateIntrinsicCall(
@@ -1315,27 +1333,15 @@ class BodyGenerator(
                 generateResumeIntrinsicsEpilogue(wasmContinuation, location)
             }
 
-            // interface lookup for `kotlin.coroutines.SuspendFunction0.invoke`
+            // interface lookup for `kotlin.coroutines.SuspendFunction(0|1|2).invoke`
             // converting `invoke` into wasm continuation - cont.new
             // passing coroutine object as the first argument of `invoke` - cont.bind
-            in wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendFunctionToContref ?: emptyList() -> {
-                val intrinsicIndex =
-                    wasmSymbols.coroutinesStackSwitchingIntrinsics
-                        ?.suspendFunctionToContref!!
-                        .indexOfFirst { it == function.symbol }
-                val arity = intrinsicIndex + 2
-                val suspendFunctionClassType = function.parameters[0].type
-                val suspendFunctionInvoke = suspendFunctionClassType.classOrFail.functions.singleOrNull {
-                    it.owner.name.asString() == "invoke"
-                } ?: error("No `invoke` function for suspend function type\n${suspendFunctionClassType.dumpKotlinLike()}")
-                val contType = typeCodegenContext.referenceContType(arity)
-                val bindContType = typeCodegenContext.referenceContType(0)
-
-                body.buildGetLocal(functionContext.referenceLocal(0), location)
-                castAnyToInvokable(suspendFunctionInvoke.owner, suspendFunctionClassType.classOrFail.owner, location)
-                body.buildContNew(contType, location)
-                body.buildContBind(contType, bindContType, location)
-            }
+            wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendFunction0ToContref ->
+                generateSuspendFunToContref(function, invokeArity = 0, location)
+            wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendFunction1ToContref ->
+                generateSuspendFunToContref(function, invokeArity = 1, location)
+            wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendFunction2ToContref ->
+                generateSuspendFunToContref(function, invokeArity = 2, location)
 
             wasmSymbols.wasmArrayCopy -> {
                 val immediate = typeCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)

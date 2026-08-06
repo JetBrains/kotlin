@@ -249,17 +249,15 @@ class BackendWasmSymbols(
         else null
 
     inner class CoroutinesStackSwitchingIntrinsics {
-        val suspendFunctionToContref: List<IrSimpleFunctionSymbol> by run {
-            val symbols = CallableIds.suspendFunctionToContref.map { it.functionSymbol() }
 
-            lazyOf(symbols.map { it.value })
-        }
+        val suspendFunction0ToContref by CallableIds.suspendFunction0ToContref.functionSymbol()
+        val suspendFunction1ToContref by CallableIds.suspendFunction1ToContref.functionSymbol()
+        val suspendFunction2ToContref by CallableIds.suspendFunction2ToContref.functionSymbol()
 
-        val suspendFunctionToContrefImpl: List<IrSimpleFunctionSymbol> by run {
-            val symbols = CallableIds.suspendFunctionToContrefImpl.map { it.functionSymbol() }
+        val suspendFunction0ToContrefImpl by CallableIds.suspendFunction0ToContrefImpl.functionSymbol()
+        val suspendFunction1ToContrefImpl by CallableIds.suspendFunction1ToContrefImpl.functionSymbol()
+        val suspendFunction2ToContrefImpl by CallableIds.suspendFunction2ToContrefImpl.functionSymbol()
 
-            lazyOf(symbols.map { it.value })
-        }
         val nullContrefIntrinsic by CallableIds.nullContrefIntrinsic.functionSymbol()
         val suspendIntrinsic by CallableIds.suspendIntrinsic.functionSymbol()
         val resumeThrowIntrinsic by CallableIds.resumeThrowIntrinsic.functionSymbol()
@@ -634,8 +632,14 @@ private object CallableIds {
     val suspendCoroutineUninterceptedOrReturnIntrinsic = "suspendCoroutineUninterceptedOrReturnIntrinsic".wasmCallableId
     val suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching = "suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching".wasmCallableId
 
-    val suspendFunctionToContref = (0..2).map { "suspendFunction${it}ToContref".wasmCallableId }
-    val suspendFunctionToContrefImpl = (0..2).map { "suspendFunction${it}ToContrefImpl".wasmCallableId }
+    val suspendFunction0ToContref = "suspendFunction0ToContref".wasmCallableId
+    val suspendFunction1ToContref = "suspendFunction1ToContref".wasmCallableId
+    val suspendFunction2ToContref = "suspendFunction2ToContref".wasmCallableId
+
+    val suspendFunction0ToContrefImpl = "suspendFunction0ToContrefImpl".wasmCallableId
+    val suspendFunction1ToContrefImpl = "suspendFunction1ToContrefImpl".wasmCallableId
+    val suspendFunction2ToContrefImpl = "suspendFunction2ToContrefImpl".wasmCallableId
+
     val nullContrefIntrinsic = "nullContrefIntrinsic".wasmCallableId
     val suspendIntrinsic = "suspendIntrinsic".wasmCallableId
     val resumeThrowIntrinsic = "resumeThrowIntrinsic".wasmCallableId
