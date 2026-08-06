@@ -16,12 +16,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.createForTests
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.JvmTarget.Companion.fromString
-import org.jetbrains.kotlin.config.useFir
-import org.jetbrains.kotlin.config.useLightTree
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getFileClassInfoNoResolve
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
@@ -114,28 +110,12 @@ abstract class CodegenTestCase {
     }
 
     protected fun loadFile(@TestDataFile name: String): String {
-        return loadFileByFullPath(KtTestUtil.getTestDataFileLocatedInCompilerTestData("codegen/$name").absolutePath)
-    }
-
-    protected fun loadFileByFullPath(fullPath: String): String {
         try {
-            val file = File(fullPath)
+            val file = File(KtTestUtil.getTestDataFileLocatedInCompilerTestData("codegen/$name").absolutePath)
             val content = FileUtil.loadFile(file, Charsets.UTF_8.name(), true)
             assert(myFiles == null) { "Should not initialize myFiles twice" }
             myFiles = CodegenTestFiles.create(file.getName(), content, myEnvironment!!.project)
             return content
-        } catch (e: IOException) {
-            throw RuntimeException(e)
-        }
-    }
-
-    protected fun loadFiles(vararg names: String) {
-        try {
-            val files = names.map { name ->
-                val content = KtTestUtil.doLoadFile(KtTestUtil.getTestDataFileLocatedInCompilerTestData("codegen/").absolutePath, name)
-                KtTestUtil.createFile(name, content, myEnvironment!!.project)
-            }
-            myFiles = CodegenTestFiles.create(files)
         } catch (e: IOException) {
             throw RuntimeException(e)
         }
