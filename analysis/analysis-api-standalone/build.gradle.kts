@@ -72,6 +72,7 @@ sourceSets {
     }
     "testFixtures" { projectDefault() }
 }
+sourcesJar()
 
 projectTests {
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_21_0)) {

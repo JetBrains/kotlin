@@ -9,11 +9,12 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.DocsType
 import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPlugin.JAVADOC_ELEMENTS_CONFIGURATION_NAME
@@ -211,17 +212,24 @@ fun Project.emptyJavadocJar() {
  * Also embeds into final '-sources.jar' file source files from embedded dependencies.
  */
 fun Project.sourcesJarWithSourcesFromEmbedded(
-    vararg embeddedDepSourcesJarTasks: TaskProvider<out Jar>,
     body: Jar.() -> Unit = {},
 ): TaskProvider<Jar> {
+    val view = configurations.named("embedded").get().incoming.artifactView {
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
+            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.SOURCES))
+        }
+        withVariantReselection()
+        componentFilter {
+            it is ProjectComponentIdentifier
+        }
+    }.files
     val sourcesJarTask = sourcesJar(body)
 
     sourcesJarTask.configure {
+        dependsOn(view)
         val archiveOperations = serviceOf<ArchiveOperations>()
-        embeddedDepSourcesJarTasks.forEach { embeddedSourceJarTask ->
-            dependsOn(embeddedSourceJarTask)
-            from(embeddedSourceJarTask.map { archiveOperations.zipTree(it.archiveFile) })
-        }
+        from(view.map { archiveOperations.zipTree(it) })
     }
 
     return sourcesJarTask
@@ -230,16 +238,17 @@ fun Project.sourcesJarWithSourcesFromEmbedded(
 @JvmOverloads
 fun Jar.addEmbeddedSources(configurationName: String = "embedded") {
     project.configurations.findByName(configurationName)?.let { embedded ->
-        val allSources by lazy {
-            embedded.resolvedConfiguration
-                .resolvedArtifacts
-                .map { it.id.componentIdentifier }
-                .filterIsInstance<ProjectComponentIdentifier>()
-                .mapNotNull {
-                    project.project(it.projectPath).sources()
-                }
+        val allSources = embedded.incoming.artifactView {
+            attributes {
+                attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.DOCUMENTATION))
+                attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.objects.named(DocsType.SOURCES))
+            }
+            withVariantReselection()
+            componentFilter {
+                it is ProjectComponentIdentifier
+            }
         }
-        from({ allSources })
+        from({ allSources.files })
     }
 }
 
@@ -272,22 +281,29 @@ fun Project.javadocJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
  * Also embeds into final '-javadoc.jar' file javadoc files from embedded dependencies.
  */
 fun Project.javadocJarWithJavadocFromEmbedded(
-    vararg embeddedDepJavadocJarTasks: TaskProvider<out Jar>,
     body: Jar.() -> Unit = {},
 ): TaskProvider<Jar> {
+    val view = configurations.named("embedded").get().incoming.artifactView {
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
+            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.JAVADOC))
+        }
+        withVariantReselection()
+        componentFilter {
+            it is ProjectComponentIdentifier
+        }
+    }.files
+
     val javadocJarTask = javadocJar(body)
 
     javadocJarTask.configure {
+        dependsOn(view)
         val archiveOperations = serviceOf<ArchiveOperations>()
-        embeddedDepJavadocJarTasks.forEach { embeddedJavadocJarTask ->
-            dependsOn(embeddedJavadocJarTask)
-            from(embeddedJavadocJarTask.map { archiveOperations.zipTree(it.archiveFile) })
-        }
+        from(view.map { archiveOperations.zipTree(it) })
     }
 
     return javadocJarTask
 }
-
 
 fun Project.standardPublicJars() {
     runtimeJar()

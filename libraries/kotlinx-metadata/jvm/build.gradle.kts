@@ -140,7 +140,14 @@ dokka {
     dokkaSourceSets.configureEach {
         includes.from(project.file("dokka/moduledoc.md").path)
 
-        sourceRoots.from(project(":kotlin-metadata").getSources())
+        val kotlinMetadataSources = configurations.detachedConfiguration(dependencies.project(":kotlin-metadata")).apply {
+            attributes {
+                attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.VERIFICATION))
+                attribute(VerificationType.VERIFICATION_TYPE_ATTRIBUTE, project.objects.named(VerificationType.MAIN_SOURCES))
+            }
+            isTransitive = false
+        }
+        sourceRoots.from(kotlinMetadataSources)
 
         skipDeprecated.set(true)
         reportUndocumented.set(true)
