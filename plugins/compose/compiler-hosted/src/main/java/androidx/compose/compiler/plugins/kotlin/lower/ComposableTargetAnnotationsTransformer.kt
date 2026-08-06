@@ -359,7 +359,10 @@ class ComposableTargetAnnotationsTransformer(
 
             return when {
                 targetsFromAnnotations.size == 1 -> Token(targetsFromAnnotations.first())
-                targetsFromAnnotations.size > 1 -> Open(explicitOpen ?: -1, allowedTokens = targetsFromAnnotations)
+                targetsFromAnnotations.size > 1 -> Open(
+                    explicitOpen ?: -1,
+                    constraints = Constraints.restrictedTo(targetsFromAnnotations)
+                )
                 explicitOpen != null -> Open(explicitOpen)
                 else -> Open(-1, isUnspecified = true)
             }
@@ -471,12 +474,14 @@ class ComposableTargetAnnotationsTransformer(
                         }
                     )
                 }
-                allowedTokens?.forEach { token ->
-                    annotations.add(
-                        annotation(ComposableTargetClass).also {
-                            it.arguments[0] = irConst(token)
-                        }
-                    )
+                if (!constraints.allowsAllTokens) {
+                    constraints.allowedTokens.forEach { token ->
+                        annotations.add(
+                            annotation(ComposableTargetClass).also {
+                                it.arguments[0] = irConst(token)
+                            }
+                        )
+                    }
                 }
 
                 annotations
