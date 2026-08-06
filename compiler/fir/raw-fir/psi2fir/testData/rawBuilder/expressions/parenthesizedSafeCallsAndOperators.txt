@@ -35,13 +35,19 @@ FILE: parenthesizedSafeCallsAndOperators.kt
         Unit
         arg#?.{ $subj$.alias#.get#(IntegerLiteral(42)) }.plusAssign#(String())
         Unit
-        lval <array>: <implicit> = arg#?.{ $subj$.alias# }
-        lval <index_0>: <implicit> = IntegerLiteral(42)
-        lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|)
-        R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary>|.inc#())
-        R|<local>/<unary>|
-        lval <array>: <implicit> = arg#?.{ $subj$.alias# }
-        lval <index_0>: <implicit> = IntegerLiteral(42)
-        R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#())
-        R|<local>/<array>|.get#(R|<local>/<index_0>|)
+         {
+            lval <array>: <implicit> = arg#?.{ $subj$.alias# }
+            lval <index_0>: <implicit> = IntegerLiteral(42)
+            lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|)
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary>|.inc#())
+            R|<local>/<unary>|
+        }
+
+         {
+            lval <array>: <implicit> = arg#?.{ $subj$.alias# }
+            lval <index_0>: <implicit> = IntegerLiteral(42)
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#())
+            R|<local>/<array>|.get#(R|<local>/<index_0>|)
+        }
+
     }

@@ -40,6 +40,7 @@ internal fun validateTargetSpecificDumpFile(
     assertions: Assertions,
     mainExpectedFile: File,
     baseDumpExtension: String,
+    directiveForIrDifference: ValueDirective<TargetBackend>,
     actualDump: String,
     isKotlinLikeDump: Boolean,
 ): Boolean {
@@ -48,7 +49,7 @@ internal fun validateTargetSpecificDumpFile(
     val moduleStructure = testServices.moduleStructure
     val dumpDescription = if (isKotlinLikeDump) "Kotlin-like IR dump" else "IR dump"
 
-    val matchedBackend = testServices.getMatchedBackendFromDirective(CodegenTestDirectives.DUMP_IR_DIFFERENCE)
+    val matchedBackend = testServices.getMatchedBackendFromDirective(directiveForIrDifference)
     if (matchedBackend != null) {
         val targetSpecificExtension = targetSpecificDumpExtension(baseDumpExtension, matchedBackend)
         val patchBackendName = targetBackend.directChildOf(matchedBackend).name.lowercase()
@@ -58,13 +59,13 @@ internal fun validateTargetSpecificDumpFile(
 
         if (normalizedActualDump.isEmpty()) {
             checkTestInfrastructure(!targetSpecificFile.exists()) {
-                "DUMP_IR_DIFFERENCE directive specifies $targetBackendDirectiveName but there is no actual dump"
+                "$directiveForIrDifference directive specifies $targetBackendDirectiveName but there is no actual dump"
             }
             return true
         }
 
         checkTestInfrastructure(mainExpectedFile.exists()) {
-            "DUMP_IR_DIFFERENCE directive specifies $targetBackendDirectiveName but neither main dump nor target-specific dump exists"
+            "$directiveForIrDifference directive specifies $targetBackendDirectiveName but neither main dump nor target-specific dump exists"
         }
 
         val mainDump = mainExpectedFile.readText().trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
@@ -86,7 +87,7 @@ internal fun validateTargetSpecificDumpFile(
                 return true
             }
             assertions.fail {
-                "There are no $dumpDescription differences. Please remove $targetBackendDirectiveName from DUMP_IR_DIFFERENCE directive"
+                "There are no $dumpDescription differences. Please remove $targetBackendDirectiveName from $directiveForIrDifference directive"
             }
         }
 
@@ -101,7 +102,7 @@ internal fun validateTargetSpecificDumpFile(
 
         val existingTargetSpecificFile = findTargetSpecificPatchFile(targetBackend, baseTestFile, baseDumpExtension)
         checkTestInfrastructure(existingTargetSpecificFile == null) {
-            "Target-specific $dumpDescription file detected but no DUMP_IR_DIFFERENCE directive specified for " +
+            "Target-specific $dumpDescription file detected but no $directiveForIrDifference directive specified for " +
                     "$targetBackendDirectiveName or its compatible target: $existingTargetSpecificFile"
         }
         return false

@@ -667,12 +667,16 @@ class Fir2IrVisitor(
     private fun convertToIrCall(functionCall: FirFunctionCall): IrExpression {
         if (functionCall.isCalleeDynamic &&
             functionCall.calleeReference.name == OperatorNameConventions.SET &&
-            functionCall.calleeReference.source?.kind == KtFakeSourceElementKind.ArrayAccessNameReference
+            functionCall.isDesugaredArrayAccess
         ) {
             return convertToIrArraySetDynamicCall(functionCall)
         }
         return convertToIrCall(functionCall, dynamicOperator = null)
     }
+
+    private val FirFunctionCall.isDesugaredArrayAccess: Boolean
+        get() = calleeReference.source?.kind == KtFakeSourceElementKind.ArrayAccessNameReference
+                || calleeReference.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement
 
     private fun convertToIrCall(
         functionCall: FirFunctionCall,
@@ -690,6 +694,11 @@ class Fir2IrVisitor(
         )
     }
 
+    /**
+     * Unlike [tryConvertDynamicIncrementOrDecrementToIr], this function handles individual
+     * calls like `obj["a"] = ...` over `obj: dynamic`. Such calls may come both as part of
+     * desugared blocks from `++obj["a"]` or entirely standalone, such as `obj["a"] = 2`.
+     */
     private fun convertToIrArraySetDynamicCall(functionCall: FirFunctionCall): IrExpression {
         // `functionCall` has the form of `myDynamic.set(key1, key2, ..., newValue)`.
         // The resulting IR expects something like `myDynamic.ARRAY_ACCESS(key1, key2, ...).EQ(newValue)`.
@@ -1168,7 +1177,7 @@ class Fir2IrVisitor(
      * [org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder.generateIncrementOrDecrementBlockForArrayAccess] and
      * [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer.transformIncrementDecrementExpression]
      */
-    private fun FirBlock.tryConvertDynamicIncrementOrDecrementToIr(): IrExpression? {
+    private fun tryConvertDynamicIncrementOrDecrementToIr(statements: List<FirStatement>): IrExpression? {
         // Key observations:
         // 1. For postfix operations `<unary>` is always present and is returned in referenced as the last statement
         // 2. The second to last statement is always either a `set()` call or an assignment
@@ -1234,7 +1243,7 @@ class Fir2IrVisitor(
         val coerceToUnit = expectedType?.isUnit == true
 
         if (this.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
-            tryConvertDynamicIncrementOrDecrementToIr()?.let {
+            tryConvertDynamicIncrementOrDecrementToIr(statements)?.let {
                 return it.applyIf(coerceToUnit) {
                     coerceToUnitHandlingSpecialBlocks()
                 }

@@ -26,9 +26,12 @@ FILE: [ResolvedTo(IMPORTS)] setOperator.kt
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
         [ResolvedTo(BODY_RESOLVE)] lvar a: R|test/B| = R|test/B.B|(Int(1))
-        [ResolvedTo(BODY_RESOLVE)] lval <array>: R|test/B| = R|<local>/a|
-        [ResolvedTo(BODY_RESOLVE)] lval <index_0>: R|kotlin/Int| = Int(2)
-        [ResolvedTo(BODY_RESOLVE)] lval <unary>: R|test/B| = R|<local>/<array>|.R|test/B.get|(R|<local>/<index_0>|)
-        R|<local>/<array>|.R|test/B.set|(R|<local>/<index_0>|, R|<local>/<unary>|.R|test/B.inc|())
-        R|<local>/<unary>|
+         {
+            [ResolvedTo(BODY_RESOLVE)] lval <array>: R|test/B| = R|<local>/a|
+            [ResolvedTo(BODY_RESOLVE)] lval <index_0>: R|kotlin/Int| = Int(2)
+            [ResolvedTo(BODY_RESOLVE)] lval <unary>: R|test/B| = R|<local>/<array>|.R|test/B.get|(R|<local>/<index_0>|)
+            R|<local>/<array>|.R|test/B.set|(R|<local>/<index_0>|, R|<local>/<unary>|.R|test/B.inc|())
+            R|<local>/<unary>|
+        }
+
     }

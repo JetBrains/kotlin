@@ -3063,7 +3063,9 @@ open class PsiRawFirBuilder(
                     val firStatement = statement.toFirStatement { "Statement expected: ${statement.text}" }
                     val isForLoopBlock =
                         firStatement is FirBlock && firStatement.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
-                    if (firStatement !is FirBlock || isForLoopBlock || firStatement.annotations.isNotEmpty()) {
+                    val isIncrementOrDecrement = firStatement is FirBlock
+                            && firStatement.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement
+                    if (firStatement !is FirBlock || isForLoopBlock || firStatement.annotations.isNotEmpty() || isIncrementOrDecrement) {
                         statements += firStatement
                     } else {
                         statements += firStatement.statements

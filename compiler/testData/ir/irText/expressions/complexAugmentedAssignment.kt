@@ -1,3 +1,4 @@
+// DUMP_IR
 object X1 {
     var x1 = 0
     object X2 {

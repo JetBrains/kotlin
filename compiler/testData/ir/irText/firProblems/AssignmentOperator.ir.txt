@@ -330,131 +330,139 @@ FILE fqName:foo fileName:/AssignmentOperator.kt
               ARG <this>: GET_VAR 'val tmp_21: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
               ARG index: GET_VAR 'val tmp_22: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
             ARG other: CONST Int type=kotlin.Int value=3
-      VAR IR_TEMPORARY_VARIABLE name:tmp_23 type:kotlin.Array<kotlin.Int> [val]
-        CALL 'public final fun id <T> (t: T of foo.id): T of foo.id declared in foo' type=kotlin.Array<kotlin.Int> origin=null
-          TYPE_ARG T: kotlin.Array<kotlin.Int>
-          ARG t: CALL 'public final fun <get-array> (): kotlin.Array<kotlin.Int> declared in foo' type=kotlin.Array<kotlin.Int> origin=GET_PROPERTY
-      VAR IR_TEMPORARY_VARIABLE name:tmp_24 type:kotlin.Int [val]
-        CONST Int type=kotlin.Int value=0
-      VAR IR_TEMPORARY_VARIABLE name:tmp_25 type:kotlin.Int [val]
-        CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=POSTFIX_INCR
-          ARG <this>: GET_VAR 'val tmp_23: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
-          ARG index: GET_VAR 'val tmp_24: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-      CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=POSTFIX_INCR
-        ARG <this>: GET_VAR 'val tmp_23: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
-        ARG index: GET_VAR 'val tmp_24: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-        ARG value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-          ARG <this>: GET_VAR 'val tmp_25: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_VAR 'val tmp_25: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-      VAR IR_TEMPORARY_VARIABLE name:tmp_26 type:kotlin.Array<kotlin.Int> [val]
-        CALL 'public final fun id <T> (t: T of foo.id): T of foo.id declared in foo' type=kotlin.Array<kotlin.Int> origin=null
-          TYPE_ARG T: kotlin.Array<kotlin.Int>
-          ARG t: CALL 'public final fun <get-array> (): kotlin.Array<kotlin.Int> declared in foo' type=kotlin.Array<kotlin.Int> origin=GET_PROPERTY
-      VAR IR_TEMPORARY_VARIABLE name:tmp_27 type:kotlin.Int [val]
-        CONST Int type=kotlin.Int value=0
-      VAR IR_TEMPORARY_VARIABLE name:tmp_28 type:kotlin.Int [val]
-        CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=POSTFIX_DECR
-          ARG <this>: GET_VAR 'val tmp_26: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
-          ARG index: GET_VAR 'val tmp_27: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-      CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=POSTFIX_DECR
-        ARG <this>: GET_VAR 'val tmp_26: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
-        ARG index: GET_VAR 'val tmp_27: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-        ARG value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
-          ARG <this>: GET_VAR 'val tmp_28: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+        BLOCK type=kotlin.Int origin=POSTFIX_INCR
+          VAR IR_TEMPORARY_VARIABLE name:tmp_23 type:kotlin.Array<kotlin.Int> [val]
+            CALL 'public final fun id <T> (t: T of foo.id): T of foo.id declared in foo' type=kotlin.Array<kotlin.Int> origin=null
+              TYPE_ARG T: kotlin.Array<kotlin.Int>
+              ARG t: CALL 'public final fun <get-array> (): kotlin.Array<kotlin.Int> declared in foo' type=kotlin.Array<kotlin.Int> origin=GET_PROPERTY
+          VAR IR_TEMPORARY_VARIABLE name:tmp_24 type:kotlin.Int [val]
+            CONST Int type=kotlin.Int value=0
+          VAR IR_TEMPORARY_VARIABLE name:tmp_25 type:kotlin.Int [val]
+            CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=POSTFIX_INCR
+              ARG <this>: GET_VAR 'val tmp_23: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
+              ARG index: GET_VAR 'val tmp_24: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+          CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=POSTFIX_INCR
+            ARG <this>: GET_VAR 'val tmp_23: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
+            ARG index: GET_VAR 'val tmp_24: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+            ARG value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+              ARG <this>: GET_VAR 'val tmp_25: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_25: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_VAR 'val tmp_28: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-      VAR IR_TEMPORARY_VARIABLE name:tmp_29 type:kotlin.Array<kotlin.Int> [val]
-        CALL 'public final fun id <T> (t: T of foo.id): T of foo.id declared in foo' type=kotlin.Array<kotlin.Int> origin=null
-          TYPE_ARG T: kotlin.Array<kotlin.Int>
-          ARG t: CALL 'public final fun <get-array> (): kotlin.Array<kotlin.Int> declared in foo' type=kotlin.Array<kotlin.Int> origin=GET_PROPERTY
-      VAR IR_TEMPORARY_VARIABLE name:tmp_30 type:kotlin.Int [val]
-        CONST Int type=kotlin.Int value=0
-      CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=PREFIX_INCR
-        ARG <this>: GET_VAR 'val tmp_29: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
-        ARG index: GET_VAR 'val tmp_30: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-        ARG value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
-          ARG <this>: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=PREFIX_INCR
+        BLOCK type=kotlin.Int origin=POSTFIX_DECR
+          VAR IR_TEMPORARY_VARIABLE name:tmp_26 type:kotlin.Array<kotlin.Int> [val]
+            CALL 'public final fun id <T> (t: T of foo.id): T of foo.id declared in foo' type=kotlin.Array<kotlin.Int> origin=null
+              TYPE_ARG T: kotlin.Array<kotlin.Int>
+              ARG t: CALL 'public final fun <get-array> (): kotlin.Array<kotlin.Int> declared in foo' type=kotlin.Array<kotlin.Int> origin=GET_PROPERTY
+          VAR IR_TEMPORARY_VARIABLE name:tmp_27 type:kotlin.Int [val]
+            CONST Int type=kotlin.Int value=0
+          VAR IR_TEMPORARY_VARIABLE name:tmp_28 type:kotlin.Int [val]
+            CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=POSTFIX_DECR
+              ARG <this>: GET_VAR 'val tmp_26: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
+              ARG index: GET_VAR 'val tmp_27: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+          CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=POSTFIX_DECR
+            ARG <this>: GET_VAR 'val tmp_26: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
+            ARG index: GET_VAR 'val tmp_27: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+            ARG value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+              ARG <this>: GET_VAR 'val tmp_28: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_28: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        BLOCK type=kotlin.Int origin=PREFIX_INCR
+          VAR IR_TEMPORARY_VARIABLE name:tmp_29 type:kotlin.Array<kotlin.Int> [val]
+            CALL 'public final fun id <T> (t: T of foo.id): T of foo.id declared in foo' type=kotlin.Array<kotlin.Int> origin=null
+              TYPE_ARG T: kotlin.Array<kotlin.Int>
+              ARG t: CALL 'public final fun <get-array> (): kotlin.Array<kotlin.Int> declared in foo' type=kotlin.Array<kotlin.Int> origin=GET_PROPERTY
+          VAR IR_TEMPORARY_VARIABLE name:tmp_30 type:kotlin.Int [val]
+            CONST Int type=kotlin.Int value=0
+          CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=PREFIX_INCR
+            ARG <this>: GET_VAR 'val tmp_29: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
+            ARG index: GET_VAR 'val tmp_30: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+            ARG value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
+              ARG <this>: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=PREFIX_INCR
+                ARG <this>: GET_VAR 'val tmp_29: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
+                ARG index: GET_VAR 'val tmp_30: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+          CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=PREFIX_INCR
             ARG <this>: GET_VAR 'val tmp_29: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
             ARG index: GET_VAR 'val tmp_30: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=PREFIX_INCR
-          ARG <this>: GET_VAR 'val tmp_29: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
-          ARG index: GET_VAR 'val tmp_30: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-      VAR IR_TEMPORARY_VARIABLE name:tmp_31 type:kotlin.Array<kotlin.Int> [val]
-        CALL 'public final fun id <T> (t: T of foo.id): T of foo.id declared in foo' type=kotlin.Array<kotlin.Int> origin=null
-          TYPE_ARG T: kotlin.Array<kotlin.Int>
-          ARG t: CALL 'public final fun <get-array> (): kotlin.Array<kotlin.Int> declared in foo' type=kotlin.Array<kotlin.Int> origin=GET_PROPERTY
-      VAR IR_TEMPORARY_VARIABLE name:tmp_32 type:kotlin.Int [val]
-        CONST Int type=kotlin.Int value=0
-      CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=PREFIX_DECR
-        ARG <this>: GET_VAR 'val tmp_31: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
-        ARG index: GET_VAR 'val tmp_32: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-        ARG value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
-          ARG <this>: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=PREFIX_DECR
+        BLOCK type=kotlin.Int origin=PREFIX_DECR
+          VAR IR_TEMPORARY_VARIABLE name:tmp_31 type:kotlin.Array<kotlin.Int> [val]
+            CALL 'public final fun id <T> (t: T of foo.id): T of foo.id declared in foo' type=kotlin.Array<kotlin.Int> origin=null
+              TYPE_ARG T: kotlin.Array<kotlin.Int>
+              ARG t: CALL 'public final fun <get-array> (): kotlin.Array<kotlin.Int> declared in foo' type=kotlin.Array<kotlin.Int> origin=GET_PROPERTY
+          VAR IR_TEMPORARY_VARIABLE name:tmp_32 type:kotlin.Int [val]
+            CONST Int type=kotlin.Int value=0
+          CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=PREFIX_DECR
+            ARG <this>: GET_VAR 'val tmp_31: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
+            ARG index: GET_VAR 'val tmp_32: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+            ARG value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
+              ARG <this>: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=PREFIX_DECR
+                ARG <this>: GET_VAR 'val tmp_31: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
+                ARG index: GET_VAR 'val tmp_32: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+          CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=PREFIX_DECR
             ARG <this>: GET_VAR 'val tmp_31: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
             ARG index: GET_VAR 'val tmp_32: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=PREFIX_DECR
-          ARG <this>: GET_VAR 'val tmp_31: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
-          ARG index: GET_VAR 'val tmp_32: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-      VAR IR_TEMPORARY_VARIABLE name:tmp_33 type:kotlin.Array<kotlin.Int> [val]
-        CALL 'public final fun <get-array> (): kotlin.Array<kotlin.Int> declared in foo' type=kotlin.Array<kotlin.Int> origin=GET_PROPERTY
-      VAR IR_TEMPORARY_VARIABLE name:tmp_34 type:kotlin.Int [val]
-        CONST Int type=kotlin.Int value=0
-      VAR IR_TEMPORARY_VARIABLE name:tmp_35 type:kotlin.Int [val]
-        CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=POSTFIX_INCR
-          ARG <this>: GET_VAR 'val tmp_33: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
-          ARG index: GET_VAR 'val tmp_34: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-      CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=POSTFIX_INCR
-        ARG <this>: GET_VAR 'val tmp_33: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
-        ARG index: GET_VAR 'val tmp_34: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-        ARG value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-          ARG <this>: GET_VAR 'val tmp_35: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+        BLOCK type=kotlin.Int origin=POSTFIX_INCR
+          VAR IR_TEMPORARY_VARIABLE name:tmp_33 type:kotlin.Array<kotlin.Int> [val]
+            CALL 'public final fun <get-array> (): kotlin.Array<kotlin.Int> declared in foo' type=kotlin.Array<kotlin.Int> origin=GET_PROPERTY
+          VAR IR_TEMPORARY_VARIABLE name:tmp_34 type:kotlin.Int [val]
+            CONST Int type=kotlin.Int value=0
+          VAR IR_TEMPORARY_VARIABLE name:tmp_35 type:kotlin.Int [val]
+            CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=POSTFIX_INCR
+              ARG <this>: GET_VAR 'val tmp_33: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
+              ARG index: GET_VAR 'val tmp_34: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+          CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=POSTFIX_INCR
+            ARG <this>: GET_VAR 'val tmp_33: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
+            ARG index: GET_VAR 'val tmp_34: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+            ARG value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+              ARG <this>: GET_VAR 'val tmp_35: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_35: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_VAR 'val tmp_35: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-      VAR IR_TEMPORARY_VARIABLE name:tmp_36 type:kotlin.Array<kotlin.Int> [val]
-        CALL 'public final fun <get-array> (): kotlin.Array<kotlin.Int> declared in foo' type=kotlin.Array<kotlin.Int> origin=GET_PROPERTY
-      VAR IR_TEMPORARY_VARIABLE name:tmp_37 type:kotlin.Int [val]
-        CONST Int type=kotlin.Int value=0
-      VAR IR_TEMPORARY_VARIABLE name:tmp_38 type:kotlin.Int [val]
-        CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=POSTFIX_DECR
-          ARG <this>: GET_VAR 'val tmp_36: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
-          ARG index: GET_VAR 'val tmp_37: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-      CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=POSTFIX_DECR
-        ARG <this>: GET_VAR 'val tmp_36: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
-        ARG index: GET_VAR 'val tmp_37: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-        ARG value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
-          ARG <this>: GET_VAR 'val tmp_38: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+        BLOCK type=kotlin.Int origin=POSTFIX_DECR
+          VAR IR_TEMPORARY_VARIABLE name:tmp_36 type:kotlin.Array<kotlin.Int> [val]
+            CALL 'public final fun <get-array> (): kotlin.Array<kotlin.Int> declared in foo' type=kotlin.Array<kotlin.Int> origin=GET_PROPERTY
+          VAR IR_TEMPORARY_VARIABLE name:tmp_37 type:kotlin.Int [val]
+            CONST Int type=kotlin.Int value=0
+          VAR IR_TEMPORARY_VARIABLE name:tmp_38 type:kotlin.Int [val]
+            CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=POSTFIX_DECR
+              ARG <this>: GET_VAR 'val tmp_36: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
+              ARG index: GET_VAR 'val tmp_37: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+          CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=POSTFIX_DECR
+            ARG <this>: GET_VAR 'val tmp_36: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
+            ARG index: GET_VAR 'val tmp_37: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+            ARG value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+              ARG <this>: GET_VAR 'val tmp_38: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_38: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_VAR 'val tmp_38: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-      VAR IR_TEMPORARY_VARIABLE name:tmp_39 type:kotlin.Array<kotlin.Int> [val]
-        CALL 'public final fun <get-array> (): kotlin.Array<kotlin.Int> declared in foo' type=kotlin.Array<kotlin.Int> origin=GET_PROPERTY
-      VAR IR_TEMPORARY_VARIABLE name:tmp_40 type:kotlin.Int [val]
-        CONST Int type=kotlin.Int value=0
-      CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=PREFIX_INCR
-        ARG <this>: GET_VAR 'val tmp_39: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
-        ARG index: GET_VAR 'val tmp_40: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-        ARG value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
-          ARG <this>: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=PREFIX_INCR
+        BLOCK type=kotlin.Int origin=PREFIX_INCR
+          VAR IR_TEMPORARY_VARIABLE name:tmp_39 type:kotlin.Array<kotlin.Int> [val]
+            CALL 'public final fun <get-array> (): kotlin.Array<kotlin.Int> declared in foo' type=kotlin.Array<kotlin.Int> origin=GET_PROPERTY
+          VAR IR_TEMPORARY_VARIABLE name:tmp_40 type:kotlin.Int [val]
+            CONST Int type=kotlin.Int value=0
+          CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=PREFIX_INCR
+            ARG <this>: GET_VAR 'val tmp_39: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
+            ARG index: GET_VAR 'val tmp_40: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+            ARG value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
+              ARG <this>: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=PREFIX_INCR
+                ARG <this>: GET_VAR 'val tmp_39: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
+                ARG index: GET_VAR 'val tmp_40: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+          CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=PREFIX_INCR
             ARG <this>: GET_VAR 'val tmp_39: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
             ARG index: GET_VAR 'val tmp_40: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=PREFIX_INCR
-          ARG <this>: GET_VAR 'val tmp_39: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
-          ARG index: GET_VAR 'val tmp_40: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-      VAR IR_TEMPORARY_VARIABLE name:tmp_41 type:kotlin.Array<kotlin.Int> [val]
-        CALL 'public final fun <get-array> (): kotlin.Array<kotlin.Int> declared in foo' type=kotlin.Array<kotlin.Int> origin=GET_PROPERTY
-      VAR IR_TEMPORARY_VARIABLE name:tmp_42 type:kotlin.Int [val]
-        CONST Int type=kotlin.Int value=0
-      CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=PREFIX_DECR
-        ARG <this>: GET_VAR 'val tmp_41: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
-        ARG index: GET_VAR 'val tmp_42: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-        ARG value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
-          ARG <this>: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=PREFIX_DECR
+        BLOCK type=kotlin.Int origin=PREFIX_DECR
+          VAR IR_TEMPORARY_VARIABLE name:tmp_41 type:kotlin.Array<kotlin.Int> [val]
+            CALL 'public final fun <get-array> (): kotlin.Array<kotlin.Int> declared in foo' type=kotlin.Array<kotlin.Int> origin=GET_PROPERTY
+          VAR IR_TEMPORARY_VARIABLE name:tmp_42 type:kotlin.Int [val]
+            CONST Int type=kotlin.Int value=0
+          CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=PREFIX_DECR
             ARG <this>: GET_VAR 'val tmp_41: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
             ARG index: GET_VAR 'val tmp_42: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
-      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=PREFIX_DECR
-          ARG <this>: GET_VAR 'val tmp_41: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
-          ARG index: GET_VAR 'val tmp_42: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+            ARG value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
+              ARG <this>: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=PREFIX_DECR
+                ARG <this>: GET_VAR 'val tmp_41: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
+                ARG index: GET_VAR 'val tmp_42: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null
+          CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Int origin=PREFIX_DECR
+            ARG <this>: GET_VAR 'val tmp_41: kotlin.Array<kotlin.Int> declared in foo.runMe' type=kotlin.Array<kotlin.Int> origin=null
+            ARG index: GET_VAR 'val tmp_42: kotlin.Int declared in foo.runMe' type=kotlin.Int origin=null

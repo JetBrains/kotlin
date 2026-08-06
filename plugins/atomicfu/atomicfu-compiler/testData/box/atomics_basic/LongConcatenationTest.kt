@@ -1,3 +1,5 @@
+// DUMP_IR
+// DUMP_KT_IR
 import kotlinx.atomicfu.*
 import kotlin.test.*
 

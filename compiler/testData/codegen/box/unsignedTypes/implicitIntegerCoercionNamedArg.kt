@@ -2,7 +2,7 @@
 // LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
 // ALLOW_KOTLIN_PACKAGE
 // WITH_STDLIB
-// DUMP_IR
+// DUMP_IR_AFTER_SPLITTING
 
 // IGNORE_BACKEND: ANDROID
 // STATUS:

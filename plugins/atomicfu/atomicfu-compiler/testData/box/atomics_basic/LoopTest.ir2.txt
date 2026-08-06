@@ -1,0 +1,1587 @@
+FILE fqName:<root> fileName:/LoopTest.kt
+  CLASS CLASS name:LoopTest modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.LoopTest
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private
+        annotations:
+          Volatile
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=0
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a$volatile> visibility:private modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LoopTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.<get-a$volatile>' type=<root>.LoopTest origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-a$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.<set-a$volatile>' type=<root>.LoopTest origin=null
+              value: GET_VAR 'value: kotlin.Int declared in <root>.LoopTest.<set-a$volatile>' type=kotlin.Int origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:a1$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:a1$volatile type:kotlin.Int visibility:private
+        annotations:
+          Volatile
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=1
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a1$volatile> visibility:private modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a1$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.LoopTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a1$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.<get-a1$volatile>' type=<root>.LoopTest origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-a1$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a1$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a1$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.<set-a1$volatile>' type=<root>.LoopTest origin=null
+              value: GET_VAR 'value: kotlin.Int declared in <root>.LoopTest.<set-a1$volatile>' type=kotlin.Int origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private
+        annotations:
+          Volatile
+        EXPRESSION_BODY
+          WHEN type=kotlin.Int origin=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Int type=kotlin.Int value=1
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Int type=kotlin.Int value=0
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-b$volatile> visibility:private modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-b$volatile> (): kotlin.Int declared in <root>.LoopTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.<get-b$volatile>' type=<root>.LoopTest origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-b$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-b$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.<set-b$volatile>' type=<root>.LoopTest origin=null
+              value: GET_VAR 'value: kotlin.Int declared in <root>.LoopTest.<set-b$volatile>' type=kotlin.Int origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:l$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:l$volatile type:kotlin.Long visibility:private
+        annotations:
+          Volatile
+        EXPRESSION_BODY
+          CONST Long type=kotlin.Long value=5000000000
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-l$volatile> visibility:private modality:FINAL returnType:kotlin.Long
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:l$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-l$volatile> (): kotlin.Long declared in <root>.LoopTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:l$volatile type:kotlin.Long visibility:private declared in <root>.LoopTest' type=kotlin.Long origin=null
+              receiver: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.<get-l$volatile>' type=<root>.LoopTest origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-l$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Long
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:l$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-l$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.LoopTest'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:l$volatile type:kotlin.Long visibility:private declared in <root>.LoopTest' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.<set-l$volatile>' type=<root>.LoopTest origin=null
+              value: GET_VAR 'value: kotlin.Long declared in <root>.LoopTest.<set-l$volatile>' type=kotlin.Long origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:r$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:r$volatile type:kotlin.Any? visibility:private
+        annotations:
+          Volatile
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.LoopTest.A' type=<root>.LoopTest.A origin=null
+            ARG s: CONST String type=kotlin.String value="aaaa"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-r$volatile> visibility:private modality:FINAL returnType:kotlin.Any?
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:r$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-r$volatile> (): kotlin.Any? declared in <root>.LoopTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:r$volatile type:kotlin.Any? visibility:private declared in <root>.LoopTest' type=kotlin.Any? origin=null
+              receiver: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.<get-r$volatile>' type=<root>.LoopTest origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-r$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:r$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-r$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LoopTest'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:r$volatile type:kotlin.Any? visibility:private declared in <root>.LoopTest' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.<set-r$volatile>' type=<root>.LoopTest origin=null
+              value: GET_VAR 'value: kotlin.Any? declared in <root>.LoopTest.<set-r$volatile>' type=kotlin.Any? origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:rs$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:rs$volatile type:kotlin.Any? visibility:private
+        annotations:
+          Volatile
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value="bbbb"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-rs$volatile> visibility:private modality:FINAL returnType:kotlin.Any?
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:rs$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-rs$volatile> (): kotlin.Any? declared in <root>.LoopTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:rs$volatile type:kotlin.Any? visibility:private declared in <root>.LoopTest' type=kotlin.Any? origin=null
+              receiver: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.<get-rs$volatile>' type=<root>.LoopTest origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-rs$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:rs$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-rs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LoopTest'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:rs$volatile type:kotlin.Any? visibility:private declared in <root>.LoopTest' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.<set-rs$volatile>' type=<root>.LoopTest origin=null
+              value: GET_VAR 'value: kotlin.Any? declared in <root>.LoopTest.<set-rs$volatile>' type=kotlin.Any? origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:a$volatile$FU type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="a$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile$FU type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater visibility:private [final,static] declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:a1$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:a1$volatile$FU type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="a1$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a1$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a1$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-a1$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a1$volatile$FU type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater visibility:private [final,static] declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:b$volatile$FU type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="b$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-b$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:b$volatile$FU type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater visibility:private [final,static] declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:l$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:l$volatile$FU type:java.util.concurrent.atomic.AtomicLongFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="l$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-l$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicLongFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:l$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:l$volatile$FU type:java.util.concurrent.atomic.AtomicLongFieldUpdater visibility:private [final,static] declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:r$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:r$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, vclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG vclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="r$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-r$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReferenceFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:r$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:r$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static] declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:rs$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:rs$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, vclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG vclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="rs$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-rs$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReferenceFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:rs$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-rs$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:rs$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static] declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+    CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.LoopTest.A
+      PROPERTY name:s visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 's: kotlin.String declared in <root>.LoopTest.A.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL returnType:kotlin.String
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest.A
+          correspondingProperty: PROPERTY name:s visibility:public modality:FINAL [val]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-s> (): kotlin.String declared in <root>.LoopTest.A'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+                receiver: GET_VAR '<this>: <root>.LoopTest.A declared in <root>.LoopTest.A.<get-s>' type=<root>.LoopTest.A origin=null
+      CONSTRUCTOR visibility:public returnType:<root>.LoopTest.A [primary]
+        VALUE_PARAMETER kind:Regular name:s index:0 type:kotlin.String
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+    CONSTRUCTOR visibility:public returnType:<root>.LoopTest [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LoopTest modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN ATOMICFU_GENERATED_FUNCTION name:getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any visibility:private modality:FINAL returnType:kotlin.Any? [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Any?, kotlin.Any?>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Any? [val]
+              CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Any? [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Any? origin=null
+                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?> declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Any?> origin=null
+                ARG p1: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+            WHEN type=kotlin.Unit origin=null
+              BRANCH
+                if: CALL 'public final fun compareAndSet <T> (obj: kotlin.Any, expect: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Boolean origin=null
+                  TYPE_ARG T: <none>
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                  ARG expect: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                  ARG update: GET_VAR 'val tmp_1: kotlin.Any? declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.LoopTest'
+                  GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+    FUN ATOMICFU_GENERATED_FUNCTION name:getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Boolean visibility:private modality:FINAL returnType:kotlin.Boolean [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Boolean, kotlin.Boolean>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Boolean [val]
+              CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                ARG arg0: CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Any? origin=null
+                ARG arg1: CONST Int type=kotlin.Int value=1
+            VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Boolean [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Boolean origin=null
+                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean> declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Function1<kotlin.Boolean, kotlin.Boolean> origin=null
+                ARG p1: GET_VAR 'val tmp_2: kotlin.Boolean declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Boolean origin=null
+            WHEN type=kotlin.Unit origin=null
+              BRANCH
+                if: CALL 'public final fun compareAndSet (obj: kotlin.Any, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Boolean origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Any? origin=null
+                  ARG expect: WHEN type=kotlin.Int origin=null
+                    BRANCH
+                      if: GET_VAR 'val tmp_2: kotlin.Boolean declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Boolean origin=null
+                      then: CONST Int type=kotlin.Int value=1
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: CONST Int type=kotlin.Int value=0
+                  ARG update: WHEN type=kotlin.Int origin=null
+                    BRANCH
+                      if: GET_VAR 'val tmp_3: kotlin.Boolean declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Boolean origin=null
+                      then: CONST Int type=kotlin.Int value=1
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: CONST Int type=kotlin.Int value=0
+                then: RETURN type=kotlin.Nothing from='private final fun getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Boolean declared in <root>.LoopTest'
+                  GET_VAR 'val tmp_2: kotlin.Boolean declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Boolean origin=null
+    FUN ATOMICFU_GENERATED_FUNCTION name:getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Int, kotlin.Int>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Int [val]
+              CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Any? origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.Int [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int> declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=null
+                ARG p1: GET_VAR 'val tmp_4: kotlin.Int declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Int origin=null
+            WHEN type=kotlin.Unit origin=null
+              BRANCH
+                if: CALL 'public final fun compareAndSet (obj: kotlin.Any, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Boolean origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Any? origin=null
+                  ARG expect: GET_VAR 'val tmp_4: kotlin.Int declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Int origin=null
+                  ARG update: GET_VAR 'val tmp_5: kotlin.Int declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Int origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.LoopTest'
+                  GET_VAR 'val tmp_4: kotlin.Int declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Int origin=null
+    FUN ATOMICFU_GENERATED_FUNCTION name:getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Long visibility:private modality:FINAL returnType:kotlin.Long [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicLongFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Long, kotlin.Long>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:kotlin.Long [val]
+              CALL 'public final fun get (obj: kotlin.Any): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Long origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Any? origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:kotlin.Long [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Long origin=null
+                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long> declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Function1<kotlin.Long, kotlin.Long> origin=null
+                ARG p1: GET_VAR 'val tmp_6: kotlin.Long declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Long origin=null
+            WHEN type=kotlin.Unit origin=null
+              BRANCH
+                if: CALL 'public final fun compareAndSet (obj: kotlin.Any, expect: kotlin.Long, update: kotlin.Long): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Boolean origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Any? origin=null
+                  ARG expect: GET_VAR 'val tmp_6: kotlin.Long declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Long origin=null
+                  ARG update: GET_VAR 'val tmp_7: kotlin.Long declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Long origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLongFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Long declared in <root>.LoopTest'
+                  GET_VAR 'val tmp_6: kotlin.Long declared in <root>.LoopTest.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Long origin=null
+    FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$ATOMIC_FIELD_UPDATER$Any visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Any?, kotlin.Unit>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_8 type:kotlin.Any? [val]
+              CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest.loop$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.loop$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+              ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Unit> declared in <root>.LoopTest.loop$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=null
+              ARG p1: GET_VAR 'val tmp_8: kotlin.Any? declared in <root>.LoopTest.loop$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+    FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$ATOMIC_FIELD_UPDATER$Boolean visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_9 type:kotlin.Boolean [val]
+              CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                ARG arg0: CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest.loop$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.loop$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Any? origin=null
+                ARG arg1: CONST Int type=kotlin.Int value=1
+            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+              ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Unit> declared in <root>.LoopTest.loop$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Function1<kotlin.Boolean, kotlin.Unit> origin=null
+              ARG p1: GET_VAR 'val tmp_9: kotlin.Boolean declared in <root>.LoopTest.loop$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Boolean origin=null
+    FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$ATOMIC_FIELD_UPDATER$Int visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_10 type:kotlin.Int [val]
+              CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest.loop$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.loop$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Any? origin=null
+            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+              ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.LoopTest.loop$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+              ARG p1: GET_VAR 'val tmp_10: kotlin.Int declared in <root>.LoopTest.loop$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Int origin=null
+    FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$ATOMIC_FIELD_UPDATER$Long visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicLongFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Long, kotlin.Unit>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_11 type:kotlin.Long [val]
+              CALL 'public final fun get (obj: kotlin.Any): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Long origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest.loop$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.loop$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Any? origin=null
+            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+              ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Unit> declared in <root>.LoopTest.loop$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Function1<kotlin.Long, kotlin.Unit> origin=null
+              ARG p1: GET_VAR 'val tmp_11: kotlin.Long declared in <root>.LoopTest.loop$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Long origin=null
+    FUN ATOMICFU_GENERATED_FUNCTION name:update$atomicfu$ATOMIC_FIELD_UPDATER$Any visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Any?, kotlin.Any?>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_12 type:kotlin.Any? [val]
+              CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_13 type:kotlin.Any? [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Any? origin=null
+                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?> declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Any?> origin=null
+                ARG p1: GET_VAR 'val tmp_12: kotlin.Any? declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+            WHEN type=kotlin.Unit origin=null
+              BRANCH
+                if: CALL 'public final fun compareAndSet <T> (obj: kotlin.Any, expect: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Boolean origin=null
+                  TYPE_ARG T: <none>
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                  ARG expect: GET_VAR 'val tmp_12: kotlin.Any? declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                  ARG update: GET_VAR 'val tmp_13: kotlin.Any? declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Unit declared in <root>.LoopTest'
+                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN ATOMICFU_GENERATED_FUNCTION name:update$atomicfu$ATOMIC_FIELD_UPDATER$Boolean visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Boolean, kotlin.Boolean>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_14 type:kotlin.Boolean [val]
+              CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                ARG arg0: CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Any? origin=null
+                ARG arg1: CONST Int type=kotlin.Int value=1
+            VAR IR_TEMPORARY_VARIABLE name:tmp_15 type:kotlin.Boolean [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Boolean origin=null
+                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean> declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Function1<kotlin.Boolean, kotlin.Boolean> origin=null
+                ARG p1: GET_VAR 'val tmp_14: kotlin.Boolean declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Boolean origin=null
+            WHEN type=kotlin.Unit origin=null
+              BRANCH
+                if: CALL 'public final fun compareAndSet (obj: kotlin.Any, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Boolean origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Any? origin=null
+                  ARG expect: WHEN type=kotlin.Int origin=null
+                    BRANCH
+                      if: GET_VAR 'val tmp_14: kotlin.Boolean declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Boolean origin=null
+                      then: CONST Int type=kotlin.Int value=1
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: CONST Int type=kotlin.Int value=0
+                  ARG update: WHEN type=kotlin.Int origin=null
+                    BRANCH
+                      if: GET_VAR 'val tmp_15: kotlin.Boolean declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Boolean origin=null
+                      then: CONST Int type=kotlin.Int value=1
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: CONST Int type=kotlin.Int value=0
+                then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$ATOMIC_FIELD_UPDATER$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Unit declared in <root>.LoopTest'
+                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN ATOMICFU_GENERATED_FUNCTION name:update$atomicfu$ATOMIC_FIELD_UPDATER$Int visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Int, kotlin.Int>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_16 type:kotlin.Int [val]
+              CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Any? origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_17 type:kotlin.Int [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int> declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=null
+                ARG p1: GET_VAR 'val tmp_16: kotlin.Int declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Int origin=null
+            WHEN type=kotlin.Unit origin=null
+              BRANCH
+                if: CALL 'public final fun compareAndSet (obj: kotlin.Any, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Boolean origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Any? origin=null
+                  ARG expect: GET_VAR 'val tmp_16: kotlin.Int declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Int origin=null
+                  ARG update: GET_VAR 'val tmp_17: kotlin.Int declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Int origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$ATOMIC_FIELD_UPDATER$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit declared in <root>.LoopTest'
+                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN ATOMICFU_GENERATED_FUNCTION name:update$atomicfu$ATOMIC_FIELD_UPDATER$Long visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicLongFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Long, kotlin.Long>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_18 type:kotlin.Long [val]
+              CALL 'public final fun get (obj: kotlin.Any): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Long origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Any? origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_19 type:kotlin.Long [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Long origin=null
+                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long> declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Function1<kotlin.Long, kotlin.Long> origin=null
+                ARG p1: GET_VAR 'val tmp_18: kotlin.Long declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Long origin=null
+            WHEN type=kotlin.Unit origin=null
+              BRANCH
+                if: CALL 'public final fun compareAndSet (obj: kotlin.Any, expect: kotlin.Long, update: kotlin.Long): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Boolean origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Any? origin=null
+                  ARG expect: GET_VAR 'val tmp_18: kotlin.Long declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Long origin=null
+                  ARG update: GET_VAR 'val tmp_19: kotlin.Long declared in <root>.LoopTest.update$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Long origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$ATOMIC_FIELD_UPDATER$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLongFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Unit declared in <root>.LoopTest'
+                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN ATOMICFU_GENERATED_FUNCTION name:updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any visibility:private modality:FINAL returnType:kotlin.Any? [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Any?, kotlin.Any?>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_20 type:kotlin.Any? [val]
+              CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_21 type:kotlin.Any? [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Any? origin=null
+                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?> declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Any?> origin=null
+                ARG p1: GET_VAR 'val tmp_20: kotlin.Any? declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+            WHEN type=kotlin.Unit origin=null
+              BRANCH
+                if: CALL 'public final fun compareAndSet <T> (obj: kotlin.Any, expect: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Boolean origin=null
+                  TYPE_ARG T: <none>
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                  ARG expect: GET_VAR 'val tmp_20: kotlin.Any? declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                  ARG update: GET_VAR 'val tmp_21: kotlin.Any? declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.LoopTest'
+                  GET_VAR 'val tmp_21: kotlin.Any? declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+    FUN ATOMICFU_GENERATED_FUNCTION name:updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Boolean visibility:private modality:FINAL returnType:kotlin.Boolean [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Boolean, kotlin.Boolean>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_22 type:kotlin.Boolean [val]
+              CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                ARG arg0: CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Any? origin=null
+                ARG arg1: CONST Int type=kotlin.Int value=1
+            VAR IR_TEMPORARY_VARIABLE name:tmp_23 type:kotlin.Boolean [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Boolean origin=null
+                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean> declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Function1<kotlin.Boolean, kotlin.Boolean> origin=null
+                ARG p1: GET_VAR 'val tmp_22: kotlin.Boolean declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Boolean origin=null
+            WHEN type=kotlin.Unit origin=null
+              BRANCH
+                if: CALL 'public final fun compareAndSet (obj: kotlin.Any, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Boolean origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Any? origin=null
+                  ARG expect: WHEN type=kotlin.Int origin=null
+                    BRANCH
+                      if: GET_VAR 'val tmp_22: kotlin.Boolean declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Boolean origin=null
+                      then: CONST Int type=kotlin.Int value=1
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: CONST Int type=kotlin.Int value=0
+                  ARG update: WHEN type=kotlin.Int origin=null
+                    BRANCH
+                      if: GET_VAR 'val tmp_23: kotlin.Boolean declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Boolean origin=null
+                      then: CONST Int type=kotlin.Int value=1
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: CONST Int type=kotlin.Int value=0
+                then: RETURN type=kotlin.Nothing from='private final fun updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Boolean declared in <root>.LoopTest'
+                  GET_VAR 'val tmp_23: kotlin.Boolean declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Boolean' type=kotlin.Boolean origin=null
+    FUN ATOMICFU_GENERATED_FUNCTION name:updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Int, kotlin.Int>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_24 type:kotlin.Int [val]
+              CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Any? origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_25 type:kotlin.Int [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int> declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=null
+                ARG p1: GET_VAR 'val tmp_24: kotlin.Int declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Int origin=null
+            WHEN type=kotlin.Unit origin=null
+              BRANCH
+                if: CALL 'public final fun compareAndSet (obj: kotlin.Any, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Boolean origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Any? origin=null
+                  ARG expect: GET_VAR 'val tmp_24: kotlin.Int declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Int origin=null
+                  ARG update: GET_VAR 'val tmp_25: kotlin.Int declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Int origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.LoopTest'
+                  GET_VAR 'val tmp_25: kotlin.Int declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Int' type=kotlin.Int origin=null
+    FUN ATOMICFU_GENERATED_FUNCTION name:updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Long visibility:private modality:FINAL returnType:kotlin.Long [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicLongFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Long, kotlin.Long>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_26 type:kotlin.Long [val]
+              CALL 'public final fun get (obj: kotlin.Any): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Long origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Any? origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_27 type:kotlin.Long [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Long origin=null
+                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long> declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Function1<kotlin.Long, kotlin.Long> origin=null
+                ARG p1: GET_VAR 'val tmp_26: kotlin.Long declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Long origin=null
+            WHEN type=kotlin.Unit origin=null
+              BRANCH
+                if: CALL 'public final fun compareAndSet (obj: kotlin.Any, expect: kotlin.Long, update: kotlin.Long): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Boolean origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Any? origin=null
+                  ARG expect: GET_VAR 'val tmp_26: kotlin.Long declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Long origin=null
+                  ARG update: GET_VAR 'val tmp_27: kotlin.Long declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Long origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLongFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Long declared in <root>.LoopTest'
+                  GET_VAR 'val tmp_27: kotlin.Long declared in <root>.LoopTest.updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Long' type=kotlin.Long origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:atomicfuBooleanGetAndUpdateTest visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      BLOCK_BODY
+        CALL 'public final fun set (obj: kotlin.Any, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG newValue: WHEN type=kotlin.Int origin=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=false
+              then: CONST Int type=kotlin.Int value=1
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Int type=kotlin.Int value=0
+        VAR name:resBool type:kotlin.Boolean [val]
+          CALL 'private final fun getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Boolean declared in <root>.LoopTest' type=kotlin.Boolean origin=null
+            ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanGetAndUpdateTest' type=<root>.LoopTest origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+            ARG obj$atomicfu: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+            ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Boolean, kotlin.Boolean> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Boolean
+                VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Boolean
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Boolean): kotlin.Boolean declared in <root>.LoopTest.atomicfuBooleanGetAndUpdateTest'
+                    WHEN type=kotlin.Boolean origin=IF
+                      BRANCH
+                        if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                          ARG <this>: GET_VAR 'value: kotlin.Boolean declared in <root>.LoopTest.atomicfuBooleanGetAndUpdateTest.<anonymous>' type=kotlin.Boolean origin=null
+                        then: BLOCK type=kotlin.Boolean origin=null
+                          CALL 'public final fun compareAndSet (obj: kotlin.Any, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Boolean origin=null
+                            ARG <this>: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                            ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                            ARG expect: WHEN type=kotlin.Int origin=null
+                              BRANCH
+                                if: CONST Boolean type=kotlin.Boolean value=false
+                                then: CONST Int type=kotlin.Int value=1
+                              BRANCH
+                                if: CONST Boolean type=kotlin.Boolean value=true
+                                then: CONST Int type=kotlin.Int value=0
+                            ARG update: WHEN type=kotlin.Int origin=null
+                              BRANCH
+                                if: CONST Boolean type=kotlin.Boolean value=true
+                                then: CONST Int type=kotlin.Int value=1
+                              BRANCH
+                                if: CONST Boolean type=kotlin.Boolean value=true
+                                then: CONST Int type=kotlin.Int value=0
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: BLOCK type=kotlin.Boolean origin=null
+                          CONST Boolean type=kotlin.Boolean value=true
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: GET_VAR 'val resBool: kotlin.Boolean declared in <root>.LoopTest.atomicfuBooleanGetAndUpdateTest' type=kotlin.Boolean origin=null
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+            CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              ARG arg0: CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                ARG <this>: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+              ARG arg1: CONST Int type=kotlin.Int value=1
+    FUN name:atomicfuBooleanLoopTest visibility:public modality:FINAL returnType:kotlin.Boolean
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:newValue index:1 type:kotlin.Boolean
+      BLOCK_BODY
+        CALL 'public final fun set (obj: kotlin.Any, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG newValue: WHEN type=kotlin.Int origin=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Int type=kotlin.Int value=1
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Int type=kotlin.Int value=0
+        CALL 'private final fun loop$atomicfu$ATOMIC_FIELD_UPDATER$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Unit>): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanLoopTest' type=<root>.LoopTest origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+          ARG obj$atomicfu: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Boolean, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER kind:Regular name:cur index:0 type:kotlin.Boolean
+              BLOCK_BODY
+                WHEN type=kotlin.Unit origin=IF
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                      ARG arg0: GET_VAR 'cur: kotlin.Boolean declared in <root>.LoopTest.atomicfuBooleanLoopTest.<anonymous>' type=kotlin.Boolean origin=null
+                      ARG arg1: CONST Boolean type=kotlin.Boolean value=false
+                    then: BLOCK type=kotlin.Unit origin=null
+                      WHEN type=kotlin.Unit origin=IF
+                        BRANCH
+                          if: CALL 'public final fun compareAndSet (obj: kotlin.Any, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Boolean origin=null
+                            ARG <this>: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                            ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                            ARG expect: WHEN type=kotlin.Int origin=null
+                              BRANCH
+                                if: CONST Boolean type=kotlin.Boolean value=false
+                                then: CONST Int type=kotlin.Int value=1
+                              BRANCH
+                                if: CONST Boolean type=kotlin.Boolean value=true
+                                then: CONST Int type=kotlin.Int value=0
+                            ARG update: WHEN type=kotlin.Int origin=null
+                              BRANCH
+                                if: GET_VAR 'newValue: kotlin.Boolean declared in <root>.LoopTest.atomicfuBooleanLoopTest' type=kotlin.Boolean origin=null
+                                then: CONST Int type=kotlin.Int value=1
+                              BRANCH
+                                if: CONST Boolean type=kotlin.Boolean value=true
+                                then: CONST Int type=kotlin.Int value=0
+                          then: BLOCK type=kotlin.Unit origin=null
+                            CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+                              TYPE_ARG T: kotlin.Boolean
+                              ARG expected: GET_VAR 'newValue: kotlin.Boolean declared in <root>.LoopTest.atomicfuBooleanLoopTest' type=kotlin.Boolean origin=null
+                              ARG actual: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+                                CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                                  ARG arg0: CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                                    ARG <this>: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                                    ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                                  ARG arg1: CONST Int type=kotlin.Int value=1
+                            RETURN type=kotlin.Nothing from='public final fun atomicfuBooleanLoopTest (newValue: kotlin.Boolean): kotlin.Boolean declared in <root>.LoopTest'
+                              TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+                                CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                                  ARG arg0: CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                                    ARG <this>: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                                    ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                                  ARG arg1: CONST Int type=kotlin.Int value=1
+                  BRANCH
+                    if: CONST Boolean type=kotlin.Boolean value=true
+                    then: BLOCK type=kotlin.Unit origin=null
+                      CALL 'public final fun set (obj: kotlin.Any, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Unit origin=null
+                        ARG <this>: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                        ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                        ARG newValue: WHEN type=kotlin.Int origin=null
+                          BRANCH
+                            if: CONST Boolean type=kotlin.Boolean value=false
+                            then: CONST Int type=kotlin.Int value=1
+                          BRANCH
+                            if: CONST Boolean type=kotlin.Boolean value=true
+                            then: CONST Int type=kotlin.Int value=0
+    FUN name:atomicfuBooleanUpdateAndGetTest visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      BLOCK_BODY
+        CALL 'public final fun set (obj: kotlin.Any, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG newValue: WHEN type=kotlin.Int origin=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=false
+              then: CONST Int type=kotlin.Int value=1
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Int type=kotlin.Int value=0
+        VAR name:resBool type:kotlin.Boolean [val]
+          CALL 'private final fun updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Boolean declared in <root>.LoopTest' type=kotlin.Boolean origin=null
+            ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanUpdateAndGetTest' type=<root>.LoopTest origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+            ARG obj$atomicfu: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+            ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Boolean, kotlin.Boolean> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Boolean
+                VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Boolean
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Boolean): kotlin.Boolean declared in <root>.LoopTest.atomicfuBooleanUpdateAndGetTest'
+                    WHEN type=kotlin.Boolean origin=IF
+                      BRANCH
+                        if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                          ARG <this>: GET_VAR 'value: kotlin.Boolean declared in <root>.LoopTest.atomicfuBooleanUpdateAndGetTest.<anonymous>' type=kotlin.Boolean origin=null
+                        then: BLOCK type=kotlin.Boolean origin=null
+                          CALL 'public final fun compareAndSet (obj: kotlin.Any, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Boolean origin=null
+                            ARG <this>: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                            ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                            ARG expect: WHEN type=kotlin.Int origin=null
+                              BRANCH
+                                if: CONST Boolean type=kotlin.Boolean value=false
+                                then: CONST Int type=kotlin.Int value=1
+                              BRANCH
+                                if: CONST Boolean type=kotlin.Boolean value=true
+                                then: CONST Int type=kotlin.Int value=0
+                            ARG update: WHEN type=kotlin.Int origin=null
+                              BRANCH
+                                if: CONST Boolean type=kotlin.Boolean value=true
+                                then: CONST Int type=kotlin.Int value=1
+                              BRANCH
+                                if: CONST Boolean type=kotlin.Boolean value=true
+                                then: CONST Int type=kotlin.Int value=0
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: BLOCK type=kotlin.Boolean origin=null
+                          CONST Boolean type=kotlin.Boolean value=true
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: GET_VAR 'val resBool: kotlin.Boolean declared in <root>.LoopTest.atomicfuBooleanUpdateAndGetTest' type=kotlin.Boolean origin=null
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+            CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              ARG arg0: CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                ARG <this>: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+              ARG arg1: CONST Int type=kotlin.Int value=1
+    FUN name:atomicfuBooleanUpdateTest visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      BLOCK_BODY
+        CALL 'public final fun set (obj: kotlin.Any, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG newValue: WHEN type=kotlin.Int origin=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=false
+              then: CONST Int type=kotlin.Int value=1
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Int type=kotlin.Int value=0
+        CALL 'private final fun update$atomicfu$ATOMIC_FIELD_UPDATER$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanUpdateTest' type=<root>.LoopTest origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+          ARG obj$atomicfu: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Boolean, kotlin.Boolean> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Boolean
+              VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Boolean
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Boolean): kotlin.Boolean declared in <root>.LoopTest.atomicfuBooleanUpdateTest'
+                  WHEN type=kotlin.Boolean origin=IF
+                    BRANCH
+                      if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                        ARG <this>: GET_VAR 'value: kotlin.Boolean declared in <root>.LoopTest.atomicfuBooleanUpdateTest.<anonymous>' type=kotlin.Boolean origin=null
+                      then: BLOCK type=kotlin.Boolean origin=null
+                        CALL 'public final fun compareAndSet (obj: kotlin.Any, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Boolean origin=null
+                          ARG <this>: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                          ARG expect: WHEN type=kotlin.Int origin=null
+                            BRANCH
+                              if: CONST Boolean type=kotlin.Boolean value=false
+                              then: CONST Int type=kotlin.Int value=1
+                            BRANCH
+                              if: CONST Boolean type=kotlin.Boolean value=true
+                              then: CONST Int type=kotlin.Int value=0
+                          ARG update: WHEN type=kotlin.Int origin=null
+                            BRANCH
+                              if: CONST Boolean type=kotlin.Boolean value=true
+                              then: CONST Int type=kotlin.Int value=1
+                            BRANCH
+                              if: CONST Boolean type=kotlin.Boolean value=true
+                              then: CONST Int type=kotlin.Int value=0
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: BLOCK type=kotlin.Boolean origin=null
+                        CONST Boolean type=kotlin.Boolean value=true
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Boolean
+          ARG expected: CONST Boolean type=kotlin.Boolean value=true
+          ARG actual: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+            CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              ARG arg0: CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                ARG <this>: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+              ARG arg1: CONST Int type=kotlin.Int value=1
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+            CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              ARG arg0: CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                ARG <this>: CALL 'private final fun <get-b$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuBooleanUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+              ARG arg1: CONST Int type=kotlin.Int value=1
+    FUN name:atomicfuGetAndUpdateTest visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      BLOCK_BODY
+        CALL 'public final fun atomicfuIntGetAndUpdateTest (): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun atomicfuBooleanGetAndUpdateTest (): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun atomicfuLongGetAndUpdateTest (): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun atomicfuRefGetAndUpdateTest (): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+    FUN name:atomicfuIntGetAndUpdateTest visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      BLOCK_BODY
+        CALL 'public final fun set (obj: kotlin.Any, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG newValue: CONST Int type=kotlin.Int value=0
+        VAR name:resInt type:kotlin.Int [val]
+          CALL 'private final fun getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.LoopTest' type=kotlin.Int origin=null
+            ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntGetAndUpdateTest' type=<root>.LoopTest origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+            ARG obj$atomicfu: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+            ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+                VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Int
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Int): kotlin.Int declared in <root>.LoopTest.atomicfuIntGetAndUpdateTest'
+                    WHEN type=kotlin.Int origin=IF
+                      BRANCH
+                        if: CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
+                          ARG arg0: GET_VAR 'value: kotlin.Int declared in <root>.LoopTest.atomicfuIntGetAndUpdateTest.<anonymous>' type=kotlin.Int origin=null
+                          ARG arg1: CONST Int type=kotlin.Int value=10
+                        then: BLOCK type=kotlin.Int origin=null
+                          CALL 'public final fun incrementAndGet (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                            ARG <this>: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                            ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: BLOCK type=kotlin.Int origin=null
+                          CONST Int type=kotlin.Int value=2147483647
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=10
+          ARG actual: GET_VAR 'val resInt: kotlin.Int declared in <root>.LoopTest.atomicfuIntGetAndUpdateTest' type=kotlin.Int origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=2147483647
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+              ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+    FUN name:atomicfuIntLoopTest visibility:public modality:FINAL returnType:kotlin.Int
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:newValue index:1 type:kotlin.Int
+      BLOCK_BODY
+        CALL 'public final fun set (obj: kotlin.Any, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG newValue: CONST Int type=kotlin.Int value=0
+        CALL 'private final fun loop$atomicfu$ATOMIC_FIELD_UPDATER$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntLoopTest' type=<root>.LoopTest origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+          ARG obj$atomicfu: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER kind:Regular name:cur index:0 type:kotlin.Int
+              BLOCK_BODY
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  WHEN type=kotlin.Int origin=IF
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                        ARG arg0: GET_VAR 'cur: kotlin.Int declared in <root>.LoopTest.atomicfuIntLoopTest.<anonymous>' type=kotlin.Int origin=null
+                        ARG arg1: CONST Int type=kotlin.Int value=10
+                      then: BLOCK type=kotlin.Unit origin=null
+                        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                          CALL 'public final fun compareAndSet (obj: kotlin.Any, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Boolean origin=null
+                            ARG <this>: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                            ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                            ARG expect: CONST Int type=kotlin.Int value=10
+                            ARG update: GET_VAR 'newValue: kotlin.Int declared in <root>.LoopTest.atomicfuIntLoopTest' type=kotlin.Int origin=null
+                        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+                          TYPE_ARG T: kotlin.Int
+                          ARG expected: GET_VAR 'newValue: kotlin.Int declared in <root>.LoopTest.atomicfuIntLoopTest' type=kotlin.Int origin=null
+                          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+                            CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                              ARG <this>: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                              ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                        RETURN type=kotlin.Nothing from='public final fun atomicfuIntLoopTest (newValue: kotlin.Int): kotlin.Int declared in <root>.LoopTest'
+                          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+                            CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                              ARG <this>: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                              ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: BLOCK type=kotlin.Int origin=null
+                        CALL 'public final fun incrementAndGet (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                          ARG <this>: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+    FUN name:atomicfuIntUpdateAndGetTest visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      BLOCK_BODY
+        CALL 'public final fun set (obj: kotlin.Any, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG newValue: CONST Int type=kotlin.Int value=0
+        VAR name:resInt type:kotlin.Int [val]
+          CALL 'private final fun updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.LoopTest' type=kotlin.Int origin=null
+            ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntUpdateAndGetTest' type=<root>.LoopTest origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+            ARG obj$atomicfu: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+            ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+                VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Int
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Int): kotlin.Int declared in <root>.LoopTest.atomicfuIntUpdateAndGetTest'
+                    WHEN type=kotlin.Int origin=IF
+                      BRANCH
+                        if: CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
+                          ARG arg0: GET_VAR 'value: kotlin.Int declared in <root>.LoopTest.atomicfuIntUpdateAndGetTest.<anonymous>' type=kotlin.Int origin=null
+                          ARG arg1: CONST Int type=kotlin.Int value=10
+                        then: BLOCK type=kotlin.Int origin=null
+                          CALL 'public final fun incrementAndGet (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                            ARG <this>: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                            ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: BLOCK type=kotlin.Int origin=null
+                          CONST Int type=kotlin.Int value=2147483647
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=2147483647
+          ARG actual: GET_VAR 'val resInt: kotlin.Int declared in <root>.LoopTest.atomicfuIntUpdateAndGetTest' type=kotlin.Int origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=2147483647
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+              ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+    FUN name:atomicfuIntUpdateTest visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      BLOCK_BODY
+        CALL 'public final fun set (obj: kotlin.Any, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG newValue: CONST Int type=kotlin.Int value=0
+        CALL 'private final fun update$atomicfu$ATOMIC_FIELD_UPDATER$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntUpdateTest' type=<root>.LoopTest origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+          ARG obj$atomicfu: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+              VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Int
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Int): kotlin.Int declared in <root>.LoopTest.atomicfuIntUpdateTest'
+                  WHEN type=kotlin.Int origin=IF
+                    BRANCH
+                      if: CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
+                        ARG arg0: GET_VAR 'value: kotlin.Int declared in <root>.LoopTest.atomicfuIntUpdateTest.<anonymous>' type=kotlin.Int origin=null
+                        ARG arg1: CONST Int type=kotlin.Int value=10
+                      then: BLOCK type=kotlin.Int origin=null
+                        CALL 'public final fun incrementAndGet (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+                          ARG <this>: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+                          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: BLOCK type=kotlin.Int origin=null
+                        CONST Int type=kotlin.Int value=2147483647
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=2147483647
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (obj: kotlin.Any): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerFieldUpdater' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-a$volatile$FU> (): java.util.concurrent.atomic.AtomicIntegerFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicIntegerFieldUpdater origin=null
+              ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuIntUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+    FUN name:atomicfuLongGetAndUpdateTest visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      BLOCK_BODY
+        CALL 'public final fun set (obj: kotlin.Any, newValue: kotlin.Long): kotlin.Unit declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG newValue: CONST Long type=kotlin.Long value=0
+        VAR name:resLong type:kotlin.Long [val]
+          CALL 'private final fun getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLongFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Long declared in <root>.LoopTest' type=kotlin.Long origin=null
+            ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongGetAndUpdateTest' type=<root>.LoopTest origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+            ARG obj$atomicfu: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+            ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Long, kotlin.Long> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Long
+                VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Long
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Long): kotlin.Long declared in <root>.LoopTest.atomicfuLongGetAndUpdateTest'
+                    WHEN type=kotlin.Long origin=IF
+                      BRANCH
+                        if: CALL 'public final fun less (arg0: kotlin.Long, arg1: kotlin.Long): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
+                          ARG arg0: GET_VAR 'value: kotlin.Long declared in <root>.LoopTest.atomicfuLongGetAndUpdateTest.<anonymous>' type=kotlin.Long origin=null
+                          ARG arg1: CALL 'public open fun toLong (): kotlin.Long declared in kotlin.Int' type=kotlin.Long origin=null
+                            ARG <this>: CONST Int type=kotlin.Int value=10
+                        then: BLOCK type=kotlin.Long origin=null
+                          CALL 'public final fun incrementAndGet (obj: kotlin.Any): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Long origin=null
+                            ARG <this>: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+                            ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: BLOCK type=kotlin.Long origin=null
+                          CONST Long type=kotlin.Long value=9223372036854775807
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=9223372036854775807
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (obj: kotlin.Any): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+              ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=10
+          ARG actual: GET_VAR 'val resLong: kotlin.Long declared in <root>.LoopTest.atomicfuLongGetAndUpdateTest' type=kotlin.Long origin=null
+    FUN name:atomicfuLongLoopTest visibility:public modality:FINAL returnType:kotlin.Long
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:newValue index:1 type:kotlin.Long
+      BLOCK_BODY
+        CALL 'public final fun set (obj: kotlin.Any, newValue: kotlin.Long): kotlin.Unit declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG newValue: CONST Long type=kotlin.Long value=5000000000
+        CALL 'private final fun loop$atomicfu$ATOMIC_FIELD_UPDATER$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLongFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Unit>): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongLoopTest' type=<root>.LoopTest origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+          ARG obj$atomicfu: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Long, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER kind:Regular name:cur index:0 type:kotlin.Long
+              BLOCK_BODY
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  WHEN type=kotlin.Any origin=IF
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                        ARG arg0: GET_VAR 'cur: kotlin.Long declared in <root>.LoopTest.atomicfuLongLoopTest.<anonymous>' type=kotlin.Long origin=null
+                        ARG arg1: CONST Long type=kotlin.Long value=5000000010
+                      then: BLOCK type=kotlin.Unit origin=null
+                        WHEN type=kotlin.Unit origin=IF
+                          BRANCH
+                            if: CALL 'public final fun compareAndSet (obj: kotlin.Any, expect: kotlin.Long, update: kotlin.Long): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Boolean origin=null
+                              ARG <this>: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+                              ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                              ARG expect: CONST Long type=kotlin.Long value=5000000010
+                              ARG update: GET_VAR 'newValue: kotlin.Long declared in <root>.LoopTest.atomicfuLongLoopTest' type=kotlin.Long origin=null
+                            then: BLOCK type=kotlin.Unit origin=null
+                              CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+                                TYPE_ARG T: kotlin.Long
+                                ARG expected: GET_VAR 'newValue: kotlin.Long declared in <root>.LoopTest.atomicfuLongLoopTest' type=kotlin.Long origin=null
+                                ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+                                  CALL 'public final fun get (obj: kotlin.Any): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Long origin=null
+                                    ARG <this>: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+                                    ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                              RETURN type=kotlin.Nothing from='public final fun atomicfuLongLoopTest (newValue: kotlin.Long): kotlin.Long declared in <root>.LoopTest'
+                                TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+                                  CALL 'public final fun get (obj: kotlin.Any): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Long origin=null
+                                    ARG <this>: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+                                    ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: BLOCK type=kotlin.Long origin=null
+                        CALL 'public final fun incrementAndGet (obj: kotlin.Any): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Long origin=null
+                          ARG <this>: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+                          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+    FUN name:atomicfuLongUpdateAndGetTest visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      BLOCK_BODY
+        CALL 'public final fun set (obj: kotlin.Any, newValue: kotlin.Long): kotlin.Unit declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG newValue: CONST Long type=kotlin.Long value=0
+        VAR name:resLong type:kotlin.Long [val]
+          CALL 'private final fun updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLongFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Long declared in <root>.LoopTest' type=kotlin.Long origin=null
+            ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongUpdateAndGetTest' type=<root>.LoopTest origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+            ARG obj$atomicfu: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+            ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Long, kotlin.Long> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Long
+                VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Long
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Long): kotlin.Long declared in <root>.LoopTest.atomicfuLongUpdateAndGetTest'
+                    WHEN type=kotlin.Long origin=IF
+                      BRANCH
+                        if: CALL 'public final fun less (arg0: kotlin.Long, arg1: kotlin.Long): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
+                          ARG arg0: GET_VAR 'value: kotlin.Long declared in <root>.LoopTest.atomicfuLongUpdateAndGetTest.<anonymous>' type=kotlin.Long origin=null
+                          ARG arg1: CALL 'public open fun toLong (): kotlin.Long declared in kotlin.Int' type=kotlin.Long origin=null
+                            ARG <this>: CONST Int type=kotlin.Int value=10
+                        then: BLOCK type=kotlin.Long origin=null
+                          CALL 'public final fun incrementAndGet (obj: kotlin.Any): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Long origin=null
+                            ARG <this>: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+                            ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: BLOCK type=kotlin.Long origin=null
+                          CONST Long type=kotlin.Long value=9223372036854775807
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=9223372036854775807
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (obj: kotlin.Any): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+              ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=9223372036854775807
+          ARG actual: GET_VAR 'val resLong: kotlin.Long declared in <root>.LoopTest.atomicfuLongUpdateAndGetTest' type=kotlin.Long origin=null
+    FUN name:atomicfuLongUpdateTest visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      BLOCK_BODY
+        CALL 'public final fun set (obj: kotlin.Any, newValue: kotlin.Long): kotlin.Unit declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG newValue: CONST Long type=kotlin.Long value=0
+        CALL 'private final fun update$atomicfu$ATOMIC_FIELD_UPDATER$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLongFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongUpdateTest' type=<root>.LoopTest origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+          ARG obj$atomicfu: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Long, kotlin.Long> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Long
+              VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Long
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Long): kotlin.Long declared in <root>.LoopTest.atomicfuLongUpdateTest'
+                  WHEN type=kotlin.Long origin=IF
+                    BRANCH
+                      if: CALL 'public final fun less (arg0: kotlin.Long, arg1: kotlin.Long): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
+                        ARG arg0: GET_VAR 'value: kotlin.Long declared in <root>.LoopTest.atomicfuLongUpdateTest.<anonymous>' type=kotlin.Long origin=null
+                        ARG arg1: CALL 'public open fun toLong (): kotlin.Long declared in kotlin.Int' type=kotlin.Long origin=null
+                          ARG <this>: CONST Int type=kotlin.Int value=10
+                      then: BLOCK type=kotlin.Long origin=null
+                        CALL 'public final fun incrementAndGet (obj: kotlin.Any): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Long origin=null
+                          ARG <this>: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+                          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: BLOCK type=kotlin.Long origin=null
+                        CONST Long type=kotlin.Long value=9223372036854775807
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=9223372036854775807
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (obj: kotlin.Any): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongFieldUpdater' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-l$volatile$FU> (): java.util.concurrent.atomic.AtomicLongFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicLongFieldUpdater origin=null
+              ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLongUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+    FUN name:atomicfuLoopTest visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      BLOCK_BODY
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=777
+          ARG actual: CALL 'public final fun atomicfuIntLoopTest (newValue: kotlin.Int): kotlin.Int declared in <root>.LoopTest' type=kotlin.Int origin=null
+            ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+            ARG newValue: CONST Int type=kotlin.Int value=777
+        CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun atomicfuBooleanLoopTest (newValue: kotlin.Boolean): kotlin.Boolean declared in <root>.LoopTest' type=kotlin.Boolean origin=null
+            ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+            ARG newValue: CONST Boolean type=kotlin.Boolean value=false
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=9000000000
+          ARG actual: CALL 'public final fun atomicfuLongLoopTest (newValue: kotlin.Long): kotlin.Long declared in <root>.LoopTest' type=kotlin.Long origin=null
+            ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+            ARG newValue: CONST Long type=kotlin.Long value=9000000000
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.String
+          ARG expected: CONST String type=kotlin.String value="bbbb"
+          ARG actual: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.LoopTest.A' type=kotlin.String origin=GET_PROPERTY
+            ARG <this>: CALL 'public final fun atomicfuRefLoopTest (newValue: <root>.LoopTest.A): <root>.LoopTest.A declared in <root>.LoopTest' type=<root>.LoopTest.A origin=null
+              ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+              ARG newValue: CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.LoopTest.A' type=<root>.LoopTest.A origin=null
+                ARG s: CONST String type=kotlin.String value="bbbb"
+    FUN name:atomicfuRefGetAndUpdateTest visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      BLOCK_BODY
+        CALL 'public final fun set <T> (obj: kotlin.Any, newValue: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG newValue: CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.LoopTest.A' type=<root>.LoopTest.A origin=null
+            ARG s: CONST String type=kotlin.String value="aaaa"
+        VAR name:resRef type:<root>.LoopTest.A [val]
+          CALL 'private final fun getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.LoopTest' type=kotlin.Any? origin=null
+            ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefGetAndUpdateTest' type=<root>.LoopTest origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+            ARG obj$atomicfu: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+            ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<<root>.LoopTest.A, <root>.LoopTest.A> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:<root>.LoopTest.A
+                VALUE_PARAMETER kind:Regular name:value index:0 type:<root>.LoopTest.A
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: <root>.LoopTest.A): <root>.LoopTest.A declared in <root>.LoopTest.atomicfuRefGetAndUpdateTest'
+                    WHEN type=<root>.LoopTest.A origin=IF
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                          ARG arg0: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.LoopTest.A' type=kotlin.String origin=GET_PROPERTY
+                            ARG <this>: GET_VAR 'value: <root>.LoopTest.A declared in <root>.LoopTest.atomicfuRefGetAndUpdateTest.<anonymous>' type=<root>.LoopTest.A origin=null
+                          ARG arg1: CONST String type=kotlin.String value="aaaa"
+                        then: BLOCK type=<root>.LoopTest.A origin=null
+                          CALL 'public final fun set <T> (obj: kotlin.Any, newValue: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Unit origin=null
+                            TYPE_ARG T: <none>
+                            ARG <this>: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                            ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                            ARG newValue: CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.LoopTest.A' type=<root>.LoopTest.A origin=null
+                              ARG s: CONST String type=kotlin.String value="bbbb"
+                          TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+                            CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+                              TYPE_ARG T: <none>
+                              ARG <this>: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                              ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: BLOCK type=<root>.LoopTest.A origin=null
+                          CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.LoopTest.A' type=<root>.LoopTest.A origin=null
+                            ARG s: STRING_CONCATENATION type=kotlin.String
+                              CONST String type=kotlin.String value="cccc"
+                              CALL 'public final fun <get-s> (): kotlin.String declared in <root>.LoopTest.A' type=kotlin.String origin=GET_PROPERTY
+                                ARG <this>: GET_VAR 'value: <root>.LoopTest.A declared in <root>.LoopTest.atomicfuRefGetAndUpdateTest.<anonymous>' type=<root>.LoopTest.A origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.String
+          ARG expected: CONST String type=kotlin.String value="bbbb"
+          ARG actual: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.LoopTest.A' type=kotlin.String origin=GET_PROPERTY
+            ARG <this>: GET_VAR 'val resRef: <root>.LoopTest.A declared in <root>.LoopTest.atomicfuRefGetAndUpdateTest' type=<root>.LoopTest.A origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.String
+          ARG expected: CONST String type=kotlin.String value="ccccbbbb"
+          ARG actual: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.LoopTest.A' type=kotlin.String origin=GET_PROPERTY
+            ARG <this>: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+              CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefGetAndUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+    FUN name:atomicfuRefLoopTest visibility:public modality:FINAL returnType:<root>.LoopTest.A
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      VALUE_PARAMETER kind:Regular name:newValue index:1 type:<root>.LoopTest.A
+      BLOCK_BODY
+        CALL 'public final fun set <T> (obj: kotlin.Any, newValue: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG newValue: CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.LoopTest.A' type=<root>.LoopTest.A origin=null
+            ARG s: CONST String type=kotlin.String value="aaa"
+        CALL 'private final fun loop$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Unit>): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefLoopTest' type=<root>.LoopTest origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+          ARG obj$atomicfu: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<<root>.LoopTest.A, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER kind:Regular name:cur index:0 type:<root>.LoopTest.A
+              BLOCK_BODY
+                WHEN type=kotlin.Unit origin=IF
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                      ARG arg0: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.LoopTest.A' type=kotlin.String origin=GET_PROPERTY
+                        ARG <this>: GET_VAR 'cur: <root>.LoopTest.A declared in <root>.LoopTest.atomicfuRefLoopTest.<anonymous>' type=<root>.LoopTest.A origin=null
+                      ARG arg1: CONST String type=kotlin.String value="bbb"
+                    then: BLOCK type=kotlin.Unit origin=null
+                      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                        CALL 'public final fun compareAndSet <T> (obj: kotlin.Any, expect: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Boolean origin=null
+                          TYPE_ARG T: <none>
+                          ARG <this>: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                          ARG expect: GET_VAR 'cur: <root>.LoopTest.A declared in <root>.LoopTest.atomicfuRefLoopTest.<anonymous>' type=<root>.LoopTest.A origin=null
+                          ARG update: GET_VAR 'newValue: <root>.LoopTest.A declared in <root>.LoopTest.atomicfuRefLoopTest' type=<root>.LoopTest.A origin=null
+                      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+                        TYPE_ARG T: kotlin.String
+                        ARG expected: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.LoopTest.A' type=kotlin.String origin=GET_PROPERTY
+                          ARG <this>: GET_VAR 'newValue: <root>.LoopTest.A declared in <root>.LoopTest.atomicfuRefLoopTest' type=<root>.LoopTest.A origin=null
+                        ARG actual: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.LoopTest.A' type=kotlin.String origin=GET_PROPERTY
+                          ARG <this>: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+                            CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+                              TYPE_ARG T: <none>
+                              ARG <this>: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                              ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                      RETURN type=kotlin.Nothing from='public final fun atomicfuRefLoopTest (newValue: <root>.LoopTest.A): <root>.LoopTest.A declared in <root>.LoopTest'
+                        TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+                          CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+                            TYPE_ARG T: <none>
+                            ARG <this>: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                            ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                  BRANCH
+                    if: CONST Boolean type=kotlin.Boolean value=true
+                    then: BLOCK type=kotlin.Unit origin=null
+                      CALL 'public final fun set <T> (obj: kotlin.Any, newValue: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Unit origin=null
+                        TYPE_ARG T: <none>
+                        ARG <this>: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                        ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefLoopTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                        ARG newValue: CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.LoopTest.A' type=<root>.LoopTest.A origin=null
+                          ARG s: CONST String type=kotlin.String value="bbb"
+    FUN name:atomicfuRefUpdateAndGetTest visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      BLOCK_BODY
+        CALL 'public final fun set <T> (obj: kotlin.Any, newValue: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG newValue: CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.LoopTest.A' type=<root>.LoopTest.A origin=null
+            ARG s: CONST String type=kotlin.String value="aaaa"
+        VAR name:resRef type:<root>.LoopTest.A [val]
+          CALL 'private final fun updateAndGet$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.LoopTest' type=kotlin.Any? origin=null
+            ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefUpdateAndGetTest' type=<root>.LoopTest origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+            ARG obj$atomicfu: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+            ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<<root>.LoopTest.A, <root>.LoopTest.A> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:<root>.LoopTest.A
+                VALUE_PARAMETER kind:Regular name:value index:0 type:<root>.LoopTest.A
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: <root>.LoopTest.A): <root>.LoopTest.A declared in <root>.LoopTest.atomicfuRefUpdateAndGetTest'
+                    WHEN type=<root>.LoopTest.A origin=IF
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                          ARG arg0: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.LoopTest.A' type=kotlin.String origin=GET_PROPERTY
+                            ARG <this>: GET_VAR 'value: <root>.LoopTest.A declared in <root>.LoopTest.atomicfuRefUpdateAndGetTest.<anonymous>' type=<root>.LoopTest.A origin=null
+                          ARG arg1: CONST String type=kotlin.String value="aaaa"
+                        then: BLOCK type=<root>.LoopTest.A origin=null
+                          CALL 'public final fun set <T> (obj: kotlin.Any, newValue: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Unit origin=null
+                            TYPE_ARG T: <none>
+                            ARG <this>: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                            ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                            ARG newValue: CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.LoopTest.A' type=<root>.LoopTest.A origin=null
+                              ARG s: CONST String type=kotlin.String value="bbbb"
+                          TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+                            CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+                              TYPE_ARG T: <none>
+                              ARG <this>: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                              ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: BLOCK type=<root>.LoopTest.A origin=null
+                          CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.LoopTest.A' type=<root>.LoopTest.A origin=null
+                            ARG s: STRING_CONCATENATION type=kotlin.String
+                              CONST String type=kotlin.String value="cccc"
+                              CALL 'public final fun <get-s> (): kotlin.String declared in <root>.LoopTest.A' type=kotlin.String origin=GET_PROPERTY
+                                ARG <this>: GET_VAR 'value: <root>.LoopTest.A declared in <root>.LoopTest.atomicfuRefUpdateAndGetTest.<anonymous>' type=<root>.LoopTest.A origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.String
+          ARG expected: CONST String type=kotlin.String value="ccccbbbb"
+          ARG actual: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.LoopTest.A' type=kotlin.String origin=GET_PROPERTY
+            ARG <this>: GET_VAR 'val resRef: <root>.LoopTest.A declared in <root>.LoopTest.atomicfuRefUpdateAndGetTest' type=<root>.LoopTest.A origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.String
+          ARG expected: CONST String type=kotlin.String value="ccccbbbb"
+          ARG actual: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.LoopTest.A' type=kotlin.String origin=GET_PROPERTY
+            ARG <this>: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+              CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+    FUN name:atomicfuRefUpdateTest visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      BLOCK_BODY
+        CALL 'public final fun set <T> (obj: kotlin.Any, newValue: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG newValue: CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.LoopTest.A' type=<root>.LoopTest.A origin=null
+            ARG s: CONST String type=kotlin.String value="aaaa"
+        CALL 'private final fun update$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefUpdateTest' type=<root>.LoopTest origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+          ARG obj$atomicfu: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+          ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<<root>.LoopTest.A, <root>.LoopTest.A> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:<root>.LoopTest.A
+              VALUE_PARAMETER kind:Regular name:value index:0 type:<root>.LoopTest.A
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: <root>.LoopTest.A): <root>.LoopTest.A declared in <root>.LoopTest.atomicfuRefUpdateTest'
+                  WHEN type=<root>.LoopTest.A origin=IF
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                        ARG arg0: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.LoopTest.A' type=kotlin.String origin=GET_PROPERTY
+                          ARG <this>: GET_VAR 'value: <root>.LoopTest.A declared in <root>.LoopTest.atomicfuRefUpdateTest.<anonymous>' type=<root>.LoopTest.A origin=null
+                        ARG arg1: CONST String type=kotlin.String value="aaaa"
+                      then: BLOCK type=<root>.LoopTest.A origin=null
+                        CALL 'public final fun set <T> (obj: kotlin.Any, newValue: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Unit origin=null
+                          TYPE_ARG T: <none>
+                          ARG <this>: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                          ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                          ARG newValue: CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.LoopTest.A' type=<root>.LoopTest.A origin=null
+                            ARG s: CONST String type=kotlin.String value="bbbb"
+                        TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+                          CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+                            TYPE_ARG T: <none>
+                            ARG <this>: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                            ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: BLOCK type=<root>.LoopTest.A origin=null
+                        CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.LoopTest.A' type=<root>.LoopTest.A origin=null
+                          ARG s: STRING_CONCATENATION type=kotlin.String
+                            CONST String type=kotlin.String value="cccc"
+                            CALL 'public final fun <get-s> (): kotlin.String declared in <root>.LoopTest.A' type=kotlin.String origin=GET_PROPERTY
+                              ARG <this>: GET_VAR 'value: <root>.LoopTest.A declared in <root>.LoopTest.atomicfuRefUpdateTest.<anonymous>' type=<root>.LoopTest.A origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.String
+          ARG expected: CONST String type=kotlin.String value="ccccbbbb"
+          ARG actual: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.LoopTest.A' type=kotlin.String origin=GET_PROPERTY
+            ARG <this>: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+              CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: CALL 'private final fun <get-r$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LoopTest' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                ARG obj: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuRefUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+    FUN name:atomicfuUpdateAndGetTest visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      BLOCK_BODY
+        CALL 'public final fun atomicfuIntUpdateAndGetTest (): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun atomicfuBooleanUpdateAndGetTest (): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun atomicfuLongUpdateAndGetTest (): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun atomicfuRefUpdateAndGetTest (): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuUpdateAndGetTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+    FUN name:atomicfuUpdateTest visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LoopTest
+      BLOCK_BODY
+        CALL 'public final fun atomicfuIntUpdateTest (): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun atomicfuBooleanUpdateTest (): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun atomicfuLongUpdateTest (): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+        CALL 'public final fun atomicfuRefUpdateTest (): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.atomicfuUpdateTest' type=<root>.LoopTest origin=IMPLICIT_ARGUMENT
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:testClass type:<root>.LoopTest [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.LoopTest' type=<root>.LoopTest origin=null
+      CALL 'public final fun atomicfuLoopTest (): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val testClass: <root>.LoopTest declared in <root>.box' type=<root>.LoopTest origin=null
+      CALL 'public final fun atomicfuUpdateTest (): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val testClass: <root>.LoopTest declared in <root>.box' type=<root>.LoopTest origin=null
+      CALL 'public final fun atomicfuUpdateAndGetTest (): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val testClass: <root>.LoopTest declared in <root>.box' type=<root>.LoopTest origin=null
+      CALL 'public final fun atomicfuGetAndUpdateTest (): kotlin.Unit declared in <root>.LoopTest' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val testClass: <root>.LoopTest declared in <root>.box' type=<root>.LoopTest origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"

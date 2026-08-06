@@ -1,0 +1,1268 @@
+FILE fqName:<root> fileName:/TopLevelTest.kt
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:a visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:a type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Int) declared in java.util.concurrent.atomic.AtomicInteger' type=java.util.concurrent.atomic.AtomicInteger origin=null
+          ARG value: CONST Int type=kotlin.Int value=0
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicInteger
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:b visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:b type:java.util.concurrent.atomic.AtomicLong visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Long) declared in java.util.concurrent.atomic.AtomicLong' type=java.util.concurrent.atomic.AtomicLong origin=null
+          ARG value: CONST Long type=kotlin.Long value=2424920024888888848
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-b> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicLong
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:b visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-b> (): java.util.concurrent.atomic.AtomicLong declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:b type:java.util.concurrent.atomic.AtomicLong visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:c visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:c type:java.util.concurrent.atomic.AtomicBoolean visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Boolean) declared in java.util.concurrent.atomic.AtomicBoolean' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+          ARG value: CONST Boolean type=kotlin.Boolean value=true
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-c> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicBoolean
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:c visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-c> (): java.util.concurrent.atomic.AtomicBoolean declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:c type:java.util.concurrent.atomic.AtomicBoolean visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:abcNode visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:abcNode type:java.util.concurrent.atomic.AtomicReference visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Any) declared in java.util.concurrent.atomic.AtomicReference' type=java.util.concurrent.atomic.AtomicReference origin=null
+          ARG value: CONSTRUCTOR_CALL 'public constructor <init> (b: T of <root>.ANode) declared in <root>.ANode' type=<root>.ANode<<root>.BNode<<root>.CNode>> origin=null
+            TYPE_ARG (of class) T: <root>.BNode<<root>.CNode>
+            ARG b: CONSTRUCTOR_CALL 'public constructor <init> (c: T of <root>.BNode) declared in <root>.BNode' type=<root>.BNode<<root>.CNode> origin=null
+              TYPE_ARG (of class) T: <root>.CNode
+              ARG c: CONSTRUCTOR_CALL 'public constructor <init> (d: kotlin.Int) declared in <root>.CNode' type=<root>.CNode origin=null
+                ARG d: CONST Int type=kotlin.Int value=8
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-abcNode> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReference
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:abcNode visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-abcNode> (): java.util.concurrent.atomic.AtomicReference declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:abcNode type:java.util.concurrent.atomic.AtomicReference visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicReference origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:any visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:any type:java.util.concurrent.atomic.AtomicReference visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Any) declared in java.util.concurrent.atomic.AtomicReference' type=java.util.concurrent.atomic.AtomicReference origin=null
+          ARG value: CONST Null type=kotlin.Nothing? value=null
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-any> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReference
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:any visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-any> (): java.util.concurrent.atomic.AtomicReference declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:any type:java.util.concurrent.atomic.AtomicReference visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicReference origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:a_internal visibility:internal modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:a_internal type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Int) declared in java.util.concurrent.atomic.AtomicInteger' type=java.util.concurrent.atomic.AtomicInteger origin=null
+          ARG value: CONST Int type=kotlin.Int value=0
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a_internal> visibility:internal modality:FINAL returnType:java.util.concurrent.atomic.AtomicInteger
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a_internal visibility:internal modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='internal final fun <get-a_internal> (): java.util.concurrent.atomic.AtomicInteger declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a_internal type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:b_internal visibility:internal modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:b_internal type:java.util.concurrent.atomic.AtomicLong visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Long) declared in java.util.concurrent.atomic.AtomicLong' type=java.util.concurrent.atomic.AtomicLong origin=null
+          ARG value: CONST Long type=kotlin.Long value=2424920024888888848
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-b_internal> visibility:internal modality:FINAL returnType:java.util.concurrent.atomic.AtomicLong
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:b_internal visibility:internal modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='internal final fun <get-b_internal> (): java.util.concurrent.atomic.AtomicLong declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:b_internal type:java.util.concurrent.atomic.AtomicLong visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:c_internal visibility:internal modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:c_internal type:java.util.concurrent.atomic.AtomicBoolean visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Boolean) declared in java.util.concurrent.atomic.AtomicBoolean' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+          ARG value: CONST Boolean type=kotlin.Boolean value=true
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-c_internal> visibility:internal modality:FINAL returnType:java.util.concurrent.atomic.AtomicBoolean
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:c_internal visibility:internal modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='internal final fun <get-c_internal> (): java.util.concurrent.atomic.AtomicBoolean declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:c_internal type:java.util.concurrent.atomic.AtomicBoolean visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:abcNode_internal visibility:internal modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:abcNode_internal type:java.util.concurrent.atomic.AtomicReference visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Any) declared in java.util.concurrent.atomic.AtomicReference' type=java.util.concurrent.atomic.AtomicReference origin=null
+          ARG value: CONSTRUCTOR_CALL 'public constructor <init> (b: T of <root>.ANode) declared in <root>.ANode' type=<root>.ANode<<root>.BNode<<root>.CNode>> origin=null
+            TYPE_ARG (of class) T: <root>.BNode<<root>.CNode>
+            ARG b: CONSTRUCTOR_CALL 'public constructor <init> (c: T of <root>.BNode) declared in <root>.BNode' type=<root>.BNode<<root>.CNode> origin=null
+              TYPE_ARG (of class) T: <root>.CNode
+              ARG c: CONSTRUCTOR_CALL 'public constructor <init> (d: kotlin.Int) declared in <root>.CNode' type=<root>.CNode origin=null
+                ARG d: CONST Int type=kotlin.Int value=8
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-abcNode_internal> visibility:internal modality:FINAL returnType:java.util.concurrent.atomic.AtomicReference
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:abcNode_internal visibility:internal modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='internal final fun <get-abcNode_internal> (): java.util.concurrent.atomic.AtomicReference declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:abcNode_internal type:java.util.concurrent.atomic.AtomicReference visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicReference origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:any_internal visibility:internal modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:any_internal type:java.util.concurrent.atomic.AtomicReference visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Any) declared in java.util.concurrent.atomic.AtomicReference' type=java.util.concurrent.atomic.AtomicReference origin=null
+          ARG value: CONST Null type=kotlin.Nothing? value=null
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-any_internal> visibility:internal modality:FINAL returnType:java.util.concurrent.atomic.AtomicReference
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:any_internal visibility:internal modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='internal final fun <get-any_internal> (): java.util.concurrent.atomic.AtomicReference declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:any_internal type:java.util.concurrent.atomic.AtomicReference visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicReference origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:intArr visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:intArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int) declared in java.util.concurrent.atomic.AtomicIntegerArray' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+          ARG length: CONST Int type=kotlin.Int value=3
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-intArr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerArray
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:intArr visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:intArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:longArr visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:longArr type:java.util.concurrent.atomic.AtomicLongArray visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int) declared in java.util.concurrent.atomic.AtomicLongArray' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+          ARG length: CONST Int type=kotlin.Int value=5
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-longArr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicLongArray
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:longArr visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:longArr type:java.util.concurrent.atomic.AtomicLongArray visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:booleanArr visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:booleanArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int) declared in java.util.concurrent.atomic.AtomicIntegerArray' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+          ARG length: CONST Int type=kotlin.Int value=4
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-booleanArr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerArray
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:booleanArr visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-booleanArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:booleanArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:refArr visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:refArr type:java.util.concurrent.atomic.AtomicReferenceArray visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> <T> (length: kotlin.Int) declared in java.util.concurrent.atomic.AtomicReferenceArray' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+          TYPE_ARG T: <none>
+          ARG length: CONST Int type=kotlin.Int value=5
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-refArr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReferenceArray
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:refArr visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:refArr type:java.util.concurrent.atomic.AtomicReferenceArray visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:anyRefArr visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:anyRefArr type:java.util.concurrent.atomic.AtomicReferenceArray visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> <T> (length: kotlin.Int) declared in java.util.concurrent.atomic.AtomicReferenceArray' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+          TYPE_ARG T: <none>
+          ARG length: CONST Int type=kotlin.Int value=10
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-anyRefArr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReferenceArray
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:anyRefArr visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-anyRefArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:anyRefArr type:java.util.concurrent.atomic.AtomicReferenceArray visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:stringAtomicNullArr visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:stringAtomicNullArr type:java.util.concurrent.atomic.AtomicReferenceArray visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> <T> (length: kotlin.Int) declared in java.util.concurrent.atomic.AtomicReferenceArray' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+          TYPE_ARG T: <none>
+          ARG length: CONST Int type=kotlin.Int value=10
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-stringAtomicNullArr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReferenceArray
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:stringAtomicNullArr visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-stringAtomicNullArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:stringAtomicNullArr type:java.util.concurrent.atomic.AtomicReferenceArray visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+  CLASS CLASS name:ANode modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ANode<T of <root>.ANode>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    PROPERTY name:b visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:b type:T of <root>.ANode visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'b: T of <root>.ANode declared in <root>.ANode.<init>' type=T of <root>.ANode origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:public modality:FINAL returnType:T of <root>.ANode
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ANode<T of <root>.ANode>
+        correspondingProperty: PROPERTY name:b visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-b> (): T of <root>.ANode declared in <root>.ANode'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:T of <root>.ANode visibility:private [final]' type=T of <root>.ANode origin=null
+              receiver: GET_VAR '<this>: <root>.ANode<T of <root>.ANode> declared in <root>.ANode.<get-b>' type=<root>.ANode<T of <root>.ANode> origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.ANode<T of <root>.ANode> [primary]
+      VALUE_PARAMETER kind:Regular name:b index:0 type:T of <root>.ANode
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ANode modality:FINAL visibility:public [data] superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL returnType:T of <root>.ANode [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ANode<T of <root>.ANode>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): T of <root>.ANode declared in <root>.ANode'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:T of <root>.ANode visibility:private [final]' type=T of <root>.ANode origin=null
+            receiver: GET_VAR '<this>: <root>.ANode<T of <root>.ANode> declared in <root>.ANode.component1' type=<root>.ANode<T of <root>.ANode> origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL returnType:<root>.ANode<T of <root>.ANode>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ANode<T of <root>.ANode>
+      VALUE_PARAMETER kind:Regular name:b index:1 type:T of <root>.ANode
+        EXPRESSION_BODY
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:T of <root>.ANode visibility:private [final]' type=T of <root>.ANode origin=null
+            receiver: GET_VAR '<this>: <root>.ANode<T of <root>.ANode> declared in <root>.ANode.copy' type=<root>.ANode<T of <root>.ANode> origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (b: T of <root>.ANode): <root>.ANode<T of <root>.ANode> declared in <root>.ANode'
+          CONSTRUCTOR_CALL 'public constructor <init> (b: T of <root>.ANode) declared in <root>.ANode' type=<root>.ANode<T of <root>.ANode> origin=null
+            TYPE_ARG (of class) T: T of <root>.ANode
+            ARG b: GET_VAR 'b: T of <root>.ANode declared in <root>.ANode.copy' type=T of <root>.ANode origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ANode<T of <root>.ANode>
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
+              ARG arg0: GET_VAR '<this>: <root>.ANode<T of <root>.ANode> declared in <root>.ANode.equals' type=<root>.ANode<T of <root>.ANode> origin=null
+              ARG arg1: GET_VAR 'other: kotlin.Any? declared in <root>.ANode.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ANode'
+              CONST Boolean type=kotlin.Boolean value=true
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.ANode<T of <root>.ANode>
+              GET_VAR 'other: kotlin.Any? declared in <root>.ANode.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ANode'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.ANode<T of <root>.ANode> [val]
+          TYPE_OP type=<root>.ANode<T of <root>.ANode> origin=IMPLICIT_CAST typeOperand=<root>.ANode<T of <root>.ANode>
+            GET_VAR 'other: kotlin.Any? declared in <root>.ANode.equals' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:T of <root>.ANode visibility:private [final]' type=T of <root>.ANode origin=null
+                  receiver: GET_VAR '<this>: <root>.ANode<T of <root>.ANode> declared in <root>.ANode.equals' type=<root>.ANode<T of <root>.ANode> origin=null
+                ARG arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:T of <root>.ANode visibility:private [final]' type=T of <root>.ANode origin=null
+                  receiver: GET_VAR 'val tmp_0: <root>.ANode<T of <root>.ANode> declared in <root>.ANode.equals' type=<root>.ANode<T of <root>.ANode> origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ANode'
+              CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ANode'
+          CONST Boolean type=kotlin.Boolean value=true
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN returnType:kotlin.Int
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ANode<T of <root>.ANode>
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.ANode'
+          WHEN type=kotlin.Int origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                ARG arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:T of <root>.ANode visibility:private [final]' type=T of <root>.ANode origin=null
+                  receiver: GET_VAR '<this>: <root>.ANode<T of <root>.ANode> declared in <root>.ANode.hashCode' type=<root>.ANode<T of <root>.ANode> origin=null
+                ARG arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Int type=kotlin.Int value=0
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
+                ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:T of <root>.ANode visibility:private [final]' type=T of <root>.ANode origin=null
+                  receiver: GET_VAR '<this>: <root>.ANode<T of <root>.ANode> declared in <root>.ANode.hashCode' type=<root>.ANode<T of <root>.ANode> origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ANode<T of <root>.ANode>
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.ANode'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="ANode("
+            CONST String type=kotlin.String value="b="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:T of <root>.ANode visibility:private [final]' type=T of <root>.ANode origin=null
+              receiver: GET_VAR '<this>: <root>.ANode<T of <root>.ANode> declared in <root>.ANode.toString' type=<root>.ANode<T of <root>.ANode> origin=null
+            CONST String type=kotlin.String value=")"
+  CLASS CLASS name:BNode modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.BNode<T of <root>.BNode>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    PROPERTY name:c visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:c type:T of <root>.BNode visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'c: T of <root>.BNode declared in <root>.BNode.<init>' type=T of <root>.BNode origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-c> visibility:public modality:FINAL returnType:T of <root>.BNode
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.BNode<T of <root>.BNode>
+        correspondingProperty: PROPERTY name:c visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-c> (): T of <root>.BNode declared in <root>.BNode'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:T of <root>.BNode visibility:private [final]' type=T of <root>.BNode origin=null
+              receiver: GET_VAR '<this>: <root>.BNode<T of <root>.BNode> declared in <root>.BNode.<get-c>' type=<root>.BNode<T of <root>.BNode> origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.BNode<T of <root>.BNode> [primary]
+      VALUE_PARAMETER kind:Regular name:c index:0 type:T of <root>.BNode
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BNode modality:FINAL visibility:public [data] superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL returnType:T of <root>.BNode [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.BNode<T of <root>.BNode>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): T of <root>.BNode declared in <root>.BNode'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:T of <root>.BNode visibility:private [final]' type=T of <root>.BNode origin=null
+            receiver: GET_VAR '<this>: <root>.BNode<T of <root>.BNode> declared in <root>.BNode.component1' type=<root>.BNode<T of <root>.BNode> origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL returnType:<root>.BNode<T of <root>.BNode>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.BNode<T of <root>.BNode>
+      VALUE_PARAMETER kind:Regular name:c index:1 type:T of <root>.BNode
+        EXPRESSION_BODY
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:T of <root>.BNode visibility:private [final]' type=T of <root>.BNode origin=null
+            receiver: GET_VAR '<this>: <root>.BNode<T of <root>.BNode> declared in <root>.BNode.copy' type=<root>.BNode<T of <root>.BNode> origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (c: T of <root>.BNode): <root>.BNode<T of <root>.BNode> declared in <root>.BNode'
+          CONSTRUCTOR_CALL 'public constructor <init> (c: T of <root>.BNode) declared in <root>.BNode' type=<root>.BNode<T of <root>.BNode> origin=null
+            TYPE_ARG (of class) T: T of <root>.BNode
+            ARG c: GET_VAR 'c: T of <root>.BNode declared in <root>.BNode.copy' type=T of <root>.BNode origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.BNode<T of <root>.BNode>
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
+              ARG arg0: GET_VAR '<this>: <root>.BNode<T of <root>.BNode> declared in <root>.BNode.equals' type=<root>.BNode<T of <root>.BNode> origin=null
+              ARG arg1: GET_VAR 'other: kotlin.Any? declared in <root>.BNode.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.BNode'
+              CONST Boolean type=kotlin.Boolean value=true
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.BNode<T of <root>.BNode>
+              GET_VAR 'other: kotlin.Any? declared in <root>.BNode.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.BNode'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.BNode<T of <root>.BNode> [val]
+          TYPE_OP type=<root>.BNode<T of <root>.BNode> origin=IMPLICIT_CAST typeOperand=<root>.BNode<T of <root>.BNode>
+            GET_VAR 'other: kotlin.Any? declared in <root>.BNode.equals' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:T of <root>.BNode visibility:private [final]' type=T of <root>.BNode origin=null
+                  receiver: GET_VAR '<this>: <root>.BNode<T of <root>.BNode> declared in <root>.BNode.equals' type=<root>.BNode<T of <root>.BNode> origin=null
+                ARG arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:T of <root>.BNode visibility:private [final]' type=T of <root>.BNode origin=null
+                  receiver: GET_VAR 'val tmp_1: <root>.BNode<T of <root>.BNode> declared in <root>.BNode.equals' type=<root>.BNode<T of <root>.BNode> origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.BNode'
+              CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.BNode'
+          CONST Boolean type=kotlin.Boolean value=true
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN returnType:kotlin.Int
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.BNode<T of <root>.BNode>
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.BNode'
+          WHEN type=kotlin.Int origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                ARG arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:T of <root>.BNode visibility:private [final]' type=T of <root>.BNode origin=null
+                  receiver: GET_VAR '<this>: <root>.BNode<T of <root>.BNode> declared in <root>.BNode.hashCode' type=<root>.BNode<T of <root>.BNode> origin=null
+                ARG arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Int type=kotlin.Int value=0
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
+                ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:T of <root>.BNode visibility:private [final]' type=T of <root>.BNode origin=null
+                  receiver: GET_VAR '<this>: <root>.BNode<T of <root>.BNode> declared in <root>.BNode.hashCode' type=<root>.BNode<T of <root>.BNode> origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.BNode<T of <root>.BNode>
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.BNode'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="BNode("
+            CONST String type=kotlin.String value="c="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:T of <root>.BNode visibility:private [final]' type=T of <root>.BNode origin=null
+              receiver: GET_VAR '<this>: <root>.BNode<T of <root>.BNode> declared in <root>.BNode.toString' type=<root>.BNode<T of <root>.BNode> origin=null
+            CONST String type=kotlin.String value=")"
+  CLASS CLASS name:CNode modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.CNode
+    PROPERTY name:d visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'd: kotlin.Int declared in <root>.CNode.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-d> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.CNode
+        correspondingProperty: PROPERTY name:d visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-d> (): kotlin.Int declared in <root>.CNode'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.CNode declared in <root>.CNode.<get-d>' type=<root>.CNode origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.CNode [primary]
+      VALUE_PARAMETER kind:Regular name:d index:0 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CNode modality:FINAL visibility:public [data] superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL returnType:kotlin.Int [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.CNode
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.CNode'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+            receiver: GET_VAR '<this>: <root>.CNode declared in <root>.CNode.component1' type=<root>.CNode origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL returnType:<root>.CNode
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.CNode
+      VALUE_PARAMETER kind:Regular name:d index:1 type:kotlin.Int
+        EXPRESSION_BODY
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+            receiver: GET_VAR '<this>: <root>.CNode declared in <root>.CNode.copy' type=<root>.CNode origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (d: kotlin.Int): <root>.CNode declared in <root>.CNode'
+          CONSTRUCTOR_CALL 'public constructor <init> (d: kotlin.Int) declared in <root>.CNode' type=<root>.CNode origin=null
+            ARG d: GET_VAR 'd: kotlin.Int declared in <root>.CNode.copy' type=kotlin.Int origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.CNode
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
+              ARG arg0: GET_VAR '<this>: <root>.CNode declared in <root>.CNode.equals' type=<root>.CNode origin=null
+              ARG arg1: GET_VAR 'other: kotlin.Any? declared in <root>.CNode.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.CNode'
+              CONST Boolean type=kotlin.Boolean value=true
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.CNode
+              GET_VAR 'other: kotlin.Any? declared in <root>.CNode.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.CNode'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.CNode [val]
+          TYPE_OP type=<root>.CNode origin=IMPLICIT_CAST typeOperand=<root>.CNode
+            GET_VAR 'other: kotlin.Any? declared in <root>.CNode.equals' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR '<this>: <root>.CNode declared in <root>.CNode.equals' type=<root>.CNode origin=null
+                ARG arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR 'val tmp_2: <root>.CNode declared in <root>.CNode.equals' type=<root>.CNode origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.CNode'
+              CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.CNode'
+          CONST Boolean type=kotlin.Boolean value=true
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN returnType:kotlin.Int
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.CNode
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.CNode'
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.CNode declared in <root>.CNode.hashCode' type=<root>.CNode origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.CNode
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.CNode'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="CNode("
+            CONST String type=kotlin.String value="d="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.CNode declared in <root>.CNode.toString' type=<root>.CNode origin=null
+            CONST String type=kotlin.String value=")"
+  CLASS CLASS name:TopLevelArrayTest modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TopLevelArrayTest
+    CONSTRUCTOR visibility:public returnType:<root>.TopLevelArrayTest [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TopLevelArrayTest modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:testBooleanArray visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TopLevelArrayTest
+      BLOCK_BODY
+        CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+            CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              ARG arg0: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                ARG <this>: CALL 'private final fun <get-booleanArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                ARG i: CONST Int type=kotlin.Int value=1
+              ARG arg1: CONST Int type=kotlin.Int value=1
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          CALL 'public final fun compareAndSet (i: kotlin.Int, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Boolean origin=null
+            ARG <this>: CALL 'private final fun <get-booleanArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+            ARG i: CONST Int type=kotlin.Int value=1
+            ARG expect: WHEN type=kotlin.Int origin=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=false
+                then: CONST Int type=kotlin.Int value=1
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Int type=kotlin.Int value=0
+            ARG update: WHEN type=kotlin.Int origin=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Int type=kotlin.Int value=1
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Int type=kotlin.Int value=0
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-booleanArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+          ARG i: CONST Int type=kotlin.Int value=0
+          ARG newValue: WHEN type=kotlin.Int origin=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Int type=kotlin.Int value=1
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Int type=kotlin.Int value=0
+        CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+            ARG arg0: CALL 'public final fun getAndSet (i: kotlin.Int, newValue: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-booleanArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=2
+              ARG newValue: WHEN type=kotlin.Int origin=null
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: CONST Int type=kotlin.Int value=1
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: CONST Int type=kotlin.Int value=0
+            ARG arg1: CONST Int type=kotlin.Int value=1
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: WHEN type=kotlin.Boolean origin=ANDAND
+            BRANCH
+              if: WHEN type=kotlin.Boolean origin=ANDAND
+                BRANCH
+                  if: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+                    CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                      ARG arg0: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                        ARG <this>: CALL 'private final fun <get-booleanArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                        ARG i: CONST Int type=kotlin.Int value=0
+                      ARG arg1: CONST Int type=kotlin.Int value=1
+                  then: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+                    CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                      ARG arg0: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                        ARG <this>: CALL 'private final fun <get-booleanArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                        ARG i: CONST Int type=kotlin.Int value=1
+                      ARG arg1: CONST Int type=kotlin.Int value=1
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: CONST Boolean type=kotlin.Boolean value=false
+              then: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+                CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  ARG arg0: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                    ARG <this>: CALL 'private final fun <get-booleanArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                    ARG i: CONST Int type=kotlin.Int value=2
+                  ARG arg1: CONST Int type=kotlin.Int value=1
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Boolean type=kotlin.Boolean value=false
+    FUN name:testIntArray visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TopLevelArrayTest
+      BLOCK_BODY
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun compareAndSet (i: kotlin.Int, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Boolean origin=null
+            ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+            ARG i: CONST Int type=kotlin.Int value=0
+            ARG expect: CONST Int type=kotlin.Int value=0
+            ARG update: CONST Int type=kotlin.Int value=3
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=0
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=1
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+          ARG i: CONST Int type=kotlin.Int value=0
+          ARG newValue: CONST Int type=kotlin.Int value=5
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=5
+          ARG actual: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+            ARG <this>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+              ARG <this>: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+                CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                  ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                  ARG i: CONST Int type=kotlin.Int value=0
+              ARG other: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+                CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                  ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                  ARG i: CONST Int type=kotlin.Int value=1
+            ARG other: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+              CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                ARG i: CONST Int type=kotlin.Int value=2
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun compareAndSet (i: kotlin.Int, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Boolean origin=null
+            ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+            ARG i: CONST Int type=kotlin.Int value=0
+            ARG expect: CONST Int type=kotlin.Int value=5
+            ARG update: CONST Int type=kotlin.Int value=10
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=10
+          ARG actual: CALL 'public final fun getAndDecrement (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+            ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+            ARG i: CONST Int type=kotlin.Int value=0
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=9
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=0
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+          ARG i: CONST Int type=kotlin.Int value=2
+          ARG newValue: CONST Int type=kotlin.Int value=2
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=2
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=2
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun compareAndSet (i: kotlin.Int, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Boolean origin=null
+            ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+            ARG i: CONST Int type=kotlin.Int value=2
+            ARG expect: CONST Int type=kotlin.Int value=2
+            ARG update: CONST Int type=kotlin.Int value=34
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=34
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=2
+    FUN name:testLongArray visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TopLevelArrayTest
+      BLOCK_BODY
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Long): kotlin.Unit declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+          ARG i: CONST Int type=kotlin.Int value=0
+          ARG newValue: CONST Long type=kotlin.Long value=2424920024888888848
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=2424920024888888848
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=0
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Long): kotlin.Unit declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+          ARG i: CONST Int type=kotlin.Int value=0
+          ARG newValue: CONST Long type=kotlin.Long value=8424920024888888848
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=8424920024888888848
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=0
+        VAR name:ac type:kotlin.Long [val]
+          TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=0
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Long): kotlin.Unit declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+          ARG i: CONST Int type=kotlin.Int value=3
+          ARG newValue: GET_VAR 'val ac: kotlin.Long declared in <root>.TopLevelArrayTest.testLongArray' type=kotlin.Long origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=8424920024888888848
+          ARG actual: CALL 'public final fun getAndSet (i: kotlin.Int, newValue: kotlin.Long): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+            ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+            ARG i: CONST Int type=kotlin.Int value=3
+            ARG newValue: CONST Long type=kotlin.Long value=8924920024888888848
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=8924920024888888848
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=3
+        VAR name:ac1 type:kotlin.Long [val]
+          TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=3
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Long): kotlin.Unit declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+          ARG i: CONST Int type=kotlin.Int value=4
+          ARG newValue: GET_VAR 'val ac1: kotlin.Long declared in <root>.TopLevelArrayTest.testLongArray' type=kotlin.Long origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=8924920024888888849
+          ARG actual: CALL 'public final fun incrementAndGet (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+            ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+            ARG i: CONST Int type=kotlin.Int value=4
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=8924920024888888849
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=4
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=8924920024888888849
+          ARG actual: CALL 'public final fun getAndDecrement (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+            ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+            ARG i: CONST Int type=kotlin.Int value=4
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=8924920024888888848
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=4
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Long): kotlin.Unit declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+          ARG i: CONST Int type=kotlin.Int value=4
+          ARG newValue: CONST Long type=kotlin.Long value=8924920024888888848
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=8924920024888888848
+          ARG actual: CALL 'public final fun getAndAdd (i: kotlin.Int, delta: kotlin.Long): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+            ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+            ARG i: CONST Int type=kotlin.Int value=4
+            ARG delta: CONST Long type=kotlin.Long value=100000000000000000
+        VAR name:ac2 type:kotlin.Long [val]
+          TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=4
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Long): kotlin.Unit declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+          ARG i: CONST Int type=kotlin.Int value=1
+          ARG newValue: GET_VAR 'val ac2: kotlin.Long declared in <root>.TopLevelArrayTest.testLongArray' type=kotlin.Long origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=9024920024888888848
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=1
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=-198452011965886959
+          ARG actual: CALL 'public final fun addAndGet (i: kotlin.Int, delta: kotlin.Long): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+            ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+            ARG i: CONST Int type=kotlin.Int value=1
+            ARG delta: CONST Long type=kotlin.Long value=-9223372036854775807
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=-198452011965886959
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=1
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=-198452011965886958
+          ARG actual: CALL 'public final fun incrementAndGet (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+            ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+            ARG i: CONST Int type=kotlin.Int value=1
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=-198452011965886958
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=1
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=-198452011965886959
+          ARG actual: CALL 'public final fun decrementAndGet (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+            ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+            ARG i: CONST Int type=kotlin.Int value=1
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=-198452011965886959
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=1
+    FUN name:testRefArray visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TopLevelArrayTest
+      annotations:
+        Suppress(names = ["UNCHECKED_CAST"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
+      BLOCK_BODY
+        VAR name:a2 type:<root>.ANode<<root>.BNode<<root>.CNode>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (b: T of <root>.ANode) declared in <root>.ANode' type=<root>.ANode<<root>.BNode<<root>.CNode>> origin=null
+            TYPE_ARG (of class) T: <root>.BNode<<root>.CNode>
+            ARG b: CONSTRUCTOR_CALL 'public constructor <init> (c: T of <root>.BNode) declared in <root>.BNode' type=<root>.BNode<<root>.CNode> origin=null
+              TYPE_ARG (of class) T: <root>.CNode
+              ARG c: CONSTRUCTOR_CALL 'public constructor <init> (d: kotlin.Int) declared in <root>.CNode' type=<root>.CNode origin=null
+                ARG d: CONST Int type=kotlin.Int value=2
+        VAR name:a3 type:<root>.ANode<<root>.BNode<<root>.CNode>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (b: T of <root>.ANode) declared in <root>.ANode' type=<root>.ANode<<root>.BNode<<root>.CNode>> origin=null
+            TYPE_ARG (of class) T: <root>.BNode<<root>.CNode>
+            ARG b: CONSTRUCTOR_CALL 'public constructor <init> (c: T of <root>.BNode) declared in <root>.BNode' type=<root>.BNode<<root>.CNode> origin=null
+              TYPE_ARG (of class) T: <root>.CNode
+              ARG c: CONSTRUCTOR_CALL 'public constructor <init> (d: kotlin.Int) declared in <root>.CNode' type=<root>.CNode origin=null
+                ARG d: CONST Int type=kotlin.Int value=3
+        CALL 'public final fun set <T> (i: kotlin.Int, newValue: T of java.util.concurrent.atomic.AtomicReferenceArray.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+          ARG i: CONST Int type=kotlin.Int value=0
+          ARG newValue: GET_VAR 'val a2: <root>.ANode<<root>.BNode<<root>.CNode>> declared in <root>.TopLevelArrayTest.testRefArray' type=<root>.ANode<<root>.BNode<<root>.CNode>> origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=2
+          ARG actual: CALL 'public final fun <get-d> (): kotlin.Int declared in <root>.CNode' type=kotlin.Int origin=GET_PROPERTY
+            ARG <this>: CALL 'public final fun <get-c> (): T of <root>.BNode declared in <root>.BNode' type=<root>.CNode origin=GET_PROPERTY
+              ARG <this>: CALL 'public final fun <get-b> (): T of <root>.ANode declared in <root>.ANode' type=<root>.BNode<<root>.CNode> origin=GET_PROPERTY
+                ARG <this>: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.ANode<<root>.BNode<<root>.CNode>> origin=EXCLEXCL
+                  TYPE_ARG T0: <root>.ANode<<root>.BNode<<root>.CNode>>
+                  ARG arg0: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+                    CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Any? origin=null
+                      TYPE_ARG T: <none>
+                      ARG <this>: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+                      ARG i: CONST Int type=kotlin.Int value=0
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun compareAndSet <T> (i: kotlin.Int, expect: T of java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Boolean origin=null
+            TYPE_ARG T: <none>
+            ARG <this>: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+            ARG i: CONST Int type=kotlin.Int value=0
+            ARG expect: GET_VAR 'val a2: <root>.ANode<<root>.BNode<<root>.CNode>> declared in <root>.TopLevelArrayTest.testRefArray' type=<root>.ANode<<root>.BNode<<root>.CNode>> origin=null
+            ARG update: GET_VAR 'val a3: <root>.ANode<<root>.BNode<<root>.CNode>> declared in <root>.TopLevelArrayTest.testRefArray' type=<root>.ANode<<root>.BNode<<root>.CNode>> origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=3
+          ARG actual: CALL 'public final fun <get-d> (): kotlin.Int declared in <root>.CNode' type=kotlin.Int origin=GET_PROPERTY
+            ARG <this>: CALL 'public final fun <get-c> (): T of <root>.BNode declared in <root>.BNode' type=<root>.CNode origin=GET_PROPERTY
+              ARG <this>: CALL 'public final fun <get-b> (): T of <root>.ANode declared in <root>.ANode' type=<root>.BNode<<root>.CNode> origin=GET_PROPERTY
+                ARG <this>: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.ANode<<root>.BNode<<root>.CNode>> origin=EXCLEXCL
+                  TYPE_ARG T0: <root>.ANode<<root>.BNode<<root>.CNode>>
+                  ARG arg0: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+                    CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Any? origin=null
+                      TYPE_ARG T: <none>
+                      ARG <this>: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+                      ARG i: CONST Int type=kotlin.Int value=0
+        VAR name:r0 type:<root>.ANode<<root>.BNode<<root>.CNode>>? [val]
+          TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+            CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Any? origin=null
+              TYPE_ARG T: <none>
+              ARG <this>: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=0
+        CALL 'public final fun set <T> (i: kotlin.Int, newValue: T of java.util.concurrent.atomic.AtomicReferenceArray.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+          ARG i: CONST Int type=kotlin.Int value=3
+          ARG newValue: GET_VAR 'val r0: <root>.ANode<<root>.BNode<<root>.CNode>>? declared in <root>.TopLevelArrayTest.testRefArray' type=<root>.ANode<<root>.BNode<<root>.CNode>>? origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=3
+          ARG actual: CALL 'public final fun <get-d> (): kotlin.Int declared in <root>.CNode' type=kotlin.Int origin=GET_PROPERTY
+            ARG <this>: CALL 'public final fun <get-c> (): T of <root>.BNode declared in <root>.BNode' type=<root>.CNode origin=GET_PROPERTY
+              ARG <this>: CALL 'public final fun <get-b> (): T of <root>.ANode declared in <root>.ANode' type=<root>.BNode<<root>.CNode> origin=GET_PROPERTY
+                ARG <this>: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.ANode<<root>.BNode<<root>.CNode>> origin=EXCLEXCL
+                  TYPE_ARG T0: <root>.ANode<<root>.BNode<<root>.CNode>>
+                  ARG arg0: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+                    CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Any? origin=null
+                      TYPE_ARG T: <none>
+                      ARG <this>: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+                      ARG i: CONST Int type=kotlin.Int value=3
+        VAR name:a type:<root>.ANode<<root>.BNode<<root>.CNode>> [val]
+          TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+            CALL 'public final fun get <T> (): T of java.util.concurrent.atomic.AtomicReference.get declared in java.util.concurrent.atomic.AtomicReference' type=kotlin.Any? origin=null
+              TYPE_ARG T: <none>
+              ARG <this>: CALL 'private final fun <get-abcNode> (): java.util.concurrent.atomic.AtomicReference declared in <root>' type=java.util.concurrent.atomic.AtomicReference origin=null
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun compareAndSet <T> (i: kotlin.Int, expect: T of java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Boolean origin=null
+            TYPE_ARG T: <none>
+            ARG <this>: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+            ARG i: CONST Int type=kotlin.Int value=3
+            ARG expect: GET_VAR 'val a3: <root>.ANode<<root>.BNode<<root>.CNode>> declared in <root>.TopLevelArrayTest.testRefArray' type=<root>.ANode<<root>.BNode<<root>.CNode>> origin=null
+            ARG update: GET_VAR 'val a: <root>.ANode<<root>.BNode<<root>.CNode>> declared in <root>.TopLevelArrayTest.testRefArray' type=<root>.ANode<<root>.BNode<<root>.CNode>> origin=null
+  CLASS CLASS name:TopLevelPrimitiveTest modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TopLevelPrimitiveTest
+    CONSTRUCTOR visibility:public returnType:<root>.TopLevelPrimitiveTest [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TopLevelPrimitiveTest modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:testTopLevelArrayOfNulls visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TopLevelPrimitiveTest
+      BLOCK_BODY
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.String?
+          ARG expected: CONST Null type=kotlin.Nothing? value=null
+          ARG actual: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+            CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Any? origin=null
+              TYPE_ARG T: <none>
+              ARG <this>: CALL 'private final fun <get-stringAtomicNullArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=0
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun compareAndSet <T> (i: kotlin.Int, expect: T of java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Boolean origin=null
+            TYPE_ARG T: <none>
+            ARG <this>: CALL 'private final fun <get-stringAtomicNullArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+            ARG i: CONST Int type=kotlin.Int value=0
+            ARG expect: CONST Null type=kotlin.Nothing? value=null
+            ARG update: CONST String type=kotlin.String value="aa"
+        CALL 'public final fun set <T> (i: kotlin.Int, newValue: T of java.util.concurrent.atomic.AtomicReferenceArray.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-stringAtomicNullArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+          ARG i: CONST Int type=kotlin.Int value=1
+          ARG newValue: CONST String type=kotlin.String value="aa"
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+            ARG arg0: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+              CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Any? origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: CALL 'private final fun <get-stringAtomicNullArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+                ARG i: CONST Int type=kotlin.Int value=0
+            ARG arg1: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+              CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Any? origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: CALL 'private final fun <get-stringAtomicNullArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+                ARG i: CONST Int type=kotlin.Int value=1
+    FUN name:testTopLevelBoolean visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TopLevelPrimitiveTest
+      BLOCK_BODY
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+            CALL 'public final fun get (): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicBoolean' type=kotlin.Boolean origin=null
+              ARG <this>: CALL 'private final fun <get-c> (): java.util.concurrent.atomic.AtomicBoolean declared in <root>' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+        CALL 'public final fun set (newValue: kotlin.Boolean): kotlin.Unit declared in java.util.concurrent.atomic.AtomicBoolean' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-c> (): java.util.concurrent.atomic.AtomicBoolean declared in <root>' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+          ARG newValue: CONST Boolean type=kotlin.Boolean value=false
+        CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+            CALL 'public final fun get (): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicBoolean' type=kotlin.Boolean origin=null
+              ARG <this>: CALL 'private final fun <get-c> (): java.util.concurrent.atomic.AtomicBoolean declared in <root>' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+            ARG <this>: CALL 'public final fun getAndSet (newValue: kotlin.Boolean): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicBoolean' type=kotlin.Boolean origin=null
+              ARG <this>: CALL 'private final fun <get-c> (): java.util.concurrent.atomic.AtomicBoolean declared in <root>' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+              ARG newValue: CONST Boolean type=kotlin.Boolean value=true
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun compareAndSet (expect: kotlin.Boolean, update: kotlin.Boolean): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicBoolean' type=kotlin.Boolean origin=null
+            ARG <this>: CALL 'private final fun <get-c> (): java.util.concurrent.atomic.AtomicBoolean declared in <root>' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+            ARG expect: CONST Boolean type=kotlin.Boolean value=true
+            ARG update: CONST Boolean type=kotlin.Boolean value=false
+        CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+            CALL 'public final fun get (): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicBoolean' type=kotlin.Boolean origin=null
+              ARG <this>: CALL 'private final fun <get-c> (): java.util.concurrent.atomic.AtomicBoolean declared in <root>' type=java.util.concurrent.atomic.AtomicBoolean origin=null
+    FUN name:testTopLevelInt visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TopLevelPrimitiveTest
+      BLOCK_BODY
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=0
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=0
+          ARG actual: CALL 'public final fun getAndSet (newValue: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+            ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+            ARG newValue: CONST Int type=kotlin.Int value=3
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun compareAndSet (expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Boolean origin=null
+            ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+            ARG expect: CONST Int type=kotlin.Int value=3
+            ARG update: CONST Int type=kotlin.Int value=8
+        CALL 'public final fun set (newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+          ARG newValue: CONST Int type=kotlin.Int value=1
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=1
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=1
+          ARG actual: CALL 'public final fun getAndSet (newValue: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+            ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+            ARG newValue: CONST Int type=kotlin.Int value=2
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=2
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=2
+          ARG actual: CALL 'public final fun getAndIncrement (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+            ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=3
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=3
+          ARG actual: CALL 'public final fun getAndDecrement (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+            ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=2
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=2
+          ARG actual: CALL 'public final fun getAndAdd (delta: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+            ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+            ARG delta: CONST Int type=kotlin.Int value=2
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=4
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=7
+          ARG actual: CALL 'public final fun addAndGet (delta: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+            ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+            ARG delta: CONST Int type=kotlin.Int value=3
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=7
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=8
+          ARG actual: CALL 'public final fun incrementAndGet (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+            ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=8
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=7
+          ARG actual: CALL 'public final fun decrementAndGet (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+            ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=7
+          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+            CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun compareAndSet (expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Boolean origin=null
+            ARG <this>: CALL 'private final fun <get-a> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+            ARG expect: CONST Int type=kotlin.Int value=7
+            ARG update: CONST Int type=kotlin.Int value=10
+    FUN name:testTopLevelLong visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TopLevelPrimitiveTest
+      BLOCK_BODY
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=2424920024888888848
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (): kotlin.Long declared in java.util.concurrent.atomic.AtomicLong' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-b> (): java.util.concurrent.atomic.AtomicLong declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+        CALL 'public final fun set (newValue: kotlin.Long): kotlin.Unit declared in java.util.concurrent.atomic.AtomicLong' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-b> (): java.util.concurrent.atomic.AtomicLong declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+          ARG newValue: CONST Long type=kotlin.Long value=8424920024888888848
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=8424920024888888848
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (): kotlin.Long declared in java.util.concurrent.atomic.AtomicLong' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-b> (): java.util.concurrent.atomic.AtomicLong declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=8424920024888888848
+          ARG actual: CALL 'public final fun getAndSet (newValue: kotlin.Long): kotlin.Long declared in java.util.concurrent.atomic.AtomicLong' type=kotlin.Long origin=null
+            ARG <this>: CALL 'private final fun <get-b> (): java.util.concurrent.atomic.AtomicLong declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+            ARG newValue: CONST Long type=kotlin.Long value=8924920024888888848
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=8924920024888888848
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (): kotlin.Long declared in java.util.concurrent.atomic.AtomicLong' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-b> (): java.util.concurrent.atomic.AtomicLong declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=8924920024888888849
+          ARG actual: CALL 'public final fun incrementAndGet (): kotlin.Long declared in java.util.concurrent.atomic.AtomicLong' type=kotlin.Long origin=null
+            ARG <this>: CALL 'private final fun <get-b> (): java.util.concurrent.atomic.AtomicLong declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=8924920024888888849
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (): kotlin.Long declared in java.util.concurrent.atomic.AtomicLong' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-b> (): java.util.concurrent.atomic.AtomicLong declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=8924920024888888849
+          ARG actual: CALL 'public final fun getAndDecrement (): kotlin.Long declared in java.util.concurrent.atomic.AtomicLong' type=kotlin.Long origin=null
+            ARG <this>: CALL 'private final fun <get-b> (): java.util.concurrent.atomic.AtomicLong declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=8924920024888888848
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (): kotlin.Long declared in java.util.concurrent.atomic.AtomicLong' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-b> (): java.util.concurrent.atomic.AtomicLong declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=8924920024888888848
+          ARG actual: CALL 'public final fun getAndAdd (delta: kotlin.Long): kotlin.Long declared in java.util.concurrent.atomic.AtomicLong' type=kotlin.Long origin=null
+            ARG <this>: CALL 'private final fun <get-b> (): java.util.concurrent.atomic.AtomicLong declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+            ARG delta: CONST Long type=kotlin.Long value=100000000000000000
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=9024920024888888848
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (): kotlin.Long declared in java.util.concurrent.atomic.AtomicLong' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-b> (): java.util.concurrent.atomic.AtomicLong declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=-198452011965886959
+          ARG actual: CALL 'public final fun addAndGet (delta: kotlin.Long): kotlin.Long declared in java.util.concurrent.atomic.AtomicLong' type=kotlin.Long origin=null
+            ARG <this>: CALL 'private final fun <get-b> (): java.util.concurrent.atomic.AtomicLong declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+            ARG delta: CONST Long type=kotlin.Long value=-9223372036854775807
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=-198452011965886959
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (): kotlin.Long declared in java.util.concurrent.atomic.AtomicLong' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-b> (): java.util.concurrent.atomic.AtomicLong declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=-198452011965886958
+          ARG actual: CALL 'public final fun incrementAndGet (): kotlin.Long declared in java.util.concurrent.atomic.AtomicLong' type=kotlin.Long origin=null
+            ARG <this>: CALL 'private final fun <get-b> (): java.util.concurrent.atomic.AtomicLong declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=-198452011965886958
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (): kotlin.Long declared in java.util.concurrent.atomic.AtomicLong' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-b> (): java.util.concurrent.atomic.AtomicLong declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=-198452011965886959
+          ARG actual: CALL 'public final fun decrementAndGet (): kotlin.Long declared in java.util.concurrent.atomic.AtomicLong' type=kotlin.Long origin=null
+            ARG <this>: CALL 'private final fun <get-b> (): java.util.concurrent.atomic.AtomicLong declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Long
+          ARG expected: CONST Long type=kotlin.Long value=-198452011965886959
+          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+            CALL 'public final fun get (): kotlin.Long declared in java.util.concurrent.atomic.AtomicLong' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-b> (): java.util.concurrent.atomic.AtomicLong declared in <root>' type=java.util.concurrent.atomic.AtomicLong origin=null
+    FUN name:testTopLevelRef visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TopLevelPrimitiveTest
+      BLOCK_BODY
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=8
+          ARG actual: CALL 'public final fun <get-d> (): kotlin.Int declared in <root>.CNode' type=kotlin.Int origin=GET_PROPERTY
+            ARG <this>: CALL 'public final fun <get-c> (): T of <root>.BNode declared in <root>.BNode' type=<root>.CNode origin=GET_PROPERTY
+              ARG <this>: CALL 'public final fun <get-b> (): T of <root>.ANode declared in <root>.ANode' type=<root>.BNode<<root>.CNode> origin=GET_PROPERTY
+                ARG <this>: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+                  CALL 'public final fun get <T> (): T of java.util.concurrent.atomic.AtomicReference.get declared in java.util.concurrent.atomic.AtomicReference' type=kotlin.Any? origin=null
+                    TYPE_ARG T: <none>
+                    ARG <this>: CALL 'private final fun <get-abcNode> (): java.util.concurrent.atomic.AtomicReference declared in <root>' type=java.util.concurrent.atomic.AtomicReference origin=null
+        VAR name:newNode type:<root>.ANode<<root>.BNode<<root>.CNode>> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (b: T of <root>.ANode) declared in <root>.ANode' type=<root>.ANode<<root>.BNode<<root>.CNode>> origin=null
+            TYPE_ARG (of class) T: <root>.BNode<<root>.CNode>
+            ARG b: CONSTRUCTOR_CALL 'public constructor <init> (c: T of <root>.BNode) declared in <root>.BNode' type=<root>.BNode<<root>.CNode> origin=null
+              TYPE_ARG (of class) T: <root>.CNode
+              ARG c: CONSTRUCTOR_CALL 'public constructor <init> (d: kotlin.Int) declared in <root>.CNode' type=<root>.CNode origin=null
+                ARG d: CONST Int type=kotlin.Int value=76
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=8
+          ARG actual: CALL 'public final fun <get-d> (): kotlin.Int declared in <root>.CNode' type=kotlin.Int origin=GET_PROPERTY
+            ARG <this>: CALL 'public final fun <get-c> (): T of <root>.BNode declared in <root>.BNode' type=<root>.CNode origin=GET_PROPERTY
+              ARG <this>: CALL 'public final fun <get-b> (): T of <root>.ANode declared in <root>.ANode' type=<root>.BNode<<root>.CNode> origin=GET_PROPERTY
+                ARG <this>: CALL 'public final fun getAndSet <T> (newValue: T of java.util.concurrent.atomic.AtomicReference.getAndSet): T of java.util.concurrent.atomic.AtomicReference.getAndSet declared in java.util.concurrent.atomic.AtomicReference' type=kotlin.Any? origin=null
+                  TYPE_ARG T: <none>
+                  ARG <this>: CALL 'private final fun <get-abcNode> (): java.util.concurrent.atomic.AtomicReference declared in <root>' type=java.util.concurrent.atomic.AtomicReference origin=null
+                  ARG newValue: GET_VAR 'val newNode: <root>.ANode<<root>.BNode<<root>.CNode>> declared in <root>.TopLevelPrimitiveTest.testTopLevelRef' type=<root>.ANode<<root>.BNode<<root>.CNode>> origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=76
+          ARG actual: CALL 'public final fun <get-d> (): kotlin.Int declared in <root>.CNode' type=kotlin.Int origin=GET_PROPERTY
+            ARG <this>: CALL 'public final fun <get-c> (): T of <root>.BNode declared in <root>.BNode' type=<root>.CNode origin=GET_PROPERTY
+              ARG <this>: CALL 'public final fun <get-b> (): T of <root>.ANode declared in <root>.ANode' type=<root>.BNode<<root>.CNode> origin=GET_PROPERTY
+                ARG <this>: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+                  CALL 'public final fun get <T> (): T of java.util.concurrent.atomic.AtomicReference.get declared in java.util.concurrent.atomic.AtomicReference' type=kotlin.Any? origin=null
+                    TYPE_ARG T: <none>
+                    ARG <this>: CALL 'private final fun <get-abcNode> (): java.util.concurrent.atomic.AtomicReference declared in <root>' type=java.util.concurrent.atomic.AtomicReference origin=null
+        VAR name:l type:kotlin.IntArray [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int, init: kotlin.Function1<kotlin.Int, kotlin.Int>) declared in kotlin.IntArray' type=kotlin.IntArray origin=null
+            ARG size: CONST Int type=kotlin.Int value=4
+            ARG init: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+                VALUE_PARAMETER kind:Regular name:i index:0 type:kotlin.Int
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (i: kotlin.Int): kotlin.Int declared in <root>.TopLevelPrimitiveTest.testTopLevelRef'
+                    GET_VAR 'i: kotlin.Int declared in <root>.TopLevelPrimitiveTest.testTopLevelRef.<anonymous>' type=kotlin.Int origin=null
+        CALL 'public final fun set <T> (newValue: T of java.util.concurrent.atomic.AtomicReference.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReference' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-any> (): java.util.concurrent.atomic.AtomicReference declared in <root>' type=java.util.concurrent.atomic.AtomicReference origin=null
+          ARG newValue: GET_VAR 'val l: kotlin.IntArray declared in <root>.TopLevelPrimitiveTest.testTopLevelRef' type=kotlin.IntArray origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG expected: CONST Int type=kotlin.Int value=2
+          ARG actual: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=GET_ARRAY_ELEMENT
+            ARG <this>: TYPE_OP type=kotlin.IntArray origin=CAST typeOperand=kotlin.IntArray
+              TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+                CALL 'public final fun get <T> (): T of java.util.concurrent.atomic.AtomicReference.get declared in java.util.concurrent.atomic.AtomicReference' type=kotlin.Any? origin=null
+                  TYPE_ARG T: <none>
+                  ARG <this>: CALL 'private final fun <get-any> (): java.util.concurrent.atomic.AtomicReference declared in <root>' type=java.util.concurrent.atomic.AtomicReference origin=null
+            ARG index: CONST Int type=kotlin.Int value=2
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:primitiveTest type:<root>.TopLevelPrimitiveTest [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.TopLevelPrimitiveTest' type=<root>.TopLevelPrimitiveTest origin=null
+      CALL 'public final fun testTopLevelInt (): kotlin.Unit declared in <root>.TopLevelPrimitiveTest' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val primitiveTest: <root>.TopLevelPrimitiveTest declared in <root>.box' type=<root>.TopLevelPrimitiveTest origin=null
+      CALL 'public final fun testTopLevelLong (): kotlin.Unit declared in <root>.TopLevelPrimitiveTest' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val primitiveTest: <root>.TopLevelPrimitiveTest declared in <root>.box' type=<root>.TopLevelPrimitiveTest origin=null
+      CALL 'public final fun testTopLevelBoolean (): kotlin.Unit declared in <root>.TopLevelPrimitiveTest' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val primitiveTest: <root>.TopLevelPrimitiveTest declared in <root>.box' type=<root>.TopLevelPrimitiveTest origin=null
+      CALL 'public final fun testTopLevelRef (): kotlin.Unit declared in <root>.TopLevelPrimitiveTest' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val primitiveTest: <root>.TopLevelPrimitiveTest declared in <root>.box' type=<root>.TopLevelPrimitiveTest origin=null
+      CALL 'public final fun testTopLevelArrayOfNulls (): kotlin.Unit declared in <root>.TopLevelPrimitiveTest' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val primitiveTest: <root>.TopLevelPrimitiveTest declared in <root>.box' type=<root>.TopLevelPrimitiveTest origin=null
+      VAR name:arrayTest type:<root>.TopLevelArrayTest [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.TopLevelArrayTest' type=<root>.TopLevelArrayTest origin=null
+      CALL 'public final fun testIntArray (): kotlin.Unit declared in <root>.TopLevelArrayTest' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val arrayTest: <root>.TopLevelArrayTest declared in <root>.box' type=<root>.TopLevelArrayTest origin=null
+      CALL 'public final fun testLongArray (): kotlin.Unit declared in <root>.TopLevelArrayTest' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val arrayTest: <root>.TopLevelArrayTest declared in <root>.box' type=<root>.TopLevelArrayTest origin=null
+      CALL 'public final fun testBooleanArray (): kotlin.Unit declared in <root>.TopLevelArrayTest' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val arrayTest: <root>.TopLevelArrayTest declared in <root>.box' type=<root>.TopLevelArrayTest origin=null
+      CALL 'public final fun testRefArray (): kotlin.Unit declared in <root>.TopLevelArrayTest' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val arrayTest: <root>.TopLevelArrayTest declared in <root>.box' type=<root>.TopLevelArrayTest origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"

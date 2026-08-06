@@ -25,7 +25,11 @@ import org.jetbrains.kotlin.test.builders.configureJsArtifactsHandlersStep
 import org.jetbrains.kotlin.test.builders.configureLoweredIrHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.setupIrTextDumpHandlers
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE_DIFFERENCE
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_SPLITTING
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_SPLITTING_DIFFERENCE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
@@ -71,6 +75,9 @@ abstract class AbstractJsTest(
                     "-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
                 )
+            }
+            configureIrHandlersStep {
+                setupIrTextDumpHandlers()
             }
 
             configureJsArtifactsHandlersStep {
@@ -147,6 +154,7 @@ abstract class AbstractJsCodegenBoxWithInlinedFunInKlibTest(
                             artifactKind = artifactKind,
                             customExtension = "inlined.ir",
                             directive = DUMP_IR_AFTER_INLINE,
+                            directiveForIrDifference = DUMP_IR_AFTER_INLINE_DIFFERENCE,
                             showOffsets = true,
                         )
                     },
@@ -203,6 +211,20 @@ abstract class AbstractJsCodegenSplittingInlineWithInlinedFunInKlibTest(
             ::SplittingModuleTransformerForBoxTests
         )
         builder.useMetaTestConfigurators(::SplittingTestConfigurator)
+        builder.configureIrHandlersStep {
+            useHandlers(
+                { testServices, artifactKind ->
+                    IrTextDumpHandler(
+                        testServices = testServices,
+                        artifactKind = artifactKind,
+                        customExtension = "splitted.ir",
+                        directive = DUMP_IR_AFTER_SPLITTING,
+                        directiveForIrDifference = DUMP_IR_AFTER_SPLITTING_DIFFERENCE,
+                        showOffsets = true,
+                    )
+                },
+            )
+        }
     }
 }
 
