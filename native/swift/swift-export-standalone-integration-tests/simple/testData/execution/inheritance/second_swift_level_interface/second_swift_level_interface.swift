@@ -11,9 +11,6 @@ final class SwiftSecondLevel: SwiftFirstLevel {}
 
 // Control: with the instance at the same level that declares the conformance, the itable slot resolves.
 // If this one starts failing too, the problem is not specific to the second level.
-
-// Control: with the instance at the same level that declares the conformance, the itable slot resolves.
-// If this one starts failing too, the problem is not specific to the second level.
 @Test
 func kotlinCallsInterfaceMethodOnFirstSwiftLevel() throws {
     let value = SwiftFirstLevel()
@@ -22,9 +19,10 @@ func kotlinCallsInterfaceMethodOnFirstSwiftLevel() throws {
     #expect(callToken(value: value) == "swift-token")
 }
 
-// The reproducer: identical call, one extra Swift inheritance level between the instance and the class that
-// adopted the Kotlin interface. Remove `.disabled(...)` to reproduce.
-@Test(.disabled("KT-88042: Kotlin cannot dispatch an itable slot to a Swift implementation inherited from the first Swift level"))
+// The KT-88042 reproducer: identical call, one extra Swift inheritance level between the instance and the class
+// that adopted the Kotlin interface. Fixed by walking the Swift superclass chain up to the bound Kotlin class
+// when collecting adopted protocols, instead of inspecting the leaf alone.
+@Test
 func kotlinCallsInterfaceMethodOnSecondSwiftLevel() throws {
     let value = SwiftSecondLevel()
     let contractView: any SecondLevelContract = value
