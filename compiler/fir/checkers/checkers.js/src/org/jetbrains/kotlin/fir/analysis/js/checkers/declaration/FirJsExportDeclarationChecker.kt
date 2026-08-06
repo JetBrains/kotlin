@@ -10,13 +10,9 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationFirstArgument
-import org.jetbrains.kotlin.fir.analysis.checkers.isCopyMethod
-import org.jetbrains.kotlin.fir.analysis.checkers.isExportedToJs
-import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXPOSED_NOT_EXPORTED_SUPER_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.js.checkers.sanitizeName
@@ -27,19 +23,15 @@ import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.isEnumEntries
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
 import org.jetbrains.kotlin.js.common.SPECIAL_KEYWORDS
 import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.jsExportIgnore
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ExposedCopyVisibility
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ConsistentCopyVisibility
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ExposedCopyVisibility
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.jsExportIgnore
 import org.jetbrains.kotlin.types.Variance
 
 object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
@@ -200,7 +192,8 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                     }
 
                     else if context.isInsideInterface -> when {
-                        !declaration.status.isCompanion -> "nested/inner declaration inside exported interface"
+                        LanguageFeature.AllowInterfaceNestedClassesInJsExport.isDisabled() && !declaration.status.isCompanion ->
+                            "nested/inner declaration inside exported interface"
                         declaration.symbol.isEffectivelyExternal(context.session) -> "external companion object"
                         else -> null
                     }

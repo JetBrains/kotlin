@@ -265,26 +265,47 @@ declare namespace JS_TESTS {
                 readonly "foo.Sealed": unique symbol;
             };
         }
-        interface SealedB extends foo.Sealed, foo.FunIFace {
-            readonly [foo.SealedB.Symbol]: true;
+        namespace Sealed {
+            class A implements foo.Sealed {
+                constructor(value: string);
+                get value(): string;
+                sos1(): void;
+                sos2(): void;
+                copy(value?: string): foo.Sealed.A;
+                toString(): string;
+                hashCode(): number;
+                equals(other: Nullable<any>): boolean;
+                readonly [foo.SuperOfSealed2.Symbol]: true;
+                readonly [foo.SuperOfSealed1.Symbol]: true;
+                readonly __doNotUseOrImplementIt: foo.Sealed["__doNotUseOrImplementIt"];
+            }
+            namespace A {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => A;
+                }
+            }
+            interface B extends foo.Sealed, foo.FunIFace {
+                readonly [foo.Sealed.B.Symbol]: true;
+            }
+            namespace B {
+                const Symbol: unique symbol;
+            }
         }
-        namespace SealedB {
-            const Symbol: unique symbol;
-        }
-        interface InterfaceInheritingFromSealed extends foo.SealedB {
+        interface InterfaceInheritingFromSealed extends foo.Sealed.B {
             readonly value2: string;
             readonly [foo.InterfaceInheritingFromSealed.Symbol]: true;
         }
         namespace InterfaceInheritingFromSealed {
             const Symbol: unique symbol;
         }
-        class ClassInheritingFromSealed implements foo.SealedB {
+        class ClassInheritingFromSealed implements foo.Sealed.B {
             constructor();
             get value(): string;
             sos1(): void;
             sos2(): void;
             apply(x: string): string;
-            readonly [foo.SealedB.Symbol]: true;
+            readonly [foo.Sealed.B.Symbol]: true;
             readonly [foo.FunIFace.Symbol]: true;
             readonly [foo.SuperOfSealed2.Symbol]: true;
             readonly [foo.SuperOfSealed1.Symbol]: true;
