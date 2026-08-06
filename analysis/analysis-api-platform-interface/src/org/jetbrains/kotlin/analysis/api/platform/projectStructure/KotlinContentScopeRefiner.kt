@@ -34,6 +34,8 @@ public interface KotlinContentScopeRefiner : KotlinPlatformComponent {
      *
      * If some file contained in [getEnlargementScopes] is also already contained in [KaModule.baseContentScope], the enlargement scope will
      * have no additional effect with respect to this file.
+     *
+     * If the refiner doesn't provide any enlargements, [emptyList] is expected to be returned.
      */
     public fun getEnlargementScopes(module: KaModule): List<GlobalSearchScope> = emptyList()
 
@@ -43,13 +45,15 @@ public interface KotlinContentScopeRefiner : KotlinPlatformComponent {
      *
      * If some file not contained in [getRestrictionScopes] is also not contained in [KaModule.baseContentScope], the restriction scope will
      * have no additional effect with respect to this file.
+     *
+     * If the refiner doesn't provide any restrictions, [emptyList] is expected to be returned.
      */
     public fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> = emptyList()
 
     @KaPlatformInterface
     public companion object {
         public val EP_NAME: ExtensionPointName<KotlinContentScopeRefiner> =
-            ExtensionPointName<KotlinContentScopeRefiner>(
+            ExtensionPointName(
                 "org.jetbrains.kotlin.kotlinContentScopeRefiner"
             )
 

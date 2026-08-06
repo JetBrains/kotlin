@@ -28,10 +28,7 @@ UnionScope
 
 Module MAIN:
 UnionScope
-    IntersectionScope
-        FileScope: main.kt
-        NotScope
-            EmptyScope
+    FileScope: main.kt
     IntersectionScope
         KaFirJvmLibraryRestrictionScope
         UnionScope

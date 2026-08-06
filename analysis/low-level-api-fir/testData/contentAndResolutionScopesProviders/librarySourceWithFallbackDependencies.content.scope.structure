@@ -9,10 +9,7 @@ IntersectionScope
         ParentTraversalLibrarySearchScope
 
 Module MAIN:
-IntersectionScope
-    FilesScope
-        files:
-            MANIFEST.MF
-            main.kt
-    NotScope
-        EmptyScope
+FilesScope
+    files:
+        MANIFEST.MF
+        main.kt

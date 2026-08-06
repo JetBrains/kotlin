@@ -1,6 +1,8 @@
 Resulting Resolution Scope Structure:
 Module MAIN:
 UnionScope
+    FileScope: c.kt
+    FileScope: x.kt
     IntersectionScope
         KaFirJvmLibraryRestrictionScope
         UnionScope
@@ -8,12 +10,6 @@ UnionScope
             ParentTraversalLibrarySearchScope
             ParentTraversalLibrarySearchScope
             ParentTraversalLibrarySearchScope
-    IntersectionScope
-        NotScope
-            EmptyScope
-        UnionScope
-            FileScope: c.kt
-            FileScope: x.kt
     IntersectionScope
         NotScope
             FileScope: b.kt
@@ -34,6 +30,8 @@ UnionScope
 
 Module SOME_DEPENDENCY:
 UnionScope
+    FileScope: c.kt
+    FileScope: x.kt
     IntersectionScope
         KaFirJvmLibraryRestrictionScope
         UnionScope
@@ -41,12 +39,6 @@ UnionScope
             ParentTraversalLibrarySearchScope
             ParentTraversalLibrarySearchScope
             ParentTraversalLibrarySearchScope
-    IntersectionScope
-        NotScope
-            EmptyScope
-        UnionScope
-            FileScope: c.kt
-            FileScope: x.kt
     KotlinBuiltinsFileScope
         FilesScope
             files:
