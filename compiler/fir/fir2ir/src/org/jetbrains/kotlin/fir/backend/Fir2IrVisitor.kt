@@ -1504,9 +1504,8 @@ class Fir2IrVisitor(
                         // compiler/testData/codegen/box/when/stringOptimization/enhancedNullability.kt
                         // See KT-47398.
                         convertToIrExpression(subjectExpression).insertCastForIntersectionTypeOrSelf(
-                            expression = subjectExpression,
+                            argumentType = subjectExpression.resolvedType,
                             expectedType = subjectVariable.returnTypeRef.coneType,
-                            forReceiver = false,
                         )
                     },
                     nameHint = "subject",
