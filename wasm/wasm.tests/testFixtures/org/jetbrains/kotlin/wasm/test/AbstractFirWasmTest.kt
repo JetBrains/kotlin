@@ -89,12 +89,6 @@ abstract class AbstractFirWasmTest(
                     ::FirResolvedTypesVerifier,
                 )
             }
-            defaultDirectives {
-                LANGUAGE with listOf(
-                    "-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                    "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
-            }
 
             configureIgnoredTestSuppressor()
         }
