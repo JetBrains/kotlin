@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.code
 
-import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
+import kotlinx.coroutines.*
 import org.jetbrains.kotlin.code.DomainsDumpTest.Companion.sanitize
+import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
 import org.jetbrains.kotlin.testFederation.RepositoryPath
 import org.jetbrains.kotlin.testFederation.allDomainInfos
 import org.jetbrains.kotlin.testFederation.domains
@@ -111,8 +112,10 @@ private val repositoryRoot = File(".").toPath().absolute()
 private val domainsDumpFile = File("repo/domains.dump.txt")
 
 private fun generateDomainsTree(): Node {
-    val tree = repositoryRoot.toNode() ?: error("Missing root tree")
-    return tree.conflate()
+    return runBlocking(Dispatchers.Default) {
+        val tree = repositoryRoot.toNode() ?: error("Missing root tree")
+        tree.conflate()
+    }
 }
 
 private fun Node.generateDomainsDump(): String {
@@ -142,20 +145,26 @@ private data class Node(
     val children: List<Node>,
 )
 
-private fun Path.toNode(): Node? {
-    val repositoryPath = RepositoryPath(repositoryRoot, repositoryRoot.relativize(this))
-    val domains = repositoryPath.domains
-    val children = if (isDirectory()) {
-        listDirectoryEntries()
-            .filter { child -> !child.isGitIgnored() }.sorted()
-            .mapNotNull { child -> child.toNode() }
-            .ifEmpty { return null }
-    } else emptyList()
-    return Node(repositoryPath, domains, children)
+private suspend fun Path.toNode(): Node? {
+    return coroutineScope {
+        val repositoryPath = RepositoryPath(repositoryRoot, repositoryRoot.relativize(this@toNode))
+        val domains = repositoryPath.domains
+        val children = if (isDirectory()) {
+            listDirectoryEntries()
+                .parallelMap { child ->
+                    if (child.isGitIgnored()) return@parallelMap null
+                    child.toNode()
+                }
+                .filterNotNull()
+                .sortedBy { it.path.value }
+                .ifEmpty { return@coroutineScope null }
+        } else emptyList()
+        Node(repositoryPath, domains, children)
+    }
 }
 
-private fun Node.conflate(): Node {
-    val conflatedChildren = children.map { it.conflate() }
+private suspend fun Node.conflate(): Node {
+    val conflatedChildren = children.parallelMap { it.conflate() }
 
     /* If a directory only contains directories, then it can be conflated */
     if (children.all { it.children.isEmpty() } && children.all { it.path.resolve().isDirectory() }) {
@@ -166,4 +175,12 @@ private fun Node.conflate(): Node {
     else emptyList()
 
     return copy(children = newChildren)
+}
+
+private suspend fun <T, R> Iterable<T>.parallelMap(transform: suspend (T) -> R): List<R> {
+    return coroutineScope {
+        map { value ->
+            async { transform(value) }
+        }.awaitAll()
+    }
 }
