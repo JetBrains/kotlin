@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.collections.set
 import kotlin.io.path.absolutePathString
+import kotlin.reflect.KProperty1
 import kotlin.text.contains
 
 @Tag("klib")
@@ -314,7 +315,18 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    fun `Compiler rejects libraries from the distribution and C-interop libraries as included and exported libs`() {
+    fun `Compiler rejects libraries from the distribution and C-interop libraries as included libs`() {
+        doTestCompilerRejectsLibrariesFromDistributionAndCInteropLibraries(testedCliParameter = K2NativeCompilerArguments::includes)
+    }
+
+    @Test
+    fun `Compiler rejects libraries from the distribution and C-interop libraries as exported libs`() {
+        doTestCompilerRejectsLibrariesFromDistributionAndCInteropLibraries(testedCliParameter = K2NativeCompilerArguments::exportedLibraries)
+    }
+
+    private fun doTestCompilerRejectsLibrariesFromDistributionAndCInteropLibraries(
+        testedCliParameter: KProperty1<K2NativeCompilerArguments, Array<String>>,
+    ) {
         val librariesDir = testRunSettings.get<KotlinNativeHome>().librariesDir
         val target = testRunSettings.get<KotlinNativeTargets>().testTarget
 
@@ -337,36 +349,31 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         checkNotNull(regularLibPath)
         checkNotNull(cinteropLibPath)
 
+        // try it with different combinations of "-no..." flags:
         listOf(
-            K2NativeCompilerArguments::includes.cliArgument,
-            K2NativeCompilerArguments::exportedLibraries.cliArgument,
-        ).forEach { testedCliParameter ->
-            // try it with different combinations of "-no..." flags:
-            listOf(
-                emptyList(),
-                listOf("-nostdlib"),
-                listOf("-no-default-libs"),
-                listOf("-nostdlib", "-no-default-libs"),
-            ).forEach { extraNoSmthFlags ->
-                newSourceModules {
-                    addRegularModule("test")
-                }.compileToKlibsViaCli(
-                    extraCliArgs = extraNoSmthFlags + listOf(
-                        "-l", stdlibPath,
-                        "-l", posixPath,
-                        "-l", regularLibPath,
-                        "-l", cinteropLibPath,
-                        "$testedCliParameter=$stdlibPath",
-                        "$testedCliParameter=$posixPath",
-                        "$testedCliParameter=$regularLibPath",
-                        "$testedCliParameter=$cinteropLibPath",
-                    )
-                ) { _, successKlib ->
-                    successKlib.assertProblematicIncludedOrExportedLibs(
-                        cliParameter = testedCliParameter,
-                        stdlibPath, posixPath, cinteropLibPath
-                    )
-                }
+            emptyList(),
+            listOf("-nostdlib"),
+            listOf("-no-default-libs"),
+            listOf("-nostdlib", "-no-default-libs"),
+        ).forEach { extraNoSmthFlags ->
+            newSourceModules {
+                addRegularModule("test")
+            }.compileToKlibsViaCli(
+                extraCliArgs = extraNoSmthFlags + listOf(
+                    "-l", stdlibPath,
+                    "-l", posixPath,
+                    "-l", regularLibPath,
+                    "-l", cinteropLibPath,
+                    testedCliParameter.cliArgument(stdlibPath),
+                    testedCliParameter.cliArgument(posixPath),
+                    testedCliParameter.cliArgument(regularLibPath),
+                    testedCliParameter.cliArgument(cinteropLibPath),
+                )
+            ) { _, successKlib ->
+                successKlib.assertProblematicIncludedOrExportedLibs(
+                    cliParameter = testedCliParameter,
+                    stdlibPath, posixPath, cinteropLibPath
+                )
             }
         }
     }
@@ -454,7 +461,7 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
     }
 
     private fun TestCompilationResult.Success<out KLIB>.assertProblematicIncludedOrExportedLibs(
-        cliParameter: String,
+        cliParameter: KProperty1<K2NativeCompilerArguments, *>,
         vararg pathsOfExpectedProblematicIncludes: String,
     ) {
         val compilationToolCall = loggedData as LoggedData.CompilationToolCall
@@ -467,7 +474,7 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         assertEquals(pathsOfExpectedProblematicIncludes.size, toolOutput.size)
 
         val pathsOfActualProblematicIncludes = toolOutput.map { message ->
-            message.substringAfterLast("cannot be used in $cliParameter CLI argument: ").trim()
+            message.substringAfterLast("cannot be used in ${cliParameter.cliArgument} CLI argument: ").trim()
         }
 
         assertEquals(pathsOfExpectedProblematicIncludes.toSet(), pathsOfActualProblematicIncludes.toSet())
