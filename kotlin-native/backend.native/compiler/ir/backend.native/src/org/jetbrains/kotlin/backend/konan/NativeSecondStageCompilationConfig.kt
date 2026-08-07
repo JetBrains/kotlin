@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
+import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibs
 import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.backend.konan.util.systemCacheRootDirectory
 import org.jetbrains.kotlin.backend.konan.util.toObsoleteKind
@@ -91,6 +92,9 @@ class NativeSecondStageCompilationConfig(
     private val platformManager = PlatformManager(distribution)
     internal val targetManager = platformManager.targetManager(configuration.konanTarget)
     override val target = targetManager.target
+
+    override val loadedKlibs = loadNativeKlibs(configuration, target)
+
     internal val phaseConfig = configuration.phaseConfig!!
 
     // See https://youtrack.jetbrains.com/issue/KT-67692.
