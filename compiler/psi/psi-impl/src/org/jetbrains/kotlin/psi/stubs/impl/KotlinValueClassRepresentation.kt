@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 
 /**
  * How a value class is unboxed by the compiler, as stored in a [KotlinClassStubImpl].
- * This is a stub-side counterpart of the compiler's `ValueClassRepresentation`.
  */
 @KtImplementationDetail
 sealed interface KotlinValueClassRepresentation {
@@ -24,7 +23,7 @@ sealed interface KotlinValueClassRepresentation {
 }
 
 /**
- * A value class declared with the `@JvmInline` annotation. It has exactly one underlying property and is always unboxed by the compiler.
+ * A value class declared with the `@JvmInline` annotation.
  */
 @KtImplementationDetail
 data class KotlinInlineClassRepresentation(
