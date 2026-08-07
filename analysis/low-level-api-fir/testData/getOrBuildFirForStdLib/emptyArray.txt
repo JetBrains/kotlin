@@ -1,4 +1,6 @@
 KT element: KtNamedFunction
+KT element text:
+public inline fun <reified T> emptyArray(): kotlin.Array<T> { /* compiled code */ }
 FIR element: FirNamedFunctionImpl
 FIR source kind: KtRealSourceElementKind
 
