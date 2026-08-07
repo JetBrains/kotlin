@@ -1500,6 +1500,12 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
     }
 
     @Test
+    @TestMetadata("differentDefaultValues.kt")
+    public void testDifferentDefaultValues() {
+      run("differentDefaultValues.kt");
+    }
+
+    @Test
     @TestMetadata("forParameters.kt")
     public void testForParameters() {
       run("forParameters.kt");

@@ -1500,6 +1500,12 @@ public class DecompiledJvmTextTestGenerated extends AbstractDecompiledJvmTextTes
     }
 
     @Test
+    @TestMetadata("differentDefaultValues.kt")
+    public void testDifferentDefaultValues() {
+      run("differentDefaultValues.kt");
+    }
+
+    @Test
     @TestMetadata("forParameters.kt")
     public void testForParameters() {
       run("forParameters.kt");
