@@ -1691,6 +1691,26 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ValueClassCannotBeCloneable::class
     }
 
+    interface WillBecomeValueNotApplicable : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = WillBecomeValueNotApplicable::class
+        val target: String
+    }
+
+    interface IdentityBasedMemberInWillBecomeValueClass : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = IdentityBasedMemberInWillBecomeValueClass::class
+        val memberName: String
+    }
+
+    interface IdentitySensitiveOperationOnWillBecomeValueClass : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = IdentitySensitiveOperationOnWillBecomeValueClass::class
+        val type: KaType
+    }
+
+    interface IdentitySensitiveOperationOnWillBecomeValueClassError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = IdentitySensitiveOperationOnWillBecomeValueClassError::class
+        val type: KaType
+    }
+
     interface NoneApplicable : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = NoneApplicable::class
         val candidates: List<Pair<KaSymbol, List<String>>>
