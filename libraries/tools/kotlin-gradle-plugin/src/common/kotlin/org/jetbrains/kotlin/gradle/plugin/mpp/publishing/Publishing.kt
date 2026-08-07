@@ -185,7 +185,7 @@ private fun KotlinNativeTarget.skipPublicationTasksWhenCrossCompilationWithDepen
     val crossCompilationSharedData = mainCompilation.crossCompilationSharedData
     fun isCrossCompilationSupported() = crossCompilationSharedData.dataForAllDependencies.all { it.crossCompilationSupported }
 
-    val skipReason = "Cross compilation should be possible with project dependencies"
+    val skipReason = "Cross-compilation of target '$targetName' with project dependencies is supported on this host"
 
     // These tasks expose the publication they operate on, so match by identity.
     project.tasks.withType<GenerateModuleMetadata>().configureEach { task ->

@@ -181,7 +181,7 @@ class MppCrossCompilationPublicationIT : KGPBaseTest() {
         }
 
         consumer.build("publishAllPublicationsToCrossTestRepository") {
-            // Skipped by the "Cross compilation should be possible with project dependencies" onlyIf:
+            // Skipped by the "Cross-compilation of target '$targetName' with project dependencies is supported on this host" onlyIf:
             // the consumer supports cross-compilation but its dependency doesn't.
             assertTasksSkipped(
                 ":compileKotlinIosArm64",
