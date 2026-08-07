@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.skipNext
 import kotlin.jvm.Throws
 
 internal fun TypeBridge.makeNothing(llvm: CodegenLlvmHelpers) = when (this) {
@@ -1927,7 +1928,7 @@ private fun MethodBridge.parametersAssociated(
                 it to null
 
             MethodBridgeReceiver.Factory -> {
-                val _ = kotlinParameters.next()
+                kotlinParameters.skipNext()
                 it to null
             }
         }

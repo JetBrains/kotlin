@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.utils.addToStdlib.skipNext
 
 @InternalKotlinNativeApi
 class ObjCExportMapper(
@@ -435,12 +436,12 @@ private fun ObjCExportMapper.bridgeMethodImpl(descriptor: FunctionDescriptor): M
     val isTopLevel = isTopLevel(descriptor)
 
     val receiver = if (descriptor is ConstructorDescriptor && descriptor.constructedClass.isArray) {
-        val _ = kotlinParameters.next()
+        kotlinParameters.skipNext()
         MethodBridgeReceiver.Factory
     } else if (isTopLevel) {
         MethodBridgeReceiver.Static
     } else {
-        val _ = kotlinParameters.next()
+        kotlinParameters.skipNext()
         MethodBridgeReceiver.Instance
     }
 
