@@ -547,6 +547,12 @@ _TYPES = [
 ]
 
 
+def _resolve_lldb_type(valobj, runtime_type):
+    if runtime_type <= _RUNTIME_TYPE_INVALID or runtime_type >= len(_TYPES):
+        return None
+    return _TYPES[runtime_type](valobj)
+
+
 def _read_string(addr, size):
     error = lldb.SBError()
     s = (
@@ -900,9 +906,13 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
 
 
 def _run_batch_child_metadata_request(provider, include_names=True):
+    count = _children_count(provider._valobj)
+    if count <= 0:
+        return []
+
     pointer_size = provider._target.GetAddressByteSize()
     pointer_format = "Q" if pointer_size == 8 else "I"
-    result_slot_count = 7
+    result_slot_count = 6
     permissions = lldb.ePermissionsReadable | lldb.ePermissionsWritable
     result_addr = _allocate_inferior_memory(
         provider._process,
@@ -911,7 +921,6 @@ def _run_batch_child_metadata_request(provider, include_names=True):
         "object child metadata request",
     )
 
-    count = 0
     field_names_addr = 0
     field_names_size = 0
     field_types_addr = 0
@@ -970,10 +979,7 @@ def _run_batch_child_metadata_request(provider, include_names=True):
                 "  return 1;"
                 "};"
                 f"void* obj = (void *){_hex(provider._valobj.unsigned)};"
-                "int count = (int)Konan_DebugGetFieldCount(obj);"
-                "if (count < 0) count = 0;"
-                "result[0] = (void *)(unsigned long long)count;"
-                "if (count == 0) return 0;"
+                f"int count = {count};"
                 "int* fieldTypesData = (int*)(void*)malloc((unsigned long long)count * sizeof(int));"
                 "if (fieldTypesData == 0) return 0;"
                 "void** fieldAddressesData = (void**)(void*)malloc((unsigned long long)count * sizeof(void*));"
@@ -1012,12 +1018,12 @@ def _run_batch_child_metadata_request(provider, include_names=True):
                 "    return 0;"
                 "  }"
                 "}"
-                "result[1] = fieldNamesData;"
-                "result[2] = (void *)(unsigned long long)fieldNamesUsed;"
-                "result[3] = fieldTypesData;"
-                "result[4] = fieldAddressesData;"
-                "result[5] = typeNamesData;"
-                "result[6] = (void *)(unsigned long long)typeNamesUsed;"
+                "result[0] = fieldNamesData;"
+                "result[1] = (void *)(unsigned long long)fieldNamesUsed;"
+                "result[2] = fieldTypesData;"
+                "result[3] = fieldAddressesData;"
+                "result[4] = typeNamesData;"
+                "result[5] = (void *)(unsigned long long)typeNamesUsed;"
                 "return 0;"
                 "})()"
             )
@@ -1034,7 +1040,6 @@ def _run_batch_child_metadata_request(provider, include_names=True):
 
         prefix = _struct_prefix_for_target(provider._target)
         (
-            count,
             field_names_addr,
             field_names_size,
             field_types_addr,
@@ -1044,11 +1049,6 @@ def _run_batch_child_metadata_request(provider, include_names=True):
         ) = struct.unpack(
             f"{prefix}{result_slot_count}{pointer_format}", raw_result
         )
-        if hasattr(provider, "_children_count"):
-            provider._children_count = count
-        _set_cached_children_count(provider._valobj, count)
-        if count <= 0:
-            return []
         if (
             (include_names and field_names_addr == 0)
             or field_types_addr == 0
@@ -1156,20 +1156,8 @@ class FastKonanObjectSyntheticProvider(lldb.SBSyntheticValueProvider):
         self._process = self._target.GetProcess()
         self._valobj = valobj
 
-    def _get_child_names_by_index(self):
-        children_count = self.num_children()
-        cached_names = _get_cached_child_names_by_index(self._valobj)
-        if cached_names is None:
-            _run_batch_child_metadata_request(self)
-            cached_names = _get_cached_child_names_by_index(self._valobj)
-        return {} if cached_names is None else cached_names
-
     def num_children(self):
-        cached_children_count = _get_cached_children_count(self._valobj)
-        if cached_children_count is None:
-            _run_batch_child_metadata_request(self)
-            cached_children_count = _get_cached_children_count(self._valobj)
-        return 0 if cached_children_count is None else cached_children_count
+        return _children_count(self._valobj)
 
     def get_child_index(self, name):
         children_count = self.num_children()
@@ -1191,7 +1179,7 @@ class FastKonanObjectSyntheticProvider(lldb.SBSyntheticValueProvider):
         if child_name is None:
             return None
 
-        lldb_type = self._resolve_lldb_type(self._field_type(index))
+        lldb_type = _resolve_lldb_type(self._valobj, self._field_type(index))
         if lldb_type is None:
             return None
 
@@ -1230,13 +1218,13 @@ class FastKonanObjectSyntheticProvider(lldb.SBSyntheticValueProvider):
             return cached_names[index]
         return None
 
-    def _resolve_lldb_type(self, runtime_type):
-        if (
-            runtime_type <= _RUNTIME_TYPE_INVALID
-            or runtime_type >= len(_TYPES)
-        ):
-            return None
-        return _TYPES[runtime_type](self._valobj)
+    def _get_child_names_by_index(self):
+        children_count = self.num_children()
+        cached_names = _get_cached_child_names_by_index(self._valobj)
+        if cached_names is None:
+            _run_batch_child_metadata_request(self)
+            cached_names = _get_cached_child_names_by_index(self._valobj)
+        return {} if cached_names is None else cached_names
 
     def update(self):
         return False
@@ -1250,11 +1238,7 @@ class FastKonanArraySyntheticProvider(lldb.SBSyntheticValueProvider):
         self._valobj = valobj
 
     def num_children(self):
-        cached_children_count = _get_cached_children_count(self._valobj)
-        if cached_children_count is None:
-            _run_batch_child_metadata_request(self, include_names=False)
-            cached_children_count = _get_cached_children_count(self._valobj)
-        return 0 if cached_children_count is None else cached_children_count
+        return _children_count(self._valobj)
 
     def get_child_index(self, name):
         index = int(name)
@@ -1268,7 +1252,7 @@ class FastKonanArraySyntheticProvider(lldb.SBSyntheticValueProvider):
         if address is None:
             return None
 
-        lldb_type = self._resolve_lldb_type(self._field_type(index))
+        lldb_type = _resolve_lldb_type(self._valobj, self._field_type(index))
         if lldb_type is None:
             return None
 
@@ -1300,14 +1284,6 @@ class FastKonanArraySyntheticProvider(lldb.SBSyntheticValueProvider):
             return cached_types[index]
 
         return _RUNTIME_TYPE_INVALID
-
-    def _resolve_lldb_type(self, runtime_type):
-        if (
-            runtime_type <= _RUNTIME_TYPE_INVALID
-            or runtime_type >= len(_TYPES)
-        ):
-            return None
-        return _TYPES[runtime_type](self._valobj)
 
 
 def _object_field(object_proxy, field_name):
