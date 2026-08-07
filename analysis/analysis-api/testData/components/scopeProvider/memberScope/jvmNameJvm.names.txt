@@ -1,0 +1,9 @@
+Classifier names:
+
+Callable names:
+  <init>
+  annotationType
+  equals
+  hashCode
+  name
+  toString

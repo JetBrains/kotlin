@@ -1,0 +1,19 @@
+KT element: KtClass
+KT element text:
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.FILE, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER])
+@kotlin.annotation.MustBeDocumented
+@kotlin.OptionalExpectation
+public expect final annotation class JvmName public constructor(name: kotlin.String) : kotlin.Annotation {
+    public expect final val name: kotlin.String /* compiled code */
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.FILE, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/OptionalExpectation|() public final expect [ResolvedTo(BODY_RESOLVE)] annotation class JvmName : R|kotlin/Annotation| {
+    public final expect [ResolvedTo(BODY_RESOLVE)] [IsDeserializedPropertyFromAnnotation=true] val name: R|kotlin/String|
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=JvmName] get(): R|kotlin/String|
+
+    public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=JvmName] constructor([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/String|): R|kotlin/jvm/JvmName|
+
+}
