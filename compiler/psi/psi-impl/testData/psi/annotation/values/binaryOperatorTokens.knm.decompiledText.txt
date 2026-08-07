@@ -2,10 +2,11 @@
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  public final annotation class Binary public constructor(i: kotlin.Int = COMPILED_CODE, b: kotlin.Boolean = COMPILED_CODE) : kotlin.Annotation {
-      public final val i: kotlin.Int /* compiled code */
+  public final annotation class Binary public constructor(
+      public final val i: kotlin.Int = COMPILED_CODE,
 
-      public final val b: kotlin.Boolean /* compiled code */
+      public final val b: kotlin.Boolean = COMPILED_CODE,
+  ) : kotlin.Annotation {
   }
 
 1_.knm:

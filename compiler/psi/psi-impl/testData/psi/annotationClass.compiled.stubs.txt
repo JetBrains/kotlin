@@ -9,19 +9,23 @@ FILE[kind=File[packageFqName=test.a]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnotationClass]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
+        VALUE_PARAMETER[fqName=test.a.AnnotationClass.i, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=i]
+          MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=j]
+        VALUE_PARAMETER[fqName=test.a.AnnotationClass.j, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=j]
+          constantInitializer: "a"
+          MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          STRING_TEMPLATE
+            LITERAL_STRING_TEMPLATE_ENTRY[text=a]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
@@ -30,20 +34,3 @@ FILE[kind=File[packageFqName=test.a]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
     CLASS_BODY
-      PROPERTY[fqName=test.a.AnnotationClass.i, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
-        MODIFIER_LIST[public final]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=test.a.AnnotationClass.j, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=j]
-        constantInitializer: "a"
-        MODIFIER_LIST[public final]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=String]
-        STRING_TEMPLATE
-          LITERAL_STRING_TEMPLATE_ENTRY[text=a]

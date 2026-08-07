@@ -3,6 +3,7 @@
 
 package test
 
-public final annotation class Documented public constructor(value: kotlin.Int = COMPILED_CODE) : kotlin.Annotation {
-    public final val value: kotlin.Int = 1
+public final annotation class Documented public constructor(
+    public final val value: kotlin.Int = 1,
+) : kotlin.Annotation {
 }

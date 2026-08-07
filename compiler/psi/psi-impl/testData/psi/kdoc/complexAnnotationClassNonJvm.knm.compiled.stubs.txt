@@ -64,28 +64,58 @@ FILE[kind=File[packageFqName=myPack]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MyMetadata]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=kind]
+        VALUE_PARAMETER[fqName=myPack.MyMetadata.kind, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=kind]
+          MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=metadataVersion]
+        VALUE_PARAMETER[fqName=myPack.MyMetadata.metadataVersion, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=metadataVersion]
+          MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=IntArray]
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=bytecodeVersion]
+        VALUE_PARAMETER[fqName=myPack.MyMetadata.bytecodeVersion, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=bytecodeVersion]
+          MODIFIER_LIST[public final]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=Deprecated]
+              valueArguments: [
+                message -> "Bytecode version had no significant use in Kotlin metadata and it will be removed in a future version."
+                level -> DeprecationLevel.WARNING
+              ]
+              ANNOTATION_TARGET[useSiteTarget=PROPERTY]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=Deprecated]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=message]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=Bytecode version had no significant use in Kotlin metadata and it will be removed in a future version.]
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=level]
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=DeprecationLevel]
+                    REFERENCE_EXPRESSION[referencedName=WARNING]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=IntArray]
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=data1]
+        VALUE_PARAMETER[fqName=myPack.MyMetadata.data1, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=data1]
+          MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -99,7 +129,8 @@ FILE[kind=File[packageFqName=myPack]]
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=String]
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=data2]
+        VALUE_PARAMETER[fqName=myPack.MyMetadata.data2, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=data2]
+          MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -113,21 +144,54 @@ FILE[kind=File[packageFqName=myPack]]
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=String]
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=extraString]
+        VALUE_PARAMETER[fqName=myPack.MyMetadata.extraString, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=extraString]
+          MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=packageName]
+        VALUE_PARAMETER[fqName=myPack.MyMetadata.packageName, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=packageName]
+          MODIFIER_LIST[public final]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
+              valueArguments: [ version -> "1.2" ]
+              ANNOTATION_TARGET[useSiteTarget=PROPERTY]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=version]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=1.2]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=extraInt]
+        VALUE_PARAMETER[fqName=myPack.MyMetadata.extraInt, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=extraInt]
+          MODIFIER_LIST[public final]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
+              valueArguments: [ version -> "1.1" ]
+              ANNOTATION_TARGET[useSiteTarget=PROPERTY]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=version]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=1.1]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -142,126 +206,3 @@ FILE[kind=File[packageFqName=myPack]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
     CLASS_BODY
-      PROPERTY[fqName=myPack.MyMetadata.kind, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=kind]
-        MODIFIER_LIST[public final]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=myPack.MyMetadata.metadataVersion, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=metadataVersion]
-        MODIFIER_LIST[public final]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=IntArray]
-      PROPERTY[fqName=myPack.MyMetadata.bytecodeVersion, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=bytecodeVersion]
-        MODIFIER_LIST[public final]
-          ANNOTATION_ENTRY[hasValueArguments=true, shortName=Deprecated]
-            valueArguments: [
-              message -> "Bytecode version had no significant use in Kotlin metadata and it will be removed in a future version."
-              level -> DeprecationLevel.WARNING
-            ]
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=Deprecated]
-            VALUE_ARGUMENT_LIST
-              VALUE_ARGUMENT[isSpread=false]
-                VALUE_ARGUMENT_NAME
-                  REFERENCE_EXPRESSION[referencedName=message]
-                STRING_TEMPLATE
-                  LITERAL_STRING_TEMPLATE_ENTRY[text=Bytecode version had no significant use in Kotlin metadata and it will be removed in a future version.]
-              VALUE_ARGUMENT[isSpread=false]
-                VALUE_ARGUMENT_NAME
-                  REFERENCE_EXPRESSION[referencedName=level]
-                DOT_QUALIFIED_EXPRESSION
-                  DOT_QUALIFIED_EXPRESSION
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                    REFERENCE_EXPRESSION[referencedName=DeprecationLevel]
-                  REFERENCE_EXPRESSION[referencedName=WARNING]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=IntArray]
-      PROPERTY[fqName=myPack.MyMetadata.data1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=data1]
-        MODIFIER_LIST[public final]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=Array]
-            TYPE_ARGUMENT_LIST
-              TYPE_PROJECTION[projectionKind=NONE]
-                TYPE_REFERENCE
-                  USER_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION[referencedName=kotlin]
-                    REFERENCE_EXPRESSION[referencedName=String]
-      PROPERTY[fqName=myPack.MyMetadata.data2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=data2]
-        MODIFIER_LIST[public final]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=Array]
-            TYPE_ARGUMENT_LIST
-              TYPE_PROJECTION[projectionKind=NONE]
-                TYPE_REFERENCE
-                  USER_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION[referencedName=kotlin]
-                    REFERENCE_EXPRESSION[referencedName=String]
-      PROPERTY[fqName=myPack.MyMetadata.extraString, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=extraString]
-        MODIFIER_LIST[public final]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=String]
-      PROPERTY[fqName=myPack.MyMetadata.packageName, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=packageName]
-        MODIFIER_LIST[public final]
-          ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
-            valueArguments: [ version -> "1.2" ]
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=SinceKotlin]
-            VALUE_ARGUMENT_LIST
-              VALUE_ARGUMENT[isSpread=false]
-                VALUE_ARGUMENT_NAME
-                  REFERENCE_EXPRESSION[referencedName=version]
-                STRING_TEMPLATE
-                  LITERAL_STRING_TEMPLATE_ENTRY[text=1.2]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=String]
-      PROPERTY[fqName=myPack.MyMetadata.extraInt, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=extraInt]
-        MODIFIER_LIST[public final]
-          ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
-            valueArguments: [ version -> "1.1" ]
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=SinceKotlin]
-            VALUE_ARGUMENT_LIST
-              VALUE_ARGUMENT[isSpread=false]
-                VALUE_ARGUMENT_NAME
-                  REFERENCE_EXPRESSION[referencedName=version]
-                STRING_TEMPLATE
-                  LITERAL_STRING_TEMPLATE_ENTRY[text=1.1]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=Int]

@@ -2,22 +2,23 @@ Simple.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  public final annotation class Simple public constructor(i: kotlin.Int, l: kotlin.Long, b: kotlin.Byte, d: kotlin.Double, f: kotlin.Float, c: kotlin.Char, b1: kotlin.Boolean, b2: kotlin.Boolean) : kotlin.Annotation {
-      public final val i: kotlin.Int /* compiled code */
+  public final annotation class Simple public constructor(
+      public final val i: kotlin.Int,
 
-      public final val l: kotlin.Long /* compiled code */
+      public final val l: kotlin.Long,
 
-      public final val b: kotlin.Byte /* compiled code */
+      public final val b: kotlin.Byte,
 
-      public final val d: kotlin.Double /* compiled code */
+      public final val d: kotlin.Double,
 
-      public final val f: kotlin.Float /* compiled code */
+      public final val f: kotlin.Float,
 
-      public final val c: kotlin.Char /* compiled code */
+      public final val c: kotlin.Char,
 
-      public final val b1: kotlin.Boolean /* compiled code */
+      public final val b1: kotlin.Boolean,
 
-      public final val b2: kotlin.Boolean /* compiled code */
+      public final val b2: kotlin.Boolean,
+  ) : kotlin.Annotation {
   }
 
 WithNamedSimple.class:

@@ -4,20 +4,22 @@ Nested.class:
 
   package foo
 
-  public final annotation class Nested public constructor(i: kotlin.Int, s: kotlin.String) : kotlin.Annotation {
-      public final val i: kotlin.Int /* compiled code */
+  public final annotation class Nested public constructor(
+      public final val i: kotlin.Int,
 
-      public final val s: kotlin.String /* compiled code */
+      public final val s: kotlin.String,
+  ) : kotlin.Annotation {
   }
 
 Outer.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  public final annotation class Outer public constructor(some: kotlin.String, nested: foo.Nested) : kotlin.Annotation {
-      public final val some: kotlin.String /* compiled code */
+  public final annotation class Outer public constructor(
+      public final val some: kotlin.String,
 
-      public final val nested: foo.Nested /* compiled code */
+      public final val nested: foo.Nested,
+  ) : kotlin.Annotation {
   }
 
 WithNested.class:

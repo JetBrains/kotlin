@@ -12,14 +12,14 @@
 
   package test
 
-  public final annotation class Simple public constructor(i: kotlin.Int) : kotlin.Annotation {
+  public final annotation class Simple public constructor(
+      public final val i: kotlin.Int,
+  ) : kotlin.Annotation {
       public companion object {
           public const val CONST1: kotlin.Int = 1
 
           public const val CONST2: kotlin.Int = 2
       }
-
-      public final val i: kotlin.Int /* compiled code */
   }
 
 1_.knm:

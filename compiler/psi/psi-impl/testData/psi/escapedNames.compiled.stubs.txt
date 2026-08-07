@@ -46,7 +46,8 @@ Annotation Class With Arguments.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Annotation Class With Arguments]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=parameter name]
+          VALUE_PARAMETER[fqName=one two.three four.Annotation Class With Arguments.parameter name, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=parameter name]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -62,15 +63,6 @@ Annotation Class With Arguments.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=one two.three four.Annotation Class With Arguments.parameter name, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=parameter name]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=one two]
-                REFERENCE_EXPRESSION[referencedName=three four]
-              REFERENCE_EXPRESSION[referencedName=Enum Class]
 
 
 Annotation Class.class:

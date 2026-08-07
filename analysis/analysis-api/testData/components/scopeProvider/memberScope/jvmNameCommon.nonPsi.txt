@@ -1,8 +1,8 @@
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -42,7 +42,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -79,7 +79,7 @@ KaKotlinPropertySymbol:
     deprecation: null
     javaMethodName: name
     importableFqName: null
-  hasBackingField: false
+  hasBackingField: true
   hasGetter: true
   hasSetter: false
   initializer: null
@@ -99,8 +99,8 @@ KaKotlinPropertySymbol:
   name: name
   origin: LIBRARY
   primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -352,7 +352,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: name
       origin: LIBRARY
-      primaryConstructorProperty: null
+      primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/jvm/JvmName.name)
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null

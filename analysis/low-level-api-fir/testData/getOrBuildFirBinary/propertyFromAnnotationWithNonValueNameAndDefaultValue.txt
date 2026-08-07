@@ -1,7 +1,8 @@
 KT element: KtClass
 KT element text:
-public final annotation class Anno public constructor(number: kotlin.Int = COMPILED_CODE) : kotlin.Annotation {
-    public final val number: kotlin.Int = 1
+public final annotation class Anno public constructor(
+    public final val number: kotlin.Int = 1,
+) : kotlin.Annotation {
 }
 FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
@@ -11,6 +12,6 @@ public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotat
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false, IsDeserializedPropertyFromAnnotation=true] val number: R|kotlin/Int| = Int(1)
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
-    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] number: R|kotlin/Int| = STUB): R|one/Anno|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/Anno.number] number: R|kotlin/Int| = STUB): R|one/Anno|
 
 }

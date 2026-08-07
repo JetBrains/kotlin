@@ -15,10 +15,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.psi.stubs.KotlinParameterStub;
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinConstantValueKt;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinParameterStubImpl;
 
 import java.io.IOException;
 
+import static org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText;
+import static org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText;
 import static org.jetbrains.kotlin.psi.stubs.elements.TypeBeanSerializationKt.deserializeTypeBean;
 import static org.jetbrains.kotlin.psi.stubs.elements.TypeBeanSerializationKt.serializeTypeBean;
 
@@ -35,7 +38,7 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
         return new KotlinParameterStubImpl(
                 (StubElement<?>) parentStub, fqNameRef, StringRef.fromString(psi.getName()),
                 psi.isMutable(), psi.hasValOrVar(), psi.hasDefaultValue(), null,
-                /* equalityBoundType = */ null
+                /* equalityBoundType = */ null, /* kdocText = */ null, /* constantInitializer = */ null
         );
     }
 
@@ -49,6 +52,8 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
         dataStream.writeName(name != null ? name.asString() : null);
         dataStream.writeName(stub.getFunctionTypeParameterName());
         serializeTypeBean(dataStream, stub.getEqualityBoundType());
+        serializeKdocText(dataStream, stub.getKdocText());
+        KotlinConstantValueKt.serializeConstantValue(stub.getConstantInitializer(), dataStream);
     }
 
     @NotNull
@@ -61,7 +66,9 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
         StringRef fqName = dataStream.readName();
 
         return new KotlinParameterStubImpl((StubElement<?>) parentStub, fqName, name, isMutable, hasValOrValNode, hasDefaultValue,
-                                           dataStream.readNameString(), deserializeTypeBean(dataStream));
+                                           dataStream.readNameString(), deserializeTypeBean(dataStream),
+                                           deserializeKdocText(dataStream),
+                                           KotlinConstantValueKt.deserializeConstantValue(dataStream));
     }
 
     @Override

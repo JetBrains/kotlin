@@ -2,10 +2,11 @@ Escaped.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  public final annotation class Escaped public constructor(s: kotlin.String, c: kotlin.Char) : kotlin.Annotation {
-      public final val s: kotlin.String /* compiled code */
+  public final annotation class Escaped public constructor(
+      public final val s: kotlin.String,
 
-      public final val c: kotlin.Char /* compiled code */
+      public final val c: kotlin.Char,
+  ) : kotlin.Annotation {
   }
 
 WithBackslash.class:

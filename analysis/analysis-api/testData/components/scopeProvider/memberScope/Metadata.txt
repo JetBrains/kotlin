@@ -1,8 +1,8 @@
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -42,7 +42,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtPropertyAccessor
+    anchorPsi: KtParameter
     annotations: [
       kotlin/jvm/JvmName(name = "bv")
         psi: null
@@ -62,8 +62,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
-    psi: KtPropertyAccessor
-    realPsi: KtPropertyAccessor
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -101,9 +101,46 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: bytecodeVersion
   origin: LIBRARY
-  primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  primaryConstructorParameter: KaValueParameterSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasDeclaredDefaultValue: true
+    hasDefaultValue: true
+    isActual: false
+    isCompanion: false
+    isCrossinline: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isImplicitLambdaParameter: false
+    isNoinline: false
+    isVal: true
+    isVararg: false
+    location: LOCAL
+    modality: FINAL
+    name: bytecodeVersion
+    origin: LIBRARY
+    primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.bytecodeVersion)
+    psi: KtParameter
+    realPsi: KtParameter
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/IntArray
+    typeParameters: []
+    visibility: PUBLIC
+    getContainingFileSymbol: null
+    getContainingJvmClassName: kotlin.Metadata
+    getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+    deprecation: null
+    importableFqName: null
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -124,10 +161,10 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -172,7 +209,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtPropertyAccessor
+    anchorPsi: KtParameter
     annotations: [
       kotlin/jvm/JvmName(name = "d1")
         psi: null
@@ -192,8 +229,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
-    psi: KtPropertyAccessor
-    realPsi: KtPropertyAccessor
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -236,9 +273,51 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: data1
   origin: LIBRARY
-  primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  primaryConstructorParameter: KaValueParameterSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasDeclaredDefaultValue: true
+    hasDefaultValue: true
+    isActual: false
+    isCompanion: false
+    isCrossinline: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isImplicitLambdaParameter: false
+    isNoinline: false
+    isVal: true
+    isVararg: false
+    location: LOCAL
+    modality: FINAL
+    name: data1
+    origin: LIBRARY
+    primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.data1)
+    psi: KtParameter
+    realPsi: KtParameter
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/String
+      ]
+      type: kotlin/Array<kotlin/String>
+    typeParameters: []
+    visibility: PUBLIC
+    getContainingFileSymbol: null
+    getContainingJvmClassName: kotlin.Metadata
+    getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+    deprecation: null
+    importableFqName: null
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -264,10 +343,10 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -312,7 +391,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtPropertyAccessor
+    anchorPsi: KtParameter
     annotations: [
       kotlin/jvm/JvmName(name = "d2")
         psi: null
@@ -332,8 +411,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
-    psi: KtPropertyAccessor
-    realPsi: KtPropertyAccessor
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -376,9 +455,51 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: data2
   origin: LIBRARY
-  primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  primaryConstructorParameter: KaValueParameterSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasDeclaredDefaultValue: true
+    hasDefaultValue: true
+    isActual: false
+    isCompanion: false
+    isCrossinline: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isImplicitLambdaParameter: false
+    isNoinline: false
+    isVal: true
+    isVararg: false
+    location: LOCAL
+    modality: FINAL
+    name: data2
+    origin: LIBRARY
+    primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.data2)
+    psi: KtParameter
+    realPsi: KtParameter
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/String
+      ]
+      type: kotlin/Array<kotlin/String>
+    typeParameters: []
+    visibility: PUBLIC
+    getContainingFileSymbol: null
+    getContainingJvmClassName: kotlin.Metadata
+    getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+    deprecation: null
+    importableFqName: null
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -404,10 +525,10 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -447,7 +568,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtPropertyAccessor
+    anchorPsi: KtParameter
     annotations: [
       kotlin/jvm/JvmName(name = "xi")
         psi: null
@@ -467,8 +588,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
-    psi: KtPropertyAccessor
-    realPsi: KtPropertyAccessor
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -506,9 +627,46 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: extraInt
   origin: LIBRARY
-  primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  primaryConstructorParameter: KaValueParameterSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasDeclaredDefaultValue: true
+    hasDefaultValue: true
+    isActual: false
+    isCompanion: false
+    isCrossinline: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isImplicitLambdaParameter: false
+    isNoinline: false
+    isVal: true
+    isVararg: false
+    location: LOCAL
+    modality: FINAL
+    name: extraInt
+    origin: LIBRARY
+    primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.extraInt)
+    psi: KtParameter
+    realPsi: KtParameter
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    typeParameters: []
+    visibility: PUBLIC
+    getContainingFileSymbol: null
+    getContainingJvmClassName: kotlin.Metadata
+    getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+    deprecation: null
+    importableFqName: null
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -529,10 +687,10 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -572,7 +730,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtPropertyAccessor
+    anchorPsi: KtParameter
     annotations: [
       kotlin/jvm/JvmName(name = "xs")
         psi: null
@@ -592,8 +750,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
-    psi: KtPropertyAccessor
-    realPsi: KtPropertyAccessor
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -631,9 +789,46 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: extraString
   origin: LIBRARY
-  primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  primaryConstructorParameter: KaValueParameterSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasDeclaredDefaultValue: true
+    hasDefaultValue: true
+    isActual: false
+    isCompanion: false
+    isCrossinline: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isImplicitLambdaParameter: false
+    isNoinline: false
+    isVal: true
+    isVararg: false
+    location: LOCAL
+    modality: FINAL
+    name: extraString
+    origin: LIBRARY
+    primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.extraString)
+    psi: KtParameter
+    realPsi: KtParameter
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    typeParameters: []
+    visibility: PUBLIC
+    getContainingFileSymbol: null
+    getContainingJvmClassName: kotlin.Metadata
+    getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+    deprecation: null
+    importableFqName: null
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -654,10 +849,10 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -697,7 +892,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtPropertyAccessor
+    anchorPsi: KtParameter
     annotations: [
       kotlin/jvm/JvmName(name = "k")
         psi: null
@@ -717,8 +912,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
-    psi: KtPropertyAccessor
-    realPsi: KtPropertyAccessor
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -756,9 +951,46 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: kind
   origin: LIBRARY
-  primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  primaryConstructorParameter: KaValueParameterSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasDeclaredDefaultValue: true
+    hasDefaultValue: true
+    isActual: false
+    isCompanion: false
+    isCrossinline: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isImplicitLambdaParameter: false
+    isNoinline: false
+    isVal: true
+    isVararg: false
+    location: LOCAL
+    modality: FINAL
+    name: kind
+    origin: LIBRARY
+    primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.kind)
+    psi: KtParameter
+    realPsi: KtParameter
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    typeParameters: []
+    visibility: PUBLIC
+    getContainingFileSymbol: null
+    getContainingJvmClassName: kotlin.Metadata
+    getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+    deprecation: null
+    importableFqName: null
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -779,10 +1011,10 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -822,7 +1054,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtPropertyAccessor
+    anchorPsi: KtParameter
     annotations: [
       kotlin/jvm/JvmName(name = "mv")
         psi: null
@@ -842,8 +1074,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
-    psi: KtPropertyAccessor
-    realPsi: KtPropertyAccessor
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -881,9 +1113,46 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: metadataVersion
   origin: LIBRARY
-  primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  primaryConstructorParameter: KaValueParameterSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasDeclaredDefaultValue: true
+    hasDefaultValue: true
+    isActual: false
+    isCompanion: false
+    isCrossinline: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isImplicitLambdaParameter: false
+    isNoinline: false
+    isVal: true
+    isVararg: false
+    location: LOCAL
+    modality: FINAL
+    name: metadataVersion
+    origin: LIBRARY
+    primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.metadataVersion)
+    psi: KtParameter
+    realPsi: KtParameter
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/IntArray
+    typeParameters: []
+    visibility: PUBLIC
+    getContainingFileSymbol: null
+    getContainingJvmClassName: kotlin.Metadata
+    getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+    deprecation: null
+    importableFqName: null
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -904,10 +1173,10 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -947,7 +1216,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtPropertyAccessor
+    anchorPsi: KtParameter
     annotations: [
       kotlin/jvm/JvmName(name = "pn")
         psi: null
@@ -967,8 +1236,8 @@ KaKotlinPropertySymbol:
     location: PROPERTY
     modality: FINAL
     origin: LIBRARY
-    psi: KtPropertyAccessor
-    realPsi: KtPropertyAccessor
+    psi: null
+    realPsi: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -1006,9 +1275,46 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: packageName
   origin: LIBRARY
-  primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  primaryConstructorParameter: KaValueParameterSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasDeclaredDefaultValue: true
+    hasDefaultValue: true
+    isActual: false
+    isCompanion: false
+    isCrossinline: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isImplicitLambdaParameter: false
+    isNoinline: false
+    isVal: true
+    isVararg: false
+    location: LOCAL
+    modality: FINAL
+    name: packageName
+    origin: LIBRARY
+    primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.packageName)
+    psi: KtParameter
+    realPsi: KtParameter
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    typeParameters: []
+    visibility: PUBLIC
+    getContainingFileSymbol: null
+    getContainingJvmClassName: kotlin.Metadata
+    getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+    deprecation: null
+    importableFqName: null
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1260,7 +1566,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: kind
       origin: LIBRARY
-      primaryConstructorProperty: null
+      primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.kind)
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
@@ -1298,7 +1604,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: metadataVersion
       origin: LIBRARY
-      primaryConstructorProperty: null
+      primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.metadataVersion)
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
@@ -1336,7 +1642,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: bytecodeVersion
       origin: LIBRARY
-      primaryConstructorProperty: null
+      primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.bytecodeVersion)
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
@@ -1374,7 +1680,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: data1
       origin: LIBRARY
-      primaryConstructorProperty: null
+      primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.data1)
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
@@ -1417,7 +1723,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: data2
       origin: LIBRARY
-      primaryConstructorProperty: null
+      primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.data2)
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
@@ -1460,7 +1766,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: extraString
       origin: LIBRARY
-      primaryConstructorProperty: null
+      primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.extraString)
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
@@ -1498,7 +1804,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: packageName
       origin: LIBRARY
-      primaryConstructorProperty: null
+      primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.packageName)
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
@@ -1536,7 +1842,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: extraInt
       origin: LIBRARY
-      primaryConstructorProperty: null
+      primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.extraInt)
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null

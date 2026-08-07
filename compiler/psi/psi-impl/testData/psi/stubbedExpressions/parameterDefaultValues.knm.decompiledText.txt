@@ -7,10 +7,11 @@ public const val constant: kotlin.Int = 1
 
 public fun withDefaults(int: kotlin.Int = COMPILED_CODE, string: kotlin.String = COMPILED_CODE, negative: kotlin.Int = COMPILED_CODE, reference: kotlin.Int = COMPILED_CODE): kotlin.Unit { /* compiled code */ }
 
-public final annotation class WithArrayDefaults public constructor(empty: kotlin.IntArray = COMPILED_CODE, filled: kotlin.IntArray = COMPILED_CODE) : kotlin.Annotation {
-    public final val empty: kotlin.IntArray /* compiled code */
+public final annotation class WithArrayDefaults public constructor(
+    public final val empty: kotlin.IntArray = COMPILED_CODE,
 
-    public final val filled: kotlin.IntArray /* compiled code */
+    public final val filled: kotlin.IntArray = COMPILED_CODE,
+) : kotlin.Annotation {
 }
 
 public final class WithConstructorDefaults public constructor(value: kotlin.Int = COMPILED_CODE, text: kotlin.String = COMPILED_CODE) {

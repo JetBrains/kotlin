@@ -14,10 +14,11 @@ WithArrayDefaults.class:
 
   package test
 
-  public final annotation class WithArrayDefaults public constructor(empty: kotlin.IntArray = COMPILED_CODE, filled: kotlin.IntArray = COMPILED_CODE) : kotlin.Annotation {
-      public final val empty: kotlin.IntArray = []
+  public final annotation class WithArrayDefaults public constructor(
+      public final val empty: kotlin.IntArray = [],
 
-      public final val filled: kotlin.IntArray = [4, 5]
+      public final val filled: kotlin.IntArray = [4, 5],
+  ) : kotlin.Annotation {
   }
 
 WithConstructorDefaults.class:

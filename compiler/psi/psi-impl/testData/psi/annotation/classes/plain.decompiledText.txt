@@ -4,12 +4,13 @@ Defaults.class:
 
   package test
 
-  public final annotation class Defaults public constructor(int: kotlin.Int = COMPILED_CODE, string: kotlin.String = COMPILED_CODE, array: kotlin.IntArray = COMPILED_CODE) : kotlin.Annotation {
-      public final val int: kotlin.Int = 1
+  public final annotation class Defaults public constructor(
+      public final val int: kotlin.Int = 1,
 
-      public final val string: kotlin.String = "s"
+      public final val string: kotlin.String = "s",
 
-      public final val array: kotlin.IntArray = [1, 2]
+      public final val array: kotlin.IntArray = [1, 2],
+  ) : kotlin.Annotation {
   }
 
 Empty.class:
@@ -27,8 +28,9 @@ Single.class:
 
   package test
 
-  public final annotation class Single public constructor(value: kotlin.String) : kotlin.Annotation {
-      public final val value: kotlin.String /* compiled code */
+  public final annotation class Single public constructor(
+      public final val value: kotlin.String,
+  ) : kotlin.Annotation {
   }
 
 Varargs.class:
@@ -37,6 +39,7 @@ Varargs.class:
 
   package test
 
-  public final annotation class Varargs public constructor(vararg values: kotlin.String) : kotlin.Annotation {
-      public final val values: kotlin.Array<out kotlin.String> /* compiled code */
+  public final annotation class Varargs public constructor(
+      public final vararg val values: kotlin.String,
+  ) : kotlin.Annotation {
   }

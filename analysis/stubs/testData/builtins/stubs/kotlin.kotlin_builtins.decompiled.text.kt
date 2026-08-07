@@ -420,29 +420,32 @@ public interface Comparable<in T> {
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
 @kotlin.annotation.MustBeDocumented
 @kotlin.SinceKotlin(version = "1.7")
-public final annotation class ContextFunctionTypeParams public constructor(count: kotlin.Int) : kotlin.Annotation {
-    public final val count: kotlin.Int /* compiled code */
+public final annotation class ContextFunctionTypeParams public constructor(
+    public final val count: kotlin.Int,
+) : kotlin.Annotation {
 }
 
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.TYPEALIAS])
 @kotlin.annotation.MustBeDocumented
-public final annotation class Deprecated public constructor(message: kotlin.String, replaceWith: kotlin.ReplaceWith = COMPILED_CODE, level: kotlin.DeprecationLevel = COMPILED_CODE) : kotlin.Annotation {
-    public final val message: kotlin.String /* compiled code */
+public final annotation class Deprecated public constructor(
+    public final val message: kotlin.String,
 
-    public final val replaceWith: kotlin.ReplaceWith /* compiled code */
+    public final val replaceWith: kotlin.ReplaceWith = COMPILED_CODE,
 
-    public final val level: kotlin.DeprecationLevel /* compiled code */
+    public final val level: kotlin.DeprecationLevel = COMPILED_CODE,
+) : kotlin.Annotation {
 }
 
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.TYPEALIAS])
 @kotlin.annotation.MustBeDocumented
 @kotlin.SinceKotlin(version = "1.4")
-public final annotation class DeprecatedSinceKotlin public constructor(warningSince: kotlin.String = COMPILED_CODE, errorSince: kotlin.String = COMPILED_CODE, hiddenSince: kotlin.String = COMPILED_CODE) : kotlin.Annotation {
-    public final val warningSince: kotlin.String /* compiled code */
+public final annotation class DeprecatedSinceKotlin public constructor(
+    public final val warningSince: kotlin.String = COMPILED_CODE,
 
-    public final val errorSince: kotlin.String /* compiled code */
+    public final val errorSince: kotlin.String = COMPILED_CODE,
 
-    public final val hiddenSince: kotlin.String /* compiled code */
+    public final val hiddenSince: kotlin.String = COMPILED_CODE,
+) : kotlin.Annotation {
 }
 
 public final enum class DeprecationLevel private constructor() : kotlin.Enum<kotlin.DeprecationLevel> {
@@ -672,8 +675,9 @@ public abstract class Enum<E : kotlin.Enum<E>> public constructor(name: kotlin.S
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.VALUE_PARAMETER])
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
 @kotlin.SinceKotlin(version = "2.5")
-public final annotation class EqualityBound public constructor(bound: kotlin.reflect.KClass<*>) : kotlin.Annotation {
-    public final val bound: kotlin.reflect.KClass<*> /* compiled code */
+public final annotation class EqualityBound public constructor(
+    public final val bound: kotlin.reflect.KClass<*>,
+) : kotlin.Annotation {
 }
 
 @kotlin.RequiresOptIn(level = kotlin.RequiresOptIn.Level.ERROR)
@@ -1369,15 +1373,17 @@ public abstract class Number public constructor() {
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.LOCAL_VARIABLE, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.EXPRESSION, kotlin.annotation.AnnotationTarget.FILE, kotlin.annotation.AnnotationTarget.TYPEALIAS])
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
 @kotlin.SinceKotlin(version = "1.3")
-public final annotation class OptIn public constructor(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>) : kotlin.Annotation {
-    public final val markerClass: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> /* compiled code */
+public final annotation class OptIn public constructor(
+    public final vararg val markerClass: kotlin.reflect.KClass<out kotlin.Annotation>,
+) : kotlin.Annotation {
 }
 
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
 @kotlin.annotation.MustBeDocumented
 @kotlin.SinceKotlin(version = "1.1")
-public final annotation class ParameterName public constructor(name: kotlin.String) : kotlin.Annotation {
-    public final val name: kotlin.String /* compiled code */
+public final annotation class ParameterName public constructor(
+    public final val name: kotlin.String,
+) : kotlin.Annotation {
 }
 
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY])
@@ -1390,21 +1396,22 @@ public final annotation class PublishedApi public constructor() : kotlin.Annotat
 @kotlin.annotation.Target(allowedTargets = [])
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
 @kotlin.annotation.MustBeDocumented
-public final annotation class ReplaceWith public constructor(expression: kotlin.String, vararg imports: kotlin.String) : kotlin.Annotation {
-    public final val expression: kotlin.String /* compiled code */
+public final annotation class ReplaceWith public constructor(
+    public final val expression: kotlin.String,
 
-    public final val imports: kotlin.Array<out kotlin.String> /* compiled code */
+    public final vararg val imports: kotlin.String,
+) : kotlin.Annotation {
 }
 
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS])
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
 @kotlin.annotation.MustBeDocumented
 @kotlin.SinceKotlin(version = "1.3")
-public final annotation class RequiresOptIn public constructor(message: kotlin.String = COMPILED_CODE, level: kotlin.RequiresOptIn.Level = COMPILED_CODE) : kotlin.Annotation {
-    public final val message: kotlin.String /* compiled code */
+public final annotation class RequiresOptIn public constructor(
+    public final val message: kotlin.String = COMPILED_CODE,
 
-    public final val level: kotlin.RequiresOptIn.Level /* compiled code */
-
+    public final val level: kotlin.RequiresOptIn.Level = COMPILED_CODE,
+) : kotlin.Annotation {
     public final enum class Level private constructor() : kotlin.Enum<kotlin.RequiresOptIn.Level> {
         WARNING,
 
@@ -1618,8 +1625,9 @@ public final class ShortArray public constructor(size: kotlin.Int) {
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FIELD, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.TYPEALIAS])
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
 @kotlin.annotation.MustBeDocumented
-public final annotation class SinceKotlin public constructor(version: kotlin.String) : kotlin.Annotation {
-    public final val version: kotlin.String /* compiled code */
+public final annotation class SinceKotlin public constructor(
+    public final val version: kotlin.String,
+) : kotlin.Annotation {
 }
 
 public final class String public constructor() : kotlin.Comparable<kotlin.String>, kotlin.CharSequence {
@@ -1652,14 +1660,16 @@ public final class String public constructor() : kotlin.Comparable<kotlin.String
 @kotlin.annotation.MustBeDocumented
 @kotlin.SinceKotlin(version = "2.1")
 @kotlin.WasExperimental(markerClass = [kotlin.ExperimentalSubclassOptIn::class])
-public final annotation class SubclassOptInRequired public constructor(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>) : kotlin.Annotation {
-    public final val markerClass: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> /* compiled code */
+public final annotation class SubclassOptInRequired public constructor(
+    public final vararg val markerClass: kotlin.reflect.KClass<out kotlin.Annotation>,
+) : kotlin.Annotation {
 }
 
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FIELD, kotlin.annotation.AnnotationTarget.LOCAL_VARIABLE, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.EXPRESSION, kotlin.annotation.AnnotationTarget.FILE, kotlin.annotation.AnnotationTarget.TYPEALIAS])
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
-public final annotation class Suppress public constructor(vararg names: kotlin.String) : kotlin.Annotation {
-    public final val names: kotlin.Array<out kotlin.String> /* compiled code */
+public final annotation class Suppress public constructor(
+    public final vararg val names: kotlin.String,
+) : kotlin.Annotation {
 }
 
 public open class Throwable public constructor(message: kotlin.String?, cause: kotlin.Throwable?) {
@@ -1686,6 +1696,7 @@ public final annotation class UnsafeVariance public constructor() : kotlin.Annot
 
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.TYPEALIAS])
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
-internal final annotation class WasExperimental public constructor(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>) : kotlin.Annotation {
-    public final val markerClass: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> /* compiled code */
+internal final annotation class WasExperimental public constructor(
+    public final vararg val markerClass: kotlin.reflect.KClass<out kotlin.Annotation>,
+) : kotlin.Annotation {
 }

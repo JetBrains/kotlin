@@ -2,18 +2,19 @@ Unary.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  public final annotation class Unary public constructor(i: kotlin.Int, l: kotlin.Long, d: kotlin.Double, f: kotlin.Float, b: kotlin.Boolean, ia: kotlin.IntArray) : kotlin.Annotation {
-      public final val i: kotlin.Int /* compiled code */
+  public final annotation class Unary public constructor(
+      public final val i: kotlin.Int,
 
-      public final val l: kotlin.Long /* compiled code */
+      public final val l: kotlin.Long,
 
-      public final val d: kotlin.Double /* compiled code */
+      public final val d: kotlin.Double,
 
-      public final val f: kotlin.Float /* compiled code */
+      public final val f: kotlin.Float,
 
-      public final val b: kotlin.Boolean /* compiled code */
+      public final val b: kotlin.Boolean,
 
-      public final val ia: kotlin.IntArray /* compiled code */
+      public final val ia: kotlin.IntArray,
+  ) : kotlin.Annotation {
   }
 
 WithMinus.class:

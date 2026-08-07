@@ -6,23 +6,24 @@ package myPack
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS])
 @kotlin.SinceKotlin(version = "1.3")
-public final annotation class MyMetadata public constructor(kind: kotlin.Int = COMPILED_CODE, metadataVersion: kotlin.IntArray = COMPILED_CODE, bytecodeVersion: kotlin.IntArray = COMPILED_CODE, data1: kotlin.Array<kotlin.String> = COMPILED_CODE, data2: kotlin.Array<kotlin.String> = COMPILED_CODE, extraString: kotlin.String = COMPILED_CODE, packageName: kotlin.String = COMPILED_CODE, extraInt: kotlin.Int = COMPILED_CODE) : kotlin.Annotation {
-    public final val kind: kotlin.Int /* compiled code */
+public final annotation class MyMetadata public constructor(
+    public final val kind: kotlin.Int = COMPILED_CODE,
 
-    public final val metadataVersion: kotlin.IntArray /* compiled code */
+    public final val metadataVersion: kotlin.IntArray = COMPILED_CODE,
 
-    @kotlin.Deprecated(message = "Bytecode version had no significant use in Kotlin metadata and it will be removed in a future version.", level = kotlin.DeprecationLevel.WARNING)
-    public final val bytecodeVersion: kotlin.IntArray /* compiled code */
+    @property:kotlin.Deprecated(message = "Bytecode version had no significant use in Kotlin metadata and it will be removed in a future version.", level = kotlin.DeprecationLevel.WARNING)
+    public final val bytecodeVersion: kotlin.IntArray = COMPILED_CODE,
 
-    public final val data1: kotlin.Array<kotlin.String> /* compiled code */
+    public final val data1: kotlin.Array<kotlin.String> = COMPILED_CODE,
 
-    public final val data2: kotlin.Array<kotlin.String> /* compiled code */
+    public final val data2: kotlin.Array<kotlin.String> = COMPILED_CODE,
 
-    public final val extraString: kotlin.String /* compiled code */
+    public final val extraString: kotlin.String = COMPILED_CODE,
 
-    @kotlin.SinceKotlin(version = "1.2")
-    public final val packageName: kotlin.String /* compiled code */
+    @property:kotlin.SinceKotlin(version = "1.2")
+    public final val packageName: kotlin.String = COMPILED_CODE,
 
-    @kotlin.SinceKotlin(version = "1.1")
-    public final val extraInt: kotlin.Int /* compiled code */
+    @property:kotlin.SinceKotlin(version = "1.1")
+    public final val extraInt: kotlin.Int = COMPILED_CODE,
+) : kotlin.Annotation {
 }

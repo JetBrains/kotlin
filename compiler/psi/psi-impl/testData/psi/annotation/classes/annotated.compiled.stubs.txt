@@ -28,25 +28,47 @@ Targeted.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Targeted]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=onParameter]
+          VALUE_PARAMETER[fqName=test.Targeted.onParameter, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=onParameter]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=onProperty]
+          VALUE_PARAMETER[fqName=test.Targeted.onProperty, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=onProperty]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=onGetter]
+          VALUE_PARAMETER[fqName=test.Targeted.onGetter, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=onGetter]
+            MODIFIER_LIST[public final]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=Marker]
+                valueArguments: [ ]
+                ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=test]
+                      REFERENCE_EXPRESSION[referencedName=Marker]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=onEveryTarget]
+          VALUE_PARAMETER[fqName=test.Targeted.onEveryTarget, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=onEveryTarget]
+            MODIFIER_LIST[public final]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=Marker]
+                valueArguments: [ ]
+                ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=test]
+                      REFERENCE_EXPRESSION[referencedName=Marker]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -60,51 +82,3 @@ Targeted.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=test.Targeted.onParameter, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=onParameter]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Int]
-        PROPERTY[fqName=test.Targeted.onProperty, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=onProperty]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Int]
-        PROPERTY[fqName=test.Targeted.onGetter, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=onGetter]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Int]
-          PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
-            MODIFIER_LIST[public final]
-              ANNOTATION_ENTRY[hasValueArguments=false, shortName=Marker]
-                valueArguments: [ ]
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION[referencedName=test]
-                      REFERENCE_EXPRESSION[referencedName=Marker]
-        PROPERTY[fqName=test.Targeted.onEveryTarget, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=onEveryTarget]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Int]
-          PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
-            MODIFIER_LIST[public final]
-              ANNOTATION_ENTRY[hasValueArguments=false, shortName=Marker]
-                valueArguments: [ ]
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION[referencedName=test]
-                      REFERENCE_EXPRESSION[referencedName=Marker]

@@ -3,8 +3,9 @@ KT element text:
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.FILE])
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
 @kotlin.annotation.MustBeDocumented
-public final annotation class JvmName public constructor(name: kotlin.String) : kotlin.Annotation {
-    public final val name: kotlin.String /* compiled code */
+public final annotation class JvmName public constructor(
+    public final val name: kotlin.String,
+) : kotlin.Annotation {
 }
 FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
@@ -14,6 +15,6 @@ FIR element rendered:
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false, IsDeserializedPropertyFromAnnotation=true] val name: R|kotlin/String|
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=JvmName] get(): R|kotlin/String|
 
-    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=JvmName] constructor([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/String|): R|kotlin/jvm/JvmName|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=JvmName] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=kotlin/jvm/JvmName.name] name: R|kotlin/String|): R|kotlin/jvm/JvmName|
 
 }
