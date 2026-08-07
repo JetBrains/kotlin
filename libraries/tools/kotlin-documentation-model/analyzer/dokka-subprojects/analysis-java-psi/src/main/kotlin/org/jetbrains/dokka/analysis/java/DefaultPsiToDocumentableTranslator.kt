@@ -4,9 +4,9 @@
 
 package org.jetbrains.dokka.analysis.java
 
+import com.intellij.java.syntax.parser.JavaKeywords
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiJavaFile
-import com.intellij.psi.PsiKeyword
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiModifierListOwner
 import kotlinx.coroutines.coroutineScope
@@ -76,9 +76,9 @@ internal class DefaultPsiToDocumentableTranslator : AsyncSourceToDocumentableTra
 internal fun PsiModifierListOwner.getVisibility() = modifierList?.let {
     val ml = it.children.toList()
     when {
-        ml.any { it.text == PsiKeyword.PUBLIC } || it.hasModifierProperty("public") -> JavaVisibility.Public
-        ml.any { it.text == PsiKeyword.PROTECTED } || it.hasModifierProperty("protected") -> JavaVisibility.Protected
-        ml.any { it.text == PsiKeyword.PRIVATE } || it.hasModifierProperty("private") -> JavaVisibility.Private
+        ml.any { it.text == JavaKeywords.PUBLIC } || it.hasModifierProperty("public") -> JavaVisibility.Public
+        ml.any { it.text == JavaKeywords.PROTECTED } || it.hasModifierProperty("protected") -> JavaVisibility.Protected
+        ml.any { it.text == JavaKeywords.PRIVATE } || it.hasModifierProperty("private") -> JavaVisibility.Private
         else -> JavaVisibility.Default
     }
 } ?: JavaVisibility.Default

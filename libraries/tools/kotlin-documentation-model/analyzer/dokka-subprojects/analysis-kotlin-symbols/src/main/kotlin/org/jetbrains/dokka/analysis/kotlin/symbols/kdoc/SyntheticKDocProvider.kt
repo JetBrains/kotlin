@@ -17,10 +17,12 @@ private const val ENUM_ENTRIES_TEMPLATE_PATH = "/dokka/docs/kdoc/EnumEntries.kt.
 private const val ENUM_VALUEOF_TEMPLATE_PATH = "/dokka/docs/kdoc/EnumValueOf.kt.template"
 private const val ENUM_VALUES_TEMPLATE_PATH = "/dokka/docs/kdoc/EnumValues.kt.template"
 
-internal fun KaSession.hasGeneratedKDocDocumentation(symbol: KaSymbol): Boolean =
+context(_: KaSession)
+internal fun hasGeneratedKDocDocumentation(symbol: KaSymbol): Boolean =
     getDocumentationTemplatePath(symbol) != null
 
-private fun KaSession.getDocumentationTemplatePath(symbol: KaSymbol): String? =
+context(_: KaSession)
+private fun getDocumentationTemplatePath(symbol: KaSymbol): String? =
     when (symbol) {
         is KaPropertySymbol -> if (isEnumEntriesProperty(symbol)) ENUM_ENTRIES_TEMPLATE_PATH else null
         is KaNamedFunctionSymbol -> {
@@ -34,24 +36,30 @@ private fun KaSession.getDocumentationTemplatePath(symbol: KaSymbol): String? =
         else -> null
     }
 
-private fun KaSession.isEnumSpecialMember(symbol: KaSymbol): Boolean =
+context(_: KaSession)
+private fun isEnumSpecialMember(symbol: KaSymbol): Boolean =
     symbol.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED
             && (symbol.containingSymbol as? KaClassSymbol)?.classKind == KaClassKind.ENUM_CLASS
 
-private fun KaSession.isEnumEntriesProperty(symbol: KaPropertySymbol): Boolean =
+context(_: KaSession)
+private fun isEnumEntriesProperty(symbol: KaPropertySymbol): Boolean =
     symbol.name == StandardNames.ENUM_ENTRIES && isEnumSpecialMember(symbol)
 
-private fun KaSession.isEnumValuesMethod(symbol: KaNamedFunctionSymbol): Boolean =
+context(_: KaSession)
+private fun isEnumValuesMethod(symbol: KaNamedFunctionSymbol): Boolean =
     symbol.name == StandardNames.ENUM_VALUES && isEnumSpecialMember(symbol)
 
-private fun KaSession.isEnumValueOfMethod(symbol: KaNamedFunctionSymbol): Boolean =
+context(_: KaSession)
+private fun isEnumValueOfMethod(symbol: KaNamedFunctionSymbol): Boolean =
     symbol.name == StandardNames.ENUM_VALUE_OF && isEnumSpecialMember(symbol)
 
-internal fun KaSession.getGeneratedKDocDocumentationFrom(symbol: KaSymbol): DocumentationNode? {
+context(_: KaSession)
+internal fun getGeneratedKDocDocumentationFrom(symbol: KaSymbol): DocumentationNode? {
     val templatePath = getDocumentationTemplatePath(symbol) ?: return null
     return loadTemplate(templatePath)
 }
-internal fun KaSession.getGenerateJavaDocDocumentationFrom(symbol: KaSymbol, syntheticJavaDocProvider: SyntheticElementDocumentationProvider, sourceSet: DokkaConfiguration.DokkaSourceSet): DocumentationNode? {
+context(_: KaSession)
+internal fun getGenerateJavaDocDocumentationFrom(symbol: KaSymbol, syntheticJavaDocProvider: SyntheticElementDocumentationProvider, sourceSet: DokkaConfiguration.DokkaSourceSet): DocumentationNode? {
     return when (symbol) {
         is KaNamedFunctionSymbol -> {
             when {
@@ -64,7 +72,8 @@ internal fun KaSession.getGenerateJavaDocDocumentationFrom(symbol: KaSymbol, syn
     }
 }
 
-private fun KaSession.loadTemplate(filePath: String): DocumentationNode {
+context(_: KaSession)
+private fun loadTemplate(filePath: String): DocumentationNode {
     val kdoc = loadContent(filePath) ?: throw IllegalArgumentException("Template file not found: $filePath")
     val externalDriProvider = { link: String ->
         resolveKDocTextLinkToDRI(link)

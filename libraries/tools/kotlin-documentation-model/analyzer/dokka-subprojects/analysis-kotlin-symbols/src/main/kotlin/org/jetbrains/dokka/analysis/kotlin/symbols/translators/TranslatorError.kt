@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 
 internal class TranslatorError(message: String, cause: Throwable?) : IllegalStateException(message, cause)
 
-internal inline fun <R> KaSession.withExceptionCatcher(symbol: KaSymbol, action: KaSession.() -> R): R =
+context(_: KaSession)
+internal inline fun <R> withExceptionCatcher(symbol: KaSymbol, action: () -> R): R =
     try {
         action()
     } catch (e: TranslatorError) {
