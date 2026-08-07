@@ -213,7 +213,7 @@ internal class DependenciesTrackerImpl(
                         }
                     }
 
-                    if (filesUsed.isEmpty() || library in config.includedLibraries) {
+                    if (filesUsed.isEmpty() || library in config.loadedKlibs.included) {
                         // This is the case when we depend on the whole module rather than on a number of files.
                         moduleDependencies.add(library)
                         addAllDependencies(cache)
