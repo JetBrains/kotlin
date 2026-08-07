@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.wasm.test
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -140,43 +138,7 @@ open class AbstractFirWasmJsSteppingTest(
     }
 }
 
-open class AbstractFirWasmJsSteppingWithInlinedFunInKlibTest(
-    testGroupOutputDirPrefix: String = "debug/firSteppingWithInlinedFunInKlib/"
-) : AbstractFirWasmJsSteppingTest(
-    testGroupOutputDirPrefix = testGroupOutputDirPrefix
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                LANGUAGE with listOf(
-                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
-            }
-        }
-    }
-}
-
 open class AbstractFirWasmJsSteppingSplitTest : AbstractFirWasmJsSteppingTest(
-    testGroupOutputDirPrefix = "debug/firSteppingSplit/"
-) {
-    override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
-        get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            @OptIn(TestInfrastructureInternals::class)
-            useModuleStructureTransformers(
-                ::SplittingModuleTransformerForBoxTests
-            )
-            useMetaTestConfigurators(::SplittingTestConfigurator)
-        }
-    }
-}
-
-open class AbstractFirWasmJsSteppingSplitWithInlinedFunInKlibTest : AbstractFirWasmJsSteppingWithInlinedFunInKlibTest(
     testGroupOutputDirPrefix = "debug/firSteppingSplit/"
 ) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
