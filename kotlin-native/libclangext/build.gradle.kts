@@ -42,7 +42,7 @@ native {
             "-DLLVM_DISABLE_ABI_BREAKING_CHECKS_ENFORCING=1",
             *reproducibilityCompilerFlags,
     )
-    if (PlatformInfo.isMac()) {
+    if (PlatformInfo.isMac() || PlatformInfo.isLinux()) {
         cxxflags += "-DLIBCLANGEXT_ENABLE=1"
     }
     suffixes {

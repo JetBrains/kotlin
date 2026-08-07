@@ -29,11 +29,11 @@ class AppleConfigurablesImpl(
     progressCallback: ProgressCallback,
 ) : AppleConfigurables, KonanPropertiesLoader(target, properties, dependenciesDir, progressCallback = progressCallback) {
 
-    private val sdkDependency = this.targetSysRoot!!
-    private val toolchainDependency = this.targetToolchain!!
-    private val xcodeAddonDependency = this.additionalToolsDir!!
+    private val sdkDependency get() = this.targetSysRoot ?: ""
+    private val toolchainDependency get() = this.targetToolchain ?: ""
+    private val xcodeAddonDependency get() = this.additionalToolsDir ?: ""
 
-    override val absoluteTargetSysRoot: String get() = when (val provider = xcodePartsProvider) {
+    override val absoluteTargetSysRoot: String get() = if (!HostManager.hostIsMac) "" else when (val provider = xcodePartsProvider) {
         is XcodePartsProvider.Local -> {
             // In the case of Mac Catalyst, we use sysroot from macOS.
             val platformName = if (targetTriple.isMacabi) "MacOSX" else platformName()
@@ -42,12 +42,12 @@ class AppleConfigurablesImpl(
         XcodePartsProvider.InternalServer -> absolute(sdkDependency)
     }
 
-    override val absoluteTargetToolchain: String get() = when (val provider = xcodePartsProvider) {
+    override val absoluteTargetToolchain: String get() = if (!HostManager.hostIsMac) "" else when (val provider = xcodePartsProvider) {
         is XcodePartsProvider.Local -> provider.xcode.toolchain
         XcodePartsProvider.InternalServer -> "${absolute(toolchainDependency)}/usr"
     }
 
-    override val absoluteAdditionalToolsDir: String get() = when (val provider = xcodePartsProvider) {
+    override val absoluteAdditionalToolsDir: String get() = if (!HostManager.hostIsMac) "" else when (val provider = xcodePartsProvider) {
         is XcodePartsProvider.Local -> provider.xcode.additionalTools
         XcodePartsProvider.InternalServer -> absolute(additionalToolsDir)
     }
@@ -69,6 +69,7 @@ class AppleConfigurablesImpl(
         when {
             useProvisionedXcode -> XcodePartsProvider.Local(provisionedXcode())
             InternalServer.isAvailable -> XcodePartsProvider.InternalServer
+            !HostManager.hostIsMac -> XcodePartsProvider.InternalServer
             else -> XcodePartsProvider.Local(currentXcodeCheckingVersion())
         }
     }
