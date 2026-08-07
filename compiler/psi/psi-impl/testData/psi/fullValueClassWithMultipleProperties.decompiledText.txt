@@ -1,0 +1,31 @@
+PrivateValue.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final value class PrivateValue public constructor(first: kotlin.String, second: kotlin.Int) {
+      private final val first: kotlin.String /* compiled code */
+
+      private final val second: kotlin.Int /* compiled code */
+
+      public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+
+      public open fun hashCode(): kotlin.Int { /* compiled code */ }
+
+      public open fun toString(): kotlin.String { /* compiled code */ }
+  }
+
+PublicValue.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final value class PublicValue public constructor(first: kotlin.String, second: kotlin.Int) {
+      public final val first: kotlin.String /* compiled code */
+
+      public final val second: kotlin.Int /* compiled code */
+
+      public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+
+      public open fun hashCode(): kotlin.Int { /* compiled code */ }
+
+      public open fun toString(): kotlin.String { /* compiled code */ }
+  }

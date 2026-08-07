@@ -1,0 +1,29 @@
+FILE[kind=File[packageFqName=<root>]]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/PublicValue, fqName=PublicValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PublicValue, superNames=[]]
+    MODIFIER_LIST[value]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PublicValue]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=PublicValue.first, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=first]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+        VALUE_PARAMETER[fqName=PublicValue.second, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=second]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+  CLASS[classId=/PrivateValue, fqName=PrivateValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PrivateValue, superNames=[]]
+    MODIFIER_LIST[value]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PrivateValue]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=PrivateValue.first, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=first]
+          MODIFIER_LIST[private]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+        VALUE_PARAMETER[fqName=PrivateValue.second, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=second]
+          MODIFIER_LIST[private]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]

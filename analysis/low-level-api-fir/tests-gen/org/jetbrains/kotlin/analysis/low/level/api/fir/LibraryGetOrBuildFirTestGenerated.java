@@ -95,6 +95,66 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("fullValueClassAbstract.kt")
+  public void testFullValueClassAbstract() {
+    run("fullValueClassAbstract.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassObject.kt")
+  public void testFullValueClassObject() {
+    run("fullValueClassObject.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassSealed.kt")
+  public void testFullValueClassSealed() {
+    run("fullValueClassSealed.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassWithEscapedPropertyName.kt")
+  public void testFullValueClassWithEscapedPropertyName() {
+    run("fullValueClassWithEscapedPropertyName.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassWithMultipleProperties.kt")
+  public void testFullValueClassWithMultipleProperties() {
+    run("fullValueClassWithMultipleProperties.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassWithPrivateProperty.kt")
+  public void testFullValueClassWithPrivateProperty() {
+    run("fullValueClassWithPrivateProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassWithPublicProperty.kt")
+  public void testFullValueClassWithPublicProperty() {
+    run("fullValueClassWithPublicProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassWithSameNamedProperties.kt")
+  public void testFullValueClassWithSameNamedProperties() {
+    run("fullValueClassWithSameNamedProperties.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassWithSuperClass.kt")
+  public void testFullValueClassWithSuperClass() {
+    run("fullValueClassWithSuperClass.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassWithTypeParameterUnderlyingType.kt")
+  public void testFullValueClassWithTypeParameterUnderlyingType() {
+    run("fullValueClassWithTypeParameterUnderlyingType.kt");
+  }
+
+  @Test
   @TestMetadata("functionWithDefinitelyNotNullParameter.kt")
   public void testFunctionWithDefinitelyNotNullParameter() {
     run("functionWithDefinitelyNotNullParameter.kt");
@@ -134,6 +194,30 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   @TestMetadata("inlineClassWithTypeParameterUnderlyingType.kt")
   public void testInlineClassWithTypeParameterUnderlyingType() {
     run("inlineClassWithTypeParameterUnderlyingType.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmAbiFullValueClassAbstract.kt")
+  public void testJvmAbiFullValueClassAbstract() {
+    run("jvmAbiFullValueClassAbstract.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmAbiFullValueClassWithPrivateConstructor.kt")
+  public void testJvmAbiFullValueClassWithPrivateConstructor() {
+    run("jvmAbiFullValueClassWithPrivateConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmAbiFullValueClassWithPrivateProperty.kt")
+  public void testJvmAbiFullValueClassWithPrivateProperty() {
+    run("jvmAbiFullValueClassWithPrivateProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmAbiFullValueClassWithPublicConstructor.kt")
+  public void testJvmAbiFullValueClassWithPublicConstructor() {
+    run("jvmAbiFullValueClassWithPublicConstructor.kt");
   }
 
   @Test

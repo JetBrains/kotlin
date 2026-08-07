@@ -1,0 +1,19 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public final value class PublicValue public constructor(value: kotlin.String) {
+    public final val value: kotlin.String /* compiled code */
+
+    public final val kotlin.Int.value: kotlin.Int /* compiled code */
+        public final get() { /* compiled code */ }
+
+    context(flag: kotlin.Boolean)
+    public final val value: kotlin.Int /* compiled code */
+        public final get() { /* compiled code */ }
+
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+
+    public open fun hashCode(): kotlin.Int { /* compiled code */ }
+
+    public open fun toString(): kotlin.String { /* compiled code */ }
+}

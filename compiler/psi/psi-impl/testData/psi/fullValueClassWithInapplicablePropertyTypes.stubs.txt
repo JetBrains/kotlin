@@ -1,0 +1,19 @@
+FILE[kind=File[packageFqName=<root>]]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/UnitWrapper, fqName=UnitWrapper, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=UnitWrapper, superNames=[]]
+    MODIFIER_LIST[value]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=UnitWrapper]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=UnitWrapper.unit, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=unit]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Unit]
+  CLASS[classId=/NothingWrapper, fqName=NothingWrapper, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=NothingWrapper, superNames=[]]
+    MODIFIER_LIST[value]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=NothingWrapper]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=NothingWrapper.nothing, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=nothing]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Nothing]

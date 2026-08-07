@@ -1,0 +1,6 @@
+// LANGUAGE: +FullValueClasses
+// JVM_ABI_GEN
+// DECLARATION_TYPE: org.jetbrains.kotlin.psi.KtClass
+// MAIN_FILE_NAME: Box
+
+value class Box<T>(val element: T, val name: String)

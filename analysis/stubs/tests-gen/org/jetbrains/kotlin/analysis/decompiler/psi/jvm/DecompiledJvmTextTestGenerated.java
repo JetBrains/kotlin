@@ -629,6 +629,66 @@ public class DecompiledJvmTextTestGenerated extends AbstractDecompiledJvmTextTes
   }
 
   @Test
+  @TestMetadata("fullValueClassObject.kt")
+  public void testFullValueClassObject() {
+    run("fullValueClassObject.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassWithEscapedPropertyName.kt")
+  public void testFullValueClassWithEscapedPropertyName() {
+    run("fullValueClassWithEscapedPropertyName.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassWithInapplicablePropertyTypes.kt")
+  public void testFullValueClassWithInapplicablePropertyTypes() {
+    run("fullValueClassWithInapplicablePropertyTypes.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassWithMultipleProperties.kt")
+  public void testFullValueClassWithMultipleProperties() {
+    run("fullValueClassWithMultipleProperties.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassWithSameNamedProperties.kt")
+  public void testFullValueClassWithSameNamedProperties() {
+    run("fullValueClassWithSameNamedProperties.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassWithSecondaryConstructor.kt")
+  public void testFullValueClassWithSecondaryConstructor() {
+    run("fullValueClassWithSecondaryConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassWithSingleProperty.kt")
+  public void testFullValueClassWithSingleProperty() {
+    run("fullValueClassWithSingleProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassWithSuperClass.kt")
+  public void testFullValueClassWithSuperClass() {
+    run("fullValueClassWithSuperClass.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassWithTypeParameter.kt")
+  public void testFullValueClassWithTypeParameter() {
+    run("fullValueClassWithTypeParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassWithoutProperties.kt")
+  public void testFullValueClassWithoutProperties() {
+    run("fullValueClassWithoutProperties.kt");
+  }
+
+  @Test
   @TestMetadata("funInterfaceDeclaration.kt")
   public void testFunInterfaceDeclaration() {
     run("funInterfaceDeclaration.kt");
@@ -818,6 +878,36 @@ public class DecompiledJvmTextTestGenerated extends AbstractDecompiledJvmTextTes
   @TestMetadata("internalConst.kt")
   public void testInternalConst() {
     run("internalConst.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmAbiFullValueClassWithPrivateConstructor.kt")
+  public void testJvmAbiFullValueClassWithPrivateConstructor() {
+    run("jvmAbiFullValueClassWithPrivateConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmAbiFullValueClassWithPrivateConstructorAndPublicProperties.kt")
+  public void testJvmAbiFullValueClassWithPrivateConstructorAndPublicProperties() {
+    run("jvmAbiFullValueClassWithPrivateConstructorAndPublicProperties.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmAbiFullValueClassWithPrivateProperty.kt")
+  public void testJvmAbiFullValueClassWithPrivateProperty() {
+    run("jvmAbiFullValueClassWithPrivateProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmAbiFullValueClassWithPublicConstructor.kt")
+  public void testJvmAbiFullValueClassWithPublicConstructor() {
+    run("jvmAbiFullValueClassWithPublicConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmAbiFullValueClassWithoutProperties.kt")
+  public void testJvmAbiFullValueClassWithoutProperties() {
+    run("jvmAbiFullValueClassWithoutProperties.kt");
   }
 
   @Test
