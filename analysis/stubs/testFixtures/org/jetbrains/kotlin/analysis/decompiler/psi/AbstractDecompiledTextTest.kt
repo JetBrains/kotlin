@@ -5,21 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.decompiler.psi
 
-import com.intellij.psi.PsiErrorElement
-import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
-import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
-import org.jetbrains.kotlin.analysis.internal.utils.IndentedTextBuilder
-import org.jetbrains.kotlin.analysis.internal.utils.buildIndentedText
 import org.jetbrains.kotlin.analysis.stubs.AbstractCompiledStubsTest
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
-import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
 
 /**
  * This test is supposed to validate a decompiler text output
@@ -30,51 +22,6 @@ abstract class AbstractDecompiledTextTest(defaultTargetPlatform: TargetPlatform)
     override val configurator: AnalysisApiTestConfigurator = AbstractCompiledStubsTest.CompiledStubsTestConfigurator(defaultTargetPlatform)
 
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
-        val files = mainModule.ktFiles.sortedBy(KtFile::getName)
-
-        val actual = buildIndentedText(indentation = IndentedTextBuilder.TWO_SPACES) {
-            if (files.isEmpty()) {
-                appendLine("NO FILES")
-                return@buildIndentedText
-            }
-
-            val file = files.singleOrNull()
-            if (file != null) {
-                append(file.text)
-            } else {
-                appendCollection(files, separator = "\n") { file ->
-                    appendLine("${file.name}:")
-                    withIndent {
-                        append(file.text)
-                    }
-                }
-            }
-        }
-
-        testServices.assertions.assertEqualsToTestOutputFile(actual, extension = ".decompiledText.txt")
-
-        for (file in files) {
-            requireIsInstance<KtDecompiledFile>(file)
-            file.validateTree(testServices.assertions)
-        }
-    }
-
-    companion object {
-        fun KtDecompiledFile.validateTree(assertions: Assertions) {
-            val visitor = object : KtTreeVisitorVoid() {
-                override fun visitErrorElement(element: PsiErrorElement) {
-                    assertions.fail {
-                        val parent = element.parent
-                        """
-                            Decompiled file should not contain syntax errors!
-                            Parent class: ${parent::class.simpleName}
-                            Parent text: ${parent.text}
-                        """.trimIndent()
-                    }
-                }
-            }
-
-            accept(visitor)
-        }
+        checkDecompiledText(mainModule.ktFiles, testServices)
     }
 }
