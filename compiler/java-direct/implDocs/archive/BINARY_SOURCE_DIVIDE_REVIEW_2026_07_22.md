@@ -1,5 +1,10 @@
 # Binary/Source Finder Divide — Review & Recommendations (2026-07-22)
 
+> **Archived (2026-08-07).** Its open recommendations are settled: the binary seam now lives behind
+> `BinaryClassRoots` and java-direct no longer depends on `:compiler:cli` — see
+> `implDocs/PSI_FREE_ROADMAP.md`. §11-§12 remain the measurement record cited by the cache-shape
+> comments in `JavaClassFinderOverBinaryIndex.kt`.
+
 Review of the `~ [j] implement binary/source finder divide` commit (`266caf3b9da2`) as it
 stands on the current branch head, plus a completeness check of the wider `java-direct`
 plan. Total removal of the PSI *fallback* is out of scope (known-deferred).

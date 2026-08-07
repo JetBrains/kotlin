@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
-import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
+import org.jetbrains.kotlin.fir.java.FirJavaFacadeWithFixedModuleData
 import org.jetbrains.kotlin.fir.java.javaAnnotationProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -203,12 +203,12 @@ open class VfsBasedProjectEnvironment(
         firSession: FirSession,
         baseModuleData: FirModuleData,
         fileSearchScope: AbstractProjectFileSearchScope,
-    ): FirJavaFacadeForSource {
+    ): FirJavaFacadeWithFixedModuleData {
         // PSI-backed default. Custom Java facades (e.g. `java-direct`) are constructed by
         // explicit lambdas passed into `FirJvmSessionFactory.create*Session(...)`
         val javaAnnotationProvider = firSession.javaAnnotationProvider
         val javaClassFinder = project.createJavaClassFinder(fileSearchScope.asPsiSearchScope(), javaAnnotationProvider)
-        return FirJavaFacadeForSource(firSession, baseModuleData, javaClassFinder)
+        return FirJavaFacadeWithFixedModuleData(firSession, baseModuleData, javaClassFinder)
     }
 
     class DirectoriesScope(

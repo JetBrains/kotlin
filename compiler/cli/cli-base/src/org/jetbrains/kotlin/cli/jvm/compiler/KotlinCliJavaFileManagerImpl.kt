@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.asBinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.readBinaryJavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.load.java.structure.impl.source.SingleFileRootPsiPackage
@@ -141,7 +142,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             // Cross-references from bytecode signatures resolve against `allScope`, not the request `searchScope`.
             return readBinaryJavaClass(
                 classId = classId,
-                topLevelVirtualFile = virtualFile,
+                topLevelClassFile = virtualFile.asBinaryClassFileHandle(),
                 classFileContent = classFileContentFromRequest,
                 outerClassFromRequest = outerClassFromRequest,
                 binaryCache = binaryCache,

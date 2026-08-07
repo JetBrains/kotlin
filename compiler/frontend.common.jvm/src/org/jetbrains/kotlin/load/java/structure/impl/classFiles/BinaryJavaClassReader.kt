@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
-import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
 
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.name.ClassId
  */
 fun readBinaryJavaClass(
     classId: ClassId,
-    topLevelVirtualFile: VirtualFile,
+    topLevelClassFile: BinaryClassFileHandle,
     classFileContent: ByteArray?,
     outerClassFromRequest: JavaClass?,
     binaryCache: MutableMap<ClassId, JavaClass?>,
@@ -35,16 +34,16 @@ fun readBinaryJavaClass(
         }
     }
 
-    val classContent = classFileContent ?: topLevelVirtualFile.contentsToByteArray()
+    val classContent = classFileContent ?: topLevelClassFile.readBytes()
     // Class files with '$' in the name may still be nested and must not be treated as top-level.
-    if (topLevelVirtualFile.nameWithoutExtension.contains("$") && isNotTopLevelClass(classContent)) {
+    if (topLevelClassFile.nameWithoutExtension.contains("$") && isNotTopLevelClass(classContent)) {
         return@getOrPut null
     }
 
     val resolver = ClassifierResolutionContext(resolveCrossReference)
 
     BinaryJavaClass(
-        topLevelVirtualFile,
+        topLevelClassFile.virtualFile,
         classId.asSingleFqName(),
         resolver,
         signatureParser,

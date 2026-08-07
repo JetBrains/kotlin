@@ -2,10 +2,10 @@
 
 **Current status**: full box + phased suite green, 2839/2839 (100%) — see
 `ITERATION_RESULTS.md` for the authoritative per-suite counts. No known won't-fix.
-The module is feature-complete on the `JavaUsingAst*` suite. Active work is
-optimization, **PSI-removal Phase 3** (source-only PSI/AST switch — see
-`implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`), and closing the IJ-FP
-regression delta. The public Java-model interface rollback (rule 7) and the
+The module is feature-complete on the `JavaUsingAst*` suite. `compiler/java-direct/src`
+is PSI-free and no longer depends on `:compiler:cli` (see
+`implDocs/PSI_FREE_ROADMAP.md`); active work is optimization, the platform-free
+(NIO) axis, and closing the IJ-FP regression delta. The public Java-model interface rollback (rule 7) and the
 resolver-unification residue have landed.
 
 > **Caveat on historical numbers.** Before 2026-04-28 the `JavaUsingAst*`
@@ -344,12 +344,11 @@ When profiling java-direct code paths:
 | Document | When to consult |
 |----------|----------------|
 | `implDocs/MERGED_REFACTORING_PLAN_2026_05_04.md` | PSI removal × resolver unification — Stages 1-4 plan, dependencies, and acceptance criteria. |
-| `implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` | Three-phase PSI removal plan; Phases 1-2 landed, **Phase 3** (source-only PSI/AST switch) is the next effort. |
+| `implDocs/PSI_FREE_ROADMAP.md` | The PSI-free / platform-free axes: what landed, the seams introduced, and the remaining platform-bound list. Read before touching the binary path or the module's dependencies. |
 | `implDocs/IJ_FP_REGRESSION_ANALYSIS_2026_05_10.md` | IntelliJ-full-pipeline regression categorisation (Cat A-E). **The tracked next step** — but re-baseline first: its code references are stale (see the doc's status banner). |
 | `implDocs/ARCHITECTURE.md` | Callback patterns, key files, JLS implicit rules, common fixes. |
 | `implDocs/RESOLUTION_PIPELINE.md` | Before any resolution fix. |
 | `implDocs/RESOLUTION_SCHEMA.md` | Structural map of the `resolution/` package — entities and scenarios; companion to `RESOLUTION_PIPELINE.md`. |
-| `implDocs/BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22.md` | Review of the binary/source finder divide — open recommendations for the current branch. |
 | `implDocs/PERFORMANCE_REVIEW_2026_07_20.md` | Performance review — landed low-risk fixes and the riskier follow-up candidates. |
 | `implDocs/PARSING_IMPROVEMENTS.md` | Parsing-pipeline improvement backlog (analysis only, unimplemented). |
 | `implDocs/INVESTIGATION_TECHNIQUES.md` | Debugging, AST inspection, measurement recipes. |
