@@ -104,19 +104,13 @@ private fun IndentedTextBuilder.appendValue(value: Any?) {
 }
 
 private fun IndentedTextBuilder.appendValueClassRepresentation(representation: ValueClassRepresentation<*>) {
-    append(
-        when (representation) {
-            is InlineClassRepresentation -> "inline"
-            is FullValueClassRepresentation -> "full"
-        }
-    )
-
-    val properties = representation.underlyingPropertyNamesToTypes
-    if (properties == null) {
-        append(" null")
-    } else {
-        appendValue(properties.toMap())
+    val kind = when (representation) {
+        is InlineClassRepresentation -> "inline"
+        is FullValueClassRepresentation -> "full"
     }
+
+    append(kind).append(" ")
+    appendValue(representation.underlyingPropertyNamesToTypes?.toMap())
 }
 
 private fun IndentedTextBuilder.appendTypeInfo(typeBean: KotlinTypeBean) {
