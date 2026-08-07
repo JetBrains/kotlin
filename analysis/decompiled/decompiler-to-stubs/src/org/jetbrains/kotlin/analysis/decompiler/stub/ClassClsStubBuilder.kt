@@ -213,7 +213,6 @@ private class ClassClsStubBuilder(
         val property = classProto.propertyList.singleOrNull { property ->
             c.nameResolver.getName(property.name) == name &&
                     !property.hasReceiver() &&
-                    !property.hasCompanionExtensionReceiver() &&
                     property.contextParameterList.isEmpty() &&
                     property.contextReceiverTypes(c.typeTable).isEmpty()
         }
