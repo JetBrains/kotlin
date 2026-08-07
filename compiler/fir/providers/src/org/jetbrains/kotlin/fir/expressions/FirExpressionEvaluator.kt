@@ -392,7 +392,8 @@ object FirExpressionEvaluator {
                         isConstWithoutInitializer -> when {
                             propertySymbol.callableId?.isStringLength == true || propertySymbol.callableId?.isCharCode == true -> {
                                 val unaryArg = evaluateOr<FirExpression>(propertyAccessExpression.explicitReceiver) { return it }
-                                evaluateUnary(unaryArg, propertySymbol.callableId!!)
+                                val argType = propertySymbol.receiverType(session) ?: return NotConst
+                                evaluateUnary(unaryArg, argType, propertySymbol.callableId!!)
                                     .adjustTypeAndConvertToLiteral(propertyAccessExpression)
                             }
 
@@ -505,12 +506,21 @@ object FirExpressionEvaluator {
             }
 
             return when (evaluatedArgs.size) {
-                1 -> evaluateUnary(evaluatedArgs.first(), symbol.callableId)
-                    ?.adjustTypeAndConvertToLiteral(functionCall)
-                    ?: NotConst
-                2 -> evaluateBinary(evaluatedArgs.first(), symbol.callableId, evaluatedArgs.get(1))
-                    ?.adjustTypeAndConvertToLiteral(functionCall)
-                    ?: NotConst
+                1 -> {
+                    val argType = symbol.receiverType(session)
+                        ?: symbol.firstValueParameterType(session)
+                        ?: return NotConst
+                    evaluateUnary(evaluatedArgs[0], argType, symbol.callableId)
+                        ?.adjustTypeAndConvertToLiteral(functionCall)
+                        ?: NotConst
+                }
+                2 -> {
+                    val leftType = symbol.receiverType(session) ?: return NotConst
+                    val rightType = symbol.firstValueParameterType(session) ?: return NotConst
+                    evaluateBinary(evaluatedArgs[0], leftType, symbol.callableId, evaluatedArgs[1], rightType)
+                        ?.adjustTypeAndConvertToLiteral(functionCall)
+                        ?: NotConst
+                }
                 else -> NotConst
             }
         }
@@ -674,6 +684,12 @@ private fun ConeKotlinType.toCompileTimeType(): CompileTimeType? {
     return this.classId?.toConstantValueKind()?.toCompileTimeType()
 }
 
+private fun FirCallableSymbol<*>.receiverType(session: FirSession): ConeKotlinType? =
+    (dispatchReceiverType ?: resolvedReceiverType)?.fullyExpandedType(session)
+
+private fun FirFunctionSymbol<*>.firstValueParameterType(session: FirSession): ConeKotlinType? =
+    valueParameterSymbols.firstOrNull()?.resolvedReturnType?.fullyExpandedType(session)
+
 private fun FirExpression.hasAllowedCompileTimeType(session: FirSession): Boolean {
     // See visitErrorExpression for details. Here we count the type as valid and take a decision later.
     if (this is FirErrorExpression) return true
@@ -696,16 +712,14 @@ private fun FirFunctionCall.isCompileTimeBuiltinCall(session: FirSession): Boole
     val receiverClassId = this.dispatchReceiver?.getExpandedType(session)?.classId
 
     if (symbol is FirFunctionSymbol<*> && session.intrinsicConstEvaluationEnabled) {
-        val receiverType = symbol.dispatchReceiverType?.fullyExpandedType(session)?.toCompileTimeType()
-            ?: symbol.resolvedReceiverType?.fullyExpandedType(session)?.toCompileTimeType()
-        val firstArgType = symbol.valueParameterSymbols.firstOrNull()?.resolvedReturnType?.fullyExpandedType(session)?.toCompileTimeType()
+        val receiverType = symbol.receiverType(session)
+        val firstArgType = symbol.firstValueParameterType(session)
 
-        val inBuiltinMap = canEvalOp(
+        return canEvalOp(
             callableId = symbol.callableId,
-            typeA = receiverType,
-            typeB = firstArgType
+            typeA = receiverType?.toCompileTimeType(),
+            typeB = firstArgType?.toCompileTimeType()
         )
-        return inBuiltinMap
     }
 
     if (!symbol.fromKotlinPackage()) return false
@@ -778,13 +792,14 @@ fun ConstantValueKind.toCompileTimeType(): CompileTimeType {
 }
 
 // Unary operators
-private fun evaluateUnary(arg: FirExpression, callableId: CallableId): Any? {
+private fun evaluateUnary(arg: FirExpression, argType: ConeKotlinType, callableId: CallableId): Any? {
     if (arg !is FirLiteralExpression || arg.value == null) return null
 
-    val opr = arg.kind.convertToGivenKind(arg.value) ?: return null
+    val compileTimeType = argType.toCompileTimeType() ?: return null
+    val opr = argType.toConstantValueKind()?.convertToGivenKind(arg.value) ?: arg.value as Any
     return evalUnaryOp(
         callableId.callableName.asString(),
-        arg.kind.toCompileTimeType(),
+        compileTimeType,
         opr
     )
 }
@@ -792,43 +807,40 @@ private fun evaluateUnary(arg: FirExpression, callableId: CallableId): Any? {
 // Binary operators
 private fun evaluateBinary(
     arg1: FirExpression,
+    leftType: ConeKotlinType,
     callableId: CallableId,
     arg2: FirExpression,
+    rightType: ConeKotlinType,
 ): Any? {
     if (arg1 !is FirLiteralExpression || arg1.value == null) return null
     if (arg2 !is FirLiteralExpression || arg2.value == null) return null
-    // NB: some utils accept very general types, and due to the way operation map works, we should up-cast rhs type.
-    val rightType = when {
-        callableId.isEquals -> CompileTimeType.ANY
-        callableId.isStringPlus -> CompileTimeType.ANY
-        else -> arg2.kind.toCompileTimeType()
-    }
 
-    val leftType = arg1.kind.toCompileTimeType()
+    val leftCompileTimeType = leftType.toCompileTimeType() ?: return null
+    val rightCompileTimeType = rightType.toCompileTimeType() ?: return null
 
-    val opr1 = arg1.kind.convertToGivenKind(arg1.value) ?: return null
-    val opr2 = arg2.kind.convertToGivenKind(arg2.value) ?: return null
+    val opr1 = leftType.toConstantValueKind()?.convertToGivenKind(arg1.value) ?: arg1.value as Any
+    val opr2 = rightType.toConstantValueKind()?.convertToGivenKind(arg2.value) ?: arg2.value as Any
 
     val functionName = callableId.callableName.asString()
 
     // Check for division by zero
     if (functionName == "div" || functionName == "rem") {
-        if (!leftType.isFloatingPoint() && !rightType.isFloatingPoint() && (opr2 as? Number)?.toInt() == 0) {
+        if (!leftCompileTimeType.isFloatingPoint() && !rightCompileTimeType.isFloatingPoint() && (arg2.value as? Number)?.toInt() == 0) {
             // If expression is division by zero, then return the original expression as a result. We will handle on later steps.
             return DivisionByZero
         }
     }
 
     // Check for trimMargin invalid argument
-    if (functionName == "trimMargin" && (opr2 as? String)?.isBlank() == true) {
+    if (functionName == "trimMargin" && (arg2.value as? String)?.isBlank() == true) {
         return TrimMarginBlankPrefix
     }
 
     return evalBinaryOp(
         functionName,
-        arg1.kind.toCompileTimeType(),
+        leftCompileTimeType,
         opr1,
-        rightType,
+        rightCompileTimeType,
         opr2
     )
 }
@@ -847,12 +859,6 @@ private fun Any.adjustTypeAndConvertToLiteral(original: FirExpression, expectedT
 
 private val CallableId.isStringLength: Boolean
     get() = classId == StandardClassIds.String && callableName.identifierOrNullIfSpecial == "length"
-
-private val CallableId.isEquals: Boolean
-    get() = callableName == OperatorNameConventions.EQUALS
-
-private val CallableId.isStringPlus: Boolean
-    get() = classId == StandardClassIds.String && callableName == OperatorNameConventions.PLUS
 
 private val CallableId.isCharCode: Boolean
     get() = packageName == StandardClassIds.BASE_KOTLIN_PACKAGE && classId == null && callableName.identifierOrNullIfSpecial == "code"
