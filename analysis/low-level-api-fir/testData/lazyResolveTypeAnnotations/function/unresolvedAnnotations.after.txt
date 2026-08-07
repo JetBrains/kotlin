@@ -1,0 +1,14 @@
+@R|kotlin/String|()  kotlin/Long
+  context -> FirValueParameterSymbol <local>/action from FirNamedFunctionSymbol one/test
+  anchor -> [FirValueParameterSymbol <local>/action from FirNamedFunctionSymbol one/test]
+
+@<ERROR TYPE REF: Symbol not found for Unresolved>()  kotlin/String
+  context -> FirValueParameterSymbol <local>/action from FirNamedFunctionSymbol one/test
+  anchor -> [FirValueParameterSymbol <local>/action from FirNamedFunctionSymbol one/test]
+
+@R|T|()  kotlin/Int
+  context -> FirValueParameterSymbol <local>/action from FirNamedFunctionSymbol one/test
+  anchor -> [FirValueParameterSymbol <local>/action from FirNamedFunctionSymbol one/test]
+
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotations.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T> test([ResolvedTo(ANNOTATION_ARGUMENTS)] action: R|(@R|T|()  kotlin/Int, @<ERROR TYPE REF: Symbol not found for Unresolved>()  kotlin/String, @R|kotlin/String|()  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
