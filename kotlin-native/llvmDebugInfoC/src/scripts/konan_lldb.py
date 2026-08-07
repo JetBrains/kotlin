@@ -260,6 +260,7 @@ _TOTAL_MEMBERS_LIMIT = 50
 
 class CachedSBValueInfo:
     def __init__(self):
+        self.children_count = None
         self.child_addresses_by_index = None
         self.child_names_by_index = None
         self.child_types_by_index = None
@@ -336,6 +337,11 @@ def _get_cached_child_addresses_by_index(value):
     return None if cached_info is None else cached_info.child_addresses_by_index
 
 
+def _get_cached_children_count(value):
+    cached_info = _get_cached_sbvalue_info(value)
+    return None if cached_info is None else cached_info.children_count
+
+
 def _get_cached_child_names_by_index(value):
     cached_info = _get_cached_sbvalue_info(value)
     return None if cached_info is None else cached_info.child_names_by_index
@@ -353,6 +359,12 @@ def _set_cached_child_address(value, index, address):
     if cached_info.child_addresses_by_index is None:
         cached_info.child_addresses_by_index = {}
     cached_info.child_addresses_by_index[index] = address
+
+
+def _set_cached_children_count(value, children_count):
+    cached_info = _get_or_create_cached_sbvalue_info(value)
+    if cached_info is not None:
+        cached_info.children_count = children_count
 
 
 def _set_cached_child_name(value, index, name):
@@ -416,6 +428,18 @@ def _decode_c_string_array(raw_bytes, count):
     return values
 
 
+def _read_pointer(process, target, address):
+    pointer_size = target.GetAddressByteSize()
+    error = lldb.SBError()
+    raw = process.ReadMemory(address, pointer_size, error)
+    if not error.Success():
+        return 0
+    pointer_format = "Q" if pointer_size == 8 else "I"
+    return struct.unpack(
+        f"{_struct_prefix_for_target(target)}{pointer_format}", raw
+    )[0]
+
+
 def _fast_type_info(value):
     process = value.GetProcess()
     target = lldb.debugger.GetSelectedTarget()
@@ -443,12 +467,17 @@ def _struct_prefix_for_target(target):
 
 
 def _children_count(value):
+    cached_children_count = _get_cached_children_count(value)
+    if cached_children_count is not None:
+        return cached_children_count
     value_str = f"{_hex(value.unsigned)}"
-    return (
+    children_count = (
         0
         if value.GetValueAsUnsigned() == 0
         else _evaluate(f"(int)Konan_DebugGetFieldCount({value_str})").signed
     )
+    _set_cached_children_count(value, children_count)
+    return children_count
 
 
 def _allocate_inferior_memory(process, size, permissions, what):
@@ -710,17 +739,6 @@ class KonanHelperProvider(lldb.SBSyntheticValueProvider):
                 f")"
             )
         ).unsigned
-
-    def _read_pointer(self, address):
-        pointer_size = self._target.GetAddressByteSize()
-        error = lldb.SBError()
-        raw = self._process.ReadMemory(address, pointer_size, error)
-        if not error.Success():
-            return 0
-        pointer_format = "Q" if pointer_size == 8 else "I"
-        return struct.unpack(
-            f"{_struct_prefix_for_target(self._target)}{pointer_format}", raw
-        )[0]
 
     def _child_name(self, index):
         children = _get_cached_child_names_by_index(self._valobj)
@@ -1026,7 +1044,9 @@ def _run_batch_child_metadata_request(provider, include_names=True):
         ) = struct.unpack(
             f"{prefix}{result_slot_count}{pointer_format}", raw_result
         )
-        provider._children_count = count
+        if hasattr(provider, "_children_count"):
+            provider._children_count = count
+        _set_cached_children_count(provider._valobj, count)
         if count <= 0:
             return []
         if (
@@ -1096,7 +1116,9 @@ def _run_batch_child_metadata_request(provider, include_names=True):
             addresses, types, type_names, summaries
         ):
             if child_type == _RUNTIME_TYPE_OBJECT and field_address:
-                child_key = provider._read_pointer(field_address)
+                child_key = _read_pointer(
+                    provider._process, provider._target, field_address
+                )
                 if type_name:
                     _set_cached_type_name(
                         provider._process, child_key, type_name
@@ -1240,23 +1262,26 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
         return False
 
 
-class FastKonanArraySyntheticProvider(KonanHelperProvider):
+class FastKonanArraySyntheticProvider(lldb.SBSyntheticValueProvider):
     def __init__(self, valobj, _, internal_dict):
-        self._log = logging.getLogger(self.__class__.__name__)
-        self._children_count = 0
-        super(FastKonanArraySyntheticProvider, self).__init__(
-            valobj, False, "FastArrayProvider", internal_dict
-        )
+        super().__init__(valobj)
+        self._target = valobj.GetTarget()
+        self._process = self._target.GetProcess()
+        self._valobj = valobj
 
     def num_children(self):
-        return self._children_count
+        cached_children_count = _get_cached_children_count(self._valobj)
+        if cached_children_count is None:
+            _run_batch_child_metadata_request(self, include_names=False)
+            cached_children_count = _get_cached_children_count(self._valobj)
+        return 0 if cached_children_count is None else cached_children_count
 
     def get_child_index(self, name):
         index = int(name)
-        return index if (0 <= index < self._children_count) else -1
+        return index if (0 <= index < self.num_children()) else -1
 
     def get_child_at_index(self, index):
-        if not (0 <= index < self._children_count):
+        if not (0 <= index < self.num_children()):
             return None
 
         address = self._field_address(index)
@@ -1273,6 +1298,9 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
             lldb_type,
         )
         return child if child.IsValid() else None
+
+    def update(self):
+        return False
 
     def _field_address(self, index):
         cached_addresses = _get_cached_child_addresses_by_index(self._valobj)
@@ -1293,32 +1321,13 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
 
         return _RUNTIME_TYPE_INVALID
 
-    def update(self):
-        super(FastKonanArraySyntheticProvider, self).update()
-        return False
-
     def _resolve_lldb_type(self, runtime_type):
-        if runtime_type == _RUNTIME_TYPE_OBJECT:
-            return self._valobj.type
-        if runtime_type == 2:
-            return self._valobj.type.GetBasicType(lldb.eBasicTypeSignedChar)
-        if runtime_type == 3:
-            return self._valobj.type.GetBasicType(lldb.eBasicTypeShort)
-        if runtime_type == 4:
-            return self._valobj.type.GetBasicType(lldb.eBasicTypeInt)
-        if runtime_type == 5:
-            return self._valobj.type.GetBasicType(lldb.eBasicTypeLongLong)
-        if runtime_type == 6:
-            return self._valobj.type.GetBasicType(lldb.eBasicTypeFloat)
-        if runtime_type == 7:
-            return self._valobj.type.GetBasicType(lldb.eBasicTypeDouble)
-        if runtime_type == 8:
-            return self._valobj.type.GetBasicType(
-                lldb.eBasicTypeVoid
-            ).GetPointerType()
-        if runtime_type == 9:
-            return self._valobj.type.GetBasicType(lldb.eBasicTypeBool)
-        return None
+        if (
+            runtime_type <= _RUNTIME_TYPE_INVALID
+            or runtime_type >= len(_TYPES)
+        ):
+            return None
+        return _TYPES[runtime_type](self._valobj)
 
 
 def _object_field(object_proxy, field_name):
