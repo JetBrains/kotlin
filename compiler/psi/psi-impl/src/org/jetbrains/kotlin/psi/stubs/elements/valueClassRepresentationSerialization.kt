@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.psi.stubs.elements
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.stubs.StubUtils.readNullableCollection
+import org.jetbrains.kotlin.psi.stubs.StubUtils.writeNullableCollection
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFullValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinInlineClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinRigidTypeBean
@@ -34,10 +36,9 @@ internal fun serializeValueClassRepresentation(
 
         is KotlinFullValueClassRepresentation -> {
             dataStream.writeVarInt(KotlinValueClassRepresentationKind.FULL_VALUE_CLASS.ordinal)
-
-            val properties = representation.underlyingPropertyNamesToTypes
-            dataStream.writeVarInt(properties.size)
-            properties.forEach { [name, type] -> dataStream.serializeUnderlyingProperty(name, type) }
+            dataStream.writeNullableCollection(representation.underlyingPropertyNamesToTypes) { [name, type] ->
+                serializeUnderlyingProperty(name, type)
+            }
         }
     }
 }
@@ -52,8 +53,8 @@ internal fun deserializeValueClassRepresentation(dataStream: StubInputStream): K
         }
 
         KotlinValueClassRepresentationKind.FULL_VALUE_CLASS -> {
-            val properties = List(dataStream.readVarInt()) { dataStream.deserializeUnderlyingProperty() }
-            KotlinFullValueClassRepresentation(properties)
+            val properties = dataStream.readNullableCollection { deserializeUnderlyingProperty() }
+            KotlinFullValueClassRepresentation(properties.orEmpty())
         }
     }
 }
