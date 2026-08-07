@@ -196,7 +196,7 @@ private class ClassClsStubBuilder(
      * @see org.jetbrains.kotlin.serialization.deserialization.loadValueClassRepresentation
      */
     private fun createValueClassRepresentation(): KotlinValueClassRepresentation? {
-        // TODO: build 'KotlinFullValueClassRepresentation' for full value classes
+        // TODO(KT-88416): build 'KotlinFullValueClassRepresentation' for full value classes
         if (!classProto.hasInlineClassUnderlyingPropertyName()) return null
 
         val name = c.nameResolver.getName(classProto.inlineClassUnderlyingPropertyName)
