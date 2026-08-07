@@ -5,28 +5,16 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import com.intellij.core.CoreJavaFileManager
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.jvm.compiler.CliVirtualFileFinderFactory
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCliJavaFileManagerImpl
-import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.asPsiSearchScope
-import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
-import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
+import org.jetbrains.kotlin.fir.java.FirJavaFacadeWithFixedModuleData
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.java.direct.resolution.JavaModuleImportedPackages
 import org.jetbrains.kotlin.java.direct.resolution.JavaModuleImportedPackagesOverModuleGraph
 import org.jetbrains.kotlin.load.java.JavaClassFinder
-import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.java.structure.JavaPackage
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassRoots
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import java.util.IdentityHashMap
 
 /**
@@ -34,29 +22,16 @@ import java.util.IdentityHashMap
  *
  * Every session gets a single-sided [JavaClassFinder]. The source scope is the identified case
  * (`scope === javaSourcesScope` reads `.java` files through [JavaClassFinderOverAstImpl]); every
- * other scope is binary and is served by a [JavaClassFinderOverBinaryIndex] over that very scope.
+ * other scope is binary and is served by a [JavaClassFinderOverBinaryIndex] over the binary roots
+ * as seen through that very scope.
  */
 fun createJavaDirectJavaFacadeBuilder(
-    configuration: CompilerConfiguration,
-    projectEnvironment: VfsBasedProjectEnvironment,
+    javaSourceRoots: List<JavaSourceRootEntry>,
+    binaryClassRootsForScope: (AbstractProjectFileSearchScope) -> BinaryClassRoots,
+    javaModuleFinder: JavaModuleFinder,
     javaSourcesScope: AbstractProjectFileSearchScope,
 ): (AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade {
-    val sourceRootEntries: List<JavaSourceRootEntry> =
-        configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS).asSequence()
-            .filterIsInstance<JavaSourceRoot>()
-            .map { javaRoot ->
-                val prefix =
-                    if (javaRoot.packagePrefix.isNullOrEmpty()) FqName.ROOT
-                    else FqName(javaRoot.packagePrefix!!)
-                JavaSourceRootEntry(javaRoot.file, prefix)
-            }
-            .toList()
-
-    @Suppress("UnstableApiUsage")
-    val virtualFileFinderFactory =
-        VirtualFileFinderFactory.getInstance(projectEnvironment.project) as? CliVirtualFileFinderFactory
-
-    val moduleImportedPackages = moduleImportedPackages(projectEnvironment)
+    val moduleImportedPackages = JavaModuleImportedPackagesOverModuleGraph(javaModuleFinder)
 
     // Keyed by scope identity: distinct binary scopes must get distinct finders, and the same scope
     // object must reuse its finder (and hence its caches).
@@ -64,50 +39,9 @@ fun createJavaDirectJavaFacadeBuilder(
 
     return { _, session, moduleData, scope ->
         val finder: JavaClassFinder = when {
-            scope === javaSourcesScope -> JavaClassFinderOverAstImpl(session, sourceRootEntries, moduleImportedPackages)
-            else -> binaryFinders.getOrPut(scope) { binaryClassFinder(virtualFileFinderFactory, scope) }
+            scope === javaSourcesScope -> JavaClassFinderOverAstImpl(session, javaSourceRoots, moduleImportedPackages)
+            else -> binaryFinders.getOrPut(scope) { JavaClassFinderOverBinaryIndex(binaryClassRootsForScope(scope)) }
         }
-        FirJavaFacadeForSource(session, moduleData, finder)
+        FirJavaFacadeWithFixedModuleData(session, moduleData, finder)
     }
-}
-
-/**
- * Expands `import module M;` declarations against the compilation's Java module graph; expands
- * to nothing when the environment has no CLI Java file manager.
- */
-private fun moduleImportedPackages(projectEnvironment: VfsBasedProjectEnvironment): JavaModuleImportedPackages {
-    val fileManager = projectEnvironment.project.getService(CoreJavaFileManager::class.java) as? KotlinCliJavaFileManagerImpl
-    val moduleFinder = fileManager?.javaModuleFinder ?: return JavaModuleImportedPackages.EMPTY
-    return JavaModuleImportedPackagesOverModuleGraph(moduleFinder)
-}
-
-/**
- * A [JavaClassFinderOverBinaryIndex] over [scope], or an empty finder when no CLI
- * `JvmDependenciesIndex` is available.
- */
-@Suppress("UnstableApiUsage")
-private fun binaryClassFinder(
-    virtualFileFinderFactory: CliVirtualFileFinderFactory?,
-    scope: AbstractProjectFileSearchScope,
-): JavaClassFinder {
-    if (virtualFileFinderFactory == null) return EmptyJavaClassFinder
-    val psiSearchScope: GlobalSearchScope = scope.asPsiSearchScope()
-    return JavaClassFinderOverBinaryIndex(
-        virtualFileFinderFactory.index,
-        psiSearchScope,
-        virtualFileFinderFactory.enableSearchInCtSym,
-    )
-}
-
-/** Answers nothing; used when the CLI dependencies index is unavailable. */
-private object EmptyJavaClassFinder : JavaClassFinder {
-    override fun findClass(request: JavaClassFinder.Request): JavaClass? = null
-
-    override fun findClasses(request: JavaClassFinder.Request): List<JavaClass> = emptyList()
-
-    override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? = null
-
-    override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? = null
-
-    override fun canComputeKnownClassNamesInPackage(): Boolean = false
 }

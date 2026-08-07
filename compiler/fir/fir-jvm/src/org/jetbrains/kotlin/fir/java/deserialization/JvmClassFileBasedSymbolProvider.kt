@@ -43,6 +43,10 @@ import java.nio.file.Paths
  * This symbol provider loads JVM classes, reading extra info from Kotlin [`@Metadata`][Metadata] annotations if present. Use it for library
  * and incremental compilation sessions. For source sessions use [JavaSymbolProvider][org.jetbrains.kotlin.fir.java.JavaSymbolProvider], as
  * Kotlin classes should be parsed first.
+ *
+ * [javaFacade] must therefore be the *binary* Java view of this session: it is asked only which class
+ * files exist ([FirJavaFacade.hasTopLevelClassOf], [FirJavaFacade.knownClassNamesInPackage]) and for
+ * the Java classes that back them, never for Java sources.
  */
 @ThreadSafeMutableState
 open class JvmClassFileBasedSymbolProvider(

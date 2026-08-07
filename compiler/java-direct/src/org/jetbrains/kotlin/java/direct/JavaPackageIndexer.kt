@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * `packagePrefix` mirrors `org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot.packagePrefix`
  */
-internal data class JavaSourceRootEntry(val root: File, val packagePrefix: FqName) {
+data class JavaSourceRootEntry(val root: File, val packagePrefix: FqName) {
     companion object {
         fun fromRootsWithoutPrefix(roots: List<File>): List<JavaSourceRootEntry> =
             roots.map { JavaSourceRootEntry(it, FqName.ROOT) }

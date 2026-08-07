@@ -25,7 +25,7 @@
 > See also: [`AGENT_INSTRUCTIONS.md`](../AGENT_INSTRUCTIONS.md),
 > [`implDocs/ARCHITECTURE.md`](ARCHITECTURE.md),
 > [`implDocs/RESOLUTION_PIPELINE.md`](RESOLUTION_PIPELINE.md),
-> [`implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md),
+> [`implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](archive/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md),
 > [`implDocs/archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
 > [`implDocs/archive/UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md`](archive/UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md)
 > (superseded by the next entry; kept for fallback alternatives A / C / F),
@@ -39,7 +39,7 @@
 
 Two refactorings on the `java-direct` story have been designed and reviewed independently,
 and now need a shared execution timeline. The **PSI-replacement** track
-([`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md))
+([`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](archive/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md))
 removes the IntelliJ-platform dependency for binary Java lookups, in three phases (Phase 1
 already landed). The **resolver-unification** track
 ([`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md))
@@ -89,13 +89,13 @@ End-state after all steps land:
 - `JavaClassFinderImpl` (PSI) is removed from JVM-FIR / `java-direct`. The
   IntelliJ-platform dependency that motivated the work is gone from this surface.
   Owns:
-  [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` §2.5](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.5).
+  [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` §2.5](archive/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.5).
 - `CombinedJavaClassFinder` and `BinaryJavaClassFinder` are deleted. The only
   `JavaClassFinder` left is the source-side one — AST-backed by default, PSI-backed during
   the 1–2-release transition behind a flag.
   Owns:
-  [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` §2.4](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.4),
-  [§2.5](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.5).
+  [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` §2.4](archive/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.4),
+  [§2.5](archive/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.5).
 - Classifier resolution goes through one origin-agnostic FIR path; the AST-side resolver
   shrinks to its irreducible core (type parameters, `containingClassIds`, and the
   same-file fast path). Becomes **literally** true post-Step-4.5b, when
@@ -133,7 +133,7 @@ and when*.
 
 | Document | Role | Owns |
 |---|---|---|
-| [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md) | What/why of PSI removal. | Three-phase design, indirect-caller catalogue (§1.5), risks per phase (§2.7). |
+| [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](archive/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md) | What/why of PSI removal. | Three-phase design, indirect-caller catalogue (§1.5), risks per phase (§2.7). |
 | [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md) | What/why of resolver unification. | Five laziness invariants, three failure modes, five-stage migration. |
 | [`UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md`](archive/UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md) | **Superseded** — design space for the L1 / L2 leftovers (alternatives A–F + Step-6 compatibility verdicts). | Kept for fallback closers A / C / F if `FirSession` injection is rejected; the §2 timing-bug analysis remains canonical. |
 | [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md`](archive/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md) | Redesign track for closing the unification residue (L1 + L2); supersedes the alternatives doc. | Deletion of `JavaClassifierType.resolve(...)` and `JavaAnnotation.resolveAnnotation(...)`; per-origin supertype routing; `JavaSupertypeLoopChecker` (cycle bound + diagnostic emission); typed `LazySessionAccess`; `directSupertypeClassIds()` cache on `FirJavaClass` (variant C); per-file plan for Step 4.5a / 4.5b (§5 inserts and Step 4 re-classification **applied 2026-05-06**). |
@@ -179,8 +179,8 @@ Each step uses the same template:
     `JavaPackageIndexer` so `IntelliJFullPipelineTestsGenerated` representative tests
     pass.
 - **References**:
-  [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` §2.2](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.2),
-  [§2.6 Phase 1](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.6).
+  [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` §2.2](archive/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.2),
+  [§2.6 Phase 1](archive/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.6).
 
 #### Step 2 — Unification Stages 1–2 (mechanical, risk-free)
 
@@ -250,7 +250,7 @@ Each step uses the same template:
   existing Phase-1 entries.
 - **References**:
   [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Verification under realistic loads](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md);
-  [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` §2.7 Phase 1](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.7).
+  [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` §2.7 Phase 1](archive/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.7).
 
 #### Step 4.5a — `FirSession` injection + `resolve(...)` deletion + drop Phase 1 (closes L1)
 
@@ -337,10 +337,10 @@ Each step uses the same template:
   symbol-creation counter on the same testbed. Any new regression is attributable to
   Phase 2 alone, since Steps 1–5 set the prior baseline.
 - **References**:
-  [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` §2.4](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.4)
+  [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` §2.4](archive/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.4)
   (all subsections),
-  [§2.6 Phase 2](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.6),
-  [§2.7 Phase 2](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.7).
+  [§2.6 Phase 2](archive/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.6),
+  [§2.7 Phase 2](archive/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.7).
 
 #### Step 7 — PSI Phase 3: source-only AST/PSI switch + 1–2-release transition
 
@@ -358,9 +358,9 @@ Each step uses the same template:
   both source-finder choices); once both legs are green and the transition window has
   elapsed, the PSI leg is removed.
 - **References**:
-  [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` §2.5](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.5),
-  [§2.6 Phase 3](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.6),
-  [§2.7 Phase 3](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.7).
+  [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` §2.5](archive/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.5),
+  [§2.6 Phase 3](archive/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.6),
+  [§2.7 Phase 3](archive/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.7).
 
 ## 6. Coupling points and shared work
 
@@ -374,7 +374,7 @@ one of the source documents; this section flags the linkage.
   `FirDirectJavaActualDeclarationExtractor`, Lombok's `AbstractBuilderGenerator`, the
   LL-FIR Analysis API component). The audit becomes a propagation, not an invention —
   which is the second-largest reason to do unification first. See PSI doc
-  [§2.4.4](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.4) and unification doc
+  [§2.4.4](archive/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.4) and unification doc
   [§Stage 3](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md).
 - **Doc-wording follow-ups when Step 6 lands.** The unification doc's chain quote
   `tryResolve(ClassId) → JvmSymbolProvider → CombinedJavaClassFinder → BinaryJavaClassFinder (miss) → JavaClassFinderOverAstImpl`
@@ -391,7 +391,7 @@ one of the source documents; this section flags the linkage.
   single redesign's effect. Without the split, a regression observed only at the end of
   the combined work would have to be bisected by hand between the two threads.
 - **Phase-1 follow-up failures.** As of 2026-05-04 the original six `assertEqualsToFile`
-  divergences (PSI doc [§2.6 Phase 1](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.6)) are
+  divergences (PSI doc [§2.6 Phase 1](archive/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.6)) are
   resolved on the source half (ancestor `findPackage` + `;`-tolerant `PACKAGE_REGEX`; see
   [`ITERATION_RESULTS.md`](../ITERATION_RESULTS.md) 2026-05-04 entry "Phase 1 follow-up:
   fix the six failures triggered by enabling `BinaryJavaClassFinder`"). Step 5's sweep
@@ -442,7 +442,7 @@ safer-to-debug ordering wins.
   annotation resolution callback pattern.
 - [`implDocs/RESOLUTION_PIPELINE.md`](RESOLUTION_PIPELINE.md) — end-to-end resolution
   pipeline reference.
-- [`implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md)
+- [`implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](archive/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md)
   — the *what* and *why* of PSI removal. Owns the three-phase design and risks.
 - [`implDocs/archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md)
   — the *what* and *why* of resolver unification. Owns the laziness invariants and

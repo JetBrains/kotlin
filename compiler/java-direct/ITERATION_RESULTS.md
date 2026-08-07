@@ -36,6 +36,29 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-07 — `compiler/java-direct/src` is PSI-free and off `:compiler:cli`
+- **Change**: java-direct now receives only abstract inputs. New `BinaryClassRoots` /
+  `TopLevelClassFileCandidates` / `BinaryClassFileHandle` seam in `frontend.common.jvm`, implemented
+  by `JvmDependenciesIndexBinaryRoots` in `:compiler:cli`, which is now the only owner of the
+  session's `GlobalSearchScope`, the `asPsiSearchScope()` downcast and the `ct.sym` extension choice.
+  `JavaModuleFinder` and the Java source roots are passed in instead of fished out of
+  `CoreJavaFileManager` / `CLIConfigurationKeys`, which also removes the `?: EMPTY` fallback that
+  silently disabled `import module M;`. `readBinaryJavaClass` takes a handle; `JavaModuleInfo.read`
+  takes a `ClassIdToJavaClass`. `FirJavaFacadeForSource` → `FirJavaFacadeWithFixedModuleData`.
+  `FirJavaElementFinder` proved unreachable under java-direct (all four entry points throwing, full
+  suites still green), so registration is gated on `!useJavaDirect`. Details: `implDocs/PSI_FREE_ROADMAP.md`.
+- **Files**: `BinaryClassRoots.kt` (new), `JvmDependenciesIndexBinaryRoots.kt` (new),
+  `JavaDirectModuleBoundaryTest.kt` (new), `JavaClassFinderOverBinaryIndex.kt`,
+  `JavaDirectFacadeBuilder.kt`, `build.gradle.kts`, `JvmFrontendPipelinePhase.kt`,
+  `BinaryJavaClassReader.kt`, `JavaModuleInfo.kt`, `CliJavaModuleFinder.kt`,
+  `ClasspathRootsResolver.kt`, `KotlinCliJavaFileManagerImpl.kt`, `FirJavaFacade.kt`,
+  `JvmClassFileBasedSymbolProvider.kt`, `LLFirJavaSymbolProvider.kt`.
+- **Tests**: `JavaUsingAst{Phased,Box}TestGenerated` 2798/2798 + `JavaParsing*` +
+  `JavaDirectModuleBoundaryTest` green; PSI gate `PhasedJvmDiagnosticLightTreeTestGenerated` and
+  `CompileKotlinAgainstKotlin` gate green before and after.
+- **Result**: green. `BinaryClassFileHandle.virtualFile` stays as the one transitional accessor —
+  `BinaryJavaClass` is still `VirtualFile`-bound; that is the platform-free (NIO) axis.
+
 ### 2026-08-07 — Module import declarations (`import module M;`, JLS 7.5.5 / KT-84499)
 - **Change**: two independent gaps. (1) Parser: `FileParser` rolls back to lexeme 0 when a file has
   no package statement, and `rollbackTo` leaves `myTokenTypeChecked = true`, so `tokenType` reported

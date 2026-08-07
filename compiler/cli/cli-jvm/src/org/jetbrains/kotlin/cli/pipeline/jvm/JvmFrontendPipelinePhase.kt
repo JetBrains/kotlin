@@ -50,17 +50,21 @@ import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.java.direct.JavaSourceRootEntry
 import org.jetbrains.kotlin.java.direct.createJavaDirectJavaFacadeBuilder
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassRoots
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.modules.Module
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.hmppModuleName
 import org.jetbrains.kotlin.psi.isCommonSource
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -331,6 +335,26 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         return libraryList
     }
 
+    private fun CompilerConfiguration.javaSourceRootEntries(): List<JavaSourceRootEntry> =
+        getList(CLIConfigurationKeys.CONTENT_ROOTS)
+            .filterIsInstance<JavaSourceRoot>()
+            .map { root ->
+                val prefix = root.packagePrefix?.takeIf { it.isNotEmpty() }?.let(::FqName) ?: FqName.ROOT
+                JavaSourceRootEntry(root.file, prefix)
+            }
+
+    @Suppress("UnstableApiUsage")
+    private fun VfsBasedProjectEnvironment.binaryClassRootsForScope(): (AbstractProjectFileSearchScope) -> BinaryClassRoots {
+        val finderFactory = VirtualFileFinderFactory.getInstance(project) as CliVirtualFileFinderFactory
+        return finderFactory.binaryClassRootsForScope()
+    }
+
+    /** The Java module graph of the current compilation, or a finder observing no modules at all. */
+    private fun VfsBasedProjectEnvironment.javaModuleFinder(): JavaModuleFinder {
+        val fileManager = project.getService(CoreJavaFileManager::class.java) as? KotlinCliJavaFileManagerImpl
+        return fileManager?.javaModuleFinder ?: JavaModuleFinder { null }
+    }
+
     fun <F> prepareJvmSessions(
         files: List<F>,
         rootModuleName: Name,
@@ -357,7 +381,12 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         val javaDirectFacade =
             if (configuration.useJavaDirect) {
-                createJavaDirectJavaFacadeBuilder(configuration, projectEnvironment, javaSourcesScope)
+                createJavaDirectJavaFacadeBuilder(
+                    configuration.javaSourceRootEntries(),
+                    projectEnvironment.binaryClassRootsForScope(),
+                    projectEnvironment.javaModuleFinder(),
+                    javaSourcesScope,
+                )
             } else AbstractProjectEnvironment::getFirJavaFacade
 
         val context = FirJvmSessionFactory.Context(
@@ -459,7 +488,10 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     extensionRegistrars,
                     configuration,
                     context,
-                    needRegisterJavaElementFinder = true,
+                    // `FirJavaElementFinder` exposes Kotlin classes to PSI-based Java resolution as PSI class
+                    // stubs. java-direct serves the Kotlin-to-Java direction from FIR instead, and never
+                    // queries `PsiElementFinder`.
+                    needRegisterJavaElementFinder = !configuration.useJavaDirect,
                     kmpModuleKind = kmpModuleKind,
                     createJavaFacade = javaDirectFacade,
                     init = sessionConfigurator,
