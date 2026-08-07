@@ -34,6 +34,18 @@ public class CompiledJvmAbiStubsTestGenerated extends AbstractCompiledJvmAbiStub
   }
 
   @Test
+  @TestMetadata("inlineClassWithPrivateProperty.kt")
+  public void testInlineClassWithPrivateProperty() {
+    run("inlineClassWithPrivateProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineClassWithPublicConstructor.kt")
+  public void testInlineClassWithPublicConstructor() {
+    run("inlineClassWithPublicConstructor.kt");
+  }
+
+  @Test
   @TestMetadata("inlineClassWithTypeParameterUnderlyingType.kt")
   public void testInlineClassWithTypeParameterUnderlyingType() {
     run("inlineClassWithTypeParameterUnderlyingType.kt");

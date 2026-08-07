@@ -761,6 +761,18 @@ public class DecompiledJsTextTestGenerated extends AbstractDecompiledJsTextTest 
   }
 
   @Test
+  @TestMetadata("inlineClassWithEscapedPropertyName.kt")
+  public void testInlineClassWithEscapedPropertyName() {
+    run("inlineClassWithEscapedPropertyName.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineClassWithSameNamedProperties.kt")
+  public void testInlineClassWithSameNamedProperties() {
+    run("inlineClassWithSameNamedProperties.kt");
+  }
+
+  @Test
   @TestMetadata("inlineClassWithTypeParameter.kt")
   public void testInlineClassWithTypeParameter() {
     run("inlineClassWithTypeParameter.kt");

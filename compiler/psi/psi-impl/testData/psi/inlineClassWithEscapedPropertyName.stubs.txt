@@ -1,0 +1,30 @@
+FILE[kind=File[packageFqName=<root>]]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/PublicValue, fqName=PublicValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PublicValue, superNames=[]]
+    MODIFIER_LIST[value]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=JvmInline]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PublicValue]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=PublicValue.underlying property, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=underlying property]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+  CLASS[classId=/PrivateValue, fqName=PrivateValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PrivateValue, superNames=[]]
+    MODIFIER_LIST[value]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=JvmInline]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PrivateValue]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=PrivateValue.underlying property, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=underlying property]
+          MODIFIER_LIST[private]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
