@@ -10,7 +10,5 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 
 /**
  * Covers .knm files
- *
- * @see org.jetbrains.kotlin.analysis.decompiler.psi.js.AbstractDecompiledJsTextTest
  */
 abstract class AbstractCompiledJsStubsTest : AbstractCompiledStubsTest(JsPlatforms.defaultJsPlatform)
