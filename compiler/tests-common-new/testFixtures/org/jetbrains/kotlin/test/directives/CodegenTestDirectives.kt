@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.File
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.SplittingModuleTransformerForBoxTests
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
 
@@ -121,7 +123,7 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Dumps generated backend IR of preprocessed inline functions (enables ${IrPreprocessedInlineFunctionDumpHandler::class})"
     )
 
-    val DUMP_IR_DIFFERENCE by enumDirective<TargetBackend>(
+    val DUMP_IR_DIFFERENCE by enumDirective<TargetBackendClassifier>(
         description = "Specifies list of target backends which have different golden data for IR dumps"
     )
 
@@ -181,12 +183,11 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         applicability = File
     )
 
-    val SEPARATE_SMAP_DUMPS by directive(
+    @OptIn(TestInfrastructureInternals::class)
+    val SEPARATE_MODULE_DUMPS by directive(
         description = """
-            If enabled then ${SMAPDumpHandler::class} will dump smap dumps
-              into ${SMAPDumpHandler.SMAP_SEP_EXT} and ${SMAPDumpHandler.SMAP_EXT}
-              files instead of ${SMAPDumpHandler.SMAP_EXT} depending of module
-              structure of test
+            If enabled then files split using ${SplittingModuleTransformerForBoxTests::class}
+              will have a `${SplittingModuleTransformerForBoxTests.SeparateModuleClassifier.classifier.extension}` classifier
         """.trimIndent()
     )
 

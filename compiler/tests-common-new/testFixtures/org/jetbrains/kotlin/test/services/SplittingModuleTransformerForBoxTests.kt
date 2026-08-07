@@ -10,9 +10,12 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.RegisteredDirectivesBuilder
-import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_STATE_MACHINE
-import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.WITH_COROUTINES
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SEPARATE_MODULE_DUMPS
+import org.jetbrains.kotlin.test.directives.SingleTestDumpClassifier
+import org.jetbrains.kotlin.test.directives.TestDumpClassifier
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.DependencyRelation
@@ -34,6 +37,13 @@ import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl
 class SplittingModuleTransformerForBoxTests(
     private val testServices: TestServices,
 ) : ModuleStructureTransformer() {
+    object SeparateModuleClassifier : SingleTestDumpClassifier<SeparateModuleClassifier>("separate") {
+        override fun fixedClassifiers(directives: RegisteredDirectives): List<TestDumpClassifier<SeparateModuleClassifier>> {
+            return if (SEPARATE_MODULE_DUMPS !in directives) emptyList() // disable the classifier completely
+            else listOf(classifier) // force `separate` dump
+        }
+    }
+
     /**
      * WARNING: `testServices` is not yet fully completed at the moment of `transformModuleStructure()` invocation,
      * so should be accessed with caution (e.g. they don't have initialized `testModuleStructure`).
@@ -59,7 +69,9 @@ class SplittingModuleTransformerForBoxTests(
             name = "lib",
             files = firstModuleFiles + additionalFiles,
             allDependencies = emptyList(),
-            module.directives,
+            RegisteredDirectivesBuilder(module.directives).apply {
+                TestDumpDirectives.DUMP_CLASSIFIER with SeparateModuleClassifier.classifier
+            }.build(),
             module.languageVersionSettings
         )
 
@@ -69,6 +81,7 @@ class SplittingModuleTransformerForBoxTests(
             allDependencies = listOf(DependencyDescription(firstModule, DependencyKind.Binary, DependencyRelation.FriendDependency)),
             RegisteredDirectivesBuilder(module.directives).apply {
                 -CodegenTestDirectives.IGNORE_FIR_DIAGNOSTICS
+                TestDumpDirectives.DUMP_CLASSIFIER with SeparateModuleClassifier.classifier
             }.build(),
             module.languageVersionSettings
         )

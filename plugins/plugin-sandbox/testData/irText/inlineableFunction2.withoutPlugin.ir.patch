@@ -1,0 +1,29 @@
+--- a/inlineableFunction2.ir.txt
++++ b/inlineableFunction2.withoutPlugin.ir.txt
+@@ -18,7 +18,7 @@
+   FUN name:runInlineable visibility:public modality:FINAL returnType:kotlin.Unit
+     VALUE_PARAMETER kind:Regular name:block index:0 type:@[MyInlineable] kotlin.Function0<kotlin.Unit>
+     BLOCK_BODY
+-      CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
++      CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+         ARG <this>: GET_VAR 'block: @[MyInlineable] kotlin.Function0<kotlin.Unit> declared in <root>.runInlineable' type=@[MyInlineable] kotlin.Function0<kotlin.Unit> origin=null
+   FUN name:test visibility:public modality:FINAL returnType:kotlin.Int
+     BLOCK_BODY
+@@ -27,8 +27,6 @@
+       VAR name:l type:@[MyInlineable] kotlin.Function0<kotlin.Unit> [val]
+         FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+-            annotations:
+-              MyInlineable
+             BLOCK_BODY
+               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                 BLOCK type=kotlin.Int origin=POSTFIX_INCR
+@@ -51,8 +49,6 @@
+       CALL 'public final fun runInlineable (block: @[MyInlineable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+         ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+-            annotations:
+-              MyInlineable
+             BLOCK_BODY
+               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                 BLOCK type=kotlin.Int origin=POSTFIX_INCR

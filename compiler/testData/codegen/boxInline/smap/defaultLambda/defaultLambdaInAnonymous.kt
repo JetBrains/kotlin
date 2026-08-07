@@ -1,5 +1,5 @@
 
-// SEPARATE_SMAP_DUMPS
+// SEPARATE_MODULE_DUMPS
 // SKIP_INLINE_CHECK_IN: lParams$default
 
 // FILE: 1.kt

@@ -59,7 +59,7 @@ abstract class AbstractLLPartialDiagnosticsTest : AbstractLLCompilerBasedTest() 
         useAfterAnalysisCheckers(::ControlFlowGraphConsistencyChecker)
         useMetaTestConfigurators({ testServices -> CustomOutputDiagnosticsConfigurator(".partialBody.", testServices) })
         defaultDirectives {
-            TestDumpDirectives.DUMP_CLASSIFIER with "partialBody"
+            TestDumpDirectives.DUMP_CLASSIFIER with LLClassifier.PartialBody
         }
     }
 }

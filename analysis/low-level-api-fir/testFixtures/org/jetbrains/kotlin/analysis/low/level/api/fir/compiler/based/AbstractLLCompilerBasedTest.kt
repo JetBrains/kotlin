@@ -29,10 +29,12 @@ import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.testConfiguration
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.EXPLICITLY_GENERATE_PLUGIN_FILES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
+import org.jetbrains.kotlin.test.directives.TestDumpClassifier
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.TestDumpRoot
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifactImpl
@@ -96,7 +98,7 @@ abstract class AbstractLLCompilerBasedTest : AbstractKotlinCompilerTest() {
         defaultDirectives {
             FIR_PARSER with FirParser.Psi
             +EXPLICITLY_GENERATE_PLUGIN_FILES
-            TestDumpDirectives.DUMP_CLASSIFIER with "ll"
+            TestDumpDirectives.DUMP_CLASSIFIER with LLClassifier.LL
         }
 
         FirLowLevelCompilerBasedTestConfigurator.configureTest(this, disposable)
@@ -170,6 +172,21 @@ abstract class AbstractLLCompilerBasedTest : AbstractKotlinCompilerTest() {
                 analyzerFacade,
                 analyzerFacade.allFirFiles
             )
+        }
+    }
+
+    enum class LLClassifier(override val compatibleWith: LLClassifier? = null) :
+        TestDumpClassifier<LLClassifier.Root> {
+        LL {
+            override val extension: String = "ll"
+        },
+        PartialBody(LL),
+        Reversed(LL);
+
+        override val root get() = Root
+
+        companion object Root : TestDumpRoot<Root>("ll") {
+            override fun calculateClassifiers() = entries
         }
     }
 
