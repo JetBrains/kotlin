@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
@@ -53,23 +54,14 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         // with overlapping browser configurations don't cause DuplicateTaskException.
         // locateOrRegisterTask returns the existing task when already registered by another target.
         val browserInstallTasks = browserTestDsl.allBrowserRunners.get().values
-            .map { runner ->
-                when (runner) {
-                    is KotlinFirefoxTestRunner -> PwBrowserKind.FIREFOX
-                    is KotlinWebkitTestRunner -> PwBrowserKind.WEBKIT
-                    is KotlinChromiumTestRunner -> PwBrowserKind.CHROMIUM
-                    else -> throw IllegalArgumentException("Unsupported browser runner: ${runner::class.simpleName}")
-                }
-            }
-            .distinct()
-            .map { browserType ->
-                project.locateOrRegisterTask<PlaywrightBrowserInstall>(browserType.getPwInstallBrowserTaskName(), args = listOf(testCompilation)) {
-                    browsers.add(browserType.browserName)
-                }
-                if (testTaskProvider.get().browserDebugRequested.get()){
-                    browsers.add("chromium")
-                }
-            }
+            .map { runner -> runner.pwBrowserKind() }
+            .toSet()
+            .map { browserKind -> project.registerBrowserInstall(browserKind, testCompilation) }
+
+        // Debug always goes through Chromium CDP, even if only Firefox or WebKit is set up.
+        // --browser-debug is parsed after configuration, so the task is always registered here and
+        // only depended on lazily below.
+        val chromiumInstallTask = project.registerBrowserInstall(PwBrowserKind.CHROMIUM, testCompilation)
 
         testTaskProvider.configure { testTask ->
             val objects = project.objects
@@ -79,6 +71,9 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
             // Per-browser tasks are independent and can run in parallel.
             // KT-87599: Design host-wide toolchain management
             browserInstallTasks.forEach { installTask -> testTask.dependsOn(installTask) }
+            testTask.dependsOn(
+                testTask.browserDebugRequested.map { if (it) listOf(chromiumInstallTask) else emptyList() }
+            )
 
             // All install tasks write to the same global browsers directory; any one is sufficient to derive the path.
             inputs.playwrightBrowsersDirectory.set(browserInstallTasks.first().flatMap { it.outputDir })
@@ -114,11 +109,22 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
     }
 }
 
-private fun KotlinBrowserTestRunnerDsl.playwrightBrowserName(): String =
+private fun Project.registerBrowserInstall(
+    browserKind: PwBrowserKind,
+    testCompilation: KotlinJsIrCompilation,
+): TaskProvider<PlaywrightBrowserInstall> =
+    locateOrRegisterTask<PlaywrightBrowserInstall>(
+        browserKind.getPwInstallBrowserTaskName(),
+        args = listOf(testCompilation),
+    ) {
+        browsers.add(browserKind.browserName)
+    }
+
+private fun KotlinBrowserTestRunnerDsl.pwBrowserKind(): PwBrowserKind =
     when (this) {
-        is KotlinFirefoxTestRunner -> "firefox"
-        is KotlinWebkitTestRunner -> "webkit"
-        is KotlinChromiumTestRunner -> "chromium"
+        is KotlinFirefoxTestRunner -> PwBrowserKind.FIREFOX
+        is KotlinWebkitTestRunner -> PwBrowserKind.WEBKIT
+        is KotlinChromiumTestRunner -> PwBrowserKind.CHROMIUM
         else -> throw IllegalArgumentException("Unsupported browser runner: ${this::class.simpleName}")
     }
 

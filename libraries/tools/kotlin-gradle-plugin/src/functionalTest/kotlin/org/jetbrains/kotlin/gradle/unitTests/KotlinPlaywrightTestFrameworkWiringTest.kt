@@ -27,16 +27,12 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PLAYWRIGHT_VERSION
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
-import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
-import java.io.File
 import java.net.ServerSocket
 import org.junit.jupiter.api.io.TempDir
 import java.net.URI
-import java.net.URLDecoder
-import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 import java.time.Duration
 import kotlin.test.Test
@@ -311,17 +307,32 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         val location = mockLocation(setup.project, URI("http://localhost:12345/test.html"))
         framework.frameworkTaskInputs.firefoxRunners.get().single().testsLocation.set(location)
 
-        val installTask = assertIs<PlaywrightBrowserInstall>(
-            setup.project.tasks.getByName("kotlinInstallPlaywrightBrowsers")
+        val firefoxInstallTask = assertIs<PlaywrightBrowserInstall>(
+            setup.project.tasks.getByName(PwBrowserKind.FIREFOX.getPwInstallBrowserTaskName())
         )
-        assertEquals(setOf("firefox"), installTask.browsers.get().toSet())
+        assertEquals(setOf("firefox"), firefoxInstallTask.browsers.get().toSet())
+
+        val chromiumInstallTask = assertIs<PlaywrightBrowserInstall>(
+            setup.project.tasks.getByName(PwBrowserKind.CHROMIUM.getPwInstallBrowserTaskName())
+        )
+        assertEquals(setOf("chromium"), chromiumInstallTask.browsers.get().toSet())
+
+        val testTask = setup.jsBrowserTestTask
+        assertFalse(
+            testTask.taskDependencies.getDependencies(testTask).contains(chromiumInstallTask),
+            "Expected no Chromium install dependency without browser debugging"
+        )
 
         val debuggerReadyPort = ServerSocket(0).use { it.localPort }
-        setup.jsBrowserTestTask.browserDebugPort.set("32123")
-        setup.jsBrowserTestTask.browserDebugReadyPort.set(debuggerReadyPort.toString())
-        setup.jsBrowserTestTask.browserDebugReadyTimeout.set("45000")
+        testTask.browserDebugPort.set("32123")
+        testTask.browserDebugReadyPort.set(debuggerReadyPort.toString())
+        testTask.browserDebugReadyTimeout.set("45000")
 
-        assertEquals(setOf("firefox", "chromium"), installTask.browsers.get().toSet())
+        // The option is only set once the task is selected, so the dependency has to resolve lazily.
+        assertTrue(
+            testTask.taskDependencies.getDependencies(testTask).contains(chromiumInstallTask),
+            "Expected a debug run to depend on the Chromium install task"
+        )
 
         val npmToolingEnv = setup.project.layout.buildDirectory.dir("test-npm-tooling").get().asFile
         npmToolingEnv.resolve("node_modules/playwright-core/cli.js").apply {
