@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.common.LoadedNativeKlibs
 import org.jetbrains.kotlin.backend.common.diagnostics.SerializationErrors
 import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqueNames
-import org.jetbrains.kotlin.backend.common.loadFriendLibraries
+import org.jetbrains.kotlin.backend.common.selectLibrariesByPaths
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
@@ -82,12 +82,12 @@ fun loadNativeKlibs(
 
     return LoadedNativeKlibs(
         all = result.librariesStdlibFirst,
-        friends = result.loadFriendLibraries(configuration.konanFriendLibraries),
-        exported = result.loadFriendLibraries(configuration.exportedLibraries)
+        friends = result.selectLibrariesByPaths(libraryPaths = configuration.konanFriendLibraries),
+        exported = result.selectLibrariesByPaths(libraryPaths = configuration.exportedLibraries)
             .selectLibrariesEligibleToBeIncludedOrExported(configuration, K2NativeCompilerArguments::exportedLibraries),
-        included = result.loadFriendLibraries(configuration.konanIncludedLibraries)
+        included = result.selectLibrariesByPaths(libraryPaths = configuration.konanIncludedLibraries)
             .selectLibrariesEligibleToBeIncludedOrExported(configuration, K2NativeCompilerArguments::includes),
-        toAddToCache = result.loadFriendLibraries(listOfNotNull(configuration.konanLibraryToAddToCache)).firstOrNull(),
+        toAddToCache = result.selectLibrariesByPaths(libraryPaths = listOfNotNull(configuration.konanLibraryToAddToCache)).firstOrNull(),
     )
 }
 
