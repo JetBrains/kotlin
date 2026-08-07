@@ -26,6 +26,12 @@ interface TestLifecycleTasksModel : Serializable {
          * The identityPath of the task
          */
         val path: String
+
+        /**
+         * The [org.jetbrains.kotlin.testFederation.toArgumentString] representation of the set of domains
+         * this test belongs to
+         */
+        val domains: String
     }
 
     interface TestLifecycleTask : Serializable {
@@ -77,12 +83,14 @@ internal data class TestLifecycleTaskImpl(
 
 internal data class TestTaskImpl(
     override val path: String,
+    override val domains: String,
 ) : TestLifecycleTasksModel.TestTask
 
 internal fun Project.configureTestLifecycleTasksModelBuilder() {
     serviceOf<ToolingModelBuilderRegistry>().register(TestLifecycleTasksModelBuilder())
 }
 
+@OptIn(DelicateTestFederationApi::class)
 class TestLifecycleTasksModelBuilder : ToolingModelBuilder {
     override fun canBuild(modelName: String): Boolean {
         return modelName == TestLifecycleTasksModel::class.java.name
@@ -91,7 +99,12 @@ class TestLifecycleTasksModelBuilder : ToolingModelBuilder {
     override fun buildAll(modelName: String, project: Project): Any {
         val testTasks = project.tasks.withType<AbstractTestTask>().toList()
             .filter { testTask -> testTask.isRelevant() }
-            .map { testTask -> TestTaskImpl(testTask.identityPath.asString()) }
+            .map { testTask ->
+                TestTaskImpl(
+                    testTask.identityPath.asString(),
+                    testTask.testFederationDomains.get().toArgumentString()
+                )
+            }
 
         val testLifecycleTasks = project.tasks.withType<TestLifecycleTask>().toList()
             .map { testLifecycleTask -> buildLifecycleTask(testLifecycleTask) }

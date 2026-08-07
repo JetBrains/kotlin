@@ -127,6 +127,30 @@ class TestFederationFunctionalTest {
         )
     }
 
+    /**
+     * We override the test task to
+     */
+    @Test
+    fun `test - Test testFederationDomains`() {
+        /* Js affected, test task belongs to no domain -> only contract is executed */
+        run {
+            val result = runTestBuild(affected = arrayOf(Domain.Js), testTaskDomainsOverride = listOf())
+            assertEquals(
+                setOf(
+                    TestResult("PseudoTest", "smoke test"),
+                    TestResult("PseudoTest", "js contract test")
+                ),
+                result.executedTests
+            )
+        }
+
+        /* Js affected, test task is configured to belong to Js and Wasm -> all tests are executed */
+        run {
+            val result = runTestBuild(affected = arrayOf(Domain.Js), testTaskDomainsOverride = listOf(Domain.Js, Domain.Wasm))
+            assertEquals(allTests, result.executedTests)
+        }
+    }
+
     @Test
     fun `test - test federation disabled`() {
         /* Test with federation enabled */
@@ -345,9 +369,10 @@ private data class TestBuildResult(
  * All executed tests are parsed and returned in [TestBuildResult.executedTests].
  */
 private fun runTestBuild(
-    mode: TestFederationMode,
+    mode: TestFederationMode? = null,
     vararg affected: Domain,
     smokeTestConfig: String? = null,
+    testTaskDomainsOverride: List<Domain>? = null,
     testFederationEnabled: Boolean = true,
     nightly: Boolean? = null,
     rerun: Boolean = true,
@@ -358,10 +383,16 @@ private fun runTestBuild(
         remove(TEST_FEDERATION_MODE_ENV_KEY)
         remove(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)
 
-        this[TEST_FEDERATION_MODE_ENV_KEY] = mode.name
+        if (mode != null) {
+            this[TEST_FEDERATION_MODE_ENV_KEY] = mode.name
+        }
 
         if (smokeTestConfig != null) {
             this["_PSEUDO_TEST_"] = smokeTestConfig
+        }
+
+        if (testTaskDomainsOverride != null) {
+            this["_DOMAINS_OVERRIDE_"] = testTaskDomainsOverride.toArgumentString()
         }
 
         this[TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY] = if (affected.isNotEmpty()) {
