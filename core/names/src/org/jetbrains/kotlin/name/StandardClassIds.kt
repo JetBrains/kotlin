@@ -266,6 +266,14 @@ object StandardClassIds {
 
         val UsedFromCompilerGeneratedCode = "UsedFromCompilerGeneratedCode".internalId()
 
+        /**
+         * `kotlin.internal.ReflectionPackageName`: a file annotation making the backend store the given package name
+         * in the reflective information of the classes declared in the file, instead of the real one.
+         *
+         * Used by the test infrastructure, which renames packages when compiling several tests into one batch.
+         */
+        val ReflectionPackageName = "ReflectionPackageName".internalId()
+
         object ParameterNames {
             val value = Name.identifier("value")
 

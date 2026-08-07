@@ -218,7 +218,7 @@ private class ExtTestDataFile(
         }
 
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNative" // for `Any.isPermanent()` and `Any.isStack()`
-        nativeReflectionPackageNameAnnotation.requiredOptInMarkers.mapTo(args) { "-opt-in=$it" }
+        ReflectionPackageNameAnnotation.requiredOptInMarkers.mapTo(args) { "-opt-in=$it" }
         if (!settings.withPlatformLibs && !structure.directives.contains(WITH_PLATFORM_LIBS))
             args += "-no-default-libs"
         val freeCInteropArgs = structure.directives[FREE_CINTEROP_ARGS]
@@ -317,7 +317,7 @@ private class ExtTestDataFile(
                 oldToNewPackageNameMapping,
                 basePackageName,
                 transformHelpersPackage = false,
-                reflectionPackageNameAnnotation = nativeReflectionPackageNameAnnotation,
+                reflectionPackageNameAnnotation = ReflectionPackageNameAnnotation,
             )
             handler.accept(visitor, emptySet())
         }

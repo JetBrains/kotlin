@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.computeBlackBoxTestInstances
-import org.jetbrains.kotlin.konan.test.blackbox.support.nativeReflectionPackageNameAnnotation
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createTestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.getOrCreateTestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.TwoStageTestConfigurationBuilder
 import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerNativeTest
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerNativeTest
+import org.jetbrains.kotlin.test.services.ReflectionPackageNameAnnotation
 import org.jetbrains.kotlin.test.services.TestServices
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -54,7 +54,7 @@ abstract class AbstractTwoStageNativeCoreTest : AbstractTwoStageKotlinCompilerNa
             useAdditionalService { // Register TestRunProvider into TestServices
                 extensionContext.getOrCreateTestRunProvider()
             }
-            useAdditionalService { nativeReflectionPackageNameAnnotation }
+            useAdditionalService { ReflectionPackageNameAnnotation }
         }
     }
 }

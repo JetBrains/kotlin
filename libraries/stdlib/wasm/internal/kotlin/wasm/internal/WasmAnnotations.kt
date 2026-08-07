@@ -14,26 +14,6 @@ import kotlin.reflect.KClass
 internal annotation class ExcludedFromCodegen
 
 /**
- * Marks a declaration that is internal for Kotlin/Wasm tests and shouldn't be used externally.
- */
-@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
-@Retention(AnnotationRetention.BINARY)
-internal annotation class InternalForKotlinWasmTests
-
-/**
- * Makes the compiler store [name] instead of the real package FQ name in the reflective information
- * of the classes declared in the annotated file.
- *
- * This annotation is used by the test infrastructure, which renames packages when several tests
- * are compiled together into one batch. Without it, `KClass.qualifiedName`, `KClass.toString()`
- * and the default `Any.toString()` would expose the batch package prefix.
- */
-@InternalForKotlinWasmTests
-@Target(FILE)
-@Retention(AnnotationRetention.BINARY)
-public annotation class ReflectionPackageName(val name: String)
-
-/**
  * Wasm supports two coroutine lowering strategies: using state-machine transformation and
  * stack switching intrinsics. The standard library ships both implementations,
  * we choose only one for a given compilation. Declarations annotated with a mode that

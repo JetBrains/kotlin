@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.GroupingStageHandler
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.CompilationStage
+import org.jetbrains.kotlin.test.services.ReflectionPackageNameAnnotation
 import org.jetbrains.kotlin.test.services.SplittingModuleTransformerForBoxTests
 import org.jetbrains.kotlin.test.services.SplittingTestConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironmentConfigurator
@@ -81,7 +82,7 @@ abstract class AbstractWasmCodegenBoxTest(
                 DIAGNOSTICS with listOf("-infos")
             }
             useConfigurators(::WasmSecondStageEnvironmentConfigurator.bind(wasmTarget))
-            useAdditionalService { wasmReflectionPackageNameAnnotation }
+            useAdditionalService { ReflectionPackageNameAnnotation }
             configureIgnoredTestSuppressor()
             useFailureSuppressors(
                 ::FirMetaInfoDiffSuppressor,

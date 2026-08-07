@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.reflectionPackageName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.parentOrNull
@@ -37,19 +38,9 @@ private val jsFunFqName = FqName("kotlin.JsFun")
 private val jsPrimitiveFqName = FqName("kotlin.wasm.internal.JsPrimitive")
 private val wasmExportFqName = FqName("kotlin.wasm.WasmExport")
 private val jsBuiltinFqName = FqName("kotlin.wasm.internal.JsBuiltin")
-private val reflectionPackageNameFqName = FqName("kotlin.wasm.internal.ReflectionPackageName")
 
 fun IrAnnotationContainer.hasExcludedFromCodegenAnnotation(): Boolean =
     hasAnnotation(excludedFromCodegenFqName)
-
-/**
- * The package name that should be reported in the reflective information for the classes declared in this file
- * instead of the real package name, or `null` if the file is not annotated with `@ReflectionPackageName`.
- *
- * See `kotlin.wasm.internal.ReflectionPackageName`.
- */
-private val IrClass.reflectionPackageName: String?
-    get() = (getPackageFragment() as? IrFile)?.getAnnotation(reflectionPackageNameFqName)?.getConstArgument("name")
 
 /**
  * Everything that precedes the simple name of this class in its fully qualified name: the package name,
@@ -60,7 +51,7 @@ private val IrClass.reflectionPackageName: String?
  */
 fun IrClass.getReflectionQualifier(fqName: FqName): String {
     val qualifier = fqName.parentOrNull() ?: FqName.ROOT
-    val reflectionPackageName = reflectionPackageName ?: return qualifier.asString()
+    val reflectionPackageName = (getPackageFragment() as? IrFile)?.reflectionPackageName ?: return qualifier.asString()
     // Keep the outer class names, replace only the package part.
     return qualifier.tail(getPackageFragment().packageFqName)
         .pathSegments()
