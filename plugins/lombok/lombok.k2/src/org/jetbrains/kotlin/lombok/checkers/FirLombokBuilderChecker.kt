@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.lombok.checkers
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -16,10 +17,13 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.processAllDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.classId
@@ -42,13 +46,35 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
             checkClassProperties(declaration, lombokService)
         }
 
-        // `@SuperBuilder` only allows `TYPE` as a target, so only plain `@Builder` can land on a constructor.
+        // `@SuperBuilder` only allows `TYPE` as a target, so only plain `@Builder` can land on a constructor
+        // or on a function (a companion-object factory function, the Kotlin analogue of a Java static
+        // factory method).
         declaration.processAllDeclarations(context.session) { symbol ->
-            val constructorSymbol = symbol as? FirConstructorSymbol ?: return@processAllDeclarations
-            if (lombokService.getBuilder(constructorSymbol) != null) {
-                checkConstructorParameters(constructorSymbol, lombokService)
+            val functionSymbol = symbol as? FirFunctionSymbol<*> ?: return@processAllDeclarations
+            val builder = lombokService.getBuilder(functionSymbol) ?: return@processAllDeclarations
+            checkFunctionParameters(functionSymbol, lombokService)
+            if (functionSymbol is FirNamedFunctionSymbol) {
+                checkBuilderClassNameIsInferable(functionSymbol, builder)
             }
         }
+    }
+
+    /**
+     * Unless it is spelled out via `builderClassName`, the builder class name is inferred from the annotated
+     * function's return type. That name is needed as early as the SUPERTYPES stage, so it can only be read off
+     * the *syntactic* return type (see `AbstractBuilderGenerator.getBuilderClassShortName`) — an implicitly
+     * typed function leaves nothing to infer it from, and no builder would be generated at all.
+     */
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkBuilderClassNameIsInferable(function: FirNamedFunctionSymbol, builder: ConeLombokAnnotations.Builder) {
+        if (builder.hasSpecifiedBuilderClassName) return
+        // So far a builder is only generated in full for a companion-object function; `@Builder` on any other
+        // Kotlin function isn't supported yet, so there is nothing to demand a return type for. Drop this guard
+        // once the remaining function kinds are supported.
+        if (function.getContainingClassSymbol()?.isCompanion != true) return
+        if (function.resolvedReturnTypeRef.source?.kind != KtFakeSourceElementKind.ImplicitTypeRef) return
+
+        reporter.reportOn(builder.annotation.source, LombokFirDiagnostics.BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE, context)
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -87,8 +113,8 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
      * way a plain property initializer is for a class-level `@Builder`.
      */
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkConstructorParameters(constructor: FirConstructorSymbol, lombokService: LombokService) {
-        for (parameterSymbol in constructor.valueParameterSymbols) {
+    private fun checkFunctionParameters(function: FirFunctionSymbol<*>, lombokService: LombokService) {
+        for (parameterSymbol in function.valueParameterSymbols) {
             parameterSymbol.getAnnotationByClassId(LombokNames.SINGULAR_ID, context.session)?.let { singularAnnotation ->
                 checkSingular(parameterSymbol, singularAnnotation, lombokService)
             }

@@ -63,7 +63,6 @@ import org.jetbrains.kotlin.lombok.java.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -151,6 +150,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         builder: T,
         builderSymbol: FirClassSymbol<*>,
         builderDeclaration: FirDeclaration,
+        substitutor: ConeSubstitutor,
         existingFunctionNames: Set<Name>,
     )
 
@@ -252,9 +252,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val generatedVariables = mutableMapOf<Name, FirVariableSymbol<*>>()
 
         val classWithBuilderAnnotations = if (classSymbol.isCompanion) {
-            // Builders aren't applicable to objects (including companion ones).
-            // The only case when this code is executed is when a companion object with a `@JvmStatic` builder function inside is being generated.
-            // It emulates static functions in Java.
+            // `@Builder` never applies to an object, so a companion is never an entity itself: it merely hosts
+            // the `@JvmStatic` `builder()` functions of its containing entity, emulating Java's static factory
+            // methods. Hence the annotations are looked up on that entity — `extractBuilderWithDeclarations`
+            // collects both the entity's own ones and any declared inside this very companion.
             classSymbol.getContainingClassSymbol() as FirClassSymbol<*>
         } else {
             // Builder functions always belong to builder class in Java and Kotlin.
@@ -286,6 +287,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         existingVariableNames: Set<Name>,
     ) {
         val containingClassSymbol = builderSymbol.getContainingClassSymbol() as? FirClassSymbol<*> ?: return
+        // `containingClassSymbol` is always the entity, never its companion — `createEmptyBuilderClass` always
+        // nests the builder under the entity — so this covers companion-declared `@Builder` functions too.
         val builderWithDeclarations = builderWithDeclarationsCache.getValue(containingClassSymbol) ?: return
         val builderName = builderSymbol.classId.shortClassName.asString()
         val builderFir = builderSymbol.fir as? FirRegularClass
@@ -318,6 +321,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 builder,
                 builderSymbol = builderSymbol,
                 builderDeclaration = declaration,
+                substitutor = substitutor,
                 existingFunctionNames = existingFunctionNames
             )
 
@@ -439,7 +443,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
             val visibility = builder.visibility ?: continue
             val entityClassId = entitySymbol.classId
-            val builderClassName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration))
+            val builderClassName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration) ?: continue)
             val builderClassId = entityClassId.createNestedClassId(builderClassName)
 
             /**
@@ -457,7 +461,14 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     }
                 }
             } else {
-                existingBuilder = entityFir.declarations.firstIsInstanceOrNull<FirClass>()?.symbol
+                // Matched by name rather than "first nested class" because the entity may also have an
+                // unrelated nested class declared first — e.g. an explicit companion object hosting the
+                // `@Builder`-annotated factory function itself.
+                existingBuilder = entityFir.declarations.firstNotNullOfOrNull {
+                    runIf(it is FirRegularClass && it.name == builderClassName) {
+                        it.symbol
+                    }
+                }
             }
 
             fun createBuilderType(typeParameterSymbols: Collection<FirTypeParameter>): ConeClassLikeType {
@@ -578,7 +589,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
             for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
                 if (builder.visibility == null) continue
-                val builderName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration))
+                val builderName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration) ?: continue)
 
                 // Don't generate classes if they already exist
                 if (!existingClassifierNames.contains(builderName)) {
@@ -595,7 +606,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
         for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
             val visibility = builder.visibility ?: continue
-            val builderName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration))
+            val builderName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration) ?: continue)
 
             if (builderName == name) {
                 return owner.createEmptyBuilderClass(
@@ -611,23 +622,46 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         return null
     }
 
+    /**
+     * All `@Builder`-with-declaration pairs relevant to [classSymbol] as an entity: its own
+     * class/constructor/member-function annotations, plus — since a function declared directly inside its
+     * companion object is the Kotlin analogue of a Java static factory method — any `@Builder`-annotated
+     * function declared in that companion.
+     */
     @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
     private fun extractBuilderWithDeclarations(classSymbol: FirClassSymbol<*>): List<BuilderWithDeclaration<T>>? {
+        // A companion object is never an entity in its own right: the Builder class always nests under the
+        // containing entity class, never under its companion, so the companion's own `@Builder`-annotated
+        // functions are only ever collected as part of the containing class's view (below).
+        if (classSymbol.isCompanion) return null
+
         val annotationSymbol = annotationClassId.toSymbol(session) as? FirRegularClassSymbol ?: return emptyList()
-        return buildList {
-            val allowedTargets = annotationSymbol.fir.getAllowedAnnotationTargets(session)
+        val allowedTargets = annotationSymbol.fir.getAllowedAnnotationTargets(session)
 
-            if (allowedTargets.contains(KotlinTarget.CLASS)) {
-                getBuilder(classSymbol)?.let { add(BuilderWithDeclaration(it, classSymbol.fir)) }
-            }
-
-            for (declarationSymbol in classSymbol.declarationSymbols) {
+        fun MutableList<BuilderWithDeclaration<T>>.addAnnotatedCallables(owner: FirClassSymbol<*>) {
+            for (declarationSymbol in owner.declarationSymbols) {
                 if (declarationSymbol is FirConstructorSymbol && allowedTargets.contains(KotlinTarget.CONSTRUCTOR) ||
                     declarationSymbol is FirFunctionSymbol<*> && allowedTargets.contains(KotlinTarget.FUNCTION)
                 ) {
                     getBuilder(declarationSymbol)?.let { add(BuilderWithDeclaration(it, declarationSymbol.fir)) }
                 }
             }
+        }
+
+        return buildList {
+            if (allowedTargets.contains(KotlinTarget.CLASS)) {
+                getBuilder(classSymbol)?.let { add(BuilderWithDeclaration(it, classSymbol.fir)) }
+            }
+
+            addAnnotatedCallables(classSymbol)
+
+            // The raw (non-lazy-resolving) symbol, not `resolvedCompanionObjectSymbol`: this runs as part of a
+            // `FirDeclarationGenerationExtension` callback, and `resolvedCompanionObjectSymbol` would try to
+            // `lazyResolveToPhase(COMPANION_GENERATION)` — a phase this callback is itself running under, which
+            // FIR's lazy-resolve contract forbids (`FirLazyResolveContractViolationException`). An explicitly
+            // source-declared companion (the only kind relevant here — we never generate one) already has its
+            // raw symbol populated well before this phase, so the fast path suffices.
+            (classSymbol as? FirRegularClassSymbol)?.companionObjectSymbol?.let { addAnnotatedCallables(it) }
         }.takeIf { it.isNotEmpty() }
     }
 
@@ -1046,29 +1080,51 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
     }
 
-    private fun T.getBuilderClassShortName(builderDeclaration: FirDeclaration): String {
+    /**
+     * The short name of the builder class to generate for [builderDeclaration], or `null` if it cannot be
+     * inferred at all — in which case no builder is generated.
+     */
+    private fun T.getBuilderClassShortName(builderDeclaration: FirDeclaration): String? {
         val refinedBuilderClassName = builderClassName ?: session.lombokService.config.builderClassName
 
         if (hasSpecifiedBuilderClassName) {
             return refinedBuilderClassName
         }
 
-        val builderClassNamePart = when (builderDeclaration) {
+        val builderClassNamePart: String = when (builderDeclaration) {
             is FirRegularClass -> builderDeclaration.name.asString()
             is FirConstructor -> builderDeclaration.nameOrSpecialName.asString()
             is FirNamedFunction -> {
                 // If the builder class name is not specified explicitly, infer the name from the method's return type
-                // according to Lombok rules
-                when (val returnType = (builderDeclaration.returnTypeRef as? FirJavaTypeRef)?.type) {
-                    is JavaPrimitiveType -> returnType.type?.typeName?.identifier ?: "Void"
-                    is JavaClassifierType -> returnType.classifier?.name?.asString() ?: returnType.presentableText
-                    else -> returnType?.toString() ?: "" // Infer something instead of throwing an exception for unsupported types
+                // according to Lombok rules.
+                //
+                // A branch per type-ref kind is needed because this runs twice over the same declaration, at
+                // different resolution stages: first from `getNestedClassifiersNames`/`generateNestedClassLikeDeclaration`,
+                // as early as SUPERTYPES, where a Kotlin return type is still an unresolved `FirUserTypeRef`, and later
+                // from `generateFunctions`, where it has been replaced by a `FirResolvedTypeRef`. Both runs must yield
+                // the same name — otherwise `builder()` would reference a builder class that was never generated under
+                // that name.
+                when (val returnTypeRef = builderDeclaration.returnTypeRef) {
+                    is FirJavaTypeRef -> when (val returnType = returnTypeRef.type) {
+                        is JavaPrimitiveType -> returnType.type?.typeName?.identifier ?: "Void"
+                        is JavaClassifierType -> returnType.classifier?.name?.asString() ?: returnType.presentableText
+                        else -> null // Skip generation for unsupported types
+                    }
+                    is FirUserTypeRef -> returnTypeRef.qualifier.lastOrNull()?.name?.asString()
+                    is FirResolvedTypeRef -> {
+                        // A bare type parameter (e.g. `fun <M> method(m: M): M`) has no `classId`
+                        val coneType = returnTypeRef.coneType
+                        coneType.classId?.shortClassName?.asString()
+                            ?: (coneType as? ConeTypeParameterType)?.lookupTag?.name?.asString()
+                    }
+                    // An implicit return type: there is nothing to infer the name from, so no builder is
+                    // generated at all. `FirLombokBuilderChecker` reports it as
+                    // `BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE`.
+                    else -> null
                 }
             }
-            else -> {
-                builderDeclaration.toString() // Normally unreachable, but infer something instead of throwing an exception
-            }
-        }
+            else -> null // Normally unreachable, but skip generation just in case
+        } ?: return null
 
         return refinedBuilderClassName.replace("*", builderClassNamePart)
     }
@@ -1113,6 +1169,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             contract {
                 returns(false) implies (this@isStaticDeclaration is FirNamedFunction)
             }
-            return this !is FirNamedFunction || this.isStatic
+            // A function declared directly inside a companion object is the Kotlin analogue of a Java
+            // static factory method, so it's treated as "static" too (e.g. for `@JvmStatic`-marking the
+            // generated `builder()`), even though Kotlin never sets `FirNamedFunction.isStatic` itself.
+            return this !is FirNamedFunction || isStatic || symbol.getContainingClassSymbol()?.isCompanion == true
         }
 }
