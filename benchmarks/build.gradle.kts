@@ -70,6 +70,12 @@ tasks.withType<JavaExec>().matching { it.name == "testBenchmark" }.configureEach
     })
 
     systemProperty("idea.use.native.fs.for.win", false)
+    // JMH JavaExec cwd is the benchmarks project dir; point FIR benches at repo dist stdlib.
+    systemProperty(
+        "kotlin.runtime.path",
+        rootProject.layout.projectDirectory.file("dist/kotlinc/lib/kotlin-stdlib.jar").asFile.absolutePath
+    )
+    workingDir = rootProject.projectDir
 }
 
 tasks.withType<JmhBytecodeGeneratorTask>().configureEach {
