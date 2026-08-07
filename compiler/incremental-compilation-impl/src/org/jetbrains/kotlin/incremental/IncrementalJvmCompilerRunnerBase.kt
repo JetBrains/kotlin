@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getVisibleTypeAliasFqNames
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -60,6 +61,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
     icFeatures: IncrementalCompilationFeatures,
     private val generateCompilerRefIndex: Boolean = false,
     compilationCanceledStatus: CompilationCanceledStatus? = null,
+    pluginsLoader: PluginsLoader?,
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
     workingDir,
     "caches-jvm",
@@ -69,6 +71,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
     kotlinSourceFilesExtensions = kotlinSourceFilesExtensions,
     icFeatures = icFeatures,
     compilationCanceledStatus = compilationCanceledStatus,
+    pluginsLoader = pluginsLoader,
 ) {
     override val shouldStoreFullFqNamesInLookupCache = true
 

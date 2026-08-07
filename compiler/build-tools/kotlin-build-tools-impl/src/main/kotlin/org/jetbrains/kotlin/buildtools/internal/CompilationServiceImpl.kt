@@ -207,7 +207,7 @@ internal object CompilationServiceImpl : CompilationService {
                         outputDirs = options.outputDirs,
                         classpathChanges = classpathChanges,
                         kotlinSourceFilesExtensions = kotlinFilenameExtensions,
-                        icFeatures = icFeatures
+                        icFeatures = icFeatures,
                     )
                 }
 

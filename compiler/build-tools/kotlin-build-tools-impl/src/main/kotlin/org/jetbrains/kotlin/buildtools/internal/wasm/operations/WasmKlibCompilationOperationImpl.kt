@@ -255,7 +255,8 @@ internal class WasmKlibCompilationOperationImpl private constructor(
                 )
             ),
             CompileScopeExpansionMode.ALWAYS,
-            icFeatures
+            icFeatures,
+            executionContext.classloadersCache?.asPluginsLoader(),
         )
 
         arguments.incrementalCompilation = true

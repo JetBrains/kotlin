@@ -270,7 +270,8 @@ internal class JvmCompilationOperationImpl private constructor(
                 snapshotBasedIcOptionsAccessor,
                 classpathChanges,
                 getKotlinFilenameExtensions(),
-                icFeatures
+                icFeatures,
+                executionContext,
             )
         }
 
@@ -342,6 +343,7 @@ internal class JvmCompilationOperationImpl private constructor(
         classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled,
         kotlinFilenameExtensions: Set<String>,
         icFeatures: IncrementalCompilationFeatures,
+        executionContext: ExecutionContext,
     ): IncrementalJvmCompilerRunner =
         IncrementalJvmCompilerRunner(
             workingDirectory.toFile(),
@@ -353,6 +355,7 @@ internal class JvmCompilationOperationImpl private constructor(
             compilationCanceledStatus = cancellationHandle,
             generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
             lookupTrackerDelegate = getLookupTrackerAdapter(),
+            pluginsLoader = executionContext.classloadersCache?.asPluginsLoader()
         )
 
     private fun JvmCompilationOperationImpl.getFirRunner(
