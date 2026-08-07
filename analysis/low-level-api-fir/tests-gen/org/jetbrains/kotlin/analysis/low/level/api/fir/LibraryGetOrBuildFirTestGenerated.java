@@ -137,6 +137,30 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("jvmAbiInlineClassWithPrivateConstructor.kt")
+  public void testJvmAbiInlineClassWithPrivateConstructor() {
+    run("jvmAbiInlineClassWithPrivateConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmAbiInlineClassWithPrivateProperty.kt")
+  public void testJvmAbiInlineClassWithPrivateProperty() {
+    run("jvmAbiInlineClassWithPrivateProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmAbiInlineClassWithPublicConstructor.kt")
+  public void testJvmAbiInlineClassWithPublicConstructor() {
+    run("jvmAbiInlineClassWithPublicConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmAbiInlineClassWithTypeParameterUnderlyingType.kt")
+  public void testJvmAbiInlineClassWithTypeParameterUnderlyingType() {
+    run("jvmAbiInlineClassWithTypeParameterUnderlyingType.kt");
+  }
+
+  @Test
   @TestMetadata("multifileFacadeFunction.kt")
   public void testMultifileFacadeFunction() {
     run("multifileFacadeFunction.kt");
