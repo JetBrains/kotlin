@@ -345,7 +345,6 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         }
     }
 
-    @Disabled // TODO(KT-61096) Re-enable the test once we stop calling `getFeaturedLibraries()` on 2nd stage.
     @Test
     fun `Compiler rejects libraries from the distribution and C-interop libraries as included libs`() {
         doTestCompilerRejectsLibrariesFromDistributionAndCInteropLibraries(testedCliParameter = K2NativeCompilerArguments::includes) { cliArgs ->
