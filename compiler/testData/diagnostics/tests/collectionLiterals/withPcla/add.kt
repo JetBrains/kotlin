@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-88681
 // LANGUAGE: +CollectionLiterals
 // WITH_STDLIB
 
