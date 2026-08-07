@@ -21,10 +21,10 @@ fun <R> funA(
 ) {}
 
 fun <E3 : Enum<E3>> funB() {
-    <!TYPE_MISMATCH("CapturedType(*); Enum<*>")!>funA(
+    funA(
         createInterfaceAKotlin(),
         defaultB(),
-    )<!>
+    )
 
     <!TYPE_MISMATCH("CapturedType(*)?; Enum<*>")!>funA(
         JavaHelper.createInterfaceA(),
