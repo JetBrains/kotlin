@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -72,4 +73,8 @@ class IrBodyBuilderVisitor(private val context: IrPluginContext) : IrVisitorVoid
 
 sealed class IrBodyBuilder<T : GeneratedDeclarationKey> {
     abstract fun IrBlockBodyBuilder.build(key: T, declaration: IrSimpleFunction)
+
+    /** The builders are always invoked from [IrBodyBuilderVisitor], which passes its [IrPluginContext] to the body builder. */
+    protected val IrBuilderWithScope.pluginContext: IrPluginContext
+        get() = context as IrPluginContext
 }
