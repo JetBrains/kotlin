@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassBody
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -140,6 +141,7 @@ private class ClassClsStubBuilder(
         )
     }
 
+    @OptIn(KtImplementationDetail::class)
     private fun doCreateClassOrObjectStub(): StubElement<out PsiElement> {
         val fqName = classId.asSingleFqName()
         val shortName = fqName.shortName().ref()
@@ -195,6 +197,7 @@ private class ClassClsStubBuilder(
      *
      * @see org.jetbrains.kotlin.serialization.deserialization.loadValueClassRepresentation
      */
+    @OptIn(KtImplementationDetail::class)
     private fun createValueClassRepresentation(): KotlinValueClassRepresentation? {
         // TODO(KT-88416): build 'KotlinFullValueClassRepresentation' for full value classes
         if (!classProto.hasInlineClassUnderlyingPropertyName()) return null

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtProjectionKind
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import java.lang.reflect.Modifier
@@ -56,6 +57,7 @@ private fun IndentedTextBuilder.extractAdditionInfo(stub: StubElement<*>) {
     }
 }
 
+@OptIn(KtImplementationDetail::class)
 private fun IndentedTextBuilder.appendValue(value: Any?) {
     when (value) {
         is Map<*, *> -> appendValue(value.entries)
@@ -100,6 +102,7 @@ private fun IndentedTextBuilder.appendValue(value: Any?) {
     }
 }
 
+@OptIn(KtImplementationDetail::class)
 private fun IndentedTextBuilder.appendValueClassRepresentation(representation: KotlinValueClassRepresentation) {
     val kind = when (representation) {
         is KotlinInlineClassRepresentation -> "inline"

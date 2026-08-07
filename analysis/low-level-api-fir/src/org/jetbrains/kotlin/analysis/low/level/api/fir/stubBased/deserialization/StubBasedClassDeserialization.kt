@@ -296,6 +296,7 @@ internal fun deserializeClassToSymbol(
     }
 }
 
+@OptIn(KtImplementationDetail::class)
 private fun KotlinClassStubImpl.deserializeValueClassRepresentation(
     klass: FirRegularClass,
     typeDeserializer: StubBasedFirTypeDeserializer,

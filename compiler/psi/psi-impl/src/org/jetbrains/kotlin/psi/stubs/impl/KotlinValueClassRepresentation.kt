@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.psi.stubs.impl
 
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 
 /**
  * How a value class is unboxed by the compiler, as stored in a [KotlinClassStubImpl].
  * This is a stub-side counterpart of the compiler's `ValueClassRepresentation`.
  */
+@KtImplementationDetail
 sealed interface KotlinValueClassRepresentation {
     /**
      * The underlying properties of the value class, in declaration order.
@@ -24,6 +26,7 @@ sealed interface KotlinValueClassRepresentation {
 /**
  * A value class declared with the `@JvmInline` annotation. It has exactly one underlying property and is always unboxed by the compiler.
  */
+@KtImplementationDetail
 data class KotlinInlineClassRepresentation(
     val underlyingPropertyName: Name,
     val underlyingType: KotlinRigidTypeBean,
@@ -38,6 +41,7 @@ data class KotlinInlineClassRepresentation(
  *
  * An abstract or a sealed value class cannot declare underlying properties, so [underlyingPropertyNamesToTypes] is empty for it.
  */
+@KtImplementationDetail
 data class KotlinFullValueClassRepresentation(
     override val underlyingPropertyNamesToTypes: List<Pair<Name, KotlinRigidTypeBean>>,
 ) : KotlinValueClassRepresentation
