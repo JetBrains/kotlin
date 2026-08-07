@@ -10,7 +10,5 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 
 /**
  * Covers .class files
- *
- * @see org.jetbrains.kotlin.analysis.decompiler.psi.jvm.AbstractDecompiledJvmTextTest
  */
 abstract class AbstractCompiledJvmStubsTest : AbstractCompiledStubsTest(JvmPlatforms.defaultJvmPlatform)

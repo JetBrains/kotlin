@@ -144,9 +144,9 @@ instead of standard test commands.
 ```
 
 Note that a single `.kt` file under `testData/psi/` feeds several suites across two modules: the PSI tree (`.txt`) from
-`:compiler:psi:psi-impl` (`PsiParsingTest`), plus source stubs (`.stubs.txt`), compiled stubs (`.compiled.stubs.txt`,
-`.knm.compiled.stubs.txt`) and decompiled text (`.decompiledText.txt`, `.knm.decompiledText.txt`) from `:analysis:stubs`. Prefer a
-path-filtered `updateTestData` from the repo root so that every affected module is picked up.
+`:compiler:psi:psi-impl` (`PsiParsingTest`), plus source stubs (`.stubs.txt`) and compiled stubs (`.compiled.stubs.txt`,
+`.knm.compiled.stubs.txt`) together with the decompiled text (`.decompiledText.txt`, `.knm.decompiledText.txt`) from `:analysis:stubs`.
+Prefer a path-filtered `updateTestData` from the repo root so that every affected module is picked up.
 
 → READ [`analysis/AGENTS.md`](../../analysis/AGENTS.md) ("Working with Test Data") for the full set of options and the rationale
 
