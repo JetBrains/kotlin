@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
+import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -54,7 +55,7 @@ fun makeJsIncrementally(
             cachesDir, buildReporter,
             buildHistoryFile = buildHistoryFile,
             modulesApiHistory = modulesApiHistory,
-            scopeExpansion = scopeExpansion
+            scopeExpansion = scopeExpansion,
         )
         compiler.compile(allKotlinFiles, args, messageCollector, providedChangedFiles ?: ChangedFiles.DeterminableFiles.ToBeComputed)
     }
@@ -85,6 +86,7 @@ class IncrementalJsCompilerRunner(
     override val modulesApiHistory: ModulesApiHistory,
     private val scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER,
     icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
+    pluginsLoader: PluginsLoader? = null,
 ) : IncrementalCompilerRunner<CommonJsAndWasmCompilerArguments, IncrementalJsCachesManager>(
     workingDir,
     "caches-js",
@@ -92,6 +94,7 @@ class IncrementalJsCompilerRunner(
     buildHistoryFile = buildHistoryFile,
     outputDirs = null,
     icFeatures = icFeatures,
+    pluginsLoader = pluginsLoader,
 ) {
     override val shouldTrackChangesInLookupCache
         get() = false

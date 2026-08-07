@@ -65,7 +65,6 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     operator fun <V> get(key: Option<V>): V = options[key]
 
-    @OptIn(UseFromImplModuleRestricted::class)
     operator fun <V> set(key: Option<V>, value: V) {
         options[key] = value
     }
