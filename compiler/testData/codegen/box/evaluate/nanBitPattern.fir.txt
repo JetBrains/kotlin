@@ -1,0 +1,56 @@
+FILE: nanBitPattern.kt
+    public final const [EvaluatedValue=Int(-4194304)] val floatNaNBits: R|kotlin/Int| = Int(-4194304)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Long(-2251799813685248)] val doubleNaNBits: R|kotlin/Long| = Long(2251799813685248).R|kotlin/Long.unaryMinus|()
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Float(NaN)] val floatNaN: R|kotlin/Float| = Q|kotlin/Float|.R|kotlin/Float.Companion.NaN|
+        public get(): R|kotlin/Float|
+    public final const [EvaluatedValue=Double(NaN)] val doubleNaN: R|kotlin/Double| = Q|kotlin/Double|.R|kotlin/Double.Companion.NaN|
+        public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=Float(NaN)] val floatPositiveDivisionNaN: R|kotlin/Float| = Float(0.0).R|kotlin/Float.div|(Float(0.0))
+        public get(): R|kotlin/Float|
+    public final const [EvaluatedValue=Float(NaN)] val floatNegativeDivisionNaN: R|kotlin/Float| = Float(0.0).R|kotlin/Float.div|(Float(0.0)).R|kotlin/Float.unaryMinus|()
+        public get(): R|kotlin/Float|
+    public final const [EvaluatedValue=Double(NaN)] val doublePositiveDivisionNaN: R|kotlin/Double| = Double(0.0).R|kotlin/Double.div|(Double(0.0))
+        public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=Double(NaN)] val doubleNegativeDivisionNaN: R|kotlin/Double| = Double(0.0).R|kotlin/Double.div|(Double(0.0)).R|kotlin/Double.unaryMinus|()
+        public get(): R|kotlin/Double|
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|/floatNaN|.R|kotlin/toRawBits|(), R|/floatNaNBits|) ->  {
+                ^box <strcat>(String(Fail Float.NaN ), R|/floatNaN|.R|kotlin/toRawBits|(), String( != ), R|/floatNaNBits|)
+            }
+        }
+
+        when () {
+            !=(R|/doubleNaN|.R|kotlin/toRawBits|(), R|/doubleNaNBits|) ->  {
+                ^box <strcat>(String(Fail Double.NaN ), R|/doubleNaN|.R|kotlin/toRawBits|(), String( != ), R|/doubleNaNBits|)
+            }
+        }
+
+        when () {
+            !=(R|/floatPositiveDivisionNaN|.R|kotlin/toRawBits|(), R|/floatNaNBits|) ->  {
+                ^box <strcat>(String(Fail floatPositiveDivisionNaN ), R|/floatPositiveDivisionNaN|.R|kotlin/toRawBits|(), String( != ), R|/floatNaNBits|)
+            }
+        }
+
+        when () {
+            !=(R|/floatNegativeDivisionNaN|.R|kotlin/toRawBits|(), R|/floatNaNBits|) ->  {
+                ^box <strcat>(String(Fail floatNegativeDivisionNaN ), R|/floatNegativeDivisionNaN|.R|kotlin/toRawBits|(), String( != ), R|/floatNaNBits|)
+            }
+        }
+
+        when () {
+            !=(R|/doublePositiveDivisionNaN|.R|kotlin/toRawBits|(), R|/doubleNaNBits|) ->  {
+                ^box <strcat>(String(Fail doublePositiveDivisionNaN ), R|/doublePositiveDivisionNaN|.R|kotlin/toRawBits|(), String( != ), R|/doubleNaNBits|)
+            }
+        }
+
+        when () {
+            !=(R|/doubleNegativeDivisionNaN|.R|kotlin/toRawBits|(), R|/doubleNaNBits|) ->  {
+                ^box <strcat>(String(Fail doubleNegativeDivisionNaN ), R|/doubleNegativeDivisionNaN|.R|kotlin/toRawBits|(), String( != ), R|/doubleNaNBits|)
+            }
+        }
+
+        ^box String(OK)
+    }
