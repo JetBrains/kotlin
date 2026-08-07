@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.test.services.independentSourceDirectoryPathsTransit
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -169,30 +168,15 @@ class IrTextDumpHandler(
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val moduleStructure = testServices.moduleStructure
         val actualDump = baseDumper.generateResultingDump()
         val baseDumpExtension = getBaseDumpExtension()
-        val baseGoldenFile = moduleStructure.originalTestDataFiles.first()
-            .withExtension(baseDumpExtension)
 
-        val hasTargetSpecificDifferenceDirective = validateTargetSpecificDumpFile(
-            testServices, assertions, baseGoldenFile,
+        validateTargetSpecificDumpFile(
+            testServices, assertions,
             baseDumpExtension = baseDumpExtension,
             actualDump,
             isKotlinLikeDump = false,
         )
-
-        if (!hasTargetSpecificDifferenceDirective) {
-            checkOneExpectedFile(baseGoldenFile, actualDump)
-        }
-    }
-
-    private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {
-        if (actualDump.isNotEmpty()) {
-            assertions.assertEqualsToFile(expectedFile, actualDump)
-        } else {
-            assertions.assertFileDoesntExist(expectedFile, directive)
-        }
     }
 
     private fun getBaseDumpExtension(): String {
