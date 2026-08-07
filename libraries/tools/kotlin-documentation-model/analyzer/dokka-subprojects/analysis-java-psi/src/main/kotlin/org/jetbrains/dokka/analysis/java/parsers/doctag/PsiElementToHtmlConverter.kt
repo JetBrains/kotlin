@@ -161,7 +161,7 @@ internal class PsiElementToHtmlConverter(
         }
 
         private fun dataElementsAsText(tag: PsiInlineDocTag): String {
-            return tag.dataElements.joinToString("") {
+            return tag.dataElementsWithWhitespaces().joinToString("") {
                 it.stringifyElementAsText(keepFormatting = true).orEmpty()
             }.htmlEscape()
         }
@@ -192,6 +192,28 @@ internal class PsiElementToHtmlConverter(
         private fun String.wrapInCodeTag(isDataInline: Boolean = false) =
             if (isMarkdownDocComment) "`$this`" // use ` for Markdown comments, further will be converted to <code> by MarkdownToHtmlConverter
             else "<code${if (isDataInline) " data-inline" else ""}>$this</code>"
+    }
+}
+
+/**
+ * The data elements of an inline tag, with the whitespace tokens between them.
+ *
+ * [PsiInlineDocTag.dataElements] used to include whitespaces, but since IntelliJ platform 261
+ * `WHITE_SPACE` is no longer part of `PsiInlineDocTagImpl.VALUE_BIT_SET`. Whitespaces carry the line
+ * breaks of a multiline tag body (e.g. `{@code}` spanning several lines), so they must be preserved
+ * for tags whose content is rendered with formatting kept.
+ */
+private fun PsiInlineDocTag.dataElementsWithWhitespaces(): List<PsiElement> {
+    val dataElements = dataElements
+    // both `children` and `dataElements` are direct children in document order, so a single pass is enough
+    var nextDataElement = 0
+    return children.filter { child ->
+        if (nextDataElement < dataElements.size && dataElements[nextDataElement] === child) {
+            nextDataElement++
+            true
+        } else {
+            child is PsiWhiteSpace
+        }
     }
 }
 
