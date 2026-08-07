@@ -715,6 +715,10 @@ context(sessionHolder: SessionHolder)
 private val intrinsicConstEvaluationEnabled: Boolean
     get() = sessionHolder.session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
 
+context(sessionHolder: SessionHolder)
+private val nanNormalizationFeatureEnabled: Boolean
+    get() = sessionHolder.session.languageVersionSettings.supportsFeature(LanguageFeature.NormalizeNaNValuesInConstContext)
+
 private fun ConeKotlinType.toCompileTimeType(): CompileTimeType? {
     if (this.classId == StandardClassIds.Any) return CompileTimeType.ANY
     return this.classId?.toConstantValueKind()?.toCompileTimeType()
@@ -904,6 +908,14 @@ private fun evaluateBinary(
 }
 
 context(sessionHolder: SessionHolder)
+private fun Any?.normalize(): Any? {
+    if (!nanNormalizationFeatureEnabled) return this
+    if (this is Float && this.isNaN()) return java.lang.Float.NaN
+    if (this is Double && this.isNaN()) return java.lang.Double.NaN
+    return this
+}
+
+context(sessionHolder: SessionHolder)
 private fun Any?.adjustTypeAndConvertToResult(original: FirExpression, expectedType: ConeKotlinType = original.resolvedType): FirEvaluatorResult {
     if (this == null) return NotConst(original.source)
     if (this is FirEvaluatorResult) return this
@@ -1027,6 +1039,7 @@ private fun ConstantValueKind.canHold(value: Any?): Boolean {
 
 private fun CompileTimeType.isFloatingPoint(): Boolean = this == CompileTimeType.FLOAT || this == CompileTimeType.DOUBLE
 
+context(sessionHolder: SessionHolder)
 private fun Any?.toConstExpression(
     kind: ConstantValueKind,
     originalExpression: FirExpression,
@@ -1034,12 +1047,13 @@ private fun Any?.toConstExpression(
     return buildLiteralExpression(
         originalExpression.source,
         kind,
-        kind.convertToGivenKind(this),
+        kind.convertToGivenKind(this).normalize(),
         originalExpression.annotations.takeIf { it.isNotEmpty() }?.toMutableList(),
         setType = false,
     ).apply { replaceConeTypeOrNull(originalExpression.resolvedType) }
 }
 
+context(sessionHolder: SessionHolder)
 private fun FirLiteralExpression.copy(originalExpression: FirExpression): FirLiteralExpression {
     // In erroneous code the type of the original expression may contradict the value, as in
     // `const val c: Char = 65`, where every access to `c` is of type `Char`, while the value of
@@ -1053,6 +1067,7 @@ private fun FirLiteralExpression.copy(originalExpression: FirExpression): FirLit
     return this.value.toConstExpression(kind, originalExpression)
 }
 
+context(sessionHolder: SessionHolder)
 private fun FirEvaluatorResult.copy(originalExpression: FirExpression): FirEvaluatorResult {
     return when (this) {
         is Evaluated -> {
