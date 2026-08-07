@@ -3,10 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.testFederation
+package org.jetbrains.kotlin.code
 
 import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
-import org.jetbrains.kotlin.testFederation.DomainsDumpTest.Companion.sanitize
+import org.jetbrains.kotlin.code.DomainsDumpTest.Companion.sanitize
+import org.jetbrains.kotlin.testFederation.RepositoryPath
+import org.jetbrains.kotlin.testFederation.allDomainInfos
+import org.jetbrains.kotlin.testFederation.domains
 import org.jetbrains.kotlin.tooling.core.withClosure
 import org.opentest4j.AssertionFailedError
 import org.opentest4j.FileInfo
@@ -44,7 +47,7 @@ class DomainsDumpTest {
             }
         }
 
-        class UnmatchedRule(val domain: DomainInfo, val rule: String, val isInclude: Boolean)
+        class UnmatchedRule(val domain: org.jetbrains.kotlin.testFederation.DomainInfo, val rule: String, val isInclude: Boolean)
 
         val unmatchedRules = mutableListOf<UnmatchedRule>()
 
@@ -64,7 +67,7 @@ class DomainsDumpTest {
 
         if (unmatchedRules.isNotEmpty()) error(buildString {
             appendLine("Unmatched includes/excludes found")
-            unmatchedRules.groupBy { it.domain }.forEach { (domain, nodes) ->
+            unmatchedRules.groupBy { it.domain }.forEach { [domain, nodes] ->
                 appendLine("${domain.domain.name}:")
                 val includes = nodes.filter { it.isInclude }
                 if (includes.isNotEmpty()) {
@@ -119,11 +122,11 @@ private fun Node.generateDomainsDump(): String {
         appendLine("####################################################")
         appendLine()
 
-        fun <T> sorting() = compareBy<Map.Entry<Collection<Domain>, T>> { (domains, _) -> domains.size }
-            .thenComparing { (domains, _) -> domains.sumOf { it.ordinal } }
+        fun <T> sorting() = compareBy<Map.Entry<Collection<org.jetbrains.kotlin.testFederation.Domain>, T>> { [domains, _] -> domains.size }
+            .thenComparing { [domains, _] -> domains.sumOf { it.ordinal } }
 
         this@generateDomainsDump.withClosure { it.children }.filter { it.children.isEmpty() }
-            .groupBy { it.domains }.entries.sortedWith(sorting()).forEach { (domains, nodes) ->
+            .groupBy { it.domains }.entries.sortedWith(sorting()).forEach { [domains, nodes] ->
                 appendLine("${domains.joinToString(", ") { it.name }}:")
                 nodes.toList().sortedBy { it.path.value.invariantSeparatorsPathString }.forEach { node ->
                     appendLine(" - ${node.path.value.invariantSeparatorsPathString}")
@@ -135,7 +138,7 @@ private fun Node.generateDomainsDump(): String {
 
 private data class Node(
     val path: RepositoryPath,
-    val domains: List<Domain>,
+    val domains: List<org.jetbrains.kotlin.testFederation.Domain>,
     val children: List<Node>,
 )
 

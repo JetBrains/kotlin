@@ -77,7 +77,7 @@ private object DomainSourcesGenerator {
                 }
 
                 this += "|"
-                this += "|internal val allDomainInfos: List<DomainInfo> by lazy {"
+                this += "|val allDomainInfos: List<DomainInfo> by lazy {"
                 this += "|    listOf("
                 for (domain in domains) {
                     this += "|        ${domain.name}DomainInfo,"
