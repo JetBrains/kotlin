@@ -49,7 +49,10 @@ private class IrExpressionEvaluator(
     private val irBuiltIns: IrBuiltIns,
     private val isFloatingPointOptimizationEnabled: Boolean,
 ) : IrVisitor<IrExpression?, Nothing?>() {
-    private fun IrExpression.evaluateAsConst(): IrConst? = this.accept(this@IrExpressionEvaluator, null) as? IrConst
+    private fun IrExpression.evaluateAsConst(): IrConst? {
+        val const = this.accept(this@IrExpressionEvaluator, null) as? IrConst
+        return const.takeUnless { it?.value.isNaNValue() }
+    }
 
     override fun visitElement(element: IrElement, data: Nothing?): IrExpression? = null
 
@@ -89,14 +92,14 @@ private class IrExpressionEvaluator(
                 1 -> {
                     val type = owner.parameters[0].type.toCompileTimeType() ?: return null
                     val value = operands[0].getCastedValue() ?: return null
-                    evalUnaryOp(name, type, value)
+                    evalUnaryOp(name, type, value).takeUnless { it.isNaNValue() }
                 }
                 2 -> {
                     val leftType = owner.parameters[0].type.toCompileTimeType() ?: return null
                     val rightType = owner.parameters[1].type.toCompileTimeType() ?: return null
                     val left = operands[0].getCastedValue() ?: return null
                     val right = operands[1].getCastedValue() ?: return null
-                    evalBinaryOp(name, leftType, left, rightType, right)
+                    evalBinaryOp(name, leftType, left, rightType, right).takeUnless { it.isNaNValue() }
                 }
                 else -> return null
             }
@@ -261,6 +264,10 @@ private class IrExpressionEvaluator(
             if (!owner.hasShape(dispatchReceiver = true, regularParameters = 0)) return false
             val property = owner.correspondingPropertySymbol?.owner ?: return false
             return this.dispatchReceiver is IrGetEnumValue && property.name.asString() == "name"
+        }
+
+        private fun Any?.isNaNValue(): Boolean {
+            return this is Float && this.isNaN() || this is Double && this.isNaN()
         }
     }
 }
