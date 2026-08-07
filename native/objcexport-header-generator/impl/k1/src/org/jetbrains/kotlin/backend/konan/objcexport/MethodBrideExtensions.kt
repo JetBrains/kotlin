@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.konan.allParameters
+import org.jetbrains.kotlin.utils.addToStdlib.skipNext
 
 
 @InternalKotlinNativeApi
@@ -27,7 +28,7 @@ fun MethodBridge.valueParametersAssociated(
          * Skip logic is bound to [this.valueParameters] array construction
          * at [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapper.bridgeMethodImpl]
          */
-        val _ = kotlinParameters.next()
+        kotlinParameters.skipNext()
     }
 
     return this.valueParameters.map {

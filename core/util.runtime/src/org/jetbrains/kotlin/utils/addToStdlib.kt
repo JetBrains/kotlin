@@ -544,3 +544,7 @@ class ChainedIterator<T>(delegates: Collection<Iterator<T>>) : Iterator<T> {
         return currentIterator?.next() ?: throw NoSuchElementException()
     }
 }
+
+fun <T> Iterator<T>.skipNext() {
+    val _ = next()
+}
