@@ -13,7 +13,6 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.kotlin.dsl.mapProperty
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
@@ -29,7 +28,7 @@ import kotlin.time.Duration.Companion.seconds
 internal abstract class KotlinBrowserTestRunner(
     private val name: String,
     objects: ObjectFactory,
-): KotlinBrowserTestRunnerDsl {
+) : KotlinBrowserTestRunnerDsl {
     override fun getName(): String = name
 
     override val testsLocation: Property<KotlinJsTestsLocation> = objects.property()
@@ -37,7 +36,7 @@ internal abstract class KotlinBrowserTestRunner(
     override val timeout: Property<Duration> = objects.property()
     override val launchArgs: ListProperty<String> = objects.listProperty()
     override val customBrowserExecutable: RegularFileProperty = objects.fileProperty()
-    override val launchEnvironmentVariables: MapProperty<String, String> = objects.mapProperty()
+    override val launchEnvironmentVariables: MapProperty<String, String> = objects.mapProperty(String::class.java, String::class.java)
 }
 
 internal class KotlinChromiumTestRunner(

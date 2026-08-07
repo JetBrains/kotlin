@@ -19,17 +19,16 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalDependency
+import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.internal.operations.BuildOperationListenerManager
-import org.gradle.kotlin.dsl.add
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_COMPAT
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
-import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.internal.attributes.setupAttributesMatchingStrategy
 import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpCompatibilityCheck.runAgpCompatibilityCheckIfAgpIsApplied
@@ -165,8 +164,13 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
                 // this configuration should be used instead of the BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME.
                 // It will effectively ignore configure compilerVersion
                 // and will fix toolchain's version to the latest 2.4 toolchain (it applies to abiValidation toolchain only).
-                project.dependencies.add(name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL") {
-                    version { versionConstraint ->
+                project.dependencies.addProvider(
+                    name,
+                    project.providers.provider {
+                        project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL")
+                    },
+                ) { dep: ExternalModuleDependency ->
+                    dep.version { versionConstraint ->
                         versionConstraint.strictly("2.4.0")
                     }
                 }
