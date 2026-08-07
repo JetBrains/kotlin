@@ -12,9 +12,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
+import org.jetbrains.kotlin.fir.resolve.getSuperTypes
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.lombokService
@@ -40,6 +44,20 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Platform
              * Mirrors the Java Lombok behavior: "Not generating toString(): A method with that name already exists"
              */
             reporter.reportOn(source, LombokFirDiagnostics.TO_STRING_FUNCTION_ALREADY_EXISTS, context)
+        } else {
+            /**
+             * Mirrors javac's reaction to the `toString()` Lombok generates in this case:
+             * "toString() in Child cannot override toString() in Parent; overridden method is final".
+             * Only relevant when no conflicting `toString()` is declared, otherwise nothing is generated at all.
+             */
+            declaration.findFinalToStringInSuperclasses()?.let { superClassSymbol ->
+                reporter.reportOn(
+                    source,
+                    LombokFirDiagnostics.TO_STRING_FUNCTION_IS_FINAL_IN_SUPERCLASS,
+                    superClassSymbol.name,
+                    context,
+                )
+            }
         }
 
         checkCallSuper(
@@ -63,5 +81,24 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Platform
 
             reporter.reportOn(includeSource, LombokFirDiagnostics.EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE, LombokNames.TO_STRING.shortName(), context)
         }
+    }
+
+    /**
+     * The closest superclass (interfaces are irrelevant, they can't declare a final member) that declares a final
+     * parameterless `toString()`, or `null` if the generated `toString()` is free to override whatever it inherits.
+     */
+    context(context: CheckerContext)
+    private fun FirRegularClass.findFinalToStringInSuperclasses(): FirRegularClassSymbol? {
+        return symbol.getSuperTypes(context.session, lookupInterfaces = false)
+            .firstNotNullOfOrNull { superType ->
+                superType.toRegularClassSymbol(context.session)?.let { superClassSymbol ->
+                    var isFinal = false
+                    context.session.declaredMemberScope(superClassSymbol, memberRequiredPhase = null)
+                        .processFunctionsByName(TO_STRING_NAME) {
+                            isFinal = isFinal || it.isFinal && it.valueParameterSymbols.isEmpty() && !it.hasReceiverOrContextParameters
+                        }
+                    superClassSymbol.takeIf { isFinal }
+                }
+            }
     }
 }
