@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.metadataVersion
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -240,7 +241,7 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
             friendDependencies(configuration.friendPaths)
         }
 
-        val librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
+        val librariesClasspath = JvmClasspath.ProjectLibraries()
 
         val rootModuleName = Name.special("<$moduleName>")
 
@@ -255,7 +256,7 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
             metadataCompilationMode = false,
             isCommonSource = groupedSources.isCommonSourceForLt,
             fileBelongsToModule = groupedSources.fileBelongsToModuleForLt,
-            librariesScope = librariesScope,
+            librariesClasspath = librariesClasspath,
         )
 
         val outputs = sessionsWithSources.map { (session, files) ->

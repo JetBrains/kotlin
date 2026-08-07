@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClasses
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.asBinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.readBinaryJavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.load.java.structure.impl.source.SingleFileRootPsiPackage
@@ -122,7 +124,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         }?.firstOrNull { it in searchScope }
     }
 
-    private val binaryCache: MutableMap<ClassId, JavaClass?> = Object2ObjectOpenHashMap()
+    private val binaryCache = BinaryJavaClasses()
     private val signatureParsingComponent = BinaryClassSignatureParser()
 
     fun findClass(classId: ClassId, searchScope: GlobalSearchScope) = findClass(JavaClassFinder.Request(classId), searchScope)
@@ -141,7 +143,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             // Cross-references from bytecode signatures resolve against `allScope`.
             return readBinaryJavaClass(
                 classId = classId,
-                topLevelVirtualFile = virtualFile,
+                topLevelClassFile = virtualFile.asBinaryClassFileHandle(),
                 classFileContent = classFileContentFromRequest,
                 outerClassFromRequest = outerClassFromRequest,
                 binaryCache = binaryCache,
@@ -279,7 +281,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     override fun findModules(moduleName: String, scope: GlobalSearchScope): Collection<PsiJavaModule> {
         // Module import declarations (`import module M;` in Java sources, JEP 511) are resolved by the platform via
         // `JavaPsiFacade.findModules`, which delegates here.
-        val moduleInfoFile = javaModuleFinder?.findModule(moduleName)?.moduleInfoFile ?: return emptySet()
+        val moduleInfoFile = javaModuleFinder.findModule(moduleName)?.moduleInfoFile ?: return emptySet()
         if (moduleInfoFile !in scope) return emptySet()
         val moduleDeclaration = (myPsiManager.findFile(moduleInfoFile) as? PsiJavaFile)?.moduleDeclaration ?: return emptySet()
         return listOf(moduleDeclaration)

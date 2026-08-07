@@ -1,5 +1,10 @@
 # PSI `JavaClassFinder` Usage and Replacement (java-direct, current `HEAD`)
 
+> **Archived (2026-08-07).** Superseded by `implDocs/PSI_FREE_ROADMAP.md`. Its vocabulary no longer
+> exists in the tree: the `JvmBinaryClassFinderInputs` seam it describes was tried and deleted, and
+> the source/binary split is now expressed only by which `JavaClassFinder` a session is given. Kept
+> as the original design record of Phases 1-2.
+
 > **Status snapshot (2026-07-13, branch `rr/ic/direct-java-dev2`).** **Phases 1 and 2 have
 > landed in production code; Phase 3 (formal PSI removal) is the next effort.** The code is now
 > *ahead* of the phase narrative in Part 2 below — treat Part 1/Part 2 as the original design

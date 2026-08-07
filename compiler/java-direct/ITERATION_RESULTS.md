@@ -36,6 +36,324 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-13 — `BinaryClassFileScope` removed: the finder takes the session's classpath
+- **Change**: the seam had one production use site — `JavaDirectJavaInterop` built
+  `classpath.asBinaryClassFileScope()` only to hand it to `JavaClassFinderOverBinaryIndex` — so it was a
+  type between two parties that both know the classpath. The finder now takes the `JvmClasspath` itself
+  and answers the restriction with `internal operator fun JvmClasspath.contains(BinaryClassFileHandle)`
+  next to it; `BinaryClassFileScope` and `JvmClasspath.asBinaryClassFileScope()` are deleted, so the
+  shared seam keeps only `BinaryClassFileIndex`, `BinaryClassFileHandle` and its `isUnder(Path)` check.
+  `applyScopeFilter` → `restrictToClasspath`, `findClassWithoutScopeFilter` →
+  `findClassAnywhereOnClasspath`; no behaviour change.
+- **Files**: `frontend.common.jvm/.../classFiles/BinaryClassFileIndex.kt`, `.../BinaryJavaClassCache.kt`,
+  `java-direct/.../JavaClassFinderOverBinaryIndex.kt`, `.../JavaDirectJavaInterop.kt`,
+  `java-direct/test/.../ClasspathRestrictionTest.kt` (was `BinaryClassFileScopeTest.kt`),
+  `implDocs/PSI_FREE_ROADMAP.md` §3/§4, `implDocs/BINARY_CLASS_CACHE_LIFETIME.md` §1.
+- **Tests**: java-direct 21774/0; PSI gate `PhasedJvmDiagnosticLightTreeTestGenerated` 10993/0
+  (mandatory: the PSI file manager shares `readBinaryJavaClass`); `IncrementalK2FirICJvmCompilerRunnerTest`
+  371/0 — the one path with a non-empty exclusion list.
+- **Result**: green; one fewer type on the seam, and the scope policy sits where the classpath is used.
+
+### 2026-08-12 — the binary lookup is restricted by classpath *root*, not by a PSI scope
+- **Change**: `binaryClassFileScope(classpath)` built `classFile.virtualFile in psiSearchScope(classpath)`
+  — a per-candidate IntelliJ query, written when a scope was an opaque file set. `JvmClasspath` is
+  root-shaped and sealed now, so the restriction is `JvmClasspath.asBinaryClassFileScope()` over a new
+  `BinaryClassFileHandle.isUnder(Path)`: `Roots` tests its roots, `ProjectLibraries` only its
+  exclusions (an index *is* the compilation's classpath). `isUnder` reproduces `ClassPathScope.contains`
+  — an archive entry belongs to the archive itself, a loose class file to any enclosing directory. The
+  CLI helper and `createJavaDirectJavaInterop`'s scope-factory parameter are gone, and
+  `BinaryClassFileHandle.virtualFile` is now private to `BinaryJavaClassReader.kt` (only `BinaryJavaClass`
+  reads it) — one step towards removing it (`PSI_FREE_ROADMAP.md` §4).
+- **Files**: `frontend.common.jvm/.../classFiles/BinaryClassFileIndex.kt`, `.../BinaryJavaClassReader.kt`,
+  `cli/.../CliBinaryClassFileIndex.kt`, `cli-jvm/.../JavaInterop.kt`, `java-direct/.../JavaDirectJavaInterop.kt`,
+  new `java-direct/test/.../BinaryClassFileScopeTest.kt`, `implDocs/PSI_FREE_ROADMAP.md` §3/§4,
+  `implDocs/BINARY_CLASS_CACHE_LIFETIME.md` §1, `implDocs/CLASS_FILE_READ_LAYER.md` §4.
+- **Tests**: java-direct 21771/0; `BinaryClassFileScopeTest` 3/0 (needed: java-direct sessions pass
+  `ProjectLibraries()` with no exclusions, so no suite exercises a non-empty root list — that is the
+  incremental output directories and an HMPP fragment's classpath); `IncrementalK2FirICJvmCompilerRunnerTest`
+  371/0; PSI gate `PhasedJvmDiagnosticLightTreeTestGenerated` 10993/0 (mandatory: the PSI file manager
+  shares `readBinaryJavaClass`).
+- **Result**: green; removes a PSI query from the hot binary lookup path.
+
+### 2026-08-12 — the Java-sources scope leaves the API; test fixtures follow the flag
+- **Change**: `psiJavaInterop` took a `(FirModuleData) -> GlobalSearchScope`, but all four non-CLI
+  callers passed the same K1-era expression (`filesScope(<module's Kotlin files>)` ∪
+  `AllJavaSourcesInProjectScope`), whose Kotlin half is filtered out again by
+  `FilterOutKotlinSourceFilesScope` in `JavaClassFinderImpl` and whose Java half *is* the default —
+  so the parameter is now `withJavaSources: Boolean = true` and `GlobalSearchScope` no longer appears
+  in any cross-module signature of the Java view. `FirFrontendFacade`/`FirReplFrontendFacade` lost
+  their `FirModuleData -> GlobalSearchScope` maps, `newModuleSearchScope` and (in the first) two
+  parameters of `createModuleBasedSession`; `FirTestSessionFactoryHelper.createSessionForTests` lost
+  the scope parameter of both overloads and all callers use `javaInterop(configuration)`, i.e. the
+  fixtures honour `-Xjava-direct` for the first time.
+- **Files**: `cli/.../VfsBasedProjectEnvironment.kt`, `cli-jvm/.../JavaInterop.kt`,
+  `tests-common-new/.../FirFrontendFacade.kt`, `.../FirReplFrontendFacade.kt`,
+  `tests-compiler-utils/.../FirTestSessionFactoryHelper.kt`, `.../session/FirSessionFactoryHelper.kt`
+  (stale import), `.../codegen/GenerationUtils.kt`, `legacy-fir-tests/.../AbstractFirTypeEnhancementTest.kt`,
+  `modularized-tests/.../FirResolveModularizedTotalKotlinTestPure.kt`,
+  `benchmarks/.../AbstractSimpleFileBenchmark.kt`, `implDocs/PSI_FREE_ROADMAP.md` §7/§8.
+- **Tests**: java-direct 21771/0; gates `PhasedJvmDiagnosticLightTreeTestGenerated` 10993/0 and
+  `*CompileKotlinAgainstKotlin*` 153/0; `FirTypeEnhancementTestGenerated` 289/0 (its `.java` files are
+  in-memory `LightVirtualFile`s, covered by `AllJavaSourcesInProjectScope`), `*ForeignAnnotations*`
+  982/0, scripting/REPL 402/0, kapt 351/0 (`GenerationUtils`); `:benchmarks:compileTestKotlin` green.
+- **Result**: green, behaviour-preserving off `-Xjava-direct`.
+
+### 2026-08-12 — metadata compilation states that it reads no Java; Compose follows the flag
+- **Change**: `prepareMetadataSessions` passed `psiJavaInterop()`, implying metadata compilation
+  resolves Java through PSI. It creates a `FirJvmSessionFactory.Context` only to register the JVM
+  session components and never calls `create*Session` on that factory, so no facade is ever built —
+  it now passes the new `NoJavaInterop`, which fails loudly if that ever changes. The Compose test
+  facade switched to the shared `javaInterop(configuration)` helper (its module already depends on
+  `:compiler:cli-jvm`), so it is no longer the last self-deciding consumer.
+- **Files**: `fir/fir-jvm/.../session/FirJavaInterop.kt` (+21), `cli/.../FirSessionConstructionUtils.kt`,
+  `plugins/compose/.../facade/K2CompilerFacade.kt` (+2 unused imports removed),
+  `implDocs/PSI_FREE_ROADMAP.md` §7.
+- **Tests**: `MetadataDiagnosticTestGenerated` 11/0, `JvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated`
+  269/0 (both run `prepareMetadataSessions`); `fir-jvm`/`cli`/`cli-metadata`/`cli-jvm` compile.
+- **Result**: green, no behaviour change. Compose integration-tests still cannot be compiled offline.
+
+### 2026-08-12 — `-Xjava-direct` is honoured by every JVM pipeline; the PSI-scope escape hatch is gone
+- **Change**: new `VfsBasedProjectEnvironment.javaInterop(configuration, withJavaSources)` in
+  `:compiler:cli-jvm` (the lowest module seeing both `:compiler:cli` and `:compiler:java-direct`)
+  derives the Java view from `useJavaDirect`. `JvmFrontendPipelinePhase`, `prepareJKlibSessions`,
+  `K2ScriptingCompilerEnvironment`, `K2ReplCompiler` and `CollectAdditionalScriptSourcesExtension`
+  all call it, so JKlib and scripting stop hardcoding PSI. `withJavaSources` is one switch because
+  the peers describe `.java` sources in different currencies. Then `PsiScopeJvmClasspath` /
+  `GlobalSearchScope.asJvmClasspath()` were **deleted** and `JvmClasspath` sealed: its two users
+  were expressible as classpaths — `JKlibIrCompilationPhase` used
+  `notScope(AllJavaSourcesInProjectScope)` for a package-part provider (`.java` files are never
+  package parts) and `FirTestSessionFactoryHelper` was passed exactly
+  `ProjectScope.getLibrariesScope(project)`.
+- **Files**: new `cli/cli-jvm/.../cli/jvm/compiler/JavaInterop.kt`; `JvmFrontendPipelinePhase.kt`
+  (−3 private helpers), `FirJKlibSessionFactory.kt`, `JKlibIrCompilationPhase.kt`,
+  `VfsBasedProjectEnvironment.kt`, `JvmClasspath.kt`, 3 scripting sites, 2 fixtures;
+  `PSI_FREE_ROADMAP.md` §3/§4/§7 + new §8 (remaining PSI in the API and how it goes).
+- **Tests**: java-direct 21771/0; JKlib 843/0; scripting-tests; both gates
+  (`PhasedJvmDiagnosticLightTree`, `*CompileKotlinAgainstKotlin*`);
+  `IncrementalK2FirICJvmCompilerRunnerTest` — all green.
+- **Result**: green. Remaining PSI in a cross-module signature: only
+  `psiJavaInterop(javaSources: (FirModuleData) -> GlobalSearchScope)` — plan in `PSI_FREE_ROADMAP.md` §8.
+
+### 2026-08-12 — PSI search scopes leave the API: `JvmClasspath` and a Java view split by role
+- **Change**: `AbstractProjectFileSearchScope` is **deleted**. It was never an abstraction over PSI —
+  one implementation (`PsiBasedProjectFileSearchScope`), a downcast (`asPsiSearchScope()`) at every
+  point of use, and IDEA semantics (`not()` only means something against an ambient "all files in the
+  project", which a compilation does not have; `ANY.minus` already threw). It is replaced by
+  `JvmClasspath`: `Roots(List<Path>)` or `ProjectLibraries(excludedRoots)`, i.e. what
+  `DependencyListForCliModule` already speaks. `JvmCompilationEnvironment` is down to
+  `getKotlinClassFinder` / `getPackagePartProvider` / `getJavaModuleResolver`; the six scope producers
+  are gone, two of which (`getSearchScopeByIoFiles`, `getSearchScopeBySourceFiles`) had **zero callers
+  repo-wide**, and `allowOutOfProjectRoots` went with them, never having been `true` in any
+  compilation. `FirJavaInterop` is split by role — `createBinaryJavaFacade(classpath)` /
+  `createJavaSourcesFacade()` — which deletes java-direct's `scope === javaSourcesScope` identity
+  check and its `IdentityHashMap`.
+- **Why**: the goal was to get PSI scopes out of the API; everything else fell out of it. The
+  incremental-compilation "hack" the OSIP-191 comment predicted would go away has gone away: the
+  libraries scope is now `ProjectLibraries(excludedRoots = outputDir)`, and the second subtraction
+  (`- sourceScope`, the explicit PSI file set ∪ "any `.java` file") is simply gone — a classpath
+  consumed by a `.class` reader has no source files in it by construction. `getSearchScopeByPsiFiles`
+  and its one caller disappeared with it, so the Kotlin PSI file set no longer crosses any module
+  boundary. The only remaining classpath → `GlobalSearchScope` conversion is
+  `VfsBasedProjectEnvironment.psiSearchScope`, private to `:compiler:cli` apart from the documented
+  `PsiScopeJvmClasspath` escape hatch (legacy JKlib IR phase, two test fixtures) — removed by the
+  2026-08-12 entry above.
+- **Files**: `JvmClasspath.kt` (new), `JvmCompilationEnvironment.kt`, `FirJavaInterop.kt`,
+  `VfsBasedProjectEnvironment.kt`, `CliBinaryClassFileIndex.kt`, `IncrementalCompilationContext*.kt`,
+  `FirJvmSessionFactory.kt`, `FirJvmIncrementalCompilationSymbolProviders.kt`,
+  `FirMetadataSessionFactory.kt`, `FirJKlibSessionFactory.kt`, `JvmFrontendPipelinePhase.kt`,
+  `JavaDirectJavaInterop.kt`, scripting/REPL (5 files), test fixtures (7 files);
+  `frontend.common/.../search/AbstractProjectFileSearchScope.kt` deleted.
+- **Tests**: java-direct 21771/0; PSI gate `PhasedJvmDiagnosticLightTree` 10993/0;
+  `*CompileKotlinAgainstKotlin*` 153/0; `IncrementalK2FirICJvmCompilerRunnerTest` 371/0;
+  jklib.tests 843/0; scripting-tests 402/0.
+- **Result**: green.
+
+### 2026-08-12 — both directions of the Java bridge in one object; the environment leaves FIR
+- **Change**: `FirJavaFacadeFactory` → `FirJavaInterop`, which now also owns
+  `registerKotlinDeclarationsForJava` (was `AbstractProjectEnvironment.registerAsJavaElementFinder`).
+  The PSI implementation registers `FirJavaElementFinder`, java-direct leaves the default no-op, and the
+  parallel `needRegisterJavaElementFinder` flag is deleted from both session factories and all 10 call
+  sites — it was a second copy of the same PSI/not-PSI decision and had already drifted (JKlib passed
+  `true` unconditionally).
+- **Why**: that method was the last FIR reference in the environment and the one member unimplementable
+  without PSI. With it gone, `AbstractProjectEnvironment` moved to `:compiler:frontend.common.jvm` as
+  `JvmCompilationEnvironment` (package `org.jetbrains.kotlin.jvm.environment`), next to the
+  `KotlinClassFinder`/`PackagePartProvider`/`JavaModuleResolver` it hands out; a PSI-free environment is
+  now expressible, and `org.jetbrains.kotlin.fir.session` is no longer a split package.
+- **Files**: `FirJavaInterop.kt` (fir-jvm, renamed), `JvmCompilationEnvironment.kt` (new location),
+  `VfsBasedProjectEnvironment.kt`, `FirJvmSessionFactory.kt`, `FirJKlibSessionFactory.kt`,
+  `JavaDirectJavaInterop.kt` (renamed), `JvmFrontendPipelinePhase.kt`, scripting + test fixtures.
+- **Tests**: see below.
+- **Result**: green.
+
+### 2026-08-12 — the Java implementation is stated, never defaulted
+- **Change**: `JvmCompilationEnvironment.getFirJavaFacade` is gone. It made the PSI Java view a property
+  of the environment — obtainable by anyone holding one, and therefore the invisible default that let the
+  incremental-compilation consumer drift onto PSI under `-Xjava-direct`. Its body moved to
+  `:compiler:cli` as `VfsBasedProjectEnvironment.psiJavaInterop()`, a free-function peer of
+  java-direct's `createJavaDirectJavaInterop`: two implementations, neither privileged.
+  `FirJvmSessionFactory.Context.javaInterop` is now a required constructor parameter, so a
+  consumer which does not choose no longer silently gets PSI. That surfaced `FirJKlibSessionFactory` as
+  a compile error, as intended: its `createLibrarySession`/`createSourceSession` take a
+  `FirJavaInterop` instead of reaching for the environment, and `prepareJKlibSessions` supplies
+  the PSI one — same behaviour as before, but now explicit and one parameter away from java-direct.
+- **Files**: `fir-jvm/.../session/environment/JvmCompilationEnvironment.kt`,
+  `fir-jvm/.../session/FirJavaInterop.kt`, `cli/.../VfsBasedProjectEnvironment.kt`,
+  `fir/entrypoint/.../FirJvmSessionFactory.kt`, `cli-jklib/.../FirJKlibSessionFactory.kt`, and the ten
+  `Context(...)` construction sites (`JvmFrontendPipelinePhase`, `FirSessionConstructionUtils`,
+  `FirFrontendFacade`, `FirReplFrontendFacade`, `FirSessionFactoryHelper`, `K2ReplCompiler`,
+  `K2ScriptingCompilerEnvironment` ×2, `CollectAdditionalScriptSourcesExtension`, Compose
+  `K2CompilerFacade`); `implDocs/PSI_FREE_ROADMAP.md` §3/§7.
+- **Tests**: `compileKotlin` of `fir:fir-jvm`, `fir:entrypoint`, `cli`, `cli-jvm`, `cli-jklib`,
+  `java-direct`, `kotlin-scripting-compiler` and the fixture modules; `:compiler:java-direct:test`;
+  `PhasedJvmDiagnosticLightTreeTestGenerated`; `*CompileKotlinAgainstKotlin*`;
+  `IncrementalK2FirICJvmCompilerRunnerTestGenerated`; `:compiler:jklib.tests:test`.
+- **Result**: green; no behaviour change. The Compose integration-tests module could not be compiled
+  offline (its `protobuf-test-classes` needs `com.google.protobuf:protoc`, unrelated); the edit there is
+  one added argument plus an import.
+
+### 2026-08-12 — the seam abstractions moved below the PSI default; `java-direct → fir:entrypoint` dropped
+- **Change**: java-direct depended on `:compiler:fir:entrypoint` only for two symbols — the abstraction
+  it implements (`FirJavaInterop`) and the scope type in its signatures
+  (`AbstractProjectFileSearchScope`) — both of which sat next to the PSI default that also implements
+  them. Two destinations, because the two types are on different layers:
+  `AbstractProjectFileSearchScope` imports nothing and has non-JVM users (metadata and JKlib
+  pipelines), so it went to `:compiler:frontend.common` under the neutral package
+  `org.jetbrains.kotlin.search`; `JvmCompilationEnvironment` is JVM-specific in five of its ten
+  members (`KotlinClassFinder`, `PackagePartProvider`, `JavaModuleResolver`,
+  `registerAsJavaElementFinder`, `getFirJavaFacade`) and has a single JVM implementation, so it went
+  to `:compiler:fir:fir-jvm` together with `FirJavaInterop`, whose `FirJavaFacade` already lives
+  there. The `fir.session[.environment]` packages are unchanged, so only the ~20 scope imports moved.
+- **Files**: `frontend.common/.../search/AbstractProjectFileSearchScope.kt` (new),
+  `fir-jvm/.../session/environment/JvmCompilationEnvironment.kt` and
+  `fir-jvm/.../session/FirJavaInterop.kt` (moved out of `fir:entrypoint`),
+  `fir-jvm/build.gradle.kts` (`frontend.common`, `frontend.common.jvm`, `core:compiler.common.jvm`
+  become `api` — they are in the moved public signatures), `java-direct/build.gradle.kts`
+  (`fir:entrypoint` out, `frontend.common` in), plus the import in 17 CLI/JKlib/scripting/test-fixture
+  files and `implDocs/PSI_FREE_ROADMAP.md` §2/§3/§4.
+- **Tests**: `compileKotlin` of `frontend.common`, `fir:fir-jvm`, `fir:entrypoint`, `java-direct`,
+  `cli`, `cli-jvm`, `cli-jklib`, `kotlin-scripting-compiler` and the test-fixture modules;
+  `:compiler:java-direct:test` (box + phased, `JavaDirectModuleBoundaryTest`, `JavaParsingTest`);
+  both gates for the shared files touched (`PhasedJvmDiagnosticLightTreeTestGenerated`,
+  `CompileKotlinAgainstKotlin`).
+- **Result**: green; move only, no behaviour change.
+
+### 2026-08-12 — `Context.binaryJavaClassCache` removed as a leftover
+- **Change**: after the `FirJavaInterop` round the cache was written into
+  `FirJvmSessionFactory.Context` but read by nobody: the only consumer is the java-direct
+  `JavaClassFinderOverBinaryIndex`, which gets it from `createJavaDirectJavaInterop`, and the
+  factory is itself the context's per-compilation Java decision. The field (and its `null`-means-PSI
+  double of `javaInterop == null`) is gone; the cache is constructed inside the java-direct
+  branch in `prepareJvmSessions`, so its lifetime is still the compilation, now stated where it is held.
+  Nothing else was left dangling: no unused parameters or imports remain from the round, and
+  `FirJKlibSessionFactory` is the only self-deciding consumer, already recorded in
+  `implDocs/PSI_FREE_ROADMAP.md` §7.
+- **Files**: `FirJvmSessionFactory.kt`, `JvmFrontendPipelinePhase.kt`, `BinaryJavaClassCache.kt` (KDoc),
+  `implDocs/BINARY_CLASS_CACHE_LIFETIME.md`, `implDocs/CLASS_FILE_READ_LAYER.md`,
+  `implDocs/PSI_FREE_ROADMAP.md`.
+- **Tests**: `:compiler:java-direct:test` full suite; `PhasedJvmDiagnosticLightTreeTestGenerated` and
+  `CompileKotlinAgainstKotlin` gates for the shared `JvmFrontendPipelinePhase.kt`.
+- **Result**: green; no behaviour change.
+
+### 2026-08-11 — the Java implementation is chosen once per compilation (`FirJavaInterop`)
+- **Change**: the choice between the PSI Java view and java-direct was a `createJavaFacade` lambda passed
+  into each construction site, so sites which did not know about it silently kept the PSI default — most
+  notably the symbol provider for the *precompiled binaries* of incremental compilation. It is now a
+  `FirJavaInterop` held by `FirJvmSessionFactory.Context` (default `psiJavaInterop()`), read by
+  the library/source sessions, `IncrementalCompilationContext.createSymbolProviders` (takes the context
+  instead of the project environment), the HMPP-common JVM provider and the scripting/REPL library session.
+  `createJavaDirectJavaFacadeBuilder` → `createJavaDirectJavaInterop`. Remaining consumer:
+  `FirJKlibSessionFactory`, see `implDocs/PSI_FREE_ROADMAP.md` §7.
+- **Files**: `FirJavaInterop.kt` (new), `FirJvmSessionFactory.kt`,
+  `FirJvmIncrementalCompilationSymbolProviders.kt`, `JvmFrontendPipelinePhase.kt`,
+  `JavaDirectFacadeFactory.kt` (renamed), `sessionUtils.kt`, `K2ReplCompiler.kt`,
+  `FirFrontendFacade.kt`, `FirSessionFactoryHelper.kt`.
+- **Tests**: `:compiler:java-direct:test` full suite; `PhasedJvmDiagnosticLightTreeTestGenerated` and
+  `CompileKotlinAgainstKotlin` gates for the shared `JvmFrontendPipelinePhase.kt`.
+- **Result**: green; behaviour changes only under `-Xjava-direct`, where the IC precompiled-binaries
+  provider now reads Java through java-direct instead of PSI.
+
+### 2026-08-11 — binary class cache keyed by class file, `BinaryClassFileHandle` identity contract
+- **Change**: `implDocs/CLASS_FILE_READ_LAYER.md` §6 first step. `BinaryClassFileHandle` now requires
+  `equals`/`hashCode` over the file identity *and* its content version (the VFS implementation snapshots
+  `modificationStamp`), and the classes read from class files moved into `BinaryJavaClasses`, keyed by the
+  handle plus the `ClassId` inside that file — the handle alone is not a key, since one class file also
+  declares every class nested in it. Removes the "which root won for whoever asked first" caveat, for the
+  PSI `KotlinCliJavaFileManagerImpl` cache as well (both share `readBinaryJavaClass`), and is the key both
+  approach B and any cross-build cache need. §7 of the same doc answers whether this retains more than
+  the PSI path: no new kind of data, no new order of magnitude.
+- **Files**: `BinaryClassFileIndex.kt`, `BinaryJavaClassReader.kt`, `BinaryJavaClassCache.kt`,
+  `KotlinCliJavaFileManagerImpl.kt`, `implDocs/CLASS_FILE_READ_LAYER.md`,
+  `implDocs/BINARY_CLASS_CACHE_LIFETIME.md`.
+- **Tests**: `:compiler:java-direct:test` full suite; PSI gate (`PhasedJvmDiagnosticLightTreeTestGenerated`)
+  and `CompileKotlinAgainstKotlin` — both required here because the PSI binary reader shares the cache
+  type — 0 failures.
+- **Result**: green; no behaviour change beyond finer cache keys.
+
+### 2026-08-11 — `BinaryJavaClassCache` moved to `FirJvmSessionFactory.Context`
+- **Change**: the cache was created inside `createJavaDirectJavaFacadeBuilder`, so "per compilation" was
+  an accident of a closure and the object was unreachable from anything but the Java facade. The type
+  moved down to `frontend.common.jvm/.../classFiles/` (it has no java-direct-specific content) and is
+  now a nullable `Context.binaryJavaClassCache`, constructed in `prepareJvmSessions` next to the index
+  and `null` for the PSI facade. Lifetime is now "as long as the context", stated in one place, and the
+  BTA-supplied instance of `implDocs/BINARY_CLASS_CACHE_LIFETIME.md` §4 becomes a parameter change only.
+  Where a *shared* Kotlin+Java class-file read layer should go: `implDocs/CLASS_FILE_READ_LAYER.md`.
+- **Files**: `BinaryJavaClassCache.kt` (moved), `JavaDirectFacadeBuilder.kt`,
+  `JavaClassFinderOverBinaryIndex.kt`, `FirJvmSessionFactory.kt`, `fir/entrypoint/build.gradle.kts`,
+  `JvmFrontendPipelinePhase.kt`.
+- **Tests**: `:compiler:java-direct:test` full suite; both gates for the shared phase file
+  (`PhasedJvmDiagnosticLightTreeTestGenerated`, `CompileKotlinAgainstKotlin`) — 0 failures.
+- **Result**: green; no behaviour change (same object, one owner earlier in the pipeline).
+
+### 2026-08-11 — binary seam split into `BinaryClassFileIndex` + `BinaryClassFileScope`, caches per compilation
+- **Change**: the seam carried both the classpath and the session's visibility, which made
+  `JavaClassFinderOverBinaryIndex` read as a finder over a finder. It is now a scope-free
+  `BinaryClassFileIndex` (CLI impl `CliBinaryClassFileIndex`) plus a one-method `BinaryClassFileScope`
+  supplied per session. That makes the index a pure function of the classpath, so the class-file
+  lookups and the loaded classes moved from the per-scope finder into `BinaryJavaClassCache`, created
+  once per compilation and shared by every session — the width the PSI `KotlinCliJavaFileManagerImpl`
+  already had. Lifetimes beyond one compilation: `implDocs/BINARY_CLASS_CACHE_LIFETIME.md`.
+- **Files**: `BinaryClassFileIndex.kt`, `CliBinaryClassFileIndex.kt`, `BinaryJavaClassCache.kt`,
+  `JavaClassFinderOverBinaryIndex.kt`, `JavaDirectFacadeBuilder.kt`, `JvmFrontendPipelinePhase.kt`.
+- **Tests**: `:compiler:java-direct:test` box + phased, no failures.
+- **Result**: green; behaviour-preserving apart from the wider cache.
+
+### 2026-08-11 — binary seam renamed to `BinaryClassFileFinder`, candidate pair moved to the use site
+- **Change**: the seam is a per-scope lookup over the classpath index, not a set of roots, so it now
+  follows the `KotlinClassFinder` / `VirtualFileFinder` naming: `BinaryClassRoots` →
+  `BinaryClassFileFinder`, `JvmDependenciesIndexBinaryRoots` → `JvmDependenciesIndexClassFileFinder`,
+  `binaryClassRootsForScope()` → `binaryClassFileFinderForScope()`. The interface now returns the
+  candidate class files in classpath order plus `isInSearchScope`; picking the scoped and the
+  cross-reference answer, and the cache record holding both, are private to
+  `JavaClassFinderOverBinaryIndex`.
+- **Files**: `BinaryClassFileFinder.kt`, `JvmDependenciesIndexClassFileFinder.kt`,
+  `JavaClassFinderOverBinaryIndex.kt`, `JavaDirectFacadeBuilder.kt`, `JvmFrontendPipelinePhase.kt`.
+- **Tests**: `:compiler:java-direct:test` box + phased, no failures.
+- **Result**: green; behaviour-preserving rename.
+
+### 2026-08-07 — `compiler/java-direct/src` is PSI-free and off `:compiler:cli`
+- **Change**: java-direct now receives only abstract inputs. New `BinaryClassRoots` /
+  `TopLevelClassFileCandidates` / `BinaryClassFileHandle` seam in `frontend.common.jvm`, implemented
+  by `JvmDependenciesIndexBinaryRoots` in `:compiler:cli`, which is now the only owner of the
+  session's `GlobalSearchScope`, the `asPsiSearchScope()` downcast and the `ct.sym` extension choice.
+  `JavaModuleFinder` and the Java source roots are passed in instead of fished out of
+  `CoreJavaFileManager` / `CLIConfigurationKeys`, which also removes the `?: EMPTY` fallback that
+  silently disabled `import module M;`. `readBinaryJavaClass` takes a handle; `JavaModuleInfo.read`
+  takes a `ClassIdToJavaClass`. `FirJavaFacadeForSource` → `FirJavaFacadeForModule`.
+  `FirJavaElementFinder` proved unreachable under java-direct (all four entry points throwing, full
+  suites still green), so registration is gated on `!useJavaDirect`. Details: `implDocs/PSI_FREE_ROADMAP.md`.
+- **Files**: `BinaryClassRoots.kt` (new), `JvmDependenciesIndexBinaryRoots.kt` (new),
+  `JavaDirectModuleBoundaryTest.kt` (new), `JavaClassFinderOverBinaryIndex.kt`,
+  `JavaDirectFacadeBuilder.kt`, `build.gradle.kts`, `JvmFrontendPipelinePhase.kt`,
+  `BinaryJavaClassReader.kt`, `JavaModuleInfo.kt`, `CliJavaModuleFinder.kt`,
+  `ClasspathRootsResolver.kt`, `KotlinCliJavaFileManagerImpl.kt`, `FirJavaFacade.kt`,
+  `JvmClassFileBasedSymbolProvider.kt`, `LLFirJavaSymbolProvider.kt`.
+- **Tests**: `JavaUsingAst{Phased,Box}TestGenerated` 2798/2798 + `JavaParsing*` +
+  `JavaDirectModuleBoundaryTest` green; PSI gate `PhasedJvmDiagnosticLightTreeTestGenerated` and
+  `CompileKotlinAgainstKotlin` gate green before and after.
+- **Result**: green. `BinaryClassFileHandle.virtualFile` stays as the one transitional accessor —
+  `BinaryJavaClass` is still `VirtualFile`-bound; that is the platform-free (NIO) axis.
+
 ### 2026-08-07 — Module import declarations (`import module M;`, JLS 7.5.5 / KT-84499)
 - **Change**: two independent gaps. (1) Parser: `FileParser` rolls back to lexeme 0 when a file has
   no package statement, and `rollbackTo` leaves `myTokenTypeChecked = true`, so `tokenType` reported

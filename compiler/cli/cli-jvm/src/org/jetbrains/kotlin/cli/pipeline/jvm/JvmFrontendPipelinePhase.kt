@@ -48,9 +48,6 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.java.direct.createJavaDirectJavaFacadeBuilder
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
@@ -62,6 +59,7 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.hmppModuleName
 import org.jetbrains.kotlin.psi.isCommonSource
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
@@ -127,25 +125,14 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         }
 
         perfManager?.notifyPhaseStarted(PhaseType.Analysis)
-        val sourceScope: AbstractProjectFileSearchScope
-        when (configuration.useLightTree) {
-            true -> {
-                sourceScope = AbstractProjectFileSearchScope.EMPTY
-            }
-            false -> {
-                val ktFiles = allSources.map { (it as KtPsiSourceFile).psiFile as KtFile }
-                sourceScope = environment.getSearchScopeByPsiFiles(ktFiles) + environment.getSearchScopeForProjectJavaSources()
-                if (checkIfScriptsInCommonSources(configuration, ktFiles)) {
-                    return null
-                }
+        if (!configuration.useLightTree) {
+            val ktFiles = allSources.map { (it as KtPsiSourceFile).psiFile as KtFile }
+            if (checkIfScriptsInCommonSources(configuration, ktFiles)) {
+                return null
             }
         }
 
-        val [librariesScope, incrementalCompilationContext] = prepareIncrementalCompilationContextAndLibrariesScope(
-            configuration,
-            environment,
-            incrementalExcludesScope = sourceScope
-        )
+        val [librariesClasspath, incrementalCompilationContext] = prepareIncrementalCompilationContextAndLibrariesClasspath(configuration)
 
         val moduleName = when {
             chunk.modules.size > 1 -> chunk.modules.joinToString(separator = "+") { it.getModuleName() }
@@ -163,7 +150,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             rootModuleName = Name.special("<$moduleName>"),
             configuration = configuration,
             projectEnvironment = environment,
-            librariesScope = librariesScope,
+            librariesClasspath = librariesClasspath,
             libraryList = libraryList,
             isCommonSource = sources.isCommonSourceForLt,
             isScript = { ((it as? KtPsiSourceFile)?.psiFile as? KtFile)?.isScript() == true },
@@ -336,7 +323,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         rootModuleName: Name,
         configuration: CompilerConfiguration,
         projectEnvironment: VfsBasedProjectEnvironment,
-        librariesScope: AbstractProjectFileSearchScope,
+        librariesClasspath: JvmClasspath,
         libraryList: DependencyListForCliModule,
         isCommonSource: (F) -> Boolean,
         isScript: (F) -> Boolean,
@@ -344,7 +331,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         incrementalCompilationContext: IncrementalCompilationContext?,
     ): List<SessionWithSources<F>> {
         val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
-        val javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources()
 
         /*
          * TODO(OSIP-75): This code is needed to preserve the legacy implementation of IC in KMP scenario, which was generally incorrect,
@@ -355,15 +341,11 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         var firJvmIncrementalCompilationSymbolProviders: FirJvmIncrementalCompilationSymbolProviders? = null
         var firJvmIncrementalCompilationSymbolProvidersIsInitialized = false
 
-        val javaFacadeBuilder =
-            if (configuration.useJavaDirect) {
-                createJavaDirectJavaFacadeBuilder(configuration, projectEnvironment, javaSourcesScope)
-            } else AbstractProjectEnvironment::getFirJavaFacade
-
         val context = FirJvmSessionFactory.Context(
             configuration,
             projectEnvironment,
-            librariesScope,
+            librariesClasspath,
+            javaInterop = projectEnvironment.javaInterop(configuration),
         )
 
         return SessionConstructionUtils.prepareSessions(
@@ -385,8 +367,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 if (libraries.isNotEmpty()) return@l emptyList()
                 val dependencies = (rawRegularDependencies + rawFriendDependencies).map { Path(it) }
                 if (dependencies.isEmpty()) return@l emptyList()
-                val scope = projectEnvironment.getSearchScopeByClassPath(dependencies)
-                val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(scope)
+                val classpath = JvmClasspath.Roots(dependencies)
+                val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(classpath)
                 val moduleData = moduleDataProvider.allModuleData.first { it.session == session }
                 val provider = JvmClassFileBasedSymbolProvider(
                     session,
@@ -394,7 +376,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     scopeProvider,
                     context.packagePartProviderForLibraries,
                     kotlinClassFinder,
-                    javaFacadeBuilder(projectEnvironment, session, moduleData, context.librariesScope)
+                    context.javaInterop.createBinaryJavaFacade(session, moduleData, context.librariesClasspath)
                 )
                 val builtinsProvider = FirJvmSessionFactory.initializeBuiltinsProvider(
                     session,
@@ -420,20 +402,18 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     extensionRegistrars,
                     configuration.languageVersionSettings,
                     context,
-                    createJavaFacade = javaFacadeBuilder,
                 )
             },
             createSourceSession = { moduleData, kmpModuleKind, sessionConfigurator ->
                 FirJvmSessionFactory.createSourceSession(
                     moduleData,
-                    javaSourcesScope,
                     createIncrementalCompilationSymbolProviders = ic@{ session ->
                         // TODO(OSIP-75): should be removed, see the comment above
                         if (isKmpCompilationWithLegacyIC) {
                             return@ic if (firJvmIncrementalCompilationSymbolProvidersIsInitialized) firJvmIncrementalCompilationSymbolProviders
                             else {
                                 firJvmIncrementalCompilationSymbolProvidersIsInitialized = true
-                                incrementalCompilationContext?.createSymbolProviders(session, moduleData, projectEnvironment)?.also {
+                                incrementalCompilationContext?.createSymbolProviders(session, moduleData, context)?.also {
                                     firJvmIncrementalCompilationSymbolProviders = it
                                 }
                             }
@@ -445,7 +425,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                             KmpModuleKind.LeafHmppModule -> incrementalCompilationContext?.createSymbolProviders(
                                 session,
                                 moduleData,
-                                projectEnvironment
+                                context
                             )
 
                             KmpModuleKind.NonLeafRegularModule,
@@ -459,9 +439,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     extensionRegistrars,
                     configuration,
                     context,
-                    needRegisterJavaElementFinder = true,
                     kmpModuleKind = kmpModuleKind,
-                    createJavaFacade = javaFacadeBuilder,
                     init = sessionConfigurator,
                 )
             }
@@ -695,8 +673,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         val packagePartProviders = mutableListOf<JvmPackagePartProvider>()
 
-        override fun getPackagePartProvider(fileSearchScope: AbstractProjectFileSearchScope): PackagePartProvider {
-            return super.getPackagePartProvider(fileSearchScope).also {
+        override fun getPackagePartProvider(classpath: JvmClasspath): PackagePartProvider {
+            return super.getPackagePartProvider(classpath).also {
                 (it as? JvmPackagePartProvider)?.run {
                     addRoots(currentRoots, configuration)
                     packagePartProviders += this

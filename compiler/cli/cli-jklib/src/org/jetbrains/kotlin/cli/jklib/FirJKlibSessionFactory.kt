@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.jklib
 import org.jetbrains.kotlin.cli.common.SessionConstructionUtils
 import org.jetbrains.kotlin.cli.common.SessionWithSources
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
@@ -26,12 +27,12 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolP
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.jvm.environment.JvmCompilationEnvironment
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -44,7 +45,7 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
         context: Context,
     ): List<FirSymbolProvider> {
         val kotlinClassFinder =
-            context.projectEnvironment.getKotlinClassFinder(context.projectEnvironment.getSearchScopeForProjectLibraries())
+            context.projectEnvironment.getKotlinClassFinder(JvmClasspath.ProjectLibraries())
         return listOf(
             FirCloneableSymbolProvider(session, moduleData, scopeProvider),
             OptionalAnnotationClassesProvider(
@@ -66,7 +67,7 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
      */
     fun createSharedLibrarySession(
         mainModuleName: Name,
-        projectEnvironment: AbstractProjectEnvironment,
+        projectEnvironment: JvmCompilationEnvironment,
         extensionRegistrars: List<FirExtensionRegistrar>,
         packagePartProvider: PackagePartProvider,
         languageVersionSettings: LanguageVersionSettings,
@@ -91,15 +92,16 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
         resolvedLibraries: List<KotlinLibrary>,
         sharedLibrarySession: FirSession,
         moduleDataProvider: ModuleDataProvider,
-        projectEnvironment: AbstractProjectEnvironment,
+        projectEnvironment: JvmCompilationEnvironment,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        scope: AbstractProjectFileSearchScope,
+        classpath: JvmClasspath,
         packagePartProvider: PackagePartProvider,
         languageVersionSettings: LanguageVersionSettings,
         predefinedJavaComponents: FirSharableJavaComponents?,
         jvmTarget: JvmTarget?,
+        javaInterop: FirJavaInterop,
     ): FirSession {
-        val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(scope)
+        val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(classpath)
         val context = Context(predefinedJavaComponents, projectEnvironment, packagePartProvider, jvmTarget)
         return createLibrarySession(
             context,
@@ -119,7 +121,7 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
                         kotlinScopeProvider,
                         packagePartProvider,
                         kotlinClassFinder,
-                        projectEnvironment.getFirJavaFacade(session, moduleDataProvider.allModuleData.last(), scope)
+                        javaInterop.createBinaryJavaFacade(session, moduleDataProvider.allModuleData.last(), classpath)
                     ),
                 )
             }
@@ -141,15 +143,14 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
      */
     fun createSourceSession(
         moduleData: FirModuleData,
-        javaSourcesScope: AbstractProjectFileSearchScope,
-        projectEnvironment: AbstractProjectEnvironment,
+        projectEnvironment: JvmCompilationEnvironment,
         createIncrementalCompilationSymbolProviders: (FirSession) -> FirJvmIncrementalCompilationSymbolProviders?,
         extensionRegistrars: List<FirExtensionRegistrar>,
         configuration: CompilerConfiguration,
         predefinedJavaComponents: FirSharableJavaComponents?,
-        needRegisterJavaElementFinder: Boolean,
         packagePartProvider: PackagePartProvider,
         kmpModuleKind: KmpModuleKind,
+        javaInterop: FirJavaInterop,
         init: FirSessionConfigurator.() -> Unit,
     ): FirSession {
         val context = Context(
@@ -167,7 +168,7 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
             init,
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider ->
                 val javaSymbolProvider =
-                    JavaSymbolProvider(session, projectEnvironment.getFirJavaFacade(session, moduleData, javaSourcesScope))
+                    JavaSymbolProvider(session, javaInterop.createJavaSourcesFacade(session, moduleData))
                 session.register(JavaSymbolProvider::class, javaSymbolProvider)
 
                 val providers = listOfNotNull(
@@ -185,9 +186,7 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
                 )
             }
         ).also {
-            if (needRegisterJavaElementFinder) {
-                projectEnvironment.registerAsJavaElementFinder(it)
-            }
+            javaInterop.registerKotlinDeclarationsForJava(it)
         }
     }
 
@@ -231,13 +230,13 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
 
     class Context(
         val predefinedJavaComponents: FirSharableJavaComponents?,
-        val projectEnvironment: AbstractProjectEnvironment,
+        val projectEnvironment: JvmCompilationEnvironment,
         val packagePartProvider: PackagePartProvider,
         val jvmTarget: JvmTarget?,
     )
 
     private fun initializeForStdlibIfNeeded(
-        projectEnvironment: AbstractProjectEnvironment,
+        projectEnvironment: JvmCompilationEnvironment,
         session: FirSession,
         kotlinScopeProvider: FirKotlinScopeProvider,
     ): FirSymbolProvider? {
@@ -246,7 +245,7 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
                     !session.moduleData.isCommon
                     && session.moduleData.dependsOnDependencies.isEmpty()
         ) {
-            val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(projectEnvironment.getSearchScopeForProjectLibraries())
+            val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(JvmClasspath.ProjectLibraries())
             FirJvmClasspathBuiltinSymbolProvider(
                 session,
                 session.moduleData,
@@ -272,12 +271,13 @@ internal fun <F> prepareJKlibSessions(
     libraryList: DependencyListForCliModule,
     extensionRegistrars: List<FirExtensionRegistrar>,
     metadataCompilationMode: Boolean,
-    librariesScope: AbstractProjectFileSearchScope,
+    librariesClasspath: JvmClasspath,
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
 ): List<SessionWithSources<F>> {
     val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
-    val packagePartProviderForLibraries = projectEnvironment.getPackagePartProvider(librariesScope)
+    val packagePartProviderForLibraries = projectEnvironment.getPackagePartProvider(librariesClasspath)
+    val javaInterop = projectEnvironment.javaInterop(configuration)
 
     return SessionConstructionUtils.prepareSessions(
         files,
@@ -308,26 +308,26 @@ internal fun <F> prepareJKlibSessions(
                 libraryList.moduleDataProvider,
                 projectEnvironment,
                 extensionRegistrars,
-                librariesScope,
+                librariesClasspath,
                 packagePartProviderForLibraries,
                 configuration.languageVersionSettings,
                 predefinedJavaComponents = predefinedJavaComponents,
                 jvmTarget = configuration.jvmTarget,
+                javaInterop = javaInterop,
             )
         },
         createSourceSession = { moduleData, kmpModuleKind, sessionConfigurator ->
             FirJKlibSessionFactory.createSourceSession(
                 moduleData = moduleData,
-                javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources(),
                 projectEnvironment = projectEnvironment,
                 createIncrementalCompilationSymbolProviders = { null },
                 extensionRegistrars = extensionRegistrars,
                 configuration = configuration,
                 predefinedJavaComponents = predefinedJavaComponents,
-                needRegisterJavaElementFinder = true,
                 packagePartProvider = packagePartProviderForLibraries,
                 init = sessionConfigurator,
                 kmpModuleKind = kmpModuleKind,
+                javaInterop = javaInterop,
             )
         },
         createMetadataSessionFactoryContextForHmppCommonLibrarySession = {

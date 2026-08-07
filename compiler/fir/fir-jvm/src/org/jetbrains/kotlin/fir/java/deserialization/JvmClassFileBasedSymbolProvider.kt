@@ -52,7 +52,7 @@ open class JvmClassFileBasedSymbolProvider(
     private val packagePartProvider: PackagePartProvider,
     private val kotlinClassFinder: KotlinClassFinder,
     private val javaFacade: FirJavaFacade,
-    defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
+    defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
 ) : AbstractFirDeserializedSymbolProvider(
     session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, BuiltInSerializerProtocol
 ) {
@@ -136,8 +136,7 @@ open class JvmClassFileBasedSymbolProvider(
 
     override fun computePackageSetWithNonClassDeclarations(): Set<String>? = packagePartProvider.computePackageSetWithNonClassDeclarations()
 
-    override fun knownTopLevelClassesInPackage(packageFqName: FqName): Set<String>? =
-        javaFacade.knownClassNamesInPackage(packageFqName)
+    override fun knownTopLevelClassesInPackage(packageFqName: FqName): Set<String>? = javaFacade.knownClassNamesInPackage(packageFqName)
 
     private val KotlinJvmBinaryClass.incompatibility: IncompatibleVersionErrorData<MetadataVersion>?
         get() {
