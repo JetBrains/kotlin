@@ -251,146 +251,159 @@ def _type_info(value):
 
 
 _FACTORY = {}
-_ARRAY_CHILD_QUERY_CACHE = {}
-_ARRAY_ELEMENT_SUMMARY_CACHE = {}
-_ARRAY_ELEMENT_FIELD_TYPE_RESULT_CACHE = {}
-_ARRAY_QUERY_CACHE_STATE = None
+_SBVALUE_CACHE = {}
+_SB_VALUE_CACHE_PROCESS_HASH = None
 _TO_STRING_DEPTH = 2
 _ARRAY_TO_STRING_LIMIT = 10
 _TOTAL_MEMBERS_LIMIT = 50
 
 
-class CachedArrayResponses:
+class CachedSBValueInfo:
     def __init__(self):
-        self.child_addresses_by_index = {}
-        self.child_types_by_index = {}
+        self.child_addresses_by_index = None
+        self.child_names_by_index = None
+        self.child_types_by_index = None
         self.resolved_proxy = None
+        self.summary = None
+        self.type_name = None
 
 
-def _clear_sbvalue_query_cache(reason="manual"):
-    global _ARRAY_CHILD_QUERY_CACHE, _ARRAY_ELEMENT_SUMMARY_CACHE
-    global _ARRAY_ELEMENT_FIELD_TYPE_RESULT_CACHE
-    global _ARRAY_QUERY_CACHE_STATE
-    _ARRAY_CHILD_QUERY_CACHE = {}
-    _ARRAY_ELEMENT_SUMMARY_CACHE = {}
-    _ARRAY_ELEMENT_FIELD_TYPE_RESULT_CACHE = {}
-    _ARRAY_QUERY_CACHE_STATE = None
+def _clear_sbvalue_query_cache():
+    global _SBVALUE_CACHE
+    global _SB_VALUE_CACHE_PROCESS_HASH
+    _SBVALUE_CACHE = {}
+    _SB_VALUE_CACHE_PROCESS_HASH = None
 
 
-def _array_query_cache_state(process):
-    if process is None or not process.IsValid():
-        return None
+def _get_process_state_hash(process):
     return process.GetUniqueID(), process.GetStopID(False)
 
 
-def _ensure_array_query_cache_state(process):
-    global _ARRAY_QUERY_CACHE_STATE
-    state = _array_query_cache_state(process)
-    if state is None:
-        _clear_sbvalue_query_cache("invalid-process")
-        return None, False
-    if _ARRAY_QUERY_CACHE_STATE != state:
-        _clear_sbvalue_query_cache("state-change")
-        _ARRAY_QUERY_CACHE_STATE = state
-        return state, False
-    return state, True
+def _clear_stale_cache(process):
+    global _SB_VALUE_CACHE_PROCESS_HASH
+    state = _get_process_state_hash(process)
+    if _SB_VALUE_CACHE_PROCESS_HASH != state:
+        _clear_sbvalue_query_cache()
+        _SB_VALUE_CACHE_PROCESS_HASH = state
+        return False
+    return True
 
 
 def _array_query_cache_key(value):
     return value.GetValueAsUnsigned()
 
 
-def _get_cached_array_responses(value):
-    _, is_cache_valid = _ensure_array_query_cache_state(value.GetProcess())
-    if not is_cache_valid:
+def _get_cached_sbvalue_info(value):
+    if value is None or value.GetValueAsUnsigned() == 0:
         return None
-    return _ARRAY_CHILD_QUERY_CACHE.get(_array_query_cache_key(value))
-
-
-def _get_or_create_cached_array_responses(value):
-    process = value.GetProcess()
-    return _get_or_create_cached_array_responses_for_key(
-        process, _array_query_cache_key(value)
+    return _get_cached_sbvalue_info_for_key(
+        value.GetProcess(), _array_query_cache_key(value)
     )
 
 
-def _get_or_create_cached_array_responses_for_key(process, key):
-    global _ARRAY_QUERY_CACHE_STATE
-    state = _array_query_cache_state(process)
-    if state is None:
-        _clear_sbvalue_query_cache("invalid-process-create")
+def _get_or_create_cached_sbvalue_info(value):
+    if value is None or value.GetValueAsUnsigned() == 0:
         return None
-    if _ARRAY_QUERY_CACHE_STATE != state:
-        _clear_sbvalue_query_cache("state-change-create")
-        _ARRAY_QUERY_CACHE_STATE = state
-    responses = _ARRAY_CHILD_QUERY_CACHE.get(key)
-    if responses is None:
-        responses = CachedArrayResponses()
-        _ARRAY_CHILD_QUERY_CACHE[key] = responses
-    return responses
+    return _get_or_create_cached_sbvalue_info_for_key(
+        value.GetProcess(), _array_query_cache_key(value)
+    )
+
+
+def _get_cached_sbvalue_info_for_key(process, key):
+    if key == 0:
+        return None
+    _clear_stale_cache(process)
+    return _SBVALUE_CACHE.get(key)
+
+
+def _get_or_create_cached_sbvalue_info_for_key(process, key):
+    if key == 0:
+        return None
+    global _SB_VALUE_CACHE_PROCESS_HASH
+    state = _get_process_state_hash(process)
+    if _SB_VALUE_CACHE_PROCESS_HASH != state:
+        _clear_sbvalue_query_cache()
+        _SB_VALUE_CACHE_PROCESS_HASH = state
+    cached_info = _SBVALUE_CACHE.get(key)
+    if cached_info is None:
+        cached_info = CachedSBValueInfo()
+        _SBVALUE_CACHE[key] = cached_info
+    return cached_info
 
 
 def _get_cached_child_addresses_by_index(value):
-    responses = _get_or_create_cached_array_responses(value)
-    return None if responses is None else responses.child_addresses_by_index
+    cached_info = _get_cached_sbvalue_info(value)
+    return None if cached_info is None else cached_info.child_addresses_by_index
+
+
+def _get_cached_child_names_by_index(value):
+    cached_info = _get_cached_sbvalue_info(value)
+    return None if cached_info is None else cached_info.child_names_by_index
 
 
 def _get_cached_child_types_by_index(value):
-    responses = _get_or_create_cached_array_responses(value)
-    return None if responses is None else responses.child_types_by_index
+    cached_info = _get_cached_sbvalue_info(value)
+    return None if cached_info is None else cached_info.child_types_by_index
 
 
-def _cache_child_type(value, index, child_type):
-    cached_types = _get_cached_child_types_by_index(value)
-    if cached_types is not None:
-        cached_types[index] = child_type
+def _set_cached_child_address(value, index, address):
+    cached_info = _get_or_create_cached_sbvalue_info(value)
+    if cached_info is None:
+        return
+    if cached_info.child_addresses_by_index is None:
+        cached_info.child_addresses_by_index = {}
+    cached_info.child_addresses_by_index[index] = address
+
+
+def _set_cached_child_name(value, index, name):
+    cached_info = _get_or_create_cached_sbvalue_info(value)
+    if cached_info is None:
+        return
+    if cached_info.child_names_by_index is None:
+        cached_info.child_names_by_index = {}
+    cached_info.child_names_by_index[index] = name
+
+
+def _set_cached_child_type(value, index, child_type):
+    cached_info = _get_or_create_cached_sbvalue_info(value)
+    if cached_info is None:
+        return
+    if cached_info.child_types_by_index is None:
+        cached_info.child_types_by_index = {}
+    cached_info.child_types_by_index[index] = child_type
 
 
 def _get_cached_proxy(value):
-    if value is None or value.GetValueAsUnsigned() == 0:
-        return None
-    responses = _get_cached_array_responses(value)
-    return None if responses is None else responses.resolved_proxy
+    cached_info = _get_cached_sbvalue_info(value)
+    return None if cached_info is None else cached_info.resolved_proxy
 
 
 def _set_cached_proxy(value, proxy):
-    if value is None or value.GetValueAsUnsigned() == 0 or proxy is None:
+    if proxy is None:
         return
-    responses = _get_or_create_cached_array_responses(value)
-    if responses is not None:
-        responses.resolved_proxy = proxy
+    cached_info = _get_or_create_cached_sbvalue_info(value)
+    if cached_info is not None:
+        cached_info.resolved_proxy = proxy
 
 
 def _get_cached_summary_for_key(process, key):
-    if key == 0:
-        return None
-    _, is_cache_valid = _ensure_array_query_cache_state(process)
-    if not is_cache_valid:
-        return None
-    return _ARRAY_ELEMENT_SUMMARY_CACHE.get(key)
+    cached_info = _get_cached_sbvalue_info_for_key(process, key)
+    return None if cached_info is None else cached_info.summary
 
 
 def _set_cached_summary_for_key(process, key, summary):
-    if key == 0 or summary is None:
+    if summary is None:
         return
-    _get_or_create_cached_array_responses_for_key(process, key)
-    _ARRAY_ELEMENT_SUMMARY_CACHE[key] = summary
-
-
-def _get_cached_field_type_result_for_key(process, key):
-    if key == 0:
-        return None
-    _, is_cache_valid = _ensure_array_query_cache_state(process)
-    if not is_cache_valid:
-        return None
-    return _ARRAY_ELEMENT_FIELD_TYPE_RESULT_CACHE.get(key)
-
+    cached_info = _get_or_create_cached_sbvalue_info_for_key(process, key)
+    if cached_info is not None:
+        cached_info.summary = summary
 
 def _set_cached_type_name(process, key, type_name):
-    if key == 0 or type_name is None:
+    if type_name is None:
         return
-    _get_or_create_cached_array_responses_for_key(process, key)
-    _ARRAY_ELEMENT_FIELD_TYPE_RESULT_CACHE[key] = type_name
+    cached_info = _get_or_create_cached_sbvalue_info_for_key(process, key)
+    if cached_info is not None:
+        cached_info.type_name = type_name
 
 
 def _decode_c_string_array(raw_bytes, count):
@@ -710,8 +723,8 @@ class KonanHelperProvider(lldb.SBSyntheticValueProvider):
         )[0]
 
     def _child_name(self, index):
-        children = getattr(self, "_children", None)
-        if children is not None and 0 <= index < len(children):
+        children = _get_cached_child_names_by_index(self._valobj)
+        if children is not None and index in children:
             return children[index]
 
         return self._field_name(index)
@@ -806,12 +819,7 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
         super(KonanObjectSyntheticProvider, self).__init__(
             valobj, False, "ObjectProvider", internal_dict
         )
-        self._children = [
-            self._field_name(i) for i in range(self._children_count)
-        ]
-        self._log.debug(
-            "%s _children: %s", _hex(self._valobj.unsigned), self._children
-        )
+        self._cache_child_names()
 
     def _field_name(self, index):
         self._log.debug("%s, %s", _hex(self._valobj.unsigned), index)
@@ -843,7 +851,13 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
     def get_child_index(self, name):
         value_str = _hex(self._valobj.unsigned)
         self._log.debug("%s, %s", value_str, name)
-        index = self._children.index(name)
+        cached_names = _get_cached_child_names_by_index(self._valobj)
+        if cached_names is None or len(cached_names) < self._children_count:
+            self._cache_child_names()
+            cached_names = _get_cached_child_names_by_index(self._valobj)
+        index = [
+            cached_names[i] for i in range(self._children_count)
+        ].index(name)
         self._log.debug("%s index=%s", value_str, name)
         return index
 
@@ -853,17 +867,24 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
 
     def update(self):
         super(KonanObjectSyntheticProvider, self).update()
-        self._children = [
-            self._field_name(i) for i in range(self._children_count)
-        ]
+        self._cache_child_names()
         return False
+
+    def _cache_child_names(self):
+        cached_names = []
+        for index in range(self._children_count):
+            name = self._field_name(index)
+            _set_cached_child_name(self._valobj, index, name)
+            cached_names.append(name)
+        self._log.debug(
+            "%s _children: %s", _hex(self._valobj.unsigned), cached_names
+        )
 
 
 class FastKonanObjectSyntheticProvider(KonanHelperProvider):
     def __init__(self, valobj, _, internal_dict):
         self._log = logging.getLogger(self.__class__.__name__)
         self._children_count = 0
-        self._children = None
         super(FastKonanObjectSyntheticProvider, self).__init__(
             valobj, False, "FastObjectProvider", internal_dict
         )
@@ -1087,14 +1108,12 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
             )
             summaries = [""] * count
 
-            cached_addresses = _get_cached_child_addresses_by_index(self._valobj)
-            if cached_addresses is not None:
-                for index, address in enumerate(addresses):
-                    cached_addresses[index] = address
-            cached_types = _get_cached_child_types_by_index(self._valobj)
-            if cached_types is not None:
-                for index, child_type in enumerate(types):
-                    cached_types[index] = child_type
+            for index, name in enumerate(names):
+                _set_cached_child_name(self._valobj, index, name)
+            for index, address in enumerate(addresses):
+                _set_cached_child_address(self._valobj, index, address)
+            for index, child_type in enumerate(types):
+                _set_cached_child_type(self._valobj, index, child_type)
             for field_address, child_type, type_name, summary in zip(
                 addresses, types, type_names, summaries
             ):
@@ -1130,14 +1149,18 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
         return names
 
     def _ensure_children(self, reason):
-        if self._children is None:
+        cached_names = _get_cached_child_names_by_index(self._valobj)
+        if cached_names is None or len(cached_names) < self._children_count:
             try:
-                self._children = self._run_batch_child_metadata_request()
+                names = self._run_batch_child_metadata_request()
             except DebuggerException:
-                self._children = [
+                names = [
                     self._field_name(i) for i in range(self._children_count)
                 ]
-        return self._children
+                for index, name in enumerate(names):
+                    _set_cached_child_name(self._valobj, index, name)
+            cached_names = _get_cached_child_names_by_index(self._valobj)
+        return [cached_names[i] for i in range(self._children_count)]
 
     def num_children(self):
         return self._children_count
@@ -1153,29 +1176,30 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
 
     def _field_address(self, index):
         cached_addresses = _get_cached_child_addresses_by_index(self._valobj)
-        if cached_addresses is not None:
-            if index not in cached_addresses:
-                self._ensure_children(
-                    f"prefetch requested field address '{index}'"
-                )
-            if index in cached_addresses:
-                return cached_addresses[index]
+        if cached_addresses is None or index not in cached_addresses:
+            self._ensure_children(
+                f"prefetch requested field address '{index}'"
+            )
+            cached_addresses = _get_cached_child_addresses_by_index(
+                self._valobj
+            )
+        if cached_addresses is not None and index in cached_addresses:
+            return cached_addresses[index]
         return super()._field_address(index)
 
     def _field_type(self, index):
         cached_types = _get_cached_child_types_by_index(self._valobj)
-        if cached_types is not None:
-            if index not in cached_types:
-                self._ensure_children(
-                    f"prefetch requested field type '{index}'"
-                )
-            if index in cached_types:
-                return cached_types[index]
+        if cached_types is None or index not in cached_types:
+            self._ensure_children(
+                f"prefetch requested field type '{index}'"
+            )
+            cached_types = _get_cached_child_types_by_index(self._valobj)
+        if cached_types is not None and index in cached_types:
+            return cached_types[index]
         return super()._field_type(index)
 
     def update(self):
         super(FastKonanObjectSyntheticProvider, self).update()
-        self._children = None
         return False
 
 
@@ -1216,19 +1240,14 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
 
 
 class FastKonanArraySyntheticProvider(KonanHelperProvider):
-    def __init__(self, valobj, tip, internal_dict):
+    def __init__(self, valobj, _, internal_dict):
         self._log = logging.getLogger(self.__class__.__name__)
         self._children_count = 0
-        self._tip = tip
-        self._element_runtime_type = _RUNTIME_TYPE_INVALID
-        self._element_lldb_type = None
         super(FastKonanArraySyntheticProvider, self).__init__(
             valobj, False, "FastArrayProvider", internal_dict
         )
         if self._valobj is None:
             return
-        self._element_runtime_type = self._resolve_element_runtime_type()
-        self._element_lldb_type = self._resolve_element_lldb_type()
         valobj.SetSyntheticChildrenGenerated(True)
 
     def num_children(self):
@@ -1243,10 +1262,13 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
             return None
 
         cached_addresses = _get_cached_child_addresses_by_index(self._valobj)
+        if cached_addresses is None or index not in cached_addresses:
+            self._prefetch_child_data(index)
+            cached_addresses = _get_cached_child_addresses_by_index(
+                self._valobj
+            )
         if cached_addresses is None:
             return None
-        if index not in cached_addresses:
-            self._prefetch_child_data(index, cached_addresses)
 
         address = cached_addresses.get(index)
         if not address:
@@ -1257,42 +1279,40 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
 
     def _field_address(self, index):
         cached_addresses = _get_cached_child_addresses_by_index(self._valobj)
-        if cached_addresses is None:
-            return super()._field_address(index)
-        if index not in cached_addresses:
-            self._prefetch_child_data(index, cached_addresses)
-        return cached_addresses.get(index, 0)
+        if cached_addresses is None or index not in cached_addresses:
+            self._prefetch_child_data(index)
+            cached_addresses = _get_cached_child_addresses_by_index(
+                self._valobj
+            )
+        if cached_addresses is not None and index in cached_addresses:
+            return cached_addresses[index]
+        return super()._field_address(index)
 
     def _field_type(self, index):
         cached_types = _get_cached_child_types_by_index(self._valobj)
         if cached_types is not None and index in cached_types:
             return cached_types[index]
 
-        cached_addresses = _get_cached_child_addresses_by_index(self._valobj)
-        if cached_addresses is not None:
-            self._prefetch_child_data(index, cached_addresses, cached_types)
-            if cached_types is not None and index in cached_types:
-                return cached_types[index]
+        self._prefetch_child_data(index)
+        cached_types = _get_cached_child_types_by_index(self._valobj)
+        if cached_types is not None and index in cached_types:
+            return cached_types[index]
 
-        child_type = self._element_runtime_type
-        if child_type == _RUNTIME_TYPE_INVALID:
-            child_type = super()._field_type(index)
-        _cache_child_type(self._valobj, index, child_type)
+        child_type = super()._field_type(index)
+        _set_cached_child_type(self._valobj, index, child_type)
         return child_type
 
     def update(self):
         super(FastKonanArraySyntheticProvider, self).update()
-        self._element_runtime_type = self._resolve_element_runtime_type()
-        self._element_lldb_type = self._resolve_element_lldb_type()
         return False
 
-    def _prefetch_child_data(
-        self, index, cached_addresses, cached_types=None
-    ):
-        if cached_types is None:
-            cached_types = _get_cached_child_types_by_index(self._valobj)
-        has_address = index in cached_addresses
-        has_type = cached_types is None or index in cached_types
+    def _prefetch_child_data(self, index):
+        cached_addresses = _get_cached_child_addresses_by_index(self._valobj)
+        cached_types = _get_cached_child_types_by_index(self._valobj)
+        has_address = (
+            cached_addresses is not None and index in cached_addresses
+        )
+        has_type = cached_types is not None and index in cached_types
         if has_address and has_type:
             return
         FastKonanObjectSyntheticProvider._run_batch_child_metadata_request(
@@ -1300,38 +1320,17 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
         )
 
     def _create_child_value(self, index, address):
-        if self._element_lldb_type is None:
+        lldb_type = self._resolve_lldb_type(self._field_type(index))
+        if lldb_type is None:
             return None
 
         return self._valobj.CreateValueFromAddress(
             str(index),
             address,
-            self._element_lldb_type,
+            lldb_type,
         )
 
-    def _resolve_element_runtime_type(self):
-        if self._tip is None:
-            return self._fallback_element_runtime_type()
-
-        pointer_size = self._target.GetAddressByteSize()
-        extended_info_addr = self._read_pointer(self._tip + pointer_size)
-        if not extended_info_addr:
-            return self._fallback_element_runtime_type()
-
-        fields_count = self._read_int32(extended_info_addr)
-        if fields_count is None or fields_count >= 0:
-            return self._fallback_element_runtime_type()
-
-        return -fields_count
-
-    def _fallback_element_runtime_type(self):
-        if self._children_count <= 0:
-            return _RUNTIME_TYPE_INVALID
-
-        return self._field_type(0)
-
-    def _resolve_element_lldb_type(self):
-        runtime_type = self._element_runtime_type
+    def _resolve_lldb_type(self, runtime_type):
         if runtime_type == _RUNTIME_TYPE_OBJECT:
             return self._valobj.type
         if runtime_type == 2:
@@ -1353,15 +1352,6 @@ class FastKonanArraySyntheticProvider(KonanHelperProvider):
         if runtime_type == 9:
             return self._valobj.type.GetBasicType(lldb.eBasicTypeBool)
         return None
-
-    def _read_int32(self, address):
-        error = lldb.SBError()
-        raw = self._process.ReadMemory(address, 4, error)
-        if not error.Success():
-            return None
-        return struct.unpack(
-            f"{_struct_prefix_for_target(self._target)}i", raw
-        )[0]
 
 
 def _object_field(object_proxy, field_name):
@@ -1664,7 +1654,7 @@ class KonanProxyTypeProvider:
 
         proxy = _select_provider(self._valobj, self._internal_dict)
 
-        value_str = _hex(valobj.unsigned)
+        value_str = _hex(self.valobj.unsigned)
         _bench(start, lambda: f"KonanProxyTypeProvider({value_str})")
         self._log.debug(
             "%s _proxy: %s", value_str, proxy.__class__.__name__
@@ -1699,21 +1689,13 @@ class KonanProxyTypeProvider:
     def __getattr__(self, item):
         return getattr(self._get_proxy(), item)
 
-
-def _cached_field_type_result_key(variable):
+def _get_cached_type_name(variable):
     if variable is None or not variable.IsValid():
         return None
     if variable.GetTypeName() != "ObjHeader *":
         return None
-    key = variable.GetValueAsUnsigned()
-    return key if key != 0 else None
-
-
-def _get_cached_type_name(variable):
-    key = _cached_field_type_result_key(variable)
-    if key is None:
-        return None
-    return _get_cached_field_type_result_for_key(variable.GetProcess(), key)
+    cached_info = _get_cached_sbvalue_info(variable)
+    return None if cached_info is None else cached_info.type_name
 
 
 def field_type_command(_, field_address, exe_ctx, result, internal_dict):
