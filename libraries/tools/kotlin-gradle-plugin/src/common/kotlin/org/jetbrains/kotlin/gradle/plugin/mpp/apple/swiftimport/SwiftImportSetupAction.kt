@@ -9,7 +9,6 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.kotlin.dsl.project
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -560,7 +559,7 @@ private fun Project.updateDependenciesWithAggregatedResults(
             aggregationService.get().buildAggregatedResultDependencies(
                 packageResolvedSynchronizationIdentifier
             ).map {
-                project.dependencies.project(path = it)
+                project.dependencies.project(it)
             }
         }
     )
