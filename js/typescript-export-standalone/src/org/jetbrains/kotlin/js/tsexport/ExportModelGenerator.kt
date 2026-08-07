@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.klib.reader.KaModules
 import org.jetbrains.kotlin.analysis.api.klib.reader.getAllDeclarations
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.scopes.combinedMemberScope
 import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.takeIfNotEmpty
 
 public const val EXTENSION_RECEIVER_NAME: String = "_this_"
 
-private typealias WholeWorldExportModel = MutableMap<KaLibraryModule, MutableMap<FileArtifactKey, MutableList<ExportedDeclaration>>>
+private typealias WholeWorldExportModel = Map<KaLibraryModule, MutableMap<FileArtifactKey, MutableList<ExportedDeclaration>>>
 
 internal class ExportModelGenerator(private val config: TypeScriptExportConfig) {
     private var pendingTransitivelyExportedClasses = linkedSetOf<KaClassLikeSymbol>()
@@ -44,7 +45,12 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
     private fun generateExport(topLevelDeclarations: Sequence<KaDeclarationSymbol>, output: WholeWorldExportModel) {
         for (declaration in topLevelDeclarations) {
             val [file, exported] = exportTopLevelDeclaration(declaration) ?: continue
-            val files = output.computeIfAbsent(declaration.containingModule as KaLibraryModule) { mutableMapOf() }
+            val module = declaration.containingModule as KaLibraryModule
+            val files = output[module]
+                ?: error(
+                    "Attempted to export declaration '${declaration.render()}' from module '${module.libraryName}', but this module" +
+                            " is not among the input modules passed to TypeScript Export."
+                )
             files.computeIfAbsent(file) { mutableListOf() }.addAll(exported)
         }
     }
@@ -53,7 +59,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
     fun generateExport(modules: KaModules<TypeScriptModuleConfig>): List<ProcessedModule> {
         // First, export all explicitly exported declarations, while simultaneously collecting all the referenced implicitly exported
         // classes into `pendingTransitivelyExportedClasses`.
-        val exportModel: WholeWorldExportModel = mutableMapOf()
+        val exportModel: WholeWorldExportModel = modules.mainModules.associateWith { mutableMapOf() }
         for (library in modules.mainModules) {
             generateExport(library.getAllDeclarations().filter { it.isEffectivelyExported(config) }, exportModel)
         }
