@@ -18,7 +18,9 @@ class ReachabilityMetadataGeneratingCompilerRunner(private val javaHome: String)
 
     private val kotlinHome: File = ForTestCompileRuntime.distKotlincForTests()
 
-    private val reachabilityMetadataPath: String = ForTestCompileRuntime.kotlinNativeImageResourcesPathForTests()
+    private val resourcesDir: File = ForTestCompileRuntime.kotlinNativeImageResourcesPathForTests()
+
+    private val reachabilityMetadataPath: String = resourcesDir
         .resolve("META-INF/native-image/org/jetbrains/kotlin/kotlin-compiler-embeddable")
         .absolutePath
 
@@ -47,6 +49,7 @@ class ReachabilityMetadataGeneratingCompilerRunner(private val javaHome: String)
                 add("-cp")
                 add(classpath.joinToString(File.pathSeparator))
             }
+            add("-Xdisable-default-scripting-plugin")
             addAll(arguments)
         }
         val process = ProcessBuilder(cmd)
