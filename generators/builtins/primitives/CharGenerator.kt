@@ -54,7 +54,7 @@ abstract class CharGenerator(private val writer: PrintWriter) : BuiltInsGenerato
 
     private fun ClassBuilder.generateCompanionObject() {
         companionObject {
-            property {
+            constProperty {
                 appendDoc("The minimum value of a character code unit.")
                 annotations += "SinceKotlin(\"1.3\")"
                 name = "MIN_VALUE"
@@ -62,7 +62,7 @@ abstract class CharGenerator(private val writer: PrintWriter) : BuiltInsGenerato
                 value = "'\\u0000'"
             }
 
-            property {
+            constProperty {
                 appendDoc("The maximum value of a character code unit.")
                 annotations += "SinceKotlin(\"1.3\")"
                 name = "MAX_VALUE"
@@ -70,49 +70,49 @@ abstract class CharGenerator(private val writer: PrintWriter) : BuiltInsGenerato
                 value = "'\\uFFFF'"
             }
 
-            property {
+            constProperty {
                 appendDoc("The minimum value of a Unicode high-surrogate code unit.")
                 name = "MIN_HIGH_SURROGATE"
                 type = PrimitiveType.CHAR.capitalized
                 value = "'\\uD800'"
             }
 
-            property {
+            constProperty {
                 appendDoc("The maximum value of a Unicode high-surrogate code unit.")
                 name = "MAX_HIGH_SURROGATE"
                 type = PrimitiveType.CHAR.capitalized
                 value = "'\\uDBFF'"
             }
 
-            property {
+            constProperty {
                 appendDoc("The minimum value of a Unicode low-surrogate code unit.")
                 name = "MIN_LOW_SURROGATE"
                 type = PrimitiveType.CHAR.capitalized
                 value = "'\\uDC00'"
             }
 
-            property {
+            constProperty {
                 appendDoc("The maximum value of a Unicode low-surrogate code unit.")
                 name = "MAX_LOW_SURROGATE"
                 type = PrimitiveType.CHAR.capitalized
                 value = "'\\uDFFF'"
             }
 
-            property {
+            constProperty {
                 appendDoc("The minimum value of a Unicode surrogate code unit.")
                 name = "MIN_SURROGATE"
                 type = PrimitiveType.CHAR.capitalized
                 value = "MIN_HIGH_SURROGATE"
             }
 
-            property {
+            constProperty {
                 appendDoc("The maximum value of a Unicode surrogate code unit.")
                 name = "MAX_SURROGATE"
                 type = PrimitiveType.CHAR.capitalized
                 value = "MAX_LOW_SURROGATE"
             }
 
-            property {
+            constProperty {
                 appendDoc("The number of bytes used to represent a Char in a binary form.")
                 annotations += "SinceKotlin(\"1.3\")"
                 name = "SIZE_BYTES"
@@ -120,7 +120,7 @@ abstract class CharGenerator(private val writer: PrintWriter) : BuiltInsGenerato
                 value = "2"
             }
 
-            property {
+            constProperty {
                 appendDoc("The number of bits used to represent a Char in a binary form.")
                 annotations += "SinceKotlin(\"1.3\")"
                 name = "SIZE_BITS"
@@ -472,7 +472,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
     }
 
     override fun CompanionObjectBuilder.modifyGeneratedCompanionObject() {
-        property {
+        constProperty {
             appendDoc("The minimum value of a supplementary code point, `\\u0x10000`.")
             visibility = MethodVisibility.INTERNAL
             expectActual = ExpectActualModifier.Unspecified
@@ -481,7 +481,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
             value = "0x10000"
         }
 
-        property {
+        constProperty {
             appendDoc("The minimum value of a Unicode code point.")
             visibility = MethodVisibility.INTERNAL
             expectActual = ExpectActualModifier.Unspecified
@@ -490,7 +490,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
             value = "0x000000"
         }
 
-        property {
+        constProperty {
             appendDoc("The maximum value of a Unicode code point.")
             visibility = MethodVisibility.INTERNAL
             expectActual = ExpectActualModifier.Unspecified
@@ -499,7 +499,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
             value = "0X10FFFF"
         }
 
-        property {
+        constProperty {
             appendDoc("The minimum radix available for conversion to and from strings.")
             visibility = MethodVisibility.INTERNAL
             expectActual = ExpectActualModifier.Unspecified
@@ -508,7 +508,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
             value = "2"
         }
 
-        property {
+        constProperty {
             appendDoc("The maximum radix available for conversion to and from strings.")
             visibility = MethodVisibility.INTERNAL
             expectActual = ExpectActualModifier.Unspecified
@@ -601,7 +601,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
 
     override fun CompanionObjectBuilder.modifyGeneratedCompanionObject() {
         annotations += "kotlin.native.internal.CanBePrecreated"
-        property {
+        constProperty {
             appendDoc(
                 """
                     The minimum value of a supplementary code point, `\u0x10000`.
@@ -617,7 +617,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
             value = "0x10000"
         }
 
-        property {
+        constProperty {
             appendDoc(
                 """
                     The minimum value of a Unicode code point.
@@ -633,7 +633,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
             value = "0x000000"
         }
 
-        property {
+        constProperty {
             appendDoc(
                 """
                     The maximum value of a Unicode code point.
@@ -649,7 +649,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
             value = "0X10FFFF"
         }
 
-        property {
+        constProperty {
             appendDoc("The minimum radix available for conversion to and from strings.")
             annotations += "Deprecated(\"Introduce your own constant with the value of `2`\", ReplaceWith(\"2\"))"
             annotations += "DeprecatedSinceKotlin(warningSince = \"1.9\", errorSince = \"2.1\")"
@@ -659,7 +659,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
             value = "2"
         }
 
-        property {
+        constProperty {
             appendDoc("The maximum radix available for conversion to and from strings.")
             annotations += "Deprecated(\"Introduce your own constant with the value of `36\", ReplaceWith(\"36\"))"
             annotations += "DeprecatedSinceKotlin(warningSince = \"1.9\", errorSince = \"2.1\")"

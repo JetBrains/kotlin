@@ -19,7 +19,6 @@ val commonMainFullSources = tasks.register<Sync>("commonMainFullSources") {
     val sources = listOf(
         "libraries/stdlib/common/src/",
         "libraries/stdlib/src/kotlin/",
-        "libraries/stdlib/unsigned/",
     )
 
     sources.forEach { path ->
@@ -48,13 +47,6 @@ val commonMainSources = tasks.register<Sync>("commonMainSources") {
     from {
         exclude(
             listOf(
-                "libraries/stdlib/unsigned/src/kotlin/UByteArray.kt",
-                "libraries/stdlib/unsigned/src/kotlin/UIntArray.kt",
-                "libraries/stdlib/unsigned/src/kotlin/ULongArray.kt",
-                "libraries/stdlib/unsigned/src/kotlin/UMath.kt",
-                "libraries/stdlib/unsigned/src/kotlin/UNumbers.kt",
-                "libraries/stdlib/unsigned/src/kotlin/UShortArray.kt",
-                "libraries/stdlib/unsigned/src/kotlin/UStrings.kt",
                 "libraries/stdlib/common/src/generated/_Arrays.kt",
                 "libraries/stdlib/common/src/generated/_Collections.kt",
                 "libraries/stdlib/common/src/generated/_Comparisons.kt",
@@ -82,7 +74,14 @@ val commonMainSources = tasks.register<Sync>("commonMainSources") {
                 "libraries/stdlib/src/kotlin/util/KotlinVersion.kt",
                 "libraries/stdlib/src/kotlin/util/Tuples.kt",
                 "libraries/stdlib/src/kotlin/uuid/**",
-                "libraries/stdlib/src/kotlin/enums/**"
+                "libraries/stdlib/src/kotlin/enums/**",
+                "libraries/stdlib/src/kotlin/unsigned/UByteArrayCommon.kt",
+                "libraries/stdlib/src/kotlin/unsigned/UShortArrayCommon.kt",
+                "libraries/stdlib/src/kotlin/unsigned/UIntArrayCommon.kt",
+                "libraries/stdlib/src/kotlin/unsigned/ULongArrayCommon.kt",
+                "libraries/stdlib/src/kotlin/unsigned/UMath.kt",
+                "libraries/stdlib/src/kotlin/unsigned/UNumbers.kt",
+                "libraries/stdlib/src/kotlin/unsigned/UStrings.kt"
             )
         )
         commonMainFullSources.get().outputs.files.singleFile
@@ -175,6 +174,10 @@ val jsMainSources = tasks.register<Sync>("jsMainSources") {
     from("$jsDir/builtins") {
         exclude("Collections.kt")
         into("builtins")
+    }
+    from("$jsDir/unsigned") {
+        exclude("UByteArray.kt", "UShortArray.kt", "UIntArray.kt", "ULongArray.kt")
+        into("unsigned")
     }
 
     into(layout.buildDirectory.dir("jsMainSources"))

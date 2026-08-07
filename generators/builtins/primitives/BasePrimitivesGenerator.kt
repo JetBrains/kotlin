@@ -280,35 +280,35 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
             val className = thisKind.capitalized
             if (thisKind == PrimitiveType.FLOAT || thisKind == PrimitiveType.DOUBLE) {
                 val [minValue, maxValue, posInf, negInf, nan] = primitiveConstants(thisKind)
-                property {
+                constProperty {
                     appendDoc("A constant holding the smallest *positive* nonzero value of $className.")
                     name = "MIN_VALUE"
                     type = className
                     value = minValue.toString()
                 }.modifyGeneratedCompanionObjectProperty(thisKind)
 
-                property {
+                constProperty {
                     appendDoc("A constant holding the largest positive finite value of $className.")
                     name = "MAX_VALUE"
                     type = className
                     value = maxValue.toString()
                 }.modifyGeneratedCompanionObjectProperty(thisKind)
 
-                property {
+                constProperty {
                     appendDoc("A constant holding the positive infinity value of $className.")
                     name = "POSITIVE_INFINITY"
                     type = className
                     value = posInf.toString()
                 }.modifyGeneratedCompanionObjectProperty(thisKind)
 
-                property {
+                constProperty {
                     appendDoc("A constant holding the negative infinity value of $className.")
                     name = "NEGATIVE_INFINITY"
                     type = className
                     value = negInf.toString()
                 }.modifyGeneratedCompanionObjectProperty(thisKind)
 
-                property {
+                constProperty {
                     appendDoc("A constant holding the \"not a number\" value of $className.")
                     name = "NaN"
                     type = className
@@ -318,14 +318,14 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
 
             if (thisKind == PrimitiveType.INT || thisKind == PrimitiveType.LONG || thisKind == PrimitiveType.SHORT || thisKind == PrimitiveType.BYTE) {
                 val [minValue, maxValue] = primitiveConstants(thisKind)
-                property {
+                constProperty {
                     appendDoc("A constant holding the minimum value an instance of $className can have.")
                     name = "MIN_VALUE"
                     type = className
                     value = minValue.toString()
                 }.modifyGeneratedCompanionObjectProperty(thisKind)
 
-                property {
+                constProperty {
                     appendDoc("A constant holding the maximum value an instance of $className can have.")
                     name = "MAX_VALUE"
                     type = className
@@ -334,7 +334,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
             }
 
             val sizeSince = if (thisKind.isFloatingPoint) "1.4" else "1.3"
-            property {
+            constProperty {
                 appendDoc("The number of bytes used to represent an instance of $className in a binary form.")
                 annotations += mutableListOf("SinceKotlin(\"$sizeSince\")")
                 name = "SIZE_BYTES"
@@ -342,7 +342,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
                 value = thisKind.byteSize.toString()
             }.modifyGeneratedCompanionObjectProperty(thisKind)
 
-            property {
+            constProperty {
                 appendDoc("The number of bits used to represent an instance of $className in a binary form.")
                 annotations += mutableListOf("SinceKotlin(\"$sizeSince\")")
                 name = "SIZE_BITS"

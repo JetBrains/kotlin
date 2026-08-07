@@ -14,72 +14,72 @@ import kotlin.wasm.internal.wasm_u32_compareTo
 
 @PublishedApi
 @WasmOp(WasmOp.I32_REM_U)
-internal actual fun uintRemainder(v1: UInt, v2: UInt): UInt = implementedAsIntrinsic
+internal fun uintRemainder(v1: UInt, v2: UInt): UInt = implementedAsIntrinsic
 
 @PublishedApi
 @WasmOp(WasmOp.I32_DIV_U)
-internal actual fun uintDivide(v1: UInt, v2: UInt): UInt = implementedAsIntrinsic
+internal fun uintDivide(v1: UInt, v2: UInt): UInt = implementedAsIntrinsic
 
 @PublishedApi
 @WasmOp(WasmOp.I64_REM_U)
-internal actual fun ulongRemainder(v1: ULong, v2: ULong): ULong = implementedAsIntrinsic
+internal fun ulongRemainder(v1: ULong, v2: ULong): ULong = implementedAsIntrinsic
 
 @PublishedApi
 @WasmOp(WasmOp.I64_DIV_U)
-internal actual fun ulongDivide(v1: ULong, v2: ULong): ULong = implementedAsIntrinsic
+internal fun ulongDivide(v1: ULong, v2: ULong): ULong = implementedAsIntrinsic
 
 @PublishedApi
 @InlineOnly
-internal actual fun uintCompare(v1: Int, v2: Int): Int = wasm_u32_compareTo(v1, v2)
+internal fun uintCompare(v1: Int, v2: Int): Int = wasm_u32_compareTo(v1, v2)
 
 @PublishedApi
 @InlineOnly
-internal actual fun ulongCompare(v1: Long, v2: Long): Int = wasm_u64_compareTo(v1, v2)
+internal fun ulongCompare(v1: Long, v2: Long): Int = wasm_u64_compareTo(v1, v2)
 
 @PublishedApi
 @WasmOp(WasmOp.I64_EXTEND_I32_U)
-internal actual fun uintToULong(value: Int): ULong = implementedAsIntrinsic
+internal fun uintToULong(value: Int): ULong = implementedAsIntrinsic
 
 @PublishedApi
 @WasmOp(WasmOp.I64_EXTEND_I32_U)
-internal actual fun uintToLong(value: Int): Long = implementedAsIntrinsic
+internal fun uintToLong(value: Int): Long = implementedAsIntrinsic
 
 @PublishedApi
 @WasmOp(WasmOp.F32_CONVERT_I32_U)
-internal actual fun uintToFloat(value: Int): Float = implementedAsIntrinsic
+internal fun uintToFloat(value: Int): Float = implementedAsIntrinsic
 
 @PublishedApi
 @WasmOp(WasmOp.I32_TRUNC_SAT_F32_U)
-internal actual fun floatToUInt(value: Float): UInt = implementedAsIntrinsic
+internal fun floatToUInt(value: Float): UInt = implementedAsIntrinsic
 
 @PublishedApi
 @WasmOp(WasmOp.F64_CONVERT_I32_U)
-internal actual fun uintToDouble(value: Int): Double = implementedAsIntrinsic
+internal fun uintToDouble(value: Int): Double = implementedAsIntrinsic
 
 @PublishedApi
 @WasmOp(WasmOp.I32_TRUNC_SAT_F64_U)
-internal actual fun doubleToUInt(value: Double): UInt = implementedAsIntrinsic
+internal fun doubleToUInt(value: Double): UInt = implementedAsIntrinsic
 
 @PublishedApi
 @WasmOp(WasmOp.F32_CONVERT_I64_U)
-internal actual fun ulongToFloat(value: Long): Float = implementedAsIntrinsic
+internal fun ulongToFloat(value: Long): Float = implementedAsIntrinsic
 
 @PublishedApi
 @WasmOp(WasmOp.I64_TRUNC_SAT_F32_U)
-internal actual fun floatToULong(value: Float): ULong = implementedAsIntrinsic
+internal fun floatToULong(value: Float): ULong = implementedAsIntrinsic
 
 @PublishedApi
 @WasmOp(WasmOp.F64_CONVERT_I64_U)
-internal actual fun ulongToDouble(value: Long): Double = implementedAsIntrinsic
+internal fun ulongToDouble(value: Long): Double = implementedAsIntrinsic
 
 @PublishedApi
 @WasmOp(WasmOp.I64_TRUNC_SAT_F64_U)
-internal actual fun doubleToULong(value: Double): ULong = implementedAsIntrinsic
+internal fun doubleToULong(value: Double): ULong = implementedAsIntrinsic
 
 @InlineOnly
-internal actual inline fun uintToString(value: Int): String = utoa32(value.toUInt())
+internal inline fun uintToString(value: Int): String = utoa32(value.toUInt())
 
-internal actual fun uintToString(value: Int, base: Int): String {
+internal fun uintToString(value: Int, base: Int): String {
     var unsignedValue = value.toUInt()
 
     if (base == 10) return unsignedValue.toString()
@@ -100,9 +100,9 @@ internal actual fun uintToString(value: Int, base: Int): String {
 }
 
 @InlineOnly
-internal actual inline fun ulongToString(value: Long): String = utoa64(value.toULong())
+internal inline fun ulongToString(value: Long): String = utoa64(value.toULong())
 
-internal actual fun ulongToString(value: Long, base: Int): String {
+internal fun ulongToString(value: Long, base: Int): String {
     var unsignedValue = value.toULong()
 
     if (base == 10) return unsignedValue.toString()

@@ -6799,6 +6799,7 @@ final fun kotlin/doubleToULong(kotlin/Double): kotlin/ULong // kotlin/doubleToUL
 final fun kotlin/uintCompare(kotlin/Int, kotlin/Int): kotlin/Int // kotlin/uintCompare|uintCompare(kotlin.Int;kotlin.Int){}[0]
 final fun kotlin/uintDivide(kotlin/UInt, kotlin/UInt): kotlin/UInt // kotlin/uintDivide|uintDivide(kotlin.UInt;kotlin.UInt){}[0]
 final fun kotlin/uintRemainder(kotlin/UInt, kotlin/UInt): kotlin/UInt // kotlin/uintRemainder|uintRemainder(kotlin.UInt;kotlin.UInt){}[0]
+final fun kotlin/uintToDouble(kotlin/Int): kotlin/Double // kotlin/uintToDouble|uintToDouble(kotlin.Int){}[0]
 final fun kotlin/ulongCompare(kotlin/Long, kotlin/Long): kotlin/Int // kotlin/ulongCompare|ulongCompare(kotlin.Long;kotlin.Long){}[0]
 final fun kotlin/ulongDivide(kotlin/ULong, kotlin/ULong): kotlin/ULong // kotlin/ulongDivide|ulongDivide(kotlin.ULong;kotlin.ULong){}[0]
 final fun kotlin/ulongRemainder(kotlin/ULong, kotlin/ULong): kotlin/ULong // kotlin/ulongRemainder|ulongRemainder(kotlin.ULong;kotlin.ULong){}[0]
@@ -9790,9 +9791,6 @@ final fun kotlin/isAssertionArgumentEvaluationEnabled(): kotlin/Boolean // kotli
 final fun kotlin/isAssertionThrowingErrorEnabled(): kotlin/Boolean // kotlin/isAssertionThrowingErrorEnabled|isAssertionThrowingErrorEnabled(){}[0]
 
 // Targets: [native, wasmJs, wasmWasi]
-final fun kotlin/uintToDouble(kotlin/Int): kotlin/Double // kotlin/uintToDouble|uintToDouble(kotlin.Int){}[0]
-
-// Targets: [native, wasmJs, wasmWasi]
 final inline fun (kotlin.text/StringBuilder).kotlin.text/deleteCharAt(kotlin/Int): kotlin.text/StringBuilder // kotlin.text/deleteCharAt|deleteCharAt@kotlin.text.StringBuilder(kotlin.Int){}[0]
 
 // Targets: [native, wasmJs, wasmWasi]
@@ -9881,24 +9879,6 @@ final inline fun (kotlin/Float.Companion).kotlin/fromBits(kotlin/Int): kotlin/Fl
 
 // Targets: [js, native]
 final inline fun (kotlin/Short).kotlin.text/toString(kotlin/Int): kotlin/String // kotlin.text/toString|toString@kotlin.Short(kotlin.Int){}[0]
-
-// Targets: [js, native]
-final inline fun kotlin/floatToUInt(kotlin/Float): kotlin/UInt // kotlin/floatToUInt|floatToUInt(kotlin.Float){}[0]
-
-// Targets: [js, native]
-final inline fun kotlin/floatToULong(kotlin/Float): kotlin/ULong // kotlin/floatToULong|floatToULong(kotlin.Float){}[0]
-
-// Targets: [js, native]
-final inline fun kotlin/uintToFloat(kotlin/Int): kotlin/Float // kotlin/uintToFloat|uintToFloat(kotlin.Int){}[0]
-
-// Targets: [js, native]
-final inline fun kotlin/uintToLong(kotlin/Int): kotlin/Long // kotlin/uintToLong|uintToLong(kotlin.Int){}[0]
-
-// Targets: [js, native]
-final inline fun kotlin/uintToULong(kotlin/Int): kotlin/ULong // kotlin/uintToULong|uintToULong(kotlin.Int){}[0]
-
-// Targets: [js, native]
-final inline fun kotlin/ulongToFloat(kotlin/Long): kotlin/Float // kotlin/ulongToFloat|ulongToFloat(kotlin.Long){}[0]
 
 // Targets: [native, wasmWasi]
 open annotation class kotlin.js/JsExport : kotlin/Annotation { // kotlin.js/JsExport|null[1]
@@ -15298,6 +15278,18 @@ final fun kotlin.js/parseInt(kotlin/String): kotlin/Int // kotlin.js/parseInt|pa
 final fun kotlin.js/parseInt(kotlin/String, kotlin/Int = ...): kotlin/Int // kotlin.js/parseInt|parseInt(kotlin.String;kotlin.Int){}[0]
 
 // Targets: [js]
+final fun kotlin/jsDoubleToUInt(kotlin/Double): kotlin/UInt // kotlin/jsDoubleToUInt|jsDoubleToUInt(kotlin.Double){}[0]
+
+// Targets: [js]
+final fun kotlin/jsUintCompare(kotlin/Int, kotlin/Int): kotlin/Int // kotlin/jsUintCompare|jsUintCompare(kotlin.Int;kotlin.Int){}[0]
+
+// Targets: [js]
+final fun kotlin/jsUintDivide(kotlin/UInt, kotlin/UInt): kotlin/UInt // kotlin/jsUintDivide|jsUintDivide(kotlin.UInt;kotlin.UInt){}[0]
+
+// Targets: [js]
+final fun kotlin/jsUintRemainder(kotlin/UInt, kotlin/UInt): kotlin/UInt // kotlin/jsUintRemainder|jsUintRemainder(kotlin.UInt;kotlin.UInt){}[0]
+
+// Targets: [js]
 final inline fun (kotlin.js/RegExpMatch).kotlin.js/asArray(): kotlin/Array<out kotlin/String?> // kotlin.js/asArray|asArray@kotlin.js.RegExpMatch(){}[0]
 
 // Targets: [js]
@@ -15844,7 +15836,7 @@ final inline fun kotlin.math/truncate(kotlin/Double): kotlin/Double // kotlin.ma
 final inline fun kotlin.math/truncate(kotlin/Float): kotlin/Float // kotlin.math/truncate|truncate(kotlin.Float){}[0]
 
 // Targets: [js]
-final inline fun kotlin/uintToDouble(kotlin/Int): kotlin/Double // kotlin/uintToDouble|uintToDouble(kotlin.Int){}[0]
+final inline fun kotlin/jsUintToDouble(kotlin/Int): kotlin/Double // kotlin/jsUintToDouble|jsUintToDouble(kotlin.Int){}[0]
 
 // Targets: [js]
 final suspend fun <#A: kotlin/Any?> kotlin.js/returnIfSuspended(kotlin/Any?): #A // kotlin.js/returnIfSuspended|returnIfSuspended(kotlin.Any?){0§<kotlin.Any?>}[0]

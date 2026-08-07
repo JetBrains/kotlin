@@ -28,7 +28,6 @@ fun f(a: UInt): Int {
 // 0 INVOKESTATIC kotlin/UInt.constructor-impl
 // 0 INVOKE\w+ kotlin/UInt.(un)?box-impl
 
-// 1 INVOKESTATIC kotlin/UnsignedKt.uintCompare
 // 1 IFGE
 // 1 IF
 

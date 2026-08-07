@@ -10,3 +10,5 @@ package kotlin.text
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.isEmpty(): Boolean = length == 0
+
+expect fun Long.toString(radix: Int): String

@@ -6,3 +6,8 @@
 package kotlin.text
 
 public fun String.substring(startIndex: Int, endIndex: Int): String = asDynamic().substring(startIndex, endIndex)
+
+public actual fun Long.toString(radix: Int): String =
+    jsLongToString(this, radix)
+
+public fun Int.toString(radix: Int): String = asDynamic().toString(radix)

@@ -8,7 +8,8 @@
         "sourceSet": [
           "webMain",
           "commonMain",
-          "commonNonJvmMain"
+          "commonNonJvmMain",
+          "nonWasmUnsignedCommon"
         ]
       },
       {
@@ -16,18 +17,21 @@
         "sourceSet": [
           "webMain",
           "commonMain",
-          "commonNonJvmMain"
+          "commonNonJvmMain",
+          "nonWasmUnsignedCommon"
         ]
       },
       {
         "name": "jvmApiElements",
         "sourceSet": [
+          "nonWasmUnsignedCommon",
           "commonMain"
         ]
       },
       {
         "name": "jvmRuntimeElements",
         "sourceSet": [
+          "nonWasmUnsignedCommon",
           "commonMain"
         ]
       },
@@ -71,6 +75,14 @@
       },
       {
         "name": "commonNonJvmMain",
+        "dependsOn": [
+          "commonMain"
+        ],
+        "moduleDependency": [],
+        "binaryLayout": "klib"
+      },
+      {
+        "name": "nonWasmUnsignedCommon",
         "dependsOn": [
           "commonMain"
         ],

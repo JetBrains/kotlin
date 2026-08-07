@@ -33,7 +33,6 @@ fun box(): String {
 // 1 INVOKESTATIC kotlin/internal/UProgressionUtilKt.getProgressionLastElement
 // 1 NEW java/lang/IllegalArgumentException
 // 1 ATHROW
-// 2 INVOKESTATIC kotlin/UnsignedKt.uintCompare
 // 3 IFGT
 // 1 IF_ICMPEQ
 // 2 IFLE

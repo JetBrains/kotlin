@@ -86,15 +86,7 @@ the Kotlin IntelliJ IDEA plugin:
       - License: 3-clause BSD license ([license/third_party/threetenbp_license.txt][threetenbp])
       - Origin: Copyright (c) 2007-present, Stephen Colebourne & Michael Nascimento Santos
 
- - Path: libraries/stdlib/js/src/kotlin/UnsignedJs.kt
-      - License: Apache 2 ([license/third_party/guava_license.txt][guava])
-      - Origin: Derived from Guava's UnsignedLongs, (C) 2011 The Guava Authors
-
- - Path: libraries/stdlib/jvm/src/kotlin/util/UnsignedJVM.kt
-      - License: Apache 2 ([license/third_party/guava_license.txt][guava])
-      - Origin: Derived from Guava's UnsignedLongs, (C) 2011 The Guava Authors
-
- - Path: kotlin-native/runtime/src/main/kotlin/kotlin/Unsigned.kt
+ - Path: libraries/stdlib/src/kotlin/unsigned/UnsignedCommon.kt
       - License: Apache 2 ([license/third_party/guava_license.txt][guava])
       - Origin: Derived from Guava's UnsignedLongs, (C) 2011 The Guava Authors
 

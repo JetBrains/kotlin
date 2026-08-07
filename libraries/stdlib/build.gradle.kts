@@ -387,7 +387,9 @@ kotlin {
             kotlin {
                 srcDir("common/src")
                 srcDir(files("src").builtBy(prepareCommonSources))
-                srcDir("unsigned/src")
+
+                // It's added separately
+                exclude("kotlin/unsigned/UnsignedCommon.kt")
             }
         }
         commonTest {
@@ -399,10 +401,18 @@ kotlin {
                 srcDir("test")
             }
         }
+        val nonWasmUnsignedCommon by creating {
+            dependsOn(commonMain.get())
+            kotlin {
+                srcDir("src/kotlin/unsigned")
+                include("UnsignedCommon.kt")
+            }
+        }
         val jvmCompileOnlyDeclarations = getByName("jvmCompileOnlyDeclarations") {
             kotlin.srcDir("jvm/compileOnly")
         }
         val jvmMain = getByName("jvmMain") {
+            dependsOn(nonWasmUnsignedCommon)
             project.configurations.getByName("jvmMainCompileOnly")
             dependencies {
                 api("org.jetbrains:annotations:13.0")
@@ -411,6 +421,7 @@ kotlin {
                 "jvm/src",
                 "jvm/runtime",
                 "jvm/builtins",
+                "jvm/unsigned",
             )
             project.sourceSets["jvmMain"].java.srcDirs(*jvmSrcDirs.toTypedArray())
             kotlin.setSrcDirs(jvmSrcDirs)
@@ -466,9 +477,11 @@ kotlin {
             dependsOn(webMain)
             dependsOn(commonNonJvmMain)
             val prepareJsIrMainSources = tasks.register("prepareJsIrMainSources", Sync::class)
+            dependsOn(nonWasmUnsignedCommon)
             kotlin {
                 srcDir(prepareJsIrMainSources.requiredForImport())
                 srcDir("$jsDir/builtins")
+                srcDir("$jsDir/unsigned")
                 srcDir("$jsDir/runtime")
                 srcDir("$jsDir/src").apply {
                     exclude("kotlin/browser")
@@ -521,6 +534,7 @@ kotlin {
             kotlin {
                 srcDir(prepareWasmBuiltinSources.requiredForImport())
                 srcDir("wasm/builtins")
+                srcDir("wasm/unsigned")
                 srcDir("wasm/internal")
                 srcDir("wasm/runtime")
                 srcDir("wasm/src")
@@ -562,6 +576,7 @@ kotlin {
             dependsOn(wasmCommonMain)
             kotlin {
                 srcDir("wasm/js/builtins")
+                srcDir("wasm/js/unsigned")
                 srcDir("wasm/js/internal")
                 srcDir("wasm/js/src")
             }
@@ -577,6 +592,7 @@ kotlin {
             dependsOn(nativeWasmWasiMain)
             kotlin {
                 srcDir("wasm/wasi/builtins")
+                srcDir("wasm/wasi/unsigned")
                 srcDir("wasm/wasi/internal")
                 srcDir("wasm/wasi/src")
             }
@@ -608,6 +624,7 @@ kotlin {
                 dependsOn(nativeWasmMain)
                 dependsOn(nativeWasmWasiMain)
                 dependsOn(nativeKotlinTestCommon)
+                dependsOn(nonWasmUnsignedCommon)
                 kotlin {
                     srcDir("$rootDir/kotlin-native/runtime/src/main/kotlin")
                     srcDir("$rootDir/kotlin-native/Interop/Runtime/src/main/kotlin")

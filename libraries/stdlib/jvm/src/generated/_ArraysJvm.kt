@@ -1963,6 +1963,17 @@ public actual inline fun <T> Array<T>.plusElement(element: T): Array<T> {
 }
 
 /**
+ * Sorts the array in-place according to the natural order of its elements.
+ * 
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * 
+ * @throws ClassCastException if any element of the array is not [Comparable].
+ */
+public fun <T> Array<out T>.sort(): Unit {
+    if (size > 1) java.util.Arrays.sort(this)
+}
+
+/**
  * Sorts the array in-place.
  * 
  * @sample samples.collections.Arrays.Sorting.sortArray
@@ -2039,14 +2050,20 @@ public actual inline fun <T : Comparable<T>> Array<out T>.sort(): Unit {
 }
 
 /**
- * Sorts the array in-place according to the natural order of its elements.
+ * Sorts a range in the array in-place.
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  * 
- * @throws ClassCastException if any element of the array is not [Comparable].
+ * @param fromIndex the start of the range (inclusive) to sort, 0 by default.
+ * @param toIndex the end of the range (exclusive) to sort, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
+ * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArrayOfComparable
  */
-public fun <T> Array<out T>.sort(): Unit {
-    if (size > 1) java.util.Arrays.sort(this)
+public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.sort(this, fromIndex, toIndex)
 }
 
 /**
@@ -2177,23 +2194,6 @@ public actual fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Uni
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.sort(this, fromIndex, toIndex)
-}
-
-/**
- * Sorts a range in the array in-place.
- * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
- * 
- * @param fromIndex the start of the range (inclusive) to sort, 0 by default.
- * @param toIndex the end of the range (exclusive) to sort, size of this array by default.
- * 
- * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
- * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
- * 
- * @sample samples.collections.Arrays.Sorting.sortRangeOfArrayOfComparable
- */
-public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
 }
 
