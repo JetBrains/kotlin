@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import com.intellij.core.CoreJavaFileManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.CliVirtualFileFinderFactory
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCliJavaFileManagerImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.asPsiSearchScope
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
@@ -18,6 +20,8 @@ import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.java.direct.resolution.JavaModuleImportedPackages
+import org.jetbrains.kotlin.java.direct.resolution.JavaModuleImportedPackagesOverModuleGraph
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
@@ -52,17 +56,29 @@ fun createJavaDirectJavaFacadeBuilder(
     val virtualFileFinderFactory =
         VirtualFileFinderFactory.getInstance(projectEnvironment.project) as? CliVirtualFileFinderFactory
 
+    val moduleImportedPackages = moduleImportedPackages(projectEnvironment)
+
     // Keyed by scope identity: distinct binary scopes must get distinct finders, and the same scope
     // object must reuse its finder (and hence its caches).
     val binaryFinders: MutableMap<AbstractProjectFileSearchScope, JavaClassFinder> = IdentityHashMap()
 
     return { _, session, moduleData, scope ->
         val finder: JavaClassFinder = when {
-            scope === javaSourcesScope -> JavaClassFinderOverAstImpl(session, sourceRootEntries)
+            scope === javaSourcesScope -> JavaClassFinderOverAstImpl(session, sourceRootEntries, moduleImportedPackages)
             else -> binaryFinders.getOrPut(scope) { binaryClassFinder(virtualFileFinderFactory, scope) }
         }
         FirJavaFacadeForSource(session, moduleData, finder)
     }
+}
+
+/**
+ * Expands `import module M;` declarations against the compilation's Java module graph; expands
+ * to nothing when the environment has no CLI Java file manager.
+ */
+private fun moduleImportedPackages(projectEnvironment: VfsBasedProjectEnvironment): JavaModuleImportedPackages {
+    val fileManager = projectEnvironment.project.getService(CoreJavaFileManager::class.java) as? KotlinCliJavaFileManagerImpl
+    val moduleFinder = fileManager?.javaModuleFinder ?: return JavaModuleImportedPackages.EMPTY
+    return JavaModuleImportedPackagesOverModuleGraph(moduleFinder)
 }
 
 /**

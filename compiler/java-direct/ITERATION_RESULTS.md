@@ -36,6 +36,24 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-07 — Module import declarations (`import module M;`, JLS 7.5.5 / KT-84499)
+- **Change**: two independent gaps. (1) Parser: `FileParser` rolls back to lexeme 0 when a file has
+  no package statement, and `rollbackTo` leaves `myTokenTypeChecked = true`, so `tokenType` reported
+  the *leading trivia* token — `getImportType` then never saw `module` and the file was parsed as a
+  `MODULE` declaration, losing every class. The builder only force-skips trivia there when a token
+  remapper is installed, so `parse.kt` now installs an identity one. Affected any file with a
+  leading comment/blank line and no package. (2) Resolution: new `moduleImports` bucket in
+  `JavaImports`, expanded to the module's unqualified exports plus its `requires transitive`
+  closure, and consulted between JLS 7.5.2 and 7.5.4 in `resolveFromModuleImports`.
+- **Files**: `parse.kt`, `JavaModuleImportedPackages.kt` (new), `JavaImportResolver.kt`,
+  `JavaResolutionContext.kt`, `JavaTypeResolver.kt`, `JavaClassFinderOverAstImpl.kt`,
+  `JavaDirectFacadeBuilder.kt`, `KotlinCliJavaFileManagerImpl.kt` (`javaModuleFinder` exposed as a
+  nullable read-only property).
+- **Tests**: `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated` + `JavaParsing*`
+  green (0 failures); PSI gate `PhasedJvmDiagnosticLightTreeTestGenerated` green (11001);
+  `CompileKotlinAgainstKotlin` gate green (153).
+- **Result**: green; `testJavaModuleImportDeclarations` passes.
+
 ### 2026-07-31 — Box guards for the JLS accessibility check, incl. a genuinely *binary* Java supertype
 - **Change**: complements the phased guard below with two box tests. Unlike diagnostics tests
   (which hard-code `DependencyKind.Source`), a codegen `// MODULE: lib` dependency is really
