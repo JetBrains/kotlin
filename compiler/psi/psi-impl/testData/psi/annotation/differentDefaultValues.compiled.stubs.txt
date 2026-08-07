@@ -1,0 +1,75 @@
+Anno.class:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Anno, fqName=Anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Anno, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Anno]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=Anno.first, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=first]
+            constantInitializer: MyEnum.Entry2
+            MODIFIER_LIST[public final]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=MyEnum]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=MyEnum]
+              REFERENCE_EXPRESSION[referencedName=Entry2]
+          VALUE_PARAMETER[fqName=Anno.second, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=second]
+            constantInitializer: NormalClass(value=/MyEnum)
+            MODIFIER_LIST[public final]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=reflect]
+                REFERENCE_EXPRESSION[referencedName=KClass]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=STAR]
+            CLASS_LITERAL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=MyEnum]
+          VALUE_PARAMETER[fqName=Anno.third, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=third]
+            constantInitializer: 3
+            MODIFIER_LIST[public final]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Int]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+      CLASS_BODY
+
+
+MyEnum.class:
+  FILE[kind=File[packageFqName=<root>]]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/MyEnum, fqName=MyEnum, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyEnum, superNames=[Enum]]
+      MODIFIER_LIST[public final enum]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MyEnum]
+        MODIFIER_LIST[private]
+        VALUE_PARAMETER_LIST
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Enum]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=NONE]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=MyEnum]
+      CLASS_BODY
+        ENUM_ENTRY[classId=null, fqName=MyEnum.Entry1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Entry1, superNames=[]]
+        ENUM_ENTRY[classId=null, fqName=MyEnum.Entry2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Entry2, superNames=[]]
