@@ -188,7 +188,6 @@
 /compiler/testData/codegen/boxWasmWasi/ "Kotlin Wasm"
 /compiler/testData/codegen/bytecodeListing/ "Kotlin JVM" "Kotlin Frontend"
 /compiler/testData/codegen/bytecodeText/ "Kotlin JVM" "Kotlin Frontend"
-/compiler/testData/codegen/properties/ "Kotlin JVM"
 /compiler/testData/compileJavaAgainstKotlin/ "Kotlin Frontend" "Kotlin JVM"
 /compiler/testData/compileKotlinAgainstCustomBinaries/ "Kotlin Frontend"
 /compiler/testData/compileKotlinAgainstJava/ "Kotlin Frontend" "Kotlin JVM"
