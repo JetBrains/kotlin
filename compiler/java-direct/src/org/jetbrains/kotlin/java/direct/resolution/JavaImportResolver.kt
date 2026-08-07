@@ -16,12 +16,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Four-bucket holder for the imports of a Java compilation unit, mirroring the JLS 7.5
+ * Five-bucket holder for the imports of a Java compilation unit, mirroring the JLS 7.5
  * `ImportDeclaration` productions:
  * - [simpleTypeImports] — `import a.b.C;`
  * - [staticSingleImports] — `import static a.b.C.X;` (`X` may be a type, method, or field)
  * - [typeStarImports] — `import a.b.*;` (values are *packages*)
  * - [staticStarImports] — `import static a.b.C.*;` (values are *outer-class* FqNames)
+ * - [moduleImports] — `import module M;` (values are *module names*)
  *
  * The JLS 6.4.1 shadowing ranks between the buckets are applied by the step functions in
  * `JavaTypeResolver.kt`.
@@ -31,13 +32,14 @@ internal class JavaImports(
     val staticSingleImports: Map<String, FqName>,
     val typeStarImports: List<FqName>,
     val staticStarImports: List<FqName>,
+    val moduleImports: List<String>,
 ) {
     /** Unified single-import lookup: [simpleTypeImports] first, then [staticSingleImports]. */
     fun getSingleImport(simpleName: String): FqName? =
         simpleTypeImports[simpleName] ?: staticSingleImports[simpleName]
 
     companion object {
-        val EMPTY: JavaImports = JavaImports(emptyMap(), emptyMap(), emptyList(), emptyList())
+        val EMPTY: JavaImports = JavaImports(emptyMap(), emptyMap(), emptyList(), emptyList(), emptyList())
     }
 }
 
@@ -64,6 +66,7 @@ internal object JavaImportResolver {
         val staticSingleImports = mutableMapOf<String, FqName>()
         val typeStarImports = mutableListOf<FqName>()
         val staticStarImports = mutableListOf<FqName>()
+        val moduleImports = mutableListOf<String>()
 
         val importList = tree.findChildByType(root, JavaSyntaxElementType.IMPORT_LIST)
             ?: tree.findChildByType(root, JavaSyntaxElementType.CLASS)?.let { tree.findChildByType(it, JavaSyntaxElementType.IMPORT_LIST) }
@@ -71,6 +74,7 @@ internal object JavaImportResolver {
         if (importList != null) {
             extractNormalImports(tree, importList, simpleTypeImports, typeStarImports)
             extractStaticImports(tree, importList, staticSingleImports, staticStarImports)
+            extractModuleImports(tree, importList, moduleImports)
             extractErrorElementImports(tree, importList, simpleTypeImports, typeStarImports)
         }
 
@@ -83,7 +87,20 @@ internal object JavaImportResolver {
             extractFragmentedImports(tree, root, simpleTypeImports, typeStarImports)
         }
 
-        return JavaImports(simpleTypeImports, staticSingleImports, typeStarImports, staticStarImports)
+        return JavaImports(simpleTypeImports, staticSingleImports, typeStarImports, staticStarImports, moduleImports)
+    }
+
+    /** `import module M;` (JLS 7.5.5): the module name lives in a `MODULE_REFERENCE` child. */
+    private fun extractModuleImports(
+        tree: JavaLightTree,
+        importList: JavaLightNode,
+        moduleImports: MutableList<String>,
+    ) {
+        for (importNode in tree.getChildrenByType(importList, JavaSyntaxElementType.IMPORT_MODULE_STATEMENT)) {
+            val referenceNode = tree.findChildByType(importNode, JavaSyntaxElementType.MODULE_REFERENCE) ?: continue
+            val moduleName = tree.getText(referenceNode).toString()
+            if (moduleName.isNotEmpty()) moduleImports.add(moduleName)
+        }
     }
 
     private fun extractNormalImports(

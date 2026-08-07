@@ -125,6 +125,8 @@ internal fun resolveSimpleNameToClassIdImpl(
     resolveFromJavaLang(simpleName, fullResolution)?.let { return it }
     // JLS 7.5.2: type-import-on-demand.
     resolveFromTypeStarImports(simpleName, fullResolution)?.let { return it }
+    // JLS 7.5.5: module imports (shadowed by 7.5.2, shadow 7.5.4).
+    resolveFromModuleImports(simpleName, fullResolution)?.let { return it }
     // JLS 7.5.4: static-import-on-demand (strictly lower rank than 7.5.2).
     return resolveFromStaticStarImports(simpleName, fullResolution)
 }
@@ -255,8 +257,31 @@ private fun resolveFromTypeStarImports(
 }
 
 /**
- * Step 7: static-import-on-demand (`import static a.b.C.*;`, JLS 7.5.4) — lower rank than
- * Step 6. Each entry is an outer *class* FqName, not a package: resolve it via [resolveAsClassId]
+ * Step 7: module imports (`import module M;`, JLS 7.5.5), each expanded to the packages the
+ * module brings into on-demand scope. Ambiguity between two of them is a compile-time error, so
+ * a conflict returns `null` and falls through to Step 8.
+ */
+context(c: JavaResolutionContext)
+private fun resolveFromModuleImports(
+    simpleName: String,
+    fullResolution: Boolean,
+): ClassId? {
+    var foundClassId: ClassId? = null
+    for (moduleName in c.fileContext.imports.moduleImports) {
+        for (packageFqName in c.fileContext.moduleImportedPackages.forModule(moduleName)) {
+            val candidateClassId = ClassId(packageFqName, Name.identifier(simpleName))
+            if (classExists(candidateClassId, fullResolution)) {
+                if (foundClassId != null && foundClassId != candidateClassId) return null // Ambiguous
+                foundClassId = candidateClassId
+            }
+        }
+    }
+    return foundClassId
+}
+
+/**
+ * Step 8: static-import-on-demand (`import static a.b.C.*;`, JLS 7.5.4) — lower rank than
+ * Steps 6-7. Each entry is an outer *class* FqName, not a package: resolve it via [resolveAsClassId]
  * and probe its nested class. Without [fullResolution] (reentrance-safe fallback) the first
  * match is returned without the ambiguity check.
  */

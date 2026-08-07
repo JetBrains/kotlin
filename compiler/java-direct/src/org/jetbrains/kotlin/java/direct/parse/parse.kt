@@ -29,6 +29,13 @@ fun parseJavaToSyntaxTreeBuilder(
         .withWhitespaceOrCommentBindingPolicy(JavaSyntaxDefinition.whitespaceOrCommentBindingPolicy)
         .build()
 
+    // Temporary workaround for `parse` calling `JavaParser.fileParser` without the `JAVA_FILE` root marker:
+    // the package statement's marker then becomes the parse's first one, the only kind allowed to start on
+    // leading trivia, and its rollback parks the lexer there, so a file with leading trivia and no `package`
+    // loses its whole import list (and with it the `module` in `import module M;`). Installing any remapper
+    // makes `tokenType` skip trivia; the identity remap is a side-effect hack, the root marker is the fix.
+    syntaxTreeBuilder.setTokenTypeRemapper { source, _, _, _ -> source }
+
     parse(LanguageLevel.HIGHEST, syntaxTreeBuilder)
     return syntaxTreeBuilder
 }
