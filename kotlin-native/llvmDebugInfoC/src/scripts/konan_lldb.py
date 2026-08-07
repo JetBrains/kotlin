@@ -1286,19 +1286,12 @@ class FastKonanArraySyntheticProvider(lldb.SBSyntheticValueProvider):
         return _RUNTIME_TYPE_INVALID
 
 
-def _object_field(object_proxy, field_name):
+def _object_field_value(object_proxy, field_name):
     try:
         field_index = object_proxy.get_child_index(field_name)
     except (DebuggerException, ValueError):
         return None
     return object_proxy.get_child_at_index(field_index)
-
-
-def _object_field_unsigned(object_proxy, field_name):
-    value = _object_field(object_proxy, field_name)
-    if value is None or not value.IsValid():
-        return None
-    return value.GetValueAsUnsigned()
 
 
 def _synthetic_value_or_self(value):
@@ -1329,13 +1322,6 @@ def _synthetic_child_at_index(value, index):
     return child if child is not None and child.IsValid() else None
 
 
-def _synthetic_num_children(value):
-    synthetic = _synthetic_value_or_self(value)
-    if synthetic is None:
-        return 0
-    return synthetic.GetNumChildren()
-
-
 class KonanListSyntheticProvider:
     def __init__(self, valobj, backing, children_count):
         self._valobj = valobj
@@ -1349,18 +1335,25 @@ class KonanListSyntheticProvider:
         if object_proxy is None:
             return None
 
-        visible_children_count = _object_field_unsigned(object_proxy, "length")
+        backing = None
         for field_name in ("backing", "$this_asList", "backingArray"):
-            backing = _object_field(object_proxy, field_name)
-            if backing is not None and backing.IsValid() and backing.unsigned != 0:
-                if visible_children_count is None:
-                    visible_children_count = _synthetic_num_children(backing)
-                return KonanListSyntheticProvider(
-                    valobj,
-                    backing,
-                    visible_children_count,
-                )
-        return None
+            candidate = _object_field_value(object_proxy, field_name)
+            if candidate is not None and candidate.IsValid() and candidate.unsigned != 0:
+                backing = candidate
+                break
+
+        if backing is None:
+            return None
+
+        size = None
+        size_value = _object_field_value(object_proxy, "length")
+        if size_value is not None and size_value.IsValid():
+            size = size_value.GetValueAsUnsigned()
+        else:
+            synthetic = _synthetic_value_or_self(backing)
+            size = None if synthetic is None else synthetic.GetNumChildren()
+
+        return KonanListSyntheticProvider(valobj, backing, size)
 
     def num_children(self):
         return self._children_count
@@ -1391,7 +1384,7 @@ class KonanSetSyntheticProvider:
         if object_proxy is None:
             return None
 
-        backing = _object_field(object_proxy, "backing")
+        backing = _object_field_value(object_proxy, "backing")
         if backing is None or not backing.IsValid() or backing.unsigned == 0:
             return None
 
@@ -1401,17 +1394,26 @@ class KonanSetSyntheticProvider:
         backing_object_proxy = _select_provider(
             backing, internal_dict, backing_type_info
         )
-        keys = _object_field(backing_object_proxy, "keysArray")
+        if backing_object_proxy is None:
+            return None
+        keys = _object_field_value(backing_object_proxy, "keysArray")
         if keys is None or not keys.IsValid() or keys.unsigned == 0:
             return None
 
-        visible_children_count = _object_field_unsigned(
-            backing_object_proxy, "length"
+        size_value = _object_field_value(backing_object_proxy, "length")
+        children_count = (
+            size_value.GetValueAsUnsigned()
+            if size_value is not None and size_value.IsValid()
+            else None
         )
+        if children_count is None:
+            synthetic = _synthetic_value_or_self(keys)
+            children_count = 0 if synthetic is None else synthetic.GetNumChildren()
+
         return KonanSetSyntheticProvider(
             valobj,
             keys,
-            visible_children_count,
+            children_count,
         )
 
     def num_children(self):
@@ -1446,8 +1448,8 @@ class KonanMapSyntheticProvider:
         if object_proxy is None:
             return None
 
-        keys = _object_field(object_proxy, "keysArray")
-        values = _object_field(object_proxy, "valuesArray")
+        keys = _object_field_value(object_proxy, "keysArray")
+        values = _object_field_value(object_proxy, "valuesArray")
         if (
             keys is None
             or not keys.IsValid()
@@ -1460,7 +1462,7 @@ class KonanMapSyntheticProvider:
 
         visible_children_count = None
         for field_name in ("length",):
-            value = _object_field(object_proxy, field_name)
+            value = _object_field_value(object_proxy, field_name)
             if value is not None and value.IsValid():
                 visible_children_count = value.GetValueAsUnsigned()
                 break
