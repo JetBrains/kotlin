@@ -77,7 +77,10 @@ internal fun LazyResolvedConfigurationComponent.resolvedDependenciesByKmpModuleI
 ): Map<KmpModuleIdentifier, Set<ResolvedDependencyResult>> =
     cache.getOrCompute("$projectId/$configurationName/resolvedDependenciesByKmpModuleId") {
         groupByNotNullToSet(
-            keySelector = { KmpModuleIdentifier.from(it.from, buildIdentifierAccessor) },
+            keySelector = {
+                if (it !is ResolvedDependencyResult) return@groupByNotNullToSet null
+                KmpModuleIdentifier.from(it.selected, buildIdentifierAccessor)
+            },
             valueTransform = { it as? ResolvedDependencyResult },
         )
     }

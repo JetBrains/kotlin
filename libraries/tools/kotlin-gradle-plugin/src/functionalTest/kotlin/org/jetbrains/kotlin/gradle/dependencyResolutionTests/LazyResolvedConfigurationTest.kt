@@ -7,17 +7,21 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests
 
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.component.external.model.DefaultModuleComponentSelector
 import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.gradle.cache.kotlinGradleTaskExecutionCache
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
@@ -27,6 +31,8 @@ import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.createResolvable
 import org.jetbrains.kotlin.gradle.utils.groupByNotNullToSet
+import org.jetbrains.kotlin.gradle.utils.resolvedDependenciesByKmpModuleId
+import org.jetbrains.kotlin.gradle.utils.resolvedDependenciesByRequested
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -273,4 +279,86 @@ class LazyResolvedConfigurationTest {
             reversedGroup.prettyPrinted
         )
     }
+
+    @Test
+    fun `test - resolvedDependenciesByKmpModuleId`() {
+        val project = projectWithCoroutinesInCommonMain()
+
+        val resolvedDependencies = project.commonMainCompileDependencies().resolvedDependenciesByKmpModuleId(
+            cache = project.kotlinGradleTaskExecutionCache.get(),
+            projectId = project.path,
+            buildIdentifierAccessor = project.variantImplementationFactoryProvider<BuildIdentifierAccessor.Factory>(),
+        )
+
+        assertEquals(
+            mapOf(
+                "KmpModuleIdentifier(moduleVersion=org.jetbrains.kotlin:kotlin-stdlib-common, module org.jetbrains.kotlin:kotlin-stdlib-common)" to setOf(
+                    "org.jetbrains.kotlin:kotlin-stdlib-common:1.9.21",
+                ),
+                "KmpModuleIdentifier(moduleVersion=org.jetbrains.kotlinx:atomicfu, module org.jetbrains.kotlinx:atomicfu)" to setOf(
+                    "org.jetbrains.kotlinx:atomicfu:0.23.1",
+                ),
+                "KmpModuleIdentifier(moduleVersion=org.jetbrains.kotlinx:kotlinx-coroutines-core, module org.jetbrains.kotlinx:kotlinx-coroutines-core)" to setOf(
+                    "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0",
+                ),
+            ).prettyPrinted,
+            resolvedDependencies.entries.associate { (kmpModuleId, dependencies) ->
+                kmpModuleId.toString() to dependencies.map { it.toString() }.toSet()
+            }.prettyPrinted
+        )
+    }
+
+    @Test
+    fun `test - resolvedDependenciesByRequested`() {
+        val project = projectWithCoroutinesInCommonMain()
+
+        val resolvedDependencies = project.commonMainCompileDependencies().resolvedDependenciesByRequested(
+            cache = project.kotlinGradleTaskExecutionCache.get(),
+            projectId = project.path,
+        )
+
+        assertEquals(
+            mapOf(
+                "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0" to setOf(
+                    "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0",
+                ),
+                "org.jetbrains.kotlinx:atomicfu:0.23.1" to setOf(
+                    "org.jetbrains.kotlinx:atomicfu:0.23.1",
+                ),
+                "org.jetbrains.kotlin:kotlin-stdlib-common:1.9.21" to setOf(
+                    "org.jetbrains.kotlin:kotlin-stdlib-common:1.9.21",
+                ),
+            ).prettyPrinted,
+            resolvedDependencies.entries.associate { (requested, dependencies) ->
+                requested.toString() to dependencies.map { it.toString() }.toSet()
+            }.prettyPrinted
+        )
+    }
+
+    private fun projectWithCoroutinesInCommonMain(): ProjectInternal {
+        val project = buildProject {
+            enableDependencyVerification(false)
+            repositories.mavenCentralCacheRedirector()
+            applyMultiplatformPlugin()
+        }
+
+        val kotlin = project.multiplatformExtension
+        kotlin.jvm()
+        kotlin.linuxX64()
+
+        kotlin.sourceSets.getByName("commonMain").dependencies {
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
+        }
+
+        project.evaluate()
+        return project
+    }
+
+    private fun Project.commonMainCompileDependencies() = LazyResolvedConfigurationComponent(
+        multiplatformExtension
+            .metadata()
+            .compilations
+            .getByName("commonMain")
+            .internal.configurations.compileDependencyConfiguration
+    )
 }
