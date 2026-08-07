@@ -2094,6 +2094,30 @@ internal class ValueClassCannotBeCloneableImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.ValueClassCannotBeCloneable
 
+internal class WillBecomeValueNotApplicableImpl(
+    override val target: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueNotApplicable
+
+internal class IdentityBasedMemberInWillBecomeValueClassImpl(
+    override val memberName: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.IdentityBasedMemberInWillBecomeValueClass
+
+internal class IdentitySensitiveOperationOnWillBecomeValueClassImpl(
+    override val type: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentitySensitiveOperationOnWillBecomeValueClass
+
+internal class IdentitySensitiveOperationOnWillBecomeValueClassErrorImpl(
+    override val type: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentitySensitiveOperationOnWillBecomeValueClassError
+
 internal class NoneApplicableImpl(
     override val candidates: List<Pair<KaSymbol, List<String>>>,
     firDiagnostic: KtPsiDiagnostic,

@@ -800,6 +800,19 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("prefix")
         }
         val VALUE_CLASS_CANNOT_BE_CLONEABLE by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
+
+        val WILL_BECOME_VALUE_NOT_APPLICABLE by error<KtAnnotationEntry> {
+            parameter<String>("target")
+        }
+        val IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS by error<KtDeclaration>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<String>("memberName")
+        }
+        val IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS by warning<KtElement> {
+            parameter<ConeKotlinType>("type")
+        }
+        val IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS_ERROR by error<KtElement> {
+            parameter<ConeKotlinType>("type")
+        }
     }
 
     val APPLICABILITY by object : DiagnosticGroup("Applicability") {

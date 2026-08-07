@@ -408,6 +408,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_MISSING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_COMPANION_BLOCK
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_COMPANION_BLOCK_MEMBER
@@ -946,6 +949,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VIRTUAL_MEMBER_HI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WHEN_GUARD_WITHOUT_SUBJECT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_NOT_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRAPPED_LHS_IN_ASSIGNMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET_WARNING
@@ -2519,6 +2523,22 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES, "Value class cannot extend identity classes.")
         map.put(VALUE_CLASS_CANNOT_BE_RECURSIVE, "Value class cannot be recursive.")
         map.put(VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS, "Value class cannot be recursive.")
+        map.put(WILL_BECOME_VALUE_NOT_APPLICABLE, "''@WillBecomeValue'' is not applicable to {0}.", STRING)
+        map.put(
+            IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS,
+            "Class annotated with ''@WillBecomeValue'' must override identity-based ''{0}'': it will become structural once the class becomes a value class.",
+            STRING,
+        )
+        map.put(
+            IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS,
+            "Identity-sensitive operation on ''{0}'', which is annotated with ''@WillBecomeValue''. It will be forbidden once the class becomes a value class.",
+            RENDER_TYPE,
+        )
+        map.put(
+            IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS_ERROR,
+            "Identity-sensitive operation on ''{0}'', which is annotated with ''@WillBecomeValue''. It will be forbidden once the class becomes a value class.",
+            RENDER_TYPE,
+        )
         map.put(
             INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE,
             "Invalid default value for inline function parameter. Only lambdas, anonymous functions, and callable references are supported.",

@@ -353,6 +353,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations {
 	public final fun getUsedFromCompilerGeneratedCode ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getVolatile ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getWasExperimental ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getWillBecomeValue ()Lorg/jetbrains/kotlin/name/ClassId;
 }
 
 public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations$ParameterNames {

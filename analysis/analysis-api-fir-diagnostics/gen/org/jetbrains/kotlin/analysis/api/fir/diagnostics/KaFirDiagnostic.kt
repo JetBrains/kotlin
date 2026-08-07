@@ -2942,6 +2942,42 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueNotApplicable : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass: KClass<WillBecomeValueNotApplicable>
+            get() = WillBecomeValueNotApplicable::class
+
+        public val target: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface IdentityBasedMemberInWillBecomeValueClass : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass: KClass<IdentityBasedMemberInWillBecomeValueClass>
+            get() = IdentityBasedMemberInWillBecomeValueClass::class
+
+        public val memberName: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface IdentitySensitiveOperationOnWillBecomeValueClass : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<IdentitySensitiveOperationOnWillBecomeValueClass>
+            get() = IdentitySensitiveOperationOnWillBecomeValueClass::class
+
+        public val type: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface IdentitySensitiveOperationOnWillBecomeValueClassError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<IdentitySensitiveOperationOnWillBecomeValueClassError>
+            get() = IdentitySensitiveOperationOnWillBecomeValueClassError::class
+
+        public val type: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface NoneApplicable : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<NoneApplicable>
             get() = NoneApplicable::class
