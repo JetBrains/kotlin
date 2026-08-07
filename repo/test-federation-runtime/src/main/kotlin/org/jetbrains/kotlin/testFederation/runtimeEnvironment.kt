@@ -39,11 +39,14 @@ val testFederationMode: TestFederationMode?
 /**
  * @return List of [Domain]s enabled for this test task
  */
-val enabledContracts: Set<Domain>
-    get() = resolve(TEST_FEDERATION_DOMAINS_ENABLED_KEY, TEST_FEDERATION_DOMAINS_ENABLED_ENV_KEY)?.split(";")?.filterNot { it.isBlank() }
-        ?.map { value ->
-            Domain.valueOf(value)
-        }?.toSet() ?: emptySet()
+val testFederationAllowAffectedBy: Set<Domain>
+    get() = Domain.fromArgumentStringOrThrow(resolve(TEST_FEDERATION_ALLOW_AFFECTED_KEY, TEST_FEDERATION_ALLOW_AFFECTED_ENV_KEY) ?: "")
+
+/**
+ * @return The [Domain]s of this test task
+ */
+val testFederationCurrentDomains: Set<Domain>
+    get() = Domain.fromArgumentStringOrThrow(resolve(TEST_FEDERATION_CURRENT_DOMAINS_KEY, TEST_FEDERATION_CURRENT_DOMAINS_ENV_KEY) ?: "")
 
 
 /**
@@ -53,13 +56,7 @@ val testFederationAffectedDomains: Set<Domain>?
     get() {
         val raw = resolve(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY) ?: return null
         if (raw.isBlank()) return null
-        return raw.split(";").flatMap { value ->
-            when (value) {
-                "*" -> Domain.entries
-                "<none>" -> emptyList()
-                else -> listOf(Domain.valueOf(value))
-            }
-        }.sorted().toSet()
+        return Domain.fromArgumentStringOrThrow(raw).sorted().toSet()
     }
 
 /**
