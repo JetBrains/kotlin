@@ -8,7 +8,6 @@ plugins {
 }
 
 dependencies {
-    commonCompileOnly(gradleKotlinDsl())
     commonCompileOnly(libs.android.gradle.plugin.gradle.api) {
         overrideTargetJvmVersion(11)
         isTransitive = false
