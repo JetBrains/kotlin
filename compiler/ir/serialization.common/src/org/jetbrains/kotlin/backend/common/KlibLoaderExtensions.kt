@@ -93,15 +93,15 @@ fun KlibLoaderResult.reportLoadingProblemsIfAny(
 }
 
 /**
- * A helper to load the list of "friend" libraries.
+ * A helper to load the list of libraries that are already present in [KlibLoaderResult] given their paths.
  *
- * Note: It is assumed that paths of all "friend" libraries have already been passed to [KlibLoader],
- * so the loaded libraries should be in [KlibLoaderResult]. All we need is to "look up" them from the result.
+ * Note: It is assumed that the paths of the libraries ([libraryPaths])  have already been passed to [KlibLoader],
+ * so the selected libraries should be in [KlibLoaderResult]. All we need is to "look up" them from the result.
  */
-fun KlibLoaderResult.loadFriendLibraries(friendLibraryPaths: List<String>): List<KotlinLibrary> {
-    if (friendLibraryPaths.isEmpty() || librariesStdlibFirst.isEmpty()) return emptyList()
+fun KlibLoaderResult.selectLibrariesByPaths(libraryPaths: List<String>): List<KotlinLibrary> {
+    if (libraryPaths.isEmpty() || librariesStdlibFirst.isEmpty()) return emptyList()
 
-    val canonicalFriendLibraryPaths: Set<String> = friendLibraryPaths.mapNotNullTo(linkedSetOf()) { rawPath ->
+    val canonicalFriendLibraryPaths: Set<String> = libraryPaths.mapNotNullTo(linkedSetOf()) { rawPath ->
         if (rawPath.isEmpty()) return@mapNotNullTo null
 
         val validPath: Path = try {
