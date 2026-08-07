@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.buildtools.api.metadata.metadataKlibCompilationOpera
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
-import org.jetbrains.kotlin.tooling.core.compareTo
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertNotNull
 import java.io.File
 import kotlin.io.path.Path
 
@@ -136,10 +136,62 @@ class ApplyCommandLineArgumentsOverridingTest : BaseCompilationTest() {
 
             val plugins = this[CommonCompilerArguments.COMPILER_PLUGINS]
             assertEquals(listOf("___RAW_PLUGINS_APPLIED___"), plugins.map { it.pluginId })
-            val pattern = """some\.jar""".toRegex()
-            assertEquals(0, pattern.findAll(build().toArgumentStrings().single { it.startsWith("-Xplugin=") }).count()) {
-                build().toArgumentStrings().joinToString()
+            with(build().toArgumentStrings()) {
+                if (isVersionThatReplacesArrayArguments()) {
+                    assertTrue(contains("-Xplugin=some-path.jar"))
+                    assertFalse(any { "some.jar" in it })
+                    assertNotNull(singleOrNull { it == "-P" })
+                    assertNotNull(singleOrNull { it == "plugin:a:b=5" })
+                } else {
+                    // before 2.4.0 Array arguments are appended to previous values rather than replacing them
+                    assertTrue(contains("-Xplugin=${File("some.jar").absolutePath},some-path.jar"))
+                    assertNotNull(singleOrNull { it == "-P" })
+                    assertNotNull(singleOrNull { it == "plugin:my-plugin:key=value,plugin:a:b=5" })
+                }
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("tests the behavior differences between compiler versions in how string parsing replaces or appends to existing arguments")
+    fun testOverrideBehaviorOfStringParsing() {
+        kotlinToolchains.jvm.jvmCompilationOperation(emptyList(), Path("")) {
+            with(compilerArguments) {
+                applyCommandLineArguments(listOf("-Xplugin=some-path.jar", "-P", "plugin:a:b=5"))
+                with(build().toArgumentStrings()) {
+                    assertTrue(contains("-Xplugin=some-path.jar"))
+                    assertNotNull(singleOrNull { it == "-P" })
+                    assertNotNull(singleOrNull { it == "plugin:a:b=5" })
+                }
+
+                applyCommandLineArguments(
+                    listOf(
+                        "-Xplugin=other-path.jar",
+                        "-Xplugin=other-path2.jar",
+                        "-P",
+                        "plugin:d:e=5",
+                        "-P",
+                        "plugin:c:d=10"
+                    )
+                )
+                with(build().toArgumentStrings()) {
+                    if (isVersionThatReplacesArrayArguments()) {
+                        assertTrue(contains("-Xplugin=other-path.jar,other-path2.jar")) 
+                        assertFalse(any { "some-path.jar" in it })
+                        assertFalse(any { "plugin:a:b=5" in it })
+                        assertNotNull(singleOrNull { it == "-P" })
+                        assertNotNull(singleOrNull { it == "plugin:d:e=5,plugin:c:d=10" })
+                    } else {
+                        // before 2.4.0 Array arguments are appended to previous values rather than replacing them
+                        assertTrue(contains("-Xplugin=some-path.jar,other-path.jar,other-path2.jar")) 
+                        assertNotNull(singleOrNull { it == "-P" })
+                        assertNotNull(singleOrNull { it == "plugin:a:b=5,plugin:d:e=5,plugin:c:d=10" })
+                    }
+                }
             }
         }
     }
 }
+
+private fun ApplyCommandLineArgumentsOverridingTest.isVersionThatReplacesArrayArguments(): Boolean =
+    KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) >= KotlinToolingVersion("2.4.0")
