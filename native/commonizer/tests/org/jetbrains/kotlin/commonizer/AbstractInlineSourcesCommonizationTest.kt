@@ -215,7 +215,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
             dependenciesProvider = TargetDependent(outputTargets.withAllLeaves()) { target ->
                 val dependenciesMetadata = dependencies.getOrNull(target).orEmpty()
                     .map { module -> createMetadata(module) }
-                    .plus(loadStdlibMetadata())
+                    .let { listOf(loadStdlibMetadata()) + it }
                 MockModulesProvider.create(dependenciesMetadata)
             },
             supportLibraryModulesProvider = TargetDependent(outputTargets.withAllLeaves()) { target ->
