@@ -197,7 +197,7 @@ private class AnalyzedModules(
                 .filter { [registeredTarget, _] -> target in registeredTarget.withAllLeaves() }
                 .values.flatten()
                 .map { it.namedMetadata }
-                .plus(loadStdlibMetadata())
+                .let { listOf(loadStdlibMetadata()) + it }
                 .let(MockModulesProvider::create)
         },
         supportLibraryModulesProvider = buildDummySupportLibraryModulesProvider(sharedTarget.withAllLeaves(), disposable),

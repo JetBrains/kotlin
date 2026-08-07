@@ -101,10 +101,10 @@ abstract class AbstractMergeCirTreeTest : KtInlineSourceCommonizerTestCase() {
             TargetDependent.empty(),
             CirCommonizedClassifierNodes.default(),
             CirProvidedClassifiers.of(
-                CirFictitiousFunctionClassifiers,
                 CirProvidedClassifiers.by(
                     MockModulesProvider.create(loadStdlibMetadata())
-                )
+                ),
+                CirFictitiousFunctionClassifiers,
             ),
             supportExpectClassSupplier,
         )

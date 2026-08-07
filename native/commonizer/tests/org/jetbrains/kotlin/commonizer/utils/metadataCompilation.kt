@@ -60,6 +60,10 @@ private fun stdlibPath(): File = nativeDistributionKlibPath().resolve("common").
 
 private fun mockJdk(): File = KtTestUtil.findMockJdkRtJar()
 
+/**
+ * NB: the stdlib is supposed to come first.
+ * See [org.jetbrains.kotlin.library.loader.KlibLoaderResult] (KT-65837).
+ */
 fun loadStdlibMetadata() = loadStdlibMetadata(KotlinTestUtils.newConfiguration())
 
 fun loadStdlibMetadata(configuration: CompilerConfiguration): NamedMetadata {
@@ -161,16 +165,16 @@ fun serializeModuleToMetadata(
     configuration.targetPlatform = targetPlatform
     configuration.renderDiagnosticInternalName = true
 
-    configuration.contentRoots += JvmClasspathRoot(stdlibPath())
-    if (targetPlatform.isJvm()) {
-        configuration.contentRoots += JvmClasspathRoot(mockJdk())
-    }
     configuration.contentRoots += regularDependencies + refinesDependencies.map { JvmClasspathRoot(File(it)) }
     configuration.putIfNotNull(K2MetadataConfigurationKeys.REFINES_PATHS, refinesDependencies.takeIf { it.isNotEmpty() })
     configuration.contentRoots += moduleRoot.walkTopDown()
         .filter { it.isFile }
         .map { KotlinSourceRoot(it.path, isCommon, hmppModuleName = null) }
         .toList()
+    configuration.contentRoots += JvmClasspathRoot(stdlibPath())
+    if (targetPlatform.isJvm()) {
+        configuration.contentRoots += JvmClasspathRoot(mockJdk())
+    }
 
     val performanceManager = createPerformanceManagerFor(JvmPlatforms.unspecifiedJvmPlatform)
 
