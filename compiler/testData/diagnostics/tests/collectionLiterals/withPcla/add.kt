@@ -31,11 +31,11 @@ fun test() {
         add(["42"])
     }
 
-    <!TYPE_MISMATCH!>buildList {
+    buildList {
         add(setOf(42))
         add(["42"])
-        <!TYPE_MISMATCH!>this[0]<!>.size
-    }<!>
+        this[0].size
+    }
 }
 
 /* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, integerLiteral, lambdaLiteral, stringLiteral */

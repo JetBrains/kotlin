@@ -733,8 +733,6 @@ R?C|<local>/otvOwner|.constrain#(Q|Interloper|)
 ##### Resolution Stages > CheckArguments:
 
 1. `Interloper <: TypeVariable(OT)` _from Argument Q|Interloper|_
-2. Combine `Interloper <: TypeVariable(OT)` with `TypeVariable(PNT) == TypeVariable(OT)`
-    1. `Interloper <: TypeVariable(PNT)`
 
 ### Call 19
 
@@ -746,6 +744,8 @@ R?C|<local>/pntvOwner|.constrain#(Q|Interloper|)
 ##### Resolution Stages > CheckArguments:
 
 1. `Interloper <: TypeVariable(PNT)` _from Argument Q|Interloper|_
+2. Combine `Interloper <: TypeVariable(PNT)` with `TypeVariable(PNT) <: TypeVariable(OT)`
+    1. `Interloper <: TypeVariable(OT)`
 
 ### Call 14
 
