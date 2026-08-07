@@ -1654,7 +1654,7 @@ class KonanProxyTypeProvider:
 
         proxy = _select_provider(self._valobj, self._internal_dict)
 
-        value_str = _hex(self.valobj.unsigned)
+        value_str = _hex(self._valobj.unsigned)
         _bench(start, lambda: f"KonanProxyTypeProvider({value_str})")
         self._log.debug(
             "%s _proxy: %s", value_str, proxy.__class__.__name__
