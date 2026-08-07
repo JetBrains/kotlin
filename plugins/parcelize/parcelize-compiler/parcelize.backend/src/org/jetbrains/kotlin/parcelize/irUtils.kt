@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELABLE_FQN
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_FQN
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_TO_PARCEL_NAME
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 
 private val PARCELIZE_ALLOWED_CLASS_KINDS = listOf(ClassKind.CLASS, ClassKind.OBJECT, ClassKind.ENUM_CLASS)
 
@@ -217,7 +218,7 @@ fun IrTypeArgument.upperBound(builtIns: IrBuiltIns): IrType =
     upperBoundOrNull() ?: builtIns.anyNType
 
 fun IrClass.typeParameterMapping(instantiation: IrType): Map<IrTypeParameterSymbol, IrType> = buildMap {
-    (instantiation as? IrSimpleType)?.arguments?.zip(typeParameters)?.forEach { [arg, parameter] ->
+    (instantiation as? IrSimpleType)?.arguments?.forEachZipped(typeParameters) { arg, parameter ->
         put(parameter.symbol, arg.upperBoundOrNull() ?: parameter.representativeUpperBound)
     }
 }

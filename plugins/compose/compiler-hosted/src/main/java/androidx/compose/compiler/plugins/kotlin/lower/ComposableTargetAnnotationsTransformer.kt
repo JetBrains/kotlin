@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 
 /**
  * This transformer walks the IR tree to infer the applier annotations such as ComposableTarget,
@@ -663,7 +664,7 @@ class InferenceFunctionDeclaration(
             transformer.addAnnotationToDeclaration(function, scheme)
         } else {
             transformer.addAnnotationToDeclaration(function, scheme.target)
-            parameters().zip(scheme.parameters).forEach { [parameter, parameterScheme] ->
+            parameters().forEachZipped(scheme.parameters) { parameter, parameterScheme ->
                 parameter.updateScheme(parameterScheme)
             }
         }
