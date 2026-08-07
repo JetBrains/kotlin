@@ -21,6 +21,7 @@ internal class JavaFileContext(
     val imports: JavaImports,
     val classFinder: LeanJavaClassFinder?,
     val session: FirSession,
+    val moduleImportedPackages: JavaModuleImportedPackages,
 )
 
 /**
@@ -57,6 +58,7 @@ class JavaResolutionContext private constructor(
             tree: JavaLightTree,
             session: FirSession,
             classFinder: LeanJavaClassFinder? = null,
+            moduleImportedPackages: JavaModuleImportedPackages = JavaModuleImportedPackages.EMPTY,
         ): JavaResolutionContext {
             val root = tree.getRoot()
             val packageFqName = JavaImportResolver.extractPackageName(tree, root)
@@ -85,6 +87,7 @@ class JavaResolutionContext private constructor(
                 packageFqName, imports,
                 classFinder,
                 session = session,
+                moduleImportedPackages = moduleImportedPackages,
             )
             return JavaResolutionContext(fileContext, scopeContext).also {
                 contextRef = it

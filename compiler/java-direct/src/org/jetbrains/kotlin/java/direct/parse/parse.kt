@@ -29,6 +29,13 @@ fun parseJavaToSyntaxTreeBuilder(
         .withWhitespaceOrCommentBindingPolicy(JavaSyntaxDefinition.whitespaceOrCommentBindingPolicy)
         .build()
 
+    // `Marker.rollbackTo` restores the lexeme index without re-arming the builder's
+    // whitespace skip, so a rollback landing on leading trivia makes `tokenType` report the
+    // whitespace/comment token itself. `FileParser` rolls back exactly that way when a file has
+    // no package statement, which then hides `module` from `import module M;` recognition.
+    // The builder always skips trivia in that path once a remapper is installed.
+    syntaxTreeBuilder.setTokenTypeRemapper { source, _, _, _ -> source }
+
     parse(LanguageLevel.HIGHEST, syntaxTreeBuilder)
     return syntaxTreeBuilder
 }
