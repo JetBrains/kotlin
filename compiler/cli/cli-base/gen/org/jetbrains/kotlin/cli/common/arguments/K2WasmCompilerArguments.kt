@@ -115,6 +115,16 @@ sealed class K2WasmCompilerArguments : CommonJsAndWasmCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xwasm-enable-tail-calls",
+        description = "Emit WebAssembly tail call instructions (return_call / return_call_indirect).",
+    )
+    var wasmEnableTailCalls: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xwasm-generate-closed-world-multimodule",
         description = "Compile modules in multi-module closed-world mode using module passed in `-include` argument as main module",
     )
