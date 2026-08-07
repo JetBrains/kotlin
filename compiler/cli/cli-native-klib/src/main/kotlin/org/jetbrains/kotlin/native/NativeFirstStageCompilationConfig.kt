@@ -30,7 +30,7 @@ import kotlin.io.path.name
 class NativeFirstStageCompilationConfig private constructor(
     override val configuration: CompilerConfiguration,
     override val target: KonanTarget,
-    val loadedKlibs: LoadedNativeKlibs,
+    override val loadedKlibs: LoadedNativeKlibs,
 ) : NativeCompilationConfig {
 
     override val moduleId: String
