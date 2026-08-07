@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.domainsEnabled
+import org.jetbrains.kotlin.testFederation.allowAffectedBy
 
 description = "Atomicfu Compiler Plugin"
 
@@ -193,7 +193,7 @@ projectTests {
             // Exclude all tests with the "atomicfu-native" tag. They should be launched by another test task.
             excludeTags("atomicfu-native")
         }
-        domainsEnabled.addAll(Domain.Compiler, Domain.Js)
+        allowAffectedBy.addAll(Domain.Compiler, Domain.Js)
         useJsIrBoxTests(buildDir = layout.buildDirectory)
 
         addClasspathProperty(atomicfuJsIrRuntimeForTests, "atomicfuJsIrRuntimeForTests.classpath")
@@ -214,7 +214,7 @@ projectTests {
         customTestDependencies = listOf(atomicfuNativeKlib),
         compilerPluginDependencies = listOf(atomicfuCompilerPluginForTests)
     ) {
-        domainsEnabled.add(Domain.Native)
+        allowAffectedBy.add(Domain.Native)
         addClasspathProperty(atomicfuNativeKlib, "atomicfuNative.classpath")
 
         // To workaround KTI-2421, we make these tests run on JDK 11 instead of the project-default JDK 8.

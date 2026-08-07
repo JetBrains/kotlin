@@ -2,7 +2,7 @@ import com.github.gradle.node.npm.task.NpmTask
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.testFederation.Domain
 import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.domainsEnabled
+import org.jetbrains.kotlin.testFederation.allowAffectedBy
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
 import java.util.*
 
@@ -412,7 +412,7 @@ projectTests {
 
     // Test everything, intended to use locally
     wasmProjectTest("test", skipInLocalBuild = false) {
-        domainsEnabled.add(Domain.Compiler)
+        allowAffectedBy.add(Domain.Compiler)
         smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
     }
 
@@ -428,7 +428,7 @@ projectTests {
     wasmProjectTest("wasmWasiBoxInlinedTest", tags = wasiBoxInlinedTag)
     wasmProjectTest("wasmIcTest", tags = "$icTag & !$extraTag")
     wasmProjectTest("wasmMiscTest", tags = allTags.joinToString(" & ") { "!$it" }) {
-        domainsEnabled.add(Domain.Compiler)
+        allowAffectedBy.add(Domain.Compiler)
     }
 
     testData(project(":compiler").isolated, "testData/diagnostics")

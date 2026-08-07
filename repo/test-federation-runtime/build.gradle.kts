@@ -40,7 +40,7 @@ tasks.withType<Test>().configureEach {
             else -> error("Unknown _PSEUDO_TEST_ configuration")
         }
     }
-    domainsEnabled.addAll(Domain.Js, Domain.Wasm, Domain.Gradle)
+    allowAffectedBy.addAll(Domain.Js, Domain.Wasm, Domain.Gradle)
 
     testLogging {
         events("passed", "skipped", "failed")

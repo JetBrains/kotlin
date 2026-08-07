@@ -1,5 +1,5 @@
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.domainsEnabled
+import org.jetbrains.kotlin.testFederation.allowAffectedBy
 
 description = "Lombok compiler plugin"
 
@@ -124,7 +124,7 @@ sourceSets {
 
 projectTests {
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
-        domainsEnabled.add(Domain.Compiler)
+        allowAffectedBy.add(Domain.Compiler)
         val prefix = "org.jetbrains.kotlin.test"
         addClasspathProperty(guavaClasspathForTests, "$prefix.guava")
         addClasspathProperty(slf4jApiClasspathForTests, "$prefix.slf4j-api")

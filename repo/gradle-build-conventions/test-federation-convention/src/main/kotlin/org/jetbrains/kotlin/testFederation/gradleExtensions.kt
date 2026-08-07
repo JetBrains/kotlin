@@ -120,7 +120,7 @@ val Test.smokeTestConfig: Property<SmokeTestConfig> by extensionProperty {
 /**
  * Returns the list of domains that we can pass to this task when in Smoke mode
  */
-val Test.domainsEnabled: ListProperty<Domain> by extensionProperty {
+val Test.allowAffectedBy: ListProperty<Domain> by extensionProperty {
     project.objects.listProperty(Domain::class.java)
 }
 

@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.domainsEnabled
+import org.jetbrains.kotlin.testFederation.allowAffectedBy
 
 plugins {
     id("common-configuration")
@@ -300,7 +300,7 @@ testing {
                             javaLauncher = JdkMajorVersion.JDK_1_8,
                             skipInLocalBuild = false
                         ) {
-                            domainsEnabled.add(Domain.CompilerPlugins)
+                            allowAffectedBy.add(Domain.CompilerPlugins)
                             ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
                         }
@@ -331,7 +331,7 @@ testing {
                             javaLauncher = JdkMajorVersion.JDK_1_8,
                             skipInLocalBuild = false
                         ) {
-                            domainsEnabled.add(Domain.CompilerPlugins)
+                            allowAffectedBy.add(Domain.CompilerPlugins)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
 
                         }

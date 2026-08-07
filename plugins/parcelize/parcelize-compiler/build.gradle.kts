@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.domainsEnabled
+import org.jetbrains.kotlin.testFederation.allowAffectedBy
 import java.util.zip.ZipFile
 
 description = "Parcelize compiler plugin"
@@ -129,7 +129,7 @@ projectTests {
             .withNormalizer(ClasspathNormalizer::class)
             .withPropertyName("prepareRobolectricDependenciesOutput")
 
-        domainsEnabled.add(Domain.Compiler)
+        allowAffectedBy.add(Domain.Compiler)
         androidSdkProvisioner {
             provideToThisTaskAsSystemProperty(ProvisioningType.PLATFORM_JAR)
         }
