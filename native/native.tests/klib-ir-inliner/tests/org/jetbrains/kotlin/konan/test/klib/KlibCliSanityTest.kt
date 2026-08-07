@@ -298,6 +298,21 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         }
     }
 
+    private fun doTestIrProviders(irProviderName: String) {
+        newSourceModules {
+            addRegularModule("a")
+            addRegularModule("b") { dependsOn("a") }
+        }.compileToKlibsViaCli { module, successKlib ->
+            successKlib.assertNoKlibLoaderIssues()
+
+            if (module.name == "a") {
+                patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
+                    properties[KLIB_PROPERTY_IR_PROVIDER] = irProviderName
+                }
+            }
+        }
+    }
+
     @Test
     fun `Compiler rejects libraries from the distribution and C-interop libraries as included and exported libs`() {
         val librariesDir = testRunSettings.get<KotlinNativeHome>().librariesDir
@@ -351,21 +366,6 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
                         cliParameter = testedCliParameter,
                         stdlibPath, posixPath, cinteropLibPath
                     )
-                }
-            }
-        }
-    }
-
-    private fun doTestIrProviders(irProviderName: String) {
-        newSourceModules {
-            addRegularModule("a")
-            addRegularModule("b") { dependsOn("a") }
-        }.compileToKlibsViaCli { module, successKlib ->
-            successKlib.assertNoKlibLoaderIssues()
-
-            if (module.name == "a") {
-                patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
-                    properties[KLIB_PROPERTY_IR_PROVIDER] = irProviderName
                 }
             }
         }
