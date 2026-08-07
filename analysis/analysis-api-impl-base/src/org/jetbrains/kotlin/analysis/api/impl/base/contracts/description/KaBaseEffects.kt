@@ -110,6 +110,23 @@ class KaBaseContractReturnsResultOfEffectDeclaration(
 }
 
 @KaImplementationDetail
+class KaBaseContractReturnsParameterEffectDeclaration(
+    private val backingValueParameterReference: KaContractParameterValue,
+) : KaContractReturnsParameterEffectDeclaration {
+    override val token: KaLifetimeToken get() = backingValueParameterReference.token
+
+    override val valueParameterReference: KaContractParameterValue get() = withValidityAssertion { backingValueParameterReference }
+
+    override fun hashCode(): Int = backingValueParameterReference.hashCode()
+
+    override fun equals(other: Any?): Boolean {
+        return this === other ||
+                other is KaBaseContractReturnsParameterEffectDeclaration &&
+                other.backingValueParameterReference == backingValueParameterReference
+    }
+}
+
+@KaImplementationDetail
 class KaBaseContractHoldsInEffectDeclaration(
     private val backingCondition: KaContractBooleanExpression,
     private val backingValueParameterReference: KaContractParameterValue,

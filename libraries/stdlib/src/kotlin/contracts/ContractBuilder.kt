@@ -156,6 +156,35 @@ public interface ContractBuilder {
     @ContractsDsl
     @SinceKotlin("2.4")
     public fun <R> returnsResultOf(lambda: Function<R>)
+
+    /**
+     * Specifies that the function returns the [value] passed as one of its parameters (or its receiver) as-is.
+     *
+     * This information is currently used by the Kotlin's return value checker and instructs it
+     * to decide whether the function with the contract is ignorable based on the argument passed for [value]:
+     * if that argument is itself non-ignorable, discarding the function's result is reported.
+     *
+     * If the parameter is returned only on some of the possible execution paths, the contract still should mention it.
+     * If the function may return several different parameters, the contract may be specified several times
+     * and should list all of them.
+     *
+     * For example:
+     * ```kotlin
+     * fun <T> T.apply(block: T.() -> Unit): T {
+     *     contract {
+     *         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+     *         returnsParameter(this@apply)
+     *     }
+     *     block()
+     *     return this
+     * }
+     * ```
+     *
+     * This contract is experimental, and it is allowed to use it only with the 'Return value checker' feature enabled.
+     */
+    @ContractsDsl
+    @SinceKotlin("2.5")
+    public fun <R> returnsParameter(value: R)
 }
 
 /**

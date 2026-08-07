@@ -2,6 +2,12 @@
 // ------------------------------------------
 package {
 
+  // signature: returnsParameterContract(Ljava/lang/Object;)Ljava/lang/Object;
+  public final fun <T#0 /* T */> returnsParameterContract(value: T#0): T#0
+    contract {
+      returnsParameter(p#1)
+    }
+
   // signature: returnsResultOfContract(Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
   public final fun <T#0 /* T */> returnsResultOfContract(block: kotlin/Function0<T#0>): T#0
     contract {

@@ -90,6 +90,11 @@ class ContractSerializer {
                     builder.addEffectConstructorArgument(contractExpressionProto(effectDeclaration.variableReference, contractDescription))
                 }
 
+                is ReturnsParameterEffectDeclaration -> {
+                    builder.effectType = ProtoBuf.Effect.EffectType.RETURNS_PARAMETER
+                    builder.addEffectConstructorArgument(contractExpressionProto(effectDeclaration.variableReference, contractDescription))
+                }
+
                 // TODO: Add else and do something like reporting issue?
             }
         }

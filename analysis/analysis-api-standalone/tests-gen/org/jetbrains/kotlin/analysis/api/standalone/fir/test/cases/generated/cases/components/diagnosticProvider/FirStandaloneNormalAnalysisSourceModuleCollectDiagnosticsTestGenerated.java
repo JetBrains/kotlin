@@ -496,6 +496,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
     }
 
     @Test
+    @TestMetadata("returnsParameterContract.kt")
+    public void testReturnsParameterContract() {
+      run("returnsParameterContract.kt");
+    }
+
+    @Test
     @TestMetadata("returnsResultOfContract.kt")
     public void testReturnsResultOfContract() {
       run("returnsResultOfContract.kt");
