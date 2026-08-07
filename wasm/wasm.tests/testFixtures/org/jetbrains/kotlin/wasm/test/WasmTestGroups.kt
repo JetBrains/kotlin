@@ -25,11 +25,9 @@ import org.junit.jupiter.api.Tag
 
 const val WASM_IC_TEST_TAG = "wasmIc"
 const val WASM_JS_BOX_TEST_TAG = "wasmJsBox"
-const val WASM_JS_BOX_INLINED_TEST_TAG = "wasmJsBoxInlined"
 const val WASM_JS_SPLITTING_TEST_TAG = "wasmJsSplitting"
 const val WASM_JS_MULTI_MODULE_TEST_TAG = "wasmJsMultiModule"
 const val WASM_WASI_BOX_TEST_TAG = "wasmWasiBox"
-const val WASM_WASI_BOX_INLINED_TEST_TAG = "wasmWasiBoxInlined"
 const val WASM_FIR_COMPILER_EXTRA_TEST_TAG = "wasmFirCompilerExtra"
 
 /**
@@ -43,13 +41,6 @@ annotation class WasmIcTest
  */
 @Tag(WASM_JS_BOX_TEST_TAG)
 annotation class WasmJsBoxTest
-
-/**
- * Codegen box tests for wasm-js with the IR inliner enabled (`WasmJsCodegenBoxInlinedTestGenerated`).
- * Executed by the `wasmJsBoxInlinedTest` Gradle task.
- */
-@Tag(WASM_JS_BOX_INLINED_TEST_TAG)
-annotation class WasmJsBoxInlinedTest
 
 /**
  * Codegen box tests for wasm-js in the splitting mode (`WasmJsCodegenSplittingTestGenerated`).
@@ -69,13 +60,6 @@ annotation class WasmJsMultiModuleTest
  */
 @Tag(WASM_WASI_BOX_TEST_TAG)
 annotation class WasmWasiBoxTest
-
-/**
- * Codegen box tests for wasm-wasi with the IR inliner enabled (`WasmWasiCodegenBoxInlinedTestGenerated`).
- * Executed by the `wasmWasiBoxInlinedTest` Gradle task.
- */
-@Tag(WASM_WASI_BOX_INLINED_TEST_TAG)
-annotation class WasmWasiBoxInlinedTest
 
 /**
  * Tests of the extra compiler configurations (single module and closed world multimodule modes).
