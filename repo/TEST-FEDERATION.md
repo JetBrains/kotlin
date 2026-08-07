@@ -88,7 +88,7 @@ The file can be found at [domains.dump.txt](domains.dump.txt).
 
 Verify it locally from the repository root with:
 ```shell
-./gradlew :gradle-build-conventions:test-federation-convention:test --tests "org.jetbrains.kotlin.testFederation.DomainsDumpTest" --rerun
+./gradlew :repo:codebase-tests:test --tests "org.jetbrains.kotlin.code.DomainsDumpTest" --rerun -Pkotlin.native.enabled=true
 ```
 
 #### Updating the dump
@@ -96,7 +96,7 @@ Verify it locally from the repository root with:
 Changes to `domains.yaml` might require an update of the dump file. Update it from the repository root with:
 
 ```shell
-./gradlew :gradle-build-conventions:test-federation-convention:updateDomainsDump
+./gradlew :repo:codebase-tests:updateDomainsDump -Pkotlin.native.enabled=true
 ```
 
 Alternatively, run `scripts/update-domains.sh` or use the `Update domains.dump.txt` run configuration in IntelliJ.
