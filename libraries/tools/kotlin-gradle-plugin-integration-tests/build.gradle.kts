@@ -251,37 +251,6 @@ enum class JunitTag {
     SwiftPMImportKGP
 }
 
-if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
-    val junitTags = JunitTag.values().filter { it !in setOf(JunitTag.SwiftExportKGP, JunitTag.SwiftPMImportKGP) }.map { it.name }
-    val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
-
-    junitTags.forEach { junitTag ->
-        val taskPrefix = "kgp${junitTag.substringBefore("KGP")}"
-        val tasksByGradleVersion = gradleVersions.map { gradleVersion ->
-            tasks.register<Test>("${taskPrefix}TestsForGradle_${gradleVersion.replace(".", "_")}") {
-                group = gradleVersionTaskGroup
-                description = "Runs all tests for Kotlin Gradle plugins against Gradle $gradleVersion"
-                maxParallelForks = maxParallelTestForks
-
-                classpath = sourceSets["test"].runtimeClasspath
-                testClassesDirs = sourceSets["test"].output.classesDirs
-                systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
-                systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
-
-                useJUnitPlatform {
-                    includeTags(junitTag)
-                    excludeTags(*(junitTags - junitTag).toTypedArray())
-                }
-            }
-        }
-
-        tasks.register("${taskPrefix}TestsGroupedByGradleVersion") {
-            group = gradleVersionTaskGroup
-            dependsOn(tasksByGradleVersion)
-        }
-    }
-}
-
 tasks.register<Test>("kgpAllParallelTests") {
     group = KGP_TEST_TASKS_GROUP
     description = "Runs all tests for Kotlin Gradle plugins except daemon ones"
@@ -363,6 +332,39 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
         )
     }
 }.map { junitTask ->
+    if (project.kotlinBuildProperties.isTeamcityBuild.get() && junitTask.junitTag !in setOf(
+            JunitTag.SwiftExportKGP,
+            JunitTag.SwiftPMImportKGP
+        )
+    ) {
+        val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
+
+        val taskPrefix = "kgp${junitTask.junitTag.name.substringBefore("KGP")}"
+        val tasksByGradleVersion = gradleVersions.map { gradleVersion ->
+            tasks.register<Test>("${taskPrefix}TestsForGradle_${gradleVersion.replace(".", "_")}") {
+                group = gradleVersionTaskGroup
+                description = junitTask.description + " against Gradle $gradleVersion"
+                maxParallelForks = maxParallelTestForks
+                domainsEnabled.addAll(junitTask.domains)
+
+                classpath = sourceSets["test"].runtimeClasspath
+                testClassesDirs = sourceSets["test"].output.classesDirs
+                systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
+                systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
+
+                useJUnitPlatform {
+                    includeTags(junitTask.junitTag.name)
+                    excludeTags(*JunitTag.entries.filterNot { it == junitTask.junitTag }.map { it.name }.toTypedArray())
+                }
+            }
+        }
+
+        tasks.register("${taskPrefix}TestsGroupedByGradleVersion") {
+            group = gradleVersionTaskGroup
+            dependsOn(tasksByGradleVersion)
+        }
+    }
+
     tasks.register<Test>(junitTask.taskName) {
         group = KGP_TEST_TASKS_GROUP
         description = junitTask.description
@@ -371,7 +373,7 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
         domainsEnabled.addAll(junitTask.domains)
         useJUnitPlatform {
             includeTags(junitTask.junitTag.name)
-            excludeTags(*JunitTag.values().filterNot { it == junitTask.junitTag }.map { it.name }.toTypedArray())
+            excludeTags(*JunitTag.entries.filterNot { it == junitTask.junitTag }.map { it.name }.toTypedArray())
         }
     }
 }
