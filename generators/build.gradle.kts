@@ -1,6 +1,6 @@
 import GeneratorInputKind.RuntimeClasspath
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.allowAffectedBy
+import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
 
 plugins {
     id("common-configuration")
@@ -96,7 +96,7 @@ dependencies {
 projectTests {
     testTask {
         workingDir = rootDir
-        allowAffectedBy.add(Domain.CoreLibs)
+        testFederationAllowAffectedBy = setOf(Domain.CoreLibs)
     }
 }
 

@@ -1,5 +1,5 @@
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.allowAffectedBy
+import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
 
 plugins {
     id("common-configuration")
@@ -55,7 +55,7 @@ projectTests {
         allowUnsafe = true, // KT-85212
     ) {
         dependsOn(":kotlin-native:distInvalidateStaleCaches")
-        allowAffectedBy.add(Domain.AnalysisApi)
+        testFederationAllowAffectedBy = setOf(Domain.AnalysisApi)
     }
 
     testGenerator(

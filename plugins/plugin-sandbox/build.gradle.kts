@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.allowAffectedBy
+import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
 
 plugins {
     id("common-configuration")
@@ -83,7 +83,7 @@ projectTests {
         useJUnitPlatform {
             excludeTags("sandbox-native")
         }
-        allowAffectedBy.addAll(Domain.Js, Domain.Compiler)
+        testFederationAllowAffectedBy = setOf(Domain.Js, Domain.Compiler)
     }
 
     nativeTestTask(
@@ -93,7 +93,7 @@ projectTests {
         customTestDependencies = listOf(sandboxAnnotationsNativeRuntimeForTests),
         compilerPluginDependencies = listOf(sandboxPluginForTests)
     ) {
-        allowAffectedBy.add(Domain.Native)
+        testFederationAllowAffectedBy = setOf(Domain.Native)
     }
 
     testGenerator("org.jetbrains.kotlin.plugin.sandbox.TestGeneratorKt", generateTestsInBuildDirectory = true)

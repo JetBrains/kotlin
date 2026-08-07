@@ -1,5 +1,5 @@
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.allowAffectedBy
+import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
 
 description = "Kotlin NoArg Compiler Plugin"
 
@@ -53,7 +53,7 @@ testsJar()
 
 projectTests {
     testTask {
-        allowAffectedBy.add(Domain.Compiler)
+        testFederationAllowAffectedBy = setOf(Domain.Compiler)
     }
 
     testGenerator("org.jetbrains.kotlin.noarg.TestGeneratorKt", generateTestsInBuildDirectory = true)

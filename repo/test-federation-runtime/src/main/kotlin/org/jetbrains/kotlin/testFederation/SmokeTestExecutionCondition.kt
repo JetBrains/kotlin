@@ -18,15 +18,15 @@ class SmokeTestExecutionCondition : ExecutionCondition {
     override fun evaluateExecutionCondition(context: ExtensionContext): ConditionEvaluationResult {
         if (!context.testMethod.isPresent) return enabled("Test Class is always enabled")
         val allContracts = contracts(context)
-        if (!enabledContracts.containsAll(allContracts)) {
+        if (!testFederationAllowAffectedBy.containsAll(allContracts)) {
             throw ExtensionConfigurationException(
                 """
                 This test has contract for domains that are not declared at the Gradle level:
-                 ${(allContracts - enabledContracts).joinToString("\n") { "- $it" }}
+                ${(allContracts - testFederationAllowAffectedBy).joinToString("\n") { "- $it" }}
                 
                 HOW TO FIX:
                 testTask {
-                    domainsEnabled.addAll(${allContracts.joinToString(", ") { "Domain.$it" }})
+                    testFederationAllowAffectedBy = setOf(${(allContracts - testFederationCurrentDomains).sorted().joinToString(", ") { "Domain.$it" }})
                 }
                 """.trimIndent()
             )

@@ -1,5 +1,5 @@
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.allowAffectedBy
+import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
 
 description = "Kotlin AllOpen Compiler Plugin"
 
@@ -49,7 +49,7 @@ testsJar()
 
 projectTests {
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
-        allowAffectedBy.add(Domain.Compiler)
+        testFederationAllowAffectedBy = setOf(Domain.Compiler)
     }
 
     testGenerator("org.jetbrains.kotlin.allopen.TestGeneratorKt", generateTestsInBuildDirectory = true)

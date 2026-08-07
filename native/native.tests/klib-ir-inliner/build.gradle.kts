@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.allowAffectedBy
+import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
 
 plugins {
     id("common-configuration")
@@ -66,7 +66,7 @@ projectTests {
         requirePlatformLibs = true,
         enableGroupingTestEngine = true,
     ) {
-        allowAffectedBy.add(Domain.Compiler)
+        testFederationAllowAffectedBy = setOf(Domain.Compiler)
         val testTargetName = providers.gradleProperty("kotlin.internal.native.test.target")
             .orElse(providers.gradleProperty("kn.target"))
             .getOrElse(HostManager.hostName)
