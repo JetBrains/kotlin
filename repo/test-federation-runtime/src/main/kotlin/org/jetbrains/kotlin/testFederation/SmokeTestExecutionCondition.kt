@@ -21,8 +21,13 @@ class SmokeTestExecutionCondition : ExecutionCondition {
         if (!enabledContracts.containsAll(allContracts)) {
             throw ExtensionConfigurationException(
                 """
-                This test has contract for a domains not enabled
-                Missing: ${(allContracts - enabledContracts).joinToString(", ")}
+                This test has contract for domains that are not declared at the Gradle level:
+                 ${(allContracts - enabledContracts).joinToString("\n") { "- $it" }}
+                
+                HOW TO FIX:
+                testTask {
+                    domainsEnabled.addAll(${allContracts.joinToString(", ") { "Domain.$it" }})
+                }
                 """.trimIndent()
             )
         }
