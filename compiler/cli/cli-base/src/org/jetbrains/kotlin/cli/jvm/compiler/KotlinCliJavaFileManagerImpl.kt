@@ -56,7 +56,9 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     private lateinit var index: JvmDependenciesIndex
     private lateinit var singleJavaFileRootsIndex: SingleJavaFileRootsIndex
     private lateinit var packagePartProviders: List<PackagePartProvider>
-    private lateinit var javaModuleFinder: JavaModuleFinder
+
+    lateinit var javaModuleFinder: JavaModuleFinder
+        private set
 
     /**
      * Caches the [VirtualFile]s found in [index] for the key [FqName].
