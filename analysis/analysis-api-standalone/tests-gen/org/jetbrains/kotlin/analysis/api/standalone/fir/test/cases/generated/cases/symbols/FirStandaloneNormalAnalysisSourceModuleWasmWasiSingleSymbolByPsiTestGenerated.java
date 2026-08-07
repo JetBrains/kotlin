@@ -724,6 +724,18 @@ public class FirStandaloneNormalAnalysisSourceModuleWasmWasiSingleSymbolByPsiTes
     }
 
     @Test
+    @TestMetadata("genericAnnotation.kt")
+    public void testGenericAnnotation() {
+      run("genericAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("illegalAnnotationClass.kt")
+    public void testIllegalAnnotationClass() {
+      run("illegalAnnotationClass.kt");
+    }
+
+    @Test
     @TestMetadata("jvmName.kt")
     public void testJvmName() {
       run("jvmName.kt");
@@ -739,6 +751,18 @@ public class FirStandaloneNormalAnalysisSourceModuleWasmWasiSingleSymbolByPsiTes
     @TestMetadata("malformedFunctionLiteralWithMultipleAnnotations.kt")
     public void testMalformedFunctionLiteralWithMultipleAnnotations() {
       run("malformedFunctionLiteralWithMultipleAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterAsAnnotation.kt")
+    public void testTypeParameterAsAnnotation() {
+      run("typeParameterAsAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedAnnotation.kt")
+    public void testUnresolvedAnnotation() {
+      run("unresolvedAnnotation.kt");
     }
 
     @Test
