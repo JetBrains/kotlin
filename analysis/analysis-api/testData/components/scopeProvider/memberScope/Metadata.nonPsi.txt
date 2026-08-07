@@ -1,8 +1,8 @@
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -42,7 +42,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: [
       kotlin/jvm/JvmName(name = "bv")
         psi: null
@@ -82,7 +82,7 @@ KaKotlinPropertySymbol:
     deprecation: null
     javaMethodName: bv
     importableFqName: null
-  hasBackingField: false
+  hasBackingField: true
   hasGetter: true
   hasSetter: false
   initializer: KaConstantValueForAnnotation([1, 0, 3])
@@ -102,8 +102,8 @@ KaKotlinPropertySymbol:
   name: bytecodeVersion
   origin: LIBRARY
   primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -124,10 +124,10 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -172,7 +172,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: [
       kotlin/jvm/JvmName(name = "d1")
         psi: null
@@ -217,7 +217,7 @@ KaKotlinPropertySymbol:
     deprecation: null
     javaMethodName: d1
     importableFqName: null
-  hasBackingField: false
+  hasBackingField: true
   hasGetter: true
   hasSetter: false
   initializer: KaConstantValueForAnnotation([])
@@ -237,8 +237,8 @@ KaKotlinPropertySymbol:
   name: data1
   origin: LIBRARY
   primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -264,10 +264,10 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -312,7 +312,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: [
       kotlin/jvm/JvmName(name = "d2")
         psi: null
@@ -357,7 +357,7 @@ KaKotlinPropertySymbol:
     deprecation: null
     javaMethodName: d2
     importableFqName: null
-  hasBackingField: false
+  hasBackingField: true
   hasGetter: true
   hasSetter: false
   initializer: KaConstantValueForAnnotation([])
@@ -377,8 +377,8 @@ KaKotlinPropertySymbol:
   name: data2
   origin: LIBRARY
   primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -404,10 +404,10 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -447,7 +447,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: [
       kotlin/jvm/JvmName(name = "xi")
         psi: null
@@ -487,7 +487,7 @@ KaKotlinPropertySymbol:
     deprecation: null
     javaMethodName: xi
     importableFqName: null
-  hasBackingField: false
+  hasBackingField: true
   hasGetter: true
   hasSetter: false
   initializer: KaConstantInitializerValue(0)
@@ -507,8 +507,8 @@ KaKotlinPropertySymbol:
   name: extraInt
   origin: LIBRARY
   primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -529,10 +529,10 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -572,7 +572,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: [
       kotlin/jvm/JvmName(name = "xs")
         psi: null
@@ -612,7 +612,7 @@ KaKotlinPropertySymbol:
     deprecation: null
     javaMethodName: xs
     importableFqName: null
-  hasBackingField: false
+  hasBackingField: true
   hasGetter: true
   hasSetter: false
   initializer: KaConstantInitializerValue("")
@@ -632,8 +632,8 @@ KaKotlinPropertySymbol:
   name: extraString
   origin: LIBRARY
   primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -654,10 +654,10 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -697,7 +697,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: [
       kotlin/jvm/JvmName(name = "k")
         psi: null
@@ -737,7 +737,7 @@ KaKotlinPropertySymbol:
     deprecation: null
     javaMethodName: k
     importableFqName: null
-  hasBackingField: false
+  hasBackingField: true
   hasGetter: true
   hasSetter: false
   initializer: KaConstantInitializerValue(1)
@@ -757,8 +757,8 @@ KaKotlinPropertySymbol:
   name: kind
   origin: LIBRARY
   primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -779,10 +779,10 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -822,7 +822,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: [
       kotlin/jvm/JvmName(name = "mv")
         psi: null
@@ -862,7 +862,7 @@ KaKotlinPropertySymbol:
     deprecation: null
     javaMethodName: mv
     importableFqName: null
-  hasBackingField: false
+  hasBackingField: true
   hasGetter: true
   hasSetter: false
   initializer: KaConstantValueForAnnotation([])
@@ -882,8 +882,8 @@ KaKotlinPropertySymbol:
   name: metadataVersion
   origin: LIBRARY
   primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -904,10 +904,10 @@ KaKotlinPropertySymbol:
   importableFqName: null
 
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -947,7 +947,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: [
       kotlin/jvm/JvmName(name = "pn")
         psi: null
@@ -987,7 +987,7 @@ KaKotlinPropertySymbol:
     deprecation: null
     javaMethodName: pn
     importableFqName: null
-  hasBackingField: false
+  hasBackingField: true
   hasGetter: true
   hasSetter: false
   initializer: KaConstantInitializerValue("")
@@ -1007,8 +1007,8 @@ KaKotlinPropertySymbol:
   name: packageName
   origin: LIBRARY
   primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -1260,7 +1260,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: kind
       origin: LIBRARY
-      primaryConstructorProperty: null
+      primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.kind)
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
@@ -1298,7 +1298,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: metadataVersion
       origin: LIBRARY
-      primaryConstructorProperty: null
+      primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.metadataVersion)
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
@@ -1336,7 +1336,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: bytecodeVersion
       origin: LIBRARY
-      primaryConstructorProperty: null
+      primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.bytecodeVersion)
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
@@ -1374,7 +1374,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: data1
       origin: LIBRARY
-      primaryConstructorProperty: null
+      primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.data1)
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
@@ -1417,7 +1417,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: data2
       origin: LIBRARY
-      primaryConstructorProperty: null
+      primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.data2)
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
@@ -1460,7 +1460,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: extraString
       origin: LIBRARY
-      primaryConstructorProperty: null
+      primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.extraString)
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
@@ -1498,7 +1498,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: packageName
       origin: LIBRARY
-      primaryConstructorProperty: null
+      primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.packageName)
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null
@@ -1536,7 +1536,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: extraInt
       origin: LIBRARY
-      primaryConstructorProperty: null
+      primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/Metadata.extraInt)
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationCom
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.addCloneForArrayIfNeeded
+import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.deserialization.applyKDoc
 import org.jetbrains.kotlin.fir.deserialization.deserializationExtension
 import org.jetbrains.kotlin.fir.deserialization.toLazyEffectiveVisibility
@@ -187,7 +188,17 @@ internal fun deserializeClassToSymbol(
         }
 
         classOrObject.primaryConstructor?.let { constructor ->
-            addDeclaration(memberDeserializer.loadConstructor(constructor, classOrObject, this))
+            val firConstructor = memberDeserializer.loadConstructor(constructor, classOrObject, this)
+            addDeclaration(firConstructor)
+
+            // A property folded into its parameter has no member declaration of its own to be built from
+            for ([index, parameter] in constructor.valueParameters.withIndex()) {
+                if (!parameter.hasValOrVar()) continue
+
+                val property = memberDeserializer.loadPropertyFromParameter(parameter, symbol)
+                firConstructor.valueParameters[index].correspondingProperty = property
+                addDeclaration(property)
+            }
         }
 
         @OptIn(KtExperimentalApi::class)

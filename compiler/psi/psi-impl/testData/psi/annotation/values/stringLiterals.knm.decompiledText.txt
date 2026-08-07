@@ -4,12 +4,13 @@
 
   public const val CONSTANT: kotlin.Int = 0
 
-  public final annotation class StringLiteral public constructor(s1: kotlin.String, s2: kotlin.String, s3: kotlin.String) : kotlin.Annotation {
-      public final val s1: kotlin.String /* compiled code */
+  public final annotation class StringLiteral public constructor(
+      public final val s1: kotlin.String,
 
-      public final val s2: kotlin.String /* compiled code */
+      public final val s2: kotlin.String,
 
-      public final val s3: kotlin.String /* compiled code */
+      public final val s3: kotlin.String,
+  ) : kotlin.Annotation {
   }
 
 1_.knm:

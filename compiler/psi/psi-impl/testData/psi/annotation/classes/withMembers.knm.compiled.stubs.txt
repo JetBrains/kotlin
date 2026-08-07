@@ -7,7 +7,8 @@ FILE[kind=File[packageFqName=test]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Outer]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+        VALUE_PARAMETER[fqName=test.Outer.value, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=value]
+          MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -33,19 +34,13 @@ FILE[kind=File[packageFqName=test]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
-      PROPERTY[fqName=test.Outer.value, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
-        MODIFIER_LIST[public final]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=Int]
       CLASS[classId=test/Outer.Nested, fqName=test.Outer.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[Annotation]]
         MODIFIER_LIST[public final annotation]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
-            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=inner]
+            VALUE_PARAMETER[fqName=test.Outer.Nested.inner, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=inner]
+              MODIFIER_LIST[public final]
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
@@ -59,10 +54,3 @@ FILE[kind=File[packageFqName=test]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Annotation]
         CLASS_BODY
-          PROPERTY[fqName=test.Outer.Nested.inner, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=inner]
-            MODIFIER_LIST[public final]
-            TYPE_REFERENCE
-              USER_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=String]

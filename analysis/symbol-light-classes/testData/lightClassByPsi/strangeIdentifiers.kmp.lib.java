@@ -18,13 +18,10 @@ public final class A()B() /* A()B()*/ {
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno /* Anno*/ {
-  @org.jetbrains.annotations.NotNull()
   public abstract @org.jetbrains.annotations.NotNull() StrangeEnum size();//  size()
 
-  @org.jetbrains.annotations.NotNull()
   public abstract @org.jetbrains.annotations.NotNull() java.lang.String A B();//  A B()
 
-  @org.jetbrains.annotations.NotNull()
   public abstract @org.jetbrains.annotations.NotNull() java.lang.String name();//  name()
 }
 

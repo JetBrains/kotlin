@@ -178,7 +178,8 @@ FILE[kind=File[packageFqName=kotlin.annotation]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Retention]
       MODIFIER_LIST[public MustUseReturnValue]
       VALUE_PARAMETER_LIST
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=value]
+        VALUE_PARAMETER[fqName=kotlin.annotation.Retention.value, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=value]
+          MODIFIER_LIST[public final MustUseReturnValue]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -195,15 +196,6 @@ FILE[kind=File[packageFqName=kotlin.annotation]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
     CLASS_BODY
-      PROPERTY[fqName=kotlin.annotation.Retention.value, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
-        MODIFIER_LIST[public final MustUseReturnValue]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=annotation]
-            REFERENCE_EXPRESSION[referencedName=AnnotationRetention]
   CLASS[classId=kotlin/annotation/Target, fqName=kotlin.annotation.Target, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Target, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
@@ -241,8 +233,8 @@ FILE[kind=File[packageFqName=kotlin.annotation]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Target]
       MODIFIER_LIST[public MustUseReturnValue]
       VALUE_PARAMETER_LIST
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=allowedTargets]
-          MODIFIER_LIST[vararg]
+        VALUE_PARAMETER[fqName=kotlin.annotation.Target.allowedTargets, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=allowedTargets]
+          MODIFIER_LIST[public final vararg MustUseReturnValue]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -258,20 +250,3 @@ FILE[kind=File[packageFqName=kotlin.annotation]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
     CLASS_BODY
-      PROPERTY[fqName=kotlin.annotation.Target.allowedTargets, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=allowedTargets]
-        MODIFIER_LIST[public final MustUseReturnValue]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=Array]
-            TYPE_ARGUMENT_LIST
-              TYPE_PROJECTION[projectionKind=OUT]
-                MODIFIER_LIST[out]
-                TYPE_REFERENCE
-                  USER_TYPE
-                    USER_TYPE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION[referencedName=kotlin]
-                      REFERENCE_EXPRESSION[referencedName=annotation]
-                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]

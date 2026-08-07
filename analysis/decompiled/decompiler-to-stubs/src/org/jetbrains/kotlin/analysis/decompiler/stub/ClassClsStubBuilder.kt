@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtSuperTypeList
@@ -76,6 +77,18 @@ private class ClassClsStubBuilder(
         c.nameResolver.getName(classProto.companionObjectName)
     else
         null
+
+    private val primaryConstructorProto = classProto.constructorList.find { !Flags.IS_SECONDARY.get(it.flags) }
+
+    /**
+     * The properties written as a `val` parameter of the primary constructor instead of a member, keyed by their name.
+     *
+     * The compiler forbids any member but a constructor parameter in an annotation class, so each of its properties
+     * is one of those parameters, and the pair belongs together exactly as it is spelled in the sources.
+     */
+    private val foldedProperties: Map<Name, ProtoBuf.Property> = computeFoldedProperties()
+
+    private val memberPropertyProtos = classProto.propertyList.filterNot { c.nameResolver.getName(it.name) in foldedProperties }
 
     private val classOrObjectStub = createClassOrObjectStubAndModifierListStub()
 
@@ -179,12 +192,29 @@ private class ClassClsStubBuilder(
         else -> null
     }
 
+    private fun computeFoldedProperties(): Map<Name, ProtoBuf.Property> {
+        if (classKind != ProtoBuf.Class.Kind.ANNOTATION_CLASS) return emptyMap()
+
+        val parameterNames = primaryConstructorProto?.valueParameterList?.mapTo(mutableSetOf()) {
+            c.nameResolver.getName(it.name)
+        } ?: return emptyMap()
+
+        return buildMap {
+            for (propertyProto in classProto.propertyList) {
+                val name = c.nameResolver.getName(propertyProto.name)
+                if (name in parameterNames) {
+                    put(name, propertyProto)
+                }
+            }
+        }
+    }
+
     private fun createConstructorStub() {
         if (!isClass()) return
 
-        val primaryConstructorProto = classProto.constructorList.find { !Flags.IS_SECONDARY.get(it.flags) } ?: return
+        val primaryConstructorProto = primaryConstructorProto ?: return
 
-        createConstructorStub(classOrObjectStub, primaryConstructorProto, c, thisAsProtoContainer)
+        createConstructorStub(classOrObjectStub, primaryConstructorProto, c, thisAsProtoContainer, foldedProperties)
     }
 
     private fun createDelegationSpecifierList() {
@@ -245,11 +275,11 @@ private class ClassClsStubBuilder(
             ProgressManager.checkCanceled()
 
             if (Flags.IS_SECONDARY.get(secondaryConstructorProto.flags)) {
-                createConstructorStub(classBody, secondaryConstructorProto, c, thisAsProtoContainer)
+                createConstructorStub(classBody, secondaryConstructorProto, c, thisAsProtoContainer, foldedProperties = emptyMap())
             }
         }
 
-        createDeclarationsStubs(classBody, c, thisAsProtoContainer, classProto.functionList, classProto.propertyList)
+        createDeclarationsStubs(classBody, c, thisAsProtoContainer, classProto.functionList, memberPropertyProtos)
     }
 
     private fun isClass(): Boolean = when (classKind) {

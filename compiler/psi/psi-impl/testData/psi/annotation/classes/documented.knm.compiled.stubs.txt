@@ -7,7 +7,11 @@ FILE[kind=File[packageFqName=test]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Documented]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=value]
+        VALUE_PARAMETER[fqName=test.Documented.value, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=value]
+          kdocText: "/**
+               * The documented value.
+               */"
+          MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -22,12 +26,3 @@ FILE[kind=File[packageFqName=test]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
     CLASS_BODY
-      PROPERTY[fqName=test.Documented.value, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, kdocText=/**
-           * The documented value.
-           */, name=value]
-        MODIFIER_LIST[public final]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=Int]

@@ -3,8 +3,9 @@
 
 package test.a
 
-public final annotation class AnnotationClass public constructor(i: kotlin.Int, j: kotlin.String = COMPILED_CODE) : kotlin.Annotation {
-    public final val i: kotlin.Int /* compiled code */
+public final annotation class AnnotationClass public constructor(
+    public final val i: kotlin.Int,
 
-    public final val j: kotlin.String = "a"
+    public final val j: kotlin.String = "a",
+) : kotlin.Annotation {
 }

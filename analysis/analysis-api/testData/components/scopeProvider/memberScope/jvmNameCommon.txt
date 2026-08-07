@@ -1,8 +1,8 @@
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -42,7 +42,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -98,9 +98,46 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: name
   origin: LIBRARY
-  primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  primaryConstructorParameter: KaValueParameterSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasDeclaredDefaultValue: false
+    hasDefaultValue: false
+    isActual: false
+    isCompanion: false
+    isCrossinline: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isImplicitLambdaParameter: false
+    isNoinline: false
+    isVal: true
+    isVararg: false
+    location: LOCAL
+    modality: FINAL
+    name: name
+    origin: LIBRARY
+    primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/jvm/JvmName.name)
+    psi: KtParameter
+    realPsi: KtParameter
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    typeParameters: []
+    visibility: PUBLIC
+    getContainingFileSymbol: null
+    getContainingJvmClassName: kotlin.jvm.JvmName
+    getContainingModule: KaLibraryModule "Library kotlin-stdlib-metadata"
+    deprecation: null
+    importableFqName: null
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -352,7 +389,7 @@ KaConstructorSymbol:
       modality: FINAL
       name: name
       origin: LIBRARY
-      primaryConstructorProperty: null
+      primaryConstructorProperty: KaKotlinPropertySymbol(kotlin/jvm/JvmName.name)
       psi: KtParameter
       realPsi: KtParameter
       receiverParameter: null

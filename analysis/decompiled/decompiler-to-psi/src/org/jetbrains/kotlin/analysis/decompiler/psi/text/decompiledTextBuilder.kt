@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.decompiler.psi.text
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_INITIALIZER
-import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_PARAMETER_VALUE
 import org.jetbrains.kotlin.analysis.internal.utils.buildIndentedText
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -498,18 +497,39 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = buildIn
         }
 
         override fun visitParameterList(list: KtParameterList) {
-            appendCollection(list.parameters, prefix = "(", postfix = ")") {
-                process(it)
+            val parameters = list.parameters
+
+            // A folded parameter also carries the modifiers, annotations and initializer of the property it declares,
+            // so it is laid out the way that property would have been laid out in the class body
+            if (parameters.none(KtParameter::hasValOrVar)) {
+                appendCollection(parameters, prefix = "(", postfix = ")") { process(it) }
+                return
             }
+
+            appendLine("(")
+            withIndent {
+                appendCollection(parameters, separator = "\n") {
+                    process(it)
+                    appendLine(",")
+                }
+            }
+
+            append(")")
         }
 
         override fun visitParameter(parameter: KtParameter) {
-            withSuffix(" ") { process(parameter.modifierList) }
+            if (parameter.hasValOrVar()) {
+                printDeclarationModifierList(parameter.modifierList)
+                append(if (parameter.isMutable) "var " else "val ")
+            } else {
+                withSuffix(" ") { process(parameter.modifierList) }
+            }
+
             append(parameter.name?.quoteIfNeeded())
             append(": ")
             parameter.typeReference?.accept(this)
             if (parameter.hasDefaultValue()) {
-                append(" = $COMPILED_DEFAULT_PARAMETER_VALUE")
+                withPrefix(" = ") { process(parameter.defaultValue) }
             }
         }
 

@@ -38,8 +38,9 @@ public final enum class `Enum Class` private constructor() : kotlin.Enum<`one tw
     `Enum Entry`;
 }
 
-public final annotation class `Annotation Class With Arguments` public constructor(`parameter name`: `one two`.`three four`.`Enum Class`) : kotlin.Annotation {
-    public final val `parameter name`: `one two`.`three four`.`Enum Class` /* compiled code */
+public final annotation class `Annotation Class With Arguments` public constructor(
+    public final val `parameter name`: `one two`.`three four`.`Enum Class`,
+) : kotlin.Annotation {
 }
 
 @`one two`.`three four`.`Annotation Class With Arguments`(`parameter name` = `one two`.`three four`.`Enum Class`.`Enum Entry`)

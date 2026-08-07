@@ -91,19 +91,35 @@ internal fun checkLightClassesDeclarationMatching(
     )
 }
 
+/**
+ * A `val` parameter of a primary constructor declares a property, and the light elements of that property
+ * navigate to the parameter, as there is no member declaration for them to navigate to.
+ */
+private fun collectPrimaryConstructor(classOrObject: KtClassOrObject, declarations: MutableMap<KtDeclaration, Boolean>) {
+    val primaryConstructor = classOrObject.primaryConstructor ?: return
+    declarations[primaryConstructor] = false
+    for (parameter in primaryConstructor.valueParameters) {
+        if (parameter.hasValOrVar()) {
+            declarations[parameter] = false
+        }
+    }
+}
+
 internal fun collectDeclarationsRecursively(root: KtDeclarationContainer): MutableMap<KtDeclaration, Boolean> {
     val declarations = mutableMapOf<KtDeclaration, Boolean>()
     fun visit(container: KtDeclarationContainer) {
         // Track the primary constructor of `container` itself, since the loop below only sees
         // primary constructors of nested classes. This matters when `root` is a class.
         if (container is KtClassOrObject) {
-            container.primaryConstructor?.let { declarations[it] = false }
+            collectPrimaryConstructor(container, declarations)
         }
+
         container.declarations.forEach { declaration ->
             declarations[declaration] = false
             if (declaration is KtClassOrObject) {
-                declaration.primaryConstructor?.let { declarations[it] = false }
+                collectPrimaryConstructor(declaration, declarations)
             }
+
             if (declaration is KtDeclarationContainer) {
                 visit(declaration)
             }

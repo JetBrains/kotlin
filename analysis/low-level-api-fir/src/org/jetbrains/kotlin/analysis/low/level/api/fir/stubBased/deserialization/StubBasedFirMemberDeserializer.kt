@@ -6,6 +6,11 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedAnnotationDeserializer.Companion.BACKING_FIELD_ANNOTATIONS_FILTER
+import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedAnnotationDeserializer.Companion.GETTER_ANNOTATIONS_FILTER
+import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedAnnotationDeserializer.Companion.PROPERTY_ANNOTATIONS_FILTER
+import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedAnnotationDeserializer.Companion.SETTER_ANNOTATIONS_FILTER
+import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedAnnotationDeserializer.Companion.VALUE_PARAMETER_ANNOTATIONS_FILTER
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -15,11 +20,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
-import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
-import org.jetbrains.kotlin.fir.declarations.utils.hasBackingFieldAttr
-import org.jetbrains.kotlin.fir.declarations.utils.isDelegatedPropertyAttr
-import org.jetbrains.kotlin.fir.declarations.utils.isDeserializedPropertyFromAnnotation
-import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.applyKDoc
 import org.jetbrains.kotlin.fir.deserialization.toLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinParameterStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -363,6 +364,155 @@ internal class StubBasedFirMemberDeserializer(
         }
     }
 
+    /**
+     * Builds the property a `val`/`var` constructor parameter declares.
+     *
+     * The decompiler folds the property of an annotation class into its parameter, exactly as the sources spell it,
+     * so there is no member declaration to read the property from. Everything it needs sits on the parameter instead,
+     * with every annotation naming the declaration it was written on.
+     */
+    fun loadPropertyFromParameter(parameter: KtParameter, classSymbol: FirClassSymbol<*>): FirProperty {
+        val callableName = parameter.nameAsSafeName
+        val symbol = FirRegularPropertySymbol(CallableId(c.packageFqName, c.relativeClassName, callableName))
+        val local = c.childContext(parameter, containingDeclarationSymbol = symbol)
+        val parameterStub: KotlinParameterStubImpl = parameter.compiledStub
+
+        var returnTypeRef = parameter.typeReference?.toTypeRef(local)
+            ?: errorWithAttachment("Value parameter doesn't have type reference") {
+                withPsiEntry("parameter", parameter)
+            }
+
+        // The parameter of a vararg is typed by its element, while the property it declares holds the whole array
+        if (parameter.isVarArg) {
+            returnTypeRef = returnTypeRef.withReplacedReturnType(returnTypeRef.coneType.createOutArrayType())
+        }
+
+        val isVar = parameter.isMutable
+        return buildProperty {
+            source = KtRealPsiSourceElement(parameter)
+            moduleData = c.moduleData
+            origin = initialOrigin
+            this.returnTypeRef = returnTypeRef
+            name = callableName
+            this.isVar = isVar
+            this.symbol = symbol
+            dispatchReceiverType = c.dispatchReceiver
+            val visibility = parameter.visibility
+            val resolvedStatus = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+                visibility,
+                parameter.modality,
+                visibility.toLazyEffectiveVisibility(classSymbol),
+            ).apply {
+                setPropertyModifiers(parameter, isStatic)
+            }
+
+            status = resolvedStatus
+            isLocal = false
+            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+
+            annotations += c.annotationDeserializer.loadAnnotations(
+                ktAnnotated = parameter,
+                useSiteTargetFilter = PROPERTY_ANNOTATIONS_FILTER,
+            )
+
+            backingField = FirDefaultPropertyBackingField(
+                c.moduleData,
+                initialOrigin,
+                source = parameter.toKtPsiSourceElement(KtFakeSourceElementKind.DefaultAccessor.BackingField),
+                c.annotationDeserializer.loadAnnotations(
+                    ktAnnotated = parameter,
+                    preserveUseSiteTarget = false,
+                    useSiteTargetFilter = BACKING_FIELD_ANNOTATIONS_FILTER,
+                ).toMutableList(),
+                returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.BackingField),
+                isVar,
+                symbol,
+                status,
+            ).apply {
+                containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
+            }
+
+            this.getter = loadFoldedAccessor(
+                parameter = parameter,
+                isGetter = true,
+                classSymbol = classSymbol,
+                returnTypeRef = returnTypeRef,
+                propertySymbol = symbol,
+                local = local,
+                propertySource = source,
+                propertyStatus = resolvedStatus,
+            )
+
+            this.setter = runIf(isVar) {
+                loadFoldedAccessor(
+                    parameter = parameter,
+                    isGetter = false,
+                    classSymbol = classSymbol,
+                    returnTypeRef = returnTypeRef,
+                    propertySymbol = symbol,
+                    local = local,
+                    propertySource = source,
+                    propertyStatus = resolvedStatus,
+                )
+            }
+
+            this.containerSource = c.containerSource
+            this.initializer = parameterStub.constantInitializer?.let {
+                c.annotationDeserializer.resolveConstant(parameter, it, returnTypeRef.coneType)
+            }
+
+            applyKDoc(parameterStub.kdocText)
+        }.apply {
+            // An annotation class keeps its values in the annotation itself, never in a field
+            @OptIn(FirImplementationDetail::class)
+            hasBackingFieldAttr = false
+
+            isDeserializedPropertyFromAnnotation = true
+
+            setLazyPublishedVisibility(c.session)
+            this.getter?.setLazyPublishedVisibility(annotations, this, c.session)
+            this.setter?.setLazyPublishedVisibility(annotations, this, c.session)
+
+            replaceDeprecationsProvider(getDeprecationsProvider(c.session))
+        }
+    }
+
+    private fun loadFoldedAccessor(
+        parameter: KtParameter,
+        isGetter: Boolean,
+        classSymbol: FirClassSymbol<*>,
+        returnTypeRef: FirTypeRef,
+        propertySymbol: FirPropertySymbol,
+        local: StubBasedFirDeserializationContext,
+        propertySource: KtSourceElement?,
+        propertyStatus: FirResolvedDeclarationStatusWithLazyEffectiveVisibility,
+    ): FirPropertyAccessor {
+        val accessor = loadPropertyAccessor(
+            psiPropertyAccessor = null,
+            isGetter = isGetter,
+            classSymbol = classSymbol,
+            returnTypeRef = returnTypeRef,
+            propertySymbol = propertySymbol,
+            local = local,
+            propertySource = propertySource,
+            propertyStatus = propertyStatus,
+            isStatic = false,
+        )
+
+        val filter = if (isGetter) GETTER_ANNOTATIONS_FILTER else SETTER_ANNOTATIONS_FILTER
+        val annotations = c.annotationDeserializer.loadAnnotations(
+            ktAnnotated = parameter,
+            preserveUseSiteTarget = false,
+            useSiteTargetFilter = filter,
+        )
+
+        if (annotations.isNotEmpty()) {
+            accessor.replaceAnnotations(annotations)
+        }
+
+        return accessor
+    }
+
     fun loadProperty(
         property: KtProperty,
         classSymbol: FirClassSymbol<*>? = null,
@@ -401,14 +551,7 @@ internal class StubBasedFirMemberDeserializer(
                 propertyModality,
                 visibility.toLazyEffectiveVisibility(classSymbol)
             ).apply {
-                isExpect = property.hasExpectModifier()
-                isActual = false
-                isOverride = false
-                isConst = property.hasModifier(KtTokens.CONST_KEYWORD)
-                isLateInit = property.hasModifier(KtTokens.LATEINIT_KEYWORD)
-                isExternal = property.hasModifier(KtTokens.EXTERNAL_KEYWORD)
-                this.isStatic = isStatic
-                setSpecialFlags(property.modifierList)
+                setPropertyModifiers(property, isStatic)
             }
 
             status = resolvedStatus
@@ -507,6 +650,20 @@ internal class StubBasedFirMemberDeserializer(
 
             replaceDeprecationsProvider(getDeprecationsProvider(c.session))
         }
+    }
+
+    private fun FirResolvedDeclarationStatusWithLazyEffectiveVisibility.setPropertyModifiers(
+        modifierListOwner: KtModifierListOwner,
+        isStatic: Boolean,
+    ) {
+        isExpect = modifierListOwner.hasExpectModifier()
+        isActual = false
+        isOverride = false
+        isConst = modifierListOwner.hasModifier(KtTokens.CONST_KEYWORD)
+        isLateInit = modifierListOwner.hasModifier(KtTokens.LATEINIT_KEYWORD)
+        isExternal = modifierListOwner.hasModifier(KtTokens.EXTERNAL_KEYWORD)
+        this.isStatic = isStatic
+        setSpecialFlags(modifierListOwner.modifierList)
     }
 
     private fun loadContextReceiver(contextReceiver: KtContextReceiver, containingDeclarationSymbol: FirBasedSymbol<*>): FirValueParameter {
@@ -785,7 +942,11 @@ internal class StubBasedFirMemberDeserializer(
 
         isCrossinline = parameter.hasModifier(KtTokens.CROSSINLINE_KEYWORD)
         isNoinline = parameter.hasModifier(KtTokens.NOINLINE_KEYWORD)
-        annotations += c.annotationDeserializer.loadAnnotations(parameter)
+        // A folded parameter also carries the annotations of the property it declares, which are not its own
+        annotations += c.annotationDeserializer.loadAnnotations(
+            parameter,
+            useSiteTargetFilter = runIf(parameter.hasValOrVar()) { VALUE_PARAMETER_ANNOTATIONS_FILTER },
+        )
     }.also { valueParameter ->
         val parameterStub: KotlinParameterStubImpl = parameter.compiledStub
         parameterStub.equalityBoundType?.let { typeBean ->

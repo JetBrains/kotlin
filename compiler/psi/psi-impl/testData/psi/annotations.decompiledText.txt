@@ -104,8 +104,9 @@ b.class:
   @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.TYPE])
   @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
   @kotlin.annotation.Repeatable
-  public final annotation class b public constructor(e: E) : kotlin.Annotation {
-      public final val e: E /* compiled code */
+  public final annotation class b public constructor(
+      public final val e: E,
+  ) : kotlin.Annotation {
   }
 
 c.class:

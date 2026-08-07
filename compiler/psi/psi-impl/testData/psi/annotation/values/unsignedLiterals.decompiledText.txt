@@ -2,14 +2,15 @@ Unsigned.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  public final annotation class Unsigned public constructor(ub: kotlin.UByte, us: kotlin.UShort, ui: kotlin.UInt, ul: kotlin.ULong) : kotlin.Annotation {
-      public final val ub: kotlin.UByte /* compiled code */
+  public final annotation class Unsigned public constructor(
+      public final val ub: kotlin.UByte,
 
-      public final val us: kotlin.UShort /* compiled code */
+      public final val us: kotlin.UShort,
 
-      public final val ui: kotlin.UInt /* compiled code */
+      public final val ui: kotlin.UInt,
 
-      public final val ul: kotlin.ULong /* compiled code */
+      public final val ul: kotlin.ULong,
+  ) : kotlin.Annotation {
   }
 
 WithMaxValues.class:

@@ -114,8 +114,8 @@ internal class StubBasedFirTypeDeserializer(
 
     fun type(typeReference: KtTypeReference): ConeKotlinType {
         val annotations = annotationDeserializer.loadAnnotations(
-            typeReference,
-            StubBasedAnnotationDeserializer.TYPE_ANNOTATIONS_FILTER,
+            ktAnnotated = typeReference,
+            useSiteTargetFilter = StubBasedAnnotationDeserializer.TYPE_ANNOTATIONS_FILTER,
         ).toMutableList()
 
         val parentStub = typeReference.compiledStub.parentStub

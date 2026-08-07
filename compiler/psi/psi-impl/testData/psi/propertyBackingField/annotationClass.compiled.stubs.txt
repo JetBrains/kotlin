@@ -7,7 +7,8 @@ AnnoWithCustomName.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithCustomName]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=string]
+          VALUE_PARAMETER[fqName=AnnoWithCustomName.string, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=string]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -21,13 +22,6 @@ AnnoWithCustomName.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=AnnoWithCustomName.string, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=string]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=String]
 
 
 AnnoWithCustomNameAndDefaultValue.class:
@@ -39,13 +33,16 @@ AnnoWithCustomNameAndDefaultValue.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithCustomNameAndDefaultValue]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=string]
+          VALUE_PARAMETER[fqName=AnnoWithCustomNameAndDefaultValue.string, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=string]
+            constantInitializer: "str"
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=str]
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -54,16 +51,6 @@ AnnoWithCustomNameAndDefaultValue.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=AnnoWithCustomNameAndDefaultValue.string, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=string]
-          constantInitializer: "str"
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=String]
-          STRING_TEMPLATE
-            LITERAL_STRING_TEMPLATE_ENTRY[text=str]
 
 
 AnnoWithDefaultName.class:
@@ -75,7 +62,8 @@ AnnoWithDefaultName.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithDefaultName]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+          VALUE_PARAMETER[fqName=AnnoWithDefaultName.value, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=value]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -89,13 +77,6 @@ AnnoWithDefaultName.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=AnnoWithDefaultName.value, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Int]
 
 
 AnnoWithDefaultNameAndDefaultValue.class:
@@ -107,13 +88,15 @@ AnnoWithDefaultNameAndDefaultValue.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithDefaultNameAndDefaultValue]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=value]
+          VALUE_PARAMETER[fqName=AnnoWithDefaultNameAndDefaultValue.value, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=value]
+            constantInitializer: 1
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -122,15 +105,6 @@ AnnoWithDefaultNameAndDefaultValue.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=AnnoWithDefaultNameAndDefaultValue.value, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
-          constantInitializer: 1
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Int]
-          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
 
 
 AnnoWithVararg.class:
@@ -142,8 +116,8 @@ AnnoWithVararg.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithVararg]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
-            MODIFIER_LIST[vararg]
+          VALUE_PARAMETER[fqName=AnnoWithVararg.value, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=value]
+            MODIFIER_LIST[public final vararg]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -157,13 +131,6 @@ AnnoWithVararg.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=AnnoWithVararg.value, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=IntArray]
 
 
 AnnoWithVarargAndDefaultVakue.class:
@@ -175,14 +142,16 @@ AnnoWithVarargAndDefaultVakue.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithVarargAndDefaultVakue]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=value]
-            MODIFIER_LIST[vararg]
+          VALUE_PARAMETER[fqName=AnnoWithVarargAndDefaultVakue.value, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=value]
+            constantInitializer: [0]
+            MODIFIER_LIST[public final vararg]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -191,13 +160,3 @@ AnnoWithVarargAndDefaultVakue.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=AnnoWithVarargAndDefaultVakue.value, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
-          constantInitializer: [0]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=IntArray]
-          COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
-            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]

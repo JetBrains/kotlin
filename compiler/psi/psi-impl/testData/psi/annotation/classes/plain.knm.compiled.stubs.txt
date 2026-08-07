@@ -20,7 +20,8 @@ FILE[kind=File[packageFqName=test]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Single]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+        VALUE_PARAMETER[fqName=test.Single.value, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=value]
+          MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -34,33 +35,29 @@ FILE[kind=File[packageFqName=test]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
     CLASS_BODY
-      PROPERTY[fqName=test.Single.value, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
-        MODIFIER_LIST[public final]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=String]
   CLASS[classId=test/Defaults, fqName=test.Defaults, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Defaults, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Defaults]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=int]
+        VALUE_PARAMETER[fqName=test.Defaults.int, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=int]
+          MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=string]
+        VALUE_PARAMETER[fqName=test.Defaults.string, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=string]
+          MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=array]
+        VALUE_PARAMETER[fqName=test.Defaults.array, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=array]
+          MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -75,34 +72,13 @@ FILE[kind=File[packageFqName=test]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
     CLASS_BODY
-      PROPERTY[fqName=test.Defaults.int, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=int]
-        MODIFIER_LIST[public final]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=test.Defaults.string, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=string]
-        MODIFIER_LIST[public final]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=String]
-      PROPERTY[fqName=test.Defaults.array, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=array]
-        MODIFIER_LIST[public final]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=IntArray]
   CLASS[classId=test/Varargs, fqName=test.Varargs, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Varargs, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Varargs]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=values]
-          MODIFIER_LIST[vararg]
+        VALUE_PARAMETER[fqName=test.Varargs.values, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=values]
+          MODIFIER_LIST[public final vararg]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -116,18 +92,3 @@ FILE[kind=File[packageFqName=test]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
     CLASS_BODY
-      PROPERTY[fqName=test.Varargs.values, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=values]
-        MODIFIER_LIST[public final]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=Array]
-            TYPE_ARGUMENT_LIST
-              TYPE_PROJECTION[projectionKind=OUT]
-                MODIFIER_LIST[out]
-                TYPE_REFERENCE
-                  USER_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION[referencedName=kotlin]
-                    REFERENCE_EXPRESSION[referencedName=String]

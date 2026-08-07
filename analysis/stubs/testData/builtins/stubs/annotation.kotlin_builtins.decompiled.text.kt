@@ -53,12 +53,14 @@ public final annotation class Repeatable public constructor() : kotlin.Annotatio
 }
 
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS])
-public final annotation class Retention public constructor(value: kotlin.annotation.AnnotationRetention = COMPILED_CODE) : kotlin.Annotation {
-    public final val value: kotlin.annotation.AnnotationRetention /* compiled code */
+public final annotation class Retention public constructor(
+    public final val value: kotlin.annotation.AnnotationRetention = COMPILED_CODE,
+) : kotlin.Annotation {
 }
 
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS])
 @kotlin.annotation.MustBeDocumented
-public final annotation class Target public constructor(vararg allowedTargets: kotlin.annotation.AnnotationTarget) : kotlin.Annotation {
-    public final val allowedTargets: kotlin.Array<out kotlin.annotation.AnnotationTarget> /* compiled code */
+public final annotation class Target public constructor(
+    public final vararg val allowedTargets: kotlin.annotation.AnnotationTarget,
+) : kotlin.Annotation {
 }

@@ -13,16 +13,15 @@ Targeted.class:
 
   package test
 
-  public final annotation class Targeted public constructor(onParameter: kotlin.Int, onProperty: kotlin.Int, onGetter: kotlin.Int, onEveryTarget: kotlin.Int) : kotlin.Annotation {
-      public final val onParameter: kotlin.Int /* compiled code */
+  public final annotation class Targeted public constructor(
+      public final val onParameter: kotlin.Int,
 
-      public final val onProperty: kotlin.Int /* compiled code */
+      public final val onProperty: kotlin.Int,
 
-      public final val onGetter: kotlin.Int /* compiled code */
-          @test.Marker
-          public final get
+      @get:test.Marker
+      public final val onGetter: kotlin.Int,
 
-      public final val onEveryTarget: kotlin.Int /* compiled code */
-          @test.Marker
-          public final get
+      @get:test.Marker
+      public final val onEveryTarget: kotlin.Int,
+  ) : kotlin.Annotation {
   }

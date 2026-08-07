@@ -6,20 +6,21 @@ package myPack
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS])
 @kotlin.SinceKotlin(version = "1.3")
-public final annotation class MyMetadata public constructor(kind: kotlin.Int = COMPILED_CODE, metadataVersion: kotlin.IntArray = COMPILED_CODE, bytecodeVersion: kotlin.IntArray = COMPILED_CODE, data1: kotlin.Array<kotlin.String> = COMPILED_CODE, data2: kotlin.Array<kotlin.String> = COMPILED_CODE, extraString: kotlin.String = COMPILED_CODE, packageName: kotlin.String = COMPILED_CODE, extraInt: kotlin.Int = COMPILED_CODE) : kotlin.Annotation {
-    public final val kind: kotlin.Int = 1
+public final annotation class MyMetadata public constructor(
+    public final val kind: kotlin.Int = 1,
 
-    public final val metadataVersion: kotlin.IntArray = []
+    public final val metadataVersion: kotlin.IntArray = [],
 
-    public final val bytecodeVersion: kotlin.IntArray = [1, 0, 3]
+    public final val bytecodeVersion: kotlin.IntArray = [1, 0, 3],
 
-    public final val data1: kotlin.Array<kotlin.String> = []
+    public final val data1: kotlin.Array<kotlin.String> = [],
 
-    public final val data2: kotlin.Array<kotlin.String> = []
+    public final val data2: kotlin.Array<kotlin.String> = [],
 
-    public final val extraString: kotlin.String = ""
+    public final val extraString: kotlin.String = "",
 
-    public final val packageName: kotlin.String = ""
+    public final val packageName: kotlin.String = "",
 
-    public final val extraInt: kotlin.Int = 0
+    public final val extraInt: kotlin.Int = 0,
+) : kotlin.Annotation {
 }

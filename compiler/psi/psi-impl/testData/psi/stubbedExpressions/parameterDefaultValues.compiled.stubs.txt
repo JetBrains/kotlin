@@ -64,20 +64,26 @@ WithArrayDefaults.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithArrayDefaults]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=empty]
+          VALUE_PARAMETER[fqName=test.WithArrayDefaults.empty, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=empty]
+            constantInitializer: []
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=IntArray]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=filled]
+            COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
+          VALUE_PARAMETER[fqName=test.WithArrayDefaults.filled, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=filled]
+            constantInitializer: [4, 5]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=IntArray]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -86,26 +92,6 @@ WithArrayDefaults.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=test.WithArrayDefaults.empty, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=empty]
-          constantInitializer: []
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=IntArray]
-          COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
-        PROPERTY[fqName=test.WithArrayDefaults.filled, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=filled]
-          constantInitializer: [4, 5]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=IntArray]
-          COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
-            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
-            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
 
 
 WithConstructorDefaults.class:
