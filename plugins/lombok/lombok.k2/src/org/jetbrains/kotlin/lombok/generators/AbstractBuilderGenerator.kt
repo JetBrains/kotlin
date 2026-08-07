@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -175,7 +176,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
         return buildSet {
-            if (isCompanionNeeded(classSymbol, context) && builderWithDeclarationsCache.getValue(classSymbol) != null) {
+            if (isCompanionNeeded(classSymbol, context) && needsCompanionForStaticBuilder(classSymbol)) {
                 add(DEFAULT_NAME_FOR_COMPANION_OBJECT)
             }
 
@@ -220,12 +221,21 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         context: NestedClassGenerationContext,
     ): FirClassLikeSymbol<*>? {
         if (name == DEFAULT_NAME_FOR_COMPANION_OBJECT) {
-            return builderWithDeclarationsCache.getValue(owner)?.let { BuilderGeneratorKey(BuilderDeclarationType.Class.Companion) }
-                ?.let { createCompanionObject(owner, it).symbol }
+            return runIf(needsCompanionForStaticBuilder(owner)) {
+                createCompanionObject(owner, BuilderGeneratorKey(BuilderDeclarationType.Class.Companion)).symbol
+            }
         }
 
         return builderClassesCache.getValue(BuilderKey(owner, name))
     }
+
+    /**
+     * Whether [classSymbol] needs a generated companion object to host its `builder()` factories. Only a static
+     * builder needs one — a `@Builder` method's factory is an instance method on the entity itself, so a class
+     * carrying nothing but method builders must not grow an otherwise empty companion.
+     */
+    private fun needsCompanionForStaticBuilder(classSymbol: FirClassSymbol<*>): Boolean =
+        builderWithDeclarationsCache.getValue(classSymbol)?.any { it.declaration.isStaticDeclaration } == true
 
     /**
      * The same class can have both builder and entity methods in case of names clashing.
@@ -472,7 +482,13 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             }
 
             fun createBuilderType(typeParameterSymbols: Collection<FirTypeParameter>): ConeClassLikeType {
-                val newTypeArguments = typeParameterSymbols.map { it.toConeType() } + getExtraTypeArguments()
+                // A builder generated for a non-static method is an inner class, so its type arguments are its
+                // own followed by the entity class's (see `createEmptyBuilderClass`) — `Entity<E>.Builder<P>`.
+                val outerTypeArguments = runIf(!builderDeclaration.isStaticDeclaration) {
+                    @OptIn(SymbolInternals::class)
+                    entitySymbol.typeParameterSymbols.map { it.fir.toConeType() }
+                }.orEmpty()
+                val newTypeArguments = typeParameterSymbols.map { it.toConeType() } + outerTypeArguments + getExtraTypeArguments()
                 val existingBuilderType = existingBuilder?.defaultType()
                 val existingBuilderTypeArguments = existingBuilderType?.typeArguments
                 val resultType = builderClassId.constructClassLikeType(newTypeArguments.toTypedArray())
@@ -488,7 +504,17 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
             val isStaticBuilderFunction = builderDeclaration.isStaticDeclaration
 
-            if (containingClassSymbol.hasJavaOrigin || containingClassSymbol.isCompanion || !isStaticBuilderFunction) {
+            // Where the `builder()` factory belongs: for a static builder it has to be callable without an
+            // instance, which in Kotlin means the entity's companion object and in Java a static method on the
+            // entity; for a `@Builder` method it is an instance method on the entity, since the builder it
+            // returns captures that very instance.
+            val shouldAddBuilderFactory = when {
+                containingClassSymbol.hasJavaOrigin -> true
+                isStaticBuilderFunction -> containingClassSymbol.isCompanion
+                else -> !containingClassSymbol.isCompanion
+            }
+
+            if (shouldAddBuilderFactory) {
                 addIfNonClashing(Name.identifier(builder.builderMethodName), existingFunctionNames) { name ->
                     if (containingClassSymbol.hasJavaOrigin) {
                         val methodSymbol = FirNamedFunctionSymbol(CallableId(entitySymbol.classId, name))
@@ -643,6 +669,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 if (declarationSymbol is FirConstructorSymbol && allowedTargets.contains(KotlinTarget.CONSTRUCTOR) ||
                     declarationSymbol is FirFunctionSymbol<*> && allowedTargets.contains(KotlinTarget.FUNCTION)
                 ) {
+                    // Left alone; `FirLombokBuilderChecker` reports it as
+                    // `BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS`.
+                    if (declarationSymbol.hasReceiverOrContextParameters) continue
                     getBuilder(declarationSymbol)?.let { add(BuilderWithDeclaration(it, declarationSymbol.fir)) }
                 }
             }
@@ -950,7 +979,11 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 builderModality,
                 effectiveVisibility
             ).apply {
-                this.isInner = false // Builders are always nested classes
+                // A builder for a non-static method is an inner class, mirroring Lombok: `build()` has to
+                // invoke the method on the very instance `builder()` was called on, and the method's
+                // parameters may refer to the entity class's own type parameters. Both come for free from
+                // the outer instance. Every other builder is a plain nested class.
+                this.isInner = !builderDeclaration.isStaticDeclaration
                 isCompanion = false
                 isData = false
                 isInline = false
@@ -958,6 +991,13 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             }
 
             typeParametersMapping.mapTo(typeParameters) { it.value }
+
+            // An inner class also lists the outer class's type parameters, after its own — that's what makes
+            // them usable in the builder's members, and cone types of the builder index their arguments in
+            // that same order (see `createBuilderType`).
+            if (status.isInner) {
+                containingClass.typeParameterSymbols.mapTo(typeParameters) { buildOuterClassTypeParameterRef { symbol = it } }
+            }
 
             completeBuilder(this@createEmptyBuilderClass, builderSymbol, builder)
         }.build()

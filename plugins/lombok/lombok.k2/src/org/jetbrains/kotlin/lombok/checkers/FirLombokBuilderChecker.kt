@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.processAllDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -33,6 +31,7 @@ import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.LombokService
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.Singulars
+import org.jetbrains.kotlin.lombok.generators.hasReceiverOrContextParameters
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 
 object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
@@ -52,6 +51,17 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
         declaration.processAllDeclarations(context.session) { symbol ->
             val functionSymbol = symbol as? FirFunctionSymbol<*> ?: return@processAllDeclarations
             val builder = lombokService.getBuilder(functionSymbol) ?: return@processAllDeclarations
+
+            if (functionSymbol.hasReceiverOrContextParameters) {
+                // Nothing is generated for such a declaration, so the checks below have nothing to say about it.
+                reporter.reportOn(
+                    builder.annotation.source,
+                    LombokFirDiagnostics.BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS,
+                    context,
+                )
+                return@processAllDeclarations
+            }
+
             checkFunctionParameters(functionSymbol, lombokService)
             if (functionSymbol is FirNamedFunctionSymbol) {
                 checkBuilderClassNameIsInferable(functionSymbol, builder)
@@ -68,10 +78,6 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkBuilderClassNameIsInferable(function: FirNamedFunctionSymbol, builder: ConeLombokAnnotations.Builder) {
         if (builder.hasSpecifiedBuilderClassName) return
-        // So far a builder is only generated in full for a companion-object function; `@Builder` on any other
-        // Kotlin function isn't supported yet, so there is nothing to demand a return type for. Drop this guard
-        // once the remaining function kinds are supported.
-        if (function.getContainingClassSymbol()?.isCompanion != true) return
         if (function.resolvedReturnTypeRef.source?.kind != KtFakeSourceElementKind.ImplicitTypeRef) return
 
         reporter.reportOn(builder.annotation.source, LombokFirDiagnostics.BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE, context)

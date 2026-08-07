@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.lombok.config.CallSuperMode
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
-import org.jetbrains.kotlin.lombok.generators.kotlin.isRelevantForConflictsCheck
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -162,7 +161,7 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
         var found = false
 
         declaredScope?.processAllFunctions {
-            if (!it.isRelevantForConflictsCheck) return@processAllFunctions
+            if (it.hasReceiverOrContextParameters) return@processAllFunctions
 
             // Match the canonical `equals(other: Any?)` or `hashCode` signatures only.
             found = found || (it.name == EQUALS_NAME &&

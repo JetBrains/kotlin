@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.lombok.config.LombokConfigNames.INCLUDE_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.INCLUDE_RANK
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
-import org.jetbrains.kotlin.lombok.generators.kotlin.isRelevantForConflictsCheck
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -98,7 +97,7 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
         // Don't generate if toString() already exists in sources
         var functionWithoutParametersAlreadyExists = false
         declaredScope?.processFunctionsByName(TO_STRING_NAME) {
-            if (it.valueParameterSymbols.isEmpty() && it.isRelevantForConflictsCheck) {
+            if (it.valueParameterSymbols.isEmpty() && !it.hasReceiverOrContextParameters) {
                 functionWithoutParametersAlreadyExists = true
             }
         }

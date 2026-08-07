@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.LombokService
 import org.jetbrains.kotlin.lombok.config.lombokService
-import org.jetbrains.kotlin.lombok.generators.kotlin.isRelevantForConflictsCheck
 import org.jetbrains.kotlin.lombok.generators.kotlin.buildJvmStaticAnnotationCallOrError
 import org.jetbrains.kotlin.lombok.java.JavaTypeParameterStub
 import org.jetbrains.kotlin.lombok.java.JavaTypeParameterTypeStub
@@ -155,7 +154,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
 
             var hasConflict = false
             declaredScope?.processFunctionsByName(staticName) { function ->
-                hasConflict = hasConflict || (function.isRelevantForConflictsCheck && function.checkParametersClashing(valuesParameterCount))
+                hasConflict = hasConflict || (!function.hasReceiverOrContextParameters && function.checkParametersClashing(valuesParameterCount))
             }
             if (hasConflict) return
 
