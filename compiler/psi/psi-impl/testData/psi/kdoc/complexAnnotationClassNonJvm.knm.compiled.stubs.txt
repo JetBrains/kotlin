@@ -65,22 +65,25 @@ FILE[kind=File[packageFqName=myPack]]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=myPack.MyMetadata.kind, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=kind]
+          constantInitializer: 1
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
-          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
         VALUE_PARAMETER[fqName=myPack.MyMetadata.metadataVersion, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=metadataVersion]
+          constantInitializer: []
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=IntArray]
-          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
         VALUE_PARAMETER[fqName=myPack.MyMetadata.bytecodeVersion, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=bytecodeVersion]
+          constantInitializer: [1, 0, 3]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=true, shortName=Deprecated]
               valueArguments: [
@@ -113,8 +116,12 @@ FILE[kind=File[packageFqName=myPack]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=IntArray]
-          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=3]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
         VALUE_PARAMETER[fqName=myPack.MyMetadata.data1, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=data1]
+          constantInitializer: []
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
@@ -128,8 +135,9 @@ FILE[kind=File[packageFqName=myPack]]
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=String]
-          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
         VALUE_PARAMETER[fqName=myPack.MyMetadata.data2, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=data2]
+          constantInitializer: []
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
@@ -143,16 +151,18 @@ FILE[kind=File[packageFqName=myPack]]
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=String]
-          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
         VALUE_PARAMETER[fqName=myPack.MyMetadata.extraString, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=extraString]
+          constantInitializer: ""
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          STRING_TEMPLATE
         VALUE_PARAMETER[fqName=myPack.MyMetadata.packageName, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=packageName]
+          constantInitializer: ""
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
               valueArguments: [ version -> "1.2" ]
@@ -174,8 +184,9 @@ FILE[kind=File[packageFqName=myPack]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          STRING_TEMPLATE
         VALUE_PARAMETER[fqName=myPack.MyMetadata.extraInt, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=extraInt]
+          constantInitializer: 0
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
               valueArguments: [ version -> "1.1" ]
@@ -197,7 +208,7 @@ FILE[kind=File[packageFqName=myPack]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
-          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE

@@ -12,11 +12,11 @@ public final annotation class Single public constructor(
 }
 
 public final annotation class Defaults public constructor(
-    public final val int: kotlin.Int = COMPILED_CODE,
+    public final val int: kotlin.Int = 1,
 
-    public final val string: kotlin.String = COMPILED_CODE,
+    public final val string: kotlin.String = "s",
 
-    public final val array: kotlin.IntArray = COMPILED_CODE,
+    public final val array: kotlin.IntArray = [1, 2],
 ) : kotlin.Annotation {
 }
 

@@ -8,21 +8,23 @@
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=Binary.i, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=i]
+            constantInitializer: 0
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
           VALUE_PARAMETER[fqName=Binary.b, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=b]
+            constantInitializer: false
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Boolean]
-            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+            BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE

@@ -41,29 +41,35 @@ FILE[kind=File[packageFqName=test]]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=test.Defaults.int, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=int]
+          constantInitializer: 1
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
-          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
         VALUE_PARAMETER[fqName=test.Defaults.string, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=string]
+          constantInitializer: "s"
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          STRING_TEMPLATE
+            LITERAL_STRING_TEMPLATE_ENTRY[text=s]
         VALUE_PARAMETER[fqName=test.Defaults.array, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=array]
+          constantInitializer: [1, 2]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=IntArray]
-          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
