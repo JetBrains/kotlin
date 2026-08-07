@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
 /**
  * Covers .knm (K2) and .kotlin_metadata (K1) files
- *
- * @see org.jetbrains.kotlin.analysis.decompiler.psi.common.AbstractDecompiledCommonTextTest
  */
 abstract class AbstractCompiledCommonStubsTest : AbstractCompiledStubsTest(CommonPlatforms.defaultCommonPlatform) {
     override fun configureTest(builder: TestConfigurationBuilder) {

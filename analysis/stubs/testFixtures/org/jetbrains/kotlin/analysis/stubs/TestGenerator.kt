@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.stubs
 
-import org.jetbrains.kotlin.analysis.decompiler.psi.common.AbstractDecompiledCommonTextTest
-import org.jetbrains.kotlin.analysis.decompiler.psi.js.AbstractDecompiledJsTextTest
-import org.jetbrains.kotlin.analysis.decompiler.psi.jvm.AbstractDecompiledJvmTextTest
 import org.jetbrains.kotlin.analysis.stubs.common.AbstractCompiledCommonStubsTest
 import org.jetbrains.kotlin.analysis.stubs.js.AbstractCompiledJsStubsTest
 import org.jetbrains.kotlin.analysis.stubs.jvm.AbstractCompiledJvmStubsTest
@@ -30,18 +27,6 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractCompiledCommonStubsTest> {
-                model("psi", pattern = TestGeneratorUtil.KT)
-            }
-
-            testClass<AbstractDecompiledJvmTextTest> {
-                model("psi", pattern = TestGeneratorUtil.KT)
-            }
-
-            testClass<AbstractDecompiledJsTextTest> {
-                model("psi", pattern = TestGeneratorUtil.KT)
-            }
-
-            testClass<AbstractDecompiledCommonTextTest> {
                 model("psi", pattern = TestGeneratorUtil.KT)
             }
         }
