@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.wasm.test
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWasmFacade
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
@@ -150,37 +148,7 @@ abstract class AbstractWasmWasiCodegenBoxTest : AbstractWasmCodegenBoxTest(Targe
     )
 }
 
-abstract class AbstractWasmJsCodegenBoxInlinedTest(pathToTestDir: String = "compiler/testData/codegen/") :
-    AbstractWasmJsCodegenBoxTest(pathToTestDir)
-{
-    override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
-        super.configure(this)
-        commonConfiguration {
-            defaultDirectives {
-                LANGUAGE with listOf(
-                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}",
-                )
-            }
-        }
-    }
-}
-
-abstract class AbstractWasmWasiCodegenBoxInlinedTest : AbstractWasmWasiCodegenBoxTest() {
-    override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
-        super.configure(this)
-        commonConfiguration {
-            defaultDirectives {
-                LANGUAGE with listOf(
-                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}",
-                )
-            }
-        }
-    }
-}
-
-abstract class AbstractWasmJsCodegenSplittingTest : AbstractWasmJsCodegenBoxInlinedTest() {
+abstract class AbstractWasmJsCodegenSplittingTest : AbstractWasmJsCodegenBoxTest() {
     // Splitting multi-module runs must respect K2 multi-module ignore directives present
     // in testdata. Support `IGNORE_BACKEND_K2_MULTI_MODULE` just like the single-stage base.
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
@@ -196,7 +164,7 @@ abstract class AbstractWasmJsCodegenSplittingTest : AbstractWasmJsCodegenBoxInli
     }
 }
 
-abstract class AbstractWasmJsSyntheticAccessorsBoxTest : AbstractWasmJsCodegenBoxInlinedTest("compiler/testData/klib/syntheticAccessors")
+abstract class AbstractWasmJsSyntheticAccessorsBoxTest : AbstractWasmJsCodegenBoxTest("compiler/testData/klib/syntheticAccessors")
 
 abstract class AbstractWasmJsTranslatorTest : AbstractWasmJsCodegenBoxTest("js/js.translator/testData/box/")
 
