@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.common.LoadedNativeKlibs
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
+import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibs
 import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.backend.konan.util.systemCacheRootDirectory
 import org.jetbrains.kotlin.backend.konan.util.toObsoleteKind
@@ -91,6 +93,7 @@ class NativeSecondStageCompilationConfig(
     private val platformManager = PlatformManager(distribution)
     internal val targetManager = platformManager.targetManager(configuration.konanTarget)
     override val target = targetManager.target
+
     internal val phaseConfig = configuration.phaseConfig!!
 
     // See https://youtrack.jetbrains.com/issue/KT-67692.
@@ -412,6 +415,22 @@ class NativeSecondStageCompilationConfig(
             // of them will be added.
             it.library.isExplicitlySpecifiedByUserInCLIArgument && !purgeUserLibs
         }.getFullList()
+    }
+
+    override val loadedKlibs = loadNativeKlibs(configuration, target).let { original ->
+        // Avoid having duplicates of the same `KotlinLibrary` loaded by the KLIB resolver and `KlibLoader`.
+        // TODO(KT-61096): Drop this `let { ... }` block when completely switching to `KlibLoader`.
+        val canonicalPathToLibraryLoadedByKlibResolver: Map<Path, KotlinLibrary> = resolvedLibraries.getFullList().associateBy { it.canonicalPath }
+
+        val substituted = LoadedNativeKlibs(
+                all = original.all.map { canonicalPathToLibraryLoadedByKlibResolver.getValue(it.canonicalPath) },
+                friends = original.friends.map { canonicalPathToLibraryLoadedByKlibResolver.getValue(it.canonicalPath) },
+                exported = original.exported.map { canonicalPathToLibraryLoadedByKlibResolver.getValue(it.canonicalPath) },
+                included = original.included.map { canonicalPathToLibraryLoadedByKlibResolver.getValue(it.canonicalPath) },
+                toAddToCache = original.toAddToCache?.let { canonicalPathToLibraryLoadedByKlibResolver.getValue(it.canonicalPath) },
+        )
+
+        substituted
     }
 
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::Path)
