@@ -28,7 +28,7 @@ try {
         throw Error("Expected instance of Error, but '" + e.name +"' ('" + e.constructor.name + "') was received")
     }
 
-    if (e.name !== "Exception" && e.message == "Some") {
+    if (e.name !== "kotlin.Exception" && e.message == "Some") {
         throw Error("Wrong e.name = '" + e.name + "'")
     }
 }
