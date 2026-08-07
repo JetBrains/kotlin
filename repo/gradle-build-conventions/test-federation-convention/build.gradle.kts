@@ -65,6 +65,14 @@ tasks.withType<Test>().configureEach {
     environment("GRADLE_USER_HOME", gradle.gradleUserHomeDir.absolutePath)
 }
 
+tasks.register<JavaExec>("updateDomainsDump") {
+    doNotTrackState("Should always run")
+    description = "Updates the 'domains.dump.txt' file"
+    classpath = files(sourceSets.test.map { it.runtimeClasspath })
+    workingDir = gradle.linearClosure { it.parent }.last().rootProject.isolated.projectDirectory.asFile
+    mainClass = $$"org.jetbrains.kotlin.testFederation.DomainsDumpTest$Update"
+}
+
 dependencies {
     implementation(kotlin("stdlib", version = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
     implementation(kotlin("tooling-core", version = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))

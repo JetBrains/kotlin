@@ -1,11 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Update domains.dump.txt" type="GradleRunConfiguration" factoryName="Gradle" folderName="Tools">
     <ExternalSystemSettings>
-      <option name="env">
-        <map>
-          <entry key="UPDATE_DOMAINS_DUMP" value="true" />
-        </map>
-      </option>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
@@ -15,9 +10,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":gradle-build-conventions:test-federation-convention:test" />
-          <option value="--tests" />
-          <option value="&quot;org.jetbrains.kotlin.testFederation.DomainsDumpTest&quot;" />
+          <option value=":gradle-build-conventions:test-federation-convention:updateDomainsDump" />
           <option value="--rerun" />
         </list>
       </option>
