@@ -200,13 +200,7 @@ fun main(args: Array<String>) {
             testClass<AbstractFirWasmJsMultiModuleSteppingTest> {
                 model("debug/stepping")
             }
-            testClass<AbstractFirWasmJsSteppingWithInlinedFunInKlibTest> {
-                model("debug/stepping")
-            }
             testClass<AbstractFirWasmJsSteppingSplitTest> {
-                model("debug/stepping")
-            }
-            testClass<AbstractFirWasmJsSteppingSplitWithInlinedFunInKlibTest> {
                 model("debug/stepping")
             }
 
