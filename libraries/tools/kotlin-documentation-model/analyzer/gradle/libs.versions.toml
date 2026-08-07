@@ -7,7 +7,7 @@
 bta-kotlin-compiler = "2.0.21"
 bta-kotlin-language = "1.4"
 
-gradlePlugin-kotlin = "2.3.21"
+gradlePlugin-kotlin = "2.4.0"
 # See: https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin
 gradlePlugin-android = "7.3.1"
 
@@ -20,13 +20,13 @@ ktor = "2.3.11"
 javaDiffUtils = "4.12"
 
 ## Analysis
-kotlin-compiler-k2 = "2.4.20-dev-8332"
+kotlin-compiler-k2 = "2.5.0-dev-2030"
 
 # MUST match the version of the intellij platform used in the kotlin compiler,
 # otherwise this will lead to different versions of psi API and implementations
 # on the classpath and will fail with hard to debug problems in runtime.
-# See: https://github.com/JetBrains/kotlin/blob/79b4def109dc73f882ec8a291a69d0197ad55c58/gradle/versions.properties#L1
-intellij-platform = "251.27812.49"
+# See: https://github.com/JetBrains/kotlin/blob/build-2.5.0-dev-2030/gradle/versions.properties#L1
+intellij-platform = "261.24374.151"
 
 ## HTML
 jsoup = "1.16.1"
@@ -118,6 +118,9 @@ kotlin-symbol-light-classes = { module = "org.jetbrains.kotlin:symbol-light-clas
 #### Java analysis ####
 intellij-java-psi-api = { module = "com.jetbrains.intellij.java:java-psi", version.ref = "intellij-platform" }
 intellij-java-psi-impl = { module = "com.jetbrains.intellij.java:java-psi-impl", version.ref = "intellij-platform" }
+# Since intellij-platform 261, `com.intellij.psi.PsiElement` (and other core PSI API classes) are no longer
+# on the `java-psi(-impl)` classpath; they now live in the platform `core` module.
+intellij-platform-core = { module = "com.jetbrains.intellij.platform:core", version.ref = "intellij-platform" }
 intellij-util= { module = "com.jetbrains.intellij.platform:util", version.ref = "intellij-platform" }
 intellij-util-base= { module = "com.jetbrains.intellij.platform:util-base", version.ref = "intellij-platform" }
 

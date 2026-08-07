@@ -11,7 +11,9 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.resolution.resolveSymbols
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.session.useSiteModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.contextModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -43,7 +45,8 @@ internal fun resolveKDocLink(
  *
  * For the resolution logic, see [resolveKDocTextLinkToDRI]
  */
-internal fun KaSession.resolveKDocTextLink(
+context(_: KaSession)
+internal fun resolveKDocTextLink(
     link: String,
     contextPackageFQN: String?,
     location: String?,
@@ -78,7 +81,8 @@ private fun logUnresolvedLink(
  * @param contextPackageFQN FQN of a context package
  * @return [DRI] or null if the [link] is unresolved
  */
-internal fun KaSession.resolveKDocTextLinkToDRI(link: String, contextPackageFQN: String? = null): DRI? {
+context(_: KaSession)
+internal fun resolveKDocTextLinkToDRI(link: String, contextPackageFQN: String? = null): DRI? {
     val kDocLink = createKDocLink(link, contextPackageFQN)
     return kDocLink?.let { resolveKDocLinkToDRI(it) }
 }
@@ -91,7 +95,8 @@ internal fun KaSession.resolveKDocTextLinkToDRI(link: String, contextPackageFQN:
  *
  * @return [KaSymbol] or null if the [link] is unresolved
  */
-internal fun KaSession.resolveKDocTextLinkToSymbol(link: String): KaSymbol? {
+context(_: KaSession)
+internal fun resolveKDocTextLinkToSymbol(link: String): KaSymbol? {
     val kDocLink = createKDocLink(link, null)
     return kDocLink?.let {
         /**
@@ -101,7 +106,8 @@ internal fun KaSession.resolveKDocTextLinkToSymbol(link: String): KaSymbol? {
     }
 }
 
-private fun KaSession.createKDocLink(link: String, contextPackageFQN: String?): KDocLink? {
+context(_: KaSession)
+private fun createKDocLink(link: String, contextPackageFQN: String?): KDocLink? {
     val currentModule: KaSourceModule = useSiteModule as? KaSourceModule
         ?: throw IllegalStateException("Resolving KDoc links can be done only in a source module, not $useSiteModule")
 
@@ -160,7 +166,8 @@ private fun resolveKDocLinkToDRI(kDocLink: KDocLink): DRI? {
     }
 }
 
-private fun KaSession.resolveToSymbol(kDocLink: KDocLink): KaSymbol? {
+context(_: KaSession)
+private fun resolveToSymbol(kDocLink: KDocLink): KaSymbol? {
     val lastNameSegment = kDocLink.children.filterIsInstance<KDocName>().lastOrNull()
     @OptIn(KaExperimentalApi::class, KtExperimentalApi::class)
     return lastNameSegment?.resolveSymbols()?.sortedWith(linkCandidatesComparator)?.firstOrNull()

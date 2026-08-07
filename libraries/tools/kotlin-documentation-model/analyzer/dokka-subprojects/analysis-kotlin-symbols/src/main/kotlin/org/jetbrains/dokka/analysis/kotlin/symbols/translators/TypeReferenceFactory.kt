@@ -8,7 +8,8 @@ import org.jetbrains.dokka.links.*
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.types.*
 
-internal fun KaSession.getTypeReferenceFrom(type: KaType, isVararg: Boolean = false): TypeReference {
+context(_: KaSession)
+internal fun getTypeReferenceFrom(type: KaType, isVararg: Boolean = false): TypeReference {
     val typeReference = getTypeReferenceFromPossiblyRecursive(type, emptyList())
     return when {
         isVararg -> Vararg(typeReference)
@@ -18,7 +19,8 @@ internal fun KaSession.getTypeReferenceFrom(type: KaType, isVararg: Boolean = fa
 
 
 // see `deep recursive typebound #1342` test
-private fun KaSession.getTypeReferenceFromPossiblyRecursive(
+context(_: KaSession)
+private fun getTypeReferenceFromPossiblyRecursive(
     type: KaType,
     paramTrace: List<KaType>
 ): TypeReference {
@@ -42,7 +44,7 @@ private fun KaSession.getTypeReferenceFromPossiblyRecursive(
 
         is KaTypeParameterType -> {
             val upperBoundsOrNullableAny =
-                type.symbol.upperBounds.takeIf { it.isNotEmpty() } ?: listOf(this.builtinTypes.nullableAny)
+                type.symbol.upperBounds.takeIf { it.isNotEmpty() } ?: listOf(builtinTypes.nullableAny)
 
             TypeParam(
                 name = type.name.asString(),
@@ -85,7 +87,8 @@ private fun KaSession.getTypeReferenceFromPossiblyRecursive(
 
 }
 
-private fun KaSession.getTypeReferenceFromTypeProjection(
+context(_: KaSession)
+private fun getTypeReferenceFromTypeProjection(
     typeProjection: KaTypeProjection,
     paramTrace: List<KaType>
 ): TypeReference =

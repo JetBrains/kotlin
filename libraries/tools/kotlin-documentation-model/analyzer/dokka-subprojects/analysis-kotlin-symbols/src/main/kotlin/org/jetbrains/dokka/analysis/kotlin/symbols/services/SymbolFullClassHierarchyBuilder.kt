@@ -12,7 +12,7 @@ import org.jetbrains.dokka.analysis.kotlin.symbols.translators.getDRIFromClassLi
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.dokka.analysis.kotlin.internal.ClassHierarchy
 import org.jetbrains.dokka.analysis.kotlin.internal.FullClassHierarchyBuilder
 import org.jetbrains.dokka.analysis.kotlin.internal.Supertypes
@@ -23,7 +23,12 @@ import org.jetbrains.dokka.analysis.kotlin.symbols.translators.TypeTranslator
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.plugin
 import org.jetbrains.dokka.plugability.querySingle
+import org.jetbrains.kotlin.analysis.api.symbols.namedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.defaultType
+import org.jetbrains.kotlin.analysis.api.types.directSupertypes
+import org.jetbrains.kotlin.analysis.api.types.expandedSymbol
+import org.jetbrains.kotlin.analysis.api.types.isAnyType
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import java.util.concurrent.ConcurrentHashMap
 
@@ -38,7 +43,8 @@ internal class SymbolFullClassHierarchyBuilder(context: DokkaContext) : FullClas
         return map
     }
 
-    private fun KaSession.collectSupertypesFromKotlinType(
+    context(_: KaSession)
+    private fun collectSupertypesFromKotlinType(
         driWithKType: Pair<DRI, KaType>,
         supersMap: MutableMap<DRI, Supertypes>
     ) {
@@ -129,7 +135,8 @@ internal class SymbolFullClassHierarchyBuilder(context: DokkaContext) : FullClas
         return hierarchy
     }
 
-    private fun KaSession.collectSupertypesWithKindFromKotlinType(
+    context(_: KaSession)
+    private fun collectSupertypesWithKindFromKotlinType(
         typeTranslator: TypeTranslator,
         typeConstructorWithKindWithKType: Pair<TypeConstructorWithKind, KaType>,
         supersMap: MutableMap<DRI, SuperclassesWithKind>,

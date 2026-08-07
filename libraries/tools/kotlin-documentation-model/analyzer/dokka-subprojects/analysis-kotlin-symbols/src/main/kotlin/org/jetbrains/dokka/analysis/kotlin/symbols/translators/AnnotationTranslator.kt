@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.findClass
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -29,14 +31,16 @@ import org.jetbrains.kotlin.psi.KtFile
  * Map [KaAnnotation] to Dokka [Annotations.Annotation]
  */
 internal class AnnotationTranslator(private val logger: DokkaLogger) {
-    private fun KaSession.getFileLevelAnnotationsFrom(symbol: KaSymbol) =
+    context(_: KaSession)
+    private fun getFileLevelAnnotationsFrom(symbol: KaSymbol) =
         if (symbol.origin != KaSymbolOrigin.SOURCE)
             null
         else
             (symbol.psi?.containingFile as? KtFile)?.symbol?.annotations
                 ?.map { toDokkaAnnotation(it) }
 
-    private fun KaSession.getDirectAnnotationsFrom(annotated: KaAnnotated) =
+    context(_: KaSession)
+    private fun getDirectAnnotationsFrom(annotated: KaAnnotated) =
         annotated.annotations.map { toDokkaAnnotation(it) }
 
     /**
@@ -44,7 +48,8 @@ internal class AnnotationTranslator(private val logger: DokkaLogger) {
      *
      * @return direct annotations, annotations from backing field and file-level annotations
      */
-    fun KaSession.getAllAnnotationsFrom(annotated: KaAnnotated): List<Annotations.Annotation> {
+    context(_: KaSession)
+    fun getAllAnnotationsFrom(annotated: KaAnnotated): List<Annotations.Annotation> {
         val directAnnotations = getDirectAnnotationsFrom(annotated)
         val backingFieldAnnotations =
             (annotated as? KaPropertySymbol)?.backingFieldSymbol?.let { getDirectAnnotationsFrom(it) }.orEmpty()
@@ -60,7 +65,8 @@ internal class AnnotationTranslator(private val logger: DokkaLogger) {
         else -> Annotations.AnnotationScope.DIRECT
     }
 
-    private fun KaSession.mustBeDocumented(annotation: KaAnnotation): Boolean {
+    context(_: KaSession)
+    private fun mustBeDocumented(annotation: KaAnnotation): Boolean {
         /**
          * Do not document the synthetic [parameterNameAnnotation] annotation since Dokka K1 ignores it too.
          * The annotation can be added by the compiler during "desugaring" functional types.
@@ -74,7 +80,8 @@ internal class AnnotationTranslator(private val logger: DokkaLogger) {
         return annotationClass?.let { mustBeDocumentedAnnotation in it.annotations } == true
     }
 
-    private fun KaSession.toDokkaAnnotation(annotation: KaAnnotation) =
+    context(_: KaSession)
+    private fun toDokkaAnnotation(annotation: KaAnnotation) =
         Annotations.Annotation(
             dri = run {
                 val classId = annotation.classId
@@ -105,7 +112,8 @@ internal class AnnotationTranslator(private val logger: DokkaLogger) {
         )
 
     @OptIn(ExperimentalUnsignedTypes::class)
-    private fun KaSession.toDokkaAnnotationValue(annotationValue: KaAnnotationValue, containingAnnotation: KaAnnotation): AnnotationParameterValue =
+    context(_: KaSession)
+    private fun toDokkaAnnotationValue(annotationValue: KaAnnotationValue, containingAnnotation: KaAnnotation): AnnotationParameterValue =
         when (annotationValue) {
             is KaAnnotationValue.ConstantValue -> {
                 when (val value = annotationValue.value) {
