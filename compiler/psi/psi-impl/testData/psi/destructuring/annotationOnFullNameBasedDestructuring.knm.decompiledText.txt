@@ -18,6 +18,6 @@ public final data class Box public constructor(first: kotlin.String) {
 }
 
 public final annotation class Ann public constructor(
-    public final val x: kotlin.String = COMPILED_CODE,
+    public final val x: kotlin.String = "",
 ) : kotlin.Annotation {
 }

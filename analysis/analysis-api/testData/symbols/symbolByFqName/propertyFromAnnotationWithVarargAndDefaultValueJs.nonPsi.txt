@@ -82,7 +82,7 @@ KaKotlinPropertySymbol:
   hasBackingField: true
   hasGetter: true
   hasSetter: false
-  initializer: null
+  initializer: KaConstantValueForAnnotation([0])
   isActual: false
   isCompanion: false
   isConst: false

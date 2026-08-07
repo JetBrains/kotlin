@@ -12,7 +12,7 @@
   // Implementation of methods is not available
 
   public final annotation class AnnoWithCustomNameAndDefaultValue public constructor(
-      public final val string: kotlin.String = COMPILED_CODE,
+      public final val string: kotlin.String = "str",
   ) : kotlin.Annotation {
   }
 
@@ -30,7 +30,7 @@
   // Implementation of methods is not available
 
   public final annotation class AnnoWithDefaultNameAndDefaultValue public constructor(
-      public final val value: kotlin.Int = COMPILED_CODE,
+      public final val value: kotlin.Int = 1,
   ) : kotlin.Annotation {
   }
 
@@ -48,6 +48,6 @@
   // Implementation of methods is not available
 
   public final annotation class AnnoWithVarargAndDefaultVakue public constructor(
-      public final vararg val value: kotlin.Int = COMPILED_CODE,
+      public final vararg val value: kotlin.Int = [0],
   ) : kotlin.Annotation {
   }
