@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.plugin.internal
 
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerializationException
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -137,7 +136,10 @@ private fun artifactTypeOfProjectSharedDataKey(key: String) = "kotlin-project-sh
  *
  * Data is meant to be extracted at Task Execution Phase.
  *
- * This class is Configuration Cache safe. It can be stored in a Task field.
+ * This class can be stored in a Task field as long as [serializer] is Configuration Cache safe. This holds for
+ * plugin-generated (`T.serializer()`), builtin, and stateless `object` serializers; a serializer that keeps live
+ * state (a thread, a stream, a class loader, ...) would fail Configuration Cache storage, because Gradle persists
+ * [serializer] as a bean.
  */
 internal class KotlinProjectSharedDataProvider<T : KotlinShareableDataAsSecondaryVariant>(
     private val key: String,
@@ -175,9 +177,11 @@ internal class KotlinProjectSharedDataProvider<T : KotlinShareableDataAsSecondar
         val content = file.readText()
         return try {
             KgpJson.default.decodeFromString(serializer, content)
-        } catch (_: SerializationException) {
-            // An artifact with our key/attribute exists but does not deserialize (e.g. a foreign or
-            // incompatible producer). Skip it rather than failing the consumer; other failures propagate.
+        } catch (_: IllegalArgumentException) {
+            // The artifact matches our key/attribute but its payload isn't a valid [T] (e.g. a foreign or
+            // incompatible producer). decodeFromString reports this as SerializationException for malformed input
+            // or IllegalArgumentException for a decoded-but-invalid instance; the former is a subtype of the latter,
+            // so catching IllegalArgumentException covers both. Skip such artifacts; other failures (e.g. I/O) propagate.
             null
         }
     }
