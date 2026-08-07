@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.js.test.converters
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.moduleName
-import org.jetbrains.kotlin.ir.backend.js.jsOutputName
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.js.config.moduleKind
 import org.jetbrains.kotlin.js.tsexport.TypeScriptExportConfig
 import org.jetbrains.kotlin.js.tsexport.TypeScriptModuleConfig
 import org.jetbrains.kotlin.js.tsexport.runTypeScriptExport
+import org.jetbrains.kotlin.library.jsOutputName
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.metadata.KlibInputModule

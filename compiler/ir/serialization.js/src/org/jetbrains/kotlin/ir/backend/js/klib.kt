@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.addMetadataFlagsToManifest
 import org.jetbrains.kotlin.library.writer.KlibWriter
@@ -44,13 +44,10 @@ import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.toSmartList
 import java.io.File
 import java.nio.file.Path
-import java.util.Properties
+import java.util.*
 
 val KotlinLibrary.moduleName: String
     get() = manifestProperties.getProperty(KLIB_PROPERTY_UNIQUE_NAME)
-
-val KotlinLibrary.jsOutputName: String?
-    get() = manifestProperties.getProperty(KLIB_PROPERTY_JS_OUTPUT_NAME)
 
 val KotlinLibrary.serializedIrFileFingerprints: List<SerializedIrFileFingerprint>?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_SERIALIZED_IR_FILE_FINGERPRINTS)?.parseSerializedIrFileFingerprints()
@@ -368,7 +365,6 @@ fun serializeModuleIntoKlib(
     }
 }
 
-const val KLIB_PROPERTY_JS_OUTPUT_NAME = "jsOutputName"
 const val KLIB_PROPERTY_SERIALIZED_IR_FILE_FINGERPRINTS = "serializedIrFileFingerprints"
 const val KLIB_PROPERTY_SERIALIZED_KLIB_FINGERPRINT = "serializedKlibFingerprint"
 
