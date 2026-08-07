@@ -1,0 +1,3 @@
+/typealiasInArgument.kt:26:40: error: Argument of '@EqualityBound' must expand to a star-projected type, but got: 'BadGeneric<String>'.
+
+/typealiasInArgument.kt:31:40: error: Argument of '@EqualityBound' must expand to a star-projected type, but got: 'BadGeneric2<String>'.

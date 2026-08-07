@@ -54,8 +54,8 @@ FILE: simple_fail.kt
                     ^ Null(null)!!
                 }
 
-            public open override operator fun equals([EqualityBoundType=Generic<*>] @R|kotlin/EqualityBound|(bound = <getClass>(Q|Generic|) [evaluated = <getClass>(Q|Generic|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
-                ^equals R|<local>/other|.R|SubstitutionOverride</Generic.t: R|CapturedType(*)|>|.R|<local>/doSomething<Candidate is inapplicable because of receiver type mismatch: <local>/doSomething>#|()
+            public open override operator fun equals([EqualityBoundType=<local>/ImplicitGeneric<*>] @R|kotlin/EqualityBound|(bound = <getClass>(Q|<local>/ImplicitGeneric|) [evaluated = <getClass>(Q|<local>/ImplicitGeneric|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+                ^equals R|<local>/other|.R|SubstitutionOverride<<local>/ImplicitGeneric.t: R|CapturedType(*)|>|.R|<local>/doSomething<Candidate is inapplicable because of receiver type mismatch: <local>/doSomething>#|()
             }
 
         }

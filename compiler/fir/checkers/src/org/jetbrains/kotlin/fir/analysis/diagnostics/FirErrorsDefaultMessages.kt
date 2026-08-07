@@ -91,6 +91,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPE_ALIAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_WITHOUT_EXPECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUSLY_RESOLVED_EQUALITY_BOUND_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_ALTERED_ASSIGN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_ANNOTATION_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_ANONYMOUS_TYPE_INFERRED
@@ -288,8 +289,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_CHARACTER_L
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_RANGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ENUM_CLASS_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ENUM_ENTRY_AS_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_BOUND_ARGUMENT_EXPANDS_TO_NON_STAR_PROJECTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_BOUND_MISMATCH_BY_DELEGATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_BOUND_MISMATCH_ON_INHERITANCE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_BOUND_NOT_SUPERTYPE_OF_CONTAINING_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_FROM_JAVA_RESOLUTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_IN_CONTRACT_DESCRIPTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_SUPPRESSION
@@ -318,6 +325,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CLASS_TYPE_PARAMETER_UPPER_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_CONTEXT_PARAMETER_NAMES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_ENUM_ENTRIES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_EQUALITY_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_FUNCTION_MODIFIERS_DIFFERENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_FUNCTION_MODIFIERS_NOT_SUBSET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_ACTUAL_INCOMPATIBLE_FUN_INTERFACE_MODIFIER
@@ -470,6 +478,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERRED_INVISIBL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFIX_MODIFIER_REQUIRED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INHERITED_INTERSECTION_EQUALITY_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZATION_BEFORE_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZATION_BEFORE_DECLARATION_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION
@@ -858,6 +867,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_LATEI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_NOT_NULL_ASSERTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_SAFE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNREACHABLE_CODE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_EQUALITY_BOUND_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_IMPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE
@@ -1542,6 +1552,66 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "See https://youtrack.jetbrains.com/issue/KT-81567 for further information.",
             DECLARATION_NAME,
             TO_STRING,
+        )
+
+        // EqualityBound
+        map.put(
+            UNRESOLVED_EQUALITY_BOUND_ARGUMENT,
+            "Type of '@EqualityBound' argument was not resolved during type resolution. " +
+            "Try to specify its fully qualified name."
+        )
+        map.put(
+            AMBIGUOUSLY_RESOLVED_EQUALITY_BOUND_ARGUMENT,
+            "Type of ''@EqualityBound'' argument is ambiguous between following candidates: {0}.\n" +
+            "Try to specify its fully qualified name.",
+            RENDER_COLLECTION_OF_TYPES,
+        )
+        map.put(
+            EQUALITY_BOUND_ARGUMENT_EXPANDS_TO_NON_STAR_PROJECTED,
+            "Argument of ''@EqualityBound'' must expand to a star-projected type, but got: ''{0}''.",
+            RENDER_TYPE,
+        )
+        map.put(
+            EQUALITY_BOUND_MISMATCH_ON_INHERITANCE,
+            "{0} clashes with {1}: equality bounds are incompatible.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+        )
+        map.put(
+            EQUALITY_BOUND_MISMATCH_BY_DELEGATION,
+            "{0} clashes with {1} from delegation: equality bounds are incompatible.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+        )
+        map.put(
+            INHERITED_INTERSECTION_EQUALITY_BOUND,
+            "Equality bound of ''{0}'' is inferred to intersection type ''{1}''. " +
+            "Specify explicit equality bound.",
+            SYMBOL,
+            RENDER_TYPE,
+        )
+        map.put(
+            EQUALITY_BOUND_NOT_SUPERTYPE_OF_CONTAINING_CLASS,
+            "Equality bound must be a supertype of the type ''{0}'' it is declared for.",
+            RENDER_TYPE,
+        )
+        map.put(
+            EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS,
+            "Equality operator is not applicable: {2} ''{0}'' and {3} ''{1}'' are incompatible.",
+            RENDER_TYPE,
+            RENDER_TYPE,
+            TO_STRING,
+            TO_STRING,
+        )
+        map.put(
+            EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS,
+            "Comparison might not be intended: neither type of left-hand side ''{0}'' is subtype of equality bound of right-hand side ''{3}'' " +
+            "nor type of right-hand side ''{1}'' is subtype of equality bound of left-hand side ''{2}''. " +
+            "If the comparison is intended, suppress this warning or add an explicit ''is'' check before the comparison.",
+            RENDER_TYPE,
+            RENDER_TYPE,
+            RENDER_TYPE,
+            RENDER_TYPE,
         )
 
         // OptIn
@@ -3186,6 +3256,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(EXPECT_ACTUAL_INCOMPATIBLE_CLASS_TYPE_PARAMETER_COUNT, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL_WITH_ALL_MODIFIERS, SYMBOL_WITH_ALL_MODIFIERS, STRING)
         map.put(EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL_WITH_ALL_MODIFIERS, SYMBOL_WITH_ALL_MODIFIERS, STRING)
+        map.put(EXPECT_ACTUAL_INCOMPATIBLE_EQUALITY_BOUNDS, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL_WITH_ALL_MODIFIERS, SYMBOL_WITH_ALL_MODIFIERS, STRING)
         map.put(EXPECT_ACTUAL_INCOMPATIBLE_PARAMETER_NAMES, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL_WITH_ALL_MODIFIERS, SYMBOL_WITH_ALL_MODIFIERS, STRING)
         map.put(EXPECT_ACTUAL_INCOMPATIBLE_CONTEXT_PARAMETER_NAMES, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL_WITH_ALL_MODIFIERS, SYMBOL_WITH_ALL_MODIFIERS, STRING)
         map.put(EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_NAMES, EXPECT_ACTUAL_INCOMPATIBILITY_MSG, SYMBOL_WITH_ALL_MODIFIERS, SYMBOL_WITH_ALL_MODIFIERS, STRING)

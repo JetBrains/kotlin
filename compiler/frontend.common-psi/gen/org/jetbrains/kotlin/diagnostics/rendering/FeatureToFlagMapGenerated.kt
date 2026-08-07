@@ -49,6 +49,7 @@ val featureToEnablingFlagMap: Map<LanguageFeature, String> = mapOf(
     LanguageFeature.NewInference to "-Xnew-inference",
     LanguageFeature.PropertyParamAnnotationDefaultTargetMode to "-Xannotation-default-target=param-property",
     LanguageFeature.SamConversionPerArgument to "-Xnew-inference",
+    LanguageFeature.StrictEquals to "-Xequality-bounds",
     LanguageFeature.UnrestrictedBuilderInference to "-Xunrestricted-builder-inference",
     LanguageFeature.WhenGuards to "-Xwhen-guards",
 )

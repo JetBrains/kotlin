@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundTypeOfParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isJava
@@ -124,6 +125,20 @@ class FirExpectActualMatchingContextImpl private constructor(
             containingExpectClass?.asSymbol()
         )
     }
+
+    override val equalityBoundMatcher: ExpectActualMatchingContext.EqualityBoundMatcher =
+        object : ExpectActualMatchingContext.EqualityBoundMatcher {
+            override fun matches(
+                expectSimpleFunction: CallableSymbolMarker,
+                actualSimpleFunction: CallableSymbolMarker,
+                substitutorMarker: TypeSubstitutorMarker,
+            ): Boolean {
+                val expectEqualityBound = (expectSimpleFunction.asSymbol() as? FirNamedFunctionSymbol)?.equalityBoundTypeOfParameter
+                val actualEqualityBound = (actualSimpleFunction.asSymbol() as? FirNamedFunctionSymbol)?.equalityBoundTypeOfParameter
+
+                return areCompatibleExpectActualTypes(expectEqualityBound, actualEqualityBound)
+            }
+        }
 
     override val CallableSymbolMarker.isExpect: Boolean
         get() = asSymbol().resolvedStatus.isExpect

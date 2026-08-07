@@ -865,8 +865,9 @@ abstract class FirDataFlowAnalyzer(
     }
 
     private fun ProcessEqContext.processEqContractBasedOnEqualityBound() {
+        if (LanguageFeature.StrictEquals.isDisabled()) return
         if (rightOperandVariable !is RealVariable) return
-        val boundForRhs = components.equalsOverrideContractCalculator.computeTypeForEqualityBoundBasedContract(leftOperand.resolvedType)
+        val boundForRhs = leftOperand.resolvedType.calculateEqualityBoundType(holder = components)
         if (boundForRhs != null) {
             flow.addImplication((expressionVariable eq isEq) implies (rightOperandVariable typeEq boundForRhs))
         }

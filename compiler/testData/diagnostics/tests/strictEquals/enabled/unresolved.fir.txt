@@ -4,7 +4,7 @@ FILE: unresolved.kt
             super<R|kotlin/Any|>()
         }
 
-        public open override operator fun equals([EqualityBoundType=ERROR CLASS: Cannot resolve argument of 'EqualityBound'] @R|kotlin/EqualityBound|(bound = <getClass>(<Unresolved name: Unresolved>#) [evaluated = <getClass>(<Unresolved name: Unresolved>#)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        public open override operator fun equals([EqualityBoundType=ERROR CLASS: Symbol not found for Unresolved] @R|kotlin/EqualityBound|(bound = <getClass>(<Unresolved name: Unresolved>#) [evaluated = <getClass>(<Unresolved name: Unresolved>#)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
             ^equals Boolean(true)
         }
 
@@ -34,7 +34,7 @@ FILE: unresolved.kt
             super<R|kotlin/Any|>()
         }
 
-        public open override operator fun equals([EqualityBoundType=ERROR CLASS: Cannot resolve argument of 'EqualityBound'] @R|kotlin/EqualityBound|(bound = <getClass>(Q|D|.<Unresolved name: Unresolved>#) [evaluated = <getClass>(Q|D|.<Unresolved name: Unresolved>#)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        public open override operator fun equals([EqualityBoundType=ERROR CLASS: Symbol not found for D.Unresolved] @R|kotlin/EqualityBound|(bound = <getClass>(Q|D|.<Unresolved name: Unresolved>#) [evaluated = <getClass>(Q|D|.<Unresolved name: Unresolved>#)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
             ^equals Boolean(true)
         }
 

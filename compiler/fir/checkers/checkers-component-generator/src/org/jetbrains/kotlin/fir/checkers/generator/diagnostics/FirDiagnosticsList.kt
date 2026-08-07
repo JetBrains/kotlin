@@ -535,6 +535,43 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
     }
 
+    val EQUALITY_BOUND by object : DiagnosticGroup("EqualityBound") {
+        val UNRESOLVED_EQUALITY_BOUND_ARGUMENT by error<KtExpression>()
+        val AMBIGUOUSLY_RESOLVED_EQUALITY_BOUND_ARGUMENT by error<KtExpression> {
+            parameter<List<ConeKotlinType>>("candidates")
+        }
+        val EQUALITY_BOUND_ARGUMENT_EXPANDS_TO_NON_STAR_PROJECTED by error<KtExpression> {
+            parameter<ConeKotlinType>("expandedType")
+        }
+        val EQUALITY_BOUND_MISMATCH_ON_INHERITANCE by error<KtDeclaration> {
+            parameter<FirCallableSymbol<*>>("overridingDeclaration")
+            parameter<FirCallableSymbol<*>>("overriddenDeclaration")
+        }
+        val EQUALITY_BOUND_MISMATCH_BY_DELEGATION by error<KtDeclaration> {
+            parameter<FirCallableSymbol<*>>("delegateDeclaration")
+            parameter<FirCallableSymbol<*>>("baseDeclaration")
+        }
+        val INHERITED_INTERSECTION_EQUALITY_BOUND by error<KtDeclaration> {
+            parameter<FirCallableSymbol<*>>("declaration")
+            parameter<ConeKotlinType>("candidates")
+        }
+        val EQUALITY_BOUND_NOT_SUPERTYPE_OF_CONTAINING_CLASS by error<KtExpression> {
+            parameter<ConeKotlinType>("receiverType")
+        }
+        val EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS by warning<KtExpression> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+            parameter<String>("leftIsEqualityBound")
+            parameter<String>("rightIsEqualityBound")
+        }
+        val EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS by warning<KtExpression> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+            parameter<ConeKotlinType>("leftEqualityBound")
+            parameter<ConeKotlinType>("rightEqualityBound")
+        }
+    }
+
     val OPT_IN by object : DiagnosticGroup("OptIn") {
         val OPT_IN_USAGE by warning<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<ClassId>("optInMarkerClassId")
@@ -1744,6 +1781,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         // Callables
         val EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE by expectActualIncompatibilityError
+        val EXPECT_ACTUAL_INCOMPATIBLE_EQUALITY_BOUNDS by expectActualIncompatibilityError
         val EXPECT_ACTUAL_INCOMPATIBLE_PARAMETER_NAMES by expectActualIncompatibilityError
         val EXPECT_ACTUAL_INCOMPATIBLE_CONTEXT_PARAMETER_NAMES by expectActualIncompatibilityError
         val EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_NAMES by expectActualIncompatibilityError

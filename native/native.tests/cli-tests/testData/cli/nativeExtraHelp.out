@@ -27,6 +27,7 @@ where advanced options include:
   -Xdump-built-caches-to=<path> Path to a file where the list of all cache archives produced by this build should be written.
   -Xdump-tests-to=<path>     Path to a file for dumping the list of all available tests.
   -Xemit-lazy-objc-header
+  -Xequality-bounds          Enable experimental support for `@EqualityBound` annotations in `equals` operators.
   -Xexport-kdoc              Export KDoc entries in the framework header.
   -Xexport-library=<path>    A library to be included in the produced framework API.
                              This library must be one of the ones passed with '-library'.

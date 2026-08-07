@@ -1,0 +1,3 @@
+/messages.kt:13:9: warning: Equality operator is not applicable: type of left-hand side 'G<String>' and equality bound type of right-hand side 'H<*>' are incompatible.
+
+/messages.kt:14:9: warning: Equality operator is not applicable: equality bound type of left-hand side 'H<*>' and type of right-hand side 'G<String>' are incompatible.

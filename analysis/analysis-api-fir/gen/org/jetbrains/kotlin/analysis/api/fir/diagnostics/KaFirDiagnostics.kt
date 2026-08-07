@@ -1242,6 +1242,59 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NestedJsModuleProhibited::class
     }
 
+    interface UnresolvedEqualityBoundArgument : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = UnresolvedEqualityBoundArgument::class
+    }
+
+    interface AmbiguouslyResolvedEqualityBoundArgument : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = AmbiguouslyResolvedEqualityBoundArgument::class
+        val candidates: List<KaType>
+    }
+
+    interface EqualityBoundArgumentExpandsToNonStarProjected : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = EqualityBoundArgumentExpandsToNonStarProjected::class
+        val expandedType: KaType
+    }
+
+    interface EqualityBoundMismatchOnInheritance : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = EqualityBoundMismatchOnInheritance::class
+        val overridingDeclaration: KaCallableSymbol
+        val overriddenDeclaration: KaCallableSymbol
+    }
+
+    interface EqualityBoundMismatchByDelegation : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = EqualityBoundMismatchByDelegation::class
+        val delegateDeclaration: KaCallableSymbol
+        val baseDeclaration: KaCallableSymbol
+    }
+
+    interface InheritedIntersectionEqualityBound : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = InheritedIntersectionEqualityBound::class
+        val declaration: KaCallableSymbol
+        val candidates: KaType
+    }
+
+    interface EqualityBoundNotSupertypeOfContainingClass : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = EqualityBoundNotSupertypeOfContainingClass::class
+        val receiverType: KaType
+    }
+
+    interface EqualityNotApplicableByEqualityBounds : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = EqualityNotApplicableByEqualityBounds::class
+        val leftType: KaType
+        val rightType: KaType
+        val leftIsEqualityBound: String
+        val rightIsEqualityBound: String
+    }
+
+    interface EqualitySuspiciousByEqualityBounds : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = EqualitySuspiciousByEqualityBounds::class
+        val leftType: KaType
+        val rightType: KaType
+        val leftEqualityBound: KaType
+        val rightEqualityBound: KaType
+    }
+
     interface OptInUsage : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OptInUsage::class
         val optInMarkerClassId: ClassId
@@ -3467,6 +3520,13 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ExpectActualIncompatibleReturnType : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = ExpectActualIncompatibleReturnType::class
+        val expectDeclaration: KaSymbol
+        val actualDeclaration: KaSymbol
+        val reason: String
+    }
+
+    interface ExpectActualIncompatibleEqualityBounds : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = ExpectActualIncompatibleEqualityBounds::class
         val expectDeclaration: KaSymbol
         val actualDeclaration: KaSymbol
         val reason: String

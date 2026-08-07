@@ -10,7 +10,7 @@ abstract class B : I {
 }
 
 abstract class A : B() {
-    abstract override fun equals(@EqualityBound(C::class) other: Any?): Boolean
+    abstract override fun equals(@EqualityBound(I::class) other: Any?): Boolean
 }
 
 class Z : A() {

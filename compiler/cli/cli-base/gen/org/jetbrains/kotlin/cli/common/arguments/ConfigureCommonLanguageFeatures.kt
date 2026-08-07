@@ -88,6 +88,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.CallCompletionRefinementsFor25, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.equalityBounds) {
+        put(LanguageFeature.StrictEquals, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.explicitBackingFields) {
         put(LanguageFeature.ExplicitBackingFields, LanguageFeature.State.ENABLED)
     }

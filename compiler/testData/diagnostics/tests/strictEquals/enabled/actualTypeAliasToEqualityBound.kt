@@ -20,7 +20,7 @@ package example
 actual typealias MyEqualityBound = <!ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION, TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION_ERROR!>EqualityBound<!>
 
 class Bar {
-    override fun equals(@MyEqualityBound(Bar::class) other: Any?): Boolean = true
+    override fun equals(@MyEqualityBound(<!UNRESOLVED_EQUALITY_BOUND_ARGUMENT!>Bar<!>::class) other: Any?): Boolean = true
 }
 
 /* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, classReference, expect, functionDeclaration,

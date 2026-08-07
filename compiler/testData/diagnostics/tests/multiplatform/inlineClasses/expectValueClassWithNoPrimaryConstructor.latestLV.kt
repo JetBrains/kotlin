@@ -1,5 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +AllowExpectValueClassesWithNoPrimaryConstructor
+// LANGUAGE: -StrictEquals
+//  ^^^ KT-88389
 // IGNORE_FIR_DIAGNOSTICS
 // WITH_STDLIB
 // LATEST_LV_DIFFERENCE

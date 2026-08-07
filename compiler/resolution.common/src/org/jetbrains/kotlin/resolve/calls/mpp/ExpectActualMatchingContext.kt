@@ -71,6 +71,17 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
         ): Boolean
     }
 
+    val equalityBoundMatcher: EqualityBoundMatcher?
+        get() = null
+
+    interface EqualityBoundMatcher {
+        fun matches(
+            expectSimpleFunction: CallableSymbolMarker,
+            actualSimpleFunction: CallableSymbolMarker,
+            substitutorMarker: TypeSubstitutorMarker,
+        ): Boolean
+    }
+
     val RegularClassSymbolMarker.superTypes: List<KotlinTypeMarker>
     val RegularClassSymbolMarker.superTypesRefs: List<TypeRefMarker>
     val RegularClassSymbolMarker.defaultType: KotlinTypeMarker
