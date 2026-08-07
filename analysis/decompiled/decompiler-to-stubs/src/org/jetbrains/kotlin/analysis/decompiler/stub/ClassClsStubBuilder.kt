@@ -13,9 +13,7 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isNumberedFunctionClassFqName
-import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -192,13 +190,13 @@ private class ClassClsStubBuilder(
      * Returns how the class is unboxed by the compiler, or `null` when the class is not a value class,
      * or when its representation cannot be restored from malformed metadata.
      *
-     * [org.jetbrains.kotlin.descriptors.FullValueClassRepresentation] is not built yet.
+     * [KotlinFullValueClassRepresentation] is not built yet.
      * The stub format is already able to store them, so only this function has to be updated to support them.
      *
      * @see org.jetbrains.kotlin.serialization.deserialization.loadValueClassRepresentation
      */
-    private fun createValueClassRepresentation(): ValueClassRepresentation<KotlinRigidTypeBean>? {
-        // TODO: build 'FullValueClassRepresentation' for full value classes
+    private fun createValueClassRepresentation(): KotlinValueClassRepresentation? {
+        // TODO: build 'KotlinFullValueClassRepresentation' for full value classes
         if (!classProto.hasInlineClassUnderlyingPropertyName()) return null
 
         val name = c.nameResolver.getName(classProto.inlineClassUnderlyingPropertyName)
@@ -206,7 +204,7 @@ private class ClassClsStubBuilder(
         // The compiler writes the type into the class itself only when the underlying property is not a part of the ABI
         val typeProto = classProto.inlineClassUnderlyingType(c.typeTable) ?: findInlineClassUnderlyingPropertyTypeProto(name)
         val type = typeProto?.let(typeStubBuilder::createKotlinTypeBean) as? KotlinRigidTypeBean ?: return null
-        return InlineClassRepresentation(name, type)
+        return KotlinInlineClassRepresentation(name, type)
     }
 
     private fun findInlineClassUnderlyingPropertyTypeProto(name: Name): ProtoBuf.Type? {

@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinFullValueClassRepresentation
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinInlineClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinRigidTypeBean
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -300,15 +302,16 @@ private fun KotlinClassStubImpl.deserializeValueClassRepresentation(
 ): ValueClassRepresentation<ConeRigidType>? = when (val representation = valueClassRepresentation) {
     null -> null
 
-    is InlineClassRepresentation -> InlineClassRepresentation(
+    is KotlinInlineClassRepresentation -> InlineClassRepresentation(
         underlyingPropertyName = representation.underlyingPropertyName,
         underlyingType = typeDeserializer.underlyingType(representation.underlyingType, klass),
     )
 
-    is FullValueClassRepresentation -> FullValueClassRepresentation(
-        underlyingPropertyNamesToTypes = representation.underlyingPropertyNamesToTypes?.map { [name, type] ->
-            name to typeDeserializer.underlyingType(type, klass)
-        }
+    is KotlinFullValueClassRepresentation -> FullValueClassRepresentation(
+        // The compiler denotes an abstract or a sealed value class, which has no underlying properties, with 'null' instead of a list
+        underlyingPropertyNamesToTypes = representation.underlyingPropertyNamesToTypes
+            .map { [name, type] -> name to typeDeserializer.underlyingType(type, klass) }
+            .ifEmpty { null }
     )
 }
 

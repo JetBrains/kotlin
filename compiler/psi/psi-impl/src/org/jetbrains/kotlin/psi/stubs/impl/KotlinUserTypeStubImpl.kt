@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 
@@ -51,9 +50,8 @@ sealed interface KotlinTypeBean : KotlinTypeMarker {
 
 /**
  * A [KotlinTypeBean] which is not a [flexible type][KotlinFlexibleTypeBean].
- * Such beans can be passed to compiler declarations which expect a [RigidTypeMarker].
  */
-sealed interface KotlinRigidTypeBean : KotlinTypeBean, RigidTypeMarker
+sealed interface KotlinRigidTypeBean : KotlinTypeBean
 
 data class KotlinFlexibleTypeBean(val lowerBound: KotlinTypeBean, val upperBound: KotlinTypeBean) : KotlinTypeBean, FlexibleTypeMarker {
     override val nullable: Boolean

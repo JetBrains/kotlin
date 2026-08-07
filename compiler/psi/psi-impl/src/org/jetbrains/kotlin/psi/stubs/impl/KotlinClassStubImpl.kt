@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
-import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
@@ -32,7 +31,7 @@ class KotlinClassStubImpl(
      * How the class is unboxed by the compiler if it is a value class, or `null` if it is not a value class.
      * Only stubs built from compiled metadata have this information; it is always `null` for stubs built from sources.
      */
-    val valueClassRepresentation: ValueClassRepresentation<KotlinRigidTypeBean>?,
+    val valueClassRepresentation: KotlinValueClassRepresentation?,
 ) : KotlinStubBaseImpl<KtClass>(
     parent = parent,
     elementType = KtStubElementTypes.CLASS,
@@ -71,13 +70,6 @@ class KotlinClassStubImpl(
                 other.qualifiedName == qualifiedName &&
                 other.isInterface == isInterface &&
                 other.kdocText == kdocText &&
-                other.valueClassRepresentation.isEquivalentTo(valueClassRepresentation) &&
+                other.valueClassRepresentation == valueClassRepresentation &&
                 other.superNameRefs.contentEquals(superNameRefs)
-}
-
-private fun ValueClassRepresentation<KotlinRigidTypeBean>?.isEquivalentTo(
-    other: ValueClassRepresentation<KotlinRigidTypeBean>?,
-): Boolean = when {
-    this == null || other == null -> this == other
-    else -> javaClass == other.javaClass && underlyingPropertyNamesToTypes == other.underlyingPropertyNamesToTypes
 }

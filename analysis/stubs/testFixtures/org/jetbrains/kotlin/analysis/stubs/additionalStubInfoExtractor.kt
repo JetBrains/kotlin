@@ -10,9 +10,6 @@ import org.jetbrains.kotlin.analysis.internal.utils.IndentedTextBuilder
 import org.jetbrains.kotlin.analysis.internal.utils.buildIndentedText
 import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.contracts.description.*
-import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
-import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProjectionKind
@@ -86,7 +83,7 @@ private fun IndentedTextBuilder.appendValue(value: Any?) {
         }
 
         is KotlinTypeBean -> appendTypeInfo(value)
-        is ValueClassRepresentation<*> -> appendValueClassRepresentation(value)
+        is KotlinValueClassRepresentation -> appendValueClassRepresentation(value)
         is Name -> append(value.asString())
         is Enum<*> -> append(value.name)
         is String -> append("\"").append(value).append("\"")
@@ -103,14 +100,14 @@ private fun IndentedTextBuilder.appendValue(value: Any?) {
     }
 }
 
-private fun IndentedTextBuilder.appendValueClassRepresentation(representation: ValueClassRepresentation<*>) {
+private fun IndentedTextBuilder.appendValueClassRepresentation(representation: KotlinValueClassRepresentation) {
     val kind = when (representation) {
-        is InlineClassRepresentation -> "inline"
-        is FullValueClassRepresentation -> "full"
+        is KotlinInlineClassRepresentation -> "inline"
+        is KotlinFullValueClassRepresentation -> "full"
     }
 
     append(kind).append(" ")
-    appendValue(representation.underlyingPropertyNamesToTypes?.toMap())
+    appendValue(representation.underlyingPropertyNamesToTypes.toMap())
 }
 
 private fun IndentedTextBuilder.appendTypeInfo(typeBean: KotlinTypeBean) {
