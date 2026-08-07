@@ -1149,116 +1149,96 @@ def _run_batch_child_metadata_request(provider, include_names=True):
     return names
 
 
-class FastKonanObjectSyntheticProvider(KonanHelperProvider):
+class FastKonanObjectSyntheticProvider(lldb.SBSyntheticValueProvider):
     def __init__(self, valobj, _, internal_dict):
-        self._log = logging.getLogger(self.__class__.__name__)
-        self._children_count = 0
-        super(FastKonanObjectSyntheticProvider, self).__init__(
-            valobj, False, "FastObjectProvider", internal_dict
-        )
+        super().__init__(valobj)
+        self._target = valobj.GetTarget()
+        self._process = self._target.GetProcess()
+        self._valobj = valobj
 
-    def _field_name(self, index):
-        error = lldb.SBError()
-        name = self._read_string(
-            (
-                f"(char *)Konan_DebugGetFieldName("
-                f"{_hex(self._valobj.unsigned)}, (int){index}"
-                f")"
-            ),
-            error,
-        )
-        if not error.Success():
-            raise DebuggerException()
-        return name
-
-    def _ensure_children(self, reason):
+    def _get_child_names_by_index(self):
+        children_count = self.num_children()
         cached_names = _get_cached_child_names_by_index(self._valobj)
-        if cached_names is None or len(cached_names) < self._children_count:
-            try:
-                names = _run_batch_child_metadata_request(self)
-            except DebuggerException:
-                names = [
-                    self._field_name(i) for i in range(self._children_count)
-                ]
-                for index, name in enumerate(names):
-                    _set_cached_child_name(self._valobj, index, name)
+        if cached_names is None:
+            _run_batch_child_metadata_request(self)
             cached_names = _get_cached_child_names_by_index(self._valobj)
-        return [cached_names[i] for i in range(self._children_count)]
+        return {} if cached_names is None else cached_names
 
     def num_children(self):
-        return self._children_count
+        cached_children_count = _get_cached_children_count(self._valobj)
+        if cached_children_count is None:
+            _run_batch_child_metadata_request(self)
+            cached_children_count = _get_cached_children_count(self._valobj)
+        return 0 if cached_children_count is None else cached_children_count
 
     def get_child_index(self, name):
-        index = self._ensure_children(
-            f"resolve requested field '{name}'"
-        ).index(name)
-        return index
+        children_count = self.num_children()
+        cached_names = self._get_child_names_by_index()
+        for index in range(children_count):
+            if cached_names.get(index) == name:
+                return index
+        return -1
 
     def get_child_at_index(self, index):
-        return self._read_value(index)
+        if not (0 <= index < self.num_children()):
+            return None
+
+        address = self._field_address(index)
+        if address is None:
+            return None
+
+        child_name = self._child_name(index)
+        if child_name is None:
+            return None
+
+        lldb_type = self._resolve_lldb_type(self._field_type(index))
+        if lldb_type is None:
+            return None
+
+        child = self._valobj.CreateValueFromAddress(
+            str(child_name),
+            address,
+            lldb_type,
+        )
+        return child if child is not None and child.IsValid() else None
 
     def _field_address(self, index):
         cached_addresses = _get_cached_child_addresses_by_index(self._valobj)
         if cached_addresses is None or index not in cached_addresses:
-            self._ensure_children(
-                f"prefetch requested field address '{index}'"
-            )
+            self._get_child_names_by_index()
             cached_addresses = _get_cached_child_addresses_by_index(
                 self._valobj
             )
         if cached_addresses is not None and index in cached_addresses:
             return cached_addresses[index]
-        return super()._field_address(index)
+        return None
 
     def _field_type(self, index):
         cached_types = _get_cached_child_types_by_index(self._valobj)
         if cached_types is None or index not in cached_types:
-            self._ensure_children(
-                f"prefetch requested field type '{index}'"
-            )
+            self._get_child_names_by_index()
             cached_types = _get_cached_child_types_by_index(self._valobj)
         if cached_types is not None and index in cached_types:
             return cached_types[index]
-        return super()._field_type(index)
+        return _RUNTIME_TYPE_INVALID
+
+    def _child_name(self, index):
+        cached_names = _get_cached_child_names_by_index(self._valobj)
+        if cached_names is None or index not in cached_names:
+            cached_names = self._get_child_names_by_index()
+        if cached_names is not None and index in cached_names:
+            return cached_names[index]
+        return None
+
+    def _resolve_lldb_type(self, runtime_type):
+        if (
+            runtime_type <= _RUNTIME_TYPE_INVALID
+            or runtime_type >= len(_TYPES)
+        ):
+            return None
+        return _TYPES[runtime_type](self._valobj)
 
     def update(self):
-        super(FastKonanObjectSyntheticProvider, self).update()
-        return False
-
-
-class KonanArraySyntheticProvider(KonanHelperProvider):
-    def __init__(self, valobj, internal_dict):
-        self._log = logging.getLogger(self.__class__.__name__)
-        self._children_count = 0
-        super(KonanArraySyntheticProvider, self).__init__(
-            valobj, False, "ArrayProvider", internal_dict
-        )
-        self._log.debug("valobj: %s", _hex(valobj.unsigned))
-        if self._valobj is None:
-            return
-        valobj.SetSyntheticChildrenGenerated(True)
-
-    def num_children(self):
-        self._log.debug(
-            "(%s) = %s", _hex(self._valobj.unsigned), self._children_count
-        )
-        return self._children_count
-
-    def get_child_index(self, name):
-        self._log.debug("%s, %s", _hex(self._valobj.unsigned), name)
-        index = int(name)
-        return index if (0 <= index < self._children_count) else -1
-
-    def get_child_at_index(self, index):
-        self._log.debug("%s, %s", _hex(self._valobj.unsigned), index)
-        return self._read_value(index)
-
-    def _field_name(self, index):
-        self._log.debug("%s, %s", _hex(self._valobj.unsigned), index)
-        return str(index)
-
-    def update(self):
-        super(KonanArraySyntheticProvider, self).update()
         return False
 
 
