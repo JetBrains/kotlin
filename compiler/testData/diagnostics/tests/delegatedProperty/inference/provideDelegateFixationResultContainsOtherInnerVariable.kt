@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 
 interface A<T> {
     operator fun getValue(x: Any?, y: Any?): T = TODO()
@@ -13,7 +13,7 @@ fun bar1() {
 fun bar2() {
     operator fun <F : A<E>, E> A<E>.provideDelegate(x: Any?, y: Any?): F = TODO()
 
-    val x: String by foo()
+    val x: String by <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!><!CANNOT_INFER_PARAMETER_TYPE!>foo<!>()<!>
 }
 
 /* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, localFunction, localProperty,
