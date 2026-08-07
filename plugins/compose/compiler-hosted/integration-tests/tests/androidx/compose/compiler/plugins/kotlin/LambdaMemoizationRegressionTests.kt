@@ -179,4 +179,18 @@ class LambdaMemoizationRegressionTests : AbstractIrTransformTest() {
             }
     """
     )
+
+    @Test
+    fun memoizationOfEmptyComposable() = verifyGoldenComposeIrTransform(
+        source = """
+        import androidx.compose.runtime.*
+
+        @Composable
+        fun <S> Test(vm: S, content: @Composable (S) -> Unit = { vm -> Effect(vm) }) {
+            content(vm)
+        }
+
+        @Composable fun <S> Effect(vm: S) {}
+        """
+    )
 }
