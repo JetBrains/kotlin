@@ -234,6 +234,6 @@ projectTests {
         )
         testClassesDirs = testSourceSet.output.classesDirs
         systemProperty("ide.can.use.coroutines.fork", "false")
-        domainsEnabled.add(Domain.AnalysisApi)
+        domainsEnabled.addAll(Domain.AnalysisApi, Domain.Native)
     }
 }

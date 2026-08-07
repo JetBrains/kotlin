@@ -297,7 +297,7 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
         JunitTag.JsKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/JS part of Gradle plugin",
             "kgpJsTests",
-            domains = setOf(Domain.Js)
+            domains = setOf(Domain.Js, Domain.BuildToolsApi, Domain.Compiler)
         )
 
         JunitTag.JsBrowserKGP -> junitTag.taskConfiguration(
@@ -308,7 +308,7 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
         JunitTag.NativeKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/Native part of Gradle plugin",
             "kgpNativeTests",
-            domains = setOf(Domain.Native)
+            domains = setOf(Domain.Native, Domain.BuildToolsApi, Domain.Compiler)
         )
         JunitTag.MppKGP -> junitTag.taskConfiguration(
             "Run Multiplatform Kotlin Gradle plugin tests",
@@ -318,11 +318,12 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
         JunitTag.AndroidKGP -> junitTag.taskConfiguration(
             "Run Android Kotlin Gradle plugin tests",
             "kgpAndroidTests",
+            domains = setOf(Domain.CompilerPlugins)
         )
         JunitTag.OtherKGP -> junitTag.taskConfiguration(
             "Run tests for all support plugins, such as kapt, allopen, etc",
             "kgpOtherTests",
-            domains = setOf(Domain.CompilerPlugins)
+            domains = setOf(Domain.CompilerPlugins, Domain.Compiler, Domain.BuildToolsApi)
         )
         JunitTag.DaemonsKGP -> junitTag.taskConfiguration(
             "Run only Gradle and Kotlin daemon tests for Kotlin Gradle Plugin",
