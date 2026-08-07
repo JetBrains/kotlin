@@ -38,7 +38,6 @@ const val trimIndentMarginChain = """
     # krapfen
 """.trimIndent().trimMargin("#")
 
-// STOP_EVALUATION_CHECKS
 fun box(): String {
     if (trim1.id() != "123")                    return "Fail trim1"
     if (trim2.id() != "123\n    456")             return "Fail trim2"

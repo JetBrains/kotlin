@@ -89,7 +89,6 @@ const val equals2 = twoVal == twoVal
 const val equals3 = threeVal == twoVal
 const val equals4 = fourVal == twoVal
 
-// STOP_EVALUATION_CHECKS
 fun box(): String {
     if (funCompareTo1.id() != -1)   return "Fail 1.1"
     if (funCompareTo2.id() != 0)    return "Fail 1.2"
