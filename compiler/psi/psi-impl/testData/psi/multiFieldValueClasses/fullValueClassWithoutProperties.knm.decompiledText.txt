@@ -1,0 +1,18 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public abstract value class AbstractValue public constructor(parameter: kotlin.Int) {
+    public expect open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+
+    public expect open fun hashCode(): kotlin.Int { /* compiled code */ }
+
+    public expect open fun toString(): kotlin.String { /* compiled code */ }
+}
+
+public sealed value class SealedValue protected constructor() {
+    public expect open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+
+    public expect open fun hashCode(): kotlin.Int { /* compiled code */ }
+
+    public expect open fun toString(): kotlin.String { /* compiled code */ }
+}

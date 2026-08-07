@@ -1,0 +1,137 @@
+KtFile: jvmAbiFullValueClassWithPrivateConstructorAndPublicProperties.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PsiComment(EOL_COMMENT)('// WITH_STDLIB')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// LIBRARY_PLATFORMS: JVM')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// LANGUAGE: +FullValueClasses')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// JVM_ABI_GEN')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(value)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('ThreadLocalDelegate')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('T')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PRIMARY_CONSTRUCTOR
+      MODIFIER_LIST
+        PsiElement(private)('private')
+      PsiWhiteSpace(' ')
+      PsiElement(constructor)('constructor')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('threadLocal')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('ThreadLocal')
+              TYPE_ARGUMENT_LIST
+                PsiElement(LT)('<')
+                TYPE_PROJECTION
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('T')
+                PsiElement(GT)('>')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('name')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      OBJECT_DECLARATION
+        MODIFIER_LIST
+          PsiElement(companion)('companion')
+        PsiWhiteSpace(' ')
+        PsiElement(object)('object')
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          FUN
+            PsiElement(fun)('fun')
+            PsiWhiteSpace(' ')
+            TYPE_PARAMETER_LIST
+              PsiElement(LT)('<')
+              TYPE_PARAMETER
+                PsiElement(IDENTIFIER)('T')
+              PsiElement(GT)('>')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('create')
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              VALUE_PARAMETER
+                PsiElement(IDENTIFIER)('name')
+                PsiElement(COLON)(':')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('String')
+              PsiElement(RPAR)(')')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('ThreadLocalDelegate')
+                TYPE_ARGUMENT_LIST
+                  PsiElement(LT)('<')
+                  TYPE_PROJECTION
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('T')
+                  PsiElement(GT)('>')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('ThreadLocalDelegate')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('ThreadLocal')
+                    VALUE_ARGUMENT_LIST
+                      PsiElement(LPAR)('(')
+                      PsiElement(RPAR)(')')
+                PsiElement(COMMA)(',')
+                PsiWhiteSpace(' ')
+                VALUE_ARGUMENT
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('name')
+                PsiElement(RPAR)(')')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
