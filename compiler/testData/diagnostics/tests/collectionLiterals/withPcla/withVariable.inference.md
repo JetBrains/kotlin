@@ -197,10 +197,8 @@ Q|kotlin/collections|.setOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLitera
 ##### Resolution Stages > CheckArguments:
 
 1. `ILT: 1 <: TypeVariable(T)` _from Argument IntegerLiteral(1)_
-2. Combine `ILT: 1 <: TypeVariable(T)` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<ILT: 1> <: TypeVariable(Z)`
-3. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
-4. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
+2. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
+3. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
 
 ### Call 8
 
@@ -264,19 +262,19 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    )`
     1. `TypeVariable(Z)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
     2. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
@@ -463,8 +461,6 @@ Q|kotlin/collections|.setOf#(String(1), String(2), String(3))
 ##### Resolution Stages > CheckArguments:
 
 1. `kotlin/String <: TypeVariable(T)` _from Argument String(1)_
-2. Combine `kotlin/String <: TypeVariable(T)` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/String> <: TypeVariable(Z)`
 
 ### Call 12
 
@@ -528,19 +524,19 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    )`
     1. `TypeVariable(Z)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
     2. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
@@ -686,10 +682,8 @@ Q|kotlin/collections|.listOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiter
 ##### Resolution Stages > CheckArguments:
 
 1. `ILT: 1 <: TypeVariable(T)` _from Argument IntegerLiteral(1)_
-2. Combine `ILT: 1 <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<ILT: 1> <: TypeVariable(Z)`
-3. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
-4. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
+2. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
+3. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
 
 ### Call 15
 
@@ -797,19 +791,19 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    )`
     1. `TypeVariable(Z)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
     2. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
@@ -953,10 +947,8 @@ Q|kotlin/collections|.listOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiter
 ##### Resolution Stages > CheckArguments:
 
 1. `ILT: 1 <: TypeVariable(T)` _from Argument IntegerLiteral(1)_
-2. Combine `ILT: 1 <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<ILT: 1> <: TypeVariable(Z)`
-3. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
-4. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
+2. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
+3. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
 
 ### Call 19
 
@@ -1019,19 +1011,19 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    )`
     1. `TypeVariable(Z)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
 4. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
@@ -1343,8 +1335,6 @@ Q|kotlin/collections|.listOf#(String(1), String(2), String(3))
 ##### Resolution Stages > CheckArguments:
 
 1. `kotlin/String <: TypeVariable(T)` _from Argument String(1)_
-2. Combine `kotlin/String <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
 
 ### Call 25
 
@@ -1407,19 +1397,19 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    )`
     1. `TypeVariable(Z)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/String` _from Fix variable T_
 4. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
@@ -1514,10 +1504,8 @@ Q|kotlin/collections|.listOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiter
 ##### Resolution Stages > CheckArguments:
 
 1. `ILT: 1 <: TypeVariable(T)` _from Argument IntegerLiteral(1)_
-2. Combine `ILT: 1 <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<ILT: 1> <: TypeVariable(Z)`
-3. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
-4. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
+2. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
+3. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
 
 ### Call 28
 
@@ -1567,10 +1555,8 @@ Q|kotlin/collections|.listOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiter
 ##### Resolution Stages > CheckArguments:
 
 1. `ILT: 1 <: TypeVariable(T)` _from Argument IntegerLiteral(1)_
-2. Combine `ILT: 1 <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<ILT: 1> <: TypeVariable(Z)`
-3. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
-4. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
+2. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
+3. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
 
 ### Call 30
 
@@ -1634,19 +1620,19 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    )`
     1. `TypeVariable(Z)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
     2. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
@@ -1789,10 +1775,8 @@ Q|kotlin/collections|.listOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiter
 ##### Resolution Stages > CheckArguments:
 
 1. `ILT: 1 <: TypeVariable(T)` _from Argument IntegerLiteral(1)_
-2. Combine `ILT: 1 <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<ILT: 1> <: TypeVariable(Z)`
-3. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
-4. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
+2. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
+3. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
 
 ### Call 33
 
@@ -1842,8 +1826,6 @@ Q|kotlin/collections|.listOf#(String(1), String(2), String(3))
 ##### Resolution Stages > CheckArguments:
 
 1. `kotlin/String <: TypeVariable(T)` _from Argument String(1)_
-2. Combine `kotlin/String <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
 
 ### Call 35
 
@@ -1907,19 +1889,19 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    )`
     1. `TypeVariable(Z)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
     2. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
@@ -2132,10 +2114,8 @@ Q|kotlin/collections|.listOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiter
 ##### Resolution Stages > CheckArguments:
 
 1. `ILT: 1 <: TypeVariable(T)` _from Argument IntegerLiteral(1)_
-2. Combine `ILT: 1 <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<ILT: 1> <: TypeVariable(Z)`
-3. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
-4. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
+2. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
+3. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
 
 ### Call 40
 
@@ -2199,19 +2179,19 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    )`
     1. `TypeVariable(Z)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
     2. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
@@ -2397,7 +2377,7 @@ Q|kotlin/collections|.listOf#(this@R|special/anonymous|.R?C|/Box.x|)
    	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+   	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
@@ -2425,13 +2405,13 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
 ##### Continue Call Completion:
 
 1. `kotlin/Unit <: kotlin/Unit` _from LambdaArgument_
-2. Choose `TypeVariable(T)` with `Readiness(
+2. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+   	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
@@ -2441,7 +2421,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-    1. `TypeVariable(Z)` is `Readiness(
+    1. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
        	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -2457,13 +2437,13 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-3. Choose `TypeVariable(T)` with `Readiness(
+3. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+   	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
@@ -2473,7 +2453,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-    1. `TypeVariable(Z)` is `Readiness(
+    1. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
        	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -2490,8 +2470,8 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 4. __NotEnoughInformationForTypeParameter__
-5. `TypeVariable(T) == ERROR CLASS: Cannot infer argument for type parameter T` _from Fix variable T_
-6. Choose `TypeVariable(Z)` with `Readiness(
+5. `TypeVariable(Z) == ERROR CLASS: Cannot infer argument for type parameter Z` _from Fix variable Z_
+6. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -2508,7 +2488,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 7. __NotEnoughInformationForTypeParameter__
-8. `TypeVariable(Z) == ERROR CLASS: Cannot infer argument for type parameter Z` _from Fix variable Z_
+8. `TypeVariable(T) == ERROR CLASS: Cannot infer argument for type parameter T` _from Fix variable T_
 
 ### Call 44
 
@@ -2582,10 +2562,8 @@ Q|kotlin/collections|.listOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiter
 ##### Resolution Stages > CheckArguments:
 
 1. `ILT: 1 <: TypeVariable(T)` _from Argument IntegerLiteral(1)_
-2. Combine `ILT: 1 <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<ILT: 1> <: TypeVariable(Z)`
-3. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
-4. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
+2. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
+3. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
 
 ### Call 46
 
@@ -2626,9 +2604,7 @@ x#
 #### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: List<Int>`
 ##### Call Completion:
 
-1. `TypeVariable(Z) == kotlin/collections/List<kotlin/Int>` _from Fix variable Z_
-2. Combine `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/List<kotlin/Int>`
-    1. `TypeVariable(T) <: kotlin/Int`
+1. `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>` _from Fix variable Z_
 
 ### Call 44
 
@@ -2655,31 +2631,39 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-   	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	false HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
     1. `TypeVariable(Z)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-       	 true HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_EQUALITY_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
 4. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
     1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)`
-5. Choose `TypeVariable(Z)` with `Readiness(
+5. Combine `TypeVariable(T) == kotlin/Int` with `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>`
+    1. `TypeVariable(Z) <: kotlin/collections/List<kotlin/Int>`
+6. Combine `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>`
+    1. `kotlin/Int <: TypeVariable(T)`
+7. Combine `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)` with `TypeVariable(Z) <: kotlin/collections/List<kotlin/Int>`
+    1. `TypeVariable(Z) == kotlin/collections/List<kotlin/Int>`
+8. Combine `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>` with `TypeVariable(Z) == kotlin/collections/List<kotlin/Int>`
+    1. `TypeVariable(T) <: kotlin/Int`
+9. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -2695,7 +2679,6 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-6. `TypeVariable(Z) == kotlin/collections/List<kotlin/Int>` _from Fix variable Z_
 
 ### Call 48
 
@@ -2814,10 +2797,8 @@ Q|kotlin/collections|.setOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLitera
 ##### Resolution Stages > CheckArguments:
 
 1. `ILT: 1 <: TypeVariable(T)` _from Argument IntegerLiteral(1)_
-2. Combine `ILT: 1 <: TypeVariable(T)` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<ILT: 1> <: TypeVariable(Z)`
-3. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
-4. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
+2. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
+3. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
 
 ### Call 51
 
@@ -2855,12 +2836,10 @@ Q|kotlin/collections|.setOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLitera
 x#
 ```
 
-#### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: Set<Int>`
+#### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: Set<*>`
 ##### Call Completion:
 
-1. `TypeVariable(Z) == kotlin/collections/Set<kotlin/Int>` _from Fix variable Z_
-2. Combine `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/Set<kotlin/Int>`
-    1. `TypeVariable(T) <: kotlin/Int`
+1. `TypeVariable(Z) == kotlin/collections/Set<*>` _from Fix variable Z_
 
 ### Call 48
 
@@ -2888,7 +2867,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-   	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	false HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
@@ -2920,7 +2899,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
@@ -2939,7 +2918,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-   	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	false HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
@@ -2976,7 +2955,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-7. `TypeVariable(Z) == kotlin/collections/Set<kotlin/Int>` _from Fix variable Z_
+7. `TypeVariable(Z) == kotlin/collections/Set<*>` _from Fix variable Z_
 
 ### Call 53
 
@@ -3119,8 +3098,6 @@ Q|kotlin/collections|.setOf#(String(!))
 ##### Resolution Stages > CheckArguments:
 
 1. `kotlin/String <: TypeVariable(T)` _from Argument String(!)_
-2. Combine `kotlin/String <: TypeVariable(T)` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/String> <: TypeVariable(Z)`
 
 ### Call 56
 
@@ -3158,17 +3135,10 @@ Q|kotlin/collections|.setOf#(String(!))
 x#
 ```
 
-#### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: Set<String>`
+#### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: Set<*>`
 ##### Call Completion:
 
-1. `TypeVariable(Z) == kotlin/collections/Set<kotlin/String>` _from Fix variable Z_
-2. Combine `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/Set<kotlin/String>`
-    1. `TypeVariable(T) <: kotlin/String`
-3. __NewConstraintError: `ILT: 1 <: kotlin/String`__
-4. Combine `kotlin/String <: TypeVariable(T)` with `TypeVariable(T) <: kotlin/String`
-    1. `TypeVariable(T) == kotlin/String`
-5. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/String> <: TypeVariable(Z)`
+1. `TypeVariable(Z) == kotlin/collections/Set<*>` _from Fix variable Z_
 
 ### Call 53
 
@@ -3184,58 +3154,8 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
 #### Candidate 1: `FirNamedFunctionSymbol /buildBox` --- `fun <Z> buildBox(block: Box<Z>.() -> Unit): Box<Z>`
 ##### Continue Call Completion:
 
-1. Choose `TypeVariable(T)` with `Readiness(
-   	 true ALLOWED
-   	 true HAS_PROPER_CONSTRAINTS
-   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false REIFIED
-   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-   	 true HAS_PROPER_NON_ILT_CONSTRAINT
-   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-   	 true HAS_PROPER_EQUALITY_CONSTRAINT
-   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-   )`
-    1. `TypeVariable(Z)` is `Readiness(
-       	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
-       	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-       	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-       	false REIFIED
-       	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
-       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-       	 true HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-       )`
-    2. `TypeVariable(T)` is `Readiness(
-       	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
-       	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-       	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-       	false REIFIED
-       	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
-       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-       	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-       )`
-2. `TypeVariable(T) == kotlin/String` _from Fix variable T_
-3. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/String> <: TypeVariable(Z)`
-4. Choose `TypeVariable(T)` with `Readiness(
+1. `kotlin/Unit <: kotlin/Unit` _from LambdaArgument_
+2. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -3267,12 +3187,61 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-5. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-6. __NewConstraintError: `kotlin/Int <: kotlin/String`__
+    2. `TypeVariable(T)` is `Readiness(
+       	 true ALLOWED
+       	 true HAS_PROPER_CONSTRAINTS
+       	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false REIFIED
+       	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
+       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+       	false HAS_PROPER_EQUALITY_CONSTRAINT
+       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       )`
+3. `TypeVariable(T) == kotlin/String` _from Fix variable T_
+4. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
+    1. `kotlin/collections/Set<kotlin/String> <: TypeVariable(Z)`
+5. Choose `TypeVariable(T)` with `Readiness(
+   	 true ALLOWED
+   	 true HAS_PROPER_CONSTRAINTS
+   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
+   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+   	false HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+   	false HAS_PROPER_EQUALITY_CONSTRAINT
+   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+   )`
+    1. `TypeVariable(Z)` is `Readiness(
+       	 true ALLOWED
+       	 true HAS_PROPER_CONSTRAINTS
+       	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false REIFIED
+       	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+       	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+       	 true HAS_PROPER_EQUALITY_CONSTRAINT
+       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       )`
+6. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
 7. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
     1. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)`
-8. __NewConstraintError: `kotlin/collections/Set<kotlin/Int> <: kotlin/collections/Set<kotlin/String>`__
-9. Choose `TypeVariable(Z)` with `Readiness(
+8. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -3288,8 +3257,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-10. `TypeVariable(Z) == kotlin/collections/Set<kotlin/String>` _from Fix variable Z_
-11. __NewConstraintError: `kotlin/collections/Set<kotlin/Int> <: kotlin/collections/Set<kotlin/String>`__
+9. `TypeVariable(Z) == kotlin/collections/Set<*>` _from Fix variable Z_
 
 ### Call 58
 
@@ -3388,8 +3356,6 @@ Q|kotlin/collections|.listOf#(String(!))
 ##### Resolution Stages > CheckArguments:
 
 1. `kotlin/String <: TypeVariable(T)` _from Argument String(!)_
-2. Combine `kotlin/String <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
 
 ### Call 60
 
@@ -3471,17 +3437,10 @@ setOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral(3))
 x#
 ```
 
-#### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: Collection<String>`
+#### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: Collection<*>`
 ##### Call Completion:
 
-1. `TypeVariable(Z) == kotlin/collections/Collection<kotlin/String>` _from Fix variable Z_
-2. Combine `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/Collection<kotlin/String>`
-    1. `TypeVariable(T) <: kotlin/String`
-3. Combine `kotlin/String <: TypeVariable(T)` with `TypeVariable(T) <: kotlin/String`
-    1. `TypeVariable(T) == kotlin/String`
-4. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
-5. __NewConstraintError: `ILT: 1 <: kotlin/String`__
+1. `TypeVariable(Z) == kotlin/collections/Collection<*>` _from Fix variable Z_
 
 ### Call 58
 
@@ -3497,58 +3456,8 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
 #### Candidate 1: `FirNamedFunctionSymbol /buildBox` --- `fun <Z> buildBox(block: Box<Z>.() -> Unit): Box<Z>`
 ##### Continue Call Completion:
 
-1. Choose `TypeVariable(T)` with `Readiness(
-   	 true ALLOWED
-   	 true HAS_PROPER_CONSTRAINTS
-   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false REIFIED
-   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-   	 true HAS_PROPER_NON_ILT_CONSTRAINT
-   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-   	 true HAS_PROPER_EQUALITY_CONSTRAINT
-   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-   )`
-    1. `TypeVariable(Z)` is `Readiness(
-       	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
-       	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-       	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-       	false REIFIED
-       	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
-       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-       	 true HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-       )`
-    2. `TypeVariable(T)` is `Readiness(
-       	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
-       	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-       	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-       	false REIFIED
-       	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
-       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-       	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-       )`
-2. `TypeVariable(T) == kotlin/String` _from Fix variable T_
-3. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
-4. Choose `TypeVariable(T)` with `Readiness(
+1. `kotlin/Unit <: kotlin/Unit` _from LambdaArgument_
+2. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -3580,12 +3489,61 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-5. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-6. __NewConstraintError: `kotlin/Int <: kotlin/String`__
+    2. `TypeVariable(T)` is `Readiness(
+       	 true ALLOWED
+       	 true HAS_PROPER_CONSTRAINTS
+       	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false REIFIED
+       	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
+       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+       	false HAS_PROPER_EQUALITY_CONSTRAINT
+       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       )`
+3. `TypeVariable(T) == kotlin/String` _from Fix variable T_
+4. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
+    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
+5. Choose `TypeVariable(T)` with `Readiness(
+   	 true ALLOWED
+   	 true HAS_PROPER_CONSTRAINTS
+   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
+   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+   	false HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+   	false HAS_PROPER_EQUALITY_CONSTRAINT
+   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+   )`
+    1. `TypeVariable(Z)` is `Readiness(
+       	 true ALLOWED
+       	 true HAS_PROPER_CONSTRAINTS
+       	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false REIFIED
+       	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+       	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+       	 true HAS_PROPER_EQUALITY_CONSTRAINT
+       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       )`
+6. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
 7. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
     1. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)`
-8. __NewConstraintError: `kotlin/collections/Set<kotlin/Int> <: kotlin/collections/Collection<kotlin/String>`__
-9. Choose `TypeVariable(Z)` with `Readiness(
+8. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -3601,8 +3559,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-10. `TypeVariable(Z) == kotlin/collections/Collection<kotlin/String>` _from Fix variable Z_
-11. __NewConstraintError: `kotlin/collections/Set<kotlin/Int> <: kotlin/collections/Collection<kotlin/String>`__
+9. `TypeVariable(Z) == kotlin/collections/Collection<*>` _from Fix variable Z_
 
 ### Call 63
 
@@ -3677,10 +3634,8 @@ Q|kotlin/collections|.listOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiter
 ##### Resolution Stages > CheckArguments:
 
 1. `ILT: 1 <: TypeVariable(T)` _from Argument IntegerLiteral(1)_
-2. Combine `ILT: 1 <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<ILT: 1> <: TypeVariable(Z)`
-3. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
-4. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
+2. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
+3. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
 
 ### Call 65
 
@@ -3730,8 +3685,6 @@ Q|kotlin/collections|.listOf#(String(1), String(2), String(3))
 ##### Resolution Stages > CheckArguments:
 
 1. `kotlin/String <: TypeVariable(T)` _from Argument String(1)_
-2. Combine `kotlin/String <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
 
 ### Call 67
 
@@ -3769,14 +3722,10 @@ Q|kotlin/collections|.listOf#(String(1), String(2), String(3))
 x#
 ```
 
-#### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: List<it(Comparable<*> & Serializable)>`
+#### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: List<*>`
 ##### Call Completion:
 
-1. `TypeVariable(Z) == kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>` _from Fix variable Z_
-2. Combine `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>`
-    1. `TypeVariable(T) <: kotlin/Comparable<*>`
-    2. `TypeVariable(T) <: java/io/Serializable`
-    3. `TypeVariable(T) <: it(kotlin/Comparable<*> & java/io/Serializable)`
+1. `TypeVariable(Z) == kotlin/collections/List<*>` _from Fix variable Z_
 
 ### Call 63
 
@@ -3836,14 +3785,14 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-3. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)`
+3. `TypeVariable(T) == kotlin/String` _from Fix variable T_
+4. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
+    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
 5. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -3855,7 +3804,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-   	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	false HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
@@ -3876,9 +3825,9 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-6. `TypeVariable(T) == kotlin/String` _from Fix variable T_
-7. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
+6. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
+7. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
+    1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)`
 8. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -3895,7 +3844,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-9. `TypeVariable(Z) == kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>` _from Fix variable Z_
+9. `TypeVariable(Z) == kotlin/collections/List<*>` _from Fix variable Z_
 
 ### Call 69
 
@@ -3970,10 +3919,8 @@ Q|kotlin/collections|.listOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiter
 ##### Resolution Stages > CheckArguments:
 
 1. `ILT: 1 <: TypeVariable(T)` _from Argument IntegerLiteral(1)_
-2. Combine `ILT: 1 <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<ILT: 1> <: TypeVariable(Z)`
-3. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
-4. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
+2. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
+3. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
 
 ### Call 71
 
@@ -4011,12 +3958,10 @@ Q|kotlin/collections|.listOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiter
 x#
 ```
 
-#### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: List<Int>`
+#### Candidate 1: `FirRegularPropertySymbol /Box.x` --- `var x: List<it(Comparable<*> & Serializable)>`
 ##### Call Completion:
 
-1. `TypeVariable(Z) == kotlin/collections/List<kotlin/Int>` _from Fix variable Z_
-2. Combine `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/List<kotlin/Int>`
-    1. `TypeVariable(T) <: kotlin/Int`
+1. `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>` _from Fix variable Z_
 
 ### Call 73
 
@@ -4032,8 +3977,12 @@ Q|kotlin/collections|.listOf#(String(1), String(2), String(3))
 ##### Continue Resolution Stages > CheckLowPriorityInOverloadResolution:
 
 1. `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)` _from Argument Q|kotlin/collections|.R?C|kotlin/collections/listOf|(String(1), String(2), String(3))_
-2. Combine `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/List<kotlin/Int>`
-    1. `TypeVariable(T) <: kotlin/Int`
+2. Combine `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>`
+    1. `TypeVariable(T) <: TypeVariable(T)`
+
+##### Resolution Stages > CheckArguments:
+
+1. `kotlin/String <: TypeVariable(T)` _from Argument String(1)_
 
 ### Call 74
 
@@ -4058,7 +4007,7 @@ Q|kotlin/collections|.listOf#(String(1), String(2), String(3))
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    	false HAS_PROPER_EQUALITY_CONSTRAINT
-   	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
 ##### Some addSubtypeConstraintIfCompatible() with currentCommonSystem inside PCLA inference session:
@@ -4098,19 +4047,19 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    )`
     1. `TypeVariable(Z)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-       	 true HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_EQUALITY_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
     2. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
@@ -4126,12 +4075,22 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-3. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
-4. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/Int> <: TypeVariable(Z)`
-5. Choose `TypeVariable(T)` with `Readiness(
+3. `TypeVariable(T) == it(kotlin/Comparable<*> & java/io/Serializable)` _from Fix variable T_
+4. Combine `TypeVariable(T) <: TypeVariable(T)` with `TypeVariable(T) == it(kotlin/Comparable<*> & java/io/Serializable)`
+    1. `TypeVariable(T) <: kotlin/Comparable<*>`
+    2. `TypeVariable(T) <: java/io/Serializable`
+    3. `TypeVariable(T) <: it(kotlin/Comparable<*> & java/io/Serializable)`
+5. Combine `TypeVariable(T) == it(kotlin/Comparable<*> & java/io/Serializable)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
+    1. `kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)> <: TypeVariable(Z)`
+6. Combine `TypeVariable(T) == it(kotlin/Comparable<*> & java/io/Serializable)` with `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>`
+    1. `TypeVariable(Z) <: kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>`
+7. Combine `kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)> <: TypeVariable(Z)` with `TypeVariable(Z) == kotlin/collections/List<TypeVariable(T)>`
+    1. `it(kotlin/Comparable<*> & java/io/Serializable) <: TypeVariable(T)`
+8. Combine `kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)> <: TypeVariable(Z)` with `TypeVariable(Z) <: kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>`
+    1. `TypeVariable(Z) == kotlin/collections/List<it(kotlin/Comparable<*> & java/io/Serializable)>`
+9. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -4145,7 +4104,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
    	false HAS_PROPER_EQUALITY_CONSTRAINT
-   	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
     1. `TypeVariable(Z)` is `Readiness(
        	 true ALLOWED
@@ -4163,23 +4122,25 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-6. Choose `TypeVariable(Z)` with `Readiness(
-   	 true ALLOWED
-   	 true HAS_PROPER_CONSTRAINTS
-   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false REIFIED
-   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-   	 true HAS_PROPER_NON_ILT_CONSTRAINT
-   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-   	 true HAS_PROPER_EQUALITY_CONSTRAINT
-   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-   )`
-7. `TypeVariable(Z) == kotlin/collections/List<kotlin/Int>` _from Fix variable Z_
+10. `TypeVariable(T) == kotlin/String` _from Fix variable T_
+11. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
+    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
+12. Choose `TypeVariable(Z)` with `Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false REIFIED
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	 true HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )`
 
 ### Call 75
 
@@ -4933,12 +4894,8 @@ Q|kotlin/collections|.listOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiter
 ##### Resolution Stages > CheckArguments:
 
 1. `ILT: 1 <: TypeVariable(T)` _from Argument IntegerLiteral(1)_
-2. Combine `ILT: 1 <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(X)`
-    1. `kotlin/collections/List<ILT: 1> <: TypeVariable(X)`
-3. Combine `ILT: 1 <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<ILT: 1> <: TypeVariable(Z)`
-4. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
-5. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
+2. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
+3. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
 
 ### Call 89
 
@@ -4967,19 +4924,19 @@ id#(<collectionLiteralCall>(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral
    )`
     1. `TypeVariable(X)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 
 ##### Some addSubtypeConstraintIfCompatible() with currentCommonSystem inside PCLA inference session:
@@ -5017,35 +4974,35 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    )`
     1. `TypeVariable(Z)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
     2. `TypeVariable(X)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
 4. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(X)`
@@ -5214,12 +5171,8 @@ Q|kotlin/collections|.listOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiter
 ##### Resolution Stages > CheckArguments:
 
 1. `ILT: 1 <: TypeVariable(T)` _from Argument IntegerLiteral(1)_
-2. Combine `ILT: 1 <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(X)`
-    1. `kotlin/collections/List<ILT: 1> <: TypeVariable(X)`
-3. Combine `ILT: 1 <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<ILT: 1> <: TypeVariable(Z)`
-4. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
-5. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
+2. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
+3. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
 
 ### Call 92
 
@@ -5248,19 +5201,19 @@ id#(<collectionLiteralCall>(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral
    )`
     1. `TypeVariable(X)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 
 ##### Some addSubtypeConstraintIfCompatible() with currentCommonSystem inside PCLA inference session:
@@ -5321,10 +5274,6 @@ Q|kotlin/collections|.listOf#(String(1), String(2), String(3))
 ##### Resolution Stages > CheckArguments:
 
 1. `kotlin/String <: TypeVariable(T)` _from Argument String(1)_
-2. Combine `kotlin/String <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(X)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(X)`
-3. Combine `kotlin/String <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
 
 ### Call 94
 
@@ -5353,19 +5302,19 @@ id#(<collectionLiteralCall>(String(1), String(2), String(3)))
    )`
     1. `TypeVariable(X)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 
 ##### Some addSubtypeConstraintIfCompatible() with currentCommonSystem inside PCLA inference session:
@@ -5404,35 +5353,35 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    )`
     1. `TypeVariable(Z)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-       	false REIFIED
-       	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
-       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-       	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-       )`
-    2. `TypeVariable(X)` is `Readiness(
-       	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
-       	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-       	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       )`
+    2. `TypeVariable(X)` is `Readiness(
+       	 true ALLOWED
+       	false HAS_PROPER_CONSTRAINTS
+       	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false REIFIED
+       	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
+       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+       	false HAS_PROPER_EQUALITY_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
     3. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
@@ -5452,19 +5401,19 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        )`
     4. `TypeVariable(X)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/String` _from Fix variable T_
 4. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(X)`
@@ -5505,19 +5454,19 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        )`
     2. `TypeVariable(X)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
     3. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
@@ -5570,19 +5519,19 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        )`
     2. `TypeVariable(X)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 9. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
 10. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(X)`
@@ -5794,10 +5743,6 @@ Q|kotlin/collections|.setOf#(String(1), String(2), String(3))
 ##### Resolution Stages > CheckArguments:
 
 1. `kotlin/String <: TypeVariable(T)` _from Argument String(1)_
-2. Combine `kotlin/String <: TypeVariable(T)` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(X)`
-    1. `kotlin/collections/Set<kotlin/String> <: TypeVariable(X)`
-3. Combine `kotlin/String <: TypeVariable(T)` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<kotlin/String> <: TypeVariable(Z)`
 
 ### Call 98
 
@@ -5826,19 +5771,19 @@ id#(<collectionLiteralCall>(String(1), String(2), String(3)))
    )`
     1. `TypeVariable(X)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 
 ##### Some addSubtypeConstraintIfCompatible() with currentCommonSystem inside PCLA inference session:
@@ -5877,19 +5822,19 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    )`
     1. `TypeVariable(Z)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
     2. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
@@ -5909,19 +5854,19 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        )`
     3. `TypeVariable(X)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/String` _from Fix variable T_
 4. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(X)`
@@ -6229,10 +6174,8 @@ Q|kotlin/collections|.setOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLitera
 ##### Resolution Stages > CheckArguments:
 
 1. `ILT: 1 <: TypeVariable(T)` _from Argument IntegerLiteral(1)_
-2. Combine `ILT: 1 <: TypeVariable(T)` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/Set<ILT: 1> <: TypeVariable(Z)`
-3. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
-4. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
+2. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
+3. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
 
 ### Call 104
 
@@ -6301,10 +6244,6 @@ R?C|/runIf|(Boolean(true), <L> = runIf@fun <anonymous>(): <implicit> <inline=Unk
     2. `TypeVariable(R) <: TypeVariable(K)?`
 7. Combine `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)` with `TypeVariable(Z) == TypeVariable(K)`
     1. `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(K)`
-8. Combine `kotlin/collections/Set<ILT: 1> <: TypeVariable(Z)` with `TypeVariable(Z) == TypeVariable(K)`
-    1. `kotlin/collections/Set<ILT: 1> <: TypeVariable(K)`
-9. Combine `kotlin/collections/Set<ILT: 1> <: TypeVariable(K)` with `TypeVariable(K) == TypeVariable(Z)`
-    1. `kotlin/collections/Set<ILT: 1> <: TypeVariable(Z)`
 
 ##### Call Completion:
 
@@ -6326,19 +6265,19 @@ R?C|/runIf|(Boolean(true), <L> = runIf@fun <anonymous>(): <implicit> <inline=Unk
    )`
     1. `TypeVariable(K)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
     2. `TypeVariable(R)` is `Readiness(
        	 true ALLOWED
@@ -6413,19 +6352,19 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    )`
     1. `TypeVariable(Z)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
     2. `TypeVariable(R)` is `Readiness(
        	 true ALLOWED
@@ -6461,19 +6400,19 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        )`
     4. `TypeVariable(K)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
 4. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
@@ -6775,12 +6714,8 @@ Q|kotlin/collections|.listOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiter
 ##### Resolution Stages > CheckArguments:
 
 1. `ILT: 1 <: TypeVariable(T)` _from Argument IntegerLiteral(1)_
-2. Combine `ILT: 1 <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(R)`
-    1. `kotlin/collections/List<ILT: 1> <: TypeVariable(R)`
-3. Combine `ILT: 1 <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<ILT: 1> <: TypeVariable(Z)`
-4. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
-5. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
+2. `ILT: 2 <: TypeVariable(T)` _from Argument IntegerLiteral(2)_
+3. `ILT: 3 <: TypeVariable(T)` _from Argument IntegerLiteral(3)_
 
 ### Call 107
 
@@ -6812,19 +6747,19 @@ runIf#(Boolean(true), <L> = runIf@fun <implicit>.<anonymous>(): <implicit> <inli
    )`
     1. `TypeVariable(R)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 
 ### Call 109
@@ -6845,8 +6780,6 @@ Q|kotlin/collections|.listOf#(String(1), String(2), String(3))
 ##### Resolution Stages > CheckArguments:
 
 1. `kotlin/String <: TypeVariable(T)` _from Argument String(1)_
-2. Combine `kotlin/String <: TypeVariable(T)` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
 
 ### Call 110
 
@@ -6895,8 +6828,6 @@ R?C|/runIf|(Boolean(true), <L> = runIf@fun <anonymous>(): <implicit> <inline=Unk
     2. `TypeVariable(R) <: TypeVariable(K)?`
 2. Combine `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(R)` with `TypeVariable(R) <: TypeVariable(K)?`
     1. `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(K)`
-3. Combine `kotlin/collections/List<ILT: 1> <: TypeVariable(R)` with `TypeVariable(R) <: TypeVariable(K)?`
-    1. `kotlin/collections/List<ILT: 1> <: TypeVariable(K)`
 
 ##### Resolution Stages > CheckIncompatibleTypeVariableUpperBounds:
 
@@ -6908,23 +6839,15 @@ R?C|/runIf|(Boolean(true), <L> = runIf@fun <anonymous>(): <implicit> <inline=Unk
     2. `TypeVariable(R) <: TypeVariable(Z)?`
 3. Combine `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(K)` with `TypeVariable(K) <: TypeVariable(Z)`
     1. `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
-4. Combine `kotlin/collections/List<ILT: 1> <: TypeVariable(K)` with `TypeVariable(K) <: TypeVariable(Z)`
-    1. `kotlin/collections/List<ILT: 1> <: TypeVariable(Z)`
-5. Combine `TypeVariable(K) <: TypeVariable(Z)` with `TypeVariable(Z) <: TypeVariable(K)`
+4. Combine `TypeVariable(K) <: TypeVariable(Z)` with `TypeVariable(Z) <: TypeVariable(K)`
     1. `TypeVariable(K) == TypeVariable(Z)`
-6. Combine `TypeVariable(K) <: TypeVariable(Z)` with `TypeVariable(Z) <: TypeVariable(K)`
+5. Combine `TypeVariable(K) <: TypeVariable(Z)` with `TypeVariable(Z) <: TypeVariable(K)`
     1. `TypeVariable(Z) == TypeVariable(K)`
-7. Combine `TypeVariable(R) & Any <: TypeVariable(Z)` with `TypeVariable(Z) == TypeVariable(K)`
+6. Combine `TypeVariable(R) & Any <: TypeVariable(Z)` with `TypeVariable(Z) == TypeVariable(K)`
     1. `TypeVariable(R) & Any <: TypeVariable(K)`
     2. `TypeVariable(R) <: TypeVariable(K)?`
-8. Combine `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)` with `TypeVariable(Z) == TypeVariable(K)`
+7. Combine `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)` with `TypeVariable(Z) == TypeVariable(K)`
     1. `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(K)`
-9. Combine `kotlin/collections/List<ILT: 1> <: TypeVariable(Z)` with `TypeVariable(Z) == TypeVariable(K)`
-    1. `kotlin/collections/List<ILT: 1> <: TypeVariable(K)`
-10. Combine `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)` with `TypeVariable(Z) == TypeVariable(K)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(K)`
-11. Combine `kotlin/collections/List<kotlin/String> <: TypeVariable(K)` with `TypeVariable(K) == TypeVariable(Z)`
-    1. `kotlin/collections/List<kotlin/String> <: TypeVariable(Z)`
 
 ##### Call Completion:
 
@@ -6946,35 +6869,35 @@ R?C|/runIf|(Boolean(true), <L> = runIf@fun <anonymous>(): <implicit> <inline=Unk
    )`
     1. `TypeVariable(K)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-       	false REIFIED
-       	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
-       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-       	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-       )`
-    2. `TypeVariable(R)` is `Readiness(
-       	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
-       	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-       	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       )`
+    2. `TypeVariable(R)` is `Readiness(
+       	 true ALLOWED
+       	false HAS_PROPER_CONSTRAINTS
+       	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false REIFIED
+       	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
+       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+       	false HAS_PROPER_EQUALITY_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
     3. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
@@ -7033,35 +6956,35 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    )`
     1. `TypeVariable(Z)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-       	false REIFIED
-       	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
-       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-       	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-       )`
-    2. `TypeVariable(R)` is `Readiness(
-       	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
-       	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-       	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       )`
+    2. `TypeVariable(R)` is `Readiness(
+       	 true ALLOWED
+       	false HAS_PROPER_CONSTRAINTS
+       	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+       	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false REIFIED
+       	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
+       	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+       	false HAS_PROPER_EQUALITY_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
     3. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
@@ -7081,19 +7004,19 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        )`
     4. `TypeVariable(K)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-       	 true HAS_PROPER_NON_ILT_CONSTRAINT
+       	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 3. `TypeVariable(T) == kotlin/String` _from Fix variable T_
 4. Combine `TypeVariable(T) == kotlin/String` with `kotlin/collections/List<TypeVariable(T)> <: TypeVariable(Z)`
@@ -7134,19 +7057,19 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        )`
     2. `TypeVariable(R)` is `Readiness(
        	 true ALLOWED
-       	 true HAS_PROPER_CONSTRAINTS
+       	false HAS_PROPER_CONSTRAINTS
        	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
        	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-       	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+       	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
        	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-       	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+       	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
        	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
        	false HAS_PROPER_EQUALITY_CONSTRAINT
-       	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+       	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
     3. `TypeVariable(K)` is `Readiness(
        	 true ALLOWED
@@ -8308,8 +8231,6 @@ setOf#(IntegerLiteral(42))
 ##### Continue Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 
 1. `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)` _from ExpectedType for some call_
-2. Combine `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)` with `TypeVariable(K) == TypeVariable(Z)`
-    1. `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(K)`
 
 ##### Call Completion:
 
@@ -8439,7 +8360,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
 3. `TypeVariable(T) == kotlin/Int` _from Fix variable T_
 4. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(Z)`
     1. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)`
-5. Combine `TypeVariable(T) == kotlin/Int` with `kotlin/collections/Set<TypeVariable(T)> <: TypeVariable(K)`
+5. Combine `kotlin/collections/Set<kotlin/Int> <: TypeVariable(Z)` with `TypeVariable(K) == TypeVariable(Z)`
     1. `kotlin/collections/Set<kotlin/Int> <: TypeVariable(K)`
 6. Choose `TypeVariable(Z)` with `Readiness(
    	 true ALLOWED
