@@ -1,0 +1,29 @@
+@kotlin.Metadata
+public final class BoxKt {
+    // source: 'Box.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class Money {
+    // source: 'IC.kt'
+    private final field cents: int
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(p0: int): void
+    private synthetic method <init>(p0: int, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic final static method box-impl(p0: int): Money
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method combineWith(@org.jetbrains.annotations.NotNull p0: Money): Money
+    public final static method combineWith-YPPxQr0(p0: int, p1: int): int
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getCents(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method plus(@org.jetbrains.annotations.NotNull p0: Money): Money
+    public final static method plus-YPPxQr0(p0: int, p1: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}

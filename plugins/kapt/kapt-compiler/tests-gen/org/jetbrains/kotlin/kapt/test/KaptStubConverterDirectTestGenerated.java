@@ -977,4 +977,66 @@ public class KaptStubConverterDirectTestGenerated extends AbstractKaptStubConver
       run("noCompatibility1.8.kt");
     }
   }
+
+  @Nested
+  @TestMetadata("plugins/kapt/kapt-compiler/testData/converter/jvmExposeBoxed")
+  @TestDataPath("$PROJECT_ROOT")
+  public class JvmExposeBoxed {
+    private void run(String fileName) {
+      runTest("plugins/kapt/kapt-compiler/testData/converter/jvmExposeBoxed/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInJvmExposeBoxed() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt/kapt-compiler/testData/converter/jvmExposeBoxed"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("annotationClass.kt")
+    public void testAnnotationClass() {
+      run("annotationClass.kt");
+    }
+
+    @Test
+    @TestMetadata("classLevel.kt")
+    public void testClassLevel() {
+      run("classLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("flagMode.kt")
+    public void testFlagMode() {
+      run("flagMode.kt");
+    }
+
+    @Test
+    @TestMetadata("funInterfaceMangledOnly.kt")
+    public void testFunInterfaceMangledOnly() {
+      run("funInterfaceMangledOnly.kt");
+    }
+
+    @Test
+    @TestMetadata("functions.kt")
+    public void testFunctions() {
+      run("functions.kt");
+    }
+
+    @Test
+    @TestMetadata("override.kt")
+    public void testOverride() {
+      run("override.kt");
+    }
+
+    @Test
+    @TestMetadata("unexposedValueClass.kt")
+    public void testUnexposedValueClass() {
+      run("unexposedValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("varargUnsigned.kt")
+    public void testVarargUnsigned() {
+      run("varargUnsigned.kt");
+    }
+  }
 }

@@ -1488,6 +1488,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     }
 
     @Test
+    @TestMetadata("genericValueClass.kt")
+    public void testGenericValueClass() {
+      run("genericValueClass.kt");
+    }
+
+    @Test
     @TestMetadata("getter.kt")
     public void testGetter() {
       run("getter.kt");
@@ -1578,6 +1584,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     }
 
     @Test
+    @TestMetadata("nestedValueClass.kt")
+    public void testNestedValueClass() {
+      run("nestedValueClass.kt");
+    }
+
+    @Test
     @TestMetadata("noArg.kt")
     public void testNoArg() {
       run("noArg.kt");
@@ -1605,6 +1617,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     @TestMetadata("noArgNoValueClass.kt")
     public void testNoArgNoValueClass() {
       run("noArgNoValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("operatorAndInfix.kt")
+    public void testOperatorAndInfix() {
+      run("operatorAndInfix.kt");
     }
 
     @Test
@@ -1638,6 +1656,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     }
 
     @Test
+    @TestMetadata("typealiasToValueClass.kt")
+    public void testTypealiasToValueClass() {
+      run("typealiasToValueClass.kt");
+    }
+
+    @Test
     @TestMetadata("uint.kt")
     public void testUint() {
       run("uint.kt");
@@ -1653,6 +1677,18 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     @TestMetadata("uintReceiver.kt")
     public void testUintReceiver() {
       run("uintReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("underlyingEnumAndArray.kt")
+    public void testUnderlyingEnumAndArray() {
+      run("underlyingEnumAndArray.kt");
+    }
+
+    @Test
+    @TestMetadata("unsignedTypes.kt")
+    public void testUnsignedTypes() {
+      run("unsignedTypes.kt");
     }
 
     @Nested
@@ -1947,6 +1983,18 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
       }
 
       @Test
+      @TestMetadata("annotationClass.kt")
+      public void testAnnotationClass() {
+        run("annotationClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funInterface.kt")
+      public void testFunInterface() {
+        run("funInterface.kt");
+      }
+
+      @Test
       @TestMetadata("globalLateinit.kt")
       public void testGlobalLateinit() {
         run("globalLateinit.kt");
@@ -2166,6 +2214,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
       @TestMetadata("vararg.kt")
       public void testVararg() {
         run("vararg.kt");
+      }
+
+      @Test
+      @TestMetadata("varargUnsigned.kt")
+      public void testVarargUnsigned() {
+        run("varargUnsigned.kt");
       }
     }
 

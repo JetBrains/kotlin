@@ -1,0 +1,81 @@
+@kotlin.Metadata
+public final class BoxKt {
+    // source: 'Box.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class ICKt {
+    // source: 'IC.kt'
+    public final static @kotlin.jvm.JvmExposeBoxed(jvmName="newListHolder") @org.jetbrains.annotations.NotNull method newListHolder(): ListHolder
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class Id {
+    // source: 'IC.kt'
+    private final @org.jetbrains.annotations.NotNull field value: java.lang.String
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    private synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic final static method box-impl(p0: java.lang.String): Id
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.String, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.String, p1: java.lang.String): boolean
+    public final @org.jetbrains.annotations.NotNull method getValue(): java.lang.String
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.String): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class ListHolder {
+    // source: 'IC.kt'
+    private synthetic final field $$delegate_0: java.util.List
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.List): void
+    public @kotlin.IgnorableReturnValue @kotlin.jvm.JvmExposeBoxed(jvmName="") method add(@org.jetbrains.annotations.NotNull p0: Id): boolean
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method add(p0: int, @org.jetbrains.annotations.NotNull p1: Id): void
+    public synthetic bridge method add(p0: int, p1: java.lang.Object): void
+    public synthetic bridge @kotlin.IgnorableReturnValue method add(p0: java.lang.Object): boolean
+    public @kotlin.IgnorableReturnValue method add-tmnojjU(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
+    public method add-x3lP4Pk(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    public @kotlin.IgnorableReturnValue method addAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public @kotlin.IgnorableReturnValue method addAll(p0: int, @org.jetbrains.annotations.NotNull p1: java.util.Collection): boolean
+    public method clear(): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method contains(@org.jetbrains.annotations.NotNull p0: Id): boolean
+    public bridge final method contains(p0: java.lang.Object): boolean
+    public method contains-tmnojjU(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
+    public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method get(p0: int): Id
+    public synthetic bridge method get(p0: int): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method get-wg9vVgU(p0: int): java.lang.String
+    public method getSize(): int
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method indexOf(@org.jetbrains.annotations.NotNull p0: Id): int
+    public bridge final method indexOf(p0: java.lang.Object): int
+    public method indexOf-tmnojjU(@org.jetbrains.annotations.NotNull p0: java.lang.String): int
+    public method isEmpty(): boolean
+    public @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method lastIndexOf(@org.jetbrains.annotations.NotNull p0: Id): int
+    public bridge final method lastIndexOf(p0: java.lang.Object): int
+    public method lastIndexOf-tmnojjU(@org.jetbrains.annotations.NotNull p0: java.lang.String): int
+    public @org.jetbrains.annotations.NotNull method listIterator(): java.util.ListIterator
+    public @org.jetbrains.annotations.NotNull method listIterator(p0: int): java.util.ListIterator
+    public @kotlin.IgnorableReturnValue @kotlin.jvm.JvmExposeBoxed(jvmName="") method remove(@org.jetbrains.annotations.NotNull p0: Id): boolean
+    public synthetic bridge @kotlin.IgnorableReturnValue method remove(p0: int): java.lang.Object
+    public bridge final @kotlin.IgnorableReturnValue method remove(p0: int): java.lang.String
+    public bridge final @kotlin.IgnorableReturnValue method remove(p0: java.lang.Object): boolean
+    public @kotlin.IgnorableReturnValue method remove-tmnojjU(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
+    public @kotlin.IgnorableReturnValue method removeAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public @kotlin.IgnorableReturnValue @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method removeAt(p0: int): Id
+    public @kotlin.IgnorableReturnValue @org.jetbrains.annotations.NotNull method removeAt-wg9vVgU(p0: int): java.lang.String
+    public @kotlin.IgnorableReturnValue method retainAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public @kotlin.IgnorableReturnValue @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method set(p0: int, @org.jetbrains.annotations.NotNull p1: Id): Id
+    public synthetic bridge @kotlin.IgnorableReturnValue method set(p0: int, p1: java.lang.Object): java.lang.Object
+    public @kotlin.IgnorableReturnValue @org.jetbrains.annotations.NotNull method set--tkJBTk(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
+    public bridge final method size(): int
+    public @org.jetbrains.annotations.NotNull method subList(p0: int, p1: int): java.util.List
+    public method toArray(): java.lang.Object[]
+    public method toArray(p0: java.lang.Object[]): java.lang.Object[]
+}

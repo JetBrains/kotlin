@@ -1,0 +1,7 @@
+@kotlin.Metadata
+public final class VarargUnsignedKt {
+    // source: 'varargUnsigned.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public varargs final static @kotlin.jvm.JvmExposeBoxed @org.jetbrains.annotations.NotNull method sumOf(@org.jetbrains.annotations.NotNull p0: kotlin.UIntArray): kotlin.UInt
+    public varargs final static method sumOf--ajY-9A(@org.jetbrains.annotations.NotNull p0: int[]): int
+}

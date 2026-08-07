@@ -1,0 +1,25 @@
+@kotlin.Metadata
+public final class BoxKt {
+    // source: 'Box.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final inner class kotlin/time/Duration$Companion
+}
+
+@kotlin.Metadata
+public final class ICKt {
+    // source: 'IC.kt'
+    public final static @kotlin.jvm.JvmExposeBoxed(jvmName="createDuration") @org.jetbrains.annotations.NotNull method createDuration(): kotlin.time.Duration
+    public final static method makeDuration(): long
+    public final inner class kotlin/time/Duration$Companion
+}
+
+@kotlin.Metadata
+public final class Timeout {
+    // source: 'IC.kt'
+    private final field duration: long
+    public @kotlin.jvm.JvmExposeBoxed method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.time.Duration): void
+    private method <init>(p0: long): void
+    public synthetic method <init>(p0: long, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method getDuration(): kotlin.time.Duration
+    public final method getDuration-UwyO8pc(): long
+}

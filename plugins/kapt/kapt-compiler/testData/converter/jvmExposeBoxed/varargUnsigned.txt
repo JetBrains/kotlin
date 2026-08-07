@@ -1,0 +1,52 @@
+/**
+ * public final class Host : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: member-JpblYG8([I)I
+ *   @kotlin/jvm/JvmExposeBoxed
+ *   public final fun member(vararg counts: kotlin/UInt (* kotlin/UIntArray *)): kotlin/UInt
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Host {
+
+    public Host() {
+        super();
+    }
+
+    @kotlin.jvm.JvmExposeBoxed()
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.UInt member(@org.jetbrains.annotations.NotNull()
+    kotlin.UIntArray counts) {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * package {
+ *
+ *   // signature: sumOf--ajY-9A([I)I
+ *   @kotlin/jvm/JvmExposeBoxed
+ *   public final fun sumOf(vararg counts: kotlin/UInt (* kotlin/UIntArray *)): kotlin/UInt
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class, kotlin.ExperimentalUnsignedTypes.class})
+public final class VarargUnsignedKt {
+
+    @kotlin.jvm.JvmExposeBoxed()
+    @org.jetbrains.annotations.NotNull()
+    public static final kotlin.UInt sumOf(@org.jetbrains.annotations.NotNull()
+    kotlin.UIntArray counts) {
+        return null;
+    }
+}

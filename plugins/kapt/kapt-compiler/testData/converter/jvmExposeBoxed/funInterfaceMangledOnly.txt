@@ -1,0 +1,108 @@
+/**
+ * public abstract fun interface ControlTransform : kotlin/Any {
+ *
+ *   // signature: apply(Ljava/lang/String;)Ljava/lang/String;
+ *   public abstract fun apply(s: kotlin/String): kotlin/String
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface ControlTransform {
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.lang.String apply(@org.jetbrains.annotations.NotNull()
+    java.lang.String s);
+}
+
+////////////////////
+
+
+@kotlin.jvm.JvmInline()
+/**
+ * @kotlin/jvm/JvmInline
+ * @kotlin/jvm/JvmExposeBoxed
+ * public final value class Id : kotlin/Any {
+ *
+ *   // signature: constructor-impl(Ljava/lang/String;)Ljava/lang/String;
+ *   public constructor(value: kotlin/String)
+ *
+ *   // signature: equals-impl(Ljava/lang/String;Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode-impl(Ljava/lang/String;)I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString-impl(Ljava/lang/String;)Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: value:Ljava/lang/String;
+ *   // getter: getValue()Ljava/lang/String;
+ *   public final val value: kotlin/String
+ *     public final get
+ *
+ *   // underlying property: value
+ *
+ *   // underlying type: kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Id {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String value = null;
+
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+    public Id(@org.jetbrains.annotations.NotNull()
+    java.lang.String value) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getValue() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract fun interface Transform : kotlin/Any {
+ *
+ *   // signature: apply-hr2SalY(Ljava/lang/String;)Ljava/lang/String;
+ *   public abstract fun apply(id: Id): Id
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Transform {
+}

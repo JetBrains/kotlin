@@ -1,0 +1,175 @@
+/**
+ * public abstract interface Base : kotlin/Any {
+ *
+ *   // signature: transform-hr2SalY(Ljava/lang/String;)Ljava/lang/String;
+ *   public abstract fun transform(id: Id): Id
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Base {
+}
+
+////////////////////
+
+
+/**
+ * public open class ControlBase : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: plain(Ljava/lang/String;)Ljava/lang/String;
+ *   public open fun plain(s: kotlin/String): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public class ControlBase {
+
+    public ControlBase() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String plain(@org.jetbrains.annotations.NotNull()
+    java.lang.String s) {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class ControlDerived : ControlBase {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: plain(Ljava/lang/String;)Ljava/lang/String;
+ *   public open fun plain(s: kotlin/String): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ControlDerived extends ControlBase {
+
+    public ControlDerived() {
+        super();
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String plain(@org.jetbrains.annotations.NotNull()
+    java.lang.String s) {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class Derived : Base {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: transform-hr2SalY(Ljava/lang/String;)Ljava/lang/String;
+ *   @kotlin/jvm/JvmExposeBoxed
+ *   public open fun transform(id: Id): Id
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Derived implements Base {
+
+    public Derived() {
+        super();
+    }
+
+    @java.lang.Override()
+    @kotlin.jvm.JvmExposeBoxed()
+    @org.jetbrains.annotations.NotNull()
+    public Id transform(@org.jetbrains.annotations.NotNull()
+    Id id) {
+        return null;
+    }
+}
+
+////////////////////
+
+
+@kotlin.jvm.JvmInline()
+/**
+ * @kotlin/jvm/JvmInline
+ * @kotlin/jvm/JvmExposeBoxed
+ * public final value class Id : kotlin/Any {
+ *
+ *   // signature: constructor-impl(Ljava/lang/String;)Ljava/lang/String;
+ *   public constructor(value: kotlin/String)
+ *
+ *   // signature: equals-impl(Ljava/lang/String;Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode-impl(Ljava/lang/String;)I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString-impl(Ljava/lang/String;)Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: value:Ljava/lang/String;
+ *   // getter: getValue()Ljava/lang/String;
+ *   public final val value: kotlin/String
+ *     public final get
+ *
+ *   // underlying property: value
+ *
+ *   // underlying type: kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Id {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String value = null;
+
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+    public Id(@org.jetbrains.annotations.NotNull()
+    java.lang.String value) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getValue() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public java.lang.String toString() {
+        return null;
+    }
+}
