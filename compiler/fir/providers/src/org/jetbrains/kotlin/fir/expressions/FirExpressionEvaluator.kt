@@ -800,7 +800,7 @@ private fun evaluateUnary(arg: FirExpression, argType: ConeKotlinType, callableI
         callableId.callableName.asString(),
         compileTimeType,
         opr
-    )
+    ).normalize()
 }
 
 // Binary operators
@@ -841,7 +841,13 @@ private fun evaluateBinary(
         opr1,
         rightCompileTimeType,
         opr2
-    )
+    ).normalize()
+}
+
+private fun Any?.normalize(): Any? {
+    if (this is Float && this.isNaN()) return Float.NaN
+    if (this is Double && this.isNaN()) return Double.NaN
+    return this
 }
 
 private fun Any?.adjustTypeAndConvertToResult(original: FirExpression, expectedType: ConeKotlinType = original.resolvedType): FirEvaluatorResult {
