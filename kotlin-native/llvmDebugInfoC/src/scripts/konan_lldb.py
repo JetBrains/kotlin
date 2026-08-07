@@ -1307,12 +1307,7 @@ def _synthetic_child_index(value, name):
     synthetic = _synthetic_value_or_self(value)
     if synthetic is None:
         return -1
-    for index in range(synthetic.GetNumChildren()):
-        child = synthetic.GetChildAtIndex(index)
-        if child is not None and child.IsValid() and child.GetName() == name:
-            return index
-    return -1
-
+    return synthetic.GetIndexOfChildWithName(name)
 
 def _synthetic_child_at_index(value, index):
     synthetic = _synthetic_value_or_self(value)
