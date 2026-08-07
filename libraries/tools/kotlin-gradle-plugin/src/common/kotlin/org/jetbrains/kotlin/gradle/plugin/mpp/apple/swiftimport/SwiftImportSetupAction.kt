@@ -559,7 +559,7 @@ private fun Project.updateDependenciesWithAggregatedResults(
             aggregationService.get().buildAggregatedResultDependencies(
                 packageResolvedSynchronizationIdentifier
             ).map {
-                project.dependencies.project(it)
+                project.dependencies.project(mapOf("path" to it))
             }
         }
     )
