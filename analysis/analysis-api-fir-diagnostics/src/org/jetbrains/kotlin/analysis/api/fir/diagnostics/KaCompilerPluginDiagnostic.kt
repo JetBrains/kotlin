@@ -57,3 +57,54 @@ public interface KaCompilerPluginDiagnostic4 : KaFirDiagnostic<PsiElement> {
     override val diagnosticClass: KClass<KaCompilerPluginDiagnostic4>
         get() = KaCompilerPluginDiagnostic4::class
 }
+
+
+@Deprecated(
+    message = "Use KaCompilerPluginDiagnostic0 instead",
+    replaceWith = ReplaceWith(
+        expression = "KaCompilerPluginDiagnostic0",
+        imports = ["org.jetbrains.kotlin.analysis.api.fir.diagnostics.KaCompilerPluginDiagnostic0"]
+    )
+)
+@OptIn(KaUnstableDiagnosticApi::class)
+public typealias KtCompilerPluginDiagnostic0 = KaCompilerPluginDiagnostic0
+
+@Deprecated(
+    message = "Use KaCompilerPluginDiagnostic1 instead",
+    replaceWith = ReplaceWith(
+        expression = "KaCompilerPluginDiagnostic1",
+        imports = ["org.jetbrains.kotlin.analysis.api.fir.diagnostics.KaCompilerPluginDiagnostic1"]
+    )
+)
+@OptIn(KaUnstableDiagnosticApi::class)
+public typealias KtCompilerPluginDiagnostic1 = KaCompilerPluginDiagnostic1
+
+@Deprecated(
+    message = "Use KaCompilerPluginDiagnostic2 instead",
+    replaceWith = ReplaceWith(
+        expression = "KaCompilerPluginDiagnostic2",
+        imports = ["org.jetbrains.kotlin.analysis.api.fir.diagnostics.KaCompilerPluginDiagnostic2"]
+    )
+)
+@OptIn(KaUnstableDiagnosticApi::class)
+public typealias KtCompilerPluginDiagnostic2 = KaCompilerPluginDiagnostic2
+
+@Deprecated(
+    message = "Use KaCompilerPluginDiagnostic3 instead",
+    replaceWith = ReplaceWith(
+        expression = "KaCompilerPluginDiagnostic3",
+        imports = ["org.jetbrains.kotlin.analysis.api.fir.diagnostics.KaCompilerPluginDiagnostic3"]
+    )
+)
+@OptIn(KaUnstableDiagnosticApi::class)
+public typealias KtCompilerPluginDiagnostic3 = KaCompilerPluginDiagnostic3
+
+@Deprecated(
+    message = "Use KaCompilerPluginDiagnostic4 instead",
+    replaceWith = ReplaceWith(
+        expression = "KaCompilerPluginDiagnostic4",
+        imports = ["org.jetbrains.kotlin.analysis.api.fir.diagnostics.KaCompilerPluginDiagnostic4"]
+    )
+)
+@OptIn(KaUnstableDiagnosticApi::class)
+public typealias KtCompilerPluginDiagnostic4 = KaCompilerPluginDiagnostic4
