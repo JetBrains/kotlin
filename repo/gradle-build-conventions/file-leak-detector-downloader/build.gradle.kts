@@ -1,7 +1,5 @@
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `java-gradle-plugin`
@@ -12,14 +10,15 @@ description = "Download file-leak-detector JAR."
 
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
-    compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
+    compilerVersion = embeddedKotlinVersion
+    coreLibrariesVersion = embeddedKotlinVersion
     jvmToolchain(17)
+    compilerOptions.allWarningsAsErrors = true
 }
 
 dependencies {
     compileOnly(gradleApi())
     compileOnly(gradleKotlinDsl())
-    compileOnly(kotlin("stdlib", embeddedKotlinVersion))
 }
 
 gradlePlugin {
@@ -31,19 +30,14 @@ gradlePlugin {
     }
 }
 
-tasks.withType<KotlinCompile>().configureEach {
-    compilerOptions {
-        languageVersion.set(KotlinVersion.KOTLIN_2_1)
-        apiVersion.set(KotlinVersion.KOTLIN_2_1)
-    }
-}
-
-project.configurations.named(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main") {
-    resolutionStrategy {
-        eachDependency {
-            if (this.requested.group == "org.jetbrains.kotlin") useVersion(libs.versions.kotlin.`for`.gradle.plugins.compilation.get())
+listOf(
+    org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main",
+).forEach { confName ->
+    project.configurations.named(confName) {
+        resolutionStrategy {
+            eachDependency {
+                if (this.requested.group == "org.jetbrains.kotlin") useVersion(embeddedKotlinVersion)
+            }
         }
     }
 }
-
-kotlin.compilerOptions.moduleName.value(project.name)

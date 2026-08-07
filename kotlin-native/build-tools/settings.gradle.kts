@@ -1,6 +1,3 @@
-import org.gradle.kotlin.dsl.mavenCentral
-import org.gradle.kotlin.dsl.repositories
-
 rootProject.name = "native-build-tools"
 
 pluginManagement {

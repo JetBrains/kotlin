@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     `kotlin-dsl`
@@ -9,18 +10,13 @@ plugins {
 
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
-    compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
+    compilerVersion = embeddedKotlinVersion
+    coreLibrariesVersion = embeddedKotlinVersion
     jvmToolchain(17)
 
     compilerOptions {
+        allWarningsAsErrors = true
         freeCompilerArgs.add("-Xsuppress-version-warnings")
-    }
-
-    target.compilations.getByName("main").compileTaskProvider.configure {
-        compilerOptions.allWarningsAsErrors.set(true)
-    }
-    target.compilations.getByName("test").compileTaskProvider.configure {
-        compilerOptions.freeCompilerArgs.add("-Xskip-metadata-version-check")
     }
 }
 
@@ -73,14 +69,21 @@ tasks.register("checkBuild") {
     dependsOn("test")
 }
 
-project.configurations.configureEach {
-    if (name.startsWith(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME)) {
+// Tests are using Dokka v1 which triggers deprecation warnings
+tasks.named<KotlinJvmCompile>("compileTestKotlin").configure {
+    compilerOptions.allWarningsAsErrors.set(false)
+}
+
+listOf(
+    org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main",
+    org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Test",
+    "compilePluginsBlocksPluginClasspathElements",
+).forEach { confName ->
+    project.configurations.named(confName) {
         resolutionStrategy {
             eachDependency {
-                if (this.requested.group == "org.jetbrains.kotlin") useVersion(libs.versions.kotlin.`for`.gradle.plugins.compilation.get())
+                if (this.requested.group == "org.jetbrains.kotlin") useVersion(embeddedKotlinVersion)
             }
         }
     }
 }
-
-kotlin.compilerOptions.moduleName.value(project.name)

@@ -17,16 +17,14 @@ buildscript {
 }
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") apply false
+    id("org.jetbrains.kotlin.jvm")
     `kotlin-dsl`
 }
 
 dependencies {
     api(gradleApi())
 
-    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
-    api("org.jetbrains.kotlin:kotlin-stdlib:${coreDepsVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:${coreDepsVersion}") { isTransitive = false }
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$embeddedKotlinVersion") { isTransitive = false }
     implementation(kotlinBuildHelpers())
     implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
 
@@ -38,19 +36,6 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}")
 }
 
-tasks.compileKotlin {
-    compilerOptions {
-        optIn.add("kotlin.ExperimentalStdlibApi")
-        freeCompilerArgs.addAll(
-            listOf(
-                "-Xskip-prerelease-check",
-                "-Xsuppress-version-warnings",
-                "-Xallow-unstable-dependencies"
-            )
-        )
-    }
-}
-
 kotlin {
     sourceSets {
         main {
@@ -58,8 +43,20 @@ kotlin {
         }
     }
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
-    compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
+    compilerVersion = embeddedKotlinVersion
+    coreLibrariesVersion = embeddedKotlinVersion
     jvmToolchain(17)
+
+    compilerOptions {
+        optIn.add("kotlin.ExperimentalStdlibApi")
+        freeCompilerArgs.addAll(
+                listOf(
+                        "-Xskip-prerelease-check",
+                        "-Xsuppress-version-warnings",
+                        "-Xallow-unstable-dependencies"
+                )
+        )
+    }
 }
 
 gradlePlugin {
@@ -99,10 +96,15 @@ gradlePlugin {
     }
 }
 
-project.configurations.named(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main") {
-    resolutionStrategy {
-        eachDependency {
-            if (this.requested.group == "org.jetbrains.kotlin") useVersion(libs.versions.kotlin.`for`.gradle.plugins.compilation.get())
+listOf(
+        org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main",
+        "compilePluginsBlocksPluginClasspathElements",
+).forEach { confName ->
+    project.configurations.named(confName) {
+        resolutionStrategy {
+            eachDependency {
+                if (this.requested.group == "org.jetbrains.kotlin") useVersion(embeddedKotlinVersion)
+            }
         }
     }
 }

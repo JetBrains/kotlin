@@ -8,7 +8,8 @@ plugins {
 
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
-    compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
+    compilerVersion = embeddedKotlinVersion
+    coreLibrariesVersion = embeddedKotlinVersion
     jvmToolchain(17)
 
     compilerOptions {
@@ -18,13 +19,13 @@ kotlin {
 }
 
 dependencies {
-    compileOnly(kotlin("stdlib", embeddedKotlinVersion))
     implementation(libs.intellij.asm)
-    implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:${libs.versions.kotlin.`for`.gradle.plugins.compilation.get()}")
+    implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:$embeddedKotlinVersion")
     implementation(libs.diff.utils)
+
     compileOnly(libs.shadow.gradlePlugin)
 
-    testImplementation(kotlin("test", libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
+    testImplementation(kotlin("test"))
     testImplementation(gradleTestKit())
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.platform.launcher)
@@ -38,14 +39,15 @@ tasks.withType<Test>().configureEach {
 /*
 In scope of: https://youtrack.jetbrains.com/issue/KT-81629
  */
-project.configurations.configureEach {
-    if (name.startsWith(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME)) {
+listOf(
+    org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main",
+    "compilePluginsBlocksPluginClasspathElements",
+).forEach { confName ->
+    project.configurations.named(confName) {
         resolutionStrategy {
             eachDependency {
-                if (this.requested.group == "org.jetbrains.kotlin") useVersion(libs.versions.kotlin.`for`.gradle.plugins.compilation.get())
+                if (this.requested.group == "org.jetbrains.kotlin") useVersion(embeddedKotlinVersion)
             }
         }
     }
 }
-
-kotlin.compilerOptions.moduleName.value(project.name)
