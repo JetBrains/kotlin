@@ -544,3 +544,9 @@ class ChainedIterator<T>(delegates: Collection<Iterator<T>>) : Iterator<T> {
         return currentIterator?.next() ?: throw NoSuchElementException()
     }
 }
+
+fun <T> Iterator<T>.skipNext() {
+    // util.runtime is compiled with the language-version=2.2
+    // will be changed to val _ = next() once the module is compiled with >= 2.5
+    next()
+}
