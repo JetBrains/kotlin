@@ -328,12 +328,10 @@ interface AbiFunction : AbiDeclarationWithModality, AbiTypeParametersContainer {
 
 /**
  * The declaration origins that the ABI reader can tell apart. Anything it does not recognize is [OTHER].
+ * Textual ABI dumps do not render origins at all, so everything parsed back from a dump is [OTHER].
  *
- * Origins come from the IR declaration origin serialized in a KLIB. Textual ABI dumps do not render origins at all,
- * so everything parsed back from a dump is [OTHER].
- *
- * Only [AbiFunction] carries an origin so far, as every origin below applies to functions and constructors. Should a
- * lowering ever start adding classes or properties to the ABI, this would need to move up to [AbiDeclaration].
+ * Only [AbiFunction] carries an origin so far, as every origin below applies to functions and constructors.
+ * Should a lowering ever start adding classes or properties to the ABI, this would need to move up to [AbiDeclaration].
  */
 @ExperimentalLibraryAbiReader
 enum class AbiDeclarationOrigin {
