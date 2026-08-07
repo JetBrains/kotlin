@@ -1646,6 +1646,44 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
     }
 
     @Nested
+    @TestMetadata("compiler/psi/psi-impl/testData/psi/annotation/classes")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Classes {
+      private void run(String fileName) {
+        runTest("compiler/psi/psi-impl/testData/psi/annotation/classes/" + fileName);
+      }
+
+      @Test
+      public void testAllFilesPresentInClasses() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/annotation/classes"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("annotated.kt")
+      public void testAnnotated() {
+        run("annotated.kt");
+      }
+
+      @Test
+      @TestMetadata("documented.kt")
+      public void testDocumented() {
+        run("documented.kt");
+      }
+
+      @Test
+      @TestMetadata("plain.kt")
+      public void testPlain() {
+        run("plain.kt");
+      }
+
+      @Test
+      @TestMetadata("withMembers.kt")
+      public void testWithMembers() {
+        run("withMembers.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/psi/psi-impl/testData/psi/annotation/functionalTypes")
     @TestDataPath("$PROJECT_ROOT")
     public class FunctionalTypes {

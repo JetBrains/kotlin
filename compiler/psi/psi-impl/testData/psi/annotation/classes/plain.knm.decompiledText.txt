@@ -1,0 +1,23 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+package test
+
+public final annotation class Empty public constructor() : kotlin.Annotation {
+}
+
+public final annotation class Single public constructor(value: kotlin.String) : kotlin.Annotation {
+    public final val value: kotlin.String /* compiled code */
+}
+
+public final annotation class Defaults public constructor(int: kotlin.Int = COMPILED_CODE, string: kotlin.String = COMPILED_CODE, array: kotlin.IntArray = COMPILED_CODE) : kotlin.Annotation {
+    public final val int: kotlin.Int /* compiled code */
+
+    public final val string: kotlin.String /* compiled code */
+
+    public final val array: kotlin.IntArray /* compiled code */
+}
+
+public final annotation class Varargs public constructor(vararg values: kotlin.String) : kotlin.Annotation {
+    public final val values: kotlin.Array<out kotlin.String> /* compiled code */
+}
