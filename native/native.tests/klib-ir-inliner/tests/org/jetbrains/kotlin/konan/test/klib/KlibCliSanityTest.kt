@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.test.utils.patchManifestAsMap
 import org.jetbrains.kotlin.test.utils.patchManifestToBumpAbiVersion
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Assumptions.assumeTrue
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -361,7 +360,6 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         }
     }
 
-    @Disabled // TODO(KT-61096) Re-enable the test once we stop calling `getFeaturedLibraries()` on 2nd stage.
     @Test
     fun `Compiler rejects libraries from the distribution and C-interop libraries as exported libs`() {
         // Frameworks can be built only on Apple.
