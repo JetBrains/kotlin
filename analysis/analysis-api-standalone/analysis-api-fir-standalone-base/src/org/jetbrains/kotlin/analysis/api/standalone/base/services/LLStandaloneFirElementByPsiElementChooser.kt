@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 
 /**
  * In Standalone mode, deserialized elements don't have sources, so we need to implement [LLFirElementByPsiElementChooser] based on
@@ -105,7 +106,7 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
     private fun typeParametersMatch(psiFunction: KtCallableDeclaration, firFunction: FirCallableDeclaration): Boolean {
         if (firFunction.typeParameters.size != psiFunction.typeParameters.size) return false
         val boundsByName = psiFunction.typeConstraints.groupBy { it.subjectTypeParameterName?.getReferencedName() }
-        firFunction.typeParameters.zip(psiFunction.typeParameters).forEach { [expectedTypeParameter, candidateTypeParameter] ->
+        firFunction.typeParameters.forEachZipped(psiFunction.typeParameters) { expectedTypeParameter, candidateTypeParameter ->
             if (expectedTypeParameter.symbol.name.toString() != candidateTypeParameter.name) return false
             val candidateBounds = mutableListOf<KtTypeReference>()
             candidateBounds.addIfNotNull(candidateTypeParameter.extendsBound)
@@ -114,7 +115,7 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
             }
             val expectedBounds = expectedTypeParameter.symbol.resolvedBounds.filter { it !is FirImplicitNullableAnyTypeRef }
             if (candidateBounds.size != expectedBounds.size) return false
-            expectedBounds.zip(candidateBounds).forEach { [expectedBound, candidateBound] ->
+            expectedBounds.forEachZipped(candidateBounds) { expectedBound, candidateBound ->
                 if (!isTheSameTypes(
                         candidateBound,
                         expectedBound,
@@ -137,7 +138,7 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
             return false
         }
 
-        firParameters.zip(psiParameters).forEach { [expectedParameter, candidateParameter] ->
+        firParameters.forEachZipped(psiParameters) { expectedParameter, candidateParameter ->
             if (expectedParameter.name.toString() != candidateParameter.name) return false
             if (expectedParameter.isVararg != candidateParameter.isVarArg) return false
             val candidateParameterType = candidateParameter.typeReference ?: return false
@@ -166,7 +167,7 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
                     return false
                 }
 
-                firContextParameters.zip(contextReceivers).forEach { [expectedParameter, candidateParameterType] ->
+                firContextParameters.forEachZipped(contextReceivers) { expectedParameter, candidateParameterType ->
                     val typeReference = candidateParameterType.typeReference() ?: return false
                     if (!isTheSameTypes(typeReference, expectedParameter.returnTypeRef, isVararg = false)) {
                         return false
