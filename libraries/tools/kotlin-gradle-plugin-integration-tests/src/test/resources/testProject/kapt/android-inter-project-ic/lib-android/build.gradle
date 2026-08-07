@@ -1,5 +1,7 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+}
 
 android {
     namespace = "org.example.inter.project.ic.androidLib"
@@ -16,8 +18,4 @@ android {
     kotlin {
         jvmToolchain(8)
     }
-}
-
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
