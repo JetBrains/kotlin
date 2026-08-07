@@ -346,14 +346,14 @@ def _cache_child_type(value, index, child_type):
         cached_types[index] = child_type
 
 
-def _get_cached_resolved_proxy(value):
+def _get_cached_proxy(value):
     if value is None or value.GetValueAsUnsigned() == 0:
         return None
     responses = _get_cached_array_responses(value)
     return None if responses is None else responses.resolved_proxy
 
 
-def _set_cached_resolved_proxy(value, proxy):
+def _set_cached_proxy(value, proxy):
     if value is None or value.GetValueAsUnsigned() == 0 or proxy is None:
         return
     responses = _get_or_create_cached_array_responses(value)
@@ -386,14 +386,24 @@ def _get_cached_field_type_result_for_key(process, key):
     return _ARRAY_ELEMENT_FIELD_TYPE_RESULT_CACHE.get(key)
 
 
-def _set_cached_field_type_result_for_key(process, key, type_name):
+def _set_cached_type_name(process, key, type_name):
     if key == 0 or type_name is None:
         return
     _get_or_create_cached_array_responses_for_key(process, key)
     _ARRAY_ELEMENT_FIELD_TYPE_RESULT_CACHE[key] = type_name
 
 
-def _object_type_info_from_memory(value):
+def _decode_c_string_array(raw_bytes, count):
+    values = [
+        item.decode("utf-8", errors="replace")
+        for item in raw_bytes.split(b"\0")[:count]
+    ]
+    while len(values) < count:
+        values.append("")
+    return values
+
+
+def _fast_type_info(value):
     process = value.GetProcess()
     target = lldb.debugger.GetSelectedTarget()
     object_address = value.GetValueAsUnsigned()
@@ -551,41 +561,65 @@ def kotlin_object_pair_type_summary(lldb_val, _):
     return " = ".join(summaries)
 
 
-def _select_provider(lldb_val, tip, internal_dict):
+def _collection_kind(valobj):
+    if _is_kotlin_list(valobj):
+        result = CollectionKind.LIST
+    elif _is_kotlin_map(valobj):
+        result = CollectionKind.MAP
+    elif _is_kotlin_set(valobj):
+        result = CollectionKind.SET
+    else:
+        result = None
+    return result
+
+
+def _select_provider(lldb_val, internal_dict, tip=None):
     start = time.monotonic()
     value_str = f"{_hex(lldb_val.unsigned)}"
-    logging.debug("%s name:%s tip:%s", value_str, lldb_val.name, _hex(tip))
-    soa = _is_string_or_array(lldb_val)
-    logging.debug("%s soa: %s", value_str, soa)
-    raw_provider = (
-        _FACTORY["string"](lldb_val, tip, internal_dict)
-        if soa == 1
-        else (
-            _FACTORY["array"](lldb_val, tip, internal_dict)
-            if soa == 2
-            else _FACTORY["object"](lldb_val, tip, internal_dict)
-        )
+    tip = tip or (_fast_type_info(lldb_val) or _type_info(lldb_val))
+    logging.debug(
+        "%s name:%s tip:%s",
+        value_str,
+        lldb_val.name,
+        _hex(tip) if tip else None,
     )
 
-    ret = raw_provider
-    if isinstance(raw_provider, FastKonanObjectSyntheticProvider):
-        collection_kind = KonanProxyTypeProvider._collection_kind(lldb_val, tip)
-        if collection_kind is CollectionKind.LIST:
-            collection_proxy = KonanListSyntheticProvider.fromObjectProxy(
-                lldb_val, raw_provider, internal_dict
+    if lldb_val.unsigned == 0:
+        ret = KonanNullSyntheticProvider(lldb_val)
+    elif not tip:
+        ret = KonanNotInitializedObjectSyntheticProvider(lldb_val)
+    else:
+        soa = _is_string_or_array(lldb_val)
+        logging.debug("%s soa: %s", value_str, soa)
+        raw_provider = (
+            _FACTORY["string"](lldb_val, tip, internal_dict)
+            if soa == 1
+            else (
+                _FACTORY["array"](lldb_val, tip, internal_dict)
+                if soa == 2
+                else _FACTORY["object"](lldb_val, tip, internal_dict)
             )
-        elif collection_kind is CollectionKind.SET:
-            collection_proxy = KonanSetSyntheticProvider.fromObjectProxy(
-                lldb_val, raw_provider, internal_dict
-            )
-        elif collection_kind is CollectionKind.MAP:
-            collection_proxy = KonanMapSyntheticProvider.fromObjectProxy(
-                lldb_val, raw_provider, internal_dict
-            )
-        else:
-            collection_proxy = None
-        if collection_proxy is not None:
-            ret = collection_proxy
+        )
+
+        ret = raw_provider
+        if isinstance(raw_provider, FastKonanObjectSyntheticProvider):
+            collection_kind = _collection_kind(lldb_val)
+            if collection_kind is CollectionKind.LIST:
+                collection_proxy = KonanListSyntheticProvider.fromObjectProxy(
+                    lldb_val, raw_provider, internal_dict
+                )
+            elif collection_kind is CollectionKind.SET:
+                collection_proxy = KonanSetSyntheticProvider.fromObjectProxy(
+                    lldb_val, raw_provider, internal_dict
+                )
+            elif collection_kind is CollectionKind.MAP:
+                collection_proxy = KonanMapSyntheticProvider.fromObjectProxy(
+                    lldb_val, raw_provider, internal_dict
+                )
+            else:
+                collection_proxy = None
+            if collection_proxy is not None:
+                ret = collection_proxy
 
     logging.debug("%s = %s", value_str, ret)
     _bench(start, lambda: f"select_provider({value_str})")
@@ -851,7 +885,7 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
     def _run_batch_child_metadata_request(self, include_names=True):
         pointer_size = self._target.GetAddressByteSize()
         pointer_format = "Q" if pointer_size == 8 else "I"
-        result_slot_count = 9
+        result_slot_count = 7
         permissions = lldb.ePermissionsReadable | lldb.ePermissionsWritable
         result_addr = _allocate_inferior_memory(
             self._process,
@@ -867,8 +901,6 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
         field_addresses_addr = 0
         type_names_addr = 0
         type_names_size = 0
-        summaries_addr = 0
-        summaries_size = 0
         try:
             names_setup_expr = (
                 "const int initialFieldNamesCapacity = 4096;"
@@ -877,7 +909,6 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
                 "  (void)free(fieldTypesData);"
                 "  (void)free(fieldAddressesData);"
                 "  (void)free(typeNamesData);"
-                "  (void)free(summariesData);"
                 "  return 0;"
                 "}"
                 "int fieldNamesCapacity = initialFieldNamesCapacity;"
@@ -893,7 +924,6 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
                 "    (void)free(fieldTypesData);"
                 "    (void)free(fieldAddressesData);"
                 "    (void)free(typeNamesData);"
-                "    (void)free(summariesData);"
                 "    return 0;"
                 "  }"
             ) if include_names else ""
@@ -943,16 +973,6 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
                     "}"
                     "int typeNamesCapacity = initialTypeNamesCapacity;"
                     "int typeNamesUsed = 0;"
-                    "const int initialSummariesCapacity = 4096;"
-                    "char* summariesData = (char*)(void*)malloc(initialSummariesCapacity);"
-                    "if (summariesData == 0) {"
-                    "  (void)free(fieldTypesData);"
-                    "  (void)free(fieldAddressesData);"
-                    "  (void)free(typeNamesData);"
-                    "  return 0;"
-                    "}"
-                    "int summariesCapacity = initialSummariesCapacity;"
-                    "int summariesUsed = 0;"
                     + names_setup_expr
                     + "for (int i = 0; i < count; ++i) {"
                     "  fieldTypesData[i] = (int)Konan_DebugGetFieldType(obj, i);"
@@ -960,7 +980,6 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
                     "  fieldAddressesData[i] = fieldAddress;"
                     + names_append_expr
                     + "  const char* typeName = \"\";"
-                    "  const char* summary = \"\";"
                     "  if (fieldTypesData[i] == 1 && fieldAddress != 0) {"
                     "    void* child = *reinterpret_cast<void**>(fieldAddress);"
                     "    if (child != 0) {"
@@ -973,15 +992,6 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
                     "    (void)free(fieldTypesData);"
                     "    (void)free(fieldAddressesData);"
                     "    (void)free(typeNamesData);"
-                    "    (void)free(summariesData);"
-                    "    return 0;"
-                    "  }"
-                    "  if (!appendCString(&summariesData, &summariesCapacity, &summariesUsed, summary)) {"
-                    "    (void)free(fieldNamesData);"
-                    "    (void)free(fieldTypesData);"
-                    "    (void)free(fieldAddressesData);"
-                    "    (void)free(typeNamesData);"
-                    "    (void)free(summariesData);"
                     "    return 0;"
                     "  }"
                     "}"
@@ -991,8 +1001,6 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
                     "result[4] = fieldAddressesData;"
                     "result[5] = typeNamesData;"
                     "result[6] = (void *)(unsigned long long)typeNamesUsed;"
-                    "result[7] = summariesData;"
-                    "result[8] = (void *)(unsigned long long)summariesUsed;"
                     "return 0;"
                     "})()"
                 )
@@ -1016,8 +1024,6 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
                 field_addresses_addr,
                 type_names_addr,
                 type_names_size,
-                summaries_addr,
-                summaries_size,
             ) = struct.unpack(
                 f"{prefix}{result_slot_count}{pointer_format}", raw_result
             )
@@ -1029,7 +1035,6 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
                 or field_types_addr == 0
                 or field_addresses_addr == 0
                 or type_names_addr == 0
-                or summaries_addr == 0
             ):
                 raise DebuggerException(
                     "FastKonanObjectSyntheticProvider child metadata was not fetched"
@@ -1069,35 +1074,18 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
                     "Failed to read FastKonanObjectSyntheticProvider type names"
                 )
 
-            raw_summaries = self._process.ReadMemory(
-                summaries_addr, summaries_size, error
-            )
-            if not error.Success():
-                raise DebuggerException(
-                    "Failed to read FastKonanObjectSyntheticProvider summaries"
-                )
-
-            def _decode_c_string_array(raw_bytes):
-                values = [
-                    item.decode("utf-8", errors="replace")
-                    for item in raw_bytes.split(b"\0")[:count]
-                ]
-                while len(values) < count:
-                    values.append("")
-                return values
-
             if include_names:
-                names = _decode_c_string_array(raw_field_names)
+                names = _decode_c_string_array(raw_field_names, count)
             else:
                 names = [str(index) for index in range(count)]
-            type_names = _decode_c_string_array(raw_type_names)
-            summaries = _decode_c_string_array(raw_summaries)
+            type_names = _decode_c_string_array(raw_type_names, count)
             types = list(struct.unpack(f"{prefix}{count}i", raw_field_types))
             addresses = list(
                 struct.unpack(
                     f"{prefix}{count}{pointer_format}", raw_field_addresses
                 )
             )
+            summaries = [""] * count
 
             cached_addresses = _get_cached_child_addresses_by_index(self._valobj)
             if cached_addresses is not None:
@@ -1113,7 +1101,7 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
                 if child_type == _RUNTIME_TYPE_OBJECT and field_address:
                     child_key = self._read_pointer(field_address)
                     if type_name:
-                        _set_cached_field_type_result_for_key(
+                        _set_cached_type_name(
                             self._process, child_key, type_name
                         )
                     if summary:
@@ -1126,7 +1114,6 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
                 or field_types_addr
                 or field_addresses_addr
                 or type_names_addr
-                or summaries_addr
             ):
                 _evaluate(
                     (
@@ -1135,7 +1122,6 @@ class FastKonanObjectSyntheticProvider(KonanHelperProvider):
                         f"(void)free((void *){_hex(field_types_addr)});"
                         f"(void)free((void *){_hex(field_addresses_addr)});"
                         f"(void)free((void *){_hex(type_names_addr)});"
-                        f"(void)free((void *){_hex(summaries_addr)});"
                         "return 0;"
                         "})()"
                     )
@@ -1491,7 +1477,7 @@ class KonanSetSyntheticProvider:
         if not backing_type_info:
             return None
         backing_object_proxy = _select_provider(
-            backing, backing_type_info, internal_dict
+            backing, internal_dict, backing_type_info
         )
         keys = _object_field(backing_object_proxy, "keysArray")
         if keys is None or not keys.IsValid() or keys.unsigned == 0:
@@ -1648,11 +1634,6 @@ class KonanProxyTypeProvider:
         self._internal_dict = internal_dict
         self._log.debug("%s, name: %s", _hex(valobj.unsigned), valobj.name)
 
-    def _type_info(self):
-        return _object_type_info_from_memory(self._valobj) or _type_info(
-            self._valobj
-        )
-
     def type_name(self):
         valobj = self._valobj
         if valobj is None or not valobj.IsValid():
@@ -1671,67 +1652,26 @@ class KonanProxyTypeProvider:
         ).summary
 
         type_name = "" if type_name is None else type_name.strip('"')
-        _set_cached_field_type_result_for_key(
-            valobj.GetProcess(),
-            valobj.GetValueAsUnsigned(),
-            type_name,
-        )
+        _set_cached_type_name(valobj.GetProcess(), valobj.GetValueAsUnsigned(), type_name)
         return type_name
 
     def _get_proxy(self):
-        cached_proxy = _get_cached_resolved_proxy(self._valobj)
+        cached_proxy = _get_cached_proxy(self._valobj)
         if cached_proxy is not None:
             return cached_proxy
 
         start = time.monotonic()
-        valobj = self._valobj
+
+        proxy = _select_provider(self._valobj, self._internal_dict)
+
         value_str = _hex(valobj.unsigned)
-        value_name = valobj.name
-
-        if valobj.unsigned == 0:
-            self._log.debug(
-                "%s, name: %s NULL syntectic %s",
-                value_str,
-                value_name,
-                valobj.IsValid(),
-            )
-            proxy = KonanNullSyntheticProvider(valobj)
-        else:
-            tip = self._type_info()
-            if not tip:
-                self._log.debug(
-                    "%s, name: %s NULL syntectic %s",
-                    value_str,
-                    value_name,
-                    valobj.IsValid(),
-                )
-                proxy = KonanNotInitializedObjectSyntheticProvider(
-                    valobj
-                )
-            else:
-                self._log.debug("%s tip: %s", value_str, _hex(tip))
-                proxy = _select_provider(
-                    valobj, tip, self._internal_dict
-                )
-
         _bench(start, lambda: f"KonanProxyTypeProvider({value_str})")
         self._log.debug(
             "%s _proxy: %s", value_str, proxy.__class__.__name__
         )
-        _set_cached_resolved_proxy(self._valobj, proxy)
-        return proxy
 
-    @staticmethod
-    def _collection_kind(valobj, type_info):
-        if _is_kotlin_list(valobj):
-            result = CollectionKind.LIST
-        elif _is_kotlin_map(valobj):
-            result = CollectionKind.MAP
-        elif _is_kotlin_set(valobj):
-            result = CollectionKind.SET
-        else:
-            result = None
-        return result
+        _set_cached_proxy(self._valobj, proxy)
+        return proxy
 
     def get_value(self):
         return self._valobj.GetValue()
@@ -1743,11 +1683,7 @@ class KonanProxyTypeProvider:
         return False
 
     def has_children(self):
-        return (
-            self._valobj is not None
-            and self._valobj.IsValid()
-            and self._valobj.GetValueAsUnsigned() != 0
-        )
+        return self._valobj is not None and self._valobj.IsValid() and self._valobj.GetValueAsUnsigned() != 0
 
     def get_child_index(self, name):
         proxy = self._get_proxy()
