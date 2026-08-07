@@ -166,6 +166,11 @@ class FirReachabilityAnalyzer(private val session: FirSession) : FirVisitorVoid(
                 // It is required for every class to have a primary constructor.
                 mark(decl.symbol)
             }
+            if (decl.origin == FirDeclarationOrigin.Synthetic.DelegateField) {
+                // Synthetic delegate fields (e.g. $$delegate_0) are required for FirDelegatedMemberScope
+                // to generate delegated members.
+                mark(decl.symbol)
+            }
             if (shouldPreserveAnchor(decl)) {
                 // The backend derives the name of anonymous objects from its declaring parent.
                 mark(decl.symbol)
