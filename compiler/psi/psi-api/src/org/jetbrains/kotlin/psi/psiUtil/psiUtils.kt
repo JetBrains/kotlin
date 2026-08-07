@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.PLUS
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.addToStdlib.skipNext
 import java.util.*
 import kotlin.collections.ArrayDeque
 import kotlin.contracts.ExperimentalContracts
@@ -170,7 +171,7 @@ fun PsiElement.siblings(forward: Boolean = true, withItself: Boolean = true): Se
             return object : Iterator<PsiElement> {
                 init {
                     if (!withItself) {
-                        val _ = next()
+                        skipNext()
                     }
                 }
 
