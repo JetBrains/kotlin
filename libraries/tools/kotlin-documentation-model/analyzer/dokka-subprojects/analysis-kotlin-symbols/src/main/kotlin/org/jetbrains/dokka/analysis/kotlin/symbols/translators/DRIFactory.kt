@@ -6,6 +6,8 @@ package org.jetbrains.dokka.analysis.kotlin.symbols.translators
 
 import com.intellij.psi.PsiMethod
 import org.jetbrains.dokka.ExperimentalDokkaApi
+import org.jetbrains.dokka.analysis.kotlin.symbols.translators.getDRIFromFunction
+import org.jetbrains.dokka.analysis.kotlin.symbols.translators.getDRIFromVariable
 import org.jetbrains.dokka.links.*
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
@@ -54,7 +56,8 @@ internal fun getDRIFromEnumEntry(symbol: KaEnumEntrySymbol): DRI {
 
 
 @OptIn(KaExperimentalApi::class) // due to `typeParameters`
-internal fun KaSession.getDRIFromTypeParameter(symbol: KaTypeParameterSymbol): DRI {
+context(_: KaSession)
+internal fun getDRIFromTypeParameter(symbol: KaTypeParameterSymbol): DRI {
     val containingSymbol = symbol.containingSymbol
             ?: throw IllegalStateException("Containing symbol is null for type parameter")
     val typeParameters = (containingSymbol as KaDeclarationSymbol).typeParameters
@@ -62,7 +65,8 @@ internal fun KaSession.getDRIFromTypeParameter(symbol: KaTypeParameterSymbol): D
     return getDRIFromSymbol(containingSymbol).copy(target = PointingToGenericParameters(index))
 }
 
-internal fun KaSession.getDRIFromConstructor(symbol: KaConstructorSymbol): DRI {
+context(_: KaSession)
+internal fun getDRIFromConstructor(symbol: KaConstructorSymbol): DRI {
     val containingClassId =
         symbol.containingClassId ?: throw IllegalStateException("Can not get class Id due to it is local")
     return containingClassId.createDRI().copy(
@@ -73,15 +77,17 @@ internal fun KaSession.getDRIFromConstructor(symbol: KaConstructorSymbol): DRI {
     )
 }
 
-internal fun KaSession.getDRIFromVariable(symbol: KaVariableSymbol): DRI {
+context(_: KaSession)
+internal fun getDRIFromVariable(symbol: KaVariableSymbol): DRI {
     val callableId = symbol.callableId ?: throw IllegalStateException("Can not get callable Id due to it is local")
-    val receiver = symbol.receiverType?.let(::getTypeReferenceFrom)
+    val receiver = symbol.receiverType?.let { getTypeReferenceFrom(it) }
     val contextParams = @OptIn(KaExperimentalApi::class) symbol.contextParameters.map { getTypeReferenceFrom(it.returnType) }
     return callableId.createDRI(receiver, emptyList(), contextParams, true, @OptIn(KaExperimentalApi::class) symbol.isCompanion)
 }
 
 
-internal fun KaSession.getDRIFromFunction(symbol: KaFunctionSymbol): DRI {
+context(_: KaSession)
+internal fun getDRIFromFunction(symbol: KaFunctionSymbol): DRI {
     val psi = symbol.psi
     val params =
         if (psi is PsiMethod) psi.parameterList.parameters.map { param -> JavaClassReference(param.type.canonicalText) }
@@ -101,7 +107,8 @@ internal fun getDRIFromClassLike(symbol: KaClassLikeSymbol): DRI =
 internal fun getDRIFromPackage(symbol: KaPackageSymbol): DRI =
     DRI(packageName = symbol.fqName.asString())
 
-internal fun KaSession.getDRIFromValueParameter(symbol: KaValueParameterSymbol): DRI {
+context(_: KaSession)
+internal fun getDRIFromValueParameter(symbol: KaValueParameterSymbol): DRI {
     val function = (symbol.containingSymbol as? KaFunctionSymbol)
         ?: throw IllegalStateException("Containing symbol is null for value parameter")
     val index = function.valueParameters.indexOfFirst { it.name == symbol.name }
@@ -110,7 +117,8 @@ internal fun KaSession.getDRIFromValueParameter(symbol: KaValueParameterSymbol):
 }
 
 @OptIn(KaExperimentalApi::class)
-internal fun KaSession.getDRIFromContextParameter(symbol: KaContextParameterSymbol): DRI {
+context(_: KaSession)
+internal fun getDRIFromContextParameter(symbol: KaContextParameterSymbol): DRI {
     val callable = (symbol.containingSymbol as? KaCallableSymbol)
         ?: throw IllegalStateException("Containing symbol is null for context parameter")
     val index = callable.contextParameters.indexOfFirst { it.name == symbol.name }
@@ -124,10 +132,12 @@ internal fun KaSession.getDRIFromContextParameter(symbol: KaContextParameterSymb
 /**
  * @return [DRI] to receiver type
  */
-internal fun KaSession.getDRIFromReceiverParameter(receiverParameterSymbol: KaReceiverParameterSymbol): DRI =
+context(_: KaSession)
+internal fun getDRIFromReceiverParameter(receiverParameterSymbol: KaReceiverParameterSymbol): DRI =
     getDRIFromReceiverType(receiverParameterSymbol.returnType)
 
-private fun KaSession.getDRIFromReceiverType(type: KaType): DRI {
+context(_: KaSession)
+private fun getDRIFromReceiverType(type: KaType): DRI {
     return when (type) {
         is KaClassType -> getDRIFromClassType(type)
         is KaTypeParameterType -> getDRIFromTypeParameter(type.symbol)
@@ -142,7 +152,8 @@ private fun KaSession.getDRIFromReceiverType(type: KaType): DRI {
     }
 }
 
-internal fun KaSession.getDRIFromSymbol(symbol: KaSymbol): DRI =
+context(_: KaSession)
+internal fun getDRIFromSymbol(symbol: KaSymbol): DRI =
     when (symbol) {
         is KaDeclarationSymbol -> @OptIn(KaExperimentalApi::class) when (symbol) {
             is KaAnonymousFunctionSymbol -> throw NotImplementedError()
@@ -172,7 +183,8 @@ internal fun KaSession.getDRIFromSymbol(symbol: KaSymbol): DRI =
         else -> throw IllegalStateException("Unknown symbol while creating DRI $symbol")
     }
 
-private fun KaSession.getDRIFromNonCallablePossibleLocalSymbol(symbol: KaSymbol): DRI {
+context(_: KaSession)
+private fun getDRIFromNonCallablePossibleLocalSymbol(symbol: KaSymbol): DRI {
     if (symbol.location == KaSymbolLocation.LOCAL) {
         return symbol.containingSymbol?.let { getDRIFromNonCallablePossibleLocalSymbol(it) }
             ?: throw IllegalStateException("Can't get containing symbol for local symbol")
@@ -184,7 +196,8 @@ private fun KaSession.getDRIFromNonCallablePossibleLocalSymbol(symbol: KaSymbol)
  * Currently, it's used only for functions from enum entry,
  * For its members: `memberSymbol.callableIdIfNonLocal=null`
  */
-private fun KaSession.getDRIFromLocalFunction(symbol: KaFunctionSymbol): DRI {
+context(_: KaSession)
+private fun getDRIFromLocalFunction(symbol: KaFunctionSymbol): DRI {
     /**
      * A function is inside local object
      */

@@ -11,13 +11,15 @@ import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.kdoc.findKDoc as findKDocInSession
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNonPublicApi
 
-internal fun KaSession.getJavaDocDocumentationFrom(
+context(_: KaSession)
+internal fun getJavaDocDocumentationFrom(
     symbol: KaSymbol,
     javadocParser: JavadocParser,
     sourceSet: DokkaSourceSet
@@ -42,11 +44,12 @@ internal fun KaSession.getJavaDocDocumentationFrom(
 }
 
 @OptIn(KaNonPublicApi::class, KtNonPublicApi::class)
-internal fun KaSession.getKDocDocumentationFrom(
+context(_: KaSession)
+internal fun getKDocDocumentationFrom(
     symbol: KaSymbol,
     logger: DokkaLogger,
     sourceSet: DokkaSourceSet,
-): DocumentationNode? = (symbol as? KaDeclarationSymbol)?.findKDoc()?.let { kDocContent ->
+): DocumentationNode? = (symbol as? KaDeclarationSymbol)?.findKDocInSession()?.let { kDocContent ->
     val kdocSymbolName = when (symbol) {
         is KaCallableSymbol -> symbol.callableId?.asSingleFqName()?.asString()
         is KaClassSymbol -> symbol.classId?.asFqNameString()
@@ -69,4 +72,4 @@ internal fun KaSession.getKDocDocumentationFrom(
 }
 
 @OptIn(KtNonPublicApi::class, KaNonPublicApi::class)
-internal fun KtDeclaration.findKDoc() = analyze(this) { this@findKDoc.findKDoc() }
+internal fun KtDeclaration.findKDoc() = analyze(this) { this@findKDoc.findKDocInSession() }

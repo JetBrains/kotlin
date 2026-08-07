@@ -12,12 +12,11 @@ import org.jetbrains.dokka.analysis.java.parsers.DocCommentParser
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.parseFromKDocTag
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.resolveKDocLink
 import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.SymbolsAnalysisPlugin
-import org.jetbrains.dokka.analysis.kotlin.symbols.utils.getLocation
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.plugin
 import org.jetbrains.dokka.plugability.querySingle
-import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.session.analyze
 
 internal class KotlinDocCommentParser(
     private val context: DokkaContext

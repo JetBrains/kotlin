@@ -42,8 +42,12 @@ import org.jetbrains.dokka.plugability.querySingle
 import org.jetbrains.dokka.transformers.sources.AsyncSourceToDocumentableTranslator
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
+import org.jetbrains.kotlin.analysis.api.components.javaGetterName
+import org.jetbrains.kotlin.analysis.api.components.javaSetterName
+import org.jetbrains.kotlin.analysis.api.scopes.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.FqName
@@ -147,7 +151,8 @@ internal class DokkaSymbolVisitor(
         }
     }
 
-    private fun KaSession.visitPackageSymbol(
+    context(_: KaSession)
+    private fun visitPackageSymbol(
         packageSymbol: KaPackageSymbol,
         moduleKtFiles: Set<KtFile>,
         moduleJavaFiles: Set<PsiJavaFile>
@@ -185,7 +190,8 @@ internal class DokkaSymbolVisitor(
         )
     }
 
-    private fun KaSession.visitTypeAliasSymbol(
+    context(_: KaSession)
+    private fun visitTypeAliasSymbol(
         typeAliasSymbol: KaTypeAliasSymbol,
         parent: DRI
     ): DTypeAlias = withExceptionCatcher(typeAliasSymbol) {
@@ -217,7 +223,8 @@ internal class DokkaSymbolVisitor(
         )
     }
 
-    fun KaSession.visitClassSymbol(
+    context(_: KaSession)
+    fun visitClassSymbol(
         namedClassSymbol: KaNamedClassSymbol,
         parent: DRI
     ): DClasslike = withExceptionCatcher(namedClassSymbol) {
@@ -429,7 +436,8 @@ internal class DokkaSymbolVisitor(
      * See [org.jetbrains.kotlin.analysis.api.components.KaScopeProvider.staticDeclaredMemberScope] for what a static scope is.
      */
     @OptIn(KaExperimentalApi::class) // due to getSyntheticJavaPropertiesScope
-    private fun KaSession.getDokkaScopeFrom(
+    context(_: KaSession)
+    private fun getDokkaScopeFrom(
         namedClassOrObjectSymbol: KaNamedClassSymbol,
         dri: DRI,
         includeStaticScope: Boolean = true,
@@ -498,7 +506,8 @@ internal class DokkaSymbolVisitor(
         )
     }
 
-    private fun KaSession.visitEnumEntrySymbol(
+    context(_: KaSession)
+    private fun visitEnumEntrySymbol(
         enumEntrySymbol: KaEnumEntrySymbol, scope: DokkaScope
     ): DEnumEntry = withExceptionCatcher(enumEntrySymbol) {
         val dri = getDRIFromEnumEntry(enumEntrySymbol)
@@ -519,7 +528,8 @@ internal class DokkaSymbolVisitor(
         )
     }
 
-    private fun KaSession.visitPropertySymbol(propertySymbol: KaPropertySymbol, parent: DRI, isJavaContext: Boolean): DProperty =
+    context(_: KaSession)
+    private fun visitPropertySymbol(propertySymbol: KaPropertySymbol, parent: DRI, isJavaContext: Boolean): DProperty =
         withExceptionCatcher(propertySymbol) {
             val dri = createDRIWithOverridden(propertySymbol).origin
             val inheritedFrom = dri.getInheritedFromDRI(parent)
@@ -570,7 +580,7 @@ internal class DokkaSymbolVisitor(
                     propertySymbol.getDefaultValue()?.let { DefaultValue(it.toSourceSetDependent()) },
                     inheritedFrom?.let { InheritedMember(it.toSourceSetDependent()) },
                     takeUnless { propertySymbol.isVal }?.let { IsVar },
-                    takeIf { propertySymbol.isFromPrimaryConstructor &&
+                    takeIf { (propertySymbol as? KaKotlinPropertySymbol)?.primaryConstructorParameter != null &&
                             // a property can be from a constructor of a super class
                             inheritedFrom == null }?.let {
 
@@ -581,7 +591,8 @@ internal class DokkaSymbolVisitor(
             )
         }
 
-    private fun KaSession.visitJavaFieldSymbol(
+    context(_: KaSession)
+    private fun visitJavaFieldSymbol(
         javaFieldSymbol: KaJavaFieldSymbol,
         parent: DRI,
         isJavaContext: Boolean
@@ -625,7 +636,8 @@ internal class DokkaSymbolVisitor(
             )
         }
 
-    private fun KaSession.visitPropertyAccessor(
+    context(_: KaSession)
+    private fun visitPropertyAccessor(
         propertyAccessorSymbol: KaPropertyAccessorSymbol,
         propertySymbol: KaPropertySymbol,
         propertyDRI: DRI,
@@ -692,7 +704,8 @@ internal class DokkaSymbolVisitor(
         )
     }
 
-    private fun KaSession.visitConstructorSymbol(
+    context(_: KaSession)
+    private fun visitConstructorSymbol(
         constructorSymbol: KaConstructorSymbol,
         isJavaContext: Boolean
     ): DFunction = withExceptionCatcher(constructorSymbol) {
@@ -748,7 +761,8 @@ internal class DokkaSymbolVisitor(
         )
     }
 
-    private fun KaSession.visitFunctionSymbol(functionSymbol: KaNamedFunctionSymbol, parent: DRI, isJavaContext: Boolean): DFunction =
+    context(_: KaSession)
+    private fun visitFunctionSymbol(functionSymbol: KaNamedFunctionSymbol, parent: DRI, isJavaContext: Boolean): DFunction =
         withExceptionCatcher(functionSymbol) {
             val dri = createDRIWithOverridden(functionSymbol).origin
             val inheritedFrom = dri.getInheritedFromDRI(parent)
@@ -810,7 +824,8 @@ internal class DokkaSymbolVisitor(
         return driList.takeIf { it.isNotEmpty() }?.let { CheckedExceptions(it.toSourceSetDependent()) }
     }
 
-    private fun KaSession.visitValueParameter(
+    context(_: KaSession)
+    private fun visitValueParameter(
         index: Int, valueParameterSymbol: KaValueParameterSymbol, dri: DRI
     ) = DParameter(
         dri = dri.copy(target = PointingToCallableParameters(index)),
@@ -828,7 +843,8 @@ internal class DokkaSymbolVisitor(
     )
 
     @OptIn(KaExperimentalApi::class)
-    private fun KaSession.visitContextParameter(
+    context(_: KaSession)
+    private fun visitContextParameter(
         index: Int, contextParameterSymbol: KaContextParameterSymbol, dri: DRI
     ): DParameter {
         return DParameter(
@@ -844,7 +860,8 @@ internal class DokkaSymbolVisitor(
         )
     }
 
-    private fun KaSession.visitReceiverParameter(
+    context(_: KaSession)
+    private fun visitReceiverParameter(
         receiverParameterSymbol: KaReceiverParameterSymbol, dri: DRI
     ) = DParameter(
         dri = dri.copy(target = PointingToDeclaration),
@@ -863,7 +880,8 @@ internal class DokkaSymbolVisitor(
      * Retrieves the default value of a value parameter, if available from sources.
      * It may be `null` if the owner function comes from a non-source file.
      */
-    private fun KaSession.getDefaultValue(symbol: KaValueParameterSymbol, parameterIndex: Int): Expression? {
+    context(_: KaSession)
+    private fun getDefaultValue(symbol: KaValueParameterSymbol, parameterIndex: Int): Expression? {
         fun KaValueParameterSymbol.getExplicitDefaultValue(): Expression? =
             if (origin == KaSymbolOrigin.SOURCE) (psi as? KtParameter)?.defaultValue?.toDefaultValueExpression() else null
         fun KaDeclarationSymbol.findMatchingParameterWithDefaultValue(): Expression? =
@@ -897,13 +915,14 @@ internal class DokkaSymbolVisitor(
         else -> node?.text?.let { ComplexExpression(it) }
     }
 
-    private fun KaSession.visitVariantTypeParameter(
+    context(_: KaSession)
+    private fun visitVariantTypeParameter(
         index: Int,
         typeParameterSymbol: KaTypeParameterSymbol,
         dri: DRI
     ): DTypeParameter {
         val upperBoundsOrNullableAny =
-            typeParameterSymbol.upperBounds.takeIf { it.isNotEmpty() } ?: listOf(this.builtinTypes.nullableAny)
+            typeParameterSymbol.upperBounds.takeIf { it.isNotEmpty() } ?: listOf(builtinTypes.nullableAny)
         return DTypeParameter(
             variantTypeParameter = TypeParameter(
                 dri = dri.copy(target = PointingToGenericParameters(index)),
@@ -922,7 +941,8 @@ internal class DokkaSymbolVisitor(
     }
     // ----------- Utils ----------------------------------------------------------------------------
 
-    private fun KaSession.getDokkaAnnotationsFrom(annotated: KaAnnotated): List<Annotations.Annotation>? {
+    context(_: KaSession)
+    private fun getDokkaAnnotationsFrom(annotated: KaAnnotated): List<Annotations.Annotation>? {
         // TODO: this is only relevant for mapped annotations: java.Deprecated is converted to kotlin.Deprecated by AA (in FIR)
         // For Java symbols, extract annotations via PSI to preserve Java DRIs
         // (e.g., java.lang.Deprecated instead of kotlin.Deprecated)
@@ -936,7 +956,8 @@ internal class DokkaSymbolVisitor(
     }
 
     @OptIn(KaExperimentalApi::class)
-    private fun KaSession.toBoundFrom(type: KaType, containingSymbol: KaSymbol): Bound {
+    context(_: KaSession)
+    private fun toBoundFrom(type: KaType, containingSymbol: KaSymbol): Bound {
         return with(typeTranslator) { toBoundFrom(type, Location(containingSymbol)) }
     }
 
@@ -963,7 +984,8 @@ internal class DokkaSymbolVisitor(
 
     data class DRIWithOverridden(val origin: DRI, val overridden: DRI? = null)
 
-    private fun KaSession.createDRIWithOverridden(
+    context(_: KaSession)
+    private fun createDRIWithOverridden(
         callableSymbol: KaCallableSymbol,
         wasOverriddenBy: DRI? = null
     ): DRIWithOverridden {
@@ -998,12 +1020,14 @@ internal class DokkaSymbolVisitor(
         }
     }
 
-    private fun KaSession.getAccessorSymbolDocumentation(symbol: KaPropertyAccessorSymbol): DocumentationNode? {
+    context(_: KaSession)
+    private fun getAccessorSymbolDocumentation(symbol: KaPropertyAccessorSymbol): DocumentationNode? {
         val documentation = getDocumentation(symbol) ?: return null
         return documentation.removePropertyTag()
     }
 
-    private fun KaSession.getDocumentation(symbol: KaSymbol) = when(symbol.origin) {
+    context(_: KaSession)
+    private fun getDocumentation(symbol: KaSymbol) = when(symbol.origin) {
         KaSymbolOrigin.SOURCE_MEMBER_GENERATED -> {
             if (symbol.containingSymbol?.isJavaSource() == true)
                 syntheticJavaDocProvider?.let { getGenerateJavaDocDocumentationFrom(symbol, it, sourceSet) }
@@ -1030,7 +1054,8 @@ internal class DokkaSymbolVisitor(
 
     private fun KaSymbol.isJavaSource() = origin == KaSymbolOrigin.JAVA_SOURCE || origin == KaSymbolOrigin.JAVA_LIBRARY
 
-    private fun KaSession.isObvious(functionSymbol: KaFunctionSymbol, inheritedFrom: DRI?): Boolean {
+    context(_: KaSession)
+    private fun isObvious(functionSymbol: KaFunctionSymbol, inheritedFrom: DRI?): Boolean {
         return functionSymbol.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED && !hasGeneratedKDocDocumentation(functionSymbol) ||
                 inheritedFrom?.isObvious() == true
     }
@@ -1041,7 +1066,8 @@ internal class DokkaSymbolVisitor(
         else -> false
     }
 
-    private fun KaSession.getSource(symbol: KaSymbol): SourceSetDependent<DocumentableSource> {
+    context(_: KaSession)
+    private fun getSource(symbol: KaSymbol): SourceSetDependent<DocumentableSource> {
         val psi = when(symbol) {
             // implicit/default accessors have no psi
             is KaPropertyAccessorSymbol -> symbol.containingSymbol?.psi
@@ -1062,7 +1088,8 @@ internal class DokkaSymbolVisitor(
     /**
      * Dokka has its own conditions for the keyword `override`
      */
-    private fun KaSession.isDokkaOverride(symbol: KaCallableSymbol): Boolean {
+    context(_: KaSession)
+    private fun isDokkaOverride(symbol: KaCallableSymbol): Boolean {
         fun KaCallableSymbol.isCompilerOverride() =
             if (this is KaPropertySymbol) isOverride else if (this is KaNamedFunctionSymbol) isOverride else error("Should be property or function but was '${this::class}'")
         fun KaSymbol.isFake() = origin == KaSymbolOrigin.SUBSTITUTION_OVERRIDE || origin == KaSymbolOrigin.INTERSECTION_OVERRIDE
@@ -1147,7 +1174,8 @@ internal class DokkaSymbolVisitor(
     ).toSet().takeUnless { it.isEmpty() }
 
 
-    private fun KaSession.additionalExtrasOfProperty(symbol: KaPropertySymbol) = with(symbol) {
+    context(_: KaSession)
+    private fun additionalExtrasOfProperty(symbol: KaPropertySymbol) = with(symbol) {
         listOfNotNull(
             ExtraModifiers.KotlinOnlyModifiers.Const.takeIf { (this as? KaKotlinPropertySymbol)?.isConst == true },
             ExtraModifiers.KotlinOnlyModifiers.LateInit.takeIf { (this as? KaKotlinPropertySymbol)?.isLateInit == true },
@@ -1164,7 +1192,8 @@ internal class DokkaSymbolVisitor(
         ExtraModifiers.JavaOnlyModifiers.Static.takeIf { isStatic }
     ).toSet().takeUnless { it.isEmpty() }
 
-    private fun KaSession.additionalExtrasOfFunction(symbol: KaNamedFunctionSymbol) = with(symbol) {
+    context(_: KaSession)
+    private fun additionalExtrasOfFunction(symbol: KaNamedFunctionSymbol) = with(symbol) {
         listOfNotNull(
             ExtraModifiers.KotlinOnlyModifiers.Infix.takeIf { isInfix },
             ExtraModifiers.KotlinOnlyModifiers.Inline.takeIf { isInline },
