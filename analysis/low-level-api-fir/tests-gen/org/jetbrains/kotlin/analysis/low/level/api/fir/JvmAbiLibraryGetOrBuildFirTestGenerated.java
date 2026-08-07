@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirJvmAbi")
 @TestDataPath("$PROJECT_ROOT")
-public class JvmAbiLibraryGetOrBuildFirTestGenerated extends AbstractJvmAbiLibraryGetOrBuildFirTest {
+public class JvmAbiLibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuildFirTest {
   private void run(String fileName) {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirJvmAbi/" + fileName);
   }
