@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.FunctionTypeInterfacePackages
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -132,10 +130,8 @@ internal class JsIrLinkerLoader(
     private val loadBodiesOnlyForMainModule: Boolean,
     private val mainLibrary: KotlinLibrary,
 ) {
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun createLinker(): JsIrLinker {
-        val signaturer = IdSignatureDescriptor(JsManglerDesc)
-        val symbolTable = SymbolTable(signaturer, icContext.createIrFactory())
+        val symbolTable = SymbolTable(signaturer = null, icContext.createIrFactory())
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             compilerConfiguration.diagnosticsCollector,
             compilerConfiguration.languageVersionSettings,
