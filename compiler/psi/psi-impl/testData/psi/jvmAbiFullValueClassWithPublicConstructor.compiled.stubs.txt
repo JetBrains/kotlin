@@ -2,6 +2,10 @@ FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/ThreadLocalDelegate, fqName=ThreadLocalDelegate, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ThreadLocalDelegate, superNames=[]]
+    valueClassRepresentation: full [
+      threadLocal -> java.lang.ThreadLocal<T>
+      name -> kotlin.String
+    ]
     MODIFIER_LIST[public final value]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]

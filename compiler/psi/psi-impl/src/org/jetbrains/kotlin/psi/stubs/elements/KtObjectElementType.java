@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub;
 import org.jetbrains.kotlin.psi.stubs.StubUtils;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl;
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinValueClassRepresentation;
 import org.jetbrains.kotlin.psi.stubs.impl.Utils;
 
 import java.io.IOException;
@@ -54,7 +55,8 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStubImpl,
                 psi.isTopLevel(),
                 psi.isLocal(),
                 psi.isObjectLiteral(),
-                /* kdocText = */ null
+                /* kdocText = */ null,
+                /* valueClassRepresentation = */ null
         );
     }
 
@@ -77,6 +79,8 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStubImpl,
         for (String name : superNames) {
             dataStream.writeName(name);
         }
+
+        ValueClassRepresentationSerializationKt.serializeValueClassRepresentation(dataStream, stub.getValueClassRepresentation());
     }
 
     @NotNull
@@ -100,6 +104,9 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStubImpl,
             superNames[i] = dataStream.readName();
         }
 
+        KotlinValueClassRepresentation valueClassRepresentation =
+                ValueClassRepresentationSerializationKt.deserializeValueClassRepresentation(dataStream);
+
         return new KotlinObjectStubImpl(
                 (StubElement<?>) parentStub,
                 name,
@@ -109,7 +116,8 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStubImpl,
                 isTopLevel,
                 isLocal,
                 isObjectLiteral,
-                kdocText
+                kdocText,
+                valueClassRepresentation
         );
     }
 

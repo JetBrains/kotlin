@@ -110,7 +110,7 @@ private fun IndentedTextBuilder.appendValueClassRepresentation(representation: K
     }
 
     append(kind).append(" ")
-    appendValue(representation.underlyingPropertyNamesToTypes.toMap())
+    appendValue(representation.underlyingPropertyNamesToTypes?.toMap())
 }
 
 private fun IndentedTextBuilder.appendTypeInfo(typeBean: KotlinTypeBean) {

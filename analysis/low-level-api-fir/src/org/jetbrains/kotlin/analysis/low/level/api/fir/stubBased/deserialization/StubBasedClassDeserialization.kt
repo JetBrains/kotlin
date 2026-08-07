@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFullValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinInlineClassRepresentation
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinRigidTypeBean
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -272,14 +273,14 @@ internal fun deserializeClassToSymbol(
         }
     }.apply {
         if (classStub != null) {
-            if (isInlineOrValue) {
-                valueClassRepresentation = classStub.deserializeValueClassRepresentation(this, context.typeDeserializer)
-            }
-
             val clsStubCompiledToJvmDefaultImplementation = classStub.isClsStubCompiledToJvmDefaultImplementation
             if (clsStubCompiledToJvmDefaultImplementation) {
                 symbol.fir.isNewPlaceForBodyGeneration = true
             }
+        }
+
+        if (isInlineOrValue) {
+            valueClassRepresentation = classOrObject.deserializeValueClassRepresentation(this, context.typeDeserializer)
         }
 
         replaceAnnotations(context.annotationDeserializer.loadAnnotations(classOrObject))
@@ -297,23 +298,37 @@ internal fun deserializeClassToSymbol(
 }
 
 @OptIn(KtImplementationDetail::class)
-private fun KotlinClassStubImpl.deserializeValueClassRepresentation(
+private fun KtClassOrObject.deserializeValueClassRepresentation(
     klass: FirRegularClass,
     typeDeserializer: StubBasedFirTypeDeserializer,
-): ValueClassRepresentation<ConeRigidType>? = when (val representation = valueClassRepresentation) {
-    null -> null
+): ValueClassRepresentation<ConeRigidType>? {
+    val representation = when (this) {
+        is KtClass -> {
+            val stub: KotlinClassStubImpl = compiledStub
+            stub.valueClassRepresentation
+        }
 
-    is KotlinInlineClassRepresentation -> InlineClassRepresentation(
-        underlyingPropertyName = representation.underlyingPropertyName,
-        underlyingType = typeDeserializer.underlyingType(representation.underlyingType, klass),
-    )
+        is KtObjectDeclaration -> {
+            val stub: KotlinObjectStubImpl = compiledStub
+            stub.valueClassRepresentation
+        }
 
-    is KotlinFullValueClassRepresentation -> FullValueClassRepresentation(
-        // The compiler denotes an abstract or a sealed value class, which has no underlying properties, with 'null' instead of a list
-        underlyingPropertyNamesToTypes = representation.underlyingPropertyNamesToTypes
-            .map { [name, type] -> name to typeDeserializer.underlyingType(type, klass) }
-            .ifEmpty { null }
-    )
+        else -> null
+    }
+
+    return when (representation) {
+        null -> null
+
+        is KotlinInlineClassRepresentation -> InlineClassRepresentation(
+            underlyingPropertyName = representation.underlyingPropertyName,
+            underlyingType = typeDeserializer.underlyingType(representation.underlyingType, klass),
+        )
+
+        is KotlinFullValueClassRepresentation -> FullValueClassRepresentation(
+            underlyingPropertyNamesToTypes = representation.underlyingPropertyNamesToTypes
+                ?.map { [name, type] -> name to typeDeserializer.underlyingType(type, klass) }
+        )
+    }
 }
 
 private fun StubBasedFirTypeDeserializer.underlyingType(bean: KotlinRigidTypeBean, klass: FirRegularClass): ConeRigidType {

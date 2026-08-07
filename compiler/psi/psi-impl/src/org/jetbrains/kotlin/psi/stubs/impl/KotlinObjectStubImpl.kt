@@ -25,7 +25,15 @@ class KotlinObjectStubImpl(
     override val isTopLevel: Boolean,
     override val isLocal: Boolean,
     override val isObjectLiteral: Boolean,
-    override val kdocText: String?
+    override val kdocText: String?,
+    /**
+     * Indicates if this object is a value object, or `null` if it is not one.
+     * Only stubs built from compiled metadata have this information; it is always `null` for stubs built from sources.
+     *
+     * A value object never has underlying properties, so the representation is always an empty
+     * [KotlinFullValueClassRepresentation].
+     */
+    val valueClassRepresentation: KotlinValueClassRepresentation?,
 ) : KotlinStubBaseImpl<KtObjectDeclaration>(parent, KtStubElementTypes.OBJECT_DECLARATION), KotlinObjectStub {
     override fun getName(): String? = name?.string
     override val superNames: List<String>
@@ -42,6 +50,7 @@ class KotlinObjectStubImpl(
         isLocal = isLocal,
         isObjectLiteral = isObjectLiteral,
         kdocText = kdocText,
+        valueClassRepresentation = valueClassRepresentation,
     )
 
     @KtImplementationDetail
@@ -54,5 +63,6 @@ class KotlinObjectStubImpl(
                 other.isLocal == isLocal &&
                 other.isObjectLiteral == isObjectLiteral &&
                 other.kdocText == kdocText &&
+                other.valueClassRepresentation == valueClassRepresentation &&
                 other.superNameRefs.contentEquals(superNameRefs)
 }

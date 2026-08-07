@@ -3,6 +3,7 @@ NothingWrapper.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/NothingWrapper, fqName=NothingWrapper, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=NothingWrapper, superNames=[]]
+      valueClassRepresentation: full [ nothing -> kotlin.Nothing ]
       MODIFIER_LIST[public final value]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=NothingWrapper]
         MODIFIER_LIST[public]
@@ -59,6 +60,7 @@ UnitWrapper.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/UnitWrapper, fqName=UnitWrapper, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=UnitWrapper, superNames=[]]
+      valueClassRepresentation: full [ unit -> kotlin.Unit ]
       MODIFIER_LIST[public final value]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=UnitWrapper]
         MODIFIER_LIST[public]

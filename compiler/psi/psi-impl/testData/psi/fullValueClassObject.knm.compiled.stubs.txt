@@ -2,6 +2,7 @@ FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   OBJECT_DECLARATION[classId=/ValueObject, fqName=ValueObject, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=ValueObject, superNames=[]]
+    valueClassRepresentation: full [ ]
     MODIFIER_LIST[public value]
     CLASS_BODY
       PROPERTY[fqName=ValueObject.property, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=property]

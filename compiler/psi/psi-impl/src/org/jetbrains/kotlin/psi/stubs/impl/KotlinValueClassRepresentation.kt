@@ -9,17 +9,18 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 
 /**
- * How a value class is unboxed by the compiler, as stored in a [KotlinClassStubImpl].
+ * The kind of a value class together with its underlying properties, as stored in a [KotlinClassStubImpl] or a [KotlinObjectStubImpl].
  */
 @KtImplementationDetail
 sealed interface KotlinValueClassRepresentation {
     /**
      * The underlying properties of the value class, in declaration order.
      *
-     * The list is empty only for an abstract or a sealed [KotlinFullValueClassRepresentation]: any other value class
-     * has to declare at least one underlying property.
+     * It is `null` for an abstract or a sealed [KotlinFullValueClassRepresentation], which is not allowed to declare them,
+     * and empty for a value object, which has no primary constructor parameters to declare them as.
+     * Any other value class has to declare at least one underlying property.
      */
-    val underlyingPropertyNamesToTypes: List<Pair<Name, KotlinRigidTypeBean>>
+    val underlyingPropertyNamesToTypes: List<Pair<Name, KotlinRigidTypeBean>>?
 }
 
 /**
@@ -35,12 +36,9 @@ data class KotlinInlineClassRepresentation(
 }
 
 /**
- * A value class declared without the `@JvmInline` annotation. It may have several underlying properties, and it is unboxed only on
- * non-JVM platforms and only if it has a single underlying property and no supertype other than `kotlin.Any`.
- *
- * An abstract or a sealed value class cannot declare underlying properties, so [underlyingPropertyNamesToTypes] is empty for it.
+ * A value class declared without the `@JvmInline` annotation.
  */
 @KtImplementationDetail
 data class KotlinFullValueClassRepresentation(
-    override val underlyingPropertyNamesToTypes: List<Pair<Name, KotlinRigidTypeBean>>,
+    override val underlyingPropertyNamesToTypes: List<Pair<Name, KotlinRigidTypeBean>>?,
 ) : KotlinValueClassRepresentation

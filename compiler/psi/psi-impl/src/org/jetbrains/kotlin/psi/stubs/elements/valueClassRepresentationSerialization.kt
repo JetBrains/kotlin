@@ -57,7 +57,7 @@ internal fun deserializeValueClassRepresentation(dataStream: StubInputStream): K
 
         KotlinValueClassRepresentationKind.FULL_VALUE_CLASS -> {
             val properties = dataStream.readNullableCollection { deserializeUnderlyingProperty() }
-            KotlinFullValueClassRepresentation(properties.orEmpty())
+            KotlinFullValueClassRepresentation(properties)
         }
     }
 }

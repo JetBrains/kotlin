@@ -11,7 +11,7 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public sealed value [ResolvedTo(BODY_RESOLVE)] class ValueClass : R|kotlin/Any| {
+public sealed value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class ValueClass : R|kotlin/Any| {
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
