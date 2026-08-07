@@ -1,3 +1,5 @@
+// JVM_ABI_GEN
+
 @JvmInline
 value class ThreadLocalDelegate<T> private constructor(private val threadLocal: ThreadLocal<T>) {
     companion object {

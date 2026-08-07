@@ -127,6 +127,11 @@ abstract class TestModuleCompiler : TestService {
         val LIBRARY_PLATFORMS by enumDirective<TargetPlatformEnum>("Target platforms allowed for library compilation")
         val BINARY_ROOT by stringDirective("A library root to which a file will be compiled", DirectiveApplicability.File)
 
+        val JVM_ABI_GEN by directive(
+            "Compiles the JVM library with the `jvm-abi-gen` plugin, so that it is an ABI JAR. Ignored for other platforms. " +
+                    "The test's module has to pass the plugin JAR to the test task (see `analysis/stubs/build.gradle.kts`)."
+        )
+
         val LIBRARY_RESOURCE by directive(
             "Embeds the file verbatim as a resource in the compiled library, regardless of its extension. Such a file is not compiled.",
             DirectiveApplicability.File,

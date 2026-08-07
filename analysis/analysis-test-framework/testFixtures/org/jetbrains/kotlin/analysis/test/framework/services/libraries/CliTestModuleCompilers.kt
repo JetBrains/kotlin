@@ -239,6 +239,7 @@ object JvmJarTestModuleCompiler : JvmTestModuleCompiler() {
 
 /**
  * Compiles a JVM test module with the `jvm-abi-gen` compiler plugin, so that the resulting library is an ABI JAR.
+ * [DispatchingTestModuleCompiler] selects this compiler for modules marked with [TestModuleCompiler.Directives.JVM_ABI_GEN].
  *
  * The plugin JAR is taken from the [JVM_ABI_GEN_JAR_PATH_PROPERTY] system property, which a test suite using this compiler has to provide
  * (see `analysis/stubs/build.gradle.kts` for an example).
@@ -348,7 +349,7 @@ object MetadataKlibDirTestModuleCompiler : CliTestModuleCompiler() {
 }
 
 /**
- * [DispatchingTestModuleCompiler] chooses the appropriate compiler for a module based on its platform.
+ * [DispatchingTestModuleCompiler] chooses the appropriate compiler for a module based on its platform and directives.
  * In case all tests in a suite should compile libraries for a single platform, one of the underlying [TestModuleCompiler]s
  * can be registered directly. Once new test compilers are introduced, they should be added to [DispatchingTestModuleCompiler].
  */
@@ -380,7 +381,11 @@ object DispatchingTestModuleCompiler : TestModuleCompiler() {
     private fun getCompiler(module: TestModule, testServices: TestServices): CliTestModuleCompiler {
         val targetPlatform = module.targetPlatform(testServices)
         return when {
-            targetPlatform.isJvm() -> JvmJarTestModuleCompiler
+            targetPlatform.isJvm() -> when {
+                Directives.JVM_ABI_GEN in module.directives -> JvmAbiTestModuleCompiler
+                else -> JvmJarTestModuleCompiler
+            }
+
             targetPlatform.isJs() -> JsKlibTestModuleCompiler
             targetPlatform.isCommon() -> MetadataKlibDirTestModuleCompiler
             else -> error("DispatchingTestModuleCompiler doesn't support the platform: $targetPlatform")

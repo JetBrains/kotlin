@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/stubs/testData/jvmAbi")
 @TestDataPath("$PROJECT_ROOT")
-public class DecompiledJvmAbiTextTestGenerated extends AbstractDecompiledJvmAbiTextTest {
+public class DecompiledJvmAbiTextTestGenerated extends AbstractDecompiledJvmTextTest {
   private void run(String fileName) {
     runTest("analysis/stubs/testData/jvmAbi/" + fileName);
   }
