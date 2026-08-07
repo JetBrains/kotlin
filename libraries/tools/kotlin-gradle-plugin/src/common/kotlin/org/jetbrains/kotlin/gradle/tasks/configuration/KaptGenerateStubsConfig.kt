@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.internal.kapt.KaptProperties
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
+import org.jetbrains.kotlin.gradle.tasks.BaseKapt
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.tasks.withType
@@ -113,6 +114,12 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
                 project.tasks.withType<KaptGenerateStubsTask>().configureEach { task ->
                     if (task.name == kaptGenerateStubsTaskName) {
                         task.libraries.from(paths)
+                    }
+                }
+                val kaptTaskName = getKaptTaskName(kotlinCompileTask.name, KAPT_PREFIX)
+                project.tasks.withType<BaseKapt>().configureEach { task ->
+                    if (task.name == kaptTaskName) {
+                        task.classpath.from(paths)
                     }
                 }
             }
