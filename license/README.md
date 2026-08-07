@@ -207,6 +207,10 @@ any distributions of the compiler, libraries or plugin:
       - License: LGPL 2.1 ([license/third_party/testdata/findbugs_license.txt][findbugs])
       - Origin: Bytecode Analysis Framework, Copyright (C) 2005 University of Maryland
 
+ - Path: third-party/java8-annotations/org/chromium
+      - License: BSD ([license/third_party/testdata/chromium_license.txt][chromium])
+      - Origin: Chromium, Copyright 2015 The Chromium Authors
+
  - Path: third-party/java8-annotations/org/eclipse
       - License: Eclipse Public License v1.0 ([license/third_party/testdata/eclipse_license.txt][eclipse])
       - Origin: Eclipse JDT, Copyright (c) 2011, 2013 Stephan Herrmann and others.
@@ -334,6 +338,7 @@ any distributions of the compiler, libraries or plugin:
 [assemblyscript]: third_party/assemblyscript_license.txt
 [antlr_js_grammar]: third_party/antlr_js_grammar_license.txt
 [boost]: third_party/boost_LICENSE.txt
+[chromium]: third_party/testdata/chromium_license.txt
 [closure-compiler]: third_party/closure-compiler_LICENSE.txt
 [compose]: third_party/compose_license.txt
 [dagger]: third_party/testdata/dagger_license.txt
