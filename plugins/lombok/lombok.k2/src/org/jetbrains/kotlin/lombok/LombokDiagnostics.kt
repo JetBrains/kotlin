@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.FLAG_USAGE_WARNING
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.LOG_PROPERTY_ALREADY_EXISTS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.CALL_SUPER_NOT_CALLED
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.TO_STRING_FUNCTION_ALREADY_EXISTS
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.TO_STRING_FUNCTION_IS_FINAL_IN_SUPERCLASS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION
@@ -70,6 +71,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
 
     val LOG_PROPERTY_ALREADY_EXISTS by warning1<KtAnnotationEntry, Name>()
     val TO_STRING_FUNCTION_ALREADY_EXISTS by warning0<KtAnnotationEntry>()
+    val TO_STRING_FUNCTION_IS_FINAL_IN_SUPERCLASS by error1<KtAnnotationEntry, Name>()
     val NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED by error0<KtAnnotationEntry>()
     val EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST by error0<KtAnnotationEntry>()
 
@@ -113,6 +115,11 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
 
         map.put(LOG_PROPERTY_ALREADY_EXISTS, "Property ''{0}'' already exists.", CommonRenderers.NAME)
         map.put(TO_STRING_FUNCTION_ALREADY_EXISTS, "Not generating 'toString()': A method with that name already exists.")
+        map.put(
+            TO_STRING_FUNCTION_IS_FINAL_IN_SUPERCLASS,
+            "Cannot generate ''toString()'': it is final in ''{0}'' and cannot be overridden.",
+            CommonRenderers.NAME,
+        )
         map.put(
             CALL_SUPER_NOT_CALLED,
             "Generating ''{0}'' implementation but without a call to superclass, even though this class does not extend ''Any''. " +

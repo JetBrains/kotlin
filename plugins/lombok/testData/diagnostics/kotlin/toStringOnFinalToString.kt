@@ -17,19 +17,19 @@ open class FinalToString {
     final override fun toString(): String = "FinalToString()"
 }
 
-@ToString
+<!TO_STRING_FUNCTION_IS_FINAL_IN_SUPERCLASS!>@ToString<!>
 class ChildOfFinalToString : FinalToString() {
     val a = 1
 }
 
 open class IntermediateOfFinalToString : FinalToString()
 
-@ToString
+<!TO_STRING_FUNCTION_IS_FINAL_IN_SUPERCLASS!>@ToString<!>
 class GrandChildOfFinalToString : IntermediateOfFinalToString() {
     val a = 1
 }
 
-@ToString
+<!TO_STRING_FUNCTION_IS_FINAL_IN_SUPERCLASS!>@ToString<!>
 class ChildOfJavaFinalToString : JavaFinalToString() {
     val a = 1
 }
