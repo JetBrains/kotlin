@@ -1,0 +1,89 @@
+KtFile: withMembers.kt
+  PsiComment(EOL_COMMENT)('// A nested classifier is the only declaration an annotation class may have besides its parameters')
+  PsiWhiteSpace('\n')
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('test')
+  IMPORT_LIST
+    <empty list>
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(annotation)('annotation')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Outer')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('value')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CLASS
+        MODIFIER_LIST
+          PsiElement(annotation)('annotation')
+        PsiWhiteSpace(' ')
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('Nested')
+        PRIMARY_CONSTRUCTOR
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(val)('val')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('inner')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('String')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      OBJECT_DECLARATION
+        MODIFIER_LIST
+          PsiElement(companion)('companion')
+        PsiWhiteSpace(' ')
+        PsiElement(object)('object')
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          PROPERTY
+            MODIFIER_LIST
+              PsiElement(const)('const')
+            PsiWhiteSpace(' ')
+            PsiElement(val)('val')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('DEFAULT')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Int')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

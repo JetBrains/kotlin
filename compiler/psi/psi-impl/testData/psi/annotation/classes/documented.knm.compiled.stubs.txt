@@ -1,0 +1,33 @@
+FILE[kind=File[packageFqName=test]]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=test]
+  IMPORT_LIST
+  CLASS[classId=test/Documented, fqName=test.Documented, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Documented, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Documented]
+      MODIFIER_LIST[public]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=value]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Int]
+          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
+      PROPERTY[fqName=test.Documented.value, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, kdocText=/**
+           * The documented value.
+           */, name=value]
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]

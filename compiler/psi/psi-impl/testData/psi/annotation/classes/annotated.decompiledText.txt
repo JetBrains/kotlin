@@ -1,0 +1,28 @@
+Marker.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public final annotation class Marker public constructor() : kotlin.Annotation {
+  }
+
+Targeted.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public final annotation class Targeted public constructor(onParameter: kotlin.Int, onProperty: kotlin.Int, onGetter: kotlin.Int, onEveryTarget: kotlin.Int) : kotlin.Annotation {
+      public final val onParameter: kotlin.Int /* compiled code */
+
+      public final val onProperty: kotlin.Int /* compiled code */
+
+      public final val onGetter: kotlin.Int /* compiled code */
+          @test.Marker
+          public final get
+
+      public final val onEveryTarget: kotlin.Int /* compiled code */
+          @test.Marker
+          public final get
+  }

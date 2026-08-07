@@ -1,0 +1,42 @@
+Defaults.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public final annotation class Defaults public constructor(int: kotlin.Int = COMPILED_CODE, string: kotlin.String = COMPILED_CODE, array: kotlin.IntArray = COMPILED_CODE) : kotlin.Annotation {
+      public final val int: kotlin.Int = 1
+
+      public final val string: kotlin.String = "s"
+
+      public final val array: kotlin.IntArray = [1, 2]
+  }
+
+Empty.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public final annotation class Empty public constructor() : kotlin.Annotation {
+  }
+
+Single.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public final annotation class Single public constructor(value: kotlin.String) : kotlin.Annotation {
+      public final val value: kotlin.String /* compiled code */
+  }
+
+Varargs.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public final annotation class Varargs public constructor(vararg values: kotlin.String) : kotlin.Annotation {
+      public final val values: kotlin.Array<out kotlin.String> /* compiled code */
+  }
