@@ -25,8 +25,6 @@ dependencies {
     implementation(project(":compiler:backend.jvm"))
     api(project(":compiler:cli-js"))
     api(project(":compiler:cli-metadata"))
-    api(project(":compiler:fir:entrypoint"))
-    api(project(":compiler:fir:fir2ir:jvm-backend"))
     api(project(":kotlin-build-common"))
     api(project(":daemon-common"))
     api(project(":compiler:build-tools:kotlin-build-statistics"))
