@@ -4,7 +4,12 @@ fun box() = abiTest {
     // fun
     expectSuccess(true) { createRemovedCtxFunReference() is kotlin.reflect.KFunction<*> }
     expectSuccess("removedCtxFun") { removedCtxFunReferenceName() }
-    if (!testMode.isJs) {
+    // On JS a callable reference is a plain function object: hashCode/equals/toString do not evaluate the unlinked target and succeed
+    if (testMode.isJs) {
+        expectSuccess { removedCtxFunReferenceHashCode(); "OK" }
+        expectSuccess(false) { removedCtxFunReferenceEquals() }
+        expectSuccess { removedCtxFunReferenceToString(); "OK" }
+    } else {
         expectFailure(linkage("Reference to function 'removedCtxFun' can not be evaluated: No function found for symbol '/removedCtxFun'")) { removedCtxFunReferenceHashCode() }
         expectFailure(linkage("Reference to function 'removedCtxFun' can not be evaluated: No function found for symbol '/removedCtxFun'")) { removedCtxFunReferenceEquals() }
         expectFailure(linkage("Reference to function 'removedCtxFun' can not be evaluated: No function found for symbol '/removedCtxFun'")) { removedCtxFunReferenceToString() }
@@ -18,7 +23,11 @@ fun box() = abiTest {
     // val
     expectSuccess(true) { createRemovedCtxValReference() is kotlin.reflect.KProperty0<*> }
     expectSuccess("removedCtxVal") { removedCtxValReferenceName() }
-    if (!testMode.isJs) {
+    if (testMode.isJs) {
+        expectSuccess { removedCtxValReferenceHashCode(); "OK" }
+        expectSuccess(false) { removedCtxValReferenceEquals() }
+        expectSuccess { removedCtxValReferenceToString(); "OK" }
+    } else {
         expectFailure(linkage("Reference to property 'removedCtxVal' can not be evaluated: No property found for symbol '/removedCtxVal'")) { removedCtxValReferenceHashCode() }
         expectFailure(linkage("Reference to property 'removedCtxVal' can not be evaluated: No property found for symbol '/removedCtxVal'")) { removedCtxValReferenceEquals() }
         expectFailure(linkage("Reference to property 'removedCtxVal' can not be evaluated: No property found for symbol '/removedCtxVal'")) { removedCtxValReferenceToString() }
@@ -29,7 +38,11 @@ fun box() = abiTest {
     // var
     expectSuccess(true) { createRemovedCtxVarReference() is kotlin.reflect.KMutableProperty0<*> }
     expectSuccess("removedCtxVar") { removedCtxVarReferenceName() }
-    if (!testMode.isJs) {
+    if (testMode.isJs) {
+        expectSuccess { removedCtxVarReferenceHashCode(); "OK" }
+        expectSuccess(false) { removedCtxVarReferenceEquals() }
+        expectSuccess { removedCtxVarReferenceToString(); "OK" }
+    } else {
         expectFailure(linkage("Reference to property 'removedCtxVar' can not be evaluated: No property found for symbol '/removedCtxVar'")) { removedCtxVarReferenceHashCode() }
         expectFailure(linkage("Reference to property 'removedCtxVar' can not be evaluated: No property found for symbol '/removedCtxVar'")) { removedCtxVarReferenceEquals() }
         expectFailure(linkage("Reference to property 'removedCtxVar' can not be evaluated: No property found for symbol '/removedCtxVar'")) { removedCtxVarReferenceToString() }
