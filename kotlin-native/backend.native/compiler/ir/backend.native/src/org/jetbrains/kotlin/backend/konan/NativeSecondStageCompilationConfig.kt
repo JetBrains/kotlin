@@ -390,13 +390,6 @@ class NativeSecondStageCompilationConfig(
 
     val resolvedLibraries get() = resolve.resolvedLibraries
 
-    val includedLibraries: List<KotlinLibrary>
-        get() = getIncludedLibraries(
-                configuration.konanIncludedLibraries.map { Path(it) },
-                configuration,
-                resolve.resolvedLibraries
-        )
-
     val exportedLibraries: List<KotlinLibrary>
         get() = getExportedLibraries(configuration, resolve.resolvedLibraries, resolve.resolver.searchPathResolver)
 

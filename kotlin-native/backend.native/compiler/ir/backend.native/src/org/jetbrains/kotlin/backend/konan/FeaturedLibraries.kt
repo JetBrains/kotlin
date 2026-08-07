@@ -17,13 +17,12 @@ import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import java.nio.file.Path
-import kotlin.io.path.absolutePathString
 
 internal fun ModuleDescriptor.getExportedDependencies(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
-        getDescriptorsFromLibraries((config.exportedLibraries + config.includedLibraries).toSet())
+        getDescriptorsFromLibraries((config.exportedLibraries + config.loadedKlibs.included).toSet())
 
 internal fun ModuleDescriptor.getIncludedLibraryDescriptors(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
-        getDescriptorsFromLibraries(config.includedLibraries.toSet())
+        getDescriptorsFromLibraries(config.loadedKlibs.included.toSet())
 
 private fun ModuleDescriptor.getDescriptorsFromLibraries(libraries: Set<KotlinLibrary>) =
     allDependencyModules.filter {
@@ -42,16 +41,6 @@ internal fun getExportedLibraries(
         resolvedLibraries,
         resolver,
         FeaturedLibrariesReporter.forExportedLibraries(configuration),
-)
-
-internal fun getIncludedLibraries(
-        includedLibraryFiles: List<Path>,
-        configuration: CompilerConfiguration,
-        resolvedLibraries: KotlinLibraryResolveResult
-): List<KotlinLibrary> = getFeaturedLibraries(
-        includedLibraryFiles.toSet(),
-        resolvedLibraries,
-        FeaturedLibrariesReporter.forIncludedLibraries(configuration),
 )
 
 private sealed class FeaturedLibrariesReporter {
@@ -90,18 +79,6 @@ private sealed class FeaturedLibrariesReporter {
         }
     }
 
-    private class IncludedLibrariesReporter(val configuration: CompilerConfiguration) : FeaturedLibrariesReporter() {
-        override fun reportIllegalKind(library: KotlinLibrary) = with(library) {
-            val message = "$reportedKind library $path cannot be passed with -Xinclude " +
-                    "(library path: ${path.absolutePathString()})"
-            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, message)
-        }
-
-        override fun reportNotIncludedLibraries(includedLibraries: List<KotlinLibrary>, remainingFeaturedLibraries: Set<Path>) {
-            error("An included library is not found among resolved libraries")
-        }
-    }
-
     private class ExportedLibrariesReporter(configuration: CompilerConfiguration) : BaseReporter(configuration) {
         override fun illegalKindMessage(kind: String, libraryName: String): String =
             "$kind library $libraryName can't be exported with -Xexport-library"
@@ -113,8 +90,6 @@ private sealed class FeaturedLibrariesReporter {
     companion object {
         fun forExportedLibraries(configuration: CompilerConfiguration): FeaturedLibrariesReporter =
                 ExportedLibrariesReporter(configuration)
-        fun forIncludedLibraries(configuration: CompilerConfiguration): FeaturedLibrariesReporter =
-                IncludedLibrariesReporter(configuration)
     }
 }
 
