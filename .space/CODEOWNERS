@@ -188,7 +188,6 @@
 /compiler/testData/codegen/boxWasmWasi/ "Kotlin Wasm"
 /compiler/testData/codegen/bytecodeListing/ "Kotlin JVM" "Kotlin Frontend"
 /compiler/testData/codegen/bytecodeText/ "Kotlin JVM" "Kotlin Frontend"
-/compiler/testData/codegen/innerClassInfo/ "Kotlin JVM"
 /compiler/testData/codegen/properties/ "Kotlin JVM"
 /compiler/testData/codegen/reflection/ vsevolod.tolstopyatov@jetbrains.com leonid.startsev@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com alexander.udalov@jetbrains.com
 /compiler/testData/compileJavaAgainstKotlin/ "Kotlin Frontend" "Kotlin JVM"
