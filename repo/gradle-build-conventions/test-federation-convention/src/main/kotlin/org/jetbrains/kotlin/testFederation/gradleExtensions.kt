@@ -118,7 +118,7 @@ val Test.smokeTestConfig: Property<SmokeTestConfig> by extensionProperty {
 }
 
 /**
- * Returns the list of domains that we can pass to this task when in Smoke mode
+ * Domains that may be used to declare contracts via `@AffectedBy...` in tests
  */
 val Test.allowAffectedBy: ListProperty<Domain> by extensionProperty {
     project.objects.listProperty(Domain::class.java)
