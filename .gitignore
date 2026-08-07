@@ -25,6 +25,7 @@ build/
 !**/src/**/build
 !**/test/**/build
 !**/tests-gen/**/build
+!/third-party/java8-annotations/org/chromium/build
 *.iml
 !**/testData/**/*.iml
 .idea/artifacts
