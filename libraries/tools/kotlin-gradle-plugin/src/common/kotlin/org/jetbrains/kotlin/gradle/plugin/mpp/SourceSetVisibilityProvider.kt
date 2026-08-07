@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationComponent
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.jetbrains.kotlin.gradle.utils.dependencyArtifactsOrNull
-import org.jetbrains.kotlin.gradle.utils.groupByToNonNullSet
+import org.jetbrains.kotlin.gradle.utils.resolvedDependenciesByKmpModuleId
+import org.jetbrains.kotlin.gradle.utils.resolvedDependenciesByRequested
 import java.io.File
 import kotlin.collections.contains
 import kotlin.collections.ifEmpty
@@ -42,22 +43,6 @@ internal class SourceSetVisibilityProvider(
     private val allowMatchingByRequestedCoordinates: Boolean,
     private val cache: KotlinGradleTaskExecutionCache,
 ) {
-    fun LazyResolvedConfigurationComponent.resolvedDependenciesByKmpModuleId(): Map<KmpModuleIdentifier, Set<ResolvedDependencyResult>> =
-        cache.getOrCompute("$projectId/$configurationName/resolvedDependenciesByKmpModuleId") {
-            groupByToNonNullSet(
-                keySelector = { KmpModuleIdentifier.from(it.from, buildIdentifierAccessor) },
-                valueTransform = { it as? ResolvedDependencyResult },
-            )
-        }
-
-    fun LazyResolvedConfigurationComponent.resolvedDependenciesByRequested(): Map<ComponentSelector, Set<ResolvedDependencyResult>> =
-        cache.getOrCompute("$projectId/$configurationName/resolvedDependenciesByRequested") {
-            groupByToNonNullSet(
-                keySelector = { it.requested },
-                valueTransform = { it as? ResolvedDependencyResult },
-            )
-        }
-
     class PlatformCompilationData(
         val allSourceSets: Set<KotlinSourceSetName>,
         val resolvedDependenciesConfiguration: LazyResolvedConfigurationComponent,
@@ -92,14 +77,14 @@ internal class SourceSetVisibilityProvider(
     ): Set<String>? {
         val resolvedPlatformDependencies = buildList {
             resolvedDependenciesConfiguration
-                .resolvedDependenciesByKmpModuleId()
+                .resolvedDependenciesByKmpModuleId(cache, projectId, buildIdentifierAccessor)
                 .get(resolvedRootMppDependencyIdentifier)
                 .orEmpty()
                 .let(::addAll)
 
             if (allowMatchingByRequestedCoordinates) {
                 resolvedDependenciesConfiguration
-                    .resolvedDependenciesByRequested()
+                    .resolvedDependenciesByRequested(cache, projectId)
                     .get(requestedDependency)
                     .orEmpty()
                     .let(::addAll)
