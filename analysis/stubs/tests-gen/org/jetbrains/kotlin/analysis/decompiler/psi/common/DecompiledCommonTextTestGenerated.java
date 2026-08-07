@@ -821,6 +821,30 @@ public class DecompiledCommonTextTestGenerated extends AbstractDecompiledCommonT
   }
 
   @Test
+  @TestMetadata("jvmAbiInlineClassWithPrivateConstructor.kt")
+  public void testJvmAbiInlineClassWithPrivateConstructor() {
+    run("jvmAbiInlineClassWithPrivateConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmAbiInlineClassWithPrivateProperty.kt")
+  public void testJvmAbiInlineClassWithPrivateProperty() {
+    run("jvmAbiInlineClassWithPrivateProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmAbiInlineClassWithPublicConstructor.kt")
+  public void testJvmAbiInlineClassWithPublicConstructor() {
+    run("jvmAbiInlineClassWithPublicConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmAbiInlineClassWithTypeParameterUnderlyingType.kt")
+  public void testJvmAbiInlineClassWithTypeParameterUnderlyingType() {
+    run("jvmAbiInlineClassWithTypeParameterUnderlyingType.kt");
+  }
+
+  @Test
   @TestMetadata("kotlinFunInterface_ERR.kt")
   public void testKotlinFunInterface_ERR() {
     run("kotlinFunInterface_ERR.kt");

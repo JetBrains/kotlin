@@ -16,16 +16,6 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("analysis/stubs/tests-gen", "analysis/stubs/testData") {
-            testClass<AbstractCompiledJvmStubsTest>(suiteTestClassName = "CompiledJvmAbiStubsTestGenerated") {
-                model("jvmAbi", pattern = TestGeneratorUtil.KT)
-            }
-
-            testClass<AbstractDecompiledJvmTextTest>(suiteTestClassName = "DecompiledJvmAbiTextTestGenerated") {
-                model("jvmAbi", pattern = TestGeneratorUtil.KT)
-            }
-        }
-
         testGroup("analysis/stubs/tests-gen", "compiler/psi/psi-impl/testData") {
             testClass<AbstractSourceStubsTest> {
                 model("psi", pattern = TestGeneratorUtil.KT_OR_KTS)
