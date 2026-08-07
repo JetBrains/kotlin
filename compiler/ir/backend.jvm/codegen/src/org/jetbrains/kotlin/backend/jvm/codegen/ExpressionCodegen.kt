@@ -346,9 +346,12 @@ class ExpressionCodegen(
             param.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
         )
             return
-        val asmType = param.type.asmType
+        // `@JvmExposeBoxed` exposes boxed inline classes, so, we need to check them for null,
+        // since they are designed to be called from Java.
+        val isBoxed = isBoxedParameterOfExposedFunction(irFunction, param)
+        val asmType = typeMapper.mapType(param.type, wrapInlineClassesForExposedFunctions(irFunction, param))
         val expandedType =
-            if (param.type.isInlineClassType())
+            if (param.type.isInlineClassType() && !isBoxed)
                 context.typeSystem.computeExpandedTypeForInlineClass(param.type) as? IrType ?: param.type
             else param.type
         if (!expandedType.isNullable() && !isPrimitive(asmType)) {
