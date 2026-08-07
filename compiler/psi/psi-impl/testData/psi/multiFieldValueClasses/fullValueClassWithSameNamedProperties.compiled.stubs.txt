@@ -2,6 +2,7 @@ FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/PublicValue, fqName=PublicValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PublicValue, superNames=[]]
+    valueClassRepresentation: full [ value -> kotlin.String ]
     MODIFIER_LIST[public final value]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PublicValue]
       MODIFIER_LIST[public]

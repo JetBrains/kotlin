@@ -15,7 +15,7 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public final value [ResolvedTo(BODY_RESOLVE)] class Box<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(element, T), (name, kotlin/String)])] class Box<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|

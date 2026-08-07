@@ -3,6 +3,7 @@ AbstractValue.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AbstractValue, fqName=AbstractValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AbstractValue, superNames=[]]
+      valueClassRepresentation: full null
       MODIFIER_LIST[public abstract value]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AbstractValue]
         MODIFIER_LIST[public]
@@ -61,6 +62,7 @@ SealedValue.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/SealedValue, fqName=SealedValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=SealedValue, superNames=[]]
+      valueClassRepresentation: full null
       MODIFIER_LIST[public sealed value]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=SealedValue]
         MODIFIER_LIST[protected]

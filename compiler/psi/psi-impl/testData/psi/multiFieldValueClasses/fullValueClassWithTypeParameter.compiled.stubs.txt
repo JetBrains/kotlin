@@ -2,6 +2,10 @@ FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/GenericValue, fqName=GenericValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=GenericValue, superNames=[]]
+    valueClassRepresentation: full [
+      first -> A
+      second -> kotlin.collections.List<B>
+    ]
     MODIFIER_LIST[public final value]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=A]

@@ -3,6 +3,7 @@ DerivedValue.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/DerivedValue, fqName=DerivedValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=DerivedValue, superNames=[SealedValue]]
+      valueClassRepresentation: full [ value -> kotlin.String ]
       MODIFIER_LIST[public final value]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=DerivedValue]
         MODIFIER_LIST[public]
@@ -64,6 +65,7 @@ SealedValue.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/SealedValue, fqName=SealedValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=SealedValue, superNames=[]]
+      valueClassRepresentation: full null
       MODIFIER_LIST[public sealed value]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=SealedValue]
         MODIFIER_LIST[protected]

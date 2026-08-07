@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -293,13 +292,18 @@ internal fun deserializeClassToSymbol(
         }
     }.apply {
         if (classStub != null) {
-            if (isInlineOrValue) {
-                valueClassRepresentation = classStub.deserializeValueClassRepresentation(this, context.typeDeserializer)
-            }
-
             val clsStubCompiledToJvmDefaultImplementation = classStub.isClsStubCompiledToJvmDefaultImplementation
             if (clsStubCompiledToJvmDefaultImplementation) {
                 symbol.fir.isNewPlaceForBodyGeneration = true
+            }
+        }
+
+        if (isInlineOrValue) {
+            valueClassRepresentation = if (classOrObject is KtObjectDeclaration) {
+                // A value object declares no underlying properties, as it has no primary constructor parameters to declare them as
+                FullValueClassRepresentation(underlyingPropertyNamesToTypes = emptyList())
+            } else {
+                classStub?.deserializeValueClassRepresentation(this, context.typeDeserializer)
             }
         }
 

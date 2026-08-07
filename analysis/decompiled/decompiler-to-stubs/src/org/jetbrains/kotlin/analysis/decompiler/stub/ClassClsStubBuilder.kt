@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtImplementationDetail
@@ -189,24 +190,34 @@ private class ClassClsStubBuilder(
     }
 
     /**
-     * Returns how the class is unboxed by the compiler, or `null` when the class is not a value class,
-     * or when its representation cannot be restored from malformed metadata.
+     * Returns the kind of a value class together with its underlying properties, or `null` when the class is not a value class, or when its
+     * representation cannot be restored from the metadata at hand.
      *
-     * [KotlinFullValueClassRepresentation] is not built yet.
-     * The stub format is already able to store them, so only this function has to be updated to support them.
+     * A value object needs no representation of its own: it declares no underlying properties, and the `value` modifier in its modifier
+     * list is enough to restore the representation on the fly.
      *
      * @see org.jetbrains.kotlin.serialization.deserialization.loadValueClassRepresentation
      */
     @OptIn(KtImplementationDetail::class)
-    private fun createValueClassRepresentation(): KotlinValueClassRepresentation? {
-        // TODO(KT-88416): build 'KotlinFullValueClassRepresentation' for full value classes
-        if (!classProto.hasInlineClassUnderlyingPropertyName()) return null
+    private fun createValueClassRepresentation(): KotlinValueClassRepresentation? = when {
+        // An inline class is the only kind of value class which names its underlying property in the class itself
+        classProto.hasInlineClassUnderlyingPropertyName() -> createInlineClassRepresentation()
 
+        // A full value class is marked with the class flag only, so its underlying properties have to be looked up
+        Flags.IS_VALUE_CLASS.get(classProto.flags) && !hasJvmInlineAnnotation() -> createFullValueClassRepresentation()
+
+        // Either not a value class at all, or a multi-field '@JvmInline' value class from an experimental compiler version.
+        // The latter has no representation anymore, exactly as in the compiler's own deserialization.
+        else -> null
+    }
+
+    @OptIn(KtImplementationDetail::class)
+    private fun createInlineClassRepresentation(): KotlinInlineClassRepresentation? {
         val name = c.nameResolver.getName(classProto.inlineClassUnderlyingPropertyName)
 
         // The compiler writes the type into the class itself only when the underlying property is not a part of the ABI
         val typeProto = classProto.inlineClassUnderlyingType(c.typeTable) ?: findInlineClassUnderlyingPropertyTypeProto(name)
-        val type = typeProto?.let(typeStubBuilder::createKotlinTypeBean) as? KotlinRigidTypeBean ?: return null
+        val type = typeProto?.let(::createValueClassUnderlyingTypeBean) ?: return null
         return KotlinInlineClassRepresentation(name, type)
     }
 
@@ -221,6 +232,28 @@ private class ClassClsStubBuilder(
 
         return property?.returnType(c.typeTable)
     }
+
+    @OptIn(KtImplementationDetail::class)
+    private fun createFullValueClassRepresentation(): KotlinValueClassRepresentation? {
+        // An abstract or a sealed value class is not allowed to declare underlying properties, which the compiler denotes with 'null'
+        if (isAbstractOrSealed()) return KotlinFullValueClassRepresentation(underlyingPropertyNamesToTypes = null)
+
+        // A full value class stores nothing about its underlying properties, so they are taken from the primary constructor's parameters
+        val primaryConstructorProto = primaryConstructorProto ?: return null
+        val properties = primaryConstructorProto.valueParameterList.map { parameterProto ->
+            val type = createValueClassUnderlyingTypeBean(parameterProto.type(c.typeTable)) ?: return null
+            c.nameResolver.getName(parameterProto.name) to type
+        }
+
+        return KotlinFullValueClassRepresentation(underlyingPropertyNamesToTypes = properties)
+    }
+
+    private fun hasJvmInlineAnnotation(): Boolean = classProto.annotationList.any { annotationProto ->
+        c.nameResolver.getClassId(annotationProto.id) == JvmStandardClassIds.Annotations.JvmInline
+    }
+
+    private fun createValueClassUnderlyingTypeBean(typeProto: ProtoBuf.Type): KotlinRigidTypeBean? =
+        typeStubBuilder.createKotlinTypeBean(typeProto) as? KotlinRigidTypeBean
 
     private fun computeFoldedProperties(): Map<Name, ProtoBuf.Property> {
         if (classKind != ProtoBuf.Class.Kind.ANNOTATION_CLASS) return emptyMap()
@@ -319,6 +352,11 @@ private class ClassClsStubBuilder(
 
     private fun isObject(): Boolean = when (classKind) {
         ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.COMPANION_OBJECT -> true
+        else -> false
+    }
+
+    private fun isAbstractOrSealed(): Boolean = when (Flags.MODALITY.get(classProto.flags)) {
+        ProtoBuf.Modality.ABSTRACT, ProtoBuf.Modality.SEALED -> true
         else -> false
     }
 
