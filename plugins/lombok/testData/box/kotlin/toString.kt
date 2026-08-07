@@ -97,6 +97,16 @@ class CallSuperDerived(val ownProp: String) : CallSuperBase(10)
 @ToString(callSuper = true)
 class CallSuperWithOnlyAnyParent(val x: Int)
 
+// ISSUE: KT-88419
+@ToString
+class WithArrays {
+    val objectArray = arrayOf("a", "b")
+    val nestedArray = arrayOf(arrayOf("a"), arrayOf("b"))
+    val intArray = intArrayOf(1, 2)
+    val charArray = charArrayOf('x', 'y')
+    val nullArray: Array<String>? = null
+}
+
 fun box(): String {
     assertEquals("Simple(name=Alice, age=30)", Simple("Alice", 30).toString())
     assertEquals("NoFieldNames(1, 2)", NoFieldNames(1, 2).toString())
@@ -128,6 +138,11 @@ fun box(): String {
     assertEquals("CallSuperBase(baseProp=10)", CallSuperBase(10).toString())
     assertEquals("CallSuperDerived(super=CallSuperBase(baseProp=10), ownProp=hello)", CallSuperDerived("hello").toString())
     assertEquals("CallSuperWithOnlyAnyParent(x=5)", CallSuperWithOnlyAnyParent(5).toString())
+
+    assertEquals(
+        "WithArrays(objectArray=[a, b], nestedArray=[[a], [b]], intArray=[1, 2], charArray=[x, y], nullArray=null)",
+        WithArrays().toString()
+    )
 
     return "OK"
 }

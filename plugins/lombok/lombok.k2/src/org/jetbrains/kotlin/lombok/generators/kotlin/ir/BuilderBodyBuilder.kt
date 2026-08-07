@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.lombok.generators.kotlin.ir
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.ir.builders.*
@@ -671,9 +670,6 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         val nonNullSource = irImplicitCast(irGet(tmp), entityValue.type.makeNotNull())
         return irIfNull(field.type, irGet(tmp), irNull(), freshMutableCopy(info, field.file, nonNullSource))
     }
-
-    private val IrBlockBodyBuilder.pluginContext: IrPluginContext
-        get() = context as IrPluginContext
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrClass.builderConstructor(): IrConstructor =
