@@ -1,0 +1,57 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] unresolvedAnnotations.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> test([ResolvedTo(RAW_FIR)] action: ( (@T[Unresolved]() Int, @Unresolved[Unresolved]() String, @String[Unresolved]() Long) -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotations.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> test([ResolvedTo(RAW_FIR)] action: ( (@T[Unresolved]() Int, @Unresolved[Unresolved]() String, @String[Unresolved]() Long) -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotations.kt
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun <[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T> test([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] action: ( (@T[Unresolved]() Int, @Unresolved[Unresolved]() String, @String[Unresolved]() Long) -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotations.kt
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun <[ResolvedTo(COMPANION_GENERATION)] T> test([ResolvedTo(COMPANION_GENERATION)] action: ( (@T[Unresolved]() Int, @Unresolved[Unresolved]() String, @String[Unresolved]() Long) -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotations.kt
+    public? final? [ResolvedTo(SUPER_TYPES)] fun <[ResolvedTo(SUPER_TYPES)] T> test([ResolvedTo(SUPER_TYPES)] action: ( (@T[Unresolved]() Int, @Unresolved[Unresolved]() String, @String[Unresolved]() Long) -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotations.kt
+    public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] T> test([ResolvedTo(TYPES)] action: R|(@R|T|()  kotlin/Int, @<ERROR TYPE REF: Symbol not found for Unresolved>()  kotlin/String, @R|kotlin/String|()  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotations.kt
+    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T> test([ResolvedTo(STATUS)] action: R|(@R|T|()  kotlin/Int, @<ERROR TYPE REF: Symbol not found for Unresolved>()  kotlin/String, @R|kotlin/String|()  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotations.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T> test([ResolvedTo(EXPECT_ACTUAL_MATCHING)] action: R|(@R|T|()  kotlin/Int, @<ERROR TYPE REF: Symbol not found for Unresolved>()  kotlin/String, @R|kotlin/String|()  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotations.kt
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> test([ResolvedTo(CONTRACTS)] action: R|(@R|T|()  kotlin/Int, @<ERROR TYPE REF: Symbol not found for Unresolved>()  kotlin/String, @R|kotlin/String|()  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotations.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T> test([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|(@R|T|()  kotlin/Int, @<ERROR TYPE REF: Symbol not found for Unresolved>()  kotlin/String, @R|kotlin/String|()  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotations.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] T> test([ResolvedTo(CONSTANT_EVALUATION)] action: R|(@R|T|()  kotlin/Int, @<ERROR TYPE REF: Symbol not found for Unresolved>()  kotlin/String, @R|kotlin/String|()  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotations.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T> test([ResolvedTo(ANNOTATION_ARGUMENTS)] action: R|(@R|T|()  kotlin/Int, @<ERROR TYPE REF: Symbol not found for Unresolved>()  kotlin/String, @R|kotlin/String|()  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotations.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> test([ResolvedTo(BODY_RESOLVE)] action: R|(@R|T|()  kotlin/Int, @<ERROR TYPE REF: Symbol not found for Unresolved>()  kotlin/String, @R|kotlin/String|()  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] unresolvedAnnotations.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> test([ResolvedTo(BODY_RESOLVE)] action: R|(@R|T|()  kotlin/Int, @<ERROR TYPE REF: Symbol not found for Unresolved>()  kotlin/String, @R|kotlin/String|()  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
+    }

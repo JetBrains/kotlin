@@ -1,0 +1,1 @@
+@<ERROR TYPE REF: Symbol not found for Unresolved>[Types]() public final? [ResolvedTo(TYPES)] class Foo : R|kotlin/Any|
