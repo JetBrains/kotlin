@@ -106,8 +106,7 @@ fun loadIr(
 ): IrModuleInfo {
     val configuration = modulesStructure.compilerConfiguration
 
-    val signaturer = IdSignatureDescriptor(JsManglerDesc)
-    val symbolTable = SymbolTable(signaturer, irFactory)
+    val symbolTable = SymbolTable(signaturer = null, irFactory)
 
     val mainModuleLib = modulesStructure.klibs.included
         ?: error("No module with ${modulesStructure.mainModulePath} found")
@@ -127,8 +126,7 @@ fun loadIrForSingleModule(
 ): IrModuleInfo {
     val configuration = modulesStructure.compilerConfiguration
 
-    val signaturer = IdSignatureDescriptor(JsManglerDesc)
-    val symbolTable = SymbolTable(signaturer, irFactory)
+    val symbolTable = SymbolTable(signaturer = null, irFactory)
 
     val mainModuleLib = modulesStructure.klibs.included
         ?: error("No module with ${modulesStructure.mainModulePath} found")
