@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationComponent
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.createResolvable
-import org.jetbrains.kotlin.gradle.utils.groupByToNonNullSet
+import org.jetbrains.kotlin.gradle.utils.groupByNotNullToSet
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -226,12 +226,12 @@ class LazyResolvedConfigurationTest {
         val cache = project.kotlinGradleTaskExecutionCache.get()
 
         val group = cache.getOrCompute("group") {
-            lazyCommonMainCompileDependencies.groupByToNonNullSet(coordinatesMapper, variantNameMapper)
+            lazyCommonMainCompileDependencies.groupByNotNullToSet(coordinatesMapper, variantNameMapper)
         }
 
         // getting group with the same name but different selectors should return the previously computed group
         val groupV2 = cache.getOrCompute("group") {
-            lazyCommonMainCompileDependencies.groupByToNonNullSet({ "" }, { "" })
+            lazyCommonMainCompileDependencies.groupByNotNullToSet({ "" }, { "" })
         }
         assertSame(
             group,
@@ -254,7 +254,7 @@ class LazyResolvedConfigurationTest {
         )
 
         val reversedGroup = cache.getOrCompute("reversedGroup") {
-            lazyCommonMainCompileDependencies.groupByToNonNullSet(
+            lazyCommonMainCompileDependencies.groupByNotNullToSet(
                 keySelector = variantNameMapper,
                 valueTransform = coordinatesMapper
             )
