@@ -314,6 +314,7 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
         JunitTag.JvmKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/JVM part of Gradle plugin",
             "kgpJvmTests",
+            domains = setOf(Domain.Compiler, Domain.BuildToolsApi)
         )
         JunitTag.SwiftExportKGP -> junitTag.taskConfiguration(
             "Run Swift Export Kotlin Gradle plugin tests",
@@ -343,7 +344,7 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
         JunitTag.MppKGP -> junitTag.taskConfiguration(
             "Run Multiplatform Kotlin Gradle plugin tests",
             "kgpMppTests",
-            domains = setOf(Domain.BuildToolsApi)
+            domains = setOf(Domain.BuildToolsApi, Domain.Compiler)
         )
         JunitTag.AndroidKGP -> junitTag.taskConfiguration(
             "Run Android Kotlin Gradle plugin tests",
