@@ -9,12 +9,9 @@ import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.util.io.FileUtil;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.test.KtAssert;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.StringsKt;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.tree.ClassNode;
@@ -28,45 +25,12 @@ import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class CodegenTestUtil {
     private CodegenTestUtil() {
-    }
-
-    public static void assertThrows(
-            @NotNull Method foo, @NotNull Class<? extends Throwable> exceptionClass, @Nullable Object instance, @NotNull Object... args
-    ) throws IllegalAccessException {
-        boolean caught = false;
-        try {
-            foo.invoke(instance, args);
-        }
-        catch (InvocationTargetException ex) {
-            caught = exceptionClass.isInstance(ex.getTargetException());
-        }
-        KtAssert.assertTrue(String.format("Exception of class %s must be thrown", exceptionClass.getName()), caught);
-    }
-
-    @NotNull
-    public static Method findDeclaredMethodByName(@NotNull Class<?> aClass, @NotNull String name) {
-        Method result = findDeclaredMethodByNameOrNull(aClass, name);
-        if (result == null) {
-            throw new AssertionError("Method " + name + " is not found in " + aClass);
-        }
-        return result;
-    }
-
-    public static Method findDeclaredMethodByNameOrNull(@NotNull Class<?> aClass, @NotNull String name) {
-        for (Method method : aClass.getDeclaredMethods()) {
-            if (method.getName().equals(name)) {
-                return method;
-            }
-        }
-        return null;
     }
 
     @NotNull
@@ -91,36 +55,6 @@ public class CodegenTestUtil {
         return options;
     }
 
-
-    @NotNull
-    public static Method findTheOnlyMethod(@NotNull Class<?> aClass) {
-        Method r = null;
-        for (Method method : aClass.getMethods()) {
-            if (method.getDeclaringClass().equals(Object.class)) {
-                continue;
-            }
-
-            if (r != null) {
-                throw new AssertionError("More than one public method in class " + aClass);
-            }
-
-            r = method;
-        }
-        if (r == null) {
-            throw new AssertionError("No public methods in class " + aClass);
-        }
-        return r;
-    }
-
-    @Nullable
-    public static Object getAnnotationAttribute(@NotNull Object annotation, @NotNull String name) {
-        try {
-            return annotation.getClass().getMethod(name).invoke(annotation);
-        }
-        catch (Exception e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
-    }
 
     @NotNull
     public static List<String> findJavaSourcesInDirectory(@NotNull File directory) {
