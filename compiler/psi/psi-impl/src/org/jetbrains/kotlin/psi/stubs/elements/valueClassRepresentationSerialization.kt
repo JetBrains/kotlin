@@ -64,7 +64,7 @@ private fun StubOutputStream.serializeUnderlyingProperty(name: Name, type: Kotli
 }
 
 private fun StubInputStream.deserializeUnderlyingProperty(): Pair<Name, KotlinRigidTypeBean> {
-    val name = Name.guessByFirstCharacter(requireNotNull(readNameString()))
+    val name = Name.identifier(requireNotNull(readNameString()))
     val type = deserializeTypeBean(this) as KotlinRigidTypeBean
     return name to type
 }
