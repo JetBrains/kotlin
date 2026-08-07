@@ -37,6 +37,7 @@ val warmupsParam = providers.gradleProperty("warmups").orNull
 val iterationsParam = providers.gradleProperty("iterations").orNull
 val includePattern = providers.gradleProperty("include").orNull
 val sizeParam = providers.gradleProperty("size").orNull
+val forksParam = providers.gradleProperty("forks").orNull
 
 benchmark {
     configurations {
@@ -53,6 +54,12 @@ benchmark {
                 // Use size from annotation arguments if the param isn't specified
                 // CAUTION: large size might cause long execution time
                 param("size", sizeParam.toInt())
+            }
+
+            // Multi-fork JMH runs for baseline variance: -Pforks=3
+            // Use "definedByJmh" to honor class-level @Fork annotations instead.
+            if (forksParam != null) {
+                advanced("jvmForks", forksParam)
             }
         }
     }

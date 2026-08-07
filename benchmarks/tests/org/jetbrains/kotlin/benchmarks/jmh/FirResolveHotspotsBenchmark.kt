@@ -23,6 +23,9 @@ import java.util.concurrent.TimeUnit
  *
  * Not covered: checkers (~⅓ of `resolveAndCheckFir`), FIR2IR/codegen, Compose/Metro
  * compiler plugins, or a real multi-module app classpath.
+ *
+ * Baseline command, env, scores, and coverage map:
+ * [FirResolveHotspotsBenchmark.md](FirResolveHotspotsBenchmark.md).
  */
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
