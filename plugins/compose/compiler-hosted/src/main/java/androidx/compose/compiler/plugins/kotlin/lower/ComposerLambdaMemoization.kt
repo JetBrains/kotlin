@@ -38,7 +38,9 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
@@ -903,7 +905,7 @@ class ComposerLambdaMemoization(
         declarationContext: DeclarationContext,
         expression: IrFunctionExpression,
         collector: CaptureCollector,
-        useComposableFactory: Boolean
+        useComposableFactory: Boolean,
     ): IrCall {
         val function = expression.function
         val argumentCount = function.parameters.size
@@ -965,6 +967,22 @@ class ComposerLambdaMemoization(
             arguments[index] = expression.markIsTransformedLambda()
         }
 
+        // Copy type parameters to ensure that types are captured correctly.
+        val functionContext = currentFunctionContext
+        if (functionContext != null && functionContext.composable && functionContext.declaration.typeParameters.isNotEmpty()) {
+            expression.function.copyTypeParametersFrom(functionContext.declaration)
+            expression.function.remapTypes(SimpleTypeRemapper(
+                object : SymbolRemapper by SymbolRemapper.EMPTY {
+                    override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol =
+                        if (symbol is IrTypeParameterSymbol && symbol.owner.parent == functionContext.declaration) {
+                            expression.function.typeParameters[symbol.owner.index].symbol
+                        } else {
+                            symbol
+                        }
+                }
+            ))
+        }
+
         return composableLambdaExpression.markHasTransformedLambda()
     }
 
@@ -981,7 +999,7 @@ class ComposerLambdaMemoization(
                             // K2 uses invokedynamic for lambdas, which doesn't perform lambda optimization
                             // on Android.
                             context.platform.isJvm()
-                    )
+                            )
 
         // If the function doesn't capture, Kotlin's default optimization is sufficient
         if (!memoizeLambdasWithoutCaptures && captures.isEmpty()) {

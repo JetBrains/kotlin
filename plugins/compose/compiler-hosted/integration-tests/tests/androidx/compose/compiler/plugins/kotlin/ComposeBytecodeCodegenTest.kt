@@ -1141,4 +1141,18 @@ class ComposeBytecodeCodegenTest : AbstractCodegenTest() {
             }
         }
     }
+
+    @Test
+    fun memoizationOfDefaultComposable() = testCompile(
+        source = """
+        import androidx.compose.runtime.*
+
+        @Composable
+        fun <S> Test(vm: S, content: @Composable (S) -> Unit = { vm -> Effect(vm) }) {
+            content(vm)
+        }
+
+        @Composable fun <S> Effect(vm: S) {}
+        """
+    )
 }
