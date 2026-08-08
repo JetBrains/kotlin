@@ -1287,10 +1287,7 @@ class FastKonanArraySyntheticProvider(lldb.SBSyntheticValueProvider):
 
 
 def _object_field_value(object_proxy, field_name):
-    try:
-        field_index = object_proxy.get_child_index(field_name)
-    except (DebuggerException, ValueError):
-        return None
+    field_index = object_proxy.get_child_index(field_name)
     return object_proxy.get_child_at_index(field_index)
 
 
