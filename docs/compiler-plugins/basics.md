@@ -50,7 +50,7 @@ Here are some useful utilities for working with IR:
   - `-Xdump-directory=<path>`
 
   You can check the name of the first backend compiler phase to dump IR for the JVM backend [here](../../compiler/ir/backend.jvm/lower/src/org/jetbrains/kotlin/backend/jvm/JvmLoweringPhases.kt), and 
-  in similar places for other backends. Currently, for the JVM backend, the name of the first phase is `ExternalPackageParentPatcherLowering`.
+  in similar places for other backends. Currently, for the JVM backend, the name of the first phase is `JvmUpgradeCallableReferences`.
 
 ## Examples
 
