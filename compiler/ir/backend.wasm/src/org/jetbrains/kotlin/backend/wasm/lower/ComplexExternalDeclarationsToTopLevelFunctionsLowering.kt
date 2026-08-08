@@ -170,20 +170,59 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
             // This is hack to support Kotlin/JS like implementation of IDL string enums bindings
             // with error suppression:
             //
-            //    @JsName("null")
             //    @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
             //    public external interface CanvasFillRule {
             //        companion object
             //    }
-            //    public inline val CanvasFillRule.Companion.NONZERO: CanvasFillRule get() = "nonzero".asDynamic().unsafeCast<CanvasFillRule>()
+            //    public inline val CanvasFillRule.Companion.NONZERO: CanvasFillRule get() = "nonzero".toJsString().unsafeCast<CanvasFillRule>()
             //
-            // Kotlin/JS translates access to CanvasFillRule.Companion as `null` due to @JsName("null"),
-            // but Kotlin/Wasm fails to do this due to stricter null checks on interop boundary.
+            // Kotlin/JS optimizes away access to CanvasFillRule.Companion.
             //
-            // Instead, as a temporary solution, we evaluate such companion object to an empty JS object.
-            // TODO: Optimize (KT-60661)
+            // As a temporary solution, Kotlin/Wasm evaluates companion object instance to an empty JS object.
+            // This doesn't allow to use companion objects properties, if they exist in runtime.
+            // At the next Kotlin versions, this hack should be removed.
+            //
+            // Libraries, implementing JavaScript IDLs, are advised to use companion blocks:
+            //
+            //    public external interface CanvasFillRule
+            //    companion val CanvasFillRule.NONZERO: CanvasFillRule get() = "nonzero".toJsString().unsafeCast<CanvasFillRule>()
+            //
+            // TODO: Remove (KT-76462)
             if (parent.isInterface) {
-                append("({})")
+                val kotlinName = parent.fqNameWhenAvailable?.asString() ?: parent.name.asString()
+                val jsName = parent.getJsNameOrKotlinName().identifier
+
+                val deprecationMessage =
+                    "Reading a companion object of an external interface '$kotlinName' currently produces an empty JS object.\\n" +
+                    "\\n" +
+                    "This will change in the future: it will produce the JS value that the interface " +
+                    "name refers to ('$jsName'), and will fail at runtime if there is no such value." +
+                    "\\n" +
+                    " - To keep the current behavior, annotate the interface with `@JsName(\\\"NaN\\\")`.\\n" +
+                    " - To emulate JavaScript IDLs without a companion object, use companion extensions " +
+                    "(experimental, -Xcompanion-blocks-and-extensions):\\n" +
+                    "     external interface $kotlinName: JsAny\\n" +
+                    "     companion val $kotlinName.ZERO: $kotlinName get() = ...\\n" +
+                    "\\n" +
+                    "Details: https://youtrack.jetbrains.com/issue/KT-76462"
+
+                append(
+                    """
+                        (
+                            (() => {
+                                if (typeof console !== "undefined" &&
+                                    typeof console.error === "function") {
+                                    console.error("$deprecationMessage");
+                                } else if (typeof printErr === "function") {
+                                    printErr("$deprecationMessage");       // SpiderMonkey shell
+                                } else if (typeof print === "function") {
+                                    print("$deprecationMessage");          // JSC, d8, and many JS shells
+                                }
+                            })(),
+                            {}
+                        )
+                    """.trimIndent()
+                )
                 return
             }
 
