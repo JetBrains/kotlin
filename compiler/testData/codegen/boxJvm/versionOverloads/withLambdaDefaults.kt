@@ -2,7 +2,6 @@
 // LAMBDAS: INDY
 // CHECK_BYTECODE_LISTING
 // WITH_STDLIB
-@file:OptIn(ExperimentalVersionOverloading::class)
 
 class C {
     fun inTrailing(
