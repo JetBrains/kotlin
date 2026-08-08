@@ -15,8 +15,8 @@ interface DDD {
 fun box() : String {
     try {
         return II.bar()
-    } catch (e: IllegalStateException) {
-        return e.message ?: "FAIL 2"
+    } catch (e: Error) {
+        return (e.cause as? IllegalStateException)?.message ?: "FAIL 2"
     }
 
     return "FAIL"
