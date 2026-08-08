@@ -49,6 +49,7 @@ public final class org/jetbrains/kotlin/buildtools/api/BaseIncrementalCompilatio
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/BuildOperation {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/BuildOperation$Companion;
+	public static final field ENABLE_CLASSLOADER_CACHE Lorg/jetbrains/kotlin/buildtools/api/BuildOperation$Option;
 	public static final field METRICS_COLLECTOR Lorg/jetbrains/kotlin/buildtools/api/BuildOperation$Option;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/BuildOperation$Option;)Ljava/lang/Object;
 }

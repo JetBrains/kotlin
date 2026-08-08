@@ -211,6 +211,7 @@ internal class WasmKlibCompilationOperationImpl private constructor(
     override fun compileIncrementallyInProcess(
         arguments: KotlinWasmCompilerArguments,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        executionContext: ExecutionContext
     ): CompilationResult {
         val icConfiguration = get(INCREMENTAL_COMPILATION)
         requireNotNull(icConfiguration) { "Missing INCREMENTAL_COMPILATION option." }
