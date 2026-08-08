@@ -125,7 +125,7 @@ using RegularRef = kotlin::mm::ObjCBackRef;
   if (kotlin::compiler::swiftExport()) {
     void *ref = kotlin::mm::createRetainedExternalRCRef(obj);
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
-    return [self _createClassWrapperForExternalRCRef:ref];
+    return [KotlinBase _createClassWrapperForExternalRCRef:ref];
   }
 
   KotlinBase* candidate = [super allocWithZone:nil];
