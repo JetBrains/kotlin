@@ -96,6 +96,7 @@ import org.jetbrains.kotlin.kapt.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.isOneSegmentFQN
@@ -991,6 +992,13 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         return parent.isInsideCompanionObject()
     }
 
+    // @JvmExposeBoxed generates an exposed function, which is not an override.
+    private fun IrSimpleFunction.isJvmOverride(): Boolean = when {
+        overriddenSymbols.isEmpty() -> false
+        !hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) -> true
+        else -> overriddenSymbols.any { it.owner.name == name }
+    }
+
     private fun convertMethod(
         method: MethodNode,
         containingClass: ClassNode,
@@ -1006,7 +1014,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         if (isSynthetic(method.access) && !isAnnotationHolderForProperty) return null
 
-        val isOverridden = declaration is IrOverridableDeclaration<*> && declaration.overriddenSymbols.isNotEmpty()
+        val isOverridden = declaration is IrSimpleFunction && declaration.isJvmOverride()
         val visibleAnnotations = if (isOverridden) {
             (method.visibleAnnotations ?: emptyList()) + AnnotationNode(Type.getType(Override::class.java).descriptor)
         } else {
