@@ -61,6 +61,8 @@ import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.test.assertEquals
@@ -120,6 +122,39 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
                 )
             }
         }
+        val ktFiles = session.modulesWithFiles.getValue(sourceModule)
+        Assertions.assertEquals(listOf("source0.kt", "source1.kt"), ktFiles.map { it.name })
+    }
+
+    @Test
+    fun testNonExistentLibraryRoot() {
+        lateinit var sourceModule: KaSourceModule
+        lateinit var session: StandaloneAnalysisAPISession
+        val errorOutput = captureSystemError {
+            session = buildStandaloneAnalysisAPISession(disposable) {
+                buildKtModuleProvider {
+                    platform = JvmPlatforms.defaultJvmPlatform
+                    val libraryModule = addModule(
+                        buildKtLibraryModule {
+                            addBinaryRoot(testDataPath("missing-library.jar"))
+                            platform = JvmPlatforms.defaultJvmPlatform
+                            libraryName = "missing-library"
+                        }
+                    )
+                    sourceModule = addModule(
+                        buildKtSourceModule {
+                            addSourceRoot(testDataPath("twoFiles"))
+                            addRegularDependency(libraryModule)
+                            platform = JvmPlatforms.defaultJvmPlatform
+                            moduleName = "source"
+                        }
+                    )
+                }
+            }
+        }
+
+        Assertions.assertTrue(errorOutput.contains("Classpath entry points to a non-existent location:"))
+        Assertions.assertFalse(errorOutput.contains("NoSuchFileException"))
         val ktFiles = session.modulesWithFiles.getValue(sourceModule)
         Assertions.assertEquals(listOf("source0.kt", "source1.kt"), ktFiles.map { it.name })
     }
@@ -815,4 +850,17 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         assert(fooReturnType.canonicalText == "java.lang.String")
         assert(fooReturnType.resolve() == null)
     }
+}
+
+private fun captureSystemError(action: () -> Unit): String {
+    val output = ByteArrayOutputStream()
+    val previousError = System.err
+    System.setErr(PrintStream(output))
+    try {
+        action()
+    } finally {
+        System.err.flush()
+        System.setErr(previousError)
+    }
+    return output.toString()
 }
