@@ -68,6 +68,12 @@ import kotlin.contracts.contract
 
 private val INLINE_ONLY_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.internal.InlineOnly"))
 
+/**
+ * JEP 390 marks JDK classes whose identity must not be relied upon, and JEP 401 migrates all of them to value classes.
+ * It is the JVM counterpart of [StandardClassIds.Annotations.WillBecomeValue].
+ */
+val JDK_INTERNAL_VALUE_BASED_ANNOTATION_CLASS_ID: ClassId = ClassId.fromString("jdk/internal/ValueBased")
+
 context(context: CheckerContext)
 fun FirClass.unsubstitutedScope(): FirTypeScope =
     this.unsubstitutedScope(
@@ -150,15 +156,17 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
 
     val asRegularClass = plainRegularClass ?: leastUpperBound(session).toRegularClassSymbol(session) ?: return null
     val primaryConstructor = asRegularClass.primaryConstructorIfAny(session) ?: return null
+    val valueClassRepresentation = asRegularClass.valueClassRepresentation
+    val isFullValueClass = valueClassRepresentation is FullValueClassRepresentation ||
+            valueClassRepresentation == null && asRegularClass.willBecomeValueClass(session)
     // Recursion in Value Classes with nullable types (e.g. `value class VC(val x: VC?, ...)`) is supported only for Multi-Field Full Value Classes
     // Generally, there is no need to disallow it for single-field value classes as well, so there is KT-86498 for that.
     // Below we forbid recursion for all other cases
     // Reminder: single-field value class is considered inline if it has @JvmInline annotation or if the FullValueClasses feature is disabled
-    val isSubjectForCheck = when (asRegularClass.valueClassRepresentation) {
-        null -> false
-        is InlineClassRepresentation -> true
-        is FullValueClassRepresentation if isNullableType() -> primaryConstructor.valueParameterSymbols.size == 1
-        is FullValueClassRepresentation -> true
+    val isSubjectForCheck = when {
+        valueClassRepresentation is InlineClassRepresentation -> true
+        isFullValueClass && isNullableType() -> primaryConstructor.valueParameterSymbols.size == 1
+        else -> isFullValueClass
     }
     if (!isSubjectForCheck) return null
 

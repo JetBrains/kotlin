@@ -182,6 +182,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     override val equalityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker> = setOf(
         FirEqualityCompatibilityChecker,
         FirContextSensitiveResolutionAmbiguityCheckerForEqualities,
+        FirIdentityEqualsOnWillBecomeValueClassChecker,
     )
 
     override val collectionLiteralCheckers: Set<FirCollectionLiteralChecker> = @OptIn(ArrayLiteralResolution::class) setOf(
