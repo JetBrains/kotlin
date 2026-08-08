@@ -8,6 +8,8 @@ package kotlin.wasm.unsafe
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.internal.DoNotInlineOnFirstStage
+import kotlin.wasm.ExperimentalWasmInterop
+import kotlin.wasm.WasmExport
 import kotlin.wasm.internal.wasm_memory_copy
 import kotlin.wasm.internal.wasm_memory_grow
 import kotlin.wasm.internal.wasm_memory_size
@@ -195,6 +197,14 @@ public fun componentModelRealloc(
     lastReallocAllocatedAddress = result
     return result
 }
+
+// internal because it should not be directly callable, just needs to be exported for component model support
+// TODO(KT-88027): need to evaluate whether we should move this to the WASI specific part of the stdlib, right now this is also exported in WasmJs, which will change size
+@OptIn(ComponentModelInternalApi::class, ExperimentalWasmInterop::class)
+@Suppress("FunctionName", "unused")
+@WasmExport
+internal fun cabi_realloc(ptr: Int, oldSize: Int, align: Int, newSize: Int): Int =
+    componentModelRealloc(ptr, oldSize, newSize)
 
 /**
  *  Frees memory allocated by all previous calls of [componentModelRealloc]. 
