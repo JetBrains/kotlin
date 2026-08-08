@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
+
 plugins {
     id("common-configuration")
     id("test-federation-convention")
@@ -47,5 +50,6 @@ projectTests {
         allowUnsafe = true, // KT-85212
     ) {
         dependsOn(":kotlin-native:distInvalidateStaleCaches")
+        testFederationAllowAffectedBy = setOf(Domain.Native, Domain.AnalysisApi)
     }
 }

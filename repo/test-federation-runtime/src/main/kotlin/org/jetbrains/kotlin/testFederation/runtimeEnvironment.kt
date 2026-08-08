@@ -9,6 +9,10 @@ internal const val TEST_FEDERATION_ENABLED_KEY = "test.federation.enabled"
 internal const val TEST_FEDERATION_ENABLED_ENV_KEY = "TEST_FEDERATION_ENABLED"
 internal const val TEST_FEDERATION_MODE_KEY = "test.federation.mode"
 internal const val TEST_FEDERATION_MODE_ENV_KEY = "TEST_FEDERATION_MODE"
+internal const val TEST_FEDERATION_CURRENT_DOMAINS_KEY = "test.federation.current.domains"
+internal const val TEST_FEDERATION_CURRENT_DOMAINS_ENV_KEY = "TEST_FEDERATION_CURRENT_DOMAINS"
+internal const val TEST_FEDERATION_ALLOW_AFFECTED_KEY = "test.federation.allowAffectedBy"
+internal const val TEST_FEDERATION_ALLOW_AFFECTED_ENV_KEY = "TEST_FEDERATION_ALLOW_AFFECTED_BY"
 internal const val TEST_FEDERATION_AFFECTED_DOMAINS_KEY = "test.federation.affected.domains"
 internal const val TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY = "TEST_FEDERATION_AFFECTED_DOMAINS"
 internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_KEY = "test.federation.auto.smoke.test.percentage"
@@ -33,19 +37,26 @@ val testFederationMode: TestFederationMode?
     }
 
 /**
+ * @return List of [Domain]s enabled for this test task
+ */
+val testFederationAllowAffectedBy: Set<Domain>
+    get() = Domain.fromArgumentStringOrThrow(resolve(TEST_FEDERATION_ALLOW_AFFECTED_KEY, TEST_FEDERATION_ALLOW_AFFECTED_ENV_KEY) ?: "")
+
+/**
+ * @return The [Domain]s of this test task
+ */
+val testFederationCurrentDomains: Set<Domain>
+    get() = Domain.fromArgumentStringOrThrow(resolve(TEST_FEDERATION_CURRENT_DOMAINS_KEY, TEST_FEDERATION_CURRENT_DOMAINS_ENV_KEY) ?: "")
+
+
+/**
  * @return All affected [Domain]s. Only relevant if the [testFederationEnabled] returns true
  */
 val testFederationAffectedDomains: Set<Domain>?
     get() {
         val raw = resolve(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY) ?: return null
         if (raw.isBlank()) return null
-        return raw.split(";").flatMap { value ->
-            when (value) {
-                "*" -> Domain.entries
-                "<none>" -> emptyList()
-                else -> listOf(Domain.valueOf(value))
-            }
-        }.sorted().toSet()
+        return Domain.fromArgumentStringOrThrow(raw).sorted().toSet()
     }
 
 /**

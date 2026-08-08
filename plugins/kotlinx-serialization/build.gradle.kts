@@ -4,6 +4,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
 import plugins.KotlinBuildPublishingPlugin.Companion.ADHOC_COMPONENT_NAME
 import plugins.configureKotlinPomAttributes
 
@@ -176,7 +178,7 @@ projectTests {
             // Exclude all tests with the "serialization-native" tag. They should be launched by another test task.
             excludeTags("serialization-native")
         }
-
+        testFederationAllowAffectedBy = setOf(Domain.Compiler, Domain.AnalysisApi, Domain.Js)
         setUpJsIrBoxTests()
     }
 

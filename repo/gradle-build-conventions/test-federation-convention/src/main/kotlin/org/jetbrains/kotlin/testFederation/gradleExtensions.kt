@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.testFederation
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.testing.Test
 
 internal const val SMOKE_TEST_CONFIG_KEY = "org.jetbrains.kotlin.testFederation.smokeTestConfig"
@@ -114,6 +115,13 @@ val Project.testFederationAffectedDomains: Provider<Set<Domain>> by extensionPro
  */
 val Test.smokeTestConfig: Property<SmokeTestConfig> by extensionProperty {
     project.objects.property(SmokeTestConfig::class.java).convention(SmokeTestConfig.Default)
+}
+
+/**
+ * Domains that may be used to declare contracts via `@AffectedBy...` in tests
+ */
+val Test.testFederationAllowAffectedBy: SetProperty<Domain> by extensionProperty {
+    project.objects.setProperty(Domain::class.java)
 }
 
 /**

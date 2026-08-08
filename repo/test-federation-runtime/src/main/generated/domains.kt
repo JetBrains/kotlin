@@ -18,5 +18,7 @@ enum class Domain {
     IntelliJ,
     BuildInfrastructure,
     Unknown,
+    ;
 
+    companion object
 }

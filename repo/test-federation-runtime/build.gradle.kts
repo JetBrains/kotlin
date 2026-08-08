@@ -2,10 +2,7 @@
 
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.testFederation.GenerateTestFederationRuntimeCodeTask
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.*
 
 plugins {
     id("common-configuration")
@@ -43,6 +40,7 @@ tasks.withType<Test>().configureEach {
             else -> error("Unknown _PSEUDO_TEST_ configuration")
         }
     }
+    testFederationAllowAffectedBy = setOf(Domain.Js, Domain.Wasm, Domain.Gradle)
 
     testLogging {
         events("passed", "skipped", "failed")

@@ -2,8 +2,10 @@ import com.github.gradle.node.npm.task.NpmTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
+import org.jetbrains.kotlin.testFederation.Domain
 import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
+import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
 import java.util.*
 
@@ -149,14 +151,17 @@ fun Test.forwardProperties() {
 projectTests {
     jsTestTask {
         setUpJsBoxTests()
+        testFederationAllowAffectedBy = setOf(Domain.Compiler, Domain.AnalysisApi)
     }
 
     jsTestTask(taskName = "jsTest", tag = "!es6", skipInLocalBuild = true) {
         setUpJsBoxTests()
+        testFederationAllowAffectedBy = setOf(Domain.Compiler, Domain.AnalysisApi)
     }
 
     jsTestTask(taskName = "jsES6Test", tag = "es6", skipInLocalBuild = true) {
         setUpJsBoxTests()
+        testFederationAllowAffectedBy = setOf(Domain.Compiler, Domain.AnalysisApi)
     }
 
     testTask("invalidationTest", skipInLocalBuild = true) {

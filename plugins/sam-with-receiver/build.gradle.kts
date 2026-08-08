@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
+
 description = "Kotlin SamWithReceiver Compiler Plugin"
 
 plugins {
@@ -42,7 +45,9 @@ javadocJar()
 testsJar()
 
 projectTests {
-    testTask()
+    testTask {
+        testFederationAllowAffectedBy = setOf(Domain.Compiler)
+    }
 
     testGenerator("org.jetbrains.kotlin.samWithReceiver.TestGeneratorKt", generateTestsInBuildDirectory = true)
 

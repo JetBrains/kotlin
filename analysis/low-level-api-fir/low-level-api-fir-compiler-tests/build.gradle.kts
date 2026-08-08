@@ -1,4 +1,6 @@
+import org.jetbrains.kotlin.testFederation.Domain
 import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
@@ -56,6 +58,7 @@ projectTests {
             JdkMajorVersion.JDK_25_0, // TestsWithJava25 and others
         )
     ) {
+        testFederationAllowAffectedBy = setOf(Domain.CompilerPlugins)
         smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
     }
 
