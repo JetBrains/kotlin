@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
@@ -53,14 +54,48 @@ private fun createFile(shortName: String, text: String, project: Project): KtFil
     return factory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile
 }
 
+// Legacy JDK 8 bootstrap jar; absent on JDK 9+ where configureJdkClasspathRoots() is enough.
 private val JDK_PATH = File("${System.getProperty("java.home")!!}/lib/rt.jar")
-private val RUNTIME_JAR = File(System.getProperty("kotlin.runtime.path") ?: "dist/kotlinc/lib/kotlin-runtime.jar")
+
+/**
+ * Resolves kotlin-stdlib for the FIR session classpath.
+ *
+ * Order: `-Dkotlin.runtime.path`, then common relative locations from repo root or `:benchmarks`
+ * working directory. The historical default `kotlin-runtime.jar` is no longer shipped in dist.
+ */
+private fun resolveRuntimeJar(): File {
+    System.getProperty("kotlin.runtime.path")?.let { explicit ->
+        return File(explicit)
+    }
+    val relativeCandidates = listOf(
+        "dist/kotlinc/lib/kotlin-stdlib.jar",
+        "../dist/kotlinc/lib/kotlin-stdlib.jar",
+    )
+    for (relative in relativeCandidates) {
+        val candidate = File(relative)
+        if (candidate.isFile) return candidate
+    }
+    // Last resort: walk up from user.dir looking for dist/kotlinc/lib/kotlin-stdlib.jar
+    var dir: File? = File(System.getProperty("user.dir") ?: ".").absoluteFile
+    repeat(6) {
+        val candidate = File(dir, "dist/kotlinc/lib/kotlin-stdlib.jar")
+        if (candidate.isFile) return candidate
+        dir = dir?.parentFile
+    }
+    error(
+        "Kotlin stdlib not found. Build the dist or pass " +
+                "-Dkotlin.runtime.path=/path/to/kotlin-stdlib.jar (searched from ${System.getProperty("user.dir")})"
+    )
+}
 
 private fun newConfiguration(): CompilerConfiguration {
     val configuration = CompilerConfiguration.create()
     configuration.put(CommonConfigurationKeys.MODULE_NAME, "benchmark")
-    configuration.addJvmClasspathRoot(JDK_PATH)
-    configuration.addJvmClasspathRoot(RUNTIME_JAR)
+    if (JDK_PATH.isFile) {
+        configuration.addJvmClasspathRoot(JDK_PATH)
+    }
+    val runtimeJar = resolveRuntimeJar()
+    configuration.addJvmClasspathRoot(runtimeJar)
     configuration.configureJdkClasspathRoots()
     @OptIn(MessageCollectorAccess::class) // write access
     configuration.messageCollector = MessageCollector.NONE
@@ -73,6 +108,10 @@ abstract class AbstractSimpleFileBenchmark {
     private var myDisposable: Disposable = Disposable { }
     private lateinit var env: KotlinCoreEnvironment
     private lateinit var file: KtFile
+
+    // Per-invocation FIR state for [prepareFirForResolve] / [processFirResolve].
+    private lateinit var resolveProcessor: FirTotalResolveProcessor
+    private lateinit var firFile: FirFile
 
     @Setup(Level.Trial)
     fun setUp() {
@@ -92,18 +131,44 @@ abstract class AbstractSimpleFileBenchmark {
         )
     }
 
+    /**
+     * Legacy entry used by existing benchmarks: builds raw FIR and runs resolve inside the
+     * timed method. Prefer [prepareFirForResolve] + [processFirResolve] for new benchmarks
+     * when raw FIR should stay outside the measured path.
+     */
     @OptIn(ObsoleteTestInfrastructure::class)
     protected fun analyzeGreenFile(bh: Blackhole) {
+        prepareFirForResolve()
+        processFirResolve(bh)
+    }
+
+    /**
+     * Creates a fresh FIR session and raw FIR file for the next resolve.
+     *
+     * Call from `@Setup(Level.Invocation)` so session/raw-FIR work is not attributed to the
+     * timed benchmark method. FIR is mutated in place by resolve, so this must run every
+     * invocation. Does not run checkers or codegen.
+     */
+    @OptIn(ObsoleteTestInfrastructure::class)
+    protected fun prepareFirForResolve() {
         val scope = GlobalSearchScope.filesScope(env.project, listOf(file.virtualFile))
             .uniteWith(AllJavaSourcesInProjectScope(env.project))
-        val session = FirTestSessionFactoryHelper.createSessionForTests(env.toVfsBasedProjectEnvironment(), scope.toAbstractProjectFileSearchScope())
+        val session = FirTestSessionFactoryHelper.createSessionForTests(
+            env.toVfsBasedProjectEnvironment(),
+            scope.toAbstractProjectFileSearchScope()
+        )
         val firProvider = session.firProvider as FirProviderImpl
         val builder = PsiRawFirBuilder(session, firProvider.kotlinScopeProvider)
+        resolveProcessor = FirTotalResolveProcessor(session)
+        firFile = builder.buildFirFile(file).also(firProvider::recordFile)
+    }
 
-        val totalTransformer = FirTotalResolveProcessor(session)
-        val firFile = builder.buildFirFile(file).also(firProvider::recordFile)
-
-        totalTransformer.process(listOf(firFile))
+    /**
+     * Runs [FirTotalResolveProcessor.process] only (same stack as `FirSession.runResolution`).
+     * Requires a prior [prepareFirForResolve] on the same invocation. Checkers/codegen are not run.
+     */
+    protected fun processFirResolve(bh: Blackhole) {
+        resolveProcessor.process(listOf(firFile))
 
         bh.consume(firFile.hashCode())
         env.project.extensionArea
