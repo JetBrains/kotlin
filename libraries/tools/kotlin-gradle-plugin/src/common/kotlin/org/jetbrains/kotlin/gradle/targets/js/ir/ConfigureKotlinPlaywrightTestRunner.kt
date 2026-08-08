@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinJsBrowserTestMetrics
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
@@ -49,18 +50,15 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
         val testTaskProvider = testRun.executionTask
 
+        val jdBrowserRunners = browserTestDsl.allBrowserRunners.get().values
+
+        KotlinJsBrowserTestMetrics.collectMetrics(project, jdBrowserRunners)
+
         // KT-87641: Register one installation task per browser type so that multiple JS targets
         // with overlapping browser configurations don't cause DuplicateTaskException.
         // locateOrRegisterTask returns the existing task when already registered by another target.
-        val browserInstallTasks = browserTestDsl.allBrowserRunners.get().values
-            .map { runner ->
-                when (runner) {
-                    is KotlinFirefoxTestRunner -> PwBrowserKind.FIREFOX
-                    is KotlinWebkitTestRunner -> PwBrowserKind.WEBKIT
-                    is KotlinChromiumTestRunner -> PwBrowserKind.CHROMIUM
-                    else -> throw IllegalArgumentException("Unsupported browser runner: ${runner::class.simpleName}")
-                }
-            }
+        val browserInstallTasks = jdBrowserRunners
+            .map { runner -> runner.getBrowserKind() }
             .distinct()
             .map { browserType ->
                 project.locateOrRegisterTask<PlaywrightBrowserInstall>(browserType.getPwInstallBrowserTaskName(), args = listOf(testCompilation)) {
@@ -109,6 +107,13 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
             )
         }
     }
+}
+
+internal fun KotlinBrowserTestRunnerDsl.getBrowserKind(): PwBrowserKind = when (this) {
+    is KotlinFirefoxTestRunner -> PwBrowserKind.FIREFOX
+    is KotlinWebkitTestRunner -> PwBrowserKind.WEBKIT
+    is KotlinChromiumTestRunner -> PwBrowserKind.CHROMIUM
+    else -> throw IllegalArgumentException("Unsupported browser runner: ${this::class.simpleName}")
 }
 
 private fun KotlinPlaywrightJsTestFramework.BrowserRunnerInput.populateFrom(

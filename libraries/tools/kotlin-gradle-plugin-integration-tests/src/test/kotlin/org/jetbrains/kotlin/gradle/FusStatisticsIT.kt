@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.file.Directory
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Internal
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.version
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -22,9 +26,11 @@ import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.metrics.StringAnonymizationPolicy
+import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
+import java.net.URI
 import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.test.assertEquals
@@ -235,7 +241,11 @@ class FusStatisticsIT : KGPBaseTest() {
             "instantExecutionWithBuildSrc",
             gradleVersion,
         ) {
-            build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build(
+                "compileKotlin",
+                "-Pkotlin.session.logger.root.path=$projectPath",
+                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+            ) {
                 assertFilesCombinedContains(
                     projectPath.resolve("kotlin-profile").listDirectoryEntries(),
                     *expectedMetrics,
@@ -585,6 +595,62 @@ class FusStatisticsIT : KGPBaseTest() {
                     assertTasksExecuted(":compileDevelopmentExecutableKotlinWasmJs")
                     assertOutputDoesNotContainFusErrors()
                     fusStatisticsDirectory.assertFusReportContains("WASM_IR_INCREMENTAL=true")
+                }
+            }
+        }
+    }
+
+    @JsGradlePluginTests
+    @DisplayName("browser test DSL configured with options changed from defaults")
+    @GradleTest
+    @OptIn(ExperimentalJsTestDsl::class)
+    fun testJsBrowserTestDslWithChangedOptions(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js().browser {
+                        test.apply {
+                            headless.set(false)
+                            @OptIn(DelicateKotlinGradlePluginApi::class)
+                            testsLocation.set(
+                                object : KotlinJsTestsLocation {
+                                    override val bundleLocation: Provider<Directory> = project.layout.buildDirectory.dir("some_dir")
+                                    override val testHtmlFileName: Provider<String> = project.provider { "test.html" }
+
+                                    @OptIn(DelicateKotlinGradlePluginApi::class)
+                                    @get:Internal
+                                    override val url: Provider<URI> =
+                                        bundleLocation.map { it.asFile.resolve(testHtmlFileName.get()).toURI() }
+                                }
+                            )
+                            chromium {
+                                it.launchArgs.set(listOf("--no-sandbox"))
+                                it.launchEnvironmentVariables.put("KOTLIN_JS_TEST_VARIABLE", "42")
+                            }
+                            firefox()
+                        }
+                    }
+                }
+            }
+
+            assertNoErrorFilesCreated {
+                build("assemble", "-Pkotlin.session.logger.root.path=$projectPath") {
+                    assertOutputDoesNotContainFusErrors()
+                    fusStatisticsDirectory.assertFusReportContainsMetricWithValues(
+                        StringListMetrics.JS_TEST_BROWSER_TYPE.name,
+                        listOf("chromium", "firefox")
+                    )
+                    // the values are reported in the alphabetical order
+                    fusStatisticsDirectory.assertFusReportContainsMetricWithValues(
+                        StringListMetrics.JS_TEST_BROWSER_CHANGED_OPTION.name,
+                        listOf("headless", "launchArgs", "launchEnvironmentVariables", "testsLocation")
+                    )
                 }
             }
         }
