@@ -129,6 +129,8 @@ and names.
   `AbstractStubsTest`, `AbstractSourceStubsTest`, `AbstractCompiledStubsTest`, `StubsTestEngine`,
   `SourceStubsTestEngine`, `CompiledStubsTestEngine` (plus `additionalStubInfoExtractor`,
   `TestGenerator`).
+- `AbstractCompiledStubsTest` additionally dumps the decompiled text (`.decompiledText.txt`) of the very same binaries and checks it for
+  syntax errors (`checkDecompiledText`).
 - Regenerate the generated tests with `./gradlew generateTests` after adding test data.
 
 ## Useful entry points
