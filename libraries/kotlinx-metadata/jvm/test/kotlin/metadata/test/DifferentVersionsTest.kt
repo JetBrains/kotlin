@@ -9,12 +9,15 @@ import kotlin.metadata.jvm.KotlinClassMetadata
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import kotlin.metadata.jvm.JvmMetadataVersion
+import kotlin.metadata.jvm.KotlinModuleMetadata
 import kotlin.test.assertContentEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 
 class DifferentVersionsTest {
-    val metadata = DifferentVersionsTest::class.java.getMetadata()
+    private val metadata = DifferentVersionsTest::class.java.getMetadata()
 
     fun Metadata.changeVersion(newVersion: IntArray) = Metadata(
         kind, newVersion,
@@ -76,5 +79,18 @@ class DifferentVersionsTest {
         val md = metadata.changeVersion(MetadataVersion.INSTANCE_NEXT.toArray()).addFlag(1 shl 1)
         assertIs<KotlinClassMetadata.Class>(KotlinClassMetadata.readStrict(md))
         assertIs<KotlinClassMetadata.Class>(KotlinClassMetadata.readLenient(md))
+    }
+
+    @Suppress("OPT_IN_USAGE")
+    @Test
+    fun readModuleMetadataStrictSemanticsFlag() {
+        val path = "META-INF/kotlin-stdlib.kotlin_module"
+        val resource = DifferentVersionsTest::class.java.classLoader.getResource(path) ?: error("No resource found named '$path'.")
+        val md = KotlinModuleMetadata.readStrict(resource.readBytes())
+        md.version = JvmMetadataVersion(md.version.major, md.version.minor + 2, md.version.patch)
+        val futureVersion = md.writeImpl()
+
+        assertFailsWith<IllegalArgumentException> { KotlinModuleMetadata.readStrict(futureVersion) }
+        assertIs<KotlinModuleMetadata>(KotlinModuleMetadata.readLenient(futureVersion))
     }
 }
