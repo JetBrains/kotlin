@@ -13,7 +13,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -23,6 +22,8 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsBrowserDebugOptions
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsBrowserDebuggableFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
@@ -44,7 +45,7 @@ internal class KotlinPlaywrightJsTestFramework(
     @Transient override val compilation: KotlinJsIrCompilation,
     override val frameworkTaskInputs: Inputs,
     private val objects: ObjectFactory,
-) : KotlinJsTestFramework {
+) : KotlinJsTestFramework, KotlinJsBrowserDebuggableFramework {
 
     abstract class Inputs @Inject constructor(objects: ObjectFactory) {
         @get:Nested
@@ -104,6 +105,18 @@ internal class KotlinPlaywrightJsTestFramework(
 
     override val executable: Property<String> = objects.property(nodeJs.executable)
 
+    private val debugPort: Property<Int> = objects.property<Int>().convention(DEFAULT_DEBUG_PORT)
+
+    // null means we don't wait for a debugger before running the tests.
+    private var debuggerReadyPort: Int? = null
+    private var debuggerReadyTimeoutMillis: Int = DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS
+
+    override fun configureDebug(options: KotlinJsBrowserDebugOptions) {
+        options.debugPort?.let { debugPort.set(it) }
+        options.debuggerReadyPort?.let { debuggerReadyPort = it }
+        options.debuggerReadyTimeoutMillis?.let { debuggerReadyTimeoutMillis = it }
+    }
+
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = setOf(
         NpmPackageVersion("playwright-core", PLAYWRIGHT_VERSION)
@@ -113,6 +126,21 @@ internal class KotlinPlaywrightJsTestFramework(
     internal val npmToolingEnvDir: DirectoryProperty = objects.directoryProperty().convention(compilation.npmToolingDir())
 
     override fun createTestExecuter(): TestExecuter<*> = PlaywrightTestExecutor()
+
+    private fun getDebugRunner(): ChromiumRunnerInput {
+        frameworkTaskInputs.chromiumRunners.get().firstOrNull()?.let { return it }
+
+        val configuredRunner = firstRunnerInput()
+        return createChromiumInputs(objects).apply {
+            name.convention("chromium")
+            testsLocation.convention(configuredRunner.testsLocation)
+            timeout.convention(configuredRunner.timeout)
+            headless.convention(true)
+            launchArgs.convention(emptyList())
+            launchEnvironmentVariables.convention(emptyMap())
+            finishMarker.convention(configuredRunner.finishMarker)
+        }
+    }
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
@@ -134,16 +162,37 @@ internal class KotlinPlaywrightJsTestFramework(
         ).toList()
 
         val browsersDirectory = frameworkTaskInputs.playwrightBrowsersDirectory.getFile().toPath()
+        val debugOptions = if (debug) takeDebugOptions() else null
+
+        if (debug && frameworkTaskInputs.chromiumRunners.get().isEmpty()) {
+            task.logger.warn(
+                "No Chromium runner is configured for Playwright debugging. " +
+                        "Kotlin will launch Chromium using the first configured browser runner's test settings. " +
+                        "Define a Chromium runner in the browser test DSL to customize the debug browser configuration."
+            )
+        }
 
         val pwRunners = buildList {
-            frameworkTaskInputs.chromiumRunners.get().forEach {
-                add(it.createPwRunnerSpec(PwBrowserKind.CHROMIUM, browsersDirectory, cliArgs))
-            }
-            frameworkTaskInputs.firefoxRunners.get().forEach {
-                add(it.createPwRunnerSpec(PwBrowserKind.FIREFOX, browsersDirectory, cliArgs))
-            }
-            frameworkTaskInputs.webkitRunners.get().forEach {
-                add(it.createPwRunnerSpec(PwBrowserKind.WEBKIT, browsersDirectory, cliArgs))
+            if (debugOptions != null) {
+                val runner = getDebugRunner()
+                add(
+                    runner.createPwRunnerSpec(
+                        PwBrowserKind.CHROMIUM,
+                        browsersDirectory,
+                        cliArgs,
+                        debugOptions,
+                    )
+                )
+            } else {
+                frameworkTaskInputs.chromiumRunners.get().forEach {
+                    add(it.createPwRunnerSpec(PwBrowserKind.CHROMIUM, browsersDirectory, cliArgs, debugOptions))
+                }
+                frameworkTaskInputs.firefoxRunners.get().forEach {
+                    add(it.createPwRunnerSpec(PwBrowserKind.FIREFOX, browsersDirectory, cliArgs, debugOptions))
+                }
+                frameworkTaskInputs.webkitRunners.get().forEach {
+                    add(it.createPwRunnerSpec(PwBrowserKind.WEBKIT, browsersDirectory, cliArgs, debugOptions))
+                }
             }
         }
 
@@ -158,10 +207,21 @@ internal class KotlinPlaywrightJsTestFramework(
         )
     }
 
+    private fun takeDebugOptions(): PwDebugOptions {
+        val remoteDebuggingPort = debugPort.get()
+
+        return PwDebugOptions(
+            remoteDebuggingPort = remoteDebuggingPort,
+            debuggerReadyPort = debuggerReadyPort,
+            debuggerReadyTimeoutMillis = debuggerReadyTimeoutMillis,
+        )
+    }
+
     private fun BrowserRunnerInput.createPwRunnerSpec(
         kind: PwBrowserKind,
         browsersDirectory: Path,
         cliArgs: List<String>,
+        debugOptions: PwDebugOptions?,
     ): PwRunnerSpec = PwRunnerSpec(
         name = name.get(),
         browserKind = kind,
@@ -173,7 +233,8 @@ internal class KotlinPlaywrightJsTestFramework(
         headless = headless.get(),
         launchArgs = launchArgs.get(),
         launchEnvironmentVariables = launchEnvironmentVariables.get(),
-        customBrowserExecutable = customBrowserExecutable.asPathOrNull
+        customBrowserExecutable = customBrowserExecutable.asPathOrNull,
+        debugOptions = debugOptions,
     )
 
     private fun BrowserRunnerInput.buildRunnerUrl(baseUrl: URI, cliArgs: List<String>): URI {
@@ -185,7 +246,15 @@ internal class KotlinPlaywrightJsTestFramework(
         return runnerConfig.buildUrlWithConfigState(baseUrl)
     }
 
+    private fun firstRunnerInput(): BrowserRunnerInput =
+        frameworkTaskInputs.chromiumRunners.get().firstOrNull()
+            ?: frameworkTaskInputs.firefoxRunners.get().firstOrNull()
+            ?: frameworkTaskInputs.webkitRunners.get().firstOrNull()
+            ?: error("No Playwright browser runners configured")
+
     companion object {
+        private const val DEFAULT_DEBUG_PORT = 9222
+        private const val DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS = 30_000
         fun createInputs(objects: ObjectFactory): Inputs =
             objects.newInstance(Inputs::class.java)
 

@@ -37,6 +37,10 @@ import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.net.InetAddress
+import java.net.InetSocketAddress
+import java.net.Socket
+import java.net.SocketTimeoutException
 import java.net.URI
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
@@ -59,6 +63,15 @@ internal class PwRunnerSpec(
     val launchArgs: List<String>,
     val launchEnvironmentVariables: Map<String, String>,
     val customBrowserExecutable: Path?,
+    val debugOptions: PwDebugOptions?,
+)
+
+internal class PwDebugOptions(
+    // A CDP debugger can attach to Chromium on this port.
+    val remoteDebuggingPort: Int,
+    // Set when the run should wait until a debugger is attached.
+    val debuggerReadyPort: Int?,
+    val debuggerReadyTimeoutMillis: Int,
 )
 
 /**
@@ -220,10 +233,25 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
             PwBrowserKind.FIREFOX -> playwright.firefox()
             PwBrowserKind.WEBKIT -> playwright.webkit()
         }
+
+        val runnerDebugPort = runner.debugOptions?.remoteDebuggingPort
+        if (runnerDebugPort != null && runner.headless) {
+            log.info("Running '${runner.name}' headed instead of headless, because it is being debugged")
+        }
         val launchOptions = BrowserType.LaunchOptions()
-            .setHeadless(runner.headless)
+            .setHeadless(runnerDebugPort == null && runner.headless)
             .apply {
-                if (runner.launchArgs.isNotEmpty()) setArgs(runner.launchArgs)
+                val launchArgs = if (runnerDebugPort != null) {
+                    // The debugger needs CDP, so non-Chromium runners are swapped out before we get here.
+                    check(runner.browserKind == PwBrowserKind.CHROMIUM) {
+                        "Browser test debugging for Playwright is supported only with Chromium runners"
+                    }
+                    runner.launchArgs.withRemoteDebuggingPort(runnerDebugPort)
+                } else {
+                    runner.launchArgs
+                }
+
+                if (launchArgs.isNotEmpty()) setArgs(launchArgs)
                 if (runner.launchEnvironmentVariables.isNotEmpty()) setEnv(runner.launchEnvironmentVariables)
                 if (runner.customBrowserExecutable != null) setExecutablePath(runner.customBrowserExecutable)
             }
@@ -234,6 +262,7 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
         browser.use {
             val page = browser.newPage()
             page.use {
+                runner.awaitDebuggerAttached()
                 page.setDefaultTimeout(runner.timeout.inWholeMilliseconds.toDouble())
                 var finished = false
                 page.onConsoleMessage {
@@ -252,8 +281,48 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
         }
     }
 
+    // With no ready port we don't wait at all. The timeout covers the connect and the reply separately.
+    private fun PwRunnerSpec.awaitDebuggerAttached() {
+        val readyPort = debugOptions?.debuggerReadyPort ?: return
+        val timeoutMillis = debugOptions.debuggerReadyTimeoutMillis
+        log.info("Waiting up to $timeoutMillis ms for a debugger to attach to '$name'")
+        try {
+            Socket().use { socket ->
+                socket.connect(InetSocketAddress(InetAddress.getLoopbackAddress(), readyPort), timeoutMillis)
+                socket.soTimeout = timeoutMillis
+                check(socket.getInputStream().read() >= 0) {
+                    "The debugger readiness connection for '$name' on port $readyPort was closed without acknowledgement"
+                }
+            }
+        } catch (e: SocketTimeoutException) {
+            throw IllegalStateException(
+                "Timed out after $timeoutMillis ms waiting for a debugger to attach to '$name' on port $readyPort", e
+            )
+        } catch (e: IOException) {
+            throw IllegalStateException(
+                "Could not reach the debugger readiness port $readyPort for '$name'. " +
+                        "The debugger is no longer waiting to attach.", e
+            )
+        }
+    }
+
     override fun stopNow() {
         // TODO: implement stop now now support
         log.warn("Playwright executor doesn't support immediate stop")
+    }
+
+    private fun List<String>.withRemoteDebuggingPort(port: Int): List<String> {
+        // Drop any CDP port the user passed, it would clash with the one we were given.
+        val args = mutableListOf<String>()
+        var skipNext = false
+        for (arg in this) {
+            when {
+                skipNext -> skipNext = false
+                arg == "--remote-debugging-port" -> skipNext = true
+                arg.startsWith("--remote-debugging-port=") -> Unit
+                else -> args.add(arg)
+            }
+        }
+        return args + "--remote-debugging-port=$port"
     }
 }
