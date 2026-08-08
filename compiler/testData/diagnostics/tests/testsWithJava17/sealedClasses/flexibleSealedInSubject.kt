@@ -41,7 +41,7 @@ fun test_1() {
 
     }
 
-    when (Base.provide()) {
+    <!WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA!>when<!> (Base.provide()) {
         is A -> {}
         is B -> {}
     }
