@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
 import org.jetbrains.kotlin.util.assertThrows
 import java.net.URLClassLoader
 import org.junit.jupiter.api.Assumptions.abort
