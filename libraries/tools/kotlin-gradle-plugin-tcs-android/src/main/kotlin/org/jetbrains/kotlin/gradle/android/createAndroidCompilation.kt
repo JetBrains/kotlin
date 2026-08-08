@@ -9,7 +9,6 @@ import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.android.build.gradle.internal.publishing.AndroidArtifacts.ARTIFACT_TYPE
 import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.attributes.java.TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE
-import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.android.AndroidKotlinSourceSet.Companion.android
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.CompilationFactory
@@ -51,7 +50,7 @@ internal fun PrototypeAndroidTarget.createAndroidCompilation(name: String): Prot
                 )
                 attributes.attributeProvider(
                     TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
-                    project.provider { project.objects.named(TargetJvmEnvironment.ANDROID) }
+                    project.provider { project.objects.named(TargetJvmEnvironment::class.java, TargetJvmEnvironment.ANDROID) }
                 )
             }
 
@@ -63,7 +62,7 @@ internal fun PrototypeAndroidTarget.createAndroidCompilation(name: String): Prot
                 )
                 attributes.attributeProvider(
                     TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
-                    project.provider { project.objects.named(TargetJvmEnvironment.ANDROID) }
+                    project.provider { project.objects.named(TargetJvmEnvironment::class.java, TargetJvmEnvironment.ANDROID) }
                 )
             }
         }
