@@ -239,6 +239,29 @@ extension KotlinBase {
     }
 }
 
+// MARK: - Link anchor
+
+/// Anchor that keeps this compilation unit in the linked image.
+///
+/// The Kotlin/Native runtime reaches the `@objc` category below only through the
+/// `+_Kotlin_SwiftExport_wrapIntoExistential:` selector, see
+/// `kotlin-native/runtime/src/main/cpp/swiftExportRuntime/SwiftExport.mm`. A Swift `import` is not a
+/// symbol reference, so nothing else in the link graph names a declaration of this module.
+///
+/// This file is shipped as a single member of a static archive, and a linker loads an archive member
+/// only if it defines a currently undefined symbol. A module whose exported API happens to reference
+/// nothing from here - which is the case whenever it exposes neither an interface nor a bridgeable
+/// type - would therefore link without the member at all, the category would never be registered, and
+/// the first existential wrap would fail with `unrecognized selector sent to class`. KT-87457.
+///
+/// `KotlinRuntimeSupport.kt` holds the matching undefined reference, see `KotlinRuntimeSupport_linkAnchor`
+/// there; the Kotlin binary is always part of the link, so that reference is what selects this member.
+/// `@_cdecl` gives the anchor a stable name for Kotlin to reference, and `@used` keeps it from being
+/// dropped as a function that does nothing.
+@used
+@_cdecl("KotlinRuntimeSupport_linkAnchor")
+func _kotlinRuntimeSupportLinkAnchor() {}
+
 extension NSObject {
     // FIXME: swap to @expose(C) when it's available or consider using @expose(Cxx)
     @objc(_Kotlin_SwiftExport_wrapIntoExistential:)
