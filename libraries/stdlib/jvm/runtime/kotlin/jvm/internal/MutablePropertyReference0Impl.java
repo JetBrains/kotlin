@@ -5,6 +5,7 @@
 
 package kotlin.jvm.internal;
 
+import kotlin.ExperimentalContextParameters;
 import kotlin.SinceKotlin;
 import kotlin.reflect.KClass;
 import kotlin.reflect.KDeclarationContainer;
@@ -27,6 +28,20 @@ public class MutablePropertyReference0Impl extends MutablePropertyReference0 {
     @SinceKotlin(version = "1.4")
     public MutablePropertyReference0Impl(Object receiver, Class owner, String name, String signature, int flags) {
         super(receiver, owner, name, signature, flags);
+    }
+
+    @SinceKotlin(version = "2.5")
+    @ExperimentalContextParameters
+    public MutablePropertyReference0Impl(Object[] contextArguments, Class owner, String name, String signature, int flags) {
+        this(owner, name, signature, flags);
+        this.boundContextArguments = contextArguments;
+    }
+
+    @SinceKotlin(version = "2.5")
+    @ExperimentalContextParameters
+    public MutablePropertyReference0Impl(Object[] contextArguments, Object receiver, Class owner, String name, String signature, int flags) {
+        this(receiver, owner, name, signature, flags);
+        this.boundContextArguments = contextArguments;
     }
 
     @Override

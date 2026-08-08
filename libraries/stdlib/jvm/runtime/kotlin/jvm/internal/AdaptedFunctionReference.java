@@ -5,10 +5,12 @@
 
 package kotlin.jvm.internal;
 
+import kotlin.ExperimentalContextParameters;
 import kotlin.SinceKotlin;
 import kotlin.reflect.KDeclarationContainer;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import static kotlin.jvm.internal.CallableReference.NO_RECEIVER;
 
@@ -28,6 +30,9 @@ import static kotlin.jvm.internal.CallableReference.NO_RECEIVER;
 @SinceKotlin(version = "1.4")
 public class AdaptedFunctionReference implements FunctionBase, Serializable {
     protected final Object receiver;
+    @SinceKotlin(version = "2.5")
+    @ExperimentalContextParameters
+    protected Object[] boundContextArguments;
     private final Class owner;
     private final String name;
     private final String signature;
@@ -89,6 +94,7 @@ public class AdaptedFunctionReference implements FunctionBase, Serializable {
                arity == other.arity &&
                flags == other.flags &&
                Intrinsics.areEqual(receiver, other.receiver) &&
+               Arrays.equals(boundContextArguments, other.boundContextArguments) &&
                Intrinsics.areEqual(owner, other.owner) &&
                name.equals(other.name) &&
                signature.equals(other.signature);
@@ -97,6 +103,7 @@ public class AdaptedFunctionReference implements FunctionBase, Serializable {
     @Override
     public int hashCode() {
         int result = receiver != null ? receiver.hashCode() : 0;
+        result = result * 31 + Arrays.hashCode(boundContextArguments);
         result = result * 31 + (owner != null ? owner.hashCode() : 0);
         result = result * 31 + name.hashCode();
         result = result * 31 + signature.hashCode();
