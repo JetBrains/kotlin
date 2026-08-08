@@ -12,6 +12,7 @@ plugins {
 dependencies {
     api(project(":compiler:build-tools:kotlin-build-tools-api"))
     implementation(kotlinStdlib())
+    compileOnly(libs.guava)
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:cli-jvm"))
     compileOnly(project(":compiler:cli-js"))
@@ -30,10 +31,12 @@ dependencies {
 
     runtimeOnly(project(":kotlin-compiler-embeddable"))
     runtimeOnly(project(":kotlin-compiler-runner"))
+    embedded(libs.guava)
     embedded(project(":kotlin-scripting-compiler-embeddable")) { isTransitive = false }
     embedded(project(":kotlin-scripting-compiler-impl-embeddable")) { isTransitive = false }
     embedded(project(":kotlin-scripting-common")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
+    embedded(libs.guava) { isTransitive = false }
 
     // dependencies for ABI validation
     compileOnly(project(":libraries:tools:abi-validation:abi-tools-api"))

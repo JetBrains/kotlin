@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
-import java.io.File
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
@@ -32,19 +31,19 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger? = null,
-        sessionIsAliveFlagFile: Lazy<File>
+        executionContext: ExecutionContext
     ): R {
         check(executionStarted.compareAndSet(expectedValue = false, newValue = true)) {
             "Build operation $this already started execution."
         }
-        return executeImpl(projectId, executionPolicy, logger, sessionIsAliveFlagFile)
+        return executeImpl(projectId, executionPolicy, logger, executionContext)
     }
 
     abstract fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger? = null,
-        sessionIsAliveFlagFile: Lazy<File>
+        executionContext: ExecutionContext
     ): R
 
     /**
@@ -68,5 +67,6 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
         val METRICS_COLLECTOR: Option<BuildMetricsCollector?> = Option("METRICS_COLLECTOR", default = null)
         val XX_KGP_METRICS_COLLECTOR: Option<Boolean> = Option("XX_KGP_METRICS_COLLECTOR", default = false)
         val XX_KGP_METRICS_COLLECTOR_OUT: Option<ByteArray?> = Option("XX_KGP_METRICS_COLLECTOR_OUT", default = null)
+        val ENABLE_CLASSLOADER_CACHE: Option<Boolean> = Option("ENABLE_CLASSLOADER_CACHE", true)
     }
 }

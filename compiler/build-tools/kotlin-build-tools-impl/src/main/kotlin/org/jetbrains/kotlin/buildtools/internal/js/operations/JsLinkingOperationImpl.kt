@@ -107,6 +107,7 @@ internal class JsLinkingOperationImpl private constructor(
     override fun compileIncrementallyInProcess(
         arguments: K2JSCompilerArguments,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        executionContext: ExecutionContext
     ): CompilationResult {
         error("Linking doesn't support incremental compilation")
     }
