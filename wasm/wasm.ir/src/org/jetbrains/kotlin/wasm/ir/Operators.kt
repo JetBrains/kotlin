@@ -354,6 +354,8 @@ enum class WasmOp(
     CALL("call", 0x10, FUNC_IDX),
     CALL_PURE("call", 0x10, FUNC_IDX),
     CALL_INDIRECT("call_indirect", 0x11, listOf(TYPE_IDX, TABLE_IDX)),
+    RETURN_CALL("return_call", 0x12, FUNC_IDX),
+    RETURN_CALL_INDIRECT("return_call_indirect", 0x13, listOf(TYPE_IDX, TABLE_IDX)),
     TRY("try", 0x06, BLOCK_TYPE),
     CATCH("catch", 0x07, TAG_IDX),
     CATCH_ALL("catch_all", 0x19),

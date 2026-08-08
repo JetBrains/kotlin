@@ -309,6 +309,14 @@ open class WasmExpressionBuilder(
         )
     }
 
+    fun buildReturnCall(symbol: WasmImmediate.FuncIdx, location: SourceLocation) {
+        buildInstr(WasmOp.RETURN_CALL, location, symbol)
+    }
+
+    fun buildReturnCallRef(typeRef: WasmImmediate.TypeIdx, location: SourceLocation) {
+        buildInstr(WasmOp.RETURN_CALL_REF, location, typeRef)
+    }
+
     fun buildGetLocal(local: WasmLocal, location: SourceLocation) {
         buildInstr(WasmOp.LOCAL_GET, location, WasmImmediate.LocalIdx.get(local))
     }

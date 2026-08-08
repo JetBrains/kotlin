@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.KLIB_RELATIVE_PATH_BASES
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.DISABLE_WASM_EXCEPTION_HANDLING
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.ENABLE_TAIL_CALLS
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_COMPILATION
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
@@ -183,6 +184,7 @@ open class WasmSecondStageEnvironmentConfigurator(
 
         configuration.put(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, registeredDirectives.useNewExceptionHandling(wasmTarget))
         configuration.put(WasmConfigurationKeys.WASM_USE_STACK_SWITCHING_PROPOSAL, USE_STACK_SWITCHING_PROPOSAL in registeredDirectives)
+        configuration.put(WasmConfigurationKeys.WASM_ENABLE_TAIL_CALLS, ENABLE_TAIL_CALLS in registeredDirectives)
         configuration.put(WasmConfigurationKeys.WASM_NO_JS_TAG, WASM_NO_JS_TAG in registeredDirectives)
         configuration.put(
             WasmConfigurationKeys.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX,
