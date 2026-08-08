@@ -304,12 +304,23 @@ internal object ArgumentCheckingProcessor {
             }
 
             else -> {
-                if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) return // no errors
+                /**
+                 * In PCLA, the CS may already have a contradiction, which will prevent us from adding
+                 * compatible constraints (unrelated to those causing that specific contradiction),
+                 * which will disrupt the fixation of further unrelated type variables. They will then
+                 * leak into the rest of the compiler.
+                 */
+                fun trySubtypeConstraint(lowerType: ConeKotlinType, upperType: ConeKotlinType) = when {
+                    !csBuilder.hasContradiction -> csBuilder.addSubtypeConstraintIfCompatible(lowerType, upperType, position)
+                    else -> false.also { csBuilder.addSubtypeConstraint(lowerType, upperType, position) }
+                }
+
+                if (trySubtypeConstraint(argumentType, expectedType)) return // no errors
 
                 val smartcastExpression = atom.expression as? FirSmartCastExpression
                 if (smartcastExpression != null && !smartcastExpression.isStable) {
                     val unstableType = smartcastExpression.smartcastType.coneType
-                    if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, position)) {
+                    if (trySubtypeConstraint(unstableType, expectedType)) {
                         reportDiagnostic(
                             UnstableSmartCast(
                                 smartcastExpression,
@@ -329,7 +340,7 @@ internal object ArgumentCheckingProcessor {
 
                 val nullableExpectedType = expectedType.withNullability(nullable = true, session.typeContext)
 
-                if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
+                if (trySubtypeConstraint(argumentType, nullableExpectedType)) {
                     reportDiagnostic(InapplicableNullableReceiver(argumentType))
                 } else {
                     csBuilder.addSubtypeConstraint(argumentType, expectedType, position)

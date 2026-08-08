@@ -19,8 +19,8 @@ public fun <E> List<E>.permutations1(k: Int = size) {
         val currentElements = <!UNRESOLVED_REFERENCE!>MutableList234<!>(k) { collection[<!UNRESOLVED_REFERENCE!>it<!>] }
 
         fun addStartMark(): Int {
-            val index = <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>references[1]<!>
-            references<!NO_SET_METHOD!>[1]<!> = references[<!ARGUMENT_TYPE_MISMATCH!>index<!>]
+            val index = <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>references[<!ARGUMENT_TYPE_MISMATCH!>1<!>]<!>
+            references<!NO_SET_METHOD!>[1]<!> = references[<!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>index<!>]
             references<!NO_SET_METHOD!>[index]<!> = 1
             return <!RETURN_TYPE_MISMATCH!>index<!>
         }
@@ -34,10 +34,10 @@ public fun <E> List<E>.permutations1(k: Int = size) {
         while (true) {
             <!INAPPLICABLE_CANDIDATE!>yield<!>(currentElements.toList())
 
-            val firstToIncrease = <!CANNOT_INFER_PARAMETER_TYPE!>scope<!> <!ARGUMENT_TYPE_MISMATCH!>{
+            val firstToIncrease = scope <!ARGUMENT_TYPE_MISMATCH!>{
                 var current = k - 1
                 var index = currentIndices[current]
-                while (<!EQUALITY_NOT_APPLICABLE!>references[<!ARGUMENT_TYPE_MISMATCH!>references[<!ARGUMENT_TYPE_MISMATCH!>index<!>]<!>] == size + 1<!>) {
+                while (<!EQUALITY_NOT_APPLICABLE!>references[<!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>references[<!ARGUMENT_TYPE_MISMATCH!>index<!>]<!>] == size + 1<!>) {
                     removeMark(index)
                     current--
                     if (current == Int.MAX_VALUE) break
@@ -49,9 +49,9 @@ public fun <E> List<E>.permutations1(k: Int = size) {
 
             val newIndex = moveToNextMark(<!ARGUMENT_TYPE_MISMATCH!>currentIndices[<!ARGUMENT_TYPE_MISMATCH!>firstToIncrease<!>]<!>)
             currentIndices[<!ARGUMENT_TYPE_MISMATCH!>firstToIncrease<!>] = <!ARGUMENT_TYPE_MISMATCH!>newIndex<!>
-            currentElements[firstToIncrease] = collection[newIndex-1]
+            currentElements[firstToIncrease] = <!ARGUMENT_TYPE_MISMATCH!>collection[newIndex-1]<!>
 
-            for (t in <!ITERATOR_MISSING!>firstToIncrease+1 .. <!ARGUMENT_TYPE_MISMATCH!>k<!><!>) {
+            for (t in <!ITERATOR_MISSING!>firstToIncrease<!NONE_APPLICABLE!>+<!>1 .. <!ARGUMENT_TYPE_MISMATCH!>k<!><!>) {
                 val index = addStartMark()
                 currentIndices[t] = index
                 currentElements[t] = collection[index-1]

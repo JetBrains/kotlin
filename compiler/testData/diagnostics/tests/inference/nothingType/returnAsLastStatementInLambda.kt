@@ -31,13 +31,13 @@ fun foo() {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.List<*>")!>dates2<!>
 
     // Doesn't work both in K1 and K2, but probably should (KT-58232 for tracking)
-    val dates3 = myRun {
+    val dates3 = <!TYPE_MISMATCH!>myRun {
         when {
-            else -> return@myRun <!CANNOT_INFER_PARAMETER_TYPE!>buildList<!> {
+            else -> return@myRun buildList {
                 add(<!ARGUMENT_TYPE_MISMATCH!>4<!>)
             }
         }
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty, nullableType,

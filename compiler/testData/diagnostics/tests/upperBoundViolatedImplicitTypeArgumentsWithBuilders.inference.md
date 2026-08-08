@@ -168,6 +168,7 @@ R|<local>/shape|.removeTraitIfPresent#<R|OperationShape|, R|AbstractShapeBuilder
 ##### Resolution Stages > CheckExtensionReceiver:
 
 1. `OperationShape <: TypeVariable(T)` _from Receiver R|<local>/shape|_
+2. `OperationShape <: TypeVariable(T)?` _from Receiver R|<local>/shape|_
 
 ##### Call Completion:
 
@@ -564,6 +565,10 @@ shapeToBuilder#<R|AbstractShapeBuilder<AbstractShapeBuilder<out AbstractShapeBui
 34. __NewConstraintError: `AbstractShapeBuilder<AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>, SimpleShape> <: AbstractShapeBuilder<in AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>, kotlin/Nothing>`__
 35. __NewConstraintError: `AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape> <: AbstractShapeBuilder<in AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>, kotlin/Nothing>`__
 36. __NewConstraintError: `AbstractShapeBuilder<*, *> <: AbstractShapeBuilder<in AbstractShapeBuilder<out AbstractShapeBuilder<*, *>, SimpleShape>, kotlin/Nothing>`__
+
+##### Resolution Stages > CheckArguments:
+
+1. `SimpleShape <: TypeVariable(S)` _from Argument R|<local>/target|_
 
 ##### Call Completion:
 
