@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.artifacts.ArtifactCollection
 import org.gradle.api.artifacts.ArtifactView
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ResolveException
 import org.gradle.api.artifacts.ResolvedConfiguration
-import org.gradle.api.artifacts.component.ComponentIdentifier
+import org.gradle.api.artifacts.component.ComponentSelector
 import org.gradle.api.artifacts.result.*
-import org.gradle.api.attributes.AttributeContainer
-import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.cache.KotlinGradleTaskExecutionCache
+import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpModuleIdentifier
 import org.jetbrains.kotlin.tooling.core.withClosure
 
 /**
@@ -67,4 +68,46 @@ private fun Configuration.lazyArtifactCollection(configureArtifactView: Artifact
 
 internal tailrec fun ResolvedVariantResult.lastExternalVariantOrSelf(): ResolvedVariantResult {
     return if (externalVariant.isPresent) externalVariant.get().lastExternalVariantOrSelf() else this
+}
+
+internal fun LazyResolvedConfigurationComponent.resolvedDependenciesByKmpModuleId(
+    cache: KotlinGradleTaskExecutionCache,
+    projectId: String,
+    buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
+): Map<KmpModuleIdentifier, Set<ResolvedDependencyResult>> =
+    cache.getOrCompute("$projectId/$configurationName/resolvedDependenciesByKmpModuleId") {
+        groupByNotNullToSet(
+            keySelector = {
+                if (it !is ResolvedDependencyResult) return@groupByNotNullToSet null
+                KmpModuleIdentifier.from(it.selected, buildIdentifierAccessor)
+            },
+            valueTransform = { it as? ResolvedDependencyResult },
+        )
+    }
+
+internal fun LazyResolvedConfigurationComponent.resolvedDependenciesByRequested(
+    cache: KotlinGradleTaskExecutionCache,
+    projectId: String,
+): Map<ComponentSelector, Set<ResolvedDependencyResult>> =
+    cache.getOrCompute("$projectId/$configurationName/resolvedDependenciesByRequested") {
+        groupByNotNullToSet(
+            keySelector = { it.requested },
+            valueTransform = { it as? ResolvedDependencyResult },
+        )
+    }
+
+internal fun <K, V> LazyResolvedConfigurationComponent.groupByNotNullToSet(
+    keySelector: (DependencyResult) -> K?,
+    valueTransform: (DependencyResult) -> V?,
+): Map<K, Set<V>> {
+    val computed = mutableMapOf<K, MutableSet<V>>()
+    for (dependency in allDependencies) {
+        val key = keySelector(dependency) ?: continue
+
+        val value = valueTransform(dependency)
+        if (value != null) {
+            computed.getOrPut(key) { mutableSetOf() } += value
+        }
+    }
+    return computed
 }

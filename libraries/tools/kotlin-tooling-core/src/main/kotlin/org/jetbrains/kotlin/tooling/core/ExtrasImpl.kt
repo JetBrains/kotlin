@@ -20,6 +20,8 @@ internal class MutableExtrasImpl(
     override val keys: Set<Key<*>>
         get() = extras.keys.toSet()
 
+    override fun contains(key: Key<*>): Boolean = extras.contains(key)
+
     override val entries: Set<Entry<*>>
         get() = extras.values.toSet()
 

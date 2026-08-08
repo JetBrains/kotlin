@@ -5,16 +5,24 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.Task
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
 
 @DisplayName("Configuration cache")
 class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
@@ -378,6 +386,67 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    // FIXME: Actually objects SHOULD be the same even after deserialisation
+    //  https://github.com/gradle/gradle/issues/38577
+    @GradleTest
+    @OtherGradlePluginTests
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
+    fun gradleConfigurationCacheDuplicatesTaskStateObjects(version: GradleVersion) {
+        project("empty", version, buildOptions = defaultBuildOptions.disableIsolatedProjects()) {
+            class Foo
+            abstract class Bs : BuildService<BuildServiceParameters.None> {
+                val state = ConcurrentHashMap<Task, Foo>()
+            }
+
+            buildScriptInjection {
+                val foo = Foo()
+                val bs = project.gradle.sharedServices.registerIfAbsent("bs", Bs::class.java) {}
+                project.tasks.register("one") {
+                    it.doLast { task ->
+                        bs.get().state[task] = foo
+                    }
+                }
+                project.tasks.register("two") {
+                    it.doLast { task ->
+                        bs.get().state[task] = foo
+                    }
+                }
+                project.tasks.register("all") {
+                    it.dependsOn("one", "two")
+                }
+            }
+
+            val provider = providerBuildScriptReturn {
+                val bs = project.gradle.sharedServices.registerIfAbsent("bs", Bs::class.java) {}
+                project.tasks.named("all").flatMap {
+                    it.outputs.files.elements
+                }.map {
+                    bs.get().state.map {
+                        it.key.name to it.value.hashCode()
+                    }.toMap()
+                }
+            }
+
+            assertAll(
+                {
+                    val hashesWithCc = provider.buildAndReturn(
+                        ":all",
+                        configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED
+                    )
+                    assertNotNull(hashesWithCc["one"])
+                    assertNotEquals(hashesWithCc["one"], hashesWithCc["two"])
+                },
+                {
+                    val hashesWithCc = provider.buildAndReturn(
+                        ":all",
+                        configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                    )
+                    assertNotNull(hashesWithCc["one"])
+                    assertEquals(hashesWithCc["one"], hashesWithCc["two"])
+                },
+            )
+        }
+    }
 }
 
 /** @return true when the patch was applied */
