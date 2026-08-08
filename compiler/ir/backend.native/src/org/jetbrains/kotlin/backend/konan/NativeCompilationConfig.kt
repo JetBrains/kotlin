@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.common.LoadedNativeKlibs
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.metadataKlib
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
@@ -34,6 +35,8 @@ interface NativeCompilationConfig {
     val target: KonanTarget
 
     val moduleId: String
+
+    val loadedKlibs: LoadedNativeKlibs
 
     val produce: CompilerOutputKind
         get() = configuration.konanProducedArtifactKind!!

@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
 import org.jetbrains.kotlin.konan.config.konanPrintFiles
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.native.NativeFirstStageCompilationConfig
 import org.jetbrains.kotlin.native.NativeFirstStagePhaseContext
-import org.jetbrains.kotlin.native.createFirstStageCompilationConfig
 import kotlin.io.path.absolutePathString
 
 object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, NativeFrontendArtifact>(
@@ -36,7 +36,7 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): NativeFrontendArtifact {
         val (configuration, rootDisposable) = input
-        val config = createFirstStageCompilationConfig(configuration)
+        val config = NativeFirstStageCompilationConfig(configuration)
         val phaseContext = NativeFirstStagePhaseContext(config)
 
         @OptIn(CoreEnvironmentDeprecation::class)
