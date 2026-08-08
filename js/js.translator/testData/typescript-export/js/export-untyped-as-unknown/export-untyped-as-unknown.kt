@@ -2,7 +2,7 @@
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
-// EXPORT_UNTYPED_AS_UNKNOWN
+// EXPORT_WITH_UNKNOWN_TYPE_INSTEAD_ANY
 // MODULE: JS_TESTS
 // WITH_STDLIB
 // FILE: export-untyped-as-unknown.kt
@@ -40,3 +40,12 @@ class WithDynamicMembers {
     fun anyMethod(value: Any): Any = value
     fun dynamicMethod(value: dynamic): dynamic = value
 }
+
+@JsExport.Ignore
+class ImplicitlyExported
+
+@JsExport
+fun consumeImplicitlyExported(value: ImplicitlyExported) {}
+
+@JsExport
+fun produceImplicitlyExported(): ImplicitlyExported = ImplicitlyExported()

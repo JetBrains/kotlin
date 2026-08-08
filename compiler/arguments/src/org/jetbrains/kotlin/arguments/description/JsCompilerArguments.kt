@@ -279,9 +279,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
     }
 
     compilerArgument {
-        name = "Xts-export-untyped-as-unknown"
-        compilerName = "exportUntypedAsUnknown"
-        description = "Export 'dynamic' and 'Any' Kotlin types as 'unknown' TypeScript type.".asReleaseDependent()
+        name = "Xdts-use-unknown-instead-any"
+        compilerName = "useUnknownInsteadAny"
+        description = "Export 'dynamic' and 'Any' Kotlin types as 'unknown' TypeScript type (instead of `any`).".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
         lifecycle(

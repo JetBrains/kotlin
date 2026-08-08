@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.ES6_BOX_PARAMETER
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.lower.isExportedDefaultImplementation
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Primitive
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -840,7 +841,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
     private fun exportTypeArgument(type: IrTypeArgument, typeOwner: IrDeclaration?, typeParameterScope: TypeParameterScope): ExportedType =
         when (type) {
             is IrTypeProjection -> exportType(type.type, typeParameterScope, typeOwner)
-            is IrStarProjection -> ExportedType.Primitive.Any
+            is IrStarProjection -> ExportedType.Primitive.Any // We keep `any` as the supertype; otherwise, the code won’t compile when the upper bound is something other than Any.
         }
 
     private typealias TypeParameterScope = Map<IrTypeParameterSymbol, ExportedTypeParameter>
@@ -949,6 +950,9 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
 
     private val currentlyProcessedTypes = hashSetOf<IrType>()
 
+    private val anyOrUnknown: ExportedType
+        get() = if (context.configuration.exportUntypedAsUnknown) Primitive.Unknown else Primitive.Any
+
     private fun exportType(
         type: IrType,
         typeParameterScope: TypeParameterScope,
@@ -956,11 +960,8 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         shouldCalculateExportedSupertypeForImplicit: Boolean = true,
         inlineClassesShouldBeUnboxed: Boolean = false,
     ): ExportedType {
-        if (context.configuration.exportUntypedAsUnknown && (type is IrDynamicType || type.isAny() || type.isNullableAny()))
-            return ExportedType.Primitive.Unknown
-
         if (type is IrDynamicType || type in currentlyProcessedTypes)
-            return ExportedType.Primitive.Any
+            return anyOrUnknown
 
         if (type !is IrSimpleType)
             return ExportedType.ErrorType("NonSimpleType ${type.render()}")
@@ -1002,7 +1003,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
 
             nonNullType.isString() -> ExportedType.Primitive.String
             nonNullType.isThrowable() -> ExportedType.Primitive.Throwable
-            nonNullType.isAny() -> ExportedType.Primitive.Any  // TODO: Should we wrap Any in a Nullable type?
+            nonNullType.isAny() -> anyOrUnknown  // TODO: Should we wrap Any in a Nullable type?
             nonNullType.isUnit() -> ExportedType.Primitive.Unit
             nonNullType.isNothing() -> ExportedType.Primitive.Nothing
             nonNullType.isArray() -> ExportedType.Array(exportTypeArgument(nonNullType.arguments[0], typeOwner, typeParameterScope))
@@ -1066,7 +1067,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                         transitiveExportedType
                             .memoryOptimizedMap { exportType(it, typeParameterScope, typeOwner) }
                             .reduce(ExportedType::IntersectionType)
-                    } ?: ExportedType.Primitive.Any
+                    } ?: anyOrUnknown
 
                     val classType = ExportedType.ClassType(
                         name = name,

@@ -26,7 +26,7 @@ public data class TypeScriptExportConfig(
     public val implementableInterfaces: Boolean,
     public val exportableSuspendLambdas: Boolean,
     public val dataClassCopyRespectsConstructorVisibility: Boolean,
-    public val exportUntypedAsUnknown: Boolean,
+    public val useUnknownInsteadAny: Boolean,
 )
 
 public typealias InputModule = KlibInputModule<TypeScriptModuleConfig>
