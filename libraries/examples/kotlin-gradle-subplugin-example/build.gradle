@@ -21,7 +21,16 @@ dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:$btaBootstrapVersion")
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$btaBootstrapVersion")
 
-    compileOnly gradleApi()
+    compileOnly(libs.gradle.api) {
+        capabilities {
+            requireCapability("org.gradle.experimental:gradle-public-api-internal")
+        }
+    }
+}
+
+plugins.withType(JavaGradlePluginPlugin).configureEach {
+    // Removing Gradle api default dependency added by 'java-gradle-plugin'
+    configurations["compileOnlyApi"].dependencies.remove(dependencies.gradleApi())
 }
 
 GradleCommonKt.configureCommonPublicationSettingsForGradle(project, false, false)
