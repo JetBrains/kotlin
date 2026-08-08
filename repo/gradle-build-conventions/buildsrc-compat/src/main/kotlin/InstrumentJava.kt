@@ -37,6 +37,7 @@ class InstrumentJava(@Transient val javaInstrumentator: Configuration) : Action<
                     "name" to "instrumentIdeaExtensions",
                     "classpath" to instrumentatorClasspath,
                     "loaderref" to "java2.loader",
+                    "reverseLoader" to true, // parent classpath since Gradle 9.7.0 contains incompatible 'org.jetbrains.org.objectweb.asm.ClassReader' symbol
                     "classname" to "com.intellij.ant.InstrumentIdeaExtensions"
                 )
             }
