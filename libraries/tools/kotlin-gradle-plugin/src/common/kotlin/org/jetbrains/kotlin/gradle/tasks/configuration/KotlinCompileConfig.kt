@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.detachedResolvable
-import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import org.jetbrains.kotlin.gradle.utils.registerTransformForArtifactType
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
@@ -64,15 +63,6 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                     it.attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
                 }.files
                 task.classpathSnapshotProperties.classpathSnapshot.from(classpathEntrySnapshotFiles).disallowChanges()
-                @Suppress("DEPRECATION")
-                task.classpathSnapshotProperties.classpathSnapshotDir.value(getClasspathSnapshotDir(task)).disallowChanges()
-                @Suppress("DEPRECATION")
-                task.taskOutputsBackupExcludes.addAll(
-                    task.classpathSnapshotProperties.classpathSnapshotDir.asFile.flatMap {
-                        // it looks weird, but it's required to work around this issue: https://github.com/gradle/gradle/issues/17704
-                        objectFactory.providerWithLazyConvention { listOf(it) }
-                    }.orElse(emptyList())
-                )
 
                 task.project.plugins.withId("org.gradle.kotlin.kotlin-dsl") {
                     task.kotlinDslPluginIsPresent.value(true).disallowChanges()

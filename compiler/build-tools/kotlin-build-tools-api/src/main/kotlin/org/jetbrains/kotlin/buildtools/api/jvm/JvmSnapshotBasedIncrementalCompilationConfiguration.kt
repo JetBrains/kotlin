@@ -49,7 +49,7 @@ constructor(
     public val workingDirectory: Path,
     public val sourcesChanges: SourcesChanges,
     public val dependenciesSnapshotFiles: List<Path>,
-    @Deprecated("This property is no longer required and will be removed in a future release.")
+    @Deprecated("This property is no longer required and will be removed in a future release.", level = DeprecationLevel.ERROR)
     public val shrunkClasspathSnapshot: Path,
     @Deprecated("Use `get` directly instead or a `Builder` instance to set options. This property will be removed in a future release.", level = DeprecationLevel.ERROR)
     public open val options: JvmSnapshotBasedIncrementalCompilationOptions,
@@ -133,11 +133,11 @@ constructor(
 
         /**
          * The path to the shrunk classpath snapshot file from a previous compilation.
-         * @deprecated The property is no longer required. Will be promoted to an error in KT-83937.
+         * @deprecated The property is no longer required. Will be removed in KT-88357.
          *
          * @since 2.3.20
          */
-        @Deprecated("This property is no longer required and will be removed in a future release.")
+        @Deprecated("This property is no longer required and will be removed in a future release.", level = DeprecationLevel.ERROR)
         public val shrunkClasspathSnapshot: Path
 
         /**

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTreeElement
 import org.gradle.api.model.ObjectFactory
@@ -49,8 +48,6 @@ import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import javax.inject.Inject
-import kotlin.collections.map
-import kotlin.collections.toTypedArray
 
 @CacheableTask
 abstract class KotlinCompile @Inject constructor(
@@ -107,11 +104,6 @@ abstract class KotlinCompile @Inject constructor(
         @get:Incremental
         @get:Optional // Set if useClasspathSnapshot == true
         abstract val classpathSnapshot: ConfigurableFileCollection
-
-        @get:OutputDirectory
-        @get:Optional // Set if useClasspathSnapshot == true
-        @Deprecated("The classpathSnapshotDir parameter is no longer required. Scheduled for removal in Kotlin 2.5.")
-        abstract val classpathSnapshotDir: DirectoryProperty
     }
 
     override val incrementalProps: List<FileCollection>
@@ -431,14 +423,9 @@ abstract class KotlinCompile @Inject constructor(
             )
         } else null
 
-        @Suppress("DEPRECATION")
         val environment = GradleCompilerEnvironment(
             defaultCompilerClasspath, gradleMessageCollector, outputItemCollector,
-            // In the incremental compiler, outputFiles will be cleaned on rebuild. However, because classpathSnapshotDir is not included in
-            // TaskOutputsBackup, we don't want classpathSnapshotDir to be cleaned immediately on rebuild, and therefore we exclude it from
-            // outputFiles here. (See TaskOutputsBackup's kdoc for more info.)
-            outputFiles = allOutputFiles()
-                    - (classpathSnapshotProperties.classpathSnapshotDir.orNull?.asFile?.let { setOf(it) } ?: emptySet()),
+            outputFiles = allOutputFiles(),
             reportingSettings = reportingSettings(),
             incrementalCompilationEnvironment = icEnv,
             kotlinScriptExtensions = scriptExtensions.get().toTypedArray(),
@@ -538,10 +525,9 @@ abstract class KotlinCompile @Inject constructor(
     }
 
     private fun getClasspathChanges(inputChanges: InputChanges): ClasspathChanges {
-        @Suppress("DEPRECATION")
         val classpathSnapshotFiles = ClasspathSnapshotFiles(
             classpathSnapshotProperties.classpathSnapshot.files.toList(),
-            classpathSnapshotProperties.classpathSnapshotDir.get().asFile
+            taskBuildCacheableOutputDirectory.get().asFile
         )
         return when {
             !inputChanges.isIncremental -> NotAvailableForNonIncrementalRun(classpathSnapshotFiles)
