@@ -18,11 +18,13 @@ package kotlin.collections
 @kotlin.jvm.JvmName("getOrImplicitDefaultNullable")
 @PublishedApi
 internal fun <K, V> Map<K, V>.getOrImplicitDefault(key: K): V {
-    if (this is MapWithDefault)
-        return this.getOrImplicitDefault(key)
-
     @OptIn(ExperimentalStdlibApi::class)
-    return getOrElseIfMissing(key, { throw NoSuchElementException("Key $key is missing in the map.") })
+    return getOrElseIfMissing(key, {
+        if (this is MapWithDefault)
+            return this.computeDefault(key)
+        else
+            throw NoSuchElementException("Key $key is missing in the map.")
+    })
 }
 
 /**
@@ -64,7 +66,7 @@ public fun <K, V> MutableMap<K, V>.withDefault(defaultValue: (key: K) -> V): Mut
 
 private interface MapWithDefault<K, out V> : Map<K, V> {
     public val map: Map<K, V>
-    public fun getOrImplicitDefault(key: K): V
+    public fun computeDefault(key: K): V
 }
 
 private interface MutableMapWithDefault<K, V> : MutableMap<K, V>, MapWithDefault<K, V> {
@@ -84,9 +86,7 @@ private class MapWithDefaultImpl<K, out V>(public override val map: Map<K, V>, p
     override val keys: Set<K> get() = map.keys
     override val values: Collection<V> get() = map.values
     override val entries: Set<Map.Entry<K, V>> get() = map.entries
-
-    @OptIn(ExperimentalStdlibApi::class)
-    override fun getOrImplicitDefault(key: K): V = map.getOrElseIfMissing(key, { default(key) })
+    override fun computeDefault(key: K): V = default(key)
 }
 
 private class MutableMapWithDefaultImpl<K, V>(public override val map: MutableMap<K, V>, private val default: (key: K) -> V) : MutableMapWithDefault<K, V> {
@@ -106,8 +106,6 @@ private class MutableMapWithDefaultImpl<K, V>(public override val map: MutableMa
     override fun remove(key: K): V? = map.remove(key)
     override fun putAll(from: Map<out K, V>) = map.putAll(from)
     override fun clear() = map.clear()
-
-    @OptIn(ExperimentalStdlibApi::class)
-    override fun getOrImplicitDefault(key: K): V = map.getOrElseIfMissing(key, { default(key) })
+    override fun computeDefault(key: K): V = default(key)
 }
 
