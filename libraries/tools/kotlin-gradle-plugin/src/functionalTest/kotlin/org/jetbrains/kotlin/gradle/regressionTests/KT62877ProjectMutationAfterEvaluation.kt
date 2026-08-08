@@ -48,7 +48,7 @@ class KT62877ProjectMutationAfterEvaluation {
         // Now initialize tasks
         val taskNames = project.tasks.names.toMutableSet()
         taskNames.remove("init") // initializing the init task isn't possible due to Gradle reasons
-        taskNames.map { project.tasks.getByName(it) }
+        taskNames.forEach { project.tasks.getByName(it) }
 
         // And resolve IDE dependencies
         project.kotlinIdeMultiplatformImport.resolveDependencies("commonMain")

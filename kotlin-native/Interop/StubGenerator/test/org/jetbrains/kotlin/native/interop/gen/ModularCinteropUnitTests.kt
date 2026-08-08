@@ -584,11 +584,11 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         )
 
         val enumDecl = index.enums.single()
-        listOf(
-                listOf("one" to enumDecl, "two" to enumDecl),
+        assertEquals(
+                listOf(markerFunctionOne to enumDecl, markerFunctionTwo to enumDecl),
                 index.functions.map {
                     it.name to assertIs<EnumType>(it.parameters.single().type).def
-                }
+                },
         )
     }
 

@@ -115,7 +115,7 @@ internal fun translateCrossReferencingModulesTransitively(
     while (translationStates.any { it.unprocessedReferences.isNotEmpty() }) {
         translationStates
             .filter { it.unprocessedReferences.isNotEmpty() }
-            .map {
+            .forEach {
                 // Copy new references to avoid concurrent modification exception.
                 it.currentlyProcessing = it.unprocessedReferences.toList()
                 it.unprocessedReferences.clear()

@@ -81,7 +81,7 @@ object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(MppCheckerKind.
                     if (type.typeArguments[i].kind != ProjectionKind.INVARIANT) {
                         val parameter = parameters[i].toConeType()
                         edges.getOrPut(coneType) { mutableSetOf() }.add(parameter)
-                        edges.getOrPut(parameter) { mutableSetOf() }
+                        edges.computeIfAbsent(parameter) { mutableSetOf() }
                     }
                 }
             }

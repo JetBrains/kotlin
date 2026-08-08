@@ -1034,7 +1034,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
             CXIdxEntity_Function -> {
                 if (isSuitableFunction(cursor)) {
-                    functionById.getOrPut(getDeclarationId(cursor)) {
+                    functionById.computeIfAbsent(getDeclarationId(cursor)) {
                         getFunction(cursor)
                     }
                 }
@@ -1048,7 +1048,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 val parentKind = info.semanticContainer!!.pointed.cursor.kind
                 if (parentKind == CXCursorKind.CXCursor_TranslationUnit || parentKind == CXCursorKind.CXCursor_Namespace) {
                     // Top-level or namespace member. Skip class static members - they are loaded by visitClass
-                    globalById.getOrPut(getDeclarationId(cursor)) {
+                    globalById.computeIfAbsent(getDeclarationId(cursor)) {
                         val definitionCursor = findDefinition(cursor)
                         val directAccess = when {
                             definitionCursor != null -> {

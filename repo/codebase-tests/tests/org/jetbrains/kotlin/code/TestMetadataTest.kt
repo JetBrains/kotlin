@@ -56,10 +56,10 @@ class TestMetadataTest {
         }
 
         forEachCompiledClass { file, classNode ->
-            checkedClasses.incrementAndFetch()
+            val _ = checkedClasses.incrementAndFetch()
             classNode.visibleAnnotations?.forEach { annotation ->
                 if (annotation.desc == testMetadataAnnotationDesc) {
-                    checkedAnnotations.incrementAndFetch()
+                    val _ = checkedAnnotations.incrementAndFetch()
                     val now = Clock.System.now()
                     if ((now - lastProgressPrinted).inWholeSeconds >= 5) {
                         lastProgressPrinted = now

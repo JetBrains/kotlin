@@ -390,7 +390,7 @@ abstract class IncrementalCompilerRunner<
         outputDirs.toSet().forEach {
             when {
                 it.isDirectory -> it.deleteDirectoryContents()
-                it.isFile -> "Expected a directory but found a regular file: ${it.path}"
+                it.isFile -> throw IllegalStateException("Expected a directory but found a regular file: ${it.path}")
                 else -> it.createDirectory()
             }
         }

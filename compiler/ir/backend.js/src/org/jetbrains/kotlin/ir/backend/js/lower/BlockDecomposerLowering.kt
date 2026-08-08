@@ -423,13 +423,14 @@ class BlockDecomposerTransformer(
             val block = IrBlockImpl(expression.startOffset, expression.endOffset, unitType, expression.origin)
 
             // TODO: consider decomposing only when it is really required
-            results.foldIndexed(block) { i, appendBlock, [cond, res, orig] ->
+            var appendBlock: IrBlockImpl = block
+            results.forEachIndexed { i, [cond, res, orig] ->
                 val condStatements = destructureComposite(cond)
                 val condValue = condStatements.last() as IrExpression
 
                 appendBlock.statements += condStatements.run { subList(0, lastIndex) }
 
-                JsIrBuilder.buildBlock(unitType).also {
+                appendBlock = JsIrBuilder.buildBlock(unitType).also {
                     val elseBlock = it.takeIf { results.lastIndex != i }
                     val additionalStatements = when {
                         isElseBranch(orig) -> (res as? IrBlock)?.statements ?: listOf(res)

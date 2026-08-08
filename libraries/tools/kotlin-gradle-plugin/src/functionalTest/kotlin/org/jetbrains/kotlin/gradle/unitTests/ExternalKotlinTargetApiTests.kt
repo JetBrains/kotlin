@@ -205,8 +205,8 @@ class ExternalKotlinTargetApiTests {
         KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
         val component = target.delegate.kotlinComponents.singleOrNull() ?: fail("Expected single 'component' for external target")
 
-        component.internal.usages.find { it.dependencyConfigurationName == target.sourcesElementsPublishedConfiguration.name }
-            ?: fail("Missing sourcesElements usage")
+        if (component.internal.usages.none { it.dependencyConfigurationName == target.sourcesElementsPublishedConfiguration.name })
+            fail("Missing sourcesElements usage")
     }
 
     @Test

@@ -91,7 +91,7 @@ class PluginDataFrameSchemaParser {
                 return Result.parsingError("Column name cannot be blank")
             }
 
-            parseColumn(name, value).fold(
+            val _ = parseColumn(name, value).fold(
                 onSuccess = { columns.add(it) },
                 onFailure = { return Result.failure(it) }
             )
@@ -147,7 +147,7 @@ class PluginDataFrameSchemaParser {
                 return Result.failure(IllegalArgumentException("Nested column name cannot be blank"))
             }
 
-            parseColumn(key, value).fold(
+            val _ = parseColumn(key, value).fold(
                 onSuccess = { columns.add(it) },
                 onFailure = { return Result.failure(it) }
             )

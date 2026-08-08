@@ -544,3 +544,23 @@ class ChainedIterator<T>(delegates: Collection<Iterator<T>>) : Iterator<T> {
         return currentIterator?.next() ?: throw NoSuchElementException()
     }
 }
+
+fun <T> Iterator<T>.skipNext() {
+    val _ = next()
+}
+
+inline fun <T, K> Iterable<T>.forEachZipped(other: Iterable<K>, transform: (T, K) -> Unit) {
+    val first = iterator()
+    val second = other.iterator()
+    while (first.hasNext() && second.hasNext()) {
+        transform(first.next(), second.next())
+    }
+}
+
+inline fun <T, K> Array<out T>.forEachZipped(other: Iterable<K>, transform: (T, K) -> Unit) {
+    val second = other.iterator()
+    for (first in this) {
+        if (!second.hasNext()) break
+        transform(first, second.next())
+    }
+}

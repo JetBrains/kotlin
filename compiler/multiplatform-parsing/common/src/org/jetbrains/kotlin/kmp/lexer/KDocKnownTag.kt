@@ -32,7 +32,7 @@ enum class KDocKnownTag(val isReferenceRequired: Boolean, val isSectionStart: Bo
             }
             try {
                 val upperCaseAsciiOnly = buildString {
-                    name.map {
+                    name.forEach {
                         append(if (it in 'a'..'z') it.uppercaseChar() else it)
                     }
                 }
