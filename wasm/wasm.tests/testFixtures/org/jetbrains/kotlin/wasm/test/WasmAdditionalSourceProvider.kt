@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.wasm.test
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -14,6 +13,22 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import java.io.File
 
+/**
+ * Attaches `wasiBoxTestRun.kt` — the `runBoxTest`/`startTest` glue an isolated WASI box run is driven through — to
+ * every module with a `box()`.
+ *
+ * The attachment is deliberately unconditional, batched tests included, and must stay that way: whether a test's
+ * per-test KLIB ends up as the `-Xinclude` main module (needing this glue) or as an ordinary `-libraries` dependency
+ * is only decided at the grouping stage — a non-isolated test that merely ends up alone in its batch goes through
+ * `WasmInProcessSecondStageFacade.doIsolated`, where the runner calls this file's `runBoxTest()` — while this provider
+ * runs at file-generation time, before batch sizes exist. Gating it on isolation would silently break exactly those
+ * lone non-isolated tests.
+ *
+ * Nor does the unconditional `@WasmExport startTest` collide with the grouped driver's export of the same name: a
+ * library KLIB's unreferenced declarations never enter the link, so a grouped binary carries no trace of this file
+ * (verified at byte level, and enforced per run by `assertDriverOwnsStartTestExport`). See
+ * `WasmWasiGroupedTestsExportedEntryPointGenerator` for the full account.
+ */
 class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     override fun produceAdditionalFiles(
         globalDirectives: RegisteredDirectives,

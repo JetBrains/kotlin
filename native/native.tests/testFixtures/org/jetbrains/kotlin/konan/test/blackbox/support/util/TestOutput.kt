@@ -7,29 +7,15 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
 import jetbrains.buildServer.messages.serviceMessages.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
+import org.jetbrains.kotlin.test.report.TestReport
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.text.ParseException
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestReportParseState as State
 
-class TestReport(
-    val passedTests: Collection<TestName>,
-    val failedTests: Collection<TestName>,
-    val ignoredTests: Collection<TestName>
-) {
-    fun isEmpty(): Boolean = passedTests.isEmpty() && failedTests.isEmpty() && ignoredTests.isEmpty()
-
-    override fun toString(): String = """
-        TestReport:
-         * Passed:  $passedTests
-         * Failed:  $failedTests
-         * Ignored: $ignoredTests
-    """.trimIndent()
-}
-
 interface TestOutputFilter {
     fun filter(testOutput: String): FilteredOutput
 
-    data class FilteredOutput(val filteredOutput: String, val testReport: TestReport?)
+    data class FilteredOutput(val filteredOutput: String, val testReport: TestReport<TestName>?)
 
     companion object {
         val NO_FILTERING = object : TestOutputFilter {
@@ -86,9 +72,13 @@ private class TCTestMessageParserCallback : ServiceMessageParserCallback {
     private var afterMessage = false
     private var state: State = State.Begin
 
-    val passedTests = mutableListOf<TestName>()
-    val failedTests = mutableListOf<TestName>()
-    val ignoredTests = mutableListOf<TestName>()
+    // Sets, since the shared TestReport holds `Set`s: what a run reported is a set of test names, not a tally of the TC
+    // messages that carried them. A name the output reports twice therefore collapses. The one consumer that counts
+    // these — `NativeBoxRunner`, checking that a single-test batch executed exactly one testcase — reads them through
+    // `TestReport.reportedIds` and asks how many *distinct* testcases ran, which is exactly this semantics.
+    val passedTests = mutableSetOf<TestName>()
+    val failedTests = mutableSetOf<TestName>()
+    val ignoredTests = mutableSetOf<TestName>()
 
     val nonTestOutput = StringBuilder()
     val errors = mutableListOf<String>()
