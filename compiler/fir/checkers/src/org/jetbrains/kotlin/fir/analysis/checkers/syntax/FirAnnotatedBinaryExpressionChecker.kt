@@ -58,7 +58,7 @@ object FirAnnotatedBinaryExpressionChecker : FirExpressionSyntaxChecker<FirState
         var current = source.lighterASTNode
         var parent: LighterASTNode? = source.treeStructure.getParent(current)
 
-        while (parent?.tokenType == KtNodeTypes.BINARY_EXPRESSION) {
+        while (parent != null && parent.tokenType == KtNodeTypes.BINARY_EXPRESSION) {
             if (source.treeStructure.getChildrenArray(parent).firstOrNull() != current) {
                 return
             }
