@@ -73,6 +73,15 @@ object TestDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Module,
     )
 
+    val HIDE_FROM_SWIFT_EXPORT by directive(
+        """
+            Keeps the module out of the Swift Export input set, while it is still compiled to a klib and still acts as a
+            regular Kotlin dependency. Types the module declares are therefore unresolvable during Swift Export and
+            translate to error types.
+        """.trimIndent(),
+        applicability = DirectiveApplicability.Module,
+    )
+
     val SWIFT_EXPORT_CONFIG by valueDirective(
         description = """
             Specify config for Swift Export in the format %KEY_1%=%VALUE_1%, %KEY_2%=%VALUE_2%. Implicitly marks module for Swift Export
@@ -421,6 +430,9 @@ internal fun parseOutputRegex(registeredDirectives: RegisteredDirectives): TestR
 fun TestModule.shouldBeExportedToSwift(): Boolean = (this as? TestModule.Exclusive)?.shouldBeExportedToSwift() ?: false
 fun TestModule.Exclusive.shouldBeExportedToSwift(): Boolean =
     TestDirectives.EXPORT_TO_SWIFT in directives || TestDirectives.SWIFT_EXPORT_CONFIG in directives
+
+fun TestModule.hiddenFromSwiftExport(): Boolean = (this as? TestModule.Exclusive)?.hiddenFromSwiftExport() ?: false
+fun TestModule.Exclusive.hiddenFromSwiftExport(): Boolean = TestDirectives.HIDE_FROM_SWIFT_EXPORT in directives
 
 fun TestModule.Exclusive.swiftExportConfigMap(): Map<String, String> =
     directives[TestDirectives.SWIFT_EXPORT_CONFIG].toMap()

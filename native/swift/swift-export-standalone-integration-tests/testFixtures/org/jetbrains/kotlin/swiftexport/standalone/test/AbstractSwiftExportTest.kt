@@ -108,6 +108,16 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
         extraSwiftCompilerOptions = extraSwiftCompilerOptions +
             discoveredModuleMaps.flatMap { listOf("-Xcc", "-fmodule-map-file=${it.absolutePath}") }
 
+        val hiddenModules = (originalTestCase.rootModules + originalTestCase.modules).filter { it.hiddenFromSwiftExport() }
+        assertTrue(hiddenModules.none { it in originalTestCase.rootModules }) {
+            "A root module cannot be hidden from Swift Export: " +
+                    hiddenModules.filter { it in originalTestCase.rootModules }.map { it.name }
+        }
+        assertTrue(hiddenModules.none { it.shouldBeExportedToSwift() }) {
+            "Module is marked both EXPORT_TO_SWIFT and HIDE_FROM_SWIFT_EXPORT: " +
+                    hiddenModules.filter { it.shouldBeExportedToSwift() }.map { it.name }
+        }
+
         val inputModuleByTestModule = (originalTestCase.rootModules + originalTestCase.modules + givenModules).associateWith {
             createInputModule(
                 testModule = it,
@@ -115,15 +125,16 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
                 shouldBeFullyExported = it.shouldBeExportedToSwift() || originalTestCase.rootModules.contains(it)
             )
         }
-        val modulesToExport = inputModuleByTestModule.values.toSet()
+        val modulesToExport = inputModuleByTestModule
+            .filterKeys { !it.hiddenFromSwiftExport() }
+            .values
+            .toSet()
 
         val config = SwiftExportConfig(
             outputPath = buildDir(testPathFull.name).resolve(testDir).toPath(),
             stableDeclarationsOrder = true,
             distribution = Distribution(KonanHome.konanHomePath),
             konanTarget = targets.testTarget,
-            errorTypeStrategy = ErrorTypeStrategy.Fail,
-            unsupportedTypeStrategy = ErrorTypeStrategy.SpecialType,
         )
 
         // run swift export
