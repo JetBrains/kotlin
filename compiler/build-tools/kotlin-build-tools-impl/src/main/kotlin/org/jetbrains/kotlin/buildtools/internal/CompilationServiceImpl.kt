@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
 import org.jetbrains.kotlin.daemon.common.*
@@ -191,25 +190,14 @@ internal object CompilationServiceImpl : CompilationService {
                 val icFeatures = options.extractIncrementalCompilationFeatures().copy(
                     usePreciseJavaTracking = verifiedPreciseJavaTracking
                 )
-                val incrementalCompiler = if (options.isUsingFirRunner && checkJvmFirRequirements(arguments)) {
-                    IncrementalFirJvmCompilerRunner(
-                        aggregatedIcConfiguration.workingDir,
-                        buildReporter,
-                        outputDirs = options.outputDirs,
-                        classpathChanges = classpathChanges,
-                        kotlinSourceFilesExtensions = kotlinFilenameExtensions,
-                        icFeatures = icFeatures
-                    )
-                } else {
-                    IncrementalJvmCompilerRunner(
-                        aggregatedIcConfiguration.workingDir,
-                        buildReporter,
-                        outputDirs = options.outputDirs,
-                        classpathChanges = classpathChanges,
-                        kotlinSourceFilesExtensions = kotlinFilenameExtensions,
-                        icFeatures = icFeatures
-                    )
-                }
+                val incrementalCompiler = IncrementalJvmCompilerRunner(
+                    aggregatedIcConfiguration.workingDir,
+                    buildReporter,
+                    outputDirs = options.outputDirs,
+                    classpathChanges = classpathChanges,
+                    kotlinSourceFilesExtensions = kotlinFilenameExtensions,
+                    icFeatures = icFeatures
+                )
 
                 val rootProjectDir = options.rootProjectDir
                 val buildDir = options.buildDir
@@ -232,25 +220,6 @@ internal object CompilationServiceImpl : CompilationService {
                         "for incremental compilation, or null for non-incremental compilation."
             )
         }
-    }
-
-    private fun checkJvmFirRequirements(
-        arguments: List<String>,
-    ): Boolean {
-        val languageVersion: LanguageVersion = arguments.find { it.startsWith("-language-version") }
-            ?.let {
-                LanguageVersion.fromVersionString(it.substringAfter("="))
-            }
-            ?: LanguageVersion.LATEST_STABLE
-
-        check(languageVersion >= LanguageVersion.KOTLIN_2_0) {
-            "FIR incremental compiler runner is only compatible with Kotlin Language Version 2.0"
-        }
-        check(arguments.contains("-Xuse-fir-ic")) {
-            "FIR incremental compiler runner requires '-Xuse-fir-ic' to be present in arguments"
-        }
-
-        return true
     }
 
     private fun compileWithinDaemon(
@@ -300,11 +269,6 @@ internal object CompilationServiceImpl : CompilationService {
                 daemonOptions = daemonOptions,
             ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
         val daemonCompileOptions = compilationConfiguration.asDaemonCompilationOptions
-        val isIncrementalCompilation = daemonCompileOptions is IncrementalCompilationOptions
-
-        if (isIncrementalCompilation && daemonCompileOptions.useJvmFirRunner) {
-            checkJvmFirRequirements(arguments)
-        }
 
         val exitCode = daemon.compile(
             sessionId,

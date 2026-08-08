@@ -29,7 +29,7 @@ class StringUtilsTest {
 
     @Test
     fun `decamelize handles acronym suffix`() {
-        assertEquals("ic-fir-misconfiguration-lv", "IcFirMisconfigurationLV".decamelize())
+        assertEquals("some-diagnostic-lv", "SomeDiagnosticLV".decamelize())
     }
 
     @Test

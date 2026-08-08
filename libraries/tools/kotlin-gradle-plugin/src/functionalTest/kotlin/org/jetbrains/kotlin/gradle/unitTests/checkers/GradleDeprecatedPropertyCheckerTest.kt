@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.unitTests.checkers
 
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_DEPRECATED_TEST_PROPERTY
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INCREMENTAL_FIR
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -74,5 +76,14 @@ class GradleDeprecatedPropertyChecker {
             kotlin { jvm() }
         }.evaluate()
         project.checkDiagnostics("NonBtaCompilationModeDeprecated")
+    }
+
+    @Test
+    fun `KT-86873 removed FIR incremental runner property reports deprecation error`() {
+        val project = buildProjectWithJvm(
+            preApplyCode = { project.propertiesExtension.set(KOTLIN_INCREMENTAL_FIR, true.toString()) },
+        ).evaluate()
+
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedErrorGradleProperties)
     }
 }

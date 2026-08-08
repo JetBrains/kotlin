@@ -369,7 +369,6 @@ class FusStatisticsIT : KGPBaseTest() {
                     buildOptions = defaultBuildOptions
                         .copy(
                             buildReport = listOf(BuildReportType.FILE),
-                            useFirJvmRunner = true,
                         ).disableIsolatedProjects(),
                 ) {
                     assertOutputDoesNotContainFusErrors()
@@ -377,7 +376,6 @@ class FusStatisticsIT : KGPBaseTest() {
                         "CONFIGURATION_IMPLEMENTATION_COUNT=2",
                         "NUMBER_OF_SUBPROJECTS=2",
                         "COMPILATIONS_COUNT=2",
-                        "KOTLIN_INCREMENTAL_FIR_RUNNER_ENABLED=true"
                     )
                 }
             }

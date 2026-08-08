@@ -151,7 +151,6 @@ internal class JsKlibCompilationOperationImpl private constructor(
                     rootProjectDir = aggregatedIcConfiguration[ROOT_PROJECT_DIR]?.toFile(),
                     buildDir = aggregatedIcConfiguration[MODULE_BUILD_DIR]?.toFile(),
                     icFeatures = aggregatedIcConfiguration.extractIncrementalCompilationFeatures(),
-                    useJvmFirRunner = false,
                     generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
                     configurationInputs = makeConfigurationInputs(aggregatedIcConfiguration)
                 )

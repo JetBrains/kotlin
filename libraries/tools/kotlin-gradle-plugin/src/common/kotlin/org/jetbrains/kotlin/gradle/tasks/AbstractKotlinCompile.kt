@@ -240,7 +240,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                     name,
                     compilerOptions,
                     separateKmpCompilation.get(),
-                    firRunnerEnabled = (this as? KotlinCompile)?.useFirRunner?.get() == true,
                     executionPolicy = compilerExecutionStrategy.get(),
                     kmpJvmClasspathMetadataEnabled = kmpJvmCompile?.enableJvmClasspathMetadata?.get(),
                     kmpJvmUnsafeOptimizationsEnabled = kmpJvmCompile?.enableUnsafeIncrementalCompilationForMultiplatform?.get(),
