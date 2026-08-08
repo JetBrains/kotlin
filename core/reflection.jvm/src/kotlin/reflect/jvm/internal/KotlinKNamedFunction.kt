@@ -59,7 +59,7 @@ internal class KotlinKNamedFunction(
     override val isPrimaryConstructor: Boolean get() = false
 
     @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
-    val isCompanionBlockMember: Boolean
+    override val isCompanionBlockMember: Boolean
         get() = container is KClassImpl<*> && kmFunction.isStatic
 
     override val overridden: Collection<ReflectKFunction> by lazy(PUBLICATION) {

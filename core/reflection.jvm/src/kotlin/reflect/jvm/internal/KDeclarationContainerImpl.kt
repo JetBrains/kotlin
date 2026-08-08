@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import java.lang.reflect.Constructor
-import java.lang.reflect.Field
 import java.lang.reflect.Method
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
 import kotlin.metadata.KmConstructor
@@ -84,7 +83,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         // see `findPropertyDescriptor`.
         require(this is KPackageImpl) { "Only top-level properties are supported for now: $this/$name ($signature)" }
 
-        val properties = propertiesMetadata.filter { it.name == name && it.computeJvmSignature(this) == signature }
+        val properties = propertiesMetadata.filter { it.name == name && it.computeJvmSignature(this).toString() == signature }
         if (properties.isEmpty()) {
             throw KotlinReflectionInternalError("Property '$name' (JVM signature: $signature) not resolved in $this")
         }
@@ -196,13 +195,6 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                         if (allMembers.isEmpty()) " no constructors found" else "\n$allMembers"
             )
         }
-
-    fun findJavaField(name: String): Field =
-        jClass.getDeclaredField(name) ?: throw KotlinReflectionInternalError(
-            "Field $name not found in $jClass:" + jClass.declaredFields.let { fields ->
-                if (fields.isEmpty()) " no fields found" else "\n" + fields.joinToString("\n") { it.name + " " + it.type }
-            }
-        )
 
     private fun Class<*>.lookupMethod(
         name: String, parameterTypes: Array<Class<*>>, returnType: Class<*>, isStaticDefault: Boolean,

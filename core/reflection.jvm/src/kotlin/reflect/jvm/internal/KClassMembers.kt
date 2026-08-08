@@ -76,17 +76,19 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
                 add(createUnboundFunction(function, kClass))
             }
         }
-        if (kmClass.kind == ClassKind.ENUM_CLASS) {
-            if (name == StandardNames.ENUM_VALUES.asString()) {
-                add(createUnboundFunction(createEnumValuesKmFunction(kClass), kClass))
+        for (property in kmClass.properties) {
+            if (property.name == name) {
+                add(createUnboundProperty(property, kClass))
             }
-            if (name == StandardNames.ENUM_VALUE_OF.asString()) {
-                add(createUnboundFunction(createEnumValueOfKmFunction(kClass), kClass))
+        }
+        if (kmClass.kind == ClassKind.ENUM_CLASS) {
+            when (name) {
+                StandardNames.ENUM_VALUES.asString() -> add(createUnboundFunction(createEnumValuesKmFunction(kClass), kClass))
+                StandardNames.ENUM_VALUE_OF.asString() -> add(createUnboundFunction(createEnumValueOfKmFunction(kClass), kClass))
+                StandardNames.ENUM_ENTRIES.asString() -> add(createUnboundProperty(createEnumEntriesKmProperty(kClass), kClass))
             }
         }
         data.value.additionalFunctions.filterTo(this) { it.name == name }
-        addAll(getDescriptorBasedProperties(memberScope, DECLARED, name))
-        addAll(getDescriptorBasedProperties(staticScope, DECLARED, name))
     } else {
         getDeclaredNonStaticMethodsFromJavaClass(name).filterTo(this) { isVisibleAsFunctionInCurrentClass(it) }
         addAll(getDescriptorBasedProperties(memberScope, DECLARED, name))
@@ -137,16 +139,19 @@ internal fun KClassImpl<*>.computeDeclaredMemberNames(): Set<String> =
     if (useK1Implementation || isComplicatedBuiltinSubclass) {
         getMemberNamesFromDescriptors()
     } else if (kmClass != null) buildSet {
-        for (function in kmClass!!.functions) {
+        val kmClass = kmClass!!
+        for (function in kmClass.functions) {
             add(function.name)
         }
-        if (kmClass!!.kind == ClassKind.ENUM_CLASS) {
+        for (property in kmClass.properties) {
+            add(property.name)
+        }
+        if (kmClass.kind == ClassKind.ENUM_CLASS) {
             add(StandardNames.ENUM_VALUES.asString())
             add(StandardNames.ENUM_VALUE_OF.asString())
+            add(StandardNames.ENUM_ENTRIES.asString())
         }
         data.value.additionalFunctions.mapTo(this, ReflectKCallable<*>::name)
-        memberScope.getVariableNames().mapTo(this, Name::asString)
-        staticScope.getVariableNames().mapTo(this, Name::asString)
     } else buildSet {
         if (!jClass.isAnnotation) {
             for (method in jClass.declaredMethods) {

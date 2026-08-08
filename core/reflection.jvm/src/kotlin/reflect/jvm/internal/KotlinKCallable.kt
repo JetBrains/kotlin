@@ -18,6 +18,8 @@ internal abstract class KotlinKCallable<out R>(
     abstract override val annotations: List<Annotation>
 
     final override val isPackagePrivate: Boolean get() = false
+
+    abstract val isCompanionBlockMember: Boolean
 }
 
 private val KotlinKCallable<*>.isLocalDelegatedProperty: Boolean
@@ -39,7 +41,7 @@ internal fun KotlinKCallable<*>.computeParameters(
                     add(InstanceParameter(callable, container.java.declaringClass.kotlin))
                 }
             } else {
-                if (!isLocalDelegatedProperty && (callable as? KotlinKNamedFunction)?.isCompanionBlockMember != true) {
+                if (!isLocalDelegatedProperty && !callable.isCompanionBlockMember) {
                     add(InstanceParameter(callable, container))
                 }
             }
