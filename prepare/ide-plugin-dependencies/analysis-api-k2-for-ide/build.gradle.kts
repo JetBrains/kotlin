@@ -5,4 +5,9 @@ plugins {
     kotlin("jvm")
 }
 
-publishJarsForIde(listOf(":analysis:analysis-api-fir"))
+publishJarsForIde(
+    listOf(
+        ":analysis:analysis-api-fir",
+        ":analysis:analysis-api-fir-diagnostics",
+    )
+)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,6 +34,7 @@ abstract class AbstractDiagnosticsDataClassRenderer : DiagnosticListRenderer() {
 
         val simpleImports = buildList {
             addAll(defaultImports)
+            addAll(optInMarkers)
 
             diagnosticList.diagnostics.forEach { diagnostic ->
                 diagnostic.parameters.forEach { diagnosticParameter ->
@@ -52,10 +53,18 @@ abstract class AbstractDiagnosticsDataClassRenderer : DiagnosticListRenderer() {
 
     protected fun SmartPrinter.printHeader(packageName: String, diagnosticList: HLDiagnosticList) {
         printCopyright()
+        printOptIn()
         println("package $packageName")
         println()
         collectAndPrintImports(diagnosticList, packageName)
         printGeneratedMessage()
+    }
+
+    private fun SmartPrinter.printOptIn() {
+        if (optInMarkers.isEmpty()) return
+
+        println(optInMarkers.joinToString(prefix = "@file:OptIn(", postfix = ")") { "${it.substringAfterLast('.')}::class" })
+        println()
     }
 
     protected fun HLDiagnosticList.containsClashingBySimpleNameType(type: KType): Boolean {
@@ -68,4 +77,11 @@ abstract class AbstractDiagnosticsDataClassRenderer : DiagnosticListRenderer() {
     protected abstract fun SmartPrinter.render(diagnosticList: HLDiagnosticList, packageName: String)
 
     protected abstract val defaultImports: Collection<String>
+
+    /**
+     * Fully qualified names of the opt-in markers required by the rendered file, emitted as a file-level `@OptIn`.
+     *
+     * The markers are referenced by their short names, so they must not clash with the rendered diagnostic names.
+     */
+    protected open val optInMarkers: Collection<String> get() = emptyList()
 }
