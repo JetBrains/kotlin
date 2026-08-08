@@ -111,6 +111,9 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
     @DisplayName("KT-79851: emit unsupported language version kotlin-dsl diagnostic, custom compiler via BTA with deprecation")
     @JvmGradlePluginTests
     @GradleTest
+    @GradleTestVersions(
+        maxVersion = TestVersions.Gradle.G_9_6 // Gradle 9.7+ brings Kotlin runtime 2.4.0 which metadata is not compatible with Kotlin compiler 2.2.10
+    )
     fun emitDiagnosticOnUnsupportedVersionAlongKotlinDslCustomVersionDeprecation(gradleVersion: GradleVersion) =
         emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(
             gradleVersion,

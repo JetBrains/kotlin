@@ -147,7 +147,8 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             projectName = "kotlinBuiltins",
             gradleVersion = gradleVersion,
             enableKotlinDaemonMemoryLimitInMb = null,
-            addHeapDumpOptions = false
+            addHeapDumpOptions = false,
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
         ) {
             setupProject(this)
 

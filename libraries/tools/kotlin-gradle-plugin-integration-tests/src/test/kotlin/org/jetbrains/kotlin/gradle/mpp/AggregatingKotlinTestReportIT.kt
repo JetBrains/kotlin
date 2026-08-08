@@ -21,6 +21,8 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
             "new-mpp-lib-with-tests",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(freeArgs = listOf("-Pkotlin.tests.individualTaskReports=false"))
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             // break all the test tasks
             kotlinSourcesDir("commonTest").resolve("TestCommonCode.kt").modify {

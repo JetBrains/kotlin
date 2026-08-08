@@ -60,6 +60,9 @@ internal class JvmDefaultIT : KGPBaseTest() {
 
     @DisplayName("Should override 'kotlin-dsl' plugin value")
     @GradleTest
+    @GradleTestVersions(
+        maxVersion = TestVersions.Gradle.G_9_6 // Gradle 9.7+ configures by default proper value
+    )
     fun overrideKotlinDslPlugin(
         gradleVersion: GradleVersion,
     ) {
@@ -87,6 +90,9 @@ internal class JvmDefaultIT : KGPBaseTest() {
     @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
     @DisplayName("Should not override 'kotlin-dsl' plugin value if using BTA with older Kotlin compiler version")
     @GradleTest
+    @GradleTestVersions(
+        maxVersion = TestVersions.Gradle.G_9_6 // Gradle 9.7+ releases using incompatible by metadata with Kotlin compiler 2.2.0 artifacts
+    )
     fun notOverrideKotlinDslPluginOnUsingBtaWithOlderCompilerVersion(
         gradleVersion: GradleVersion,
     ) {
@@ -102,7 +108,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                 """.trimIndent()
             )
             buildScriptInjection {
-                useCompilerVersion("2.2.0-RC")
+                useCompilerVersion("2.2.0")
             }
             overrideOldGradleBoundLanguageVersionsWith21()
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
@@ -116,6 +122,9 @@ internal class JvmDefaultIT : KGPBaseTest() {
 
     @DisplayName("Should override 'kotlin-dsl' plugin value if using BTA with current Kotlin compiler version")
     @GradleTest
+    @GradleTestVersions(
+        maxVersion = TestVersions.Gradle.G_9_6 // Gradle 9.7+ configures by default proper value
+    )
     fun overrideKotlinDslPluginOnUsingBtaWithCurrentCompilerVersion(
         gradleVersion: GradleVersion,
     ) {
@@ -148,6 +157,9 @@ internal class JvmDefaultIT : KGPBaseTest() {
 
     @DisplayName("Stable -jvm-default option is specified")
     @GradleTest
+    @GradleTestVersions(
+        maxVersion = TestVersions.Gradle.G_9_6 // Gradle 9.7+ configures by default proper value
+    )
     fun stableJvmDefaultOptionIsPresent(
         gradleVersion: GradleVersion,
     ) {

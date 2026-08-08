@@ -32,7 +32,12 @@ class TestCancellationIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
     ) {
 
-        project("kmp-test-timeout", gradleVersion) {
+        project(
+            projectName = "kmp-test-timeout",
+            gradleVersion = gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
 
             val kmpTasksWithExternalTestProcesses =
                 fetchKmpTestTasksThatUseExecHandle()

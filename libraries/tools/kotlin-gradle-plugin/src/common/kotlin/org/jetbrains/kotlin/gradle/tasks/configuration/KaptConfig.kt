@@ -61,9 +61,6 @@ internal open class KaptConfig<TASK : KaptTask>(
         ext: KaptExtensionConfig,
     ) : this(project, ext) {
         configureTask { task ->
-            task.classpath.from(
-                kaptGenerateStubsTask.map { it.libraries }
-            )
             task.compiledSources
                 .from(
                     kaptGenerateStubsTask.flatMap { it.kotlinCompileDestinationDirectory },
@@ -96,7 +93,11 @@ internal open class KaptConfig<TASK : KaptTask>(
             // the configuration is not extended (via extendsFrom, which normally happens when one configuration is _added_ into another)
             // but is instead included as the (lazily) resolved files. This is needed because the class structure configuration doesn't have
             // the attributes that are potentially needed to resolve dependencies on MPP modules, and the classpath configuration does.
-            classStructureConfiguration.dependencies.add(project.dependencies.create(project.files(project.provider { taskProvider.get().classpath })))
+            classStructureConfiguration.dependencies.addLater(
+                taskProvider.map { task ->
+                    project.dependencies.create(project.files({ task.classpath }))
+                }
+            )
             classStructureConfiguration.incoming.artifactView { viewConfig ->
                 viewConfig.attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, CLASS_STRUCTURE_ARTIFACT_TYPE)
             }.files
