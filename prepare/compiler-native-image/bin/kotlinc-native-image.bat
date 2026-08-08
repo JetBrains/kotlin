@@ -12,4 +12,5 @@ if "%JAVA_HOME%"=="" (
 "%_BIN_DIR%kotlinc-native-image.exe" ^
   "-Djava.home=%JAVA_HOME%" ^
   "-Dkotlin.home=%_KOTLIN_HOME%" ^
+  "-Xdisable-default-scripting-plugin" ^
   %*
