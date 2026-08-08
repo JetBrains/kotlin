@@ -33,8 +33,6 @@ fun main(args: Array<String>) {
         // Multimodal infra is not supported. Also, we don't use ES modules for cross-module refs in Wasm
         "crossModuleRef", "crossModuleRefPerFile", "crossModuleRefPerModule"
     )
-    // TODO: Remove excludedPattern below after fix of KT-78960 (it's simpler to exclude temporarily than to split test `boxInline/innerClasses/kt12126.kt`)
-    val excludedPatternForBoxInlineTestsWithInliner = "kt12126.kt"
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData/klib/partial-linkage") {
@@ -100,23 +98,9 @@ fun main(args: Array<String>) {
                 model("testsWithAnyBackend", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
 
-            testClass<AbstractWasmJsDiagnosticWithIrInlinerTest> {
-                model("wasmTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-                model("wasmDiagnosticsKlibTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-                model("irInliner", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-                model("testsWithAnyBackend", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-
             testClass<AbstractWasmWasiDiagnosticTest> {
                 model("wasmWasiTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
                 model("wasmDiagnosticsKlibTests/wasmExport", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-
-            testClass<AbstractWasmWasiDiagnosticWithIrInlinerTestBase> {
-                model("wasmWasiTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-                model("wasmDiagnosticsKlibTests/wasmExport", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-                model("irInliner", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-                model("testsWithAnyBackend", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
         }
 
@@ -157,14 +141,9 @@ fun main(args: Array<String>) {
                 model("codegen/box/coroutines", pattern = jsTranslatorTestPattern)
             }
 
-            testClass<AbstractWasmJsCodegenBoxInlinedTest>(annotations = listOf(annotation<WasmJsBoxInlinedTest>())) {
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
-                model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludedPattern = excludedPatternForBoxInlineTestsWithInliner)
-            }
-
             testClass<AbstractWasmJsCodegenSplittingTest>(annotations = listOf(annotation<WasmJsSplittingTest>())) {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
-                model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludedPattern = excludedPatternForBoxInlineTestsWithInliner)
+                model("codegen/boxInline", pattern = jsTranslatorTestPattern)
             }
 
             testClass<AbstractFirWasmJsCodegenInteropTest> {
@@ -185,12 +164,6 @@ fun main(args: Array<String>) {
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractWasmWasiCodegenBoxInlinedTest>(annotations = listOf(annotation<WasmWasiBoxInlinedTest>())) {
-                model("codegen/boxWasmWasi")
-                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
-                model("codegen/boxInline")
-            }
-
             testClass<AbstractFirWasmJsSteppingTest> {
                 model("debug/stepping")
             }
@@ -200,13 +173,7 @@ fun main(args: Array<String>) {
             testClass<AbstractFirWasmJsMultiModuleSteppingTest> {
                 model("debug/stepping")
             }
-            testClass<AbstractFirWasmJsSteppingWithInlinedFunInKlibTest> {
-                model("debug/stepping")
-            }
             testClass<AbstractFirWasmJsSteppingSplitTest> {
-                model("debug/stepping")
-            }
-            testClass<AbstractFirWasmJsSteppingSplitWithInlinedFunInKlibTest> {
                 model("debug/stepping")
             }
 
