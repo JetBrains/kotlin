@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/../syntaxError.kt
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
+-libraries
+$STDLIB_WASM_JS$

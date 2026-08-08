@@ -1,0 +1,2 @@
+error: invalid ABI version format. Expected format: <major>.<minor>.<patch>
+COMPILATION_ERROR
