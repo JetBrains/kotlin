@@ -73,6 +73,13 @@ open annotation class kotlin.experimental/ExperimentalTypeInference : kotlin/Ann
     constructor <init>() // kotlin.experimental/ExperimentalTypeInference.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin.internal/ReflectionPackageName : kotlin/Annotation { // kotlin.internal/ReflectionPackageName|null[0]
+    constructor <init>(kotlin/String) // kotlin.internal/ReflectionPackageName.<init>|<init>(kotlin.String){}[0]
+
+    final val name // kotlin.internal/ReflectionPackageName.name|{}name[0]
+        final fun <get-name>(): kotlin/String // kotlin.internal/ReflectionPackageName.name.<get-name>|<get-name>(){}[0]
+}
+
 open annotation class kotlin.io.encoding/ExperimentalEncodingApi : kotlin/Annotation { // kotlin.io.encoding/ExperimentalEncodingApi|null[0]
     constructor <init>() // kotlin.io.encoding/ExperimentalEncodingApi.<init>|<init>(){}[0]
 }
@@ -10034,14 +10041,6 @@ open annotation class kotlin.native.internal/Independent : kotlin/Annotation { /
 // Targets: [native]
 open annotation class kotlin.native.internal/LeakDetectorCandidate : kotlin/Annotation { // kotlin.native.internal/LeakDetectorCandidate|null[0]
     constructor <init>() // kotlin.native.internal/LeakDetectorCandidate.<init>|<init>(){}[0]
-}
-
-// Targets: [native]
-open annotation class kotlin.native.internal/ReflectionPackageName : kotlin/Annotation { // kotlin.native.internal/ReflectionPackageName|null[0]
-    constructor <init>(kotlin/String) // kotlin.native.internal/ReflectionPackageName.<init>|<init>(kotlin.String){}[0]
-
-    final val name // kotlin.native.internal/ReflectionPackageName.name|{}name[0]
-        final fun <get-name>(): kotlin/String // kotlin.native.internal/ReflectionPackageName.name.<get-name>|<get-name>(){}[0]
 }
 
 // Targets: [native]

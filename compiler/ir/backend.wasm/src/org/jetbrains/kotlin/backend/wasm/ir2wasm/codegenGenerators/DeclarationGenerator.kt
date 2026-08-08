@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.wasm.utils.fitsLatin1
 import org.jetbrains.kotlin.backend.wasm.utils.getFunctionalInterfaceSlot
 import org.jetbrains.kotlin.backend.wasm.utils.getJsBuiltinDescriptor
 import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
+import org.jetbrains.kotlin.backend.wasm.utils.getReflectionQualifier
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.backend.wasm.utils.hasUnpairedSurrogates
 import org.jetbrains.kotlin.backend.wasm.utils.isAbstractOrSealed
@@ -51,7 +52,6 @@ import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.wasm.ir.WasmAnyRef
 import org.jetbrains.kotlin.wasm.ir.WasmContRefType
 import org.jetbrains.kotlin.wasm.ir.WasmExport
@@ -389,7 +389,7 @@ class DeclarationGenerator(
                                       klass.origin != WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL)
         val qualifier =
             if (fqnShouldBeEmitted) {
-                (klass.originalFqName ?: klass.kotlinFqName).parentOrNull()?.asString() ?: ""
+                klass.getReflectionQualifier(klass.originalFqName ?: klass.kotlinFqName)
             } else {
                 ""
             }

@@ -43,7 +43,6 @@ object KonanFqNames {
     val hidesFromObjC = FqName("kotlin.native.HidesFromObjC")
     val refinesInSwift = FqName("kotlin.native.RefinesInSwift")
     val shouldRefineInSwift = FqName("kotlin.native.ShouldRefineInSwift")
-    val reflectionPackageName = FqName("kotlin.native.internal.ReflectionPackageName")
     val noInline = FqName("kotlin.native.NoInline")
     val transparentForDebugger = FqName("kotlin.native.internal.TransparentForDebugger")
 }

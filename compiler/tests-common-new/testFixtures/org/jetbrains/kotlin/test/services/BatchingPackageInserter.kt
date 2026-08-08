@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
@@ -59,6 +58,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
  * Note that packages with fully qualified names starting with "kotlin." and "helpers." are kept unchanged.
  * Examples: package kotlin.coroutines -> package kotlin.coroutines
  *           import kotlin.test.* -> import kotlin.test.*
+ *
+ * If the platform supports it (see [ReflectionPackageNameAnnotation]), every patched file is additionally annotated
+ * with the file annotation preserving the original package name in the reflective information. Otherwise, tests
+ * asserting fully qualified names would produce different results in grouping and non-grouping modes.
  */
 class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFilePreprocessor(testServices) {
     companion object {
@@ -112,11 +115,11 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
             }
         }
         val patcher = PackageNamePatcher(
-            testServices.targetPlatformProvider.getTargetPlatform(module),
             psiFactory,
             packageMapping,
             additionalBasePackage,
-            transformHelpersPackage = isNative
+            transformHelpersPackage = isNative,
+            reflectionPackageNameAnnotation = testServices.reflectionPackageNameAnnotation,
         )
         ktFiles.values.forEach { it.accept(patcher, emptySet()) }
         for ([testFile, ktFile] in ktFiles) {
@@ -127,7 +130,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
     override fun revert(file: TestFile, actualContent: String): String {
         var content = actualContent
         val additionalPackage = computePackage(testServices.testInfo)
-        content = content.replace("@file:kotlin.native.internal.ReflectionPackageName(.*)\n".toRegex(), "")
+        testServices.reflectionPackageNameAnnotation?.let { content = content.replace(it.fileAnnotationRegex, "") }
         content = content.replace("package $additionalPackage\n", "")
         content = content.replace("$additionalPackage.", "")
         content = content.stripAdditionalEmptyLines(file)
@@ -168,11 +171,11 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
     }
 
     class PackageNamePatcher(
-        val targetPlatform: TargetPlatform,
         val psiFactory: KtPsiFactory, // psiFactory
         val oldToNewPackageNameMapping: Map<FqName, FqName?>,
         val basePackageName: FqName,
-        val transformHelpersPackage: Boolean
+        val transformHelpersPackage: Boolean,
+        val reflectionPackageNameAnnotation: ReflectionPackageNameAnnotation? = null,
     ) : KtVisitor<Unit, Set<Name>>() {
         companion object {
             private val KOTLINX_PACKAGE_NAME = Name.identifier("kotlinx")
@@ -205,11 +208,11 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
             }
 
             if (!file.name.endsWith(".def")) { // don't process .def file contents after the package directive
-                if (targetPlatform.isNative()) {
-                    // Add @ReflectionPackageName annotation to make the compiler use the original package name in the reflective information.
-                    val annotationText =
-                        "kotlin.native.internal.ReflectionPackageName(${oldPackageName.asString().quoteAsKotlinStringLiteral()})"
-                    val fileAnnotationList = psiFactory.createFileAnnotationListWithAnnotation(annotationText)
+                // Make the compiler use the original package name in the reflective information.
+                reflectionPackageNameAnnotation?.let { annotation ->
+                    val fileAnnotationList = psiFactory.createFileAnnotationListWithAnnotation(
+                        annotation.render(oldPackageName.asString())
+                    )
                     file.addAnnotations(fileAnnotationList)
                 }
                 visitKtElement(file, file.collectAccessibleDeclarationNames())
@@ -447,7 +450,7 @@ private fun PsiElement.whiteSpaceAfter(): Pair<Boolean, String> {
  * Returns the expression to be parsed by Kotlin as a string literal with given contents.
  * i.e. transforms `foo$bar` to `"foo\$bar"`.
  */
-private fun String.quoteAsKotlinStringLiteral(): String = buildString {
+internal fun String.quoteAsKotlinStringLiteral(): String = buildString {
     append('"')
 
     this@quoteAsKotlinStringLiteral.forEach { c ->
