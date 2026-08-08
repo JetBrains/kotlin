@@ -50,7 +50,7 @@ private fun getArtifactName(target: KonanTarget, baseName: String, kind: Compile
 class CachedLibraries(
         private val configuration: CompilerConfiguration,
         private val target: KonanTarget,
-        allLibraries: List<KotlinLibrary>,
+        allKlibs: CachedKlibs,
         explicitCaches: Map<KotlinLibrary, String>,
         implicitCacheDirectories: List<Path>,
         autoCacheDirectory: Path,
@@ -226,7 +226,6 @@ class CachedLibraries(
         }
     }
 
-    private val uniqueNameToLibrary = allLibraries.associateBy { it.uniqueName }
     private val uniqueNameToHash = mutableMapOf<String, FingerprintHash>()
 
     private val cacheNameToImplicitDirMapping: Map<String, Path> =
@@ -239,7 +238,7 @@ class CachedLibraries(
                     .mapNotNull { it?.trySelectCacheFor(this) }
                     .firstOrNull()
 
-    private val allCaches: Map<KotlinLibrary, Cache> = allLibraries.mapNotNull { library ->
+    private val allCaches: Map<KotlinLibrary, Cache> = allKlibs.allLibraries.mapNotNull { library ->
         val explicitPath = explicitCaches[library]
 
         val cache = if (explicitPath != null) {
@@ -250,7 +249,7 @@ class CachedLibraries(
             library.trySelectCacheAt { cacheNameToImplicitDirMapping[it] }
                     ?: autoCacheDirectory.takeIf { autoCacheableFrom.any { libraryPath.startsWith(it.canonicalPathString()) } }
                             ?.let {
-                                val dir = computeLibraryCacheDirectory(it, library, uniqueNameToLibrary, uniqueNameToHash)
+                                val dir = computeLibraryCacheDirectory(it, library, allKlibs, uniqueNameToHash)
                                 library.trySelectCacheAt { cacheName -> dir.resolve(cacheName) }
                             }
         }
@@ -315,10 +314,10 @@ class CachedLibraries(
         fun computeLibraryCacheDirectory(
                 baseCacheDirectory: Path,
                 library: KotlinLibrary,
-                allLibraries: Map<String, KotlinLibrary>,
+                allKlibs: CachedKlibs,
                 librariesHashes: MutableMap<String, FingerprintHash>,
         ): Path {
-            val dependencies = library.getAllTransitiveDependencies(allLibraries)
+            val dependencies = allKlibs.getAllTransitiveDependencies(library)
             val fingerprintHash = computeDependenciesFingerprint(listOf(library) + dependencies, librariesHashes)
             return baseCacheDirectory.resolve(library.uniqueName).resolve(fingerprintHash.toString())
         }
