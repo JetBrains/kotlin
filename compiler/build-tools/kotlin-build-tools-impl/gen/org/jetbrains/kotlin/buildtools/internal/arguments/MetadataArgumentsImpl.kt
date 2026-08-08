@@ -49,10 +49,9 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal class MetadataArgumentsImpl(
-  private val adapter: MetadataArgumentValueAdapter? = null,
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonCompilerArgumentsImpl(adapter, argumentValidationErrors, restrictedArgViolations),
+) : CommonCompilerArgumentsImpl(argumentValidationErrors, restrictedArgViolations),
     MetadataArguments,
     MetadataArguments.Builder,
     DeepCopyable<MetadataArgumentsImpl> {
@@ -74,7 +73,7 @@ internal class MetadataArgumentsImpl(
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: MetadataArguments.MetadataArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+    return optionsMap[key.id] as V
   }
 
   @UseFromImplModuleRestricted
@@ -82,10 +81,10 @@ internal class MetadataArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+    optionsMap[key.id] = `value`
   }
 
-  override fun deepCopy(): MetadataArgumentsImpl = MetadataArgumentsImpl(adapter, argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+  override fun deepCopy(): MetadataArgumentsImpl = MetadataArgumentsImpl(argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
   override fun build(): MetadataArgumentsImpl = deepCopy()
 

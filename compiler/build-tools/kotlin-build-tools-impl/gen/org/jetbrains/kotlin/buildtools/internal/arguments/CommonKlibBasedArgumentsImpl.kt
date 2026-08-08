@@ -50,10 +50,9 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonKlibBasedArgumentsImpl(
-  private val adapter: CommonKlibBasedArgumentValueAdapter? = null,
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonCompilerArgumentsImpl(adapter, argumentValidationErrors, restrictedArgViolations),
+) : CommonCompilerArgumentsImpl(argumentValidationErrors, restrictedArgViolations),
     CommonKlibBasedArguments,
     CommonKlibBasedArguments.Builder,
     CommonKlibBasedArgumentsKlibArguments,
@@ -75,7 +74,7 @@ internal abstract class CommonKlibBasedArgumentsImpl(
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: CommonKlibBasedArguments.CommonKlibBasedArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+    return optionsMap[key.id] as V
   }
 
   @UseFromImplModuleRestricted
@@ -83,14 +82,14 @@ internal abstract class CommonKlibBasedArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+    optionsMap[key.id] = `value`
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: CommonKlibBasedArgumentsKlibArguments.CommonKlibBasedArgumentsKlibArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+    return optionsMap[key.id] as V
   }
 
   @UseFromImplModuleRestricted
@@ -98,14 +97,14 @@ internal abstract class CommonKlibBasedArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+    optionsMap[key.id] = `value`
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: CommonKlibBasedArgumentsLinkingArguments.CommonKlibBasedArgumentsLinkingArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+    return optionsMap[key.id] as V
   }
 
   @UseFromImplModuleRestricted
@@ -113,7 +112,7 @@ internal abstract class CommonKlibBasedArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+    optionsMap[key.id] = `value`
   }
 
   abstract override fun build(): CommonKlibBasedArgumentsImpl

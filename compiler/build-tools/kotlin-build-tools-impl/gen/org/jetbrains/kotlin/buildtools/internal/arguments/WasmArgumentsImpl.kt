@@ -58,10 +58,9 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgume
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal class WasmArgumentsImpl(
-  private val adapter: WasmArgumentValueAdapter? = null,
   argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonJsAndWasmArgumentsImpl(adapter, argumentValidationErrors, restrictedArgViolations),
+) : CommonJsAndWasmArgumentsImpl(argumentValidationErrors, restrictedArgViolations),
     WasmCompilerArguments,
     WasmCompilerArguments.Builder,
     WasmCompilerKlibArguments,
@@ -87,7 +86,7 @@ internal class WasmArgumentsImpl(
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: WasmCompilerArguments.WasmCompilerArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+    return optionsMap[key.id] as V
   }
 
   @UseFromImplModuleRestricted
@@ -95,14 +94,14 @@ internal class WasmArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+    optionsMap[key.id] = `value`
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: WasmCompilerKlibArguments.WasmCompilerKlibArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+    return optionsMap[key.id] as V
   }
 
   @UseFromImplModuleRestricted
@@ -110,14 +109,14 @@ internal class WasmArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+    optionsMap[key.id] = `value`
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: WasmCompilerLinkingArguments.WasmCompilerLinkingArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+    return optionsMap[key.id] as V
   }
 
   @UseFromImplModuleRestricted
@@ -125,10 +124,10 @@ internal class WasmArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+    optionsMap[key.id] = `value`
   }
 
-  override fun deepCopy(): WasmArgumentsImpl = WasmArgumentsImpl(adapter, argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+  override fun deepCopy(): WasmArgumentsImpl = WasmArgumentsImpl(argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
   override fun build(): WasmArgumentsImpl = deepCopy()
 
