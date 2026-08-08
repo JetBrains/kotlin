@@ -7,6 +7,7 @@
 import kt56402.*
 
 import kotlin.concurrent.AtomicInt
+import kotlin.concurrent.AtomicReference
 import kotlin.native.concurrent.*
 import kotlin.native.internal.test.testLauncherEntryPoint
 import kotlin.system.exitProcess
@@ -45,11 +46,18 @@ class OnDestroyHookSub(onDestroy: (ULong) -> Unit) : OnDestroyHook(onDestroy)
 
 val aliveObjectIds = LockedSet<ULong>()
 
-@NoInline fun alloc(ctor: ((ULong) -> Unit) -> ULong): ULong = autoreleasepool {
-    val id = ctor {
+// Keeps the last allocated object strongly reachable until it is registered in `aliveObjectIds`.
+// Otherwise the GC may collect it and run `onDestroy` (which removes the id from the set)
+// on the finalizer thread before `add` happens, failing the assertion in `LockedSet.remove`.
+val keepAlive = AtomicReference<Any?>(null)
+
+@NoInline fun alloc(ctor: ((ULong) -> Unit) -> Pair<Any, ULong>): ULong = autoreleasepool {
+    val (obj, id) = ctor {
         aliveObjectIds.remove(it)
     }
+    keepAlive.value = obj
     aliveObjectIds.add(id)
+    keepAlive.value = null
     id
 }
 
@@ -73,10 +81,11 @@ fun waitDestruction(id: ULong) {
 fun testOnMainThread() {
     assertTrue(isMainThread())
     val id = alloc { onDestroy ->
-        OnDestroyHook {
+        val obj = OnDestroyHook {
             assertTrue(isMainThread())
             onDestroy(it)
-        }.identity()
+        }
+        obj to obj.identity()
     }
     waitDestruction(id)
 }
@@ -87,10 +96,11 @@ fun testOnSecondaryThread() {
         execute(TransferMode.SAFE, {}) {
             assertFalse(isMainThread())
             alloc { onDestroy ->
-                OnDestroyHook {
+                val obj = OnDestroyHook {
                     assertFalse(isMainThread())
                     onDestroy(it)
-                }.identity()
+                }
+                obj to obj.identity()
             }
         }.result
     }
@@ -101,10 +111,11 @@ fun testOnSecondaryThread() {
 fun testSubOnMainThread() {
     assertTrue(isMainThread())
     val id = alloc { onDestroy ->
-        OnDestroyHookSub {
+        val obj = OnDestroyHookSub {
             assertTrue(isMainThread())
             onDestroy(it)
-        }.identity()
+        }
+        obj to obj.identity()
     }
     waitDestruction(id)
 }
@@ -115,10 +126,11 @@ fun testSubOnSecondaryThread() {
         execute(TransferMode.SAFE, {}) {
             assertFalse(isMainThread())
             alloc { onDestroy ->
-                OnDestroyHookSub {
+                val obj = OnDestroyHookSub {
                     assertFalse(isMainThread())
                     onDestroy(it)
-                }.identity()
+                }
+                obj to obj.identity()
             }
         }.result
     }
@@ -134,7 +146,7 @@ fun testGlobalOnMainThread() {
             onDestroy(it)
         }!!
         clearGlobal()
-        obj.identity()
+        obj to obj.identity()
     }
     waitDestruction(id)
 }
@@ -150,7 +162,7 @@ fun testGlobalOnSecondaryThread() {
                     onDestroy(it)
                 }!!
                 clearGlobal()
-                obj.identity()
+                obj to obj.identity()
             }
         }.result
     }
@@ -161,10 +173,11 @@ fun testGlobalOnSecondaryThread() {
 fun testProtocolOnMainThread() {
     assertTrue(isMainThread())
     val id = alloc { onDestroy ->
-        newOnDestroyHook {
+        val obj = newOnDestroyHook {
             assertTrue(isMainThread())
             onDestroy(it)
-        }!!.identity()
+        }!!
+        obj to obj.identity()
     }
     waitDestruction(id)
 }
@@ -175,10 +188,11 @@ fun testProtocolOnSecondaryThread() {
         execute(TransferMode.SAFE, {}) {
             assertFalse(isMainThread())
             alloc { onDestroy ->
-                newOnDestroyHook {
+                val obj = newOnDestroyHook {
                     assertFalse(isMainThread())
                     onDestroy(it)
-                }!!.identity()
+                }!!
+                obj to obj.identity()
             }
         }.result
     }
