@@ -623,7 +623,7 @@ private fun Project.enableFingerprintCoordination(
         fingerprintSwiftPMDependencyGraph(
             directMetadata,
             transitiveMetadata,
-            normalizeVersions = false,
+            normalizeVersions = true,
         )
     }
 
