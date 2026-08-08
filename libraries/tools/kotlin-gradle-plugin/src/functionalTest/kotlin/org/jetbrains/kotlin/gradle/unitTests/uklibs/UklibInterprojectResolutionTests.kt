@@ -693,6 +693,7 @@ class UklibInterprojectResolutionTests {
         enableCInteropCommonization = false,
         resolveIdeDependencies = mutableSetOf(
             "consumer:commonizeNativeDistribution",
+            "consumer:downloadKotlinNativeDistribution",
             "producer:serializeUklibManifestWithoutCompilationDependency",
         ),
         compileCommonMainKotlinMetadata = mutableSetOf(
@@ -701,6 +702,7 @@ class UklibInterprojectResolutionTests {
             "producer:compileCommonMainKotlinMetadata",
             "producer:compileLinuxMainKotlinMetadata",
             "producer:compileNativeMainKotlinMetadata",
+            "producer:downloadKotlinNativeDistribution",
             "producer:serializeUklibManifestWithoutCompilationDependency",
             "producer:transformCommonMainDependenciesMetadata",
             "producer:transformLinuxMainDependenciesMetadata",
