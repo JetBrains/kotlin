@@ -22,8 +22,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.findByType
-import org.gradle.kotlin.dsl.register
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -51,22 +49,22 @@ internal fun Project.configureComposeMappingFile(
                 )
             }
 
-        extensions.findByType<ApplicationAndroidComponentsExtension>()?.onVariants { variant ->
+        extensions.findByType(ApplicationAndroidComponentsExtension::class.java)?.onVariants { variant ->
             if (!enabled.get()) return@onVariants
             if (!variant.isMinifyEnabled) return@onVariants
 
             val name = variant.name.capitalize()
             val produceTaskName = "produce${name}ComposeMapping"
-            val produceTask = tasks.register<ProduceMappingFileTask>(produceTaskName) {
-                classpath.from(configuration)
+            val produceTask = tasks.register(produceTaskName, ProduceMappingFileTask::class.java) {
+                it.classpath.from(configuration)
                 val outputDir = layout.buildDirectory.dir("intermediates/compose_mapping/${variant.name}/")
-                outputFile.set(outputDir.map { it.file("compose-mapping.txt") })
-                errorFile.set(outputDir.map { it.file("compose-mapping-errors.txt") })
+                it.outputFile.set(outputDir.map { it.file("compose-mapping.txt") })
+                it.errorFile.set(outputDir.map { it.file("compose-mapping-errors.txt") })
             }
 
             val reportErrorsTask =
-                tasks.register<ReportMappingErrorsTask>("report${name}ComposeMappingErrors") {
-                    errorFile.set(produceTask.map { it.errorFile.get() })
+                tasks.register("report${name}ComposeMappingErrors", ReportMappingErrorsTask::class.java) {
+                    it.errorFile.set(produceTask.map { it.errorFile.get() })
                 }
             produceTask.configure { it.finalizedBy(reportErrorsTask) }
 
@@ -86,9 +84,9 @@ internal fun Project.configureComposeMappingFile(
                     it != null && it.major >= 9 && it.minor >= 1
                 }
             val mergeTaskProvider = if (agpCopiesR8Output) {
-                tasks.register<MergeMappingFileTask>(mergeTaskName)
+                tasks.register(mergeTaskName, MergeMappingFileTask::class.java)
             } else {
-                tasks.register<MergeMappingFileTask.WithR8Outputs>(mergeTaskName)
+                tasks.register(mergeTaskName, MergeMappingFileTask.WithR8Outputs::class.java)
             }
             mergeTaskProvider.configure { it.composeMapping.set(produceTask.map { it.outputFile.get() }) }
 

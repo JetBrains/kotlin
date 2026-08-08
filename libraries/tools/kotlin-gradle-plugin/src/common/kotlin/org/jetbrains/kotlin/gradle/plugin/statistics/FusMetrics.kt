@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
-import org.gradle.kotlin.dsl.withType
 import org.gradle.tooling.events.FailureResult
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.task.TaskFinishEvent
@@ -36,6 +35,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.Library
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.addConfigurationMetrics
 import org.jetbrains.kotlin.gradle.utils.runMetricMethodSafely
+import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics

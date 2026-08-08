@@ -13,16 +13,16 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.GenerateMavenPom
-import org.gradle.kotlin.dsl.register
-import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_BOUNCY_CASTLE_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.getExtension
+import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.named
+import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.File
 
@@ -59,13 +59,13 @@ internal fun Project.addPgpSignatureHelpers() {
 internal fun Project.addSigningValidationHelpers() {
     project.pluginManager.withPlugin("signing") {
         val bcConfiguration = maybeCreateBcConfiguration()
-        val signingTask = project.tasks.register<CheckSigningTask>("checkSigningConfiguration") {
+        val signingTask = project.tasks.register("checkSigningConfiguration", CheckSigningTask::class.java) {
             group = "validation"
             description = "Checks that a signing configuration is set up correctly."
-            gradleHomePath.set(project.gradle.gradleUserHomeDir.absolutePath)
-            bouncyCastleClasspath.from(bcConfiguration)
-            offlineMode.set(gradle.startParameter.isOffline)
-            keyservers.convention(
+            it.gradleHomePath.set(project.gradle.gradleUserHomeDir.absolutePath)
+            it.bouncyCastleClasspath.from(bcConfiguration)
+            it.offlineMode.set(gradle.startParameter.isOffline)
+            it.keyservers.convention(
                 listOf(
                     "https://keys.openpgp.org",
                     "https://keyserver.ubuntu.com",
@@ -116,10 +116,10 @@ internal fun Project.addPomValidationHelpers() {
                 val capitalizedPublicationName = "${publication.name.capitalizeAsciiOnly()}Publication"
                 val generatePomTaskName = "generatePomFileFor$capitalizedPublicationName"
                 val generatePomTask = tasks.withType<GenerateMavenPom>().named(generatePomTaskName)
-                project.tasks.register<CheckPomTask>("checkPomFileFor${publication.name.capitalizeAsciiOnly()}Publication") {
-                    dependsOn(generatePomTask)
+                project.tasks.register("checkPomFileFor${publication.name.capitalizeAsciiOnly()}Publication", CheckPomTask::class.java) {
+                    it.dependsOn(generatePomTask)
                     group = "validation"
-                    pom.set(generatePomTask.map { it.destination })
+                    it.pom.set(generatePomTask.map { it.destination })
                 }
             }
         }

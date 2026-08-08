@@ -22,7 +22,6 @@ package org.jetbrains.kotlin.powerassert.gradle
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
-import org.gradle.kotlin.dsl.property
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import javax.inject.Inject
@@ -69,5 +68,5 @@ abstract class PowerAssertGradleExtension @Inject constructor(
      * ```
      */
     val compilationFilter: Property<PowerAssertCompilationFilter> =
-        objectFactory.property<PowerAssertCompilationFilter>().convention(PowerAssertCompilationFilter.TESTS)
+        objectFactory.property(PowerAssertCompilationFilter::class.java).convention(PowerAssertCompilationFilter.TESTS)
 }

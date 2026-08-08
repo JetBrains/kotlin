@@ -13,7 +13,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.mapProperty
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
@@ -82,7 +81,7 @@ internal class KotlinPlaywrightJsTestFramework(
         val launchArgs: ListProperty<String> = objects.listProperty()
 
         @get:Input
-        val launchEnvironmentVariables: MapProperty<String, String> = objects.mapProperty()
+        val launchEnvironmentVariables: MapProperty<String, String> = objects.mapProperty(String::class.java, String::class.java)
 
         @get:Optional
         @get:InputFile
