@@ -24,6 +24,8 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.PlatformManagerPlugin
 import org.jetbrains.kotlin.clangArgs
+import org.jetbrains.kotlin.provisionXcodeBeforeRun
+import org.jetbrains.kotlin.xcodeProvisioningSpec
 import org.jetbrains.kotlin.cpp.*
 import org.jetbrains.kotlin.cpp.ClangFrontend
 import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
@@ -242,6 +244,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             this.targetName.set(target.name)
             this.compiler.set(module.compiler)
             this.arguments.set(allCompilerArgs)
+            provisionXcodeBeforeRun(project.xcodeProvisioningSpec(platformManager, target))
             // Add the sources, as clang by default adds directory with the source to the include path.
             this.headersDirs.from(this@SourceSet.inputFiles.dir)
             this.headersDirs.from(this@SourceSet.headersDirs)
@@ -617,6 +620,8 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 group = VERIFICATION_BUILD_TASK_GROUP
                 this.target.set(target)
                 this.sanitizer.set(sanitizer)
+                val platformManager = project.extensions.getByType<PlatformManager>()
+                provisionXcodeBeforeRun(project.xcodeProvisioningSpec(platformManager, target))
                 this.outputFile.set(project.layout.buildDirectory.file("bin/test/${target}/$testName.${target.family.exeSuffix}"))
                 this.llvmLinkFirstStageOutputFile.set(project.layout.buildDirectory.file("bitcode/test/$target/$testName-firstStage.bc"))
                 this.llvmLinkOutputFile.set(project.layout.buildDirectory.file("bitcode/test/$target/$testName.bc"))
