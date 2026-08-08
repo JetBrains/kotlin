@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /User { // /User|null[0]
+    final val age // /User.age|{}age[0]
+        final fun <get-age>(): kotlin/Int // /User.age.<get-age>|<get-age>(){}[0]
+    final val name // /User.name|{}name[0]
+        final fun <get-name>(): kotlin/String // /User.name.<get-name>|<get-name>(){}[0]
+    constructor <init>(kotlin/String, kotlin/Int) // /User.<init>|<init>(kotlin.String;kotlin.Int){}[0]
+    final fun component1(): kotlin/String // /User.component1|component1(){}[0]
+    final fun component2(): kotlin/Int // /User.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/Int = ...): /User // /User.copy|copy(kotlin.String;kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /User.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /User.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /User.toString|toString(){}[0]
+}

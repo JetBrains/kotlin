@@ -1,0 +1,29 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /TestClass { // /TestClass|null[0]
+    final val aliasUser // /TestClass.aliasUser|{}aliasUser[0]
+        final fun <get-aliasUser>(): kotlin/String // /TestClass.aliasUser.<get-aliasUser>|<get-aliasUser>(){}[0]
+    final var publicBackingField // /TestClass.publicBackingField|{}publicBackingField[0]
+        final fun <get-publicBackingField>(): kotlin/String // /TestClass.publicBackingField.<get-publicBackingField>|<get-publicBackingField>(){}[0]
+        final fun <set-publicBackingField>(kotlin/String) // /TestClass.publicBackingField.<set-publicBackingField>|<set-publicBackingField>(kotlin.String){}[0]
+    final val publicProperty // /TestClass.publicProperty|{}publicProperty[0]
+        final fun <get-publicProperty>(): kotlin/String // /TestClass.publicProperty.<get-publicProperty>|<get-publicProperty>(){}[0]
+    constructor <init>() // /TestClass.<init>|<init>(){}[0]
+    final fun provideInner(): /TestClass.KeptPrivateInner // /TestClass.provideInner|provideInner(){}[0]
+    final fun publicFunction() // /TestClass.publicFunction|publicFunction(){}[0]
+    final inline fun useMixed() // /TestClass.useMixed|useMixed(){}[0]
+    final inline fun useNestedMixed() // /TestClass.useNestedMixed|useNestedMixed(){}[0]
+    final inline fun witnessForCompanion() // /TestClass.witnessForCompanion|witnessForCompanion(){}[0]
+    final inline fun witnessForField() // /TestClass.witnessForField|witnessForField(){}[0]
+    final inline fun witnessForFunction() // /TestClass.witnessForFunction|witnessForFunction(){}[0]
+    final inline fun witnessForProperty() // /TestClass.witnessForProperty|witnessForProperty(){}[0]
+    final object PublicCompanion // /TestClass.PublicCompanion|null[0]
+    final class PublicInnerClass { // /TestClass.PublicInnerClass|null[0]
+        constructor <init>() // /TestClass.PublicInnerClass.<init>|<init>(){}[0]
+    }
+}
+final fun /topLevelKept() // /topLevelKept|topLevelKept(){}[0]

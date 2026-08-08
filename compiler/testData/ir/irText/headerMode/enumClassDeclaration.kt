@@ -1,4 +1,3 @@
-// RUN_PIPELINE_TILL: BACKEND
 // FIR_DUMP
 enum class A {
     EAST,

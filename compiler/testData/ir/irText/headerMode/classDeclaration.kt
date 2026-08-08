@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// IGNORE_BACKEND: JS_IR, WASM_JS, NATIVE
 // FIR_DUMP
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract

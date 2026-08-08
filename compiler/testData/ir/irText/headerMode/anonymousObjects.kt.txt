@@ -1,0 +1,8 @@
+val publicRefToChained: String
+  get
+
+val publicRefToNested: String
+  get
+
+fun useAnonObject(): String {
+}

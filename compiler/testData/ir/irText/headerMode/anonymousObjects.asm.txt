@@ -1,0 +1,20 @@
+public final class AnonymousObjectsKt : java/lang/Object {
+    private final static java.lang.String publicRefToChained
+
+    private final static java.lang.String publicRefToNested
+
+    public final static java.lang.String getPublicRefToChained() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static java.lang.String getPublicRefToNested() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static java.lang.String useAnonObject() {
+          ACONST_NULL
+          ATHROW
+    }
+}

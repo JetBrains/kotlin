@@ -1,0 +1,73 @@
+public final class User : java/lang/Object {
+    private final int age
+
+    private final java.lang.String name
+
+    public void <init>(java.lang.String name, int age) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final java.lang.String component1() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final int component2() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final User copy(java.lang.String name, int age) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public static User copy$default(User p0, java.lang.String p1, int p2, int p3, java.lang.Object p4) {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public boolean equals(java.lang.Object other) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final int getAge() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final java.lang.String getName() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public int hashCode() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public java.lang.String toString() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}

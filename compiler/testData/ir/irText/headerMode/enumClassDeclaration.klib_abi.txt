@@ -1,0 +1,23 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final enum class /A : kotlin/Enum</A> { // /A|null[0]
+    final val entries // /A.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</A> // /A.entries.<get-entries>|<get-entries>#static(){}[0]
+    final fun valueOf(kotlin/String): /A // /A.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</A> // /A.values|values#static(){}[0]
+    enum entry EAST // /A.EAST|null[0]
+    enum entry WEST // /A.WEST|null[0]
+}
+abstract enum class /B : kotlin/Enum</B> { // /B|null[0]
+    final val entries // /B.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</B> // /B.entries.<get-entries>|<get-entries>#static(){}[0]
+    abstract fun getString(): kotlin/String // /B.getString|getString(){}[0]
+    final fun valueOf(kotlin/String): /B // /B.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</B> // /B.values|values#static(){}[0]
+    enum entry NORTH // /B.NORTH|null[0]
+    enum entry SOUTH // /B.SOUTH|null[0]
+}

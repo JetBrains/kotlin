@@ -216,7 +216,12 @@ class ExpressionCodegen(
         mv.visitCode()
         val startLabel = markNewLabel()
         val info = BlockInfo()
-        if (state.classBuilderMode.generateBodies && !state.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode)) {
+        val isHeaderMode = state.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode)
+        // Preserve bodies of functions under inline scope for inlining.
+        val keepBodyInHeaderMode = irFunction.inlineScopeVisibility != null
+        val shouldGenerateBody =
+            state.classBuilderMode.generateBodies && (!isHeaderMode || keepBodyInHeaderMode)
+        if (shouldGenerateBody) {
             if (irFunction.isMultifileBridge()) {
                 // Multifile bridges need to have line number 1 to be filtered out by the intellij debugging filters.
                 mv.visitLineNumber(1, startLabel)

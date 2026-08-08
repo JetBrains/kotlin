@@ -121,14 +121,14 @@ FILE: privateDeclaration.kt
             R|/TestClass.InlineChain.InlineChain|().R|/TestClass.InlineChain.used|()
         }
 
-        public final inline fun publicInlineChainStart(): R|kotlin/Unit| {
+        private final inline fun privateInlineChainStart(): R|kotlin/Unit| {
             this@R|/TestClass|.R|/TestClass.privateInlineChainMiddle|()
         }
 
         private final fun privateNonInlineMiddle(): R|kotlin/Unit| {
         }
 
-        public final inline fun publicBrokenChainStart(): R|kotlin/Unit| {
+        private final inline fun privateBrokenChainStart(): R|kotlin/Unit| {
             this@R|/TestClass|.R|/TestClass.privateNonInlineMiddle|()
         }
 

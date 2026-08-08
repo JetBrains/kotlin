@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.runners.ir
 
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
+import org.jetbrains.kotlin.test.backend.handlers.AsmLikeInstructionListingHandler
 import org.jetbrains.kotlin.test.backend.handlers.JvmNewKotlinReflectCompatibilityCheck
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
@@ -26,6 +27,9 @@ abstract class AbstractJvmIrTextTest(val parser: FirParser) : AbstractKotlinComp
         setupDefaultDirectivesForIrTextTest()
         configureIrHandlersStep {
             setupIrTextDumpHandlers()
+        }
+        configureJvmArtifactsHandlersStep {
+            useHandlers({ AsmLikeInstructionListingHandler(it, renderAllMethodBodies = true) })
         }
         additionalK2ConfigurationForIrTextTest(parser)
 

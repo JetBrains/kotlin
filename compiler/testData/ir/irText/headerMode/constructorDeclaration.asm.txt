@@ -1,0 +1,81 @@
+public final class A : java/lang/Object {
+    private final java.lang.String a
+
+    private final int b
+
+    public void <init>(java.lang.String a, int b) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public void <init>(java.lang.String e) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final java.lang.String getA() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final int getB() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}
+
+public final class B : java/lang/Object {
+    private final java.lang.String a
+
+    private final int b
+
+    private void <init>(java.lang.String a, int b) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public void <init>(java.lang.String e) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public void <init>() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final java.lang.String getA() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+
+    public final int getB() {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}

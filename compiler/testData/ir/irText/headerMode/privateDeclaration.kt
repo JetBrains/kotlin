@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// IGNORE_BACKEND: JS_IR, WASM_JS, NATIVE
 // FIR_DUMP
 
 class TestClass {
@@ -87,8 +87,8 @@ class TestClass {
     private inline fun privateInlineChainMiddle() {
         InlineChain().used()
     }
-    public inline fun publicInlineChainStart() {
-        privateInlineChainMiddle()
+    private inline fun privateInlineChainStart() {
+        <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>privateInlineChainMiddle()<!>
     }
 
     private class BrokenChainEnd {
@@ -97,7 +97,7 @@ class TestClass {
     private fun privateNonInlineMiddle() {
         BrokenChainEnd().unused()
     }
-    public inline fun publicBrokenChainStart() {
+    private inline fun privateBrokenChainStart() {
         privateNonInlineMiddle()
     }
 }

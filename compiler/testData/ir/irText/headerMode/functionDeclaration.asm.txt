@@ -1,0 +1,98 @@
+public final class FunctionDeclarationKt$funG$classA : java/lang/Object {
+    public void <init>() {
+        LABEL (L0)
+        LINENUMBER (42)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public final java.lang.String funH() {
+        LABEL (L0)
+        LINENUMBER (43)
+          LDC (funH body)
+          ARETURN
+        LABEL (L1)
+    }
+}
+
+public final class FunctionDeclarationKt : java/lang/Object {
+    public final static java.lang.String access$funE$funF() {
+        LABEL (L0)
+        LINENUMBER (1)
+          INVOKESTATIC (FunctionDeclarationKt, funE$funF, ()Ljava/lang/String;)
+          ARETURN
+    }
+
+    public final static java.lang.String funA() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static java.lang.String funB() {
+          ICONST_0
+          ISTORE (0)
+        LABEL (L0)
+        LINENUMBER (12)
+          LDC (funB body)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final static int funD() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static java.lang.String funE() {
+          ICONST_0
+          ISTORE (0)
+        LABEL (L0)
+        LINENUMBER (37)
+          INVOKESTATIC (FunctionDeclarationKt, access$funE$funF, ()Ljava/lang/String;)
+          ARETURN
+        LABEL (L1)
+    }
+
+    private final static java.lang.String funE$funF() {
+        LABEL (L0)
+        LINENUMBER (35)
+          LDC (funF body)
+          ARETURN
+    }
+
+    public final static java.lang.String funG() {
+          ICONST_0
+          ISTORE (0)
+        LABEL (L0)
+        LINENUMBER (45)
+          NEW (FunctionDeclarationKt$funG$classA)
+          DUP
+          INVOKESPECIAL (FunctionDeclarationKt$funG$classA, <init>, ()V)
+          ASTORE (1)
+        LABEL (L1)
+        LINENUMBER (46)
+          ALOAD (1)
+          INVOKEVIRTUAL (FunctionDeclarationKt$funG$classA, funH, ()Ljava/lang/String;)
+          ARETURN
+        LABEL (L2)
+    }
+
+    public final static int funI() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static java.lang.String funJ() {
+          ACONST_NULL
+          ATHROW
+    }
+
+    public final static boolean isNotNull(java.lang.Object value) {
+        LABEL (L0)
+          ACONST_NULL
+          ATHROW
+        LABEL (L1)
+    }
+}

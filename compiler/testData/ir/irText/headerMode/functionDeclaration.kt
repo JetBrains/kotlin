@@ -1,4 +1,3 @@
-// RUN_PIPELINE_TILL: BACKEND
 // FIR_DUMP
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
