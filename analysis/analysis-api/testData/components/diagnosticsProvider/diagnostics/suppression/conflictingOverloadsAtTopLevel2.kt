@@ -16,5 +16,3 @@ fun someFun() {
 fun someFun(): String {
     return ""
 }
-
-// SUPPRESS_INDIVIDUAL_DIAGNOSTICS_CHECK: KT-63221

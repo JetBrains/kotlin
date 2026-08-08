@@ -90,4 +90,16 @@ public class FirStandaloneNormalAnalysisSourceModuleElementDiagnosticsTestGenera
   public void testJavaScriptStableName() {
     run("javaScriptStableName.kt");
   }
+
+  @Test
+  @TestMetadata("uninitializedMemberProperty.kt")
+  public void testUninitializedMemberProperty() {
+    run("uninitializedMemberProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("uninitializedTopLevelProperty.kt")
+  public void testUninitializedTopLevelProperty() {
+    run("uninitializedTopLevelProperty.kt");
+  }
 }

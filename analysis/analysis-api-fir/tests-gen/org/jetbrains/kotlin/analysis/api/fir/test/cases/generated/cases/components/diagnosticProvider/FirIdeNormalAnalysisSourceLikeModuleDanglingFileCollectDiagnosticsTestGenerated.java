@@ -381,6 +381,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleDanglingFileCollectDiagnosticsT
   }
 
   @Test
+  @TestMetadata("superTypeCallDiagnostics.kt")
+  public void testSuperTypeCallDiagnostics() {
+    run("superTypeCallDiagnostics.kt");
+  }
+
+  @Test
   @TestMetadata("syntheticHashCode.kt")
   public void testSyntheticHashCode() {
     run("syntheticHashCode.kt");
@@ -402,6 +408,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleDanglingFileCollectDiagnosticsT
   @TestMetadata("unavailableRecord.kt")
   public void testUnavailableRecord() {
     run("unavailableRecord.kt");
+  }
+
+  @Test
+  @TestMetadata("unreachableCodeInClassInitializerAndConstructor.kt")
+  public void testUnreachableCodeInClassInitializerAndConstructor() {
+    run("unreachableCodeInClassInitializerAndConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("unreachableCodeInPropertyInitializer.kt")
+  public void testUnreachableCodeInPropertyInitializer() {
+    run("unreachableCodeInPropertyInitializer.kt");
   }
 
   @Test

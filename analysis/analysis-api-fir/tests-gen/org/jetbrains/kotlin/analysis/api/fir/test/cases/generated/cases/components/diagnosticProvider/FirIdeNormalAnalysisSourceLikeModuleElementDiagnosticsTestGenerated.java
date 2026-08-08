@@ -96,4 +96,16 @@ public class FirIdeNormalAnalysisSourceLikeModuleElementDiagnosticsTestGenerated
   public void testScriptWithFunctionWithImplicitType() {
     run("scriptWithFunctionWithImplicitType.kts");
   }
+
+  @Test
+  @TestMetadata("uninitializedMemberProperty.kt")
+  public void testUninitializedMemberProperty() {
+    run("uninitializedMemberProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("uninitializedTopLevelProperty.kt")
+  public void testUninitializedTopLevelProperty() {
+    run("uninitializedTopLevelProperty.kt");
+  }
 }

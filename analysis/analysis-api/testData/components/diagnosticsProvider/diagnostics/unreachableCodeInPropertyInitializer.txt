@@ -1,0 +1,7 @@
+Diagnostics from file:
+  for PSI element of type KtCallExpression at (14,9-24)
+    UNREACHABLE_CODE      text ranges: [(421,436)]
+      PSI: KtCallExpression at (14,9-24)
+  for PSI element of type KtCallExpression at (8,5-20)
+    UNREACHABLE_CODE      text ranges: [(331,346)]
+      PSI: KtCallExpression at (8,5-20)
