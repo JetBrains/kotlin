@@ -22,6 +22,7 @@ plugins {
 
 val knownGroups = buildList {
     add("ring")
+    add("macro")
     add("cinterop")
     add("helloworld")
     add("numerical")
