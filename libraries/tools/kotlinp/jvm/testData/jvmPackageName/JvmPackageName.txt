@@ -1,0 +1,64 @@
+// j/BarAsJKt.class
+// ------------------------------------------
+package {
+
+  // signature: file0()V
+  public final fun file0(): kotlin/Unit
+
+  // module name: test-module
+}
+// jjj/FooAsJJJKt.class
+// ------------------------------------------
+package {
+
+  // signature: file2()V
+  public final fun file2(): kotlin/Unit
+
+  // module name: test-module
+}
+// foo/FooKt.class
+// ------------------------------------------
+package {
+
+  // signature: file1()V
+  public final fun file1(): kotlin/Unit
+
+  // module name: test-module
+}
+// jj/JJ.class
+// ------------------------------------------
+package {
+
+  // signature: jj()V
+  public final fun jj(): kotlin/Unit
+
+  // module name: test-module
+}
+// foo/MultiFoo.class
+// ------------------------------------------
+multi-file class {
+  // foo/MultiFoo__FooMultiFileKt
+}
+// foo/MultiFoo__FooMultiFileKt.class
+// ------------------------------------------
+package {
+  // facade: foo/MultiFoo
+
+  // signature: multiFile1()V
+  public final fun multiFile1(): kotlin/Unit
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package bar {
+    j/BarAsJKt
+    jj/JJ
+  }
+  package foo {
+    foo/FooKt
+    jjj/FooAsJJJKt
+    foo/MultiFoo__FooMultiFileKt (foo/MultiFoo)
+  }
+}

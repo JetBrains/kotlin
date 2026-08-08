@@ -42,6 +42,12 @@ public class FirScriptingPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiB
   }
 
   @Test
+  @TestMetadata("nameSanitization.kt")
+  public void testNameSanitization() {
+    run("nameSanitization.kt");
+  }
+
+  @Test
   @TestMetadata("outOuOrderDecls.kt")
   public void testOutOuOrderDecls() {
     run("outOuOrderDecls.kt");

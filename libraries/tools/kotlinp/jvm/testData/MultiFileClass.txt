@@ -1,15 +1,121 @@
-// test/File.class
+// foo/AnotherMultiFoo.class
 // ------------------------------------------
 multi-file class {
-  // test/File__MultiFileClassKt
+  // foo/AnotherMultiFoo__AnotherFooMultiFilePart1Kt
 }
-// test/File__MultiFileClassKt.class
+// foo/AnotherMultiFoo__AnotherFooMultiFilePart1Kt.class
 // ------------------------------------------
 package {
-  // facade: test/File
+  // facade: foo/AnotherMultiFoo
 
-  // field: x:I
-  public final const val x: kotlin/Int /* = ... */
+  // signature: anotherMultiFile1()V
+  public final fun anotherMultiFile1(): kotlin/Unit
+
+  // module name: test-module
+}
+// bar/BarFileFacade1Kt.class
+// ------------------------------------------
+package {
+
+  // signature: file1()V
+  public final fun file1(): kotlin/Unit
+
+  // field: barFileConst1:I
+  public final const val barFileConst1: kotlin/Int /* = ... */
+    public final get
+
+  // module name: test-module
+}
+// foo/FooFileFacade1Kt.class
+// ------------------------------------------
+package {
+
+  // signature: file1()V
+  public final fun file1(): kotlin/Unit
+
+  // field: fooFileConst1:I
+  public final const val fooFileConst1: kotlin/Int /* = ... */
+    public final get
+
+  // module name: test-module
+}
+// foo/FooFileFacade2Kt.class
+// ------------------------------------------
+package {
+
+  // signature: file2()V
+  public final fun file2(): kotlin/Unit
+
+  // field: fooFileConst2:I
+  public final const val fooFileConst2: kotlin/Int /* = ... */
+    public final get
+
+  // module name: test-module
+}
+// bar/MultiBar.class
+// ------------------------------------------
+multi-file class {
+  // bar/MultiBar__BarMultiFilePart1Kt
+  // bar/MultiBar__BarMultiFilePart2Kt
+}
+// bar/MultiBar__BarMultiFilePart1Kt.class
+// ------------------------------------------
+package {
+  // facade: bar/MultiBar
+
+  // signature: multiFile1()V
+  public final fun multiFile1(): kotlin/Unit
+
+  // field: barMultiFileConst1:I
+  public final const val barMultiFileConst1: kotlin/Int /* = ... */
+    public final get
+
+  // module name: test-module
+}
+// bar/MultiBar__BarMultiFilePart2Kt.class
+// ------------------------------------------
+package {
+  // facade: bar/MultiBar
+
+  // signature: multiFile2()V
+  public final fun multiFile2(): kotlin/Unit
+
+  // field: barMultiFileConst2:I
+  public final const val barMultiFileConst2: kotlin/Int /* = ... */
+    public final get
+
+  // module name: test-module
+}
+// foo/MultiFoo.class
+// ------------------------------------------
+multi-file class {
+  // foo/MultiFoo__FooMultiFilePart1Kt
+  // foo/MultiFoo__FooMultiFilePart2Kt
+}
+// foo/MultiFoo__FooMultiFilePart1Kt.class
+// ------------------------------------------
+package {
+  // facade: foo/MultiFoo
+
+  // signature: multiFile1()V
+  public final fun multiFile1(): kotlin/Unit
+
+  // field: fooMultiFileConst1:I
+  public final const val fooMultiFileConst1: kotlin/Int /* = ... */
+    public final get
+
+  // module name: test-module
+}
+// foo/MultiFoo__FooMultiFilePart2Kt.class
+// ------------------------------------------
+package {
+  // facade: foo/MultiFoo
+
+  // signature: multiFile2()V
+  public final fun multiFile2(): kotlin/Unit
+
+  // field: fooMultiFileConst2:I
+  public final const val fooMultiFileConst2: kotlin/Int /* = ... */
     public final get
 
   // module name: test-module
@@ -17,7 +123,16 @@ package {
 // META-INF/test-module.kotlin_module
 // ------------------------------------------
 module {
-  package test {
-    test/File__MultiFileClassKt (test/File)
+  package bar {
+    bar/BarFileFacade1Kt
+    bar/MultiBar__BarMultiFilePart1Kt (bar/MultiBar)
+    bar/MultiBar__BarMultiFilePart2Kt (bar/MultiBar)
+  }
+  package foo {
+    foo/FooFileFacade1Kt
+    foo/FooFileFacade2Kt
+    foo/AnotherMultiFoo__AnotherFooMultiFilePart1Kt (foo/AnotherMultiFoo)
+    foo/MultiFoo__FooMultiFilePart1Kt (foo/MultiFoo)
+    foo/MultiFoo__FooMultiFilePart2Kt (foo/MultiFoo)
   }
 }

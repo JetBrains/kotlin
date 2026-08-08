@@ -68,9 +68,6 @@ projectTests {
 
     testData(isolated, "testData/checkLocalVariablesTable")
     testData(isolated, "testData/codegen")
-    testData(isolated, "testData/kotlinClassFinder")
-    testData(isolated, "testData/moduleProtoBuf")
-    testData(isolated, "testData/modules.xml")
     testData(isolated, "testData/serialization")
     testData(isolated, "testData/versionRequirement")
     testData(isolated, "testData/writeFlags")

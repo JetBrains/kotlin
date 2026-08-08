@@ -84,14 +84,6 @@ fun main(args: Array<String>) {
                 model("klib/syntheticAccessors")
             }
 
-            testClass<AbstractComposeLikeFirLightTreeBlackBoxCodegenTest> {
-                model("codegen/composeLike")
-            }
-
-            testClass<AbstractComposeLikeFirLightTreeBytecodeTextTest> {
-                model("codegen/composeLikeBytecodeText")
-            }
-
             testClass<AbstractFirLightTreeSteppingTest> {
                 model("debug/stepping")
             }
