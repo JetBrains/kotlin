@@ -925,10 +925,11 @@ private fun Project.provideSyntheticPackageDir(): Provider<Directory> =
     )
 
 internal const val SHARED_CHECKOUT_DIR = "build/kotlin/swiftPMCheckouts"
+internal fun Project.rootSharedCheckoutDir() = rootProject.projectDir.resolve(SHARED_CHECKOUT_DIR)
 private fun Project.provideCheckoutDir(): Provider<Directory> =
     layout.dir(
         provider {
-            rootProject.projectDir.resolve(SHARED_CHECKOUT_DIR)
+            rootSharedCheckoutDir()
         }
     )
 
@@ -1009,6 +1010,12 @@ private fun Project.provideIdentifierCheckoutDir(identifier: String): Provider<D
     return providerIdentifierRoot(identifier).map { it.dir("swiftPMCheckout") }
 }
 
+internal fun FetchSyntheticImportProjectPackages.getCheckoutPath(): File =
+    if (syntheticPackageFingerprint.isPresent) {
+        project.rootSharedCheckoutDir().resolve(syntheticPackageFingerprint.getFile().readLines()[1])
+    } else {
+        swiftPMDependenciesCheckout.getFile()
+    }
 
 internal fun Project.swiftPMImportIdeModelProvider(): Provider<SwiftPMImportIdeModel> =
     project.hasDirectOrTransitiveSwiftPMDependencies().map { hasDirectOrTransitiveSwiftPMDependencies ->
@@ -1035,7 +1042,7 @@ internal fun Project.swiftPMImportIdeModelProvider(): Provider<SwiftPMImportIdeM
                 val fetchTask = tasks.getByName(FetchSyntheticImportProjectPackages.TASK_NAME) as FetchSyntheticImportProjectPackages
                 DeclaredSwiftPMDependencies(
                     dependencies = declaredDependencies,
-                    checkoutPath = fetchTask.swiftPMDependenciesCheckout.getFile(),
+                    checkoutPath = fetchTask.getCheckoutPath(),
                     swiftPackageResolveTaskPath = fetchTask.path,
                 )
             }.orNull

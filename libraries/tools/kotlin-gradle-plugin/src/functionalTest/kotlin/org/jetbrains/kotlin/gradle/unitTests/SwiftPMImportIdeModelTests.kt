@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.kotlin.dsl.buildscript
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DeclaredSwiftPMDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.LocalSwiftPMDepe
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.RemoteSwiftPMDependencyForIde
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportIdeModel
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.rootSharedCheckoutDir
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
@@ -57,14 +59,23 @@ class SwiftPMImportIdeModelTests {
     // The rest of this suite has to be implemented as an integration test because interproject SwiftPM dependencies work by serializing using a task
     @Test
     fun `swiftPMImportIdeModel - project with direct SwiftPM dependency`() {
+
+        val syntheticPackageFingerprint = "syntheticPackageFingerprintY"
         val project = buildProjectWithMPP {
+            val syntheticPackageFingerprintFile = project.rootDir.resolve("syntheticPackageFingerprint").also {
+                it.createNewFile()
+                it.writeText("syntheticPackageFingerprintX\n$syntheticPackageFingerprint")
+            }
+            buildscript {
+                val fetchTask =
+                    project.tasks.getByName(FetchSyntheticImportProjectPackages.TASK_NAME) as FetchSyntheticImportProjectPackages
+                fetchTask.syntheticPackageFingerprint.set(syntheticPackageFingerprintFile)
+            }
             kotlin {
                 iosArm64()
                 locateOrRegisterSwiftPMDependenciesExtension().swiftPackage(url = "foo", version = "1.0.0", products = listOf("bar"))
             }
         }
-
-        val fetchTask = project.tasks.getByName(FetchSyntheticImportProjectPackages.TASK_NAME) as FetchSyntheticImportProjectPackages
 
         assertEquals(
             SwiftPMImportIdeModel(
@@ -75,7 +86,7 @@ class SwiftPMImportIdeModelTests {
                     dependencies = listOf(
                         RemoteSwiftPMDependencyForIde("foo")
                     ),
-                    checkoutPath = fetchTask.swiftPMDependenciesCheckout.get().asFile,
+                    checkoutPath = project.rootSharedCheckoutDir().resolve(syntheticPackageFingerprint),
                     swiftPackageResolveTaskPath = ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
                 )
             ),
@@ -85,7 +96,19 @@ class SwiftPMImportIdeModelTests {
 
     @Test
     fun `swiftPMImportIdeModel - project with direct local SwiftPM dependency`() {
+        val syntheticPackageFingerprint = "syntheticPackageFingerprintY"
         val project = buildProjectWithMPP {
+
+            val syntheticPackageFingerprintFile = project.rootDir.resolve("syntheticPackageFingerprint").also {
+                it.createNewFile()
+                it.writeText("syntheticPackageFingerprintX\n$syntheticPackageFingerprint")
+            }
+            buildscript {
+                val fetchTask =
+                    project.tasks.getByName(FetchSyntheticImportProjectPackages.TASK_NAME) as FetchSyntheticImportProjectPackages
+                fetchTask.syntheticPackageFingerprint.set(syntheticPackageFingerprintFile)
+            }
+
             kotlin {
                 iosArm64()
 
@@ -99,6 +122,37 @@ class SwiftPMImportIdeModelTests {
         }
 
         val localPackage = project.layout.projectDirectory.dir("localPackage").asFile
+        assertEquals(
+            SwiftPMImportIdeModel(
+                hasSwiftPMDependencies = true,
+                integrateLinkagePackageTaskPath = ":${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}",
+                magicPackageName = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+                declaredSwiftPMDependencies = DeclaredSwiftPMDependencies(
+                    dependencies = listOf(
+                        LocalSwiftPMDependencyForIde(localPackage)
+                    ),
+                    checkoutPath = project.rootSharedCheckoutDir().resolve(syntheticPackageFingerprint),
+                    swiftPackageResolveTaskPath = ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
+                )
+            ),
+            project.multiplatformExtension.swiftPMImportIdeModel
+        )
+    }
+
+    // The rest of this suite has to be implemented as an integration test because interproject SwiftPM dependencies work by serializing using a task
+    @Test
+    fun `swiftPMImportIdeModel - project with direct SwiftPM dependency - noSync`() {
+        val project = buildProjectWithMPP {
+
+            kotlin {
+                iosArm64()
+                locateOrRegisterSwiftPMDependenciesExtension().apply {
+                    swiftPackage(url = "foo", version = "1.0.0", products = listOf("bar"))
+                    packageResolvedSynchronization = noSynchronization()
+                }
+            }
+        }
+
         val fetchTask = project.tasks.getByName(FetchSyntheticImportProjectPackages.TASK_NAME) as FetchSyntheticImportProjectPackages
 
         assertEquals(
@@ -108,7 +162,7 @@ class SwiftPMImportIdeModelTests {
                 magicPackageName = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
                 declaredSwiftPMDependencies = DeclaredSwiftPMDependencies(
                     dependencies = listOf(
-                        LocalSwiftPMDependencyForIde(localPackage)
+                        RemoteSwiftPMDependencyForIde("foo")
                     ),
                     checkoutPath = fetchTask.swiftPMDependenciesCheckout.get().asFile,
                     swiftPackageResolveTaskPath = ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
