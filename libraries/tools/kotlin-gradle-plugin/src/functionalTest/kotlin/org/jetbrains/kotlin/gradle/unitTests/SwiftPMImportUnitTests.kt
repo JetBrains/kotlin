@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.getExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.CleanSwiftImportFingerprintArtifacts
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ComputeLocalPackageDependencyInputFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DumpXcodeBuildArgs
@@ -42,6 +43,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNotSame
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class SwiftPMImportUnitTests {
@@ -49,6 +51,44 @@ class SwiftPMImportUnitTests {
     @BeforeTest
     fun runOnMacOSOnly() {
         Assumptions.assumeTrue(HostManager.hostIsMac, "macOS host required for this test")
+    }
+
+    @Test
+    fun `no synchronization does not register fingerprint artifacts cleanup task`() {
+        val project = swiftPMImportProject(
+            swiftPMDependencies = {
+                packageResolvedSynchronization = noSynchronization()
+            }
+        )
+        project.evaluate()
+
+        assertNull(project.tasks.findByName(CleanSwiftImportFingerprintArtifacts.TASK_NAME))
+        val cleanTask = project.tasks.getByName("clean")
+        assertFalse(
+            cleanTask.taskDependencies.getDependencies(cleanTask).any {
+                it.name == CleanSwiftImportFingerprintArtifacts.TASK_NAME
+            }
+        )
+    }
+
+    @Test
+    fun `default identifier registers fingerprint artifacts cleanup task and wires clean dependency`() {
+        val project = swiftPMImportProject()
+        project.evaluate()
+
+        project.assertFingerprintArtifactsCleanupIsRegistered()
+    }
+
+    @Test
+    fun `explicit identifier registers fingerprint artifacts cleanup task and wires clean dependency`() {
+        val project = swiftPMImportProject(
+            swiftPMDependencies = {
+                packageResolvedSynchronization = identifier("custom")
+            }
+        )
+        project.evaluate()
+
+        project.assertFingerprintArtifactsCleanupIsRegistered()
     }
 
     @Test
@@ -1066,6 +1106,18 @@ class SwiftPMImportUnitTests {
 
 
     }
+}
+
+private fun ProjectInternal.assertFingerprintArtifactsCleanupIsRegistered() {
+    val cleanupTask = tasks.findByName(CleanSwiftImportFingerprintArtifacts.TASK_NAME)
+    assertNotNull(cleanupTask, "${CleanSwiftImportFingerprintArtifacts.TASK_NAME} should be registered")
+    assertIs<CleanSwiftImportFingerprintArtifacts>(cleanupTask)
+
+    val cleanTask = tasks.getByName("clean")
+    assertTrue(
+        cleanupTask in cleanTask.taskDependencies.getDependencies(cleanTask),
+        "clean should depend on ${CleanSwiftImportFingerprintArtifacts.TASK_NAME}",
+    )
 }
 
 private fun ProjectInternal.swiftPmLocalDependencies(): List<SwiftPMDependency.Local> {
