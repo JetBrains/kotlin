@@ -25,7 +25,7 @@ library {
     }
 
     @kotlinx/cinterop/internal/CStruct.VarType(size = 4L, align = 4)
-    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.ERROR)
     public final companion object dependency/Foo.Companion : kotlinx/cinterop/CStructVar.Type {
 
       private constructor()

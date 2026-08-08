@@ -12,6 +12,8 @@ import kotlin.test.*
 @CStruct("struct { int p0; int p1; }")
 class S(rawPtr: NativePtr) : CStructVar(rawPtr) {
 
+    @Suppress("DEPRECATION_ERROR")
+    @CStruct.VarType(size = 8L, align = 4)
     companion object : CStructVar.Type(8, 4)
 
     var x: Int

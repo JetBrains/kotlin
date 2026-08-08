@@ -241,6 +241,7 @@ open class NativeInteropPlugin : Plugin<Project> {
                         include("**/*.dylib", "**/*.so", "**/*.dll")
                     }
                 }))
+                suppressions.add("DEPRECATION_ERROR") // CVariable.Type deprecation; can be removed after the bootstrap update
             }
         } else {
             target.dependencies {
