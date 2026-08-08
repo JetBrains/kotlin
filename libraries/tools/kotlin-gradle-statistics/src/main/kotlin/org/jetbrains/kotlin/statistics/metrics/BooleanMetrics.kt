@@ -61,7 +61,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     // Not supported on the current host
     KOTLIN_CROSS_COMPILATION_NOT_SUPPORTED(OR, SAFE),
     KOTLIN_INCREMENTAL_NATIVE_ENABLED(OR, SAFE),
-    KOTLIN_INCREMENTAL_FIR_RUNNER_ENABLED(OR, SAFE),
     KOTLIN_SEPARATE_KMP_COMPILATION_ENABLED(OR, SAFE),
     // kotlin.internal.jvm.enableKmpClasspathMetadataForIncrementalCompilation, reported per KMP JVM compilation
     KMP_JVM_CLASSPATH_METADATA_ENABLED(OR, SAFE),
@@ -146,6 +145,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     ;
 
     companion object {
-        const val VERSION = 30
+        const val VERSION = 31
     }
 }
