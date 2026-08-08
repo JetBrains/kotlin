@@ -70,3 +70,7 @@ End-to-end tests using Gradle TestKit. Located in [`kotlin-gradle-plugin-integra
 
 - `@ExperimentalKotlinGradlePluginApi` - unstable public API
 - `@InternalKotlinGradlePluginApi` - internal API, no compatibility guarantees
+
+## Conventions
+
+Conventions are located in [docs/build-tools/gradle/guidelines](../../../docs/build-tools/gradle/conventions) directory.

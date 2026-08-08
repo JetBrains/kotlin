@@ -14,3 +14,7 @@ The subplugin modules are `:kotlin-allopen`, `:kotlin-noarg`, `:kotlin-sam-with-
 
 All Gradle plugins tests are located inside [`libraries/tools/kotlin-gradle-plugin-integration-tests`](../kotlin-gradle-plugin-integration-tests/Readme.md)
 module.
+
+## Documentation
+
+Documentation and guidelines can be found in [docs/build-tools/gradle](../../../docs/build-tools/gradle) directory.

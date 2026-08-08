@@ -38,3 +38,7 @@ Version constants generated from [`native-cache-kotlin-versions.txt`](native-cac
 
 - [`kotlin-gradle-plugin`](../kotlin-gradle-plugin) - Main plugin implementation
 - [`kotlin-gradle-plugin-annotations`](../kotlin-gradle-plugin-annotations) - API annotations
+
+## Conventions
+
+Conventions are located in [docs/build-tools/gradle/guidelines](../../../docs/build-tools/gradle/conventions) directory.
