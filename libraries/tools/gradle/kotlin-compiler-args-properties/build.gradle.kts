@@ -12,7 +12,6 @@ dependencies {
     commonApi(project(":kotlin-gradle-plugin-api"))
     commonCompileOnly(project(":kotlin-gradle-compiler-types"))
     commonCompileOnly(project(":kotlin-gradle-plugin"))
-    commonCompileOnly(gradleKotlinDsl())
 }
 
 
