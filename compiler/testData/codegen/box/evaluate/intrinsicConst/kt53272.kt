@@ -4,7 +4,6 @@
 // FILE: 1.kt
 
 const val name = E.OK.name
-// STOP_EVALUATION_CHECKS
 fun box(): String = name
 
 // FILE: 2.kt

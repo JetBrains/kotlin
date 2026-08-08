@@ -816,8 +816,8 @@ private fun evaluateBinary(
     val functionName = callableId.callableName.asString()
 
     // Check for division by zero
-    if (functionName == "div" || functionName == "rem") {
-        if (!leftType.isFloatingPoint() && !rightType.isFloatingPoint() && (opr2 as? Number)?.toInt() == 0) {
+    if (functionName == "div" || functionName == "rem" || functionName == "mod" || functionName == "floorDiv") {
+        if (!leftType.isFloatingPoint() && !rightType.isFloatingPoint() && (opr2 as? Number)?.toLong() == 0L) {
             // If expression is division by zero, then return the original expression as a result. We will handle on later steps.
             return DivisionByZero
         }

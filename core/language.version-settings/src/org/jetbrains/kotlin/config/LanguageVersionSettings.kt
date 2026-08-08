@@ -562,6 +562,7 @@ enum class LanguageFeature(
     IrCrossModuleInlinerBeforeKlibSerialization(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_3, forcesPreReleaseBinaries = true, issue = "KT-71896"),
     JvmSupportRecursiveTypeOf(sinceVersion = KOTLIN_2_5, issue = "KT-87339"),
     JsAllowExportTypealiases(sinceVersion = KOTLIN_2_5, "KT-49795"),
+    IntrinsicConstEvaluation(sinceVersion = KOTLIN_2_5, issue = "KT-49303"),
 
     // 2.6
 
@@ -657,7 +658,6 @@ enum class LanguageFeature(
     ReferencesToSyntheticJavaProperties(sinceVersion = null, testOnly = true, issue = "KT-8575", enabledInLatestLVTests = false),
     ImplicitSignedToUnsignedIntegerConversion(sinceVersion = null, testOnly = true, issue = "KT-56583", enabledInLatestLVTests = false),
     ForbidInferringTypeVariablesIntoEmptyIntersection(sinceVersion = null, enabledInProgressiveMode = true, issue = "KT-51221", enabledInLatestLVTests = false),
-    IntrinsicConstEvaluation(sinceVersion = null, issue = "KT-49303", enabledInLatestLVTests = true),
 
     // K1 support only. We keep it, as it's currently unclear what to do with this feature in K2
     DisableCheckingChangedProgressionsResolve(sinceVersion = null, "KT-49276", enabledInLatestLVTests = false),

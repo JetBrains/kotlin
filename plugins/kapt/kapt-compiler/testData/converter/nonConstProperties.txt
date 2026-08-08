@@ -329,8 +329,8 @@ public final class Literals {
     private static final float float15 = 1.5F;
     private static final double double16 = 1.6;
     private static final int uint21 = 21;
-    private static final byte ubyte22 = 0;
-    private static final short ushort23 = 0;
+    private static final byte ubyte22 = (byte)22;
+    private static final short ushort23 = (short)23;
     private static final long ulong24 = 24L;
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.String string = "Hello, world!";

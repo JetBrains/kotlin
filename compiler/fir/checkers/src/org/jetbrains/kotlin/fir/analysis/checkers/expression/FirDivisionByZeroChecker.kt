@@ -10,23 +10,26 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirDivisionByZeroChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     private val defaultPackageName = FqName("kotlin")
-    private val defaultDivName = Name.identifier("div")
+    private val forbiddenDivisions = setOf(
+        OperatorNameConventions.DIV, OperatorNameConventions.REM, Name.identifier("mod"), Name.identifier("floorDiv")
+    )
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         val firstValue = (expression.arguments.singleOrNull() as? FirLiteralExpression)?.value
         if (firstValue != null && (firstValue == 0L || firstValue == 0.0f || firstValue == 0.0)) {
             val callableId = (expression.calleeReference.toResolvedNamedFunctionSymbol())?.callableId
-            if (callableId != null && callableId.packageName == defaultPackageName && callableId.callableName == defaultDivName) {
+            if (callableId != null && callableId.packageName == defaultPackageName && callableId.callableName in forbiddenDivisions) {
                 reporter.reportOn(expression.source, FirErrors.DIVISION_BY_ZERO)
             }
         }
