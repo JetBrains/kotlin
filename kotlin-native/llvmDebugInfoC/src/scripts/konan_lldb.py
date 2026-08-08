@@ -253,6 +253,8 @@ def _type_info(value):
 _FACTORY = {}
 _SBVALUE_CACHE = {}
 _SB_VALUE_CACHE_PROCESS_HASH = None
+_MAP_ENTRY_TYPE = None
+_MAP_ENTRY_TYPE_PROCESS_ID = None
 _TO_STRING_DEPTH = 2
 _ARRAY_TO_STRING_LIMIT = 10
 _TOTAL_MEMBERS_LIMIT = 50
@@ -565,6 +567,45 @@ def _read_string(addr, size):
     return s
 
 
+def _get_map_entry_type(process):
+    global _MAP_ENTRY_TYPE
+    global _MAP_ENTRY_TYPE_PROCESS_ID
+
+    process_id = process.GetUniqueID()
+    if (
+        _MAP_ENTRY_TYPE_PROCESS_ID == process_id
+        and _MAP_ENTRY_TYPE is not None
+        and _MAP_ENTRY_TYPE.IsValid()
+    ):
+        return _MAP_ENTRY_TYPE
+
+    value = _evaluate(
+        """
+        struct ObjHeader;
+        struct _KonanMapEntry {
+            ObjHeader *key;
+            ObjHeader *value;
+        };
+        _KonanMapEntry{(ObjHeader *)0, (ObjHeader *)0}
+        """
+    )
+
+    if value is None or not value.IsValid():
+        return None
+
+    error = value.GetError()
+    if error.Fail():
+        return None
+
+    entry_type = value.GetType()
+    if entry_type is None or not entry_type.IsValid():
+        return None
+
+    _MAP_ENTRY_TYPE = entry_type
+    _MAP_ENTRY_TYPE_PROCESS_ID = process_id
+    return _MAP_ENTRY_TYPE
+
+
 def _render_object(addr):
     process = lldb.debugger.GetSelectedTarget().GetProcess()
     cached = _get_cached_summary_for_key(process, addr)
@@ -599,10 +640,17 @@ def kotlin_object_type_summary(lldb_val, _):
     return "\"\"" if summary == "" else summary
 
 
-def kotlin_object_pair_type_summary(lldb_val, _):
+def kotlin_map_entry_type_summary(lldb_val, _):
+    synthetic = _synthetic_value_or_self(lldb_val)
+    if synthetic is None:
+        return _NULL
+
     summaries = []
     for index in range(2):
-        child = lldb_val.GetChildAtIndex(index)
+        child = synthetic.GetChildAtIndex(index)
+        if child is None or not child.IsValid():
+            summaries.append(_NULL)
+            continue
         summary = child.GetSummary()
         value = summary if summary is not None else child.GetValue()
         summaries.append(_NULL if value is None else value)
@@ -1421,7 +1469,6 @@ class KonanSetSyntheticProvider:
 class KonanMapSyntheticProvider:
     def __init__(self, valobj, keys, values, children_count):
         self._valobj = valobj
-        self._target = lldb.debugger.GetSelectedTarget()
         self._keys = keys
         self._values = values
         self._children_count = (
@@ -1474,8 +1521,8 @@ class KonanMapSyntheticProvider:
             return None
 
         if self._entry_type is None:
-            self._entry_type = key.GetType().GetArrayType(2)
-        if not self._entry_type.IsValid():
+            self._entry_type = _get_map_entry_type(self._valobj.GetProcess())
+        if self._entry_type is None or not self._entry_type.IsValid():
             return None
 
         pointer_size = self._target.GetAddressByteSize()
@@ -1781,8 +1828,8 @@ def __lldb_init_module(debugger, _):
         (
             "type summary add "
             "--no-value "
-            "--python-function konan_lldb.kotlin_object_pair_type_summary "
-            '"ObjHeader *[2]" '
+            "--python-function konan_lldb.kotlin_map_entry_type_summary "
+            '"_KonanMapEntry" '
             "--category Kotlin"
         )
     )
