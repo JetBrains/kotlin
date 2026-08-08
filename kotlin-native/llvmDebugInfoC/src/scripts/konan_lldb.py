@@ -1150,7 +1150,7 @@ def _run_batch_child_metadata_request(provider, include_names=True):
 
 
 class FastKonanObjectSyntheticProvider(lldb.SBSyntheticValueProvider):
-    def __init__(self, valobj, _, internal_dict):
+    def __init__(self, valobj, internal_dict):
         super().__init__(valobj)
         self._target = valobj.GetTarget()
         self._process = self._target.GetProcess()
@@ -1380,14 +1380,8 @@ class KonanSetSyntheticProvider:
         if backing is None or not backing.IsValid() or backing.unsigned == 0:
             return None
 
-        backing_type_info = _type_info(backing)
-        if not backing_type_info:
-            return None
-        backing_object_proxy = _select_provider(
-            backing, internal_dict, backing_type_info
-        )
-        if backing_object_proxy is None:
-            return None
+        backing_object_proxy = FastKonanObjectSyntheticProvider(backing, internal_dict)
+
         keys = _object_field_value(backing_object_proxy, "keysArray")
         if keys is None or not keys.IsValid() or keys.unsigned == 0:
             return None
@@ -1452,13 +1446,13 @@ class KonanMapSyntheticProvider:
         ):
             return None
 
-        visible_children_count = None
-        for field_name in ("length",):
-            value = _object_field_value(object_proxy, field_name)
-            if value is not None and value.IsValid():
-                visible_children_count = value.GetValueAsUnsigned()
-                break
-        return KonanMapSyntheticProvider(valobj, keys, values, visible_children_count)
+        size_value = _object_field_value(object_proxy, "length")
+        size = (
+            size_value.GetValueAsUnsigned()
+            if size_value is not None and size_value.IsValid()
+            else None
+        )
+        return KonanMapSyntheticProvider(valobj, keys, values, size)
 
     def num_children(self):
         return self._children_count
@@ -1771,9 +1765,7 @@ def _init_logger():
 
 def __lldb_init_module(debugger, _):
     _init_logger()
-    _FACTORY["object"] = lambda x, y, z: FastKonanObjectSyntheticProvider(
-        x, y, z
-    )
+    _FACTORY["object"] = lambda x, y, z: FastKonanObjectSyntheticProvider(x, z)
     _FACTORY["array"] = lambda x, y, z: FastKonanArraySyntheticProvider(x, y, z)
     _FACTORY["string"] = lambda x, y, _: KonanStringSyntheticProvider(x)
     debugger.HandleCommand(
