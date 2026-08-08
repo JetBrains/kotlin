@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaAnnotationImpl
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
@@ -27,12 +28,14 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
-import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -94,23 +97,22 @@ internal fun FirAnnotation.toKaAnnotation(builder: KaSymbolByFirBuilder): KaAnno
     )
 }
 
-private fun findAnnotationConstructor(annotation: FirAnnotation, session: LLFirSession): FirConstructorSymbol? {
-    if (annotation is FirAnnotationCall) {
-        val constructorSymbol = annotation.calleeReference.toResolvedConstructorSymbol()
-        if (constructorSymbol != null) {
-            return constructorSymbol
-        }
-    }
+private fun findAnnotationConstructor(
+    annotation: FirAnnotation,
+    session: LLFirSession,
+): FirConstructorSymbol? = annotation.annotationTypeRef.coneType.toRegularClassSymbol(session)?.findAnnotationConstructor(session = session)
 
-    // Handle unresolved annotation calls gracefully
-    @OptIn(UnresolvedExpressionTypeAccess::class)
-    val annotationClass = annotation.coneTypeOrNull?.toClassSymbol(session)?.fir ?: return null
-
+context(session: LLFirSession)
+internal fun FirRegularClassSymbol.findAnnotationConstructor(): FirConstructorSymbol? = if (classKind != ClassKind.ANNOTATION_CLASS) {
+    null
+} else {
     // The search is done via scope to force Java enhancement. Annotation class might be a 'FirJavaClass'
-    return annotationClass
-        .unsubstitutedScope(session, session.getScopeSession(), withForcedTypeCalculator = false, memberRequiredPhase = null)
-        .getDeclaredConstructors()
-        .singleOrNull()
+    fir.unsubstitutedScope(
+        useSiteSession = session,
+        scopeSession = session.getScopeSession(),
+        withForcedTypeCalculator = false,
+        memberRequiredPhase = null,
+    ).getDeclaredConstructors().singleOrNull()
 }
 
 /**
