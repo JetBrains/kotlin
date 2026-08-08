@@ -215,7 +215,6 @@
 /compiler/testData/reflection/ vsevolod.tolstopyatov@jetbrains.com leonid.startsev@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com alexander.udalov@jetbrains.com
 /compiler/testData/serialization/builtinsSerializer/ "Kotlin Frontend"
 /compiler/testData/serialization/klib/ "Kotlin Common Backend"
-/compiler/testData/versionRequirement/ "Kotlin JVM"
 /compiler/testData/writeFlags/ "Kotlin JVM"
 /compiler/testData/writeSignature/ "Kotlin JVM"
 /compiler/tests/ "Kotlin Compiler"

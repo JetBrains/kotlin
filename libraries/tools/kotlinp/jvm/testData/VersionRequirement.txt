@@ -18,6 +18,79 @@ public final class test/Konstructor : kotlin/Any {
 
   // module name: test-module
 }
+// test/Outer.class
+// ------------------------------------------
+public final class test/Outer : kotlin/Any {
+
+  // signature: <init>()V
+  public constructor()
+
+  // companion object: Companion
+
+  // nested class: Inner
+
+  // nested class: Nested
+
+  // nested class: Companion
+
+  // module name: test-module
+}
+// test/Outer$Companion.class
+// ------------------------------------------
+// requires language version 1.3.0 (level=ERROR)
+public final companion object test/Outer.Companion : kotlin/Any {
+
+  // signature: <init>()V
+  private constructor()
+
+  // module name: test-module
+}
+// test/Outer$Inner.class
+// ------------------------------------------
+public final inner class test/Outer.Inner : kotlin/Any {
+
+  // signature: <init>(Ltest/Outer;)V
+  public constructor()
+
+  // nested class: Deep
+
+  // module name: test-module
+}
+// test/Outer$Inner$Deep.class
+// ------------------------------------------
+// requires language version 1.3.0 (level=ERROR)
+public final inner class test/Outer.Inner.Deep : kotlin/Any {
+
+  // requires language version 1.3.0 (level=ERROR)
+  // signature: <init>(Ltest/Outer$Inner;)V
+  public constructor()
+
+  // requires language version 1.3.0 (level=ERROR)
+  // signature: f()V
+  public final fun f(): kotlin/Unit
+
+  // requires language version 1.3.0 (level=ERROR)
+  // field: x:Ljava/lang/String;
+  // getter: getX()Ljava/lang/String;
+  // synthetic method for annotations: getX$annotations()V
+  public final val x: kotlin/String /* = ... */
+    public final get
+
+  // module name: test-module
+}
+// test/Outer$Nested.class
+// ------------------------------------------
+public final class test/Outer.Nested : kotlin/Any {
+
+  // signature: <init>()V
+  public constructor()
+
+  // requires language version 1.3.0 (level=ERROR)
+  // signature: g()V
+  public final fun g(): kotlin/Unit
+
+  // module name: test-module
+}
 // test/VersionRequirementKt.class
 // ------------------------------------------
 package {
