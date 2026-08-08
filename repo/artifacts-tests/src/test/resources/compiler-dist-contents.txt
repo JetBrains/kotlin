@@ -116,6 +116,7 @@ license/third_party/sl4f_license.txt
 license/third_party/stax2-api.txt
 license/third_party/sun_license.txt
 license/third_party/teamcity-service-messages_LICENSE.txt
+license/third_party/testdata/chromium_license.txt
 license/third_party/testdata/dagger_license.txt
 license/third_party/testdata/eclipse_distribution_license.txt
 license/third_party/testdata/eclipse_license.txt

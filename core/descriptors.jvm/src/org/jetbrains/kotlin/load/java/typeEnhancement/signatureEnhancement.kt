@@ -119,7 +119,7 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
         }
 
         val ignoreDeclarationNullabilityAnnotations =
-            (isJspecifyEnabledInStrictMode(c.components.javaTypeEnhancementState)
+            (isJspecifyOrChromiumEnabledInStrictMode(c.components.javaTypeEnhancementState)
                     || memberContext.components.settings.ignoreNullabilityForErasedValueParameters)
                     && hasErasedValueParameters(this)
         val valueParameterEnhancements = annotationOwnerForMember.valueParameters.map { p ->

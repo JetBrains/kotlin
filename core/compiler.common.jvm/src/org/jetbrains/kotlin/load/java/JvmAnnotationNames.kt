@@ -40,6 +40,16 @@ val JSPECIFY_NULLNESS_UNSPECIFIED_ANNOTATION_FQ_NAME = FqName("org.jspecify.anno
 
 val JSPECIFY_NULL_UNMARKED_ANNOTATION_FQ_NAME = FqName("org.jspecify.annotations.NullUnmarked")
 
+// Chromium annotations
+
+val CHROMIUM_NON_NULL_ANNOTATION_FQ_NAME = FqName("org.chromium.build.annotations.NonNull")
+
+val CHROMIUM_NULLABLE_ANNOTATION_FQ_NAME = FqName("org.chromium.build.annotations.Nullable")
+
+val CHROMIUM_NULL_MARKED_ANNOTATION_FQ_NAME = FqName("org.chromium.build.annotations.NullMarked")
+
+val CHROMIUM_NULL_UNMARKED_ANNOTATION_FQ_NAME = FqName("org.chromium.build.annotations.NullUnmarked")
+
 // JSR-305 annotations
 
 val JAVAX_TYPE_QUALIFIER_ANNOTATION_FQ_NAME = FqName("javax.annotation.meta.TypeQualifier")
@@ -89,6 +99,8 @@ val NOT_NULL_ANNOTATIONS: Set<FqName> = setOf(
     FqName("lombok.NonNull"),
     // Jakarta
     FqName("jakarta.annotation.Nonnull"),
+    // Chromium
+    CHROMIUM_NON_NULL_ANNOTATION_FQ_NAME,
 )
 
 val NULLABLE_ANNOTATIONS: Set<FqName> = setOf(
@@ -122,6 +134,8 @@ val NULLABLE_ANNOTATIONS: Set<FqName> = setOf(
     FqName("jakarta.annotation.Nullable"),
     // vertx
     FqName("io.vertx.codegen.annotations.Nullable"),
+    // Chromium
+    CHROMIUM_NULLABLE_ANNOTATION_FQ_NAME,
 )
 
 val FORCE_FLEXIBILITY_ANNOTATIONS: Set<FqName> = setOf(
@@ -136,7 +150,9 @@ val NULLABILITY_ANNOTATIONS: Set<FqName> = mutableSetOf<FqName>() +
         JAVAX_NONNULL_ANNOTATION_FQ_NAME +
         JSPECIFY_OLD_NULL_MARKED_ANNOTATION_FQ_NAME +
         JSPECIFY_NULL_MARKED_ANNOTATION_FQ_NAME +
-        JSPECIFY_NULL_UNMARKED_ANNOTATION_FQ_NAME
+        JSPECIFY_NULL_UNMARKED_ANNOTATION_FQ_NAME +
+        CHROMIUM_NULL_MARKED_ANNOTATION_FQ_NAME +
+        CHROMIUM_NULL_UNMARKED_ANNOTATION_FQ_NAME
 
 // mutability annotations
 
