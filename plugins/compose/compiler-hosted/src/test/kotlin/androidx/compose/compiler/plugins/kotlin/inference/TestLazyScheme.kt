@@ -71,20 +71,20 @@ class TestLazyScheme {
     fun canUpdateResultThroughUnificationWithConstrainedOpenBindings() {
         val lazyScheme = LazyScheme(schemeOf("[0, [1], [2]:[0, [2], [1]]"))
         val bindings = lazyScheme.bindings
-        val a = bindings.open(allowedTokens = setOf("U", "V"))
-        val b = bindings.open(allowedTokens = setOf("W", "X"))
-        val c = bindings.open(allowedTokens = setOf("Y", "Z"))
+        val a = bindings.open(constraints = Constraints.restrictedTo(setOf("U", "V")))
+        val b = bindings.open(constraints = Constraints.restrictedTo(setOf("W", "X")))
+        val c = bindings.open(constraints = Constraints.restrictedTo(setOf("Y", "Z")))
         bindings.unify(lazyScheme.target, a)
         bindings.unify(lazyScheme.parameters[0].target, b)
         bindings.unify(lazyScheme.parameters[1].target, c)
         assertEquals(
             "[" +
-                    "Open(0, allowedTokens = {U, V}), " +
-                    "[Open(2, allowedTokens = {W, X})], [Open(1, allowedTokens = {Y, Z})]" +
+                    "Open(0, constrainedTo = {U, V}), " +
+                    "[Open(2, constrainedTo = {W, X})], [Open(1, constrainedTo = {Y, Z})]" +
                     ": " +
                     "[" +
-                    "Open(0, allowedTokens = {U, V}), " +
-                    "[Open(1, allowedTokens = {Y, Z})], [Open(2, allowedTokens = {W, X})]" +
+                    "Open(0, constrainedTo = {U, V}), " +
+                    "[Open(1, constrainedTo = {Y, Z})], [Open(2, constrainedTo = {W, X})]" +
                     "]" +
                     "]",
             lazyScheme.toScheme().toString()

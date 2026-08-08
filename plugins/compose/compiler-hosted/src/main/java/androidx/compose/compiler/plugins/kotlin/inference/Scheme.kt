@@ -35,7 +35,7 @@ sealed class Item {
     internal abstract fun serializeTo(
         schemeWriter: SchemeStringSerializationWriter,
         positionalWriter: SchemeStringSerializationWriter,
-        indexed: MutableList<Set<String>?>,
+        indexed: MutableList<Constraints>,
     )
 }
 
@@ -53,7 +53,7 @@ class Token(val value: String) : Item() {
     override fun serializeTo(
         schemeWriter: SchemeStringSerializationWriter,
         positionalWriter: SchemeStringSerializationWriter,
-        indexed: MutableList<Set<String>?>,
+        indexed: MutableList<Constraints>,
     ) {
         schemeWriter.writeToken(value)
         positionalWriter.writeUnderscore()
@@ -61,21 +61,24 @@ class Token(val value: String) : Item() {
 }
 
 /**
- * An open part of a [Scheme]. If [allowedTokens] is non-null, then this part may only be bound to
- * an element of [allowedTokens]. All [Open] items with the same non-negative index should be bound
- * together to the  same applier. [Open] items with a negative index are considered anonymous and
- * are treated as independent.
+ * An open part of a [Scheme]. [constraints] dictates what tokens this part may be bound to. All
+ * [Open] items with the same non-negative index should be bound together to the same applier.
+ * [Open] items with a negative index are considered anonymous and are treated as independent.
  */
-class Open(val index: Int, val allowedTokens: Set<String>? = null, override val isUnspecified: Boolean = false) : Item() {
+class Open(
+    val index: Int,
+    val constraints: Constraints = Constraints.UNRESTRICTED,
+    override val isUnspecified: Boolean = false,
+) : Item() {
     override val isAnonymous: Boolean get() = index < 0
     override fun toBinding(bindings: Bindings, context: MutableList<Binding>): Binding {
-        if (index < 0) return bindings.open(allowedTokens)
+        if (index < 0) return bindings.open(constraints)
         while (index >= context.size) {
             context.add(bindings.open())
         }
         val result = context[index]
-        if (allowedTokens != null) {
-            bindings.unify(result, bindings.open(allowedTokens))
+        if (!constraints.allowsAllTokens) {
+            bindings.unify(result, bindings.open(constraints))
         }
         return result
     }
@@ -84,37 +87,33 @@ class Open(val index: Int, val allowedTokens: Set<String>? = null, override val 
         val sb = StringBuilder()
         sb.append("Open(")
         sb.append(if (index < 0) '_' else index)
-        allowedTokens?.let { sb.append(", allowedTokens = ${it.joinToString(separator = ", ", prefix = "{", postfix = "}")}") }
+        if (!constraints.allowsAllTokens) {
+            sb.append(", constrainedTo = $constraints")
+        }
         sb.append(")")
         return sb.toString()
     }
 
     override fun equals(other: Any?) =
-        other is Open && (other.index == index || (other.index < 0 && index < 0)) && other.allowedTokens == allowedTokens
+        other is Open && (other.index == index || (other.index < 0 && index < 0)) && other.constraints == constraints
 
     override fun hashCode(): Int = if (index < 0) -31 else index * 31
 
     override fun serializeTo(
         schemeWriter: SchemeStringSerializationWriter,
         positionalWriter: SchemeStringSerializationWriter,
-        indexed: MutableList<Set<String>?>,
+        indexed: MutableList<Constraints>,
     ) {
         schemeWriter.writeNumber(index)
 
         if (index < 0) {
-            if (allowedTokens?.isNotEmpty() == true) {
-                positionalWriter.writeTokenSet(allowedTokens)
-            } else {
-                positionalWriter.writeUnderscore()
-            }
+            positionalWriter.writeConstraints(constraints)
         } else {
             positionalWriter.writeUnderscore()
             while (indexed.size <= index) {
-                indexed.add(null)
+                indexed.add(Constraints.UNRESTRICTED)
             }
-            if (allowedTokens != null) {
-                indexed[index] = allowedTokens
-            }
+            indexed[index] = constraints
         }
     }
 }
@@ -122,15 +121,15 @@ class Open(val index: Int, val allowedTokens: Set<String>? = null, override val 
 /**
  * An object whose fields are jointly the serialization of a [Scheme].
  *
- * @param scheme a string that encodes all details about a scheme, except what `allowedTokens`
- *   constraints are on items. This string is in the format expected by the `scheme` parameter of
+ * @param scheme a string that encodes all details about a scheme, except what `constraints` are on
+ *   items. This string is in the format expected by the `scheme` parameter of
  *   `ComposableInferredTarget`.
- * @param positional a string that encodes what `allowedTokens` constraints are on each
- *   negative-indexed [Open] item in a scheme. This string is in the format expected by the
- *   `positional` parameter of `ComposableInferredTargetConstraints`.
- * @param indexed a string that encodes what `allowedTokens` constraints are on each
- *   non-negative-indexed [Open] item in a scheme. This string is in the format expected by the
- *   `indexed` parameter of `ComposableInferredTargetConstraints`.
+ * @param positional a string that encodes what `constraints` are on each negative-indexed [Open]
+ *   item in a scheme. This string is in the format expected by the `positional` parameter of
+ *   `ComposableInferredTargetConstraints`.
+ * @param indexed a string that encodes what `constraints` are on each non-negative-indexed [Open]
+ *   item in a scheme. This string is in the format expected by the `indexed` parameter of
+ *   `ComposableInferredTargetConstraints`.
  */
 data class SerializedScheme(val scheme: String, val positional: String, val indexed: String)
 
@@ -167,19 +166,15 @@ class Scheme(
     fun serialize(): SerializedScheme {
         val schemeWriter = SchemeStringSerializationWriter(StringBuilder())
         val positionalWriter = SchemeStringSerializationWriter(StringBuilder())
-        val indexed = mutableListOf<Set<String>?>()
+        val indexed = mutableListOf<Constraints>()
 
         serializeTo(schemeWriter, positionalWriter, indexed)
         var indexedWriter: SchemeStringSerializationWriter? = null
-        if (indexed.filterNotNull().isNotEmpty()) {
+        if (indexed.any { !it.allowsAllTokens }) {
             indexedWriter = SchemeStringSerializationWriter(StringBuilder())
             indexedWriter.writeOpen()
-            indexed.forEachIndexed { i, allowedTokens ->
-                if (allowedTokens?.isNotEmpty() == true) {
-                    indexedWriter.writeTokenSet(allowedTokens)
-                } else {
-                    indexedWriter.writeUnderscore()
-                }
+            indexed.forEachIndexed { i, constraints ->
+                indexedWriter.writeConstraints(constraints)
                 if (i < indexed.size - 1) {
                     indexedWriter.writeComma()
                 }
@@ -250,7 +245,7 @@ class Scheme(
     private fun serializeTo(
         schemeWriter: SchemeStringSerializationWriter,
         positionalWriter: SchemeStringSerializationWriter,
-        indexed: MutableList<Set<String>?>,
+        indexed: MutableList<Constraints>,
     ) {
         schemeWriter.writeOpen()
         positionalWriter.writeOpen()
@@ -380,9 +375,9 @@ fun deserializeScheme(scheme: String, positional: String? = null, indexed: Strin
         ItemKind.Number -> {
             val index = reader.number()
             if (indexedList != null && index in indexedList.indices) {
-                Open(index, indexedList[index])
+                Open(index, indexedList[index]?.let { Constraints.restrictedTo(it) } ?: Constraints.UNRESTRICTED)
             } else {
-                Open(index, allowedTokensFromPositional)
+                Open(index, allowedTokensFromPositional?.let { Constraints.restrictedTo(it) } ?: Constraints.UNRESTRICTED)
             }
         }
         else -> schemeParseError()
@@ -503,6 +498,14 @@ internal class SchemeStringSerializationWriter(private val builder: StringBuilde
     fun writeTokenSet(tokenSet: Set<String>) {
         builder.append(tokenSet.joinToString(separator = ",", prefix = "{", postfix = "}"))
         hasWrittenToken = true
+    }
+
+    fun writeConstraints(constraints: Constraints) {
+        if (!constraints.allowsAllTokens) {
+            writeTokenSet(constraints.allowedTokens)
+        } else {
+            writeUnderscore()
+        }
     }
 
     override fun toString(): String = builder.toString()
