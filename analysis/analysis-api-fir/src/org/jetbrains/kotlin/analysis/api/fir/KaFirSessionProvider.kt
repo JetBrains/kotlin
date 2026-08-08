@@ -16,6 +16,7 @@ import com.intellij.openapi.util.LowMemoryWatcher
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.util.concurrency.AppExecutorUtil
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCacheCleaner
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvider
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProject
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.isStable
+import org.jetbrains.kotlin.analysis.api.session.KaSessionAcquisitionListenerRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
@@ -99,10 +101,29 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
 
     override fun getAnalysisSession(useSiteElement: PsiElement): KaSession {
         val module = KotlinProjectStructureProvider.getModule(project, useSiteElement, useSiteModule = null)
-        return getAnalysisSession(module)
+        return acquireSessionWithListeners(module, useSiteElement as? KtElement)
     }
 
     override fun getAnalysisSession(useSiteModule: KaModule): KaSession {
+        return acquireSessionWithListeners(useSiteModule, null)
+    }
+
+    private fun acquireSessionWithListeners(
+        useSiteModule: KaModule,
+        useSiteElement: KtElement?,
+    ): KaSession {
+        val listenerRunner = KaSessionAcquisitionListenerRunner(project, useSiteModule, useSiteElement)
+        return try {
+            listenerRunner.runListenersBeforeBlock()
+            acquireAnalysisSession(useSiteModule)
+        } catch (throwable: Throwable) {
+            throw listenerRunner.handleException(throwable)
+        } finally {
+            listenerRunner.runListenersAfterBlock()
+        }
+    }
+
+    private fun acquireAnalysisSession(useSiteModule: KaModule): KaSession {
         checkUseSiteModule(useSiteModule)
 
         ProgressManager.checkCanceled()

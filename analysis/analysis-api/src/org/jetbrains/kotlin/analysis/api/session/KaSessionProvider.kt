@@ -48,9 +48,10 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
     ): R {
         contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
         val analysisSession = getAnalysisSession(useSiteElement)
-
+        val listenerRunner = KaAnalysisListenerRunner(project, analysisSession, useSiteElement as? KtElement)
         beforeEnteringAnalysis(analysisSession, useSiteElement)
         return try {
+            listenerRunner.runListenersBeforeBlock()
             val lock = Any()
             synchronized(lock) {
                 // A 'synchronized' block here prevents non-local suspend calls from being inlined.
@@ -58,8 +59,10 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
                 action(analysisSession)
             }
         } catch (throwable: Throwable) {
-            handleAnalysisException(throwable, analysisSession, useSiteElement)
+            val ex = listenerRunner.handleException(throwable)
+            handleAnalysisException(ex, analysisSession, useSiteElement)
         } finally {
+            listenerRunner.runListenersAfterBlock()
             afterLeavingAnalysis(analysisSession, useSiteElement)
         }
     }
@@ -70,9 +73,10 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
     ): R {
         contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
         val analysisSession = getAnalysisSession(useSiteModule)
-
+        val listenerRunner = KaAnalysisListenerRunner(project, analysisSession, null)
         beforeEnteringAnalysis(analysisSession, useSiteModule)
         return try {
+            listenerRunner.runListenersBeforeBlock()
             val lock = Any()
             synchronized(lock) {
                 // A 'synchronized' block here prevents non-local suspend calls from being inlined.
@@ -80,8 +84,10 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
                 action(analysisSession)
             }
         } catch (throwable: Throwable) {
-            handleAnalysisException(throwable, analysisSession, useSiteModule)
+            val ex = listenerRunner.handleException(throwable)
+            handleAnalysisException(ex, analysisSession, useSiteModule)
         } finally {
+            listenerRunner.runListenersAfterBlock()
             afterLeavingAnalysis(analysisSession, useSiteModule)
         }
     }
