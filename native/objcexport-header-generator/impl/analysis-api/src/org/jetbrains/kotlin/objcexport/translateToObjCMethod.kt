@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.objcexport
 
+import org.jetbrains.kotlin.analysis.api.export.utilities.getPropertySymbol
 import org.jetbrains.kotlin.analysis.api.export.utilities.isFakeOverride
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
@@ -231,8 +232,16 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
     val parameters = valueParametersAssociated(methodBridge, symbol)
     val method = symbol
     val sb = StringBuilder()
-    val anyMethodSelector = anyMethodSelectors[symbol.name]
-    val reservedNameSelector = objCReservedNameMethodSelectors[symbol.name]
+    // If we're obtaining a selector for a getter/setter, we cannot obtain the name directly since
+    // it's not a `KaNamedSymbol`.
+    val symbolName = if (symbol is KaPropertyAccessorSymbol) {
+        analysisSession.getPropertySymbol(symbol).name
+    } else {
+        symbol.name
+    }
+
+    val anyMethodSelector = anyMethodSelectors[symbolName]
+    val reservedNameSelector = objCReservedNameMethodSelectors[symbolName]
 
     if (reservedNameSelector != null && parameters.isEmpty()) {
         /**
