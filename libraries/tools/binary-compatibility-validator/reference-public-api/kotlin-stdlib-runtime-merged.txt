@@ -6533,6 +6533,7 @@ public final class kotlin/time/DurationKt {
 }
 
 public final class kotlin/time/DurationUnit : java/lang/Enum {
+	public static final field Companion Lkotlin/time/DurationUnit$Companion;
 	public static final field DAYS Lkotlin/time/DurationUnit;
 	public static final field HOURS Lkotlin/time/DurationUnit;
 	public static final field MICROSECONDS Lkotlin/time/DurationUnit;
@@ -6545,7 +6546,13 @@ public final class kotlin/time/DurationUnit : java/lang/Enum {
 	public static fun values ()[Lkotlin/time/DurationUnit;
 }
 
+public final class kotlin/time/DurationUnit$Companion {
+}
+
 public final class kotlin/time/DurationUnitKt {
+	public static final fun convert (Lkotlin/time/DurationUnit$Companion;DLkotlin/time/DurationUnit;Lkotlin/time/DurationUnit;)D
+	public static final fun convertInWhole (Lkotlin/time/DurationUnit$Companion;ILkotlin/time/DurationUnit;Lkotlin/time/DurationUnit;)J
+	public static final fun convertInWhole (Lkotlin/time/DurationUnit$Companion;JLkotlin/time/DurationUnit;Lkotlin/time/DurationUnit;)J
 	public static final fun toDurationUnit (Ljava/util/concurrent/TimeUnit;)Lkotlin/time/DurationUnit;
 	public static final fun toTimeUnit (Lkotlin/time/DurationUnit;)Ljava/util/concurrent/TimeUnit;
 }

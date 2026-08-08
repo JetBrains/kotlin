@@ -521,6 +521,8 @@ final enum class kotlin.time/DurationUnit : kotlin/Enum<kotlin.time/DurationUnit
 
     final fun valueOf(kotlin/String): kotlin.time/DurationUnit // kotlin.time/DurationUnit.valueOf|valueOf#static(kotlin.String){}[0]
     final fun values(): kotlin/Array<kotlin.time/DurationUnit> // kotlin.time/DurationUnit.values|values#static(){}[0]
+
+    final object Companion // kotlin.time/DurationUnit.Companion|null[0]
 }
 
 final enum class kotlin/DeprecationLevel : kotlin/Enum<kotlin/DeprecationLevel> { // kotlin/DeprecationLevel|null[0]
@@ -5144,6 +5146,9 @@ final fun (kotlin.sequences/Sequence<kotlin/UShort>).kotlin.sequences/sum(): kot
 final fun (kotlin.text/MatchGroupCollection).kotlin.text/get(kotlin/String): kotlin.text/MatchGroup? // kotlin.text/get|get@kotlin.text.MatchGroupCollection(kotlin.String){}[0]
 final fun (kotlin.text/StringBuilder).kotlin.text/append(kotlin/Array<out kotlin/Any?>...): kotlin.text/StringBuilder // kotlin.text/append|append@kotlin.text.StringBuilder(kotlin.Array<out|kotlin.Any?>...){}[0]
 final fun (kotlin.text/StringBuilder).kotlin.text/append(kotlin/Array<out kotlin/String?>...): kotlin.text/StringBuilder // kotlin.text/append|append@kotlin.text.StringBuilder(kotlin.Array<out|kotlin.String?>...){}[0]
+final fun (kotlin.time/DurationUnit.Companion).kotlin.time/convert(kotlin/Double, kotlin.time/DurationUnit, kotlin.time/DurationUnit): kotlin/Double // kotlin.time/convert|convert@kotlin.time.DurationUnit.Companion(kotlin.Double;kotlin.time.DurationUnit;kotlin.time.DurationUnit){}[0]
+final fun (kotlin.time/DurationUnit.Companion).kotlin.time/convertInWhole(kotlin/Int, kotlin.time/DurationUnit, kotlin.time/DurationUnit): kotlin/Long // kotlin.time/convertInWhole|convertInWhole@kotlin.time.DurationUnit.Companion(kotlin.Int;kotlin.time.DurationUnit;kotlin.time.DurationUnit){}[0]
+final fun (kotlin.time/DurationUnit.Companion).kotlin.time/convertInWhole(kotlin/Long, kotlin.time/DurationUnit, kotlin.time/DurationUnit): kotlin/Long // kotlin.time/convertInWhole|convertInWhole@kotlin.time.DurationUnit.Companion(kotlin.Long;kotlin.time.DurationUnit;kotlin.time.DurationUnit){}[0]
 final fun (kotlin.time/TimeSource).kotlin.time/asClock(kotlin.time/Instant): kotlin.time/Clock // kotlin.time/asClock|asClock@kotlin.time.TimeSource(kotlin.time.Instant){}[0]
 final fun (kotlin/Array<out kotlin/Boolean>).kotlin.collections/toBooleanArray(): kotlin/BooleanArray // kotlin.collections/toBooleanArray|toBooleanArray@kotlin.Array<out|kotlin.Boolean>(){}[0]
 final fun (kotlin/Array<out kotlin/Byte>).kotlin.collections/average(): kotlin/Double // kotlin.collections/average|average@kotlin.Array<out|kotlin.Byte>(){}[0]
