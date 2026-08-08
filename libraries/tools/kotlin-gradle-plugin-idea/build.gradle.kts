@@ -14,33 +14,44 @@ plugins {
 
 configureKotlinCompileTasksGradleCompatibility()
 
-kotlin.sourceSets.configureEach {
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
+kotlin {
+    coreLibrariesVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    compilerOptions {
+        optIn.add("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
+    }
 }
 
 dependencies {
-    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
-    compileOnly(kotlin("stdlib", coreDepsVersion))
+    compileOnly(kotlin("stdlib"))
     api(project(":kotlin-tooling-core"))
     api(project(":kotlin-gradle-plugin-annotations"))
-    testImplementation(gradleApi())
-    testImplementation(gradleKotlinDsl())
+
+    testImplementation(libs.gradle.api) {
+        capabilities {
+            requireCapability("org.gradle.experimental:gradle-public-api-internal")
+        }
+    }
     testImplementation(project(":kotlin-gradle-plugin"))
     testImplementation(project(":kotlin-gradle-plugin-idea-proto"))
-    testImplementation(kotlin("stdlib", coreDepsVersion))
-    testImplementation(kotlin("test-junit5", coreDepsVersion))
+    testImplementation(kotlin("stdlib"))
+    testImplementation(kotlin("reflect"))
+    testImplementation(kotlin("test-junit5"))
     testImplementation(libs.junit.jupiter.params)
 
     testImplementation("org.reflections:reflections:0.10.2") {
         because("Tests on the object graph are performed. This library will find implementations of interfaces at runtime")
     }
 
-    testFixturesImplementation(gradleApi())
-    testFixturesImplementation(gradleKotlinDsl())
+    testFixturesImplementation(libs.gradle.api) {
+        capabilities {
+            requireCapability("org.gradle.experimental:gradle-public-api-internal")
+        }
+    }
     testFixturesImplementation(project(":kotlin-tooling-core"))
     testFixturesImplementation(project(":kotlin-gradle-plugin-idea-proto"))
-    testFixturesImplementation(kotlin("stdlib", coreDepsVersion))
-    testFixturesImplementation(kotlin("test", coreDepsVersion)) // no test annotations, only assertions are needed
+    testFixturesImplementation(kotlin("stdlib"))
+    testFixturesImplementation(kotlin("reflect"))
+    testFixturesImplementation(kotlin("test")) // no test annotations, only assertions are needed
 }
 
 
