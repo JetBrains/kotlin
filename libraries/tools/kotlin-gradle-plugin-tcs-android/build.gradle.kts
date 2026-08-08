@@ -7,17 +7,23 @@ plugins {
 }
 
 dependencies {
-    compileOnly(gradleKotlinDsl())
     compileOnly(libs.android.gradle.plugin.gradle)
     compileOnly(project(":kotlin-gradle-plugin"))
     compileOnly(project(":kotlin-gradle-plugin-api"))
     compileOnly(project(":kotlin-gradle-plugin-idea"))
+    compileOnly(libs.gradle.api) {
+        capabilities {
+            requireCapability("org.gradle.experimental:gradle-public-api-internal")
+        }
+    }
+    compileOnly(kotlin("stdlib"))
 }
 
 configureKotlinCompileTasksGradleCompatibility()
 configureJvmToolchain(JdkMajorVersion.JDK_11_0)
 
 kotlin {
+    coreLibrariesVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
     compilerOptions {
         optIn.add("org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi")
         /* Workaround for KT-54823 */
