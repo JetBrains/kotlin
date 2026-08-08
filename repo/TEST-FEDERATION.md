@@ -83,23 +83,24 @@ This allows for some modules acting as 'API' boundaries.
 
 #### Verifying domains
 
-The declared domains will be 'expanded' into the actual files belonging to each domain. The dump file will be verified on CI.
-The file can be found here [domains.dump.txt](domains.dump.txt).
+The declared domains will be 'expanded' into the actual files belonging to each domain. The dump file is verified on CI.
+The file can be found at [domains.dump.txt](domains.dump.txt).
 
-Locally, it can be ran us:
+Verify it locally from the repository root with:
 ```shell
-./gradlew :gradle-build-conventions:test-federation-convention:test --tests "org.jetbrains.kotlin.testFederation.DomainsDumpTest" --rerun
+./gradlew :repo:codebase-tests:test --tests "org.jetbrains.kotlin.code.DomainsDumpTest" --rerun -Pkotlin.native.enabled=true
 ```
 
 #### Updating the dump
 
-Changes to the domains.yaml file might require an update of the dump file.
-This can be done by executing the 'update-domains' script:
+Changes to `domains.yaml` might require an update of the dump file. Update it from the repository root with:
 
 ```shell
-cd ..
-./scripts/update-domains.sh
+./gradlew :repo:codebase-tests:updateDomainsDump -Pkotlin.native.enabled=true
 ```
+
+Alternatively, run `scripts/update-domains.sh` or use the `Update domains.dump.txt` run configuration in IntelliJ.
+Use `Update all project dumps` to refresh all project dumps at once.
 
 #### Checking domain dependencies
 
