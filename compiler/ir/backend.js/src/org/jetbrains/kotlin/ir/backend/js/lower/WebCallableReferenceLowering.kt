@@ -53,22 +53,20 @@ abstract class WebCallableReferenceLowering(context: JsCommonBackendContext) :
                     context.irBuiltIns.functionN(arity)
             } else null
 
-    private fun StringBuilder.collectNamesForLambda(d: IrDeclarationWithName) {
+    private fun StringBuilder.collectNamesForLambda(d: IrDeclarationWithName, isLambda: Boolean) {
         val parent = d.parent
 
-        if (parent is IrPackageFragment) {
+        if (parent is IrPackageFragment || isLambda && parent is IrClass) {
             append(d.name.asString())
             return
         }
 
-        collectNamesForLambda(parent as IrDeclarationWithName)
+        collectNamesForLambda(parent as IrDeclarationWithName, isLambda)
 
         if (d is IrAnonymousInitializer) return
 
-        fun IrDeclaration.isLambdaFun(): Boolean = origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
-
         when {
-            d.isLambdaFun() -> {
+            d.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA -> {
                 append('$')
                 if (d is IrSimpleFunction && d.isSuspend) append('s')
                 append("lambda")
@@ -83,8 +81,9 @@ abstract class WebCallableReferenceLowering(context: JsCommonBackendContext) :
 
     override fun getReferenceClassName(reference: IrRichFunctionReference): Name {
         val sb = StringBuilder()
-        sb.collectNamesForLambda(reference.reflectionTargetSymbol?.owner ?: reference.invokeFunction)
-        if (!reference.isLambda) sb.append("\$ref")
+        val isLambda = reference.isLambda
+        sb.collectNamesForLambda(reference.reflectionTargetSymbol?.owner ?: reference.invokeFunction, isLambda)
+        if (!isLambda) sb.append("\$ref")
         return Name.identifier(sb.toString())
     }
 
@@ -162,7 +161,6 @@ abstract class WebCallableReferenceLowering(context: JsCommonBackendContext) :
         }
     }
 
-    
     protected fun IrRichFunctionReference.getId(backendContext: JsCommonBackendContext): String = when {
         isFunInterfaceConstructorAdapter() -> invokeFunction.returnType.getClass()!!.fqNameForIrSerialization.toString()
         else -> (backendContext.irFactory as IdSignatureRetriever).declarationSignature(reflectionTargetSymbol!!.owner).toString()

@@ -349,7 +349,7 @@ private fun CommonBackendContext.getOrCreateStaticMethod(function: IrFunction): 
     }
 
 private fun IrFunction.toInlineClassImplementationName(): Name {
-    val newName = parentAsClass.name.asString() + "__" + name.asString() + INLINE_CLASS_IMPL_SUFFIX
+    val newName = name.asString() + INLINE_CLASS_IMPL_SUFFIX
     return when {
         name.isSpecial -> Name.special("<$newName>")
         else -> Name.identifier(newName)

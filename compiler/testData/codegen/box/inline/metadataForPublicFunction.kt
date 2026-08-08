@@ -4,7 +4,7 @@ import kotlin.test.*
 // CHECK_CONTAINS_NO_CALLS: test1 except=imul
 // CHECK_CONTAINS_NO_CALLS: test2 except=imul
 // CHECK_CONTAINS_NO_CALLS: test3 except=imul
-// CHECK_CONTAINS_NO_CALLS: test5 except=imul;OInner_getInstance
+// CHECK_CONTAINS_NO_CALLS: test5 except=imul;O$OInner$getInstance
 
 inline
 public fun <T> apply(arg: T, func: (T)->T): T = func(arg)

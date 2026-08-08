@@ -1,7 +1,7 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: testImplicitThis except=Unit_getInstance
-// CHECK_CONTAINS_NO_CALLS: testExplicitThis except=Unit_getInstance
+// CHECK_CONTAINS_NO_CALLS: testImplicitThis except=Unit$getInstance
+// CHECK_CONTAINS_NO_CALLS: testExplicitThis except=Unit$getInstance
 
 internal class A(var value: Int)
 

@@ -14,13 +14,8 @@ import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
-import org.jetbrains.kotlin.ir.backend.js.objectInstanceField
-import org.jetbrains.kotlin.ir.backend.js.syntheticPrimaryConstructor
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
@@ -39,12 +34,17 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
  * Creates lazy object instance generator functions.
  */
 class ObjectDeclarationLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
+    companion object {
+        internal val INSTANCE_FIELD_NAME: Name = Name.identifier("instance")
+        internal val GET_INSTANCE_METHOD_NAME: Name = Name.identifier("getInstance")
+    }
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration !is IrClass || declaration.kind != ClassKind.OBJECT || declaration.isEffectivelyExternal())
             return null
 
         val getInstanceFun = getOrCreateGetInstanceFunction(declaration)
         val instanceField = getOrCreateInstanceField(declaration)
+        declaration.declarations.addAll(0, listOf(instanceField, getInstanceFun))
 
         val primaryConstructor = declaration.primaryConstructor ?: declaration.syntheticPrimaryConstructor!!
 
@@ -87,7 +87,7 @@ class ObjectDeclarationLowering(val context: JsCommonBackendContext) : Declarati
             }.statements
         }
 
-        return listOf(declaration, instanceField, getInstanceFun)
+        return null
     }
 
     private fun IrBuilderWithScope.irNullabilityCheck(instanceField: IrField): IrExpression {
@@ -156,12 +156,12 @@ class ObjectUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPas
 private fun getOrCreateInstanceField(obj: IrClass): IrField =
     obj::objectInstanceField.getOrSetIfNull {
         obj.factory.buildField {
-            name = Name.identifier(obj.name.asString() + "_instance")
+            name = ObjectDeclarationLowering.INSTANCE_FIELD_NAME
             type = obj.defaultType.makeNullable()
             isStatic = true
             origin = IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
         }.apply {
-            parent = obj.parent
+            parent = obj
             initializer = null  // Initialized with 'undefined'
         }
     }
@@ -173,11 +173,11 @@ private fun getOrCreateGetInstanceFunction(obj: IrClass): IrSimpleFunction =
         // signature and tags for JS namer. It prevents name clashes during the JS namer phase.
         getOrCreateInstanceField(obj)
         obj.factory.buildFun {
-            name = Name.identifier(obj.name.asString() + "_getInstance")
+            name = ObjectDeclarationLowering.GET_INSTANCE_METHOD_NAME
             returnType = obj.defaultType
             origin = JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION
             visibility = obj.visibility
         }.apply {
-            parent = obj.parent
+            parent = obj
         }
     }
