@@ -1,0 +1,7 @@
+// FUNCTION: take
+param n: value=Top type=Exact(Int) final
+param p: value=Top type=UpperBound(Base)
+
+// FUNCTION: <init>
+
+// FUNCTION: box

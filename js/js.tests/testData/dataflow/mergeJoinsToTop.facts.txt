@@ -1,0 +1,12 @@
+// FUNCTION: <init>
+
+// FUNCTION: <init>
+
+// FUNCTION: box
+local tmp: value=Top type=Top
+local tmp: value=Top type=Top
+local tmp: value=Top type=Top
+local tmp: value=Top type=Top
+local tmp: value=Top type=Top
+local x: value=Top type=Exact(Int) final
+local y: value=Top type=Top

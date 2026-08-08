@@ -1,0 +1,63 @@
+// FUNCTION: <init>
+// blocks=1 entry=BB0
+BB0:
+  Any()
+  terminator: Return(Unit)
+
+// FUNCTION: <init>
+// blocks=1 entry=BB0
+BB0:
+  Any()
+  terminator: Return(Unit)
+
+// FUNCTION: box
+// blocks=12 entry=BB0
+BB0:
+  var x: Int = 1
+  val tmp: dynamic = js(code = "true")
+  terminator: MultiCond(when { when { jsNot(a = jsEqeq(a = tmp, b = null)) -> jsEqeqeq(a = jsTypeOf(a = tmp), b = "boolean") else -> false } ->  -> BB1, else -> BB2)
+  succs: BB1, BB2
+BB1:
+  x = 2
+  terminator: Goto(BB2)
+  succs: BB2
+BB2:
+  var tmp: Base
+  val tmp: dynamic = js(code = "true")
+  terminator: MultiCond(when { when { jsNot(a = jsEqeq(a = tmp, b = null)) -> jsEqeqeq(a = jsTypeOf(a = tmp), b = "boolean") else -> false } ->  -> BB3, true -> BB4)
+  succs: BB3, BB4
+BB3:
+  tmp = A()
+  terminator: Goto(BB5)
+  succs: BB5
+BB4:
+  tmp = B()
+  terminator: Goto(BB5)
+  succs: BB5
+BB5:
+  val y: Base = tmp
+  var tmp: String
+  var tmp: Boolean
+  terminator: MultiCond(jsGt(a = x, b = 0) -> BB6, true -> BB7)
+  succs: BB6, BB7
+BB6:
+  tmp = isInterface(obj = y, iface = jsClassIntrinsic<Base>())
+  terminator: Goto(BB8)
+  succs: BB8
+BB7:
+  tmp = false
+  terminator: Goto(BB8)
+  succs: BB8
+BB8:
+  terminator: MultiCond(tmp -> BB9, true -> BB10)
+  succs: BB9, BB10
+BB9:
+  tmp = "OK"
+  terminator: Goto(BB11)
+  succs: BB11
+BB10:
+  tmp = "FAIL"
+  terminator: Goto(BB11)
+  succs: BB11
+BB11:
+  terminator: Return(tmp)

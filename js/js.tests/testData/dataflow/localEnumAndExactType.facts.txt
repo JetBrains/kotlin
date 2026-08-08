@@ -1,0 +1,22 @@
+// FUNCTION: static_init
+
+// FUNCTION: <init>
+param name: value=Top type=Exact(String) final
+param ordinal: value=Top type=Exact(Int) final
+
+// FUNCTION: values
+
+// FUNCTION: valueOf
+param value: value=Top type=Exact(String) final
+
+// FUNCTION: <get-entries>
+
+// FUNCTION: <init>
+
+// FUNCTION: box
+local e: value=Top type=UpperBound(Color)
+local x: value=Top type=Exact(Child) final
+
+// FUNCTION: Color_RED_getInstance
+
+// FUNCTION: Color_GREEN_getInstance

@@ -1,0 +1,7 @@
+// FUNCTION: box
+// unsupportedConstruct: IrTryImpl
+// blocks=1 entry=BB0
+BB0:
+  var tmp: String
+  try { // BLOCK\ntmp = "OK"\n}\ncatch ($p: dynamic){ // BLOCK\nvar tmp: String\nwhen {\njsInstanceOfIntrinsic(a = $p, b = jsClassIntrinsic<Throwable>()) -> { // BLOCK\nval e: Throwable = $p /*=> Throwable */\ntmp = "FAIL"\n}\nelse -> { // BLOCK\nthrow $p\n}\n}\ntmp = tmp\n}\n
+  terminator: Return(tmp)
