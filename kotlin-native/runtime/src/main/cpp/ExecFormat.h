@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2026 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,18 @@
 
 #include <stddef.h>
 
+#if __has_include("dlfcn.h")
+#include <dlfcn.h>
+#endif
+
 extern "C" {
 
 bool AddressToSymbol(const void* address, char* resultBuffer, size_t resultBufferSize, ptrdiff_t &resultOffset);
 
 }  // extern "C"
+
+#if defined(__cplusplus) && __has_include("dlfcn.h")
+bool AddressToSymbolWithDlInfo(const void* address, const Dl_info& info, char* resultBuffer, size_t resultBufferSize, ptrdiff_t& resultOffset);
+#endif
 
 #endif  // RUNTIME_EXECFORMAT_H
