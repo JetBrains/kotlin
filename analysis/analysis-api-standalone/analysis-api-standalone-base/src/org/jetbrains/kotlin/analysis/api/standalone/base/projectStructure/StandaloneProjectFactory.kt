@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.utils.topologicalSort
 import org.picocontainer.PicoContainer
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -426,7 +427,11 @@ object StandaloneProjectFactory {
             val pathString = FileUtil.toSystemIndependentName(path.toAbsolutePath().toString())
             when {
                 pathString.endsWith(JAR_PROTOCOL) || pathString.endsWith(KLIB_FILE_EXTENSION) -> {
-                    environment.jarFileSystem.findFileByPath(pathString + JAR_SEPARATOR)
+                    if (Files.exists(path)) {
+                        environment.jarFileSystem.findFileByPath(pathString + JAR_SEPARATOR)
+                    } else {
+                        null
+                    }
                 }
 
                 pathString.contains(JAR_SEPARATOR) -> {
