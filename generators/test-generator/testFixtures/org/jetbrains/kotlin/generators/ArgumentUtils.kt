@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.generators
 
 internal fun Array<String>.allowGenerationOnTeamCity(): Boolean {
-    return any { it == "allowGenerationOnTeamCity"}
+    return any { it == "allowGenerationOnTeamCity" }
 }
 
 internal fun Array<String>.skipTestAllFilesCheck(): Boolean {
-    return any { it == "skipTestAllFilesCheck"}
+    return any { it == "skipTestAllFilesCheck" }
+}
+
+internal fun Array<String>.tolerateEmptyModels(): Boolean {
+    return any { it == "tolerateEmptyModels" }
 }
