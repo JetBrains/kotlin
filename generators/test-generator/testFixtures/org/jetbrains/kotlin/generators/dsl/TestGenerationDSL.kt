@@ -137,7 +137,7 @@ class TestGroup(
                     File(testDataRoot), rootFile, recursive, excludeParentDirs, compiledPattern,
                     compiledExcludedPattern, testMethod, className, excludeDirs,
                     excludeDirsRecursively, testRunnerMethodName, annotations, extractTagsFromDirectory(rootFile), methodModels,
-                    skipTestAllFilesCheck, testKClass, isSmokeTest = smokeTest, smokeTestLimit = smokeTestLimit
+                    skipTestAllFilesCheck, testKClass, isAutoSmokeTest = smokeTest, autoSmokeTestLimit = smokeTestLimit
                 )
             )
         }
