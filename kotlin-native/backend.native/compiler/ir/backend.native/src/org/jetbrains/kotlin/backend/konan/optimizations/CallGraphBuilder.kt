@@ -143,7 +143,9 @@ internal class CallGraphBuilder(
             externalRootFunctions.add(symbol)
         else {
             wholeRootSet.add(symbol as DataFlowIR.FunctionSymbol.Declared)
-            functionStack.push(HandleFunctionParams(null, function))
+            if (!directEdges.containsKey(symbol)) {
+                functionStack.push(HandleFunctionParams(null, function))
+            }
         }
     }
 
