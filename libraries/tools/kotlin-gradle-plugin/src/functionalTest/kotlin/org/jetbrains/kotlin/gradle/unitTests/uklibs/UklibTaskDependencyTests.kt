@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.util.setUklibResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.util.allTaskDependencies
 import org.jetbrains.kotlin.gradle.util.setUklibPublicationStrategy
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -24,7 +25,7 @@ class UklibTaskDependencyTests {
                 jvm()
             }
         }.evaluate()
-        val assembleDependencies = project.tasks.getByName("assemble").taskDependencies.getDependencies(null).map { it.name }.toSet()
+        val assembleDependencies = project.allTaskDependencies(project.tasks.getByName("assemble")).map { it.name }.toSet()
         assertEquals(
             setOf<String>(
                 "allMetadataJar",
