@@ -93,7 +93,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         // Filter repeated cases. Allowed in Kotlin but unreachable.
         val cases = callToLabels.map {
             val constCoercion = it.call.arguments[1]!! as IrCall
-            val constValue = (constCoercion.arguments[0] as IrConst).value
+            val constValue = (constCoercion.arguments[0] as IrConst).jvmValue
             ValueToLabel(
                 constValue,
                 it.label
@@ -235,7 +235,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         // Don't generate repeated cases, which are unreachable but allowed in Kotlin.
         // Only keep the first encountered case:
         val cases =
-            callToLabels.map { ValueToLabel((it.call.arguments[1] as IrConst).value, it.label) }.distinctBy { it.value }
+            callToLabels.map { ValueToLabel((it.call.arguments[1] as IrConst).jvmValue, it.label) }.distinctBy { it.value }
 
         expressionToLabels.removeUnreachableLabels(cases)
 

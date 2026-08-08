@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.Oper
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperationPre_2_4_0.OperationCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.StatementCase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement.VarargElementCase
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.isKMutableProperty
 import org.jetbrains.kotlin.ir.util.isKProperty
+import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -900,15 +902,31 @@ class IrBodyDeserializer(
             BOOLEAN
             -> IrConstImpl.boolean(start, end, type, proto.boolean)
             BYTE
-            -> IrConstImpl.byte(start, end, type, proto.byte.toByte())
+            -> if (type.isUnsignedType()) {
+                IrConstImpl.ubyte(start, end, type, proto.byte.toUByte())
+            } else {
+                IrConstImpl.byte(start, end, type, proto.byte.toByte())
+            }
             CHAR
             -> IrConstImpl.char(start, end, type, proto.char.toChar())
             SHORT
-            -> IrConstImpl.short(start, end, type, proto.short.toShort())
+            -> if (type.isUnsignedType()) {
+                IrConstImpl.ushort(start, end, type, proto.short.toUShort())
+            } else {
+                IrConstImpl.short(start, end, type, proto.short.toShort())
+            }
             INT
-            -> IrConstImpl.int(start, end, type, proto.int)
+            -> if (type.isUnsignedType()) {
+                IrConstImpl.uint(start, end, type, proto.int.toUInt())
+            } else {
+                IrConstImpl.int(start, end, type, proto.int)
+            }
             LONG
-            -> IrConstImpl.long(start, end, type, proto.long)
+            -> if (type.isUnsignedType()) {
+                IrConstImpl.ulong(start, end, type, proto.long.toULong())
+            } else {
+                IrConstImpl.long(start, end, type, proto.long)
+            }
             STRING
             -> IrConstImpl.string(start, end, type, libraryFile.string(proto.string))
             FLOAT_BITS

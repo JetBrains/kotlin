@@ -69,9 +69,13 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             is IrConstKind.Null -> JsNullLiteral()
             is IrConstKind.Boolean -> JsBooleanLiteral(expression.value as Boolean)
             is IrConstKind.Byte -> JsIntLiteral((expression.value as Byte).toInt())
+            is IrConstKind.UByte -> JsIntLiteral((expression.value as UByte).toByte().toInt())
             is IrConstKind.Short -> JsIntLiteral((expression.value as Short).toInt())
+            is IrConstKind.UShort -> JsIntLiteral((expression.value as UShort).toShort().toInt())
             is IrConstKind.Int -> JsIntLiteral(expression.value as Int)
+            is IrConstKind.UInt -> JsIntLiteral((expression.value as UInt).toInt())
             is IrConstKind.Long -> JsBigIntLiteral(expression.value as Long)
+            is IrConstKind.ULong -> JsBigIntLiteral((expression.value as ULong).toLong())
             is IrConstKind.Char -> compilationException(
                 "Char const should have been lowered at this point",
                 expression

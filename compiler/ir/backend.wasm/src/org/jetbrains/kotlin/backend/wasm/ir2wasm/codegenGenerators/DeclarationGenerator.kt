@@ -625,9 +625,13 @@ fun generateConstExpression(
         }
         is IrConstKind.Boolean -> body.buildConstI32(if (expression.value as Boolean) 1 else 0, location)
         is IrConstKind.Byte -> body.buildConstI32((expression.value as Byte).toInt(), location)
+        is IrConstKind.UByte -> body.buildConstI32((expression.value as UByte).toByte().toInt(), location)
         is IrConstKind.Short -> body.buildConstI32((expression.value as Short).toInt(), location)
+        is IrConstKind.UShort -> body.buildConstI32((expression.value as UShort).toShort().toInt(), location)
         is IrConstKind.Int -> body.buildConstI32(expression.value as Int, location)
+        is IrConstKind.UInt -> body.buildConstI32((expression.value as UInt).toInt(), location)
         is IrConstKind.Long -> body.buildConstI64(expression.value as Long, location)
+        is IrConstKind.ULong -> body.buildConstI64((expression.value as ULong).toLong(), location)
         is IrConstKind.Char -> body.buildConstI32((expression.value as Char).code, location)
         is IrConstKind.Float -> body.buildConstF32(expression.value as Float, location)
         is IrConstKind.Double -> body.buildConstF64(expression.value as Double, location)

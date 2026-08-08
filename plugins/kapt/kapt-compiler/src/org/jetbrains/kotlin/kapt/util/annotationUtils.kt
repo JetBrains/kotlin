@@ -71,10 +71,10 @@ private fun IrConst.toConstantValue(): ConstantValue<*> {
         PrimitiveType.LONG -> LongValue((this.value as Number).toLong())
         PrimitiveType.DOUBLE -> DoubleValue((this.value as Number).toDouble())
         null -> when (constType.getUnsignedType()) {
-            UnsignedType.UBYTE -> UByteValue((this.value as Number).toByte())
-            UnsignedType.USHORT -> UShortValue((this.value as Number).toShort())
-            UnsignedType.UINT -> UIntValue((this.value as Number).toInt())
-            UnsignedType.ULONG -> ULongValue((this.value as Number).toLong())
+            UnsignedType.UBYTE -> UByteValue((this.value as UByte).toByte())
+            UnsignedType.USHORT -> UShortValue((this.value as UShort).toShort())
+            UnsignedType.UINT -> UIntValue((this.value as UInt).toInt())
+            UnsignedType.ULONG -> ULongValue((this.value as ULong).toLong())
             null -> when {
                 constType.isString() -> StringValue(this.value as String)
                 else -> error("Cannot convert IrConst ${this.render()} to ConstantValue")

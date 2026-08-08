@@ -897,7 +897,7 @@ class ExpressionCodegen(
 
     override fun visitConst(expression: IrConst, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
-        when (val value = expression.value) {
+        when (val value = expression.jvmValue) {
             is Boolean -> {
                 // BooleanConstants _may not_ be materialized, so we ensure an instruction for the line number.
                 mv.nop()
@@ -1468,12 +1468,12 @@ class ExpressionCodegen(
                 val type = when (arg.kind) {
                     IrConstKind.Boolean -> Type.BOOLEAN_TYPE
                     IrConstKind.Char -> Type.CHAR_TYPE
-                    IrConstKind.Int -> Type.INT_TYPE
-                    IrConstKind.Long -> Type.LONG_TYPE
+                    IrConstKind.Int, IrConstKind.UInt -> Type.INT_TYPE
+                    IrConstKind.Long, IrConstKind.ULong -> Type.LONG_TYPE
                     IrConstKind.Float -> Type.FLOAT_TYPE
                     IrConstKind.Double -> Type.DOUBLE_TYPE
-                    IrConstKind.Byte -> Type.BYTE_TYPE
-                    IrConstKind.Short -> Type.SHORT_TYPE
+                    IrConstKind.Byte, IrConstKind.UByte -> Type.BYTE_TYPE
+                    IrConstKind.Short, IrConstKind.UShort -> Type.SHORT_TYPE
                     IrConstKind.String -> JAVA_STRING_TYPE
                     IrConstKind.Null -> OBJECT_TYPE
                 }

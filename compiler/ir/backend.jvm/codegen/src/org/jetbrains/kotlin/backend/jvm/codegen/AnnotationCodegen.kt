@@ -219,7 +219,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
         annotationVisitor: AnnotationVisitor,
     ) {
         when (value) {
-            is IrConst -> annotationVisitor.visit(name, value.value)
+            is IrConst -> annotationVisitor.visit(name, value.jvmValue)
             is IrAnnotation -> {
                 val annotationClassType = value.classSymbol.owner.defaultType
                 val internalAnnName = typeMapper.mapType(annotationClassType).descriptor

@@ -200,10 +200,14 @@ internal fun IrConstantPrimitive.toBoxCacheValue(generationState: NativeGenerati
     val value = when (value.kind) {
         IrConstKind.Boolean -> if (value.value as Boolean) 1L else 0L
         IrConstKind.Byte -> (value.value as Byte).toLong()
+        IrConstKind.UByte -> (value.value as UByte).toLong()
         IrConstKind.Short -> (value.value as Short).toLong()
+        IrConstKind.UShort -> (value.value as UShort).toLong()
         IrConstKind.Char -> (value.value as Char).code.toLong()
         IrConstKind.Int -> (value.value as Int).toLong()
+        IrConstKind.UInt -> (value.value as UInt).toLong()
         IrConstKind.Long -> value.value as Long
+        IrConstKind.ULong -> (value.value as ULong).toLong()
         else -> throw IllegalArgumentException("IrConst of kind ${value.kind} can't be converted to box cache")
     }
     val [start, end] = cacheType.defaultRange

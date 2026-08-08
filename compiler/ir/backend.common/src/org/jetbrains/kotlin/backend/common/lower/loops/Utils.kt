@@ -88,9 +88,10 @@ internal val IrExpression.canHaveSideEffects: Boolean
 internal val IrExpression.constLongValue: Long?
     get() = when {
         this !is IrConst -> null
-        type.isUByte() -> (value as? Number)?.toLong()?.toUByte()?.toLong()
-        type.isUShort() -> (value as? Number)?.toLong()?.toUShort()?.toLong()
-        type.isUInt() -> (value as? Number)?.toLong()?.toUInt()?.toLong()
+        type.isUByte() -> (value as? UByte)?.toLong() ?: (value as? Number)?.toLong()?.toUByte()?.toLong()
+        type.isUShort() -> (value as? UShort)?.toLong() ?: (value as? Number)?.toLong()?.toUShort()?.toLong()
+        type.isUInt() -> (value as? UInt)?.toLong() ?: (value as? Number)?.toLong()?.toUInt()?.toLong()
+        type.isULong() -> (value as? ULong)?.toLong() ?: (value as? Number)?.toLong()
         type.isChar() -> (value as? Char)?.code?.toLong()
         else -> (value as? Number)?.toLong()
     }

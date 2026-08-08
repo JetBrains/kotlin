@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -18,10 +17,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
@@ -58,44 +55,36 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
     }
 
     override fun visitConst(expression: IrConst): IrExpression {
-        if (expression.type.isUnsigned() && expression.kind != IrConstKind.Null) {
-            return when (expression.type.classifierOrNull) {
-                context.irBuiltIns.ubyteClass -> lowerConst(
-                    expression,
-                    context.irBuiltIns.ubyteClass!!,
-                    IrConstImpl.Companion::byte,
-                    expression.value as Byte
-                )
+        return when (expression.kind) {
+            IrConstKind.UByte -> lowerConst(
+                expression,
+                context.irBuiltIns.ubyteClass!!,
+                IrConstImpl.Companion::ubyte,
+                expression.value as UByte
+            )
+            IrConstKind.UShort -> lowerConst(
+                expression,
+                context.irBuiltIns.ushortClass!!,
+                IrConstImpl.Companion::ushort,
+                expression.value as UShort
+            )
+            IrConstKind.UInt -> lowerConst(
+                expression,
+                context.irBuiltIns.uintClass!!,
+                IrConstImpl.Companion::uint,
+                expression.value as UInt
+            )
+            IrConstKind.ULong -> lowerConst(
+                expression,
+                context.irBuiltIns.ulongClass!!,
+                { _, _, _, v -> createLong(expression, v.toLong()) },
+                expression.value as ULong
+            )
 
-                context.irBuiltIns.ushortClass -> lowerConst(
-                    expression,
-                    context.irBuiltIns.ushortClass!!,
-                    IrConstImpl.Companion::short,
-                    expression.value as Short
-                )
-
-                context.irBuiltIns.uintClass -> lowerConst(
-                    expression,
-                    context.irBuiltIns.uintClass!!,
-                    IrConstImpl.Companion::int,
-                    expression.value as Int
-                )
-
-                context.irBuiltIns.ulongClass -> lowerConst(
-                    expression,
-                    context.irBuiltIns.ulongClass!!,
-                    { _, _, _, v -> createLong(expression, v) },
-                    expression.value as Long
-                )
-
-                else -> compilationException("Unknown unsigned type", expression)
-            }
-        }
-        return when {
-            expression.kind is IrConstKind.Char ->
+            IrConstKind.Char ->
                 lowerConst(expression, context.irBuiltIns.charClass, IrConstImpl.Companion::int, (expression.value as Char).code)
 
-            expression.kind is IrConstKind.Long ->
+            IrConstKind.Long ->
                 createLong(expression, expression.value as Long)
 
             else -> super.visitConst(expression)

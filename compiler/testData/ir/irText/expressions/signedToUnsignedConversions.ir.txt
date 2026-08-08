@@ -86,7 +86,7 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
             ARG <this>: CONST Int type=kotlin.Int value=255
           CALL 'public final fun toUByte (<this>: kotlin.Int): kotlin.UByte declared in kotlin' type=kotlin.UByte origin=null
             ARG <this>: CONST Int type=kotlin.Int value=255
-          CONST Byte type=kotlin.UByte value=42
+          CONST UByte type=kotlin.UByte value=42
   PROPERTY name:BIGGER_THAN_UBYTE visibility:public modality:FINAL [const,val]
     annotations:
       ImplicitIntegerCoercion
@@ -136,7 +136,7 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
       ImplicitIntegerCoercion
     FIELD PROPERTY_BACKING_FIELD name:UINT_CONST type:kotlin.UInt visibility:public [final,static]
       EXPRESSION_BODY
-        CONST Int type=kotlin.UInt value=42
+        CONST UInt type=kotlin.UInt value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-UINT_CONST> visibility:public modality:FINAL returnType:kotlin.UInt
       correspondingProperty: PROPERTY name:UINT_CONST visibility:public modality:FINAL [const,val]
       BLOCK_BODY
