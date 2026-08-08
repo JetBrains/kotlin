@@ -104,6 +104,21 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
     @get:Inject
     abstract val fs: FileSystemOperations
 
+    init {
+        // The shared package cannot be declared as an output by every coordinated task. Its local output may still be
+        // up-to-date after the root build directory is deleted, so explicitly invalidate the task when the shared marker disappears.
+        outputs.upToDateWhen {
+            val fingerprintFile = syntheticPackageFingerprint.asFile.orNull
+            if (fingerprintFile == null) {
+                true
+            } else {
+                fingerprintFile.isFile && coordinationService.get().sharedPackageGenerationOutputsExist(
+                        fingerprintFile.readText().trim().split("\n")[1]
+                    )
+            }
+        }
+    }
+
     fun configureWithExtension(swiftPMImportExtension: SwiftPMImportExtension) {
         iosDeploymentVersion.set(swiftPMImportExtension.iosMinimumDeploymentTarget)
         macosDeploymentVersion.set(swiftPMImportExtension.macosMinimumDeploymentTarget)

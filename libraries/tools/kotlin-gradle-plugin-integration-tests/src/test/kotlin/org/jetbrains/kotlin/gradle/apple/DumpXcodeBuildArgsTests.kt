@@ -22,13 +22,13 @@ import org.jetbrains.kotlin.gradle.testbase.assertOutputContainsExactlyTimes
 import org.jetbrains.kotlin.gradle.testbase.assertOutputDoesNotContain
 import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.build
-import org.jetbrains.kotlin.gradle.testbase.buildAndFail
 import org.jetbrains.kotlin.gradle.testbase.findTasksByPattern
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.createDirectories
+import kotlin.io.path.deleteRecursively
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
@@ -480,6 +480,40 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                     assertDumpDirectoryContainsXcodebuildArgsDump(localIphoneosDumpDir(fuzzProjectName))
                     assertDumpDirectoryContainsXcodebuildArgsDump(localIphoneosDumpDir(buzzProjectName))
                 }
+            }
+        }
+    }
+
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
+    @GradleTest
+    fun `KT-88104 - dump task does not fail after root build directory is removed`(version: GradleVersion) {
+        val libraryProjectName = "lib1"
+
+        project("empty", version) {
+            withLockFileFixture {
+                val packageRepo = repoRef("TestPackage").also { createRepo(it.name, listOf("1.0.0")) }
+
+                initSwiftPmProject(cacheDirFile) {}
+
+                val libraryProject = project("empty", version) {
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            swiftPackage(
+                                url = url(packageRepo.url),
+                                version = exact("1.0.0"),
+                                products = listOf(product(packageRepo.name)),
+                            )
+                        }
+                    }
+                }
+                include(libraryProject, libraryProjectName)
+
+                val dumpTask = ":$libraryProjectName:dumpXcodebuildArgsIphoneos"
+                build(dumpTask)
+
+                projectPath.resolve("build").deleteRecursively()
+
+                build(dumpTask)
             }
         }
     }

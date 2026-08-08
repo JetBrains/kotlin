@@ -93,6 +93,18 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
         // task must not be up-to-date so the next build retries the resolve.
         testExecutionHooks.convention(SwiftImportExecutionHooks.NONE)
         outputs.upToDateWhen { !ideImportError.get().asFile.exists() }
+        // Shared resolve outputs are @Internal to avoid overlapping outputs across coordinated tasks. The local copies can
+        // survive deletion of the root build directory, so also use the shared marker files for the up-to-date decision.
+        outputs.upToDateWhen {
+            val fingerprintFile = syntheticPackageFingerprint.asFile.orNull
+            if (fingerprintFile == null) {
+                true
+            } else {
+                fingerprintFile.isFile && coordinationService.get().sharedSwiftResolveOutputsExist(
+                        fingerprintFile.readText().trim().split("\n")[1]
+                    )
+            }
+        }
     }
 
     /**
