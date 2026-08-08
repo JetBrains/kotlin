@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.evaluation.FloatingPointOptimizationMode
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
@@ -105,7 +106,7 @@ private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): A
 }
 
 private fun createConstEvaluationPhase(context: JsIrBackendContext): ConstEvaluationLowering {
-    return ConstEvaluationLowering(context, isFloatingPointOptimizationEnabled = false)
+    return ConstEvaluationLowering(context, FloatingPointOptimizationMode.DISABLED)
 }
 
 fun jsLoweringsOfTheFirstPhase(

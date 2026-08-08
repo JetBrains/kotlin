@@ -26,6 +26,12 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.evalBinaryOp
 import org.jetbrains.kotlin.resolve.constants.evaluate.evalUnaryOp
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
+enum class FloatingPointOptimizationMode {
+    DISABLED,
+    NO_TO_STRING,
+    ENABLED,
+}
+
 /**
  * Evaluates the given IR expression using constant folding.
  * This function returns either
@@ -38,16 +44,20 @@ fun evaluate(
     irFile: IrFile,
     irBuiltIns: IrBuiltIns,
     inlineConstTracker: InlineConstTracker?,
-    isFloatingPointOptimizationEnabled: Boolean,
+    fpOptimizationMode: FloatingPointOptimizationMode,
 ): IrExpression? {
     val inlineResult = expression.accept(IrConstFieldInliner(irFile, inlineConstTracker), null)
-    val evaluationResult = (inlineResult ?: expression).accept(IrExpressionEvaluator(irBuiltIns, isFloatingPointOptimizationEnabled), null)
+    val visitor = IrExpressionEvaluator(
+        irBuiltIns = irBuiltIns,
+        fpOptimizationMode = fpOptimizationMode,
+    )
+    val evaluationResult = (inlineResult ?: expression).accept(visitor, null)
     return evaluationResult ?: inlineResult
 }
 
 private class IrExpressionEvaluator(
     private val irBuiltIns: IrBuiltIns,
-    private val isFloatingPointOptimizationEnabled: Boolean,
+    private val fpOptimizationMode: FloatingPointOptimizationMode,
 ) : IrVisitor<IrExpression?, Nothing?>() {
     private fun IrExpression.evaluateAsConst(): IrConst? = this.accept(this@IrExpressionEvaluator, null) as? IrConst
 
@@ -68,7 +78,7 @@ private class IrExpressionEvaluator(
         val builder = StringBuilder()
         for (argument in expression.arguments) {
             val const = argument.evaluateAsConst() ?: return null
-            if (!isFloatingPointOptimizationEnabled && const.type.isFloatOrDouble()) return null
+            if (fpOptimizationMode == FloatingPointOptimizationMode.DISABLED && const.type.isFloatOrDouble()) return null
             builder.append(const.getCastedValue() ?: return null)
         }
         return builder.toString().toIrConstOrNull(expression.type, expression.startOffset, expression.endOffset)
@@ -80,16 +90,20 @@ private class IrExpressionEvaluator(
         val operands = expression.arguments.mapNotNull { argument ->
             if (argument == null) return@mapNotNull null
             val const = argument.evaluateAsConst() ?: return null
-            if (!isFloatingPointOptimizationEnabled && const.type.isFloatOrDouble()) return null
+            if (fpOptimizationMode == FloatingPointOptimizationMode.DISABLED && const.type.isFloatOrDouble()) return null
             const
         }
 
         val computed: Any? = try {
             when (operands.size) {
                 1 -> {
-                    val type = owner.parameters[0].type.toCompileTimeType() ?: return null
+                    val type = owner.parameters[0].type
+                    if (fpOptimizationMode != FloatingPointOptimizationMode.ENABLED) {
+                        if (name == "toString" && type.isFloatOrDouble()) return null
+                    }
+                    val compileTimeType = type.toCompileTimeType() ?: return null
                     val value = operands[0].getCastedValue() ?: return null
-                    evalUnaryOp(name, type, value)
+                    evalUnaryOp(name, compileTimeType, value)
                 }
                 2 -> {
                     val leftType = owner.parameters[0].type.toCompileTimeType() ?: return null
@@ -108,7 +122,7 @@ private class IrExpressionEvaluator(
 
         if (computed == null) return null
         return computed.toIrConstOrNull(expression.type, expression.startOffset, expression.endOffset)?.takeUnless {
-            !isFloatingPointOptimizationEnabled && it.type.isFloatOrDouble()
+            fpOptimizationMode == FloatingPointOptimizationMode.DISABLED && it.type.isFloatOrDouble()
         }
     }
 
