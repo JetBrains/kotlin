@@ -45,7 +45,7 @@ FILE: builderExplicitBuildersWithIncompatibleTypeParameters_kotlin.kt
                 super<R|kotlin/Any|>()
             }
 
-            public open fun build(): R|ExplicitBuilderWithTypeParametersMoreThanRequired<T1, T2>|
+            public open fun build(): R|ExplicitBuilderWithTypeParametersMoreThanRequired<T1>|
 
             public open fun p(p: R|T1|): R|ExplicitBuilderWithTypeParametersMoreThanRequired.ExplicitBuilderWithTypeParametersMoreThanRequiredBuilder<T1, T2>|
 

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -68,6 +69,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         builder: SuperBuilder,
         builderSymbol: FirClassSymbol<*>,
         builderDeclaration: FirDeclaration,
+        substitutor: ConeSubstitutor,
         existingFunctionNames: Set<Name>,
     ) {
         // Don't care about manually written builder classes without specified type parameters

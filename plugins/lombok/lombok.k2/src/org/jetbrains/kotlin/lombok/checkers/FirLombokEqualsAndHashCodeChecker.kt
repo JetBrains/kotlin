@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.isEqualsAndHashCode
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
-import org.jetbrains.kotlin.lombok.generators.kotlin.isRelevantForConflictsCheck
+import org.jetbrains.kotlin.lombok.generators.hasReceiverOrContextParameters
 
 object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
     private val functionNames = setOf(EQUALS_NAME, HASHCODE_NAME)
@@ -75,7 +75,7 @@ object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind
         processAllFunctions {
             found = found ||
                     !it.origin.isEqualsAndHashCode &&
-                    it.isRelevantForConflictsCheck &&
+                    !it.hasReceiverOrContextParameters &&
                     (it.name == EQUALS_NAME &&
                             it.valueParameterSymbols.singleOrNull()?.resolvedReturnType?.isNullableAny == true ||
                             it.name == HASHCODE_NAME &&

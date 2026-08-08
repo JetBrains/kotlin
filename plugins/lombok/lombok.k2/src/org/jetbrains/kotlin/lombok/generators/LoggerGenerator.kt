@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.kotlin.createConstructorIfGeneratedCompanion
 import org.jetbrains.kotlin.lombok.generators.kotlin.initializeCompanionObjectIfNeeded
-import org.jetbrains.kotlin.lombok.generators.kotlin.isRelevantForConflictsCheck
 import org.jetbrains.kotlin.lombok.generators.kotlin.needsConstructorIfGeneratedCompanion
 import org.jetbrains.kotlin.lombok.generators.kotlin.buildJvmStaticAnnotationCallOrError
 import org.jetbrains.kotlin.lombok.LombokNames
@@ -195,7 +194,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         // Ignore generation if a property with the same name already exists (but warn about it in a checker)
         var fieldOrPropertyAlreadyExists = false
         context.declaredScope?.processPropertiesByName(logFieldOrPropertyName) {
-            fieldOrPropertyAlreadyExists = fieldOrPropertyAlreadyExists || it.isRelevantForConflictsCheck
+            fieldOrPropertyAlreadyExists = fieldOrPropertyAlreadyExists || !it.hasReceiverOrContextParameters
         }
         if (fieldOrPropertyAlreadyExists) return null
 

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.lombok.generators.LombokConstructorsGenerator
 import org.jetbrains.kotlin.lombok.generators.ToStringGenerator
 import org.jetbrains.kotlin.lombok.generators.EqualsAndHashCodeGenerator
 import org.jetbrains.kotlin.lombok.config.LombokService
+import org.jetbrains.kotlin.lombok.generators.BuilderGenerator
 import java.io.File
 
 class FirLombokCommonRegistrar(private val lombokConfigFile: File?) : FirExtensionRegistrar() {
@@ -20,6 +21,7 @@ class FirLombokCommonRegistrar(private val lombokConfigFile: File?) : FirExtensi
         +::ToStringGenerator
         +::LombokConstructorsGenerator
         +::EqualsAndHashCodeGenerator
+        +::BuilderGenerator
 
         registerDiagnosticContainers(LombokCliDiagnostics)
     }

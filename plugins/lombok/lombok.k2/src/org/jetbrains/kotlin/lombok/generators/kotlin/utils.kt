@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
@@ -30,9 +29,6 @@ import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.lombok.generators.hasJavaOrigin
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
-
-val FirCallableSymbol<*>.isRelevantForConflictsCheck: Boolean
-    get() = !isExtension && !hasContextParameters
 
 /**
  * Annotations on primary constructor val/var params with @Target(FIELD) end up in the

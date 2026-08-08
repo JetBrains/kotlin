@@ -42,3 +42,15 @@ class CleanWidget(
     @Singular
     val tags: List<String>,
 )
+
+// `@Builder` on a secondary constructor: only `@Singular` is checkable (`@Builder.Default`
+// is `@Target(FIELD)`, so it can't land on a bare constructor parameter at all).
+class ConstructorSingularCannotSingularize(val id: Int) {
+    @Builder
+    constructor(id: Int, <!CANNOT_SINGULARIZE_NAME!>@Singular<!> sheep: List<String>) : this(id)
+}
+
+class ConstructorParameterDefaultIgnored(val id: Int, val extra: Int) {
+    @Builder
+    constructor(id: Int = <!BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION!>0<!>) : this(id, -1)
+}
