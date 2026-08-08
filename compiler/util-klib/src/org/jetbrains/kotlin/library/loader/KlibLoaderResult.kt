@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,11 +8,7 @@ package org.jetbrains.kotlin.library.loader
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
-import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.IncompatibleAbiVersion
-import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.InvalidLibraryFormat
-import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.LibraryNotFound
-import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.OtherCheckMismatch
-import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.PlatformCheckMismatch
+import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.*
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblematicLibrary
 
 /**
@@ -123,13 +119,13 @@ class KlibLoaderResult(
     }
 }
 
+typealias KlibLoaderErrorReporterCallback = (defaultSeverity: KlibLoaderResult.ProblemSeverity, message: String) -> Unit
+
 /**
  * Report any problems with loading KLIBs stored in [KlibLoaderResult] to the supplied [reporter] lambda.
  * Returns `true` if there were any problems reported.
  */
-fun KlibLoaderResult.reportLoadingProblemsIfAny(
-    reporter: (defaultSeverity: KlibLoaderResult.ProblemSeverity, message: String) -> Unit
-): Boolean {
+fun KlibLoaderResult.reportLoadingProblemsIfAny(reporter: KlibLoaderErrorReporterCallback): Boolean {
     if (problematicLibraries.isEmpty()) return false
 
     problematicLibraries.forEach { problematicLibrary ->

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
-import org.jetbrains.kotlin.ir.backend.js.jsOutputName
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.js.config.sourceMap
 import org.jetbrains.kotlin.js.config.useDebuggerCustomFormatters
 import org.jetbrains.kotlin.library.isWasmStdlib
+import org.jetbrains.kotlin.library.jsOutputName
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.wasm.config.*
 import java.net.URLEncoder

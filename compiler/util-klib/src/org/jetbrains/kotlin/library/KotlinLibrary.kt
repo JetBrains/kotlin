@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.library.components.ir
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
-import java.util.Properties
+import java.util.*
 
 /**
  * [org.jetbrains.kotlin.library.KotlinAbiVersion]
@@ -40,6 +40,9 @@ const val KLIB_PROPERTY_DEPENDS = "depends"
 const val KLIB_PROPERTY_PACKAGE = "package"
 const val KLIB_PROPERTY_BUILTINS_PLATFORM = "builtins_platform"
 const val KLIB_PROPERTY_NEW_COMPANION_INITIALIZATION = "new_companion_initialization"
+
+// JS-specific
+const val KLIB_PROPERTY_JS_OUTPUT_NAME = "jsOutputName"
 
 // Native-specific:
 const val KLIB_PROPERTY_INTEROP = "interop"
@@ -139,6 +142,9 @@ val BaseKotlinLibrary.hasDependencies: Boolean
     get() = !manifestProperties.getProperty(KLIB_PROPERTY_DEPENDS).isNullOrBlank()
 
 interface KotlinLibrary : Klib, BaseKotlinLibrary
+
+val KotlinLibrary.jsOutputName: String?
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_JS_OUTPUT_NAME)
 
 val BaseKotlinLibrary.interopFlag: String?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_INTEROP)

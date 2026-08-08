@@ -14,10 +14,16 @@ import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScriptFragment
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.TsCompilationStrategy
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
+import org.jetbrains.kotlin.library.jsOutputName
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.KlibLoaderErrorReporterCallback
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.metadata.KlibInputModule
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.TargetPlatform
 import java.io.File
+import java.nio.file.Path
 
 public data class TypeScriptExportConfig(
     public val targetPlatform: TargetPlatform,
@@ -77,6 +83,16 @@ public fun runTypeScriptExport(klibs: List<KlibInputModule<TypeScriptModuleConfi
             }
         }
     }
+}
+
+public fun createTypeScriptExportInputModule(
+    klibPath: Path,
+    errorReporter: KlibLoaderErrorReporterCallback,
+): KlibInputModule<TypeScriptModuleConfig> {
+    val result = KlibLoader { libraryPaths(klibPath.toString()) }.load()
+    result.reportLoadingProblemsIfAny(errorReporter)
+    val library = result.librariesStdlibFirst.single()
+    return KlibInputModule(library.uniqueName, klibPath, TypeScriptModuleConfig(outputName = library.jsOutputName))
 }
 
 private fun writeMergedTsFile(
