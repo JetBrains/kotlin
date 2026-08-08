@@ -19,7 +19,7 @@ internal interface ArgumentTestDescriptor<T> {
 
     /**
      * Raw CLI string forms of [argumentValues]. Each string must round-trip: parsing it via
-     * `applyArgumentStrings` produces a typed value whose [getValueString] returns the same string.
+     * `applyCommandLineArguments` produces a typed value whose [getValueString] returns the same string.
      */
     val argumentRawValues: List<String>
 

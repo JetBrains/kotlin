@@ -159,5 +159,5 @@ private fun configureKmpJvmFragments(enableClasspathMetadata: Boolean): (JvmComp
         add("-Xuse-metadata-on-incremental-classpath=$enableClasspathMetadata")
     }
 
-    builder.compilerArguments.applyArgumentStrings(args)
+    builder.compilerArguments.applyCommandLineArguments(args)
 }
