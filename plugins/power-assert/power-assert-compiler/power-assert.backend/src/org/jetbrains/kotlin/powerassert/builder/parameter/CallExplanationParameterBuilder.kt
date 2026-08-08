@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.powerassert.diagram.IrDiagramVariable
 import org.jetbrains.kotlin.powerassert.diagram.SourceFile
-import org.jetbrains.kotlin.powerassert.sourceRange
+import org.jetbrains.kotlin.powerassert.diagram.sourceRange
 
 class CallExplanationParameterBuilder(
     private val factory: ExplanationFactory,

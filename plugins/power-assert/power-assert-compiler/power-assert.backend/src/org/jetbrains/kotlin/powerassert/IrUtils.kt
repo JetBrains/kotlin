@@ -22,21 +22,15 @@ package org.jetbrains.kotlin.powerassert
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
-import org.jetbrains.kotlin.ir.expressions.isComparisonOperator
-import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -71,43 +65,10 @@ fun IrBuilderWithScope.irLambda(
     return IrFunctionExpressionImpl(startOffset, endOffset, lambdaType, lambda, IrStatementOrigin.LAMBDA)
 }
 
-val IrElement.earliestStartOffset: Int
-    get() {
-        var offset = startOffset
-        this.acceptChildrenVoid(
-            object : IrVisitorVoid() {
-                override fun visitElement(element: IrElement) {
-                    if (element.startOffset < offset) offset = element.startOffset
-                    element.acceptChildrenVoid(this)
-                }
-            },
-        )
-        return offset
-    }
-
-private var IrElement.sourceRangeAttribute: ClosedRange<Int>? by irAttribute(copyByDefault = false)
-val IrElement.sourceRange: ClosedRange<Int>
-    get() {
-        sourceRangeAttribute?.let { return it }
-
-        var range = startOffset..endOffset
-        acceptChildrenVoid(
-            object : IrVisitorVoid() {
-                override fun visitElement(element: IrElement) {
-                    val childRange = element.sourceRange
-                    range = minOf(range.start, childRange.start)..maxOf(range.endInclusive, childRange.endInclusive)
-                }
-            },
-        )
-
-        sourceRangeAttribute = range
-        return range
-    }
-
 /**
- * An implicit argument may only be either `this` class dispatch receiver ([IrGetField])
- * or `this` extension function receiver ([IrGetValue]). As such, these are the only two
- * IR elements that need to be checked for [IrStatementOrigin.IMPLICIT_ARGUMENT].
+ * An implicit argument may only be either `this` class dispatch receiver ([IrGetField]),
+ * `this` extension function receiver ([IrGetValue]), or an implicit context parameter ([IrGetValue]).
+ * As such, these are the only IR elements that need to be checked for [IrStatementOrigin.IMPLICIT_ARGUMENT].
  */
 internal fun IrExpression.isImplicitArgument(): Boolean = when (this) {
     is IrGetValue -> origin == IrStatementOrigin.IMPLICIT_ARGUMENT

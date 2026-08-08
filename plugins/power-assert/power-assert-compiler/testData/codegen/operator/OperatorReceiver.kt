@@ -1,5 +1,5 @@
 // LANGUAGE: +ContextParameters
-// ISSUE: KT-73870, KT-73898
+// ISSUE: KT-73870, KT-73898, KT-88179
 
 fun box(): String {
     return listOf(
@@ -27,6 +27,18 @@ fun box(): String {
         "test22: " to { test22() },
         "test23: " to { test23() },
         "test24: " to { test24() },
+        "test25: " to { test25() },
+        "test26: " to { test26() },
+        "test27: " to { test27() },
+        "test28: " to { test28() },
+        "test29: " to { test29() },
+        "test30: " to { test30() },
+        "test31: " to { test31() },
+        "test32: " to { test32() },
+        "test33: " to { test33() },
+        "test34: " to { test34() },
+        "test35: " to { test35() },
+        "test36: " to { test36() },
     ).joinToString("") { (name, test) -> name + test() }
 }
 
@@ -97,12 +109,24 @@ fun test4() = expectThrowableMessage {
 }
 
 fun test5() = expectThrowableMessage {
+    context(context) {
+        assert(dispatch - dispatch == Failure)
+    }
+}
+
+fun test6() = expectThrowableMessage {
     with(context) {
         assert(extension - extension == Failure)
     }
 }
 
-fun test6() = expectThrowableMessage {
+fun test7() = expectThrowableMessage {
+    context(context) {
+        assert(extension - extension == Failure)
+    }
+}
+
+fun test8() = expectThrowableMessage {
     with(dispatch) {
         with(context) {
             assert(extension * extension == Failure)
@@ -110,27 +134,41 @@ fun test6() = expectThrowableMessage {
     }
 }
 
-fun test7() = expectThrowableMessage {
+fun test9() = expectThrowableMessage {
+    with(dispatch) {
+        context(context) {
+            assert(extension * extension == Failure)
+        }
+    }
+}
+
+fun test10() = expectThrowableMessage {
     assert(dispatch in dispatch)
 }
 
-fun test8() = expectThrowableMessage {
+fun test11() = expectThrowableMessage {
     assert(dispatch in extension)
 }
 
-fun test9() = expectThrowableMessage {
+fun test12() = expectThrowableMessage {
     with(dispatch) {
         assert(extension in extension)
     }
 }
 
-fun test10() = expectThrowableMessage {
+fun test13() = expectThrowableMessage {
     with(context) {
         assert(context in dispatch)
     }
 }
 
-fun test11() = expectThrowableMessage {
+fun test14() = expectThrowableMessage {
+    context(context) {
+        assert(context in dispatch)
+    }
+}
+
+fun test15() = expectThrowableMessage {
     context(_: Context)
     operator fun Extension.contains(other: Dispatch): Boolean = false
 
@@ -139,9 +177,26 @@ fun test11() = expectThrowableMessage {
     }
 }
 
-fun test12() = expectThrowableMessage {
+fun test16() = expectThrowableMessage {
+    context(_: Context)
+    operator fun Extension.contains(other: Dispatch): Boolean = false
+
+    context(context) {
+        assert(dispatch in extension)
+    }
+}
+
+fun test17() = expectThrowableMessage {
     with(dispatch) {
         with(context) {
+            assert(context in extension)
+        }
+    }
+}
+
+fun test18() = expectThrowableMessage {
+    with(dispatch) {
+        context(context) {
             assert(context in extension)
         }
     }
@@ -151,33 +206,45 @@ fun test12() = expectThrowableMessage {
 // Regular Call //
 // ============ //
 
-fun test13() = expectThrowableMessage {
+fun test19() = expectThrowableMessage {
     assert(dispatch.plus(dispatch) == Failure)
 }
 
-fun test14() = expectThrowableMessage {
+fun test20() = expectThrowableMessage {
     assert(extension.plus(extension) == Failure)
 }
 
-fun test15() = expectThrowableMessage {
+fun test21() = expectThrowableMessage {
     with(dispatch) {
         assert(extension.minus(extension) == Failure)
     }
 }
 
-fun test16() = expectThrowableMessage {
+fun test22() = expectThrowableMessage {
     with(context) {
         assert(dispatch.minus(dispatch) == Failure)
     }
 }
 
-fun test17() = expectThrowableMessage {
+fun test23() = expectThrowableMessage {
+    context(context) {
+        assert(dispatch.minus(dispatch) == Failure)
+    }
+}
+
+fun test24() = expectThrowableMessage {
     with(context) {
         assert(extension.minus(extension) == Failure)
     }
 }
 
-fun test18() = expectThrowableMessage {
+fun test25() = expectThrowableMessage {
+    context(context) {
+        assert(extension.minus(extension) == Failure)
+    }
+}
+
+fun test26() = expectThrowableMessage {
     with(dispatch) {
         with(context) {
             assert(extension.times(extension) == Failure)
@@ -185,27 +252,41 @@ fun test18() = expectThrowableMessage {
     }
 }
 
-fun test19() = expectThrowableMessage {
+fun test27() = expectThrowableMessage {
+    with(dispatch) {
+        context(context) {
+            assert(extension.times(extension) == Failure)
+        }
+    }
+}
+
+fun test28() = expectThrowableMessage {
     assert(dispatch.contains(dispatch))
 }
 
-fun test20() = expectThrowableMessage {
+fun test29() = expectThrowableMessage {
     assert(extension.contains(dispatch))
 }
 
-fun test21() = expectThrowableMessage {
+fun test30() = expectThrowableMessage {
     with(dispatch) {
         assert(extension.contains(extension))
     }
 }
 
-fun test22() = expectThrowableMessage {
+fun test31() = expectThrowableMessage {
     with(context) {
         assert(dispatch.contains(context))
     }
 }
 
-fun test23() = expectThrowableMessage {
+fun test32() = expectThrowableMessage {
+    context(context) {
+        assert(dispatch.contains(context))
+    }
+}
+
+fun test33() = expectThrowableMessage {
     context(_: Context)
     operator fun Extension.contains(other: Dispatch): Boolean = false
 
@@ -214,9 +295,26 @@ fun test23() = expectThrowableMessage {
     }
 }
 
-fun test24() = expectThrowableMessage {
+fun test34() = expectThrowableMessage {
+    context(_: Context)
+    operator fun Extension.contains(other: Dispatch): Boolean = false
+
+    context(context) {
+        assert(extension.contains(dispatch))
+    }
+}
+
+fun test35() = expectThrowableMessage {
     with(dispatch) {
         with(context) {
+            assert(extension.contains(context))
+        }
+    }
+}
+
+fun test36() = expectThrowableMessage {
+    with(dispatch) {
+        context(context) {
             assert(extension.contains(context))
         }
     }

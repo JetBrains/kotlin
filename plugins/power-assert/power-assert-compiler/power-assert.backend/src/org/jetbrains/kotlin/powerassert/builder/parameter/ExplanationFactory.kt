@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.powerassert.PowerAssertBuiltIns
 import org.jetbrains.kotlin.powerassert.diagram.IrDiagramVariable
+import org.jetbrains.kotlin.powerassert.diagram.sourceRange
 import org.jetbrains.kotlin.powerassert.diagram.toDisplayOffset
-import org.jetbrains.kotlin.powerassert.sourceRange
 
 class ExplanationFactory(
     private val builtIns: PowerAssertBuiltIns,
