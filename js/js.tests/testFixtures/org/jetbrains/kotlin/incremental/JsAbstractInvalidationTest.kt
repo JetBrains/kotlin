@@ -186,6 +186,7 @@ abstract class JsAbstractInvalidationTest(
                     artifactConfiguration = artifactConfiguration,
                     sourceMapsInfo = SourceMapsInfo.from(configuration),
                     caches = icCaches,
+                    configuration.useEs6ConstLet,
                 )
 
                 (val jsOutput = compilationOut, val rebuiltModules = buildModules) = jsExecutableProducer.buildExecutable(outJsProgram = true)

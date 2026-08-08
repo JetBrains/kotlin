@@ -142,6 +142,9 @@ object JSConfigurationKeys {
     @JvmField
     val USE_ES6_CLASSES = CompilerConfigurationKey.create<Boolean>("USE_ES6_CLASSES")
 
+    @JvmField
+    val USE_ES6_CONST_LET = CompilerConfigurationKey.create<Boolean>("USE_ES6_CONST_LET")
+
     // List of KLibs for this linking phase.
     @JvmField
     val INCLUDES = CompilerConfigurationKey.create<String>("INCLUDES")
@@ -334,6 +337,10 @@ var CompilerConfiguration.optimizeGeneratedJs: Boolean
 var CompilerConfiguration.useEs6Classes: Boolean
     get() = getBoolean(JSConfigurationKeys.USE_ES6_CLASSES)
     set(value) { put(JSConfigurationKeys.USE_ES6_CLASSES, value) }
+
+var CompilerConfiguration.useEs6ConstLet: Boolean
+    get() = getBoolean(JSConfigurationKeys.USE_ES6_CONST_LET)
+    set(value) { put(JSConfigurationKeys.USE_ES6_CONST_LET, value) }
 
 var CompilerConfiguration.includes: String?
     get() = get(JSConfigurationKeys.INCLUDES)

@@ -7,7 +7,8 @@ fun foo(x: Int): Int {
     return x
 }
 
-// EXPECT_GENERATED_JS: function=box expect=doWhileEvaluationOrder.optimized.js
+// EXPECT_GENERATED_JS: function=box expect=doWhileEvaluationOrder.optimized.js TARGET_BACKENDS=JS_IR
+// EXPECT_GENERATED_JS: function=box expect=doWhileEvaluationOrder.optimized.es6.js TARGET_BACKENDS=JS_IR_ES6
 fun box(): String {
     var i = 1
     var sum = 0

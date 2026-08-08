@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.lower.ES6ConstLetPreparationLowering
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -17,32 +18,35 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.isFalseConst
 import org.jetbrains.kotlin.ir.util.isTrueConst
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.js.config.useEs6ConstLet
 
 class WhileConditionFoldingLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.acceptVoid(Visitor(container))
+        irBody.transformChildrenVoid(Transformer(container))
     }
 
-    private inner class Visitor(private val container: IrDeclaration) : IrVisitorVoid() {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        override fun visitWhileLoop(loop: IrWhileLoop) {
+    private inner class Transformer(private val container: IrDeclaration) : IrElementTransformerVoid() {
+        override fun visitWhileLoop(loop: IrWhileLoop): IrExpression {
             super.visitWhileLoop(loop)
             context.createIrBuilder(container.symbol).process(loop)
+            return loop
         }
 
-        override fun visitDoWhileLoop(loop: IrDoWhileLoop) {
+        override fun visitDoWhileLoop(loop: IrDoWhileLoop): IrExpression {
             super.visitDoWhileLoop(loop)
-            val body = loop.body ?: return
+            val body = loop.body ?: return loop
             if (!hasContinue(body, loop)) {
                 context.createIrBuilder(container.symbol).process(loop)
+                if (context.configuration.useEs6ConstLet) {
+                    // After this optimization, some variables declared in the loop body could now be referenced
+                    // from the loop condition. In JavaScript, it's illegal for a const/let declared in a loop body to
+                    // be referenced from the loop' condition, so we have to fix this.
+                    return ES6ConstLetPreparationLowering(context).hoistVariablesReferencedInCondition(loop)
+                }
             }
+            return loop
         }
     }
 

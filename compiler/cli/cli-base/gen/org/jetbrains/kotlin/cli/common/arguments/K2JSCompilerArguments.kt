@@ -67,6 +67,16 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xes-const-let",
+        description = "Variables in generated JavaScript code are declared with 'let' or 'const' keywords instead of 'var'",
+    )
+    var useEs6ConstLet: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xes-generators",
         description = "Enable ES2015 generator functions usage inside the compiled code. Enabled by default in case of ES2015 target usage",
     )
