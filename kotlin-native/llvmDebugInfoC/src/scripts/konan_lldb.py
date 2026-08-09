@@ -292,15 +292,11 @@ def _clear_stale_cache(process):
     return True
 
 
-def _array_query_cache_key(value):
-    return value.GetValueAsUnsigned()
-
-
 def _get_cached_sbvalue_info(value):
     if value is None or value.GetValueAsUnsigned() == 0:
         return None
     return _get_cached_sbvalue_info_for_key(
-        value.GetProcess(), _array_query_cache_key(value)
+        value.GetProcess(), value.GetValueAsUnsigned()
     )
 
 
@@ -308,7 +304,7 @@ def _get_or_create_cached_sbvalue_info(value):
     if value is None or value.GetValueAsUnsigned() == 0:
         return None
     return _get_or_create_cached_sbvalue_info_for_key(
-        value.GetProcess(), _array_query_cache_key(value)
+        value.GetProcess(), value.GetValueAsUnsigned()
     )
 
 
@@ -400,12 +396,12 @@ def _set_cached_proxy(value, proxy):
         cached_info.resolved_proxy = proxy
 
 
-def _get_cached_summary_for_key(process, key):
+def _get_cached_summary(process, key):
     cached_info = _get_cached_sbvalue_info_for_key(process, key)
     return None if cached_info is None else cached_info.summary
 
 
-def _set_cached_summary_for_key(process, key, summary):
+def _set_cached_summary(process, key, summary):
     if summary is None:
         return
     cached_info = _get_or_create_cached_sbvalue_info_for_key(process, key)
@@ -608,7 +604,7 @@ def _get_map_entry_type(process):
 
 def _render_object(addr):
     process = lldb.debugger.GetSelectedTarget().GetProcess()
-    cached = _get_cached_summary_for_key(process, addr)
+    cached = _get_cached_summary(process, addr)
     if cached is not None:
         return cached
     buff_addr = _evaluate("(void *)Konan_DebugBuffer()").unsigned
@@ -1172,7 +1168,7 @@ def _run_batch_child_metadata_request(provider, include_names=True):
                         provider._process, child_key, type_name
                     )
                 if summary:
-                    _set_cached_summary_for_key(
+                    _set_cached_summary(
                         provider._process, child_key, summary
                     )
     finally:
@@ -1241,7 +1237,7 @@ class FastKonanObjectSyntheticProvider(lldb.SBSyntheticValueProvider):
     def _field_address(self, index):
         cached_addresses = _get_cached_child_addresses_by_index(self._valobj)
         if cached_addresses is None or index not in cached_addresses:
-            self._get_child_names_by_index()
+            _run_batch_child_metadata_request(self)
             cached_addresses = _get_cached_child_addresses_by_index(
                 self._valobj
             )
@@ -1525,15 +1521,16 @@ class KonanMapSyntheticProvider:
         if self._entry_type is None or not self._entry_type.IsValid():
             return None
 
-        pointer_size = self._target.GetAddressByteSize()
+        target = self._valobj.GetTarget()
+        pointer_size = target.GetAddressByteSize()
         addresses = [key.GetValueAsUnsigned(), value.GetValueAsUnsigned()]
         if pointer_size == 8:
             data = lldb.SBData.CreateDataFromUInt64Array(
-                self._target.GetByteOrder(), pointer_size, addresses
+                target.GetByteOrder(), pointer_size, addresses
             )
         elif pointer_size == 4:
             data = lldb.SBData.CreateDataFromUInt32Array(
-                self._target.GetByteOrder(), pointer_size, addresses
+                target.GetByteOrder(), pointer_size, addresses
             )
         else:
             return None
@@ -1644,17 +1641,15 @@ class KonanProxyTypeProvider:
 
     def get_child_index(self, name):
         proxy = self._get_proxy()
-        child_index = proxy.get_child_index(name)
-        return child_index if 0 <= child_index < proxy.num_children() else -1
+        return proxy.get_child_index(name)
 
     def get_child_at_index(self, index):
         proxy = self._get_proxy()
-        if not 0 <= index < proxy.num_children():
-            return None
         return proxy.get_child_at_index(index)
 
     def __getattr__(self, item):
         return getattr(self._get_proxy(), item)
+
 
 def _get_cached_type_name(variable):
     if variable is None or not variable.IsValid():
