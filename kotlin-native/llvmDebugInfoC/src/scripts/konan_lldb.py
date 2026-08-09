@@ -36,6 +36,44 @@ _RUNTIME_TYPE_OBJECT = 1
 _RUNTIME_TYPE_VECTOR128 = 10
 
 
+def _get_cpp_helpers_string():
+    return f"""
+auto failAndFree = [](int* fieldTypesData, void** fieldAddressesData, char* fieldNamesData, char* typeNamesData) -> int {{
+    (void)free(fieldNamesData);
+    (void)free(fieldTypesData);
+    (void)free(fieldAddressesData);
+    (void)free(typeNamesData);
+    return 0;
+}};
+auto appendCString = [](char** buffer, int* capacity, int* used, const char* text) -> int {{
+    if (text == 0) text = "";
+    if (*buffer == 0 || *capacity <= 0) return 0;
+    int length = 0;
+    while (text[length] != '\\0') ++length;
+    int required = *used + length + 1;
+    if (required > *capacity) {{
+        int newCapacity = *capacity;
+        while (required > newCapacity) newCapacity *= 2;
+        char* newBuffer = (char*)(void*)realloc(*buffer, newCapacity);
+        if (newBuffer == 0) return 0;
+        *buffer = newBuffer;
+        *capacity = newCapacity;
+    }}
+    for (int i = 0; i < length; ++i) (*buffer)[*used + i] = text[i];
+    (*buffer)[*used + length] = '\\0';
+    *used += length + 1;
+    return 1;
+}};
+auto getObjectTypeName = [](int fieldType, void* fieldAddress) -> const char* {{
+    if (fieldType != {_RUNTIME_TYPE_OBJECT} || fieldAddress == 0) return "";
+    void* child = *reinterpret_cast<void**>(fieldAddress);
+    if (child == 0) return "";
+    const char* typeName = (const char*)Konan_DebugGetTypeName(child);
+    return typeName != 0 ? typeName : "";
+}};
+"""
+
+
 class CollectionKind(Enum):
     LIST = "list"
     MAP = "map"
@@ -965,232 +1003,214 @@ def _run_batch_child_metadata_request(provider, include_names=True):
         "object child metadata request",
     )
 
-    field_names_addr = 0
-    field_names_size = 0
-    field_types_addr = 0
-    field_addresses_addr = 0
-    type_names_addr = 0
-    type_names_size = 0
+    metadata_addrs = (0, 0, 0, 0)
     try:
-        names_setup_expr = (
-            "const int initialFieldNamesCapacity = 4096;"
-            "char* fieldNamesData = (char*)(void*)malloc(initialFieldNamesCapacity);"
-            "if (fieldNamesData == 0) {"
-            "  (void)free(fieldTypesData);"
-            "  (void)free(fieldAddressesData);"
-            "  (void)free(typeNamesData);"
-            "  return 0;"
-            "}"
-            "int fieldNamesCapacity = initialFieldNamesCapacity;"
-            "int fieldNamesUsed = 0;"
-        ) if include_names else (
-            "char* fieldNamesData = 0;"
-            "int fieldNamesCapacity = 0;"
-            "int fieldNamesUsed = 0;"
+        _evaluate_batch_child_metadata_request(
+            provider, result_addr, result_slot_count, count, include_names
         )
-        names_append_expr = (
-            "  if (!appendCString(&fieldNamesData, &fieldNamesCapacity, &fieldNamesUsed, (const char*)Konan_DebugGetFieldName(obj, i))) {"
-            "    (void)free(fieldNamesData);"
-            "    (void)free(fieldTypesData);"
-            "    (void)free(fieldAddressesData);"
-            "    (void)free(typeNamesData);"
-            "    return 0;"
-            "  }"
-        ) if include_names else ""
+        (
+            metadata_addrs,
+            names,
+            types,
+            addresses,
+            type_names,
+            summaries,
+        ) = _read_child_metadata(
+            provider, result_addr, result_slot_count, count, include_names
+        )
+        _cache_child_metadata(
+            provider, names, types, addresses, type_names, summaries
+        )
+    finally:
+        _free_batch_child_metadata_result(metadata_addrs)
+        _deallocate_inferior_memory(provider._process, result_addr)
+    return names
+
+
+def _evaluate_batch_child_metadata_request(
+    provider, result_addr, result_slot_count, count, include_names
+):
+    _evaluate(
+        f"""
+        ([]() -> int {{
+            void** result = (void **){_hex(result_addr)};
+            for (int i = 0; i < {result_slot_count}; ++i) result[i] = 0;
+            void* obj = (void *){_hex(provider._valobj.unsigned)};
+            int count = {count};
+            const bool includeFieldNames = {'true' if include_names else 'false'};
+            {_get_cpp_helpers_string()}
+
+            int* fieldTypesData = (int*)(void*)malloc((unsigned long long)count * sizeof(int));
+            void** fieldAddressesData = (void**)(void*)malloc((unsigned long long)count * sizeof(void*));
+            const int initialTypeNamesCapacity = 4096;
+            char* typeNamesData = (char*)(void*)malloc(initialTypeNamesCapacity);
+            const int initialFieldNamesCapacity = 4096;
+            char* fieldNamesData = includeFieldNames ? (char*)(void*)malloc(initialFieldNamesCapacity) : 0;
+
+            if (fieldTypesData == 0 || fieldAddressesData == 0 || typeNamesData == 0 || (includeFieldNames && fieldNamesData == 0)) {{
+                return failAndFree(fieldTypesData, fieldAddressesData, fieldNamesData, typeNamesData);
+            }}
+
+            int typeNamesCapacity = initialTypeNamesCapacity;
+            int typeNamesUsed = 0;
+            int fieldNamesCapacity = includeFieldNames ? initialFieldNamesCapacity : 0;
+            int fieldNamesUsed = 0;
+
+            for (int i = 0; i < count; ++i) {{
+                fieldTypesData[i] = (int)Konan_DebugGetFieldType(obj, i);
+                void* fieldAddress = (void*)Konan_DebugGetFieldAddress(obj, i);
+                fieldAddressesData[i] = fieldAddress;
+                const char* typeName = getObjectTypeName(fieldTypesData[i], fieldAddress);
+                appendCString(&typeNamesData, &typeNamesCapacity, &typeNamesUsed, typeName)
+                if (includeFieldNames) {{
+                    const char* fieldName = (const char*)Konan_DebugGetFieldName(obj, i);
+                    appendCString(&fieldNamesData, &fieldNamesCapacity, &fieldNamesUsed, fieldName)
+                }}
+            }}
+
+            result[0] = fieldNamesData;
+            result[1] = (void *)(unsigned long long)fieldNamesUsed;
+            result[2] = fieldTypesData;
+            result[3] = fieldAddressesData;
+            result[4] = typeNamesData;
+            result[5] = (void *)(unsigned long long)typeNamesUsed;
+            return 0;
+        }})()
+        """
+    )
+
+
+def _read_memory_or_raise(process, address, size, message):
+    error = lldb.SBError()
+    raw_value = process.ReadMemory(address, size, error)
+    if not error.Success():
+        raise DebuggerException(message)
+    return raw_value
+
+
+def _read_child_metadata(provider, result_addr, result_slot_count, count, include_names):
+    pointer_size = provider._target.GetAddressByteSize()
+    pointer_format = "Q" if pointer_size == 8 else "I"
+    raw_result = _read_memory_or_raise(
+        provider._process,
+        result_addr,
+        pointer_size * result_slot_count,
+        "Failed to read FastKonanObjectSyntheticProvider child metadata result",
+    )
+    prefix = _struct_prefix_for_target(provider._target)
+    (
+        field_names_addr,
+        field_names_size,
+        field_types_addr,
+        field_addresses_addr,
+        type_names_addr,
+        type_names_size,
+    ) = struct.unpack(f"{prefix}{result_slot_count}{pointer_format}", raw_result)
+    if (
+        (include_names and field_names_addr == 0)
+        or field_types_addr == 0
+        or field_addresses_addr == 0
+        or type_names_addr == 0
+    ):
+        raise DebuggerException(
+            "FastKonanObjectSyntheticProvider child metadata was not fetched"
+        )
+
+    raw_field_names = b""
+    if include_names:
+        raw_field_names = _read_memory_or_raise(
+            provider._process,
+            field_names_addr,
+            field_names_size,
+            "Failed to read FastKonanObjectSyntheticProvider field names",
+        )
+    raw_field_types = _read_memory_or_raise(
+        provider._process,
+        field_types_addr,
+        count * 4,
+        "Failed to read FastKonanObjectSyntheticProvider field types",
+    )
+    raw_field_addresses = _read_memory_or_raise(
+        provider._process,
+        field_addresses_addr,
+        count * pointer_size,
+        "Failed to read FastKonanObjectSyntheticProvider field addresses",
+    )
+    raw_type_names = _read_memory_or_raise(
+        provider._process,
+        type_names_addr,
+        type_names_size,
+        "Failed to read FastKonanObjectSyntheticProvider type names",
+    )
+    if include_names:
+        names = _decode_c_string_array(raw_field_names, count)
+    else:
+        names = [str(index) for index in range(count)]
+    type_names = _decode_c_string_array(raw_type_names, count)
+    types = list(struct.unpack(f"{prefix}{count}i", raw_field_types))
+    addresses = list(
+        struct.unpack(f"{prefix}{count}{pointer_format}", raw_field_addresses)
+    )
+    summaries = [""] * count
+    return (
+        (
+            field_names_addr,
+            field_types_addr,
+            field_addresses_addr,
+            type_names_addr,
+        ),
+        names,
+        types,
+        addresses,
+        type_names,
+        summaries,
+    )
+
+
+def _cache_child_metadata(provider, names, types, addresses, type_names, summaries):
+    for index, name in enumerate(names):
+        _set_cached_child_name(provider._valobj, index, name)
+    for index, address in enumerate(addresses):
+        _set_cached_child_address(provider._valobj, index, address)
+    for index, child_type in enumerate(types):
+        _set_cached_child_type(provider._valobj, index, child_type)
+    for field_address, child_type, type_name, summary in zip(
+        addresses, types, type_names, summaries
+    ):
+        if child_type == _RUNTIME_TYPE_OBJECT and field_address:
+            child_key = _read_pointer(
+                provider._process, provider._target, field_address
+            )
+            if type_name:
+                _set_cached_type_name(provider._process, child_key, type_name)
+            if summary:
+                _set_cached_summary(provider._process, child_key, summary)
+
+
+def _free_batch_child_metadata_result(metadata_addrs):
+    (
+        field_names_addr,
+        field_types_addr,
+        field_addresses_addr,
+        type_names_addr,
+    ) = metadata_addrs
+    if (
+        field_names_addr
+        or field_types_addr
+        or field_addresses_addr
+        or type_names_addr
+    ):
         _evaluate(
             (
                 "([]() -> int {"
-                "void** result = "
-                f"(void **){_hex(result_addr)};"
-                f"for (int i = 0; i < {result_slot_count}; ++i) result[i] = 0;"
-                "auto appendCString = [](char** buffer, int* capacity, int* used, const char* text) -> int {"
-                "  if (text == 0) text = \"\";"
-                "  if (*buffer == 0 || *capacity <= 0) return 0;"
-                "  int length = 0;"
-                "  while (text[length] != '\\0') ++length;"
-                "  int required = *used + length + 1;"
-                "  if (required > *capacity) {"
-                "    int newCapacity = *capacity;"
-                "    while (required > newCapacity) newCapacity *= 2;"
-                "    char* newBuffer = (char*)(void*)realloc(*buffer, newCapacity);"
-                "    if (newBuffer == 0) return 0;"
-                "    *buffer = newBuffer;"
-                "    *capacity = newCapacity;"
-                "  }"
-                "  for (int i = 0; i < length; ++i) (*buffer)[*used + i] = text[i];"
-                "  (*buffer)[*used + length] = '\\0';"
-                "  *used += length + 1;"
-                "  return 1;"
-                "};"
-                f"void* obj = (void *){_hex(provider._valobj.unsigned)};"
-                f"int count = {count};"
-                "int* fieldTypesData = (int*)(void*)malloc((unsigned long long)count * sizeof(int));"
-                "if (fieldTypesData == 0) return 0;"
-                "void** fieldAddressesData = (void**)(void*)malloc((unsigned long long)count * sizeof(void*));"
-                "if (fieldAddressesData == 0) {"
-                "  (void)free(fieldTypesData);"
-                "  return 0;"
-                "}"
-                "const int initialTypeNamesCapacity = 4096;"
-                "char* typeNamesData = (char*)(void*)malloc(initialTypeNamesCapacity);"
-                "if (typeNamesData == 0) {"
-                "  (void)free(fieldTypesData);"
-                "  (void)free(fieldAddressesData);"
-                "  return 0;"
-                "}"
-                "int typeNamesCapacity = initialTypeNamesCapacity;"
-                "int typeNamesUsed = 0;"
-                + names_setup_expr
-                + "for (int i = 0; i < count; ++i) {"
-                "  fieldTypesData[i] = (int)Konan_DebugGetFieldType(obj, i);"
-                "  void* fieldAddress = (void*)Konan_DebugGetFieldAddress(obj, i);"
-                "  fieldAddressesData[i] = fieldAddress;"
-                + names_append_expr
-                + "  const char* typeName = \"\";"
-                "  if (fieldTypesData[i] == 1 && fieldAddress != 0) {"
-                "    void* child = *reinterpret_cast<void**>(fieldAddress);"
-                "    if (child != 0) {"
-                "      const char* candidateTypeName = (const char*)Konan_DebugGetTypeName(child);"
-                "      if (candidateTypeName != 0) typeName = candidateTypeName;"
-                "    }"
-                "  }"
-                "  if (!appendCString(&typeNamesData, &typeNamesCapacity, &typeNamesUsed, typeName)) {"
-                "    (void)free(fieldNamesData);"
-                "    (void)free(fieldTypesData);"
-                "    (void)free(fieldAddressesData);"
-                "    (void)free(typeNamesData);"
-                "    return 0;"
-                "  }"
-                "}"
-                "result[0] = fieldNamesData;"
-                "result[1] = (void *)(unsigned long long)fieldNamesUsed;"
-                "result[2] = fieldTypesData;"
-                "result[3] = fieldAddressesData;"
-                "result[4] = typeNamesData;"
-                "result[5] = (void *)(unsigned long long)typeNamesUsed;"
+                f"(void)free((void *){_hex(field_names_addr)});"
+                f"(void)free((void *){_hex(field_types_addr)});"
+                f"(void)free((void *){_hex(field_addresses_addr)});"
+                f"(void)free((void *){_hex(type_names_addr)});"
                 "return 0;"
                 "})()"
             )
         )
-
-        error = lldb.SBError()
-        raw_result = provider._process.ReadMemory(
-            result_addr, pointer_size * result_slot_count, error
-        )
-        if not error.Success():
-            raise DebuggerException(
-                "Failed to read FastKonanObjectSyntheticProvider child metadata result"
-            )
-
-        prefix = _struct_prefix_for_target(provider._target)
-        (
-            field_names_addr,
-            field_names_size,
-            field_types_addr,
-            field_addresses_addr,
-            type_names_addr,
-            type_names_size,
-        ) = struct.unpack(
-            f"{prefix}{result_slot_count}{pointer_format}", raw_result
-        )
-        if (
-            (include_names and field_names_addr == 0)
-            or field_types_addr == 0
-            or field_addresses_addr == 0
-            or type_names_addr == 0
-        ):
-            raise DebuggerException(
-                "FastKonanObjectSyntheticProvider child metadata was not fetched"
-            )
-
-        raw_field_names = b""
-        if include_names:
-            raw_field_names = provider._process.ReadMemory(
-                field_names_addr, field_names_size, error
-            )
-            if not error.Success():
-                raise DebuggerException(
-                    "Failed to read FastKonanObjectSyntheticProvider field names"
-                )
-
-        raw_field_types = provider._process.ReadMemory(
-            field_types_addr, count * 4, error
-        )
-        if not error.Success():
-            raise DebuggerException(
-                "Failed to read FastKonanObjectSyntheticProvider field types"
-            )
-
-        raw_field_addresses = provider._process.ReadMemory(
-            field_addresses_addr, count * pointer_size, error
-        )
-        if not error.Success():
-            raise DebuggerException(
-                "Failed to read FastKonanObjectSyntheticProvider field addresses"
-            )
-
-        raw_type_names = provider._process.ReadMemory(
-            type_names_addr, type_names_size, error
-        )
-        if not error.Success():
-            raise DebuggerException(
-                "Failed to read FastKonanObjectSyntheticProvider type names"
-            )
-
-        if include_names:
-            names = _decode_c_string_array(raw_field_names, count)
-        else:
-            names = [str(index) for index in range(count)]
-        type_names = _decode_c_string_array(raw_type_names, count)
-        types = list(struct.unpack(f"{prefix}{count}i", raw_field_types))
-        addresses = list(
-            struct.unpack(
-                f"{prefix}{count}{pointer_format}", raw_field_addresses
-            )
-        )
-        summaries = [""] * count
-
-        for index, name in enumerate(names):
-            _set_cached_child_name(provider._valobj, index, name)
-        for index, address in enumerate(addresses):
-            _set_cached_child_address(provider._valobj, index, address)
-        for index, child_type in enumerate(types):
-            _set_cached_child_type(provider._valobj, index, child_type)
-        for field_address, child_type, type_name, summary in zip(
-            addresses, types, type_names, summaries
-        ):
-            if child_type == _RUNTIME_TYPE_OBJECT and field_address:
-                child_key = _read_pointer(
-                    provider._process, provider._target, field_address
-                )
-                if type_name:
-                    _set_cached_type_name(
-                        provider._process, child_key, type_name
-                    )
-                if summary:
-                    _set_cached_summary(
-                        provider._process, child_key, summary
-                    )
-    finally:
-        if (
-            field_names_addr
-            or field_types_addr
-            or field_addresses_addr
-            or type_names_addr
-        ):
-            _evaluate(
-                (
-                    "([]() -> int {"
-                    f"(void)free((void *){_hex(field_names_addr)});"
-                    f"(void)free((void *){_hex(field_types_addr)});"
-                    f"(void)free((void *){_hex(field_addresses_addr)});"
-                    f"(void)free((void *){_hex(type_names_addr)});"
-                    "return 0;"
-                    "})()"
-                )
-            )
-        _deallocate_inferior_memory(provider._process, result_addr)
-    return names
 
 
 class FastKonanObjectSyntheticProvider(lldb.SBSyntheticValueProvider):
