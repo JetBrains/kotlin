@@ -1061,10 +1061,10 @@ def _evaluate_batch_child_metadata_request(
                 void* fieldAddress = (void*)Konan_DebugGetFieldAddress(obj, i);
                 fieldAddressesData[i] = fieldAddress;
                 const char* typeName = getObjectTypeName(fieldTypesData[i], fieldAddress);
-                appendCString(&typeNamesData, &typeNamesCapacity, &typeNamesUsed, typeName)
+                appendCString(&typeNamesData, &typeNamesCapacity, &typeNamesUsed, typeName);
                 if (includeFieldNames) {{
                     const char* fieldName = (const char*)Konan_DebugGetFieldName(obj, i);
-                    appendCString(&fieldNamesData, &fieldNamesCapacity, &fieldNamesUsed, fieldName)
+                    appendCString(&fieldNamesData, &fieldNamesCapacity, &fieldNamesUsed, fieldName);
                 }}
             }}
 
