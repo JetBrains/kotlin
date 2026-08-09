@@ -846,8 +846,11 @@ internal object DevirtualizationAnalysis {
             val badEdges = mutableListOf<Pair<Node, Node.CastEdge>>()
             for (node in topologicalOrder) {
                 node.directCastEdges
-                        ?.filter { it.node.priority < node.priority } // Contradicts topological order.
-                        ?.forEach { badEdges += node to it }
+                        ?.forEach {
+                            if (it.node.priority < node.priority){ // Contradicts topological order.
+                                badEdges += node to it
+                            }
+                        }
             }
             badEdges.sortBy { it.second.node.priority } // Heuristic.
 
@@ -868,9 +871,10 @@ internal object DevirtualizationAnalysis {
                         node.types.or(constraintGraph.nodes[it].types)
                     }
                     node.reversedCastEdges
-                            ?.filter { it.node.priority < node.priority } // Doesn't contradict topological order.
                             ?.forEach {
-                                node.types.orWithFilterHasChanged(it.node.types, it.suitableTypes)
+                                if(it.node.priority < node.priority) { // Doesn't contradict topological order.
+                                    node.types.orWithFilterHasChanged(it.node.types, it.suitableTypes)
+                                }
                             }
                 }
                 if (iterations >= maxNumberOfIterations) break
