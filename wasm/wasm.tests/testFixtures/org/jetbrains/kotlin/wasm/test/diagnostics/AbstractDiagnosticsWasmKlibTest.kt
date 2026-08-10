@@ -99,7 +99,7 @@ abstract class AbstractWasmDiagnosticTestBase(
         configureLoweredIrHandlersStep {
             useHandlers(::IrDiagnosticsHandler)
         }
-        facadeStep { FirKlibSerializerCliWasmFacade(it, true) }
+        facadeStep(facade = { FirKlibSerializerCliWasmFacade(it, firstTimeCompilation = true) })
 
         klibArtifactsHandlersStep {
             useHandlers(::KlibBackendDiagnosticsHandler)

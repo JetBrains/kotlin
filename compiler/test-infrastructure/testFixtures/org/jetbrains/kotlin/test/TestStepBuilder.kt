@@ -29,6 +29,7 @@ sealed class TestStepBuilder<InputArtifact, OutputArtifact, out FacadeStep>
 
         class NonGroupingStage<InputArtifact, OutputArtifact>(
             facade: Constructor<AbstractTestFacade<InputArtifact, OutputArtifact>>,
+            private val inputArtifactSelection: FacadeInputArtifactSelection,
         ) : FacadeStepBuilder<
                 InputArtifact,
                 OutputArtifact,
@@ -38,7 +39,7 @@ sealed class TestStepBuilder<InputArtifact, OutputArtifact, out FacadeStep>
                                 OutputArtifact : ResultingArtifact<OutputArtifact> {
             @TestInfrastructureInternals
             override fun createTestStep(testServices: TestServices): TestStep.NonGroupingStep.FacadeStep<InputArtifact, OutputArtifact> {
-                return TestStep.NonGroupingStep.FacadeStep(facade.invoke(testServices))
+                return TestStep.NonGroupingStep.FacadeStep(facade.invoke(testServices), inputArtifactSelection)
             }
         }
 

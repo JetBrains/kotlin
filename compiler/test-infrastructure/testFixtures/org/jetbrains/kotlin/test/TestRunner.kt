@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectivesImpl
 import org.jetbrains.kotlin.test.model.AnalysisHandler
 import org.jetbrains.kotlin.test.model.ResultingArtifact
+import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -56,24 +57,53 @@ sealed class TestRunner<Step : TestStep<*, *>, Configuration : TestConfiguration
         ): TestStep.StepResult<*>
     }
 
+    /**
+     * The decision about how the next step of the pipeline should be handled, see [runPipelineOnSingleUnit].
+     */
+    protected sealed class StepInput {
+        /** The step should be executed with [inputArtifact]. */
+        class Run(val inputArtifact: ResultingArtifact<*>) : StepInput()
+
+        /** The step is not applicable in this pipeline run (e.g. the branch producing its input artifact was not taken). */
+        object Skip : StepInput()
+
+        /** The pipeline is configured incorrectly, so the whole unit processing should be aborted with [exception]. */
+        class Fail(val exception: WrappedException) : StepInput()
+    }
+
+    /**
+     * Runs all configured [TestConfiguration.steps] one after another, tracking the artifact produced by the last
+     * executed facade step (the *latest* artifact).
+     *
+     * [resolveStepInput] decides for each step whether it should be executed, skipped or reported as a
+     * misconfiguration, and which artifact should be passed to it.
+     */
     protected fun runPipelineOnSingleUnit(
         produceStartingArtifact: () -> ResultingArtifact<*>,
-        shouldRunStep: (Step, ResultingArtifact<*>) -> Boolean,
+        resolveStepInput: (Step, ResultingArtifact<*>) -> StepInput,
         runStep: RunStep<Step>,
         onArtifactResult: (ResultingArtifact<*>) -> Unit,
         onHandlersResult: (Step) -> Unit
     ): Boolean {
-        var inputArtifact = produceStartingArtifact()
+        var latestArtifact = produceStartingArtifact()
 
         for (step in testConfiguration.steps) {
-            if (!shouldRunStep(step, inputArtifact)) continue
+            val inputArtifact = when (val stepInput = resolveStepInput(step, latestArtifact)) {
+                is StepInput.Skip -> continue
+                is StepInput.Fail -> {
+                    @OptIn(PrivateForInline::class)
+                    failuresInterceptor._allFailedExceptions += stepInput.exception
+                    return false
+                }
+                is StepInput.Run -> stepInput.inputArtifact
+            }
 
             val thereWereCriticalExceptionsOnPreviousSteps = failuresInterceptor.allFailedExceptions.any { it.failureDisablesNextSteps }
             when (val result = runStep.run(step, inputArtifact, thereWereCriticalExceptionsOnPreviousSteps)) {
                 is TestStep.StepResult.Artifact<*> -> {
                     checkTestInfrastructure(step is TestStep.FacadeStep<*, *>) { "Step must be FacadeStep" }
                     onArtifactResult(result.outputArtifact)
-                    inputArtifact = result.outputArtifact
+                    latestArtifact = result.outputArtifact
                 }
                 is TestStep.StepResult.ErrorFromFacade -> {
                     @OptIn(PrivateForInline::class)
@@ -93,6 +123,17 @@ sealed class TestRunner<Step : TestStep<*, *>, Configuration : TestConfiguration
             }
         }
         return true
+    }
+
+    /**
+     * Renders all configured steps with their input and output artifact kinds. Used in error messages about
+     * incorrectly configured pipelines.
+     */
+    protected fun renderPipeline(): String {
+        return testConfiguration.steps.joinToString(separator = "\n", prefix = "Configured pipeline:\n") { step ->
+            val output = step.outputArtifactKind?.let { " -> $it" }.orEmpty()
+            "  ${step.inputArtifactKind}$output: $step"
+        }
     }
 
     class FailuresInterceptor(val testConfiguration: TestConfiguration<*>) {
@@ -229,6 +270,15 @@ class NonGroupingTestRunner(
         val services = testConfiguration.testServices
         val moduleStructure = services.moduleStructure
 
+        val firstModule = moduleStructure.modules.firstOrNull()
+        if (firstModule != null) {
+            val startingArtifactKind = testConfiguration.startingArtifactFactory.invoke(firstModule).kind
+            val pipelineIsInvalid = failuresInterceptor.withAssertionCatching({ WrappedException.FromTestPipeline(it, failedModule = null) }) {
+                validatePipeline(startingArtifactKind)
+            }
+            if (pipelineIsInvalid) return
+        }
+
         for (module in moduleStructure.modules) {
             val shouldProcessNextModules = processModule(module, services.artifactsProvider)
             if (!shouldProcessNextModules) break
@@ -264,18 +314,108 @@ class NonGroupingTestRunner(
         module: TestModule,
         artifactsProvider: ArtifactsProvider,
     ): Boolean {
+        /*
+         * Output kinds of the facade steps which were visited but produced nothing for this module. They are tracked to
+         * distinguish "this branch of the pipeline was not taken for this module" (a legal situation) from
+         * "this artifact kind can never appear here" (a misconfigured test), see [resolveStepInput].
+         */
+        val unproducedArtifactKinds = mutableSetOf<TestArtifactKind<*>>()
+
         return runPipelineOnSingleUnit(
             produceStartingArtifact = { testConfiguration.startingArtifactFactory.invoke(module) },
-            shouldRunStep = { step, inputArtifact -> step.shouldProcessModule(module, inputArtifact) },
+            resolveStepInput = { step, latestArtifact ->
+                resolveStepInput(step, latestArtifact, module, artifactsProvider, unproducedArtifactKinds)
+            },
             runStep = { step, inputArtifact, thereWereCriticalExceptionsOnPreviousSteps ->
                 step.hackyProcessModule(module, inputArtifact, thereWereCriticalExceptionsOnPreviousSteps)
             },
-            onArtifactResult = { artifactsProvider.registerArtifact(module, it) },
+            onArtifactResult = {
+                artifactsProvider.registerArtifact(module, it)
+                unproducedArtifactKinds -= it.kind
+            },
             onHandlersResult = { step ->
                 checkTestInfrastructure(step is TestStep.NonGroupingStep.HandlersStep<*>) { "Step must be HandlersStep" }
                 allRanHandlers += step.handlers
             }
         )
+    }
+
+    /**
+     * Decides how [step] should be handled for [module], based on the [latestArtifact] produced by the pipeline so far
+     * and on all artifacts produced for this module earlier ([artifactsProvider]).
+     *
+     * Note that the *starting* artifact of the pipeline is intentionally not registered in [artifactsProvider], so once
+     * the pipeline has moved past it, facades consuming it are never re-entered. It's essential for pipelines which
+     * have several facades consuming the starting artifact, e.g. `ObjCInteropFacade` and a frontend facade in the
+     * Kotlin/Native test pipeline.
+     */
+    private fun resolveStepInput(
+        step: TestStep.NonGroupingStep<*, *>,
+        latestArtifact: ResultingArtifact<*>,
+        module: TestModule,
+        artifactsProvider: ArtifactsProvider,
+        unproducedArtifactKinds: MutableSet<TestArtifactKind<*>>,
+    ): StepInput {
+        val inputKind = step.inputArtifactKind
+        return when (step) {
+            is TestStep.NonGroupingStep.FacadeStep<*, *> -> {
+                val inputArtifact = when {
+                    latestArtifact.kind == inputKind -> latestArtifact
+                    else -> when (step.inputArtifactSelection) {
+                        FacadeInputArtifactSelection.LatestArtifactOnly -> null
+                        FacadeInputArtifactSelection.AnyArtifactOfInputKind -> artifactsProvider.getArtifactSafe(module, inputKind)
+                    }
+                }
+                when {
+                    // There is no suitable input artifact, or the facade doesn't want to process this module. In both
+                    // cases the facade produces nothing, so all steps depending on its output should be skipped too.
+                    inputArtifact == null || !step.facade.shouldTransform(module) -> {
+                        unproducedArtifactKinds += step.outputArtifactKind
+                        StepInput.Skip
+                    }
+                    else -> StepInput.Run(inputArtifact)
+                }
+            }
+
+            is TestStep.NonGroupingStep.HandlersStep<*> -> when {
+                latestArtifact.kind == inputKind -> StepInput.Run(latestArtifact)
+                // The facade which would have produced an artifact of this kind was skipped for this module, so this
+                // branch of the pipeline is simply not taken here.
+                inputKind in unproducedArtifactKinds -> StepInput.Skip
+                artifactsProvider.getArtifactSafe(module, inputKind) != null -> {
+                    val message = """
+                        Incorrect test configuration: handlers step "$step" is declared after a facade which replaced
+                        the artifact of kind $inputKind with an artifact of kind ${latestArtifact.kind}.
+                        Handlers steps always run on the latest produced artifact, so this step should be moved right
+                        after the facade producing $inputKind.
+                        ${renderPipeline()}
+                    """.trimIndent()
+                    StepInput.Fail(WrappedException.FromTestPipeline(TestInfrastructureException(message), module))
+                }
+                // No artifact of the required kind was ever produced for this module: the pipeline never reached the
+                // facade which produces it.
+                else -> StepInput.Skip
+            }
+        }
+    }
+
+    /**
+     * Checks that the configured pipeline is executable at all: every step must consume either the starting artifact or
+     * an artifact produced by one of the preceding facade steps.
+     *
+     * Without this check, a step which can never be executed (e.g. a handlers step for an artifact kind which no facade
+     * in the pipeline produces) would be silently ignored.
+     */
+    private fun validatePipeline(startingArtifactKind: TestArtifactKind<*>) {
+        val producibleArtifactKinds = mutableSetOf(startingArtifactKind)
+        for (step in testConfiguration.steps) {
+            checkTestInfrastructure(step.inputArtifactKind in producibleArtifactKinds) {
+                "Incorrect test configuration: step \"$step\" consumes an artifact of kind ${step.inputArtifactKind}, " +
+                        "but none of the preceding steps produces it.\n" +
+                        renderPipeline()
+            }
+            step.outputArtifactKind?.let { producibleArtifactKinds += it }
+        }
     }
 
     // -------------------------------------- hacks --------------------------------------
@@ -312,12 +452,35 @@ class GroupingTestRunner(
         val merger = GroupingStageInputsMerger(testServices, testConfiguration.mergerWorkers)
         runPipelineOnSingleUnit(
             produceStartingArtifact = { merger.merge(nonGroupingStageOutputs) },
-            shouldRunStep = { _, _ -> true },
+            resolveStepInput = ::resolveStepInput,
             runStep = { step, input, thereWereCriticalExceptionsOnPreviousSteps ->
                 step.hackyProcess(input, thereWereCriticalExceptionsOnPreviousSteps)
             },
             onArtifactResult = {},
             onHandlersResult = {}
+        )
+    }
+
+    /**
+     * Unlike the non-grouping pipeline, the grouping one is strictly linear: there is no lookup of previously produced
+     * artifacts and no skipping of steps, so every step must consume exactly the artifact produced by the previous one
+     * (or [GroupingStageInputArtifact] for the very first step).
+     *
+     * The kinds are checked explicitly here, because otherwise a mismatch would blow up much later, inside the unchecked
+     * casts of [hackyProcess].
+     */
+    private fun resolveStepInput(
+        step: TestStep.GroupingStageStep<*, *>,
+        latestArtifact: ResultingArtifact<*>,
+    ): StepInput {
+        if (latestArtifact.kind == step.inputArtifactKind) return StepInput.Run(latestArtifact)
+        val message = "Incorrect test configuration: step \"$step\" of the grouping stage expects an artifact of kind " +
+                "${step.inputArtifactKind}, but the latest produced artifact has kind ${latestArtifact.kind}.\n" +
+                "The grouping stage pipeline is strictly linear, so each step must consume the artifact produced " +
+                "by the previous one.\n" +
+                renderPipeline()
+        return StepInput.Fail(
+            WrappedException.FromTestPipeline(TestInfrastructureException(message), failedModule = null)
         )
     }
 

@@ -207,6 +207,7 @@ class PhasedPipelineChecker(
         for (exception in failedAssertions) {
             val targetStorage = when (exception) {
                 is WrappedException.FromMetaInfoHandler -> nonSuppressibleFailures
+                is WrappedException.FromTestPipeline -> nonSuppressibleFailures
                 is WrappedException.FromFacade ->
                     processFailure(exception.failedModule, exception.facade.toPhase(), exception)
                 is WrappedException.WrappedExceptionWithoutModule -> nonSuppressibleFailures

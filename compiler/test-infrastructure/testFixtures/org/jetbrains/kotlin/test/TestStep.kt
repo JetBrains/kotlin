@@ -8,10 +8,53 @@ package org.jetbrains.kotlin.test
 import org.jetbrains.kotlin.test.NonGroupingTestRunner.Companion.shouldRun
 import org.jetbrains.kotlin.test.model.*
 
+/**
+ * Defines which artifact [NonGroupingTestRunner] passes to a facade step.
+ *
+ * The test pipeline is an ordered list of steps, and the runner keeps track of the artifact produced by the last
+ * executed facade (the *latest* artifact). A facade step always prefers the latest artifact, and by default
+ * ([AnyArtifactOfInputKind]) may also reach back to an artifact produced earlier in the pipeline, which allows building
+ * branching pipelines, e.g.:
+ *
+ * ```
+ * sources -> fir -> ir -> klib -> deserialized ir -> compiled js
+ *                                                 -> exported ts
+ * ```
+ */
+enum class FacadeInputArtifactSelection {
+    /**
+     * Strictly linear behavior: the facade step is executed only if the artifact produced by the previous facade matches
+     * [AbstractTestFacadeBase.inputKind]. Otherwise the step is skipped.
+     *
+     * This is an opt-out from the default [AnyArtifactOfInputKind] for steps which must never see anything but the
+     * immediately preceding artifact.
+     */
+    LatestArtifactOnly,
+
+    /**
+     * The default behavior.
+     *
+     * If the latest artifact doesn't match [AbstractTestFacadeBase.inputKind], the runner looks up the most recent
+     * artifact of that kind produced earlier in the pipeline
+     * (see [org.jetbrains.kotlin.test.services.ArtifactsProvider]).
+     *
+     * Note that the *starting* artifact of the pipeline is not a part of that lookup: once the pipeline has moved past
+     * it, facades consuming it (e.g. frontend facades) are never re-entered. Several pipelines rely on that, e.g. the
+     * Kotlin/Native one, where `ObjCInteropFacade` compiles `.def` modules straight to a KLIB and the whole
+     * source-consuming part of the pipeline must be skipped for such modules.
+     */
+    AnyArtifactOfInputKind,
+}
+
 sealed class TestStep<InputArtifact, OutputArtifact>
         where InputArtifact : ResultingArtifact<InputArtifact>,
               OutputArtifact : ResultingArtifact<OutputArtifact> {
     abstract val inputArtifactKind: TestArtifactKind<InputArtifact>
+
+    /**
+     * The kind of the artifact produced by this step, or `null` if the step produces nothing (i.e. it's a handlers step).
+     */
+    abstract val outputArtifactKind: TestArtifactKind<*>?
 
     sealed interface FacadeStep<InputArtifact, OutputArtifact>
             where InputArtifact : ResultingArtifact<InputArtifact>,
@@ -28,10 +71,6 @@ sealed class TestStep<InputArtifact, OutputArtifact>
             where InputArtifact : ResultingArtifact<InputArtifact>,
                   OutputArtifact : ResultingArtifact<OutputArtifact> {
 
-        open fun shouldProcessModule(module: TestModule, inputArtifact: ResultingArtifact<*>): Boolean {
-            return inputArtifact.kind == inputArtifactKind
-        }
-
         abstract fun processModule(
             module: TestModule,
             inputArtifact: InputArtifact,
@@ -40,15 +79,15 @@ sealed class TestStep<InputArtifact, OutputArtifact>
 
         class FacadeStep<InputArtifact, OutputArtifact>(
             override val facade: AbstractTestFacade<InputArtifact, OutputArtifact>,
+            val inputArtifactSelection: FacadeInputArtifactSelection,
         ) : NonGroupingStep<InputArtifact, OutputArtifact>(), TestStep.FacadeStep<InputArtifact, OutputArtifact>
                 where InputArtifact : ResultingArtifact<InputArtifact>,
                       OutputArtifact : ResultingArtifact<OutputArtifact> {
             override val inputArtifactKind: TestArtifactKind<InputArtifact>
                 get() = facade.inputKind
 
-            override fun shouldProcessModule(module: TestModule, inputArtifact: ResultingArtifact<*>): Boolean {
-                return super.shouldProcessModule(module, inputArtifact) && facade.shouldTransform(module)
-            }
+            override val outputArtifactKind: TestArtifactKind<OutputArtifact>
+                get() = facade.outputKind
 
             override fun processModule(
                 module: TestModule,
@@ -81,6 +120,8 @@ sealed class TestStep<InputArtifact, OutputArtifact>
                     }
                 }
             }
+
+            override val outputArtifactKind: TestArtifactKind<*>? get() = null
 
             override fun processModule(
                 module: TestModule,
@@ -124,6 +165,8 @@ sealed class TestStep<InputArtifact, OutputArtifact>
             override val inputArtifactKind: TestArtifactKind<InputArtifact>
                 get() = facade.inputKind
 
+            override val outputArtifactKind: TestArtifactKind<OutputArtifact>
+                get() = facade.outputKind
 
             override fun process(
                 inputArtifact: InputArtifact,
@@ -154,6 +197,8 @@ sealed class TestStep<InputArtifact, OutputArtifact>
                     }
                 }
             }
+
+            override val outputArtifactKind: TestArtifactKind<*>? get() = null
 
             override fun process(
                 inputArtifact: InputArtifact,
@@ -196,5 +241,3 @@ sealed class TestStep<InputArtifact, OutputArtifact>
         data object NoArtifactFromFacade : StepResult<Nothing>()
     }
 }
-
-

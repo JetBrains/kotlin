@@ -159,6 +159,12 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
         is JsBackendFacades.WithRecompilation -> {
             facadeStep(backendFacades.deserializerAndLoweringFacade)
             facadeStep(backendFacades.recompileFacade)
+
+            jsArtifactsHandlersStep {
+                useHandlers(
+                    ::JsSourceMapPathRewriter,
+                )
+            }
         }
 
         is JsBackendFacades.WithSeparatedDeserialization -> {
@@ -166,12 +172,6 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
             facadeStep(backendFacades.deserializerFacade)
             deserializedIrHandlersStep { useHandlers(backendFacades.postDeserializationHandler) }
         }
-    }
-
-    jsArtifactsHandlersStep {
-        useHandlers(
-            ::JsSourceMapPathRewriter,
-        )
     }
 
     useFailureSuppressors(JsArtifactsDumpHandler::Suppressor)

@@ -53,7 +53,7 @@ class AbstractFirKotlinKaptIntegrationTestRunner(
             { FirKaptIntegrationEnvironmentConfigurator(it, processorOptions, supportedAnnotations, process) }
         )
 
-        facadeStep { services -> JvmCompilerWithKaptFacade(services, additionalPluginExtension) }
+        facadeStep(facade = { services -> JvmCompilerWithKaptFacade(services, additionalPluginExtension) })
         handlersStep(KaptContextBinaryArtifact.Kind, CompilationStage.FIRST) {
             useHandlers(::FirKaptIntegrationStubsDumpHandler, ::FirProcessorWasCalledHandler)
         }

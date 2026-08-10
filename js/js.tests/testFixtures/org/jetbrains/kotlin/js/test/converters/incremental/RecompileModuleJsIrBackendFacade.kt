@@ -37,8 +37,8 @@ class RecompileModuleJsIrBackendFacade(
             }
         }
 
-        facadeStep { FirKlibSerializerCliJsFacade(it, firstTimeCompilation = false) }
-        facadeStep { JsUnifiedIrDeserializerAndLoweringFacade(it, firstTimeCompilation = false) }
+        facadeStep(facade = { FirKlibSerializerCliJsFacade(it, firstTimeCompilation = false) })
+        facadeStep(facade = { JsUnifiedIrDeserializerAndLoweringFacade(it, firstTimeCompilation = false) })
     }
 
     override fun TestServices.register(module: TestModule) {

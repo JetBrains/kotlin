@@ -38,6 +38,22 @@ sealed class WrappedException(
         }
     }
 
+    /**
+     * A failure of the test pipeline itself: the runner couldn't figure out how to execute a step of the configured
+     * pipeline (e.g. a handlers step is declared for an artifact which is not the current one anymore).
+     *
+     * Such failures always originate from an incorrectly configured test, so they are reported before anything else
+     * and are never suppressed (see [isTestInfrastructureFailure]).
+     */
+    class FromTestPipeline(
+        cause: Throwable,
+        override val failedModule: TestModule?,
+    ) : WrappedException(cause, 0, 0) {
+        override fun withReplacedCause(newCause: Throwable): WrappedException {
+            return FromTestPipeline(newCause, failedModule)
+        }
+    }
+
     class FromGroupingFacade(
         cause: Throwable,
         val facade: AbstractGroupingStageTestFacade<*, *>,

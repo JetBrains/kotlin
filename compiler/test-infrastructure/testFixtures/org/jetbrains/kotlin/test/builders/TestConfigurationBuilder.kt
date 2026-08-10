@@ -213,10 +213,18 @@ class NonGroupingStageTestConfigurationBuilder :
         groupingTestIsolators += isolators
     }
 
+    /**
+     * Registers a facade step in the test pipeline.
+     *
+     * By default the step consumes the artifact produced by the previous facade, and if its kind doesn't match the input
+     * kind of [facade], any artifact of the matching kind produced earlier in the pipeline, which makes the pipeline
+     * non-linear. Pass [FacadeInputArtifactSelection.LatestArtifactOnly] to make this particular step strictly linear.
+     */
     fun <I : ResultingArtifact<I>, O : ResultingArtifact<O>> facadeStep(
         facade: Constructor<AbstractTestFacade<I, O>>,
+        inputArtifactSelection: FacadeInputArtifactSelection = FacadeInputArtifactSelection.AnyArtifactOfInputKind,
     ): TestStepBuilder.FacadeStepBuilder.NonGroupingStage<I, O> {
-        return TestStepBuilder.FacadeStepBuilder.NonGroupingStage(facade).also {
+        return TestStepBuilder.FacadeStepBuilder.NonGroupingStage(facade, inputArtifactSelection).also {
             steps.add(it)
         }
     }
