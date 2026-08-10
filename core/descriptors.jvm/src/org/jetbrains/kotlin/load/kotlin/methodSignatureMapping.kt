@@ -82,7 +82,7 @@ fun forceSingleValueParameterBoxing(f: CallableDescriptor): Boolean {
 }
 
 // This method only returns not-null for class methods
-internal fun CallableDescriptor.computeJvmSignature(): String? = signatures {
+fun CallableDescriptor.computeJvmSignature(): String? = signatures {
     if (DescriptorUtils.isLocal(this@computeJvmSignature)) return null
 
     val classDescriptor = containingDeclaration as? ClassDescriptor ?: return null
