@@ -5,20 +5,18 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
-import org.jetbrains.kotlin.js.config.ModuleKind
-import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
-import org.jetbrains.kotlin.js.config.additionalExportedDeclarationNames
-import org.jetbrains.kotlin.js.config.moduleKind
+import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.tsexport.TypeScriptExportConfig
 import org.jetbrains.kotlin.js.tsexport.TypeScriptModuleConfig
 import org.jetbrains.kotlin.js.tsexport.createTypeScriptExportInputModule
 import org.jetbrains.kotlin.js.tsexport.runTypeScriptExport
 import org.jetbrains.kotlin.library.metadata.KlibInputModule
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.TS_COMPILATION_STRATEGY
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
@@ -28,6 +26,23 @@ import kotlin.io.path.Path
 class AnalysisApiBasedDtsGeneratorFacade(
     private val testServices: TestServices,
 ) : AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>() {
+    companion object {
+        fun createExportConfig(
+            targetPlatform: TargetPlatform,
+            artifactConfiguration: WebArtifactConfiguration,
+            configuration: CompilerConfiguration,
+        ): TypeScriptExportConfig = TypeScriptExportConfig(
+            targetPlatform = targetPlatform,
+            artifactConfiguration = artifactConfiguration,
+            compileLongAsBigInt = configuration.compileLongAsBigint,
+            implementableInterfaces = configuration.languageVersionSettings.supportsFeature(LanguageFeature.JsExportInterfacesInImplementableWay),
+            exportableSuspendLambdas = configuration.languageVersionSettings.supportsFeature(LanguageFeature.JsExportingSuspendLambdas),
+            useUnknownInsteadAny = configuration.exportUntypedAsUnknown,
+            dataClassCopyRespectsConstructorVisibility = configuration.languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility),
+            additionalExportedDeclarationNames = configuration.additionalExportedDeclarationNames,
+        )
+    }
+
     override val inputKind: TestArtifactKind<BinaryArtifacts.KLib>
         get() = ArtifactKinds.KLib
 
@@ -38,14 +53,14 @@ class AnalysisApiBasedDtsGeneratorFacade(
         JsEnvironmentConfigurator.isMainModule(module, testServices)
 
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): BinaryArtifacts.Js {
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
+        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.SECOND)
         val moduleKind = configuration.moduleKind ?: ModuleKind.PLAIN
 
         val tsCompilationStrategy = testServices.moduleStructure.allDirectives[TS_COMPILATION_STRATEGY].last()
         val translationModes = JsEnvironmentConfigurator.getTypeScriptExportTranslationModes(testServices, module)
 
         val result = translationModes.associateWith { mode ->
-            val config = TypeScriptExportConfig(
+            val config = createExportConfig(
                 targetPlatform = testServices.targetPlatformProvider.getTargetPlatform(module),
                 artifactConfiguration = WebArtifactConfiguration(
                     moduleKind = moduleKind,
@@ -57,12 +72,7 @@ class AnalysisApiBasedDtsGeneratorFacade(
                     production = false, // irrelevant
                     minimizedMemberNames = false, // irrelevant
                 ),
-                compileLongAsBigInt = JsEnvironmentConfigurationDirectives.ES6_MODE in module.directives,
-                implementableInterfaces = configuration.languageVersionSettings.supportsFeature(LanguageFeature.JsExportInterfacesInImplementableWay),
-                exportableSuspendLambdas = configuration.languageVersionSettings.supportsFeature(LanguageFeature.JsExportingSuspendLambdas),
-                useUnknownInsteadAny = JsEnvironmentConfigurationDirectives.EXPORT_WITH_UNKNOWN_TYPE_INSTEAD_ANY in module.directives,
-                dataClassCopyRespectsConstructorVisibility = configuration.languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility),
-                additionalExportedDeclarationNames = configuration.additionalExportedDeclarationNames,
+                configuration = configuration,
             )
             val runtimeKlibs = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
             val regularDependencies = module.transitiveRegularDependencies(reverseOrder = true)
