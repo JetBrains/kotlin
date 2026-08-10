@@ -50,21 +50,20 @@ internal fun IrFunction.getDefaultValueForOverriddenBuiltinFunction(): TypeSafeB
     if (this.name !in ERASED_VALUE_PARAMETERS_SHORT_NAMES) return null
     if (this !is IrSimpleFunction) return null
 
-    var result: IrSimpleFunctionSymbol? = null
+    var result: TypeSafeBarrierDescription? = null
     return DFS.dfs(listOf(this.symbol),
             { current -> current?.owner?.overriddenSymbols ?: emptyList() },
-            object : DFS.NodeHandler<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol?> {
-                override fun beforeChildren(current: IrSimpleFunctionSymbol?): Boolean = result == null
+            object : DFS.NodeHandler<IrSimpleFunctionSymbol, TypeSafeBarrierDescription?> {
+                override fun beforeChildren(current: IrSimpleFunctionSymbol): Boolean = result == null
 
-                override fun afterChildren(current: IrSimpleFunctionSymbol?) {
-                    if (result == null && current?.owner?.computeJvmLikeSignature() in SIGNATURE_TO_DEFAULT_VALUES_MAP) {
-                        result = current
-                    }
+                override fun afterChildren(current: IrSimpleFunctionSymbol) {
+                    if (result != null) return
+                    SIGNATURE_TO_DEFAULT_VALUES_MAP[current.owner.computeJvmLikeSignature()]?.let { result = it }
                 }
 
-                override fun result(): IrSimpleFunctionSymbol? = result
+                override fun result(): TypeSafeBarrierDescription? = result
             }
-    )?.let { SIGNATURE_TO_DEFAULT_VALUES_MAP[it.owner.computeJvmLikeSignature()] }
+    )
 }
 
 private val SIGNATURE_TO_DEFAULT_VALUES_MAP = mapOf(
@@ -73,8 +72,6 @@ private val SIGNATURE_TO_DEFAULT_VALUES_MAP = mapOf(
 
         "${StandardClassIds.Map}.containsKey(${StandardClassIds.Any}): ${StandardClassIds.Boolean}" to TypeSafeBarrierDescription.FALSE,
         "${StandardClassIds.Map}.containsValue(${StandardClassIds.Any}): ${StandardClassIds.Boolean}" to TypeSafeBarrierDescription.FALSE,
-        "${StandardClassIds.MutableMap}.remove(${StandardClassIds.Any}, ${StandardClassIds.Any}): ${StandardClassIds.Boolean}" to TypeSafeBarrierDescription.FALSE,
-        "${StandardClassIds.Map}.getOrDefault(${StandardClassIds.Any}, ${StandardClassIds.Any}): ${StandardClassIds.Any}" to TypeSafeBarrierDescription.MAP_GET_OR_DEFAULT,
         "${StandardClassIds.Map}.get(${StandardClassIds.Any}): ${StandardClassIds.Any}" to TypeSafeBarrierDescription.NULL,
         "${StandardClassIds.MutableMap}.remove(${StandardClassIds.Any}): ${StandardClassIds.Any}" to TypeSafeBarrierDescription.NULL,
 
