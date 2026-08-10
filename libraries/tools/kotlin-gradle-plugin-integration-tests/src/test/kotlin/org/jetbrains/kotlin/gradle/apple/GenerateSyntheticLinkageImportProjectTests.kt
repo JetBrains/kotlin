@@ -35,8 +35,8 @@ import kotlin.io.path.isWritable
 import kotlin.io.path.pathString
 import kotlin.io.path.relativeTo
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
 
 @OsCondition(
     supportedOn = [OS.MAC],
@@ -275,7 +275,7 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
     }
 
     @GradleTest
-    fun `KT-82823 - stale subpackages are not cleaned up and generated files are writable`(version: GradleVersion) {
+    fun `KT-82823 - stale subpackages are removed and generated files are read-only`(version: GradleVersion) {
         val includeStaleDependency = "includeStaleDependency"
 
         val syntheticImportSubpackagesDir = GenerateSyntheticLinkageImportProject.Companion.SUBPACKAGES
@@ -287,7 +287,7 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
         fun syntheticSubpackageDir(packageRoot: Path, identifier: String): Path =
             packageRoot.resolve(syntheticImportSubpackagesDir).resolve(identifier)
 
-        fun generatedManifestFiles(root: Path, identifier: String): List<Path> = listOf(
+        fun generatedFiles(root: Path, identifier: String): List<Path> = listOf(
             syntheticImportManifestName,
             "Sources/$identifier/$identifier.m",
             "Sources/$identifier/include/$identifier.h",
@@ -295,8 +295,8 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
         ).map { root.resolve(it) }
 
         fun syntheticPackageGeneratedFiles(packageRoot: Path, subpackages: List<String> = emptyList()): List<Path> =
-            generatedManifestFiles(packageRoot, SYNTHETIC_IMPORT_TARGET_MAGIC_NAME) +
-                    subpackages.flatMap { generatedManifestFiles(syntheticSubpackageDir(packageRoot, it), it) }
+            generatedFiles(packageRoot, SYNTHETIC_IMPORT_TARGET_MAGIC_NAME) +
+                    subpackages.flatMap { generatedFiles(syntheticSubpackageDir(packageRoot, it), it) }
 
         project("empty", version) {
             plugins {
@@ -353,8 +353,17 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
                 )
                 assertDirectoryExists(syntheticSubpackageDir(packageRoot, retainedSubpackage))
                 assertDirectoryExists(syntheticSubpackageDir(packageRoot, stateSubpackage))
+
+                syntheticPackageGeneratedFiles(packageRoot, listOf(retainedSubpackage, stateSubpackage))
+                    .forEach { generatedFile ->
+                        assertFalse(
+                            generatedFile.isWritable(),
+                            "Generated file '${generatedFile.relativeTo(packageRoot)}' should be read-only",
+                        )
+                    }
             }
 
+            // Regenerating over the read-only files of the previous run has to work
             build("packageGeneration") {
                 assertTasksExecuted(":packageGeneration")
                 assertEquals(
@@ -364,15 +373,15 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
                 )
                 assertDirectoryExists(syntheticSubpackageDir(packageRoot, retainedSubpackage))
 
-                assertDirectoryExists(
+                assertDirectoryDoesNotExist(
                     syntheticSubpackageDir(packageRoot, stateSubpackage),
-                    message = "Stale subpackage directory exists, should be fixed in KT-82823",
+                    message = "Subpackage directory should be removed together with the dependency",
                 )
 
                 syntheticPackageGeneratedFiles(packageRoot, listOf(retainedSubpackage)).forEach { generatedFile ->
-                    assertTrue(
+                    assertFalse(
                         generatedFile.isWritable(),
-                        "Generated file '${generatedFile.relativeTo(packageRoot)}' is writable, should be read-only after KT-82823",
+                        "Regenerated file '${generatedFile.relativeTo(packageRoot)}' should be read-only again",
                     )
                 }
             }
