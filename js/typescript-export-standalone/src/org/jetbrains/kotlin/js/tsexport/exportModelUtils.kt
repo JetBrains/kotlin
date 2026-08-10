@@ -253,9 +253,6 @@ internal fun KaAnnotated.isJsImplicitExport(): Boolean =
 internal fun KaAnnotated.isJsExportIgnore(): Boolean =
     annotations.contains(JsExportIgnore)
 
-internal fun KaAnnotated.isJsExport(): Boolean =
-    annotations.contains(JsExport)
-
 internal fun KaAnnotated.isJsStatic(): Boolean =
     annotations.contains(JsStatic)
 
