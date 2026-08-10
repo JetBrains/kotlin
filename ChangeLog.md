@@ -1,3 +1,72 @@
+## 2.4.20-RC
+
+### Backend. J2KLIB
+
+- [`KT-88165`](https://youtrack.jetbrains.com/issue/KT-88165) Add Support for -XheaderModeType=compilation to improve header compilation performance
+- [`KT-86239`](https://youtrack.jetbrains.com/issue/KT-86239) [JKLIB] Investigate which type system context is needed in JklibIrLinker
+- [`KT-88306`](https://youtrack.jetbrains.com/issue/KT-88306) [JKLIB] Unbound symbols for kotlin.coroutines.SuspendFunctionN
+- [`KT-88120`](https://youtrack.jetbrains.com/issue/KT-88120) [JKLIB] Add -jvm-target to K2JKlibCompilerArguments
+- [`KT-88176`](https://youtrack.jetbrains.com/issue/KT-88176) [JKLIB] DeserializationStrategy.WITH_INLINE_BODIES when deserializaing dependencies 
+- [`KT-88163`](https://youtrack.jetbrains.com/issue/KT-88163) Allow to disable firAggressivePrunner for Jklib
+
+### Compiler
+
+- [`KT-87499`](https://youtrack.jetbrains.com/issue/KT-87499) ClassCastException "Float cannot be cast to Unit" when a suspend function's result is discarded in a when-branch
+- [`KT-87983`](https://youtrack.jetbrains.com/issue/KT-87983) CCE on member extension property delegated to bound property reference
+- [`KT-85403`](https://youtrack.jetbrains.com/issue/KT-85403) kotlin.NoWhenBranchMatchedException on Kotlin Native with sealed interface
+- [`KT-87922`](https://youtrack.jetbrains.com/issue/KT-87922) K1FakeDescriptorsForReferencesKt classes duplicated between kotlin-scripting-compiler-embeddable and kotlin-build-tools-impl
+- [`KT-86657`](https://youtrack.jetbrains.com/issue/KT-86657) Native: turn on incremental compilation by default
+
+### Compose compiler
+
+- [`b/543684938`](https://issuetracker.google.com/issues/543684938) Fix composable singleton in function with type parameters
+- [`b/537617330`](https://issuetracker.google.com/issues/537617330) Fixed a bug that caused miscompilation of cross-module calls
+      to getters and setters, causing spurious runtime errors.
+
+### JVM. Reflection
+
+- [`KT-87369`](https://youtrack.jetbrains.com/issue/KT-87369) Reflection: KClass.members fails on Java class with self-referential raw type bounds
+
+### Tools. Build Tools API
+
+- [`KT-88348`](https://youtrack.jetbrains.com/issue/KT-88348) MessageCollector in IncrementalCompilerRunner drops diagnostics IDs
+- [`KT-87743`](https://youtrack.jetbrains.com/issue/KT-87743) Make `KotlinCoreEnvironment.disposeApplicationEnvironment()` unnecessary for K2 BTA compilation
+
+### Tools. CLI
+
+- [`KT-87868`](https://youtrack.jetbrains.com/issue/KT-87868) In-process compilation via CLI/Build Tools API pays a large ThreadMXBean.getCurrentThreadUserTime penalty on Linux: PerformanceManager.measureSideTime measures unconditionally around every class file read
+
+### Tools. Compiler Plugins
+
+- [`KT-88179`](https://youtrack.jetbrains.com/issue/KT-88179) Power-assert: IrGenerationExtensionException (StringIndexOutOfBoundsException) when assert() wraps a context-parameter function call
+
+### Tools. Compiler plugins. Compose
+
+- [`KT-88028`](https://youtrack.jetbrains.com/issue/KT-88028) Compose compiler: IndexOutOfBoundsException in ComposableTargetAnnotationsTransformer when overriding a `@Composable` function with default parameter in another module
+
+### Tools. Gradle
+
+- [`KT-87994`](https://youtrack.jetbrains.com/issue/KT-87994) Run Gradle integration tests against Gradle 9.7
+- [`KT-87993`](https://youtrack.jetbrains.com/issue/KT-87993) Compile against Gradle API 9.7
+- [`KT-87256`](https://youtrack.jetbrains.com/issue/KT-87256) KotlincOutputParser fails to parse compilation errors under Gradle when task path prefixes are enabled (Kotlin 2.4.20-Beta1)
+- [`KT-88084`](https://youtrack.jetbrains.com/issue/KT-88084) Each build leaves a strong reference to an instance of BuildMetricsService
+- [`KT-87911`](https://youtrack.jetbrains.com/issue/KT-87911) Report an actionable diagnostic when .kar files reach compilation classpaths in Kotlin 2.4.20
+- [`KT-86040`](https://youtrack.jetbrains.com/issue/KT-86040) Run tests against the Gradle 9.6.0 release
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-87790`](https://youtrack.jetbrains.com/issue/KT-87790) Kotlin 2.4.0 increases Gradle sync times
+- [`KT-88104`](https://youtrack.jetbrains.com/issue/KT-88104) dumpXcodebuildArgs task fails if the root build directory is removed
+- [`KT-88154`](https://youtrack.jetbrains.com/issue/KT-88154) Swift PM lock file is ignored on switching version from `exact` to `from`
+
+### Tools. Gradle. Wasm
+
+- [`KT-88115`](https://youtrack.jetbrains.com/issue/KT-88115) "Your lockfile needs to be updated": Outdated bundled yarn.lock breaks kotlinWasmToolingSetup with --frozen-lockfile
+
+### Tools. Scripts
+
+- [`KT-87958`](https://youtrack.jetbrains.com/issue/KT-87958) K2 scripting: FirPropertyImpl transformation crash when using class from `@file`:Import-ed script in 2.4.0+
+
 ## 2.4.20-Beta2
 
 ### Analysis API
