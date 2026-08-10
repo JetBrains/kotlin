@@ -35,8 +35,8 @@ import kotlin.io.path.isWritable
 import kotlin.io.path.pathString
 import kotlin.io.path.relativeTo
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
 
 @OsCondition(
     supportedOn = [OS.MAC],
@@ -275,19 +275,19 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
     }
 
     @GradleTest
-    fun `KT-82823 - stale subpackages are not cleaned up and generated files are writable`(version: GradleVersion) {
+    fun `KT-82823 - stale subpackages are removed and generated files are read-only`(version: GradleVersion) {
         val includeStaleDependency = "includeStaleDependency"
 
         val syntheticImportSubpackagesDir = GenerateSyntheticLinkageImportProject.Companion.SUBPACKAGES
         val syntheticImportManifestName = GenerateSyntheticLinkageImportProject.Companion.MANIFEST_NAME
 
         val retainedSubpackage = "retained"
-        val stateSubpackage = "stale"
+        val staleSubpackage = "stale"
 
         fun syntheticSubpackageDir(packageRoot: Path, identifier: String): Path =
             packageRoot.resolve(syntheticImportSubpackagesDir).resolve(identifier)
 
-        fun generatedManifestFiles(root: Path, identifier: String): List<Path> = listOf(
+        fun generatedFiles(root: Path, identifier: String): List<Path> = listOf(
             syntheticImportManifestName,
             "Sources/$identifier/$identifier.m",
             "Sources/$identifier/include/$identifier.h",
@@ -295,8 +295,8 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
         ).map { root.resolve(it) }
 
         fun syntheticPackageGeneratedFiles(packageRoot: Path, subpackages: List<String> = emptyList()): List<Path> =
-            generatedManifestFiles(packageRoot, SYNTHETIC_IMPORT_TARGET_MAGIC_NAME) +
-                    subpackages.flatMap { generatedManifestFiles(syntheticSubpackageDir(packageRoot, it), it) }
+            generatedFiles(packageRoot, SYNTHETIC_IMPORT_TARGET_MAGIC_NAME) +
+                    subpackages.flatMap { generatedFiles(syntheticSubpackageDir(packageRoot, it), it) }
 
         project("empty", version) {
             plugins {
@@ -307,7 +307,7 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
                 val extension = project.locateOrRegisterSwiftPMDependenciesExtension()
                 val includeStale = project.providers.gradleProperty(includeStaleDependency).isPresent
                 val subpackages = if (includeStale) {
-                    listOf(retainedSubpackage, stateSubpackage)
+                    listOf(retainedSubpackage, staleSubpackage)
                 } else {
                     listOf(retainedSubpackage)
                 }
@@ -347,14 +347,23 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
             build("packageGeneration", "-P$includeStaleDependency=true") {
                 assertTasksExecuted(":packageGeneration")
                 assertEquals(
-                    listOf(retainedSubpackage, stateSubpackage),
+                    listOf(retainedSubpackage, staleSubpackage),
                     describeSwiftPackage(packageRoot).dependencies.map { it.identity },
                     "Both subpackages should be declared in the generated manifest",
                 )
                 assertDirectoryExists(syntheticSubpackageDir(packageRoot, retainedSubpackage))
-                assertDirectoryExists(syntheticSubpackageDir(packageRoot, stateSubpackage))
+                assertDirectoryExists(syntheticSubpackageDir(packageRoot, staleSubpackage))
+
+                syntheticPackageGeneratedFiles(packageRoot, listOf(retainedSubpackage, staleSubpackage))
+                    .forEach { generatedFile ->
+                        assertFalse(
+                            generatedFile.isWritable(),
+                            "Generated file '${generatedFile.relativeTo(packageRoot)}' should be read-only",
+                        )
+                    }
             }
 
+            // Regenerating over the read-only files of the previous run has to work
             build("packageGeneration") {
                 assertTasksExecuted(":packageGeneration")
                 assertEquals(
@@ -364,15 +373,15 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
                 )
                 assertDirectoryExists(syntheticSubpackageDir(packageRoot, retainedSubpackage))
 
-                assertDirectoryExists(
-                    syntheticSubpackageDir(packageRoot, stateSubpackage),
-                    message = "Stale subpackage directory exists, should be fixed in KT-82823",
+                assertDirectoryDoesNotExist(
+                    syntheticSubpackageDir(packageRoot, staleSubpackage),
+                    message = "Subpackage directory should be removed together with the dependency",
                 )
 
                 syntheticPackageGeneratedFiles(packageRoot, listOf(retainedSubpackage)).forEach { generatedFile ->
-                    assertTrue(
+                    assertFalse(
                         generatedFile.isWritable(),
-                        "Generated file '${generatedFile.relativeTo(packageRoot)}' is writable, should be read-only after KT-82823",
+                        "Regenerated file '${generatedFile.relativeTo(packageRoot)}' should be read-only again",
                     )
                 }
             }
