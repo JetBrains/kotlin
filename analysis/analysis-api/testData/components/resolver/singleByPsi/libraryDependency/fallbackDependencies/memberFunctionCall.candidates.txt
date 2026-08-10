@@ -1,4 +1,4 @@
-KtCallExpression(138,151): 'foo(1, "foo")'
+KtCallExpression(136,149): 'foo(1, "foo")'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}

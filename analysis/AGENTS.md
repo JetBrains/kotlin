@@ -7,7 +7,7 @@ A library for analyzing Kotlin code at the semantic level, providing structured 
 ## Architecture
 
 - **Platform** — Provides declarations, project structure, and modification events (IntelliJ, Standalone)
-- **Engine** — Performs code analysis using platform-provided information (K1, K2)
+- **Engine** — Performs code analysis using platform-provided information (based on K2 compiler)
 - **User** — Code that calls `analyze()` to work with symbols and types
 
 → READ [`analysis-api-platform-interface/README.md`](analysis-api-platform-interface/README.md) for detailed architecture overview

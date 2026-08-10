@@ -1,4 +1,4 @@
-KtNameReferenceExpression(589,592): 'bar'
+KtNameReferenceExpression(522,525): 'bar'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false

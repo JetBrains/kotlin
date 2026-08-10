@@ -2,7 +2,6 @@
 // MAIN_FILE_NAME: Foo
 
 // FILE: Foo.kt
-// K1 metadata : default accessors, K2 metadata : non-default accessors
 class Foo(
     @get:Anno val withDefaultGetter: Int,
     @set:Anno var withDefaultSetter: String,

@@ -110,8 +110,8 @@ public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
 /**
  * [KaEnumEntrySymbol] represents an [enum entry declaration](https://kotlinlang.org/docs/enum-classes.html).
  *
- * In the Kotlin PSI, a [KtEnumEntry][org.jetbrains.kotlin.psi.KtEnumEntry] is a [KtClass][org.jetbrains.kotlin.psi.KtClass], which aligns
- * with the old K1 compiler. In the Analysis API, though, similarly to the K2 compiler, an enum entry is a [KaVariableSymbol].
+ * Note that even though the PSI representation [KtEnumEntry][org.jetbrains.kotlin.psi.KtEnumEntry] is a [KtClass][org.jetbrains.kotlin.psi.KtClass],
+ * in Analysis API and the compiler an enum entry is seen as [KaVariableSymbol].
  *
  * ### Enum entry type & members
  *

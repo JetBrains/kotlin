@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredAugmentedAssign
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredIncrementOrDecrement

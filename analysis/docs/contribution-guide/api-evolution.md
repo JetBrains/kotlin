@@ -72,7 +72,7 @@ Every part of the Analysis API falls under one of these stability categories:
     - No compatibility guarantees between versions
     - Reserved for internal use only
     - Applies to
-        - *K1* and *K2* implementations of the Analysis API
+        - Implementation of the Analysis API
         - *Platform Interface* implementations
         - *Low-level API*
         - *Light Classes* (unless explicitly exposed in the *Analysis API Surface*)
@@ -95,9 +95,6 @@ This process protects both API designers and users from the cost of breaking cha
 - **Mark with `@KaExperimentalApi`**  
   This annotation serves as both a compiler warning and documentation that the API may change.
   Users must explicitly opt-in, ensuring they understand the risks.
-
-- **Choose whether to implement for both K1 and K2**  
-  If K1 support is impractical, use `@KaK1Unsupported` with clear documentation.
 
 - **Provide comprehensive documentation and tests**  
   Experimental doesn't mean untested. Include edge cases, error conditions, and usage examples.

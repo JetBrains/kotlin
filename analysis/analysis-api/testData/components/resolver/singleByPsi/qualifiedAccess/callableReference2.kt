@@ -7,6 +7,6 @@ class AA {
 }
 
 fun test() {
-    A<caret>A::foo // FE1.0 won't resolve this
+    A<caret>A::foo
 }
 
