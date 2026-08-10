@@ -326,6 +326,25 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `verify mocha is served from the test bundle instead of over HTTP`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions
+        ) {
+            jsProject {
+                chromium()
+            }
+
+            build(":jsBrowserTest") {
+                val bundleDir = projectPath.resolve("build/kotlinJsTest/dist")
+                assertFileExists(bundleDir.resolve("mocha.js"))
+                assertFileExists(bundleDir.resolve("mocha.css"))
+            }
+        }
+    }
+
+    @GradleTest
     fun `verify each browser runner executes the tests`(gradleVersion: GradleVersion) {
         project(
             "empty",
