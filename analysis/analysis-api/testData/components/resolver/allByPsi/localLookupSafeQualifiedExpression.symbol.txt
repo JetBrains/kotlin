@@ -205,7 +205,7 @@ KtBinaryExpression(133,145): 'a1 ?: return'
 KtNameReferenceExpression(133,135): 'a1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       val a1: A?

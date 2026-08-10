@@ -294,7 +294,7 @@ KtOperationReferenceExpression(208,210): '..'
 KtNameReferenceExpression(210,211): 'y'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       val y: kotlin.Int

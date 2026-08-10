@@ -123,7 +123,7 @@ private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpress
         resolveIgnore.add(element)
     }
 
-    private fun isIgnored(element: KtElement): Boolean = resolveIgnore.contains(element) || !typeMatchesGivenContext(element, contextKind)
+    private fun isIgnored(element: KtElement): Boolean = resolveIgnore.contains(element)
 
     private val KtElement.typeMatchesForValueContext: Boolean
         get() = this is KtProperty
@@ -348,7 +348,7 @@ private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpress
     }
 
     private fun nameMatchesAndIsValidCandidate(element: KtNamedDeclaration): Boolean =
-        element.nameAsSafeName == name && !isIgnored(element)
+        element.nameAsSafeName == name && !isIgnored(element) && typeMatchesGivenContext(element, contextKind)
 
     private fun foundIfNameMatches(element: KtNamedDeclaration) {
         if (nameMatchesAndIsValidCandidate(element)) {
