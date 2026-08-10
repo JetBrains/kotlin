@@ -40,22 +40,6 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
     }
 
     compilerArgument {
-        name = "Xklib-normalize-absolute-path"
-        compilerName = "normalizeAbsolutePath"
-        description = "Normalize absolute paths in klibs.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_0_20,
-            deprecatedVersion = KotlinReleaseVersion.v2_4_20,
-            // The CLI arguments generation is broken if use a future `removedVersion`.
-            // TODO: uncomment after switching to 2.5 or after fixing of KT-87495
-            // removedVersion = KotlinReleaseVersion.v2_5_0,
-        )
-        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
-    }
-
-    compilerArgument {
         name = "Xklib-enable-signature-clash-checks"
         compilerName = "enableSignatureClashChecks"
         description = "Enable signature uniqueness checks.".asReleaseDependent()

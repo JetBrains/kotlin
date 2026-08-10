@@ -18,9 +18,12 @@ import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.library.metadata.KlibMetadataCachedPackageFragment
 import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.parentOrNull
@@ -33,7 +36,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class KlibMetadataModuleDescriptorFactoryImpl(
     override val descriptorFactory: KlibModuleDescriptorFactory,
-    override val packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory,
     @OptIn(K1Deprecation::class)
     override val flexibleTypeDeserializer: FlexibleTypeDeserializer,
     val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
@@ -72,25 +74,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
         return moduleDescriptor
     }
 
-    override fun createCachedPackageFragmentProvider(
-        byteArrays: List<ByteArray>,
-        storageManager: StorageManager,
-        moduleDescriptor: ModuleDescriptor,
-        configuration: DeserializationConfiguration,
-        lookupTracker: LookupTracker
-    ): PackageFragmentProvider {
-        val deserializedPackageFragments = packageFragmentsFactory.createCachedPackageFragments(
-            byteArrays, moduleDescriptor, storageManager
-        )
-
-        val provider = PackageFragmentProviderImpl(deserializedPackageFragments)
-
-        @OptIn(K1Deprecation::class)
-        return initializePackageFragmentProvider(provider, deserializedPackageFragments, storageManager,
-            moduleDescriptor, configuration, null, lookupTracker)
-    }
-
-    override fun createPackageFragmentProvider(
+    private fun createPackageFragmentProvider(
         library: KotlinLibrary,
         storageManager: StorageManager,
         moduleDescriptor: ModuleDescriptor,
@@ -99,7 +83,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
         lookupTracker: LookupTracker
     ): PackageFragmentProvider {
 
-        val deserializedPackageFragments = packageFragmentsFactory.createDeserializedPackageFragments(
+        val deserializedPackageFragments = createDeserializedPackageFragments(
             library = library,
             moduleDescriptor = moduleDescriptor,
             storageManager = storageManager,
@@ -207,5 +191,50 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             NativeForwardDeclarationKind.entries.map { createPackage(it) }
         )
         return packageFragmentProvider
+    }
+}
+
+
+private fun createDeserializedPackageFragments(
+    library: KotlinLibrary,
+    moduleDescriptor: ModuleDescriptor,
+    storageManager: StorageManager,
+    configuration: DeserializationConfiguration
+): List<KlibMetadataPackageFragment> {
+    val metadata = library.metadata
+    val header = parseModuleHeader(metadata.moduleHeaderData)
+
+    val nonEmptyPackageFqNames = buildSet {
+        addAll(header.packageFragmentNameList)
+        removeAll(header.emptyPackageList)
+    }
+
+    return nonEmptyPackageFqNames.flatMap {
+        val packageFqName = FqName(it)
+        val containerSource = KlibDeserializedContainerSource(
+            library, header, configuration, packageFqName, incompatibility = library.getIncompatibility(configuration.metadataVersion)
+        )
+        val parts = metadata.getPackageFragmentNames(packageFqName.asString())
+        val isBuiltInModule = moduleDescriptor.builtIns.builtInsModule === moduleDescriptor
+        parts.map { partName ->
+            if (isBuiltInModule)
+                BuiltInKlibMetadataDeserializedPackageFragment(
+                    fqName = packageFqName,
+                    metadata = metadata,
+                    storageManager = storageManager,
+                    module = moduleDescriptor,
+                    partName = partName,
+                    containerSource = containerSource,
+                )
+            else
+                KlibMetadataDeserializedPackageFragment(
+                    fqName = packageFqName,
+                    metadata = metadata,
+                    storageManager = storageManager,
+                    module = moduleDescriptor,
+                    partName = partName,
+                    containerSource = containerSource,
+                )
+        }
     }
 }

@@ -17,7 +17,7 @@ analysisApiArtifact {
     expectNonEmptySources = false
 }
 
-val mergedClasspathJar by tasks.registering(Jar::class) {
+val mergedClasspathJar = tasks.register("mergedClasspathJar", Jar::class) {
     description = "Merges all runtime classpath JARs into a single JAR for ProGuard validation"
     destinationDirectory.set(layout.buildDirectory.dir("proguard"))
     archiveFileName.set("merged-classpath.jar")
@@ -27,7 +27,7 @@ val mergedClasspathJar by tasks.registering(Jar::class) {
     from({ configurations.runtimeClasspath.get().map(::zipTree) })
 }
 
-val validateClasspath by tasks.registering(CacheableProguardTask::class) {
+val validateClasspath = tasks.register("validateClasspath", CacheableProguardTask::class) {
     group = LifecycleBasePlugin.VERIFICATION_GROUP
     description = "Validates that Analysis API JARs have all required classes"
 

@@ -3,13 +3,13 @@ import org.gradle.api.internal.file.collections.DefaultConfigurableFileCollectio
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.internal.config.MavenComparableVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 // Contains common configuration that should be applied to all projects
 plugins {
@@ -34,6 +34,7 @@ project.configureJsCacheRedirector()
 project.configurePublishingRetry()
 project.exposeCompileAllConfiguration()
 project.configureJarEntryCompression()
+project.configureTestLifecycleTasksModelBuilder()
 
 // There are problems with common build dir:
 //  - some tests (in particular js and binary-compatibility-validator depend on the fixed (default) location
@@ -110,7 +111,8 @@ val kotlinApiVersionForProjectsDependingOnStableStdlib: Provider<String> = proje
 fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
         val kotlinLanguageVersion: Provider<String> = project.providers.gradleProperty("kotlinLanguageVersion")
-        val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames.get())
+        val renderDiagnosticNames = project.kotlinBuildProperties.renderDiagnosticNames.get()
+        extra.set("renderDiagnosticNames", renderDiagnosticNames)
 
         tasks.withType<KotlinCompilationTask<*>>().configureEach {
             compilerOptions {
@@ -221,7 +223,7 @@ fun Project.configureKotlinCompilationOptions() {
 private fun Project.shouldUseOldJvmDefaultArgument(): Boolean {
     @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
     val isOldCompilerVersion =
-        MavenComparableVersion(kotlinExtension.compilerVersion.get()) < MavenComparableVersion("2.2")
+        KotlinToolingVersion(kotlinExtension.compilerVersion.get()) < KotlinToolingVersion("2.2")
 
     return isOldCompilerVersion
 }
@@ -231,7 +233,7 @@ private val kotlinCompilerVersionForGradle = libs.versions.kotlin.`for`.gradle.p
 
 private fun Project.skipArgumentForOlderKotlinCompilerVersion(): Boolean {
     @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
-    return MavenComparableVersion(kotlinExtension.compilerVersion.get()) <= MavenComparableVersion(kotlinCompilerVersionForGradle)
+    return KotlinToolingVersion(kotlinExtension.compilerVersion.get()) <= KotlinToolingVersion(kotlinCompilerVersionForGradle)
 }
 
 fun Project.configureArtifacts() {
@@ -378,6 +380,7 @@ fun Project.configureTests() {
 
             ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
             ":plugins:scripting:scripting-tests",
+            ":plugins:scripting:scripting-tests:runtime",
             ":repo:auto-code-review", // Runs processes, traverses all repo files. Quick.
             ":repo:artifacts-tests",
             ":repo:codebase-tests",
@@ -387,7 +390,7 @@ fun Project.configureTests() {
             ":test-instrumenter"
         )
         val projectPath = project.path
-        val hasTestInputCheckPlugin = plugins.hasPlugin("test-inputs-check") || plugins.hasPlugin("test-inputs-check-v2")
+        val hasTestInputCheckPlugin = plugins.hasPlugin("test-inputs-check")
         if (!hasTestInputCheckPlugin) {
             outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
         }

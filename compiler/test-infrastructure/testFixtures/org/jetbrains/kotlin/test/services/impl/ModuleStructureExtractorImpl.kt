@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
 import org.jetbrains.kotlin.test.directives.model.*
+import org.jetbrains.kotlin.test.NonGroupingStageTestConfiguration
+import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
+import org.jetbrains.kotlin.test.impl.testConfiguration
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.joinToArrayString
@@ -224,9 +227,19 @@ class ModuleStructureExtractorImpl(
                     val kind = defaultsProvider.defaultDependencyKind
 
                     fun String.toDependencyDescription(relation: DependencyRelation): DependencyDescription {
-                        val dependantModuleName = escapeModuleNameIfNeeded(this)
-                        val dependantModule = modules.find { it.name == dependantModuleName }
-                            ?: error("Module $this not found. Known modules: ${modules.joinToString { it.name }}")
+                        // The referenced module was already created with its name decided based on its own
+                        // content (see `escapeModuleNameIfNeeded`). We must NOT re-run `escapeModuleNameIfNeeded`
+                        // here using the *current* (depending) module's context: its isolation decision can
+                        // differ from the one taken when the referenced module was finalized. In particular,
+                        // resolving the dependency list is incremental (`dependenciesOfCurrentModule` grows as
+                        // each dependency is resolved), so a friend-dependency-based isolator may flip its answer
+                        // between resolving the first and the second dependency of the same module — escaping the
+                        // referenced module's name for one but not the other, breaking the lookup (KT: `Module
+                        // lib2 not found`). Instead, match the already-created module by either its raw name or
+                        // its escaped form.
+                        val dependantModule =
+                            modules.find { it.name == this || it.name == computeEscapedModuleName(this) }
+                                ?: error("Module $this not found. Known modules: ${modules.joinToString { it.name }}")
                         val specificKind = when (relation) {
                             DependencyRelation.DependsOnDependency -> DependencyKind.Source
                             else -> kind
@@ -329,10 +342,8 @@ class ModuleStructureExtractorImpl(
             val moduleDirectives = testServices.defaultDirectives + globalDirectives + moduleDirectivesBuilder.build()
             moduleDirectives.forEach { it.checkDirectiveApplicability(contextIsGlobal = isImplicitModule, contextIsModule = true) }
 
-            val frontendKind = defaultsProvider.frontendKind
-
             currentModuleLanguageVersionSettingsBuilder.configureUsingDirectives(
-                moduleDirectives, environmentConfigurators, useK2 = frontendKind == FrontendKinds.FIR
+                moduleDirectives, environmentConfigurators
             )
             val moduleName = currentModuleName
                 ?: testServices.defaultDirectives[ModuleStructureDirectives.MODULE].firstOrNull()
@@ -357,6 +368,34 @@ class ModuleStructureExtractorImpl(
             if (filesOfCurrentModule.any { it.name.endsWith(".def")}) return name
             if (mutableFilesListPerModule.any { it.value.any { file -> file.name.endsWith(".def") } }) return name
 
+            // Don't rename if the test will be isolated in the grouping configuration.
+            // Isolated tests are compiled standalone (not batched), so their module names must remain unchanged — otherwise stacktrace checks
+            // like `stacktrace.contains("<main>", "fn")` in test `codegen/boxWasmJsInterop/jsException.kt`
+            // break because the Wasm binary's module name would be the escaped test-class-prefixed name instead of `<main>`.
+            // We build a temporary structure from the modules collected so far; directive-based isolators (e.g. WasmGroupingTestIsolator)
+            // can inspect the files already seen. This mirrors the same guard in BatchingPackageInserter.processModule.
+            if (testServices.testConfiguration is NonGroupingStageTestConfiguration) {
+                // Include a synthetic module for the current (not-yet-finalized) module so that
+                // directive-based isolators can inspect its directives (e.g. WASM_STANDALONE added
+                // via defaultDirectives, which is merged into moduleDirectives at finishModule time).
+                val currentModuleDirectives = testServices.defaultDirectives + globalDirectives + moduleDirectivesBuilder.build()
+                val syntheticModuleForDirectives = TestModule(
+                    name = name,
+                    files = filesOfCurrentModule,
+                    allDependencies = dependenciesOfCurrentModule,
+                    directives = currentModuleDirectives,
+                    languageVersionSettings = currentModuleLanguageVersionSettingsBuilder.build()
+                )
+                if (testServices.shouldIsolateTestInGroupingConfiguration(
+                        TestModuleStructureImpl(modules + syntheticModuleForDirectives, testDataFiles),
+                        fileGenerationPhase = true
+                    )) return name
+            }
+
+            return computeEscapedModuleName(name)
+        }
+
+        private fun computeEscapedModuleName(name: String): String {
             (val className, val methodName, val _ = tags) = testServices.testInfo
             val classPart = className.substringAfter("$").replace("$", ".")
             return "$classPart.$methodName.$name"

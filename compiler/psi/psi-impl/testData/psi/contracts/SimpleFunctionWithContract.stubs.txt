@@ -12,3 +12,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SimpleFunctionWithContractKt
               REFERENCE_EXPRESSION[referencedName=String]
     CONTRACT_EFFECT_LIST
       CONTRACT_EFFECT
+        BINARY_EXPRESSION
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=returns]
+            VALUE_ARGUMENT_LIST
+          OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=implies]
+          PARENTHESIZED
+            BINARY_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=s]
+              OPERATION_REFERENCE[operationToken=EXCLEQ, referencedName=!=]
+              NULL[kind=NULL, value=null]

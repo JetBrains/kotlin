@@ -221,11 +221,12 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
 
         val missingClassNames = classNames.toSet() - classpathClasses
 
-        if (missingClassNames.isEmpty()) {
+        val expectedFile = missingClasspathEntriesOutputFile.getOrNull()?.asFile
+
+        if (missingClassNames.isEmpty() && expectedFile == null) {
             return
         }
 
-        val expectedFile = missingClasspathEntriesOutputFile.getOrNull()?.asFile
         if (expectedFile != null) {
             val actualText = renderClassNames(missingClassNames.toList(), processor)
             assertEqualsToFile(expectedFile, actualText)

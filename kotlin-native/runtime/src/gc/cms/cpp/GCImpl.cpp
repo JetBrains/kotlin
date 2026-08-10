@@ -8,10 +8,10 @@
 #include <memory>
 
 #include "CompilerConstants.hpp"
-#include "GC.hpp"
-#include "GCStatistics.hpp"
-#include "MarkAndSweepUtils.hpp"
-#include "ObjectOps.hpp"
+#include "gc/GC.hpp"
+#include "gc/GCStatistics.hpp"
+#include "gc/MarkAndSweepUtils.hpp"
+#include "mm/ObjectOps.hpp"
 
 using namespace kotlin;
 

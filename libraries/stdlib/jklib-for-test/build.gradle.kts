@@ -12,12 +12,12 @@ project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
 val stdlibProjectDir = file("$rootDir/libraries/stdlib")
 
-val jklibCompilerClasspath by configurations.creating {
+val jklibCompilerClasspath = configurations.create("jklibCompilerClasspath") {
     isCanBeConsumed = false
     isCanBeResolved = true
 }
 
-val substrateStdlibCompilerDependencies by configurations.creating {
+val substrateStdlibCompilerDependencies = configurations.create("substrateStdlibCompilerDependencies") {
     isCanBeConsumed = false
     isCanBeResolved = true
 }
@@ -40,7 +40,7 @@ dependencies {
 
 val outputKlib = layout.buildDirectory.file("libs/kotlin-stdlib-jklib-for-test.klib")
 
-val copyMinimalSources by tasks.registering(Sync::class) {
+val copyMinimalSources = tasks.register("copyMinimalSources", Sync::class) {
     dependsOn(":prepare:build.version:writeStdlibVersion")
     into(layout.buildDirectory.dir("src/genesis-minimal"))
 
@@ -90,6 +90,7 @@ val copyMinimalSources by tasks.registering(Sync::class) {
             "kotlin/internal/Annotations.kt",
             "kotlin/internal/AnnotationsBuiltin.kt",
             "kotlin/internal/progressionUtil.kt",
+            "kotlin/internal/throwNoWhenBranchMatchedException.kt",
             "kotlin/concurrent/atomics/AtomicArrays.common.kt",
             "kotlin/concurrent/atomics/Atomics.common.kt",
             "kotlin/contextParameters/Context.kt",
@@ -134,6 +135,7 @@ val copyMinimalSources by tasks.registering(Sync::class) {
             "runtime/kotlin/jvm/internal/Lambda.kt",
             "runtime/kotlin/jvm/internal/FunctionBase.kt",
             "runtime/kotlin/jvm/annotations/JvmPlatformAnnotations.kt",
+            "src/kotlin/internal/throwNoWhenBranchMatchedException.kt",
         )
         into("src/jvm")
     }
@@ -205,7 +207,7 @@ fun JavaExec.configureJklibCompilation(
 
 
 
-val compileStdlib by tasks.registering(JavaExec::class) {
+val compileStdlib = tasks.register("compileStdlib", JavaExec::class) {
     val javaToolchains = project.extensions.getByType(JavaToolchainService::class.java)
     javaLauncher.set(javaToolchains.launcherFor {
         languageVersion.set(JavaLanguageVersion.of(8))
@@ -215,15 +217,15 @@ val compileStdlib by tasks.registering(JavaExec::class) {
     args("-nowarn")
 }
 
-val compileMinimalStdlib by tasks.registering {
+val compileMinimalStdlib = tasks.register("compileMinimalStdlib") {
     dependsOn(compileStdlib)
 }
 
-val distJKlib by configurations.creating {
+val distJKlib = configurations.create("distJKlib") {
     isCanBeConsumed = true
     isCanBeResolved = false
 }
-val distMinimalJKlib by configurations.creating {
+val distMinimalJKlib = configurations.create("distMinimalJKlib") {
     isCanBeConsumed = true
     isCanBeResolved = false
     extendsFrom(distJKlib)

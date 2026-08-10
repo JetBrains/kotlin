@@ -285,6 +285,7 @@ public interface KaCompiledFile : org.jetbrains.kotlin.analysis.api.compilation.
         "this.isClassFile",
         "org.jetbrains.kotlin.analysis.api.compilation.isClassFile",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaExperimentalApi
 public val KaCompiledFile.isClassFile: Boolean
@@ -383,6 +384,7 @@ public fun interface KaCompilerFacilityModuleActualizer {
         "compile(file, options)",
         "org.jetbrains.kotlin.analysis.api.compilation.compile",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaExperimentalApi
 @Throws(KaCodeCompilationException::class)
@@ -418,6 +420,7 @@ public fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationRe
         "createCompilationOptions(init)",
         "org.jetbrains.kotlin.analysis.api.compilation.createCompilationOptions",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaExperimentalApi
 @KaContextParameterApi
@@ -443,6 +446,7 @@ public fun createCompilationOptions(init: KaCompilationOptionsBuilder.() -> Unit
         "this.modify(init)",
         "org.jetbrains.kotlin.analysis.api.compilation.modify",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaExperimentalApi
 @KaContextParameterApi

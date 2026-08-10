@@ -205,6 +205,7 @@ public class KaDataFlowExitPointSnapshot(
         "this.smartCastInfo",
         "org.jetbrains.kotlin.analysis.api.dataflow.smartCastInfo",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -232,6 +233,7 @@ public val KtExpression.smartCastInfo: KaSmartCastInfo?
         "this.implicitReceiverSmartCasts",
         "org.jetbrains.kotlin.analysis.api.dataflow.implicitReceiverSmartCasts",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaNonPublicApi
 @KaContextParameterApi
@@ -245,6 +247,7 @@ public val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceive
         "computeExitPointSnapshot(statements)",
         "org.jetbrains.kotlin.analysis.api.dataflow.computeExitPointSnapshot",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaNonPublicApi
 @KaContextParameterApi

@@ -21,24 +21,17 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
-import org.junit.Assert.assertEquals
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedClass
+import org.junit.jupiter.params.provider.ValueSource
 import java.io.File
 
-@RunWith(Parameterized::class)
+@ParameterizedClass(name = "intrinsicRemember = {0}")
+@ValueSource(booleans = [false, true])
 class StrongSkippingModeTransformTests(
     private val intrinsicRememberEnabled: Boolean,
 ) : AbstractIrTransformTest() {
-    companion object {
-        @JvmStatic
-        @Parameterized.Parameters(name = "intrinsicRemember = {0}")
-        fun data() = arrayOf<Any>(
-            arrayOf(false),
-            arrayOf(true)
-        )
-    }
 
     override fun CompilerConfiguration.updateConfiguration() {
         put(

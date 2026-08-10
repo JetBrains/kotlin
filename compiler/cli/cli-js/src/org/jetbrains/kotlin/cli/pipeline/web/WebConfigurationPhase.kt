@@ -237,11 +237,10 @@ abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArgument
         configuration.sourcemapNamesPolicy = sourceMapNamesPolicy
 
         configuration.printReachabilityInfo = arguments.irDcePrintReachabilityInfo
-        configuration.fakeOverrideValidator = arguments.fakeOverrideValidator
 
         arguments.irDceRuntimeDiagnostic?.let { configuration.dceRuntimeDiagnostic = it }
 
-        configuration.setupPartialLinkageConfig(arguments, WEB_ARGUMENT_WARNING, WEB_ARGUMENT_ERROR)
+        configuration.setupPartialLinkageConfig(arguments, WEB_ARGUMENT_ERROR)
     }
 
     internal fun initializeCommonConfiguration(

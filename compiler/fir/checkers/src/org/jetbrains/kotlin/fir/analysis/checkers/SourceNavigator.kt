@@ -21,9 +21,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.stubs.elements.KtDotQualifiedExpressionElementType
-import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
-import org.jetbrains.kotlin.psi.stubs.elements.KtTypeProjectionElementType
 import org.jetbrains.kotlin.util.getChildren
 
 /**
@@ -105,9 +102,9 @@ private open class LightTreeSourceNavigator : SourceNavigator {
     private fun LighterASTNode.getRawIdentifier(
         treeStructure: FlyweightCapableTreeStructure<LighterASTNode>,
     ): CharSequence? = when (tokenType) {
-        is KtNameReferenceExpressionElementType, KtTokens.IDENTIFIER -> toString()
-        is KtTypeProjectionElementType -> getChildren(treeStructure).last().toString()
-        is KtDotQualifiedExpressionElementType, KtTokens.SAFE_ACCESS -> getChildren(treeStructure).last().getRawIdentifier(treeStructure)
+        KtNodeTypes.REFERENCE_EXPRESSION, KtTokens.IDENTIFIER -> toString()
+        KtNodeTypes.TYPE_PROJECTION -> getChildren(treeStructure).last().toString()
+        KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtTokens.SAFE_ACCESS -> getChildren(treeStructure).last().getRawIdentifier(treeStructure)
         else -> null
     }
 

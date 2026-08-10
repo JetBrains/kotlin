@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,8 +14,10 @@ import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType;
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
 import java.util.Arrays;
 import java.util.List;
@@ -130,5 +132,35 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     @Override
     public KtElement getPsiOrParent() {
         return this;
+    }
+
+    /**
+     * The expressions this element holds, taken from its stub, or an empty array if the stub does not have them.
+     *
+     * <p>An expression is stubbed only where {@link KtTokenSets#STUBBED_EXPRESSIONS} covers its element type, so a
+     * caller has to fall back to the AST when nothing is found: the expression may still be there, merely not stubbed.
+     *
+     * <p>The expression is told apart from the other children by its element type alone. No child of a declaration
+     * that is not its initializer, expression body or default value has one of these types, and the references
+     * inside a type reference are grandchildren, out of reach of a direct lookup.
+     *
+     * <p>Nothing is looked up once the AST is loaded: the stub carries no data the AST does not have here, so the
+     * caller may as well read the AST it already paid for.
+     */
+    @NotNull
+    protected final KtExpression[] getExpressionsFromStub() {
+        T stub = getStub();
+        if (stub == null) return KtExpression.EMPTY_ARRAY;
+
+        return stub.getChildrenByType(KtTokenSets.STUBBED_EXPRESSIONS, KtExpression.EMPTY_ARRAY);
+    }
+
+    /**
+     * @see #getExpressionsFromStub()
+     */
+    @Nullable
+    protected final KtExpression getExpressionFromStub() {
+        KtExpression[] expressions = getExpressionsFromStub();
+        return expressions.length != 0 ? expressions[0] : null;
     }
 }

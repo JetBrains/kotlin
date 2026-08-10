@@ -54,7 +54,7 @@ val unpackBreakpad = tasks.register<Sync>("unpackBreakpad") {
     into(breakpadLocationNoDependency)
 }
 
-val breakpadSources by configurations.creating {
+val breakpadSources = configurations.create("breakpadSources") {
     isCanBeConsumed = true
     isCanBeResolved = false
     attributes {
@@ -105,7 +105,7 @@ bitcode {
                 "TARGET_OS_IPHONE" to "1",
                 "TARGET_OS_TV" to "1",
             )
-            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_DEVICE_ARM64 -> hashMapOf(
+            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_DEVICE_ARM64 -> hashMapOf(
                 "TARGET_OS_EMBEDDED" to "1",
                 "TARGET_OS_IPHONE" to "1",
                 "TARGET_OS_WATCH" to "1",
@@ -157,24 +157,19 @@ bitcode {
                 "-Wno-unused-parameter",  // False positives with polymorphic functions.
         ) + clangArgsSpecificForKonanSources)
 
-        module("main") {
-            headersDirs.from("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/breakpad/cpp", "src/crashHandler/common/cpp", "src/utfcpp/cpp", "src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp",  "src/mm/cpp")
+        module("runtime") {
+            srcRoot.set(layout.projectDirectory.dir("src/main"))
+            headersDirs.from("src/utfcpp/cpp")
             sourceSets {
-                main {
-                    // TODO: Split out out `base` module and merge it together with `main` into `runtime.bc`
-                    if (sanitizer == null) {
-                        outputFile.set(layout.buildDirectory.file("bitcode/main/$target/runtime.bc"))
-                    }
-                }
+                main {}
                 testFixtures {}
                 test {}
             }
         }
 
-        testsGroup("main_test") {
-            testedModules.addAll("main")
-            // TODO(KT-53776): Some tests depend on allocator being legacy.
-            testSupportModules.addAll("mm", "noop_externalCallsChecker", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+        testsGroup("runtime_test") {
+            testedModules.addAll("runtime")
+            testSupportModules.addAll("noop_externalCallsChecker", "custom_alloc", "noop_gc", "manual_gcScheduler", "objc", "noop_crashHandler")
         }
 
         // Headers from here get reused by Swift Export, so this module should not depend on anything in the runtime
@@ -188,54 +183,44 @@ bitcode {
             sourceSets {}
         }
 
-        if (!project.providers.gradleProperty("disableBreakpad").isPresent) {
-            module("breakpad") {
-                srcRoot.fileProvider(unpackBreakpad.map { it.destinationDir })
-                val sources = listOf(
-                        "client/mac/crash_generation/crash_generation_client.cc",
-                        "client/mac/handler/breakpad_nlist_64.cc",
-                        "client/mac/handler/dynamic_images.cc",
-                        "client/mac/handler/exception_handler.cc",
-                        "client/mac/handler/minidump_generator.cc",
-                        "client/mac/handler/protected_memory_allocator.cc",
-                        "client/minidump_file_writer.cc",
-                        "common/mac/MachIPC.mm",
-                        "common/mac/arch_utilities.cc",
-                        "common/mac/file_id.cc",
-                        "common/mac/macho_id.cc",
-                        "common/mac/macho_utilities.cc",
-                        "common/mac/macho_walker.cc",
-                        "common/mac/string_utilities.cc",
-                        "common/mac/bootstrap_compat.cc",
-                        "common/convert_UTF.cc",
-                        "common/md5.cc",
-                        "common/string_conversion.cc",
-                )
-                sourceSets {
-                    main {
-                        inputFiles.from(srcRoot.dir("src"))
-                        inputFiles.setIncludes(sources)
-                        headersDirs.setFrom(project.layout.projectDirectory.dir("src/breakpad/cpp"))
-                    }
+        module("breakpad") {
+            srcRoot.fileProvider(unpackBreakpad.map { it.destinationDir })
+            val sources = listOf(
+                    "client/mac/crash_generation/crash_generation_client.cc",
+                    "client/mac/handler/breakpad_nlist_64.cc",
+                    "client/mac/handler/dynamic_images.cc",
+                    "client/mac/handler/exception_handler.cc",
+                    "client/mac/handler/minidump_generator.cc",
+                    "client/mac/handler/protected_memory_allocator.cc",
+                    "client/minidump_file_writer.cc",
+                    "common/mac/MachIPC.mm",
+                    "common/mac/arch_utilities.cc",
+                    "common/mac/file_id.cc",
+                    "common/mac/macho_id.cc",
+                    "common/mac/macho_utilities.cc",
+                    "common/mac/macho_walker.cc",
+                    "common/mac/string_utilities.cc",
+                    "common/mac/bootstrap_compat.cc",
+                    "common/convert_UTF.cc",
+                    "common/md5.cc",
+                    "common/string_conversion.cc",
+            )
+            sourceSets {
+                main {
+                    inputFiles.from(srcRoot.dir("src"))
+                    inputFiles.setIncludes(sources)
+                    headersDirs.setFrom(project.layout.projectDirectory.dir("src/breakpad/cpp"))
                 }
-                // Make sure breakpad sources are downloaded when building the corresponding compilation database entry
-                dependencies.add(unpackBreakpad)
-                compilerArgs.set(listOf(
-                        "-std=c++17",
-                        "-DHAVE_MACH_O_NLIST_H",
-                        "-DHAVE_CONFIG_H",
-                ))
+            }
+            // Make sure breakpad sources are downloaded when building the corresponding compilation database entry
+            dependencies.add(unpackBreakpad)
+            compilerArgs.set(listOf(
+                    "-std=c++17",
+                    "-DHAVE_MACH_O_NLIST_H",
+                    "-DHAVE_CONFIG_H",
+            ))
 
-                onlyIf { it.family == Family.OSX }
-            }
-        } else {
-            // Compiler expects breakpad.bc file. Let's give it an empty one.
-            module("breakpad") {
-                srcRoot.set(project.layout.projectDirectory.dir("src/breakpad_stubs"))
-                sourceSets {
-                    main {}
-                }
-            }
+            onlyIf { it.family == Family.OSX }
         }
 
         module("libbacktrace") {
@@ -290,43 +275,21 @@ bitcode {
         }
 
         module("compiler_interface") {
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"))
             sourceSets {
                 main {}
             }
         }
 
         module("launcher") {
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"))
             sourceSets {
                 main {}
             }
         }
 
         module("debug") {
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
-            sourceSets {
-                main {}
-            }
-        }
-
-        module("common_alloc") {
-            srcRoot.set(layout.projectDirectory.dir("src/alloc/common"))
-            headersDirs.from(files("src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
-            sourceSets {
-                main {}
-                test {}
-            }
-        }
-
-        testsGroup("common_alloc_test") {
-            testedModules.addAll("common_alloc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
-        }
-
-        module("std_alloc") {
-            srcRoot.set(layout.projectDirectory.dir("src/alloc/std"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/alloc/legacy/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"))
             sourceSets {
                 main {}
             }
@@ -334,7 +297,7 @@ bitcode {
 
         module("custom_alloc") {
             srcRoot.set(layout.projectDirectory.dir("src/alloc/custom"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -344,13 +307,12 @@ bitcode {
 
         testsGroup("custom_alloc_test") {
             testedModules.addAll("custom_alloc")
-            // TODO(KT-53776): Some tests depend on GC not being noop.
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "concurrent_ms_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("runtime", "noop_externalCallsChecker", "noop_gc", "manual_gcScheduler", "objc", "noop_crashHandler")
         }
 
         module("legacy_alloc") {
             srcRoot.set(layout.projectDirectory.dir("src/alloc/legacy"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -358,14 +320,14 @@ bitcode {
             }
         }
 
-        testsGroup("std_legacy_alloc_test") {
+        testsGroup("legacy_alloc_test") {
             testedModules.addAll("legacy_alloc")
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "std_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("runtime", "noop_externalCallsChecker", "noop_gc", "manual_gcScheduler", "objc", "noop_crashHandler")
         }
 
         module("exceptionsSupport") {
             srcRoot.set(layout.projectDirectory.dir("src/exceptions_support"))
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"))
             sourceSets {
                 main {}
             }
@@ -373,7 +335,7 @@ bitcode {
 
         module("source_info_core_symbolication") {
             srcRoot.set(layout.projectDirectory.dir("src/source_info/core_symbolication"))
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"))
             sourceSets {
                 main {}
             }
@@ -383,7 +345,7 @@ bitcode {
 
         module("source_info_libbacktrace") {
             srcRoot.set(layout.projectDirectory.dir("src/source_info/libbacktrace"))
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/libbacktrace/c/include"))
+            headersDirs.from(files("src/main/cpp", "src/libbacktrace/c/include"))
             sourceSets {
                 main {}
             }
@@ -392,7 +354,7 @@ bitcode {
         }
 
         module("objc") {
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
             }
@@ -454,7 +416,7 @@ bitcode {
         }
 
         module("test_support") {
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"))
             sourceSets {
                 testFixtures {
                     inputFiles.include("**/*.cpp", "**/*.mm")
@@ -462,63 +424,38 @@ bitcode {
             }
         }
 
-        module("mm") {
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
-            sourceSets {
-                main {}
-                test {}
-            }
-        }
-
-        testsGroup("mm_test") {
-            testedModules.addAll("mm")
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
-        }
-
-        module("common_gc") {
-            srcRoot.set(layout.projectDirectory.dir("src/gc/common"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
-            sourceSets {
-                main {}
-                test {}
-            }
-        }
-
-        testsGroup("common_gc_test") {
-            testedModules.addAll("common_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
-        }
-
         module("noop_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/noop"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"))
             sourceSets {
                 main {}
+                testFixtures {}
             }
         }
 
         module("same_thread_ms_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/stms"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"))
             sourceSets {
                 main {}
+                testFixtures {}
                 test {}
             }
         }
 
         testsGroup("stms_gc_test") {
             testedModules.addAll("same_thread_ms_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("runtime", "noop_externalCallsChecker", "legacy_alloc", "manual_gcScheduler", "objc", "noop_crashHandler")
         }
 
         testsGroup("stms_gc_custom_test") {
             testedModules.addAll("same_thread_ms_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("runtime", "noop_externalCallsChecker", "custom_alloc", "manual_gcScheduler", "objc", "noop_crashHandler")
         }
 
         module("pmcs_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/pmcs"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"))
             sourceSets {
                 main {}
                 testFixtures {}
@@ -528,50 +465,37 @@ bitcode {
 
         testsGroup("pmcs_gc_test") {
             testedModules.addAll("pmcs_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("runtime", "noop_externalCallsChecker", "legacy_alloc", "manual_gcScheduler", "objc", "noop_crashHandler")
         }
 
         testsGroup("pmcs_gc_custom_test") {
             testedModules.addAll("pmcs_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("runtime", "noop_externalCallsChecker", "custom_alloc", "manual_gcScheduler", "objc", "noop_crashHandler")
         }
 
         module("concurrent_ms_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/cms"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"))
             sourceSets {
                 main {}
+                testFixtures {}
                 test {}
             }
         }
 
         testsGroup("cms_gc_test") {
             testedModules.addAll("concurrent_ms_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("runtime", "noop_externalCallsChecker", "legacy_alloc", "manual_gcScheduler", "objc", "noop_crashHandler")
         }
 
         testsGroup("cms_gc_custom_test") {
             testedModules.addAll("concurrent_ms_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
-        }
-
-        module("common_gcScheduler") {
-            srcRoot.set(layout.projectDirectory.dir("src/gcScheduler/common"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
-            sourceSets {
-                main {}
-                test {}
-            }
-        }
-
-        testsGroup("common_gcScheduler_test") {
-            testedModules.addAll("common_gcScheduler")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("runtime", "noop_externalCallsChecker", "custom_alloc", "manual_gcScheduler", "objc", "noop_crashHandler")
         }
 
         module("manual_gcScheduler") {
             srcRoot.set(layout.projectDirectory.dir("src/gcScheduler/manual"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"))
             sourceSets {
                 main {}
             }
@@ -579,7 +503,7 @@ bitcode {
 
         module("adaptive_gcScheduler") {
             srcRoot.set(layout.projectDirectory.dir("src/gcScheduler/adaptive"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -588,12 +512,12 @@ bitcode {
 
         testsGroup("adaptive_gcScheduler_test") {
             testedModules.addAll("adaptive_gcScheduler")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("runtime", "noop_externalCallsChecker", "custom_alloc", "noop_gc", "objc", "noop_crashHandler")
         }
 
         module("aggressive_gcScheduler") {
             srcRoot.set(layout.projectDirectory.dir("src/gcScheduler/aggressive"))
-            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -602,12 +526,12 @@ bitcode {
 
         testsGroup("aggressive_gcScheduler_test") {
             testedModules.addAll("aggressive_gcScheduler")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("runtime", "noop_externalCallsChecker", "custom_alloc", "noop_gc", "objc", "noop_crashHandler")
         }
 
         module("impl_externalCallsChecker") {
             srcRoot.set(layout.projectDirectory.dir("src/externalCallsChecker/impl"))
-            headersDirs.from("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp")
+            headersDirs.from("src/main/cpp")
             sourceSets {
                 main {}
             }
@@ -615,46 +539,38 @@ bitcode {
 
         module("noop_externalCallsChecker") {
             srcRoot.set(layout.projectDirectory.dir("src/externalCallsChecker/noop"))
-            headersDirs.from("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp")
+            headersDirs.from("src/main/cpp")
             sourceSets {
                 main {}
             }
         }
 
-        if (!project.providers.gradleProperty("disableBreakpad").isPresent) {
-            module("impl_crashHandler") {
-                srcRoot.set(layout.projectDirectory.dir("src/crashHandler/impl"))
-                // Cannot use output of `unpackBreakpad` to support Gradle Configuration Cache working before `unpackBreakpad`
-                // actually had a chance to run.
-                headersDirs.from("src/main/cpp", "src/breakpad/cpp", breakpadLocationNoDependency.get().dir("src"))
-                sourceSets {
-                    main {
-                        // This task depends on breakpad headers being present.
-                        compileTask.configure {
-                            dependsOn(unpackBreakpad)
-                        }
+        module("impl_crashHandler") {
+            srcRoot.set(layout.projectDirectory.dir("src/crashHandler/impl"))
+            // Cannot use output of `unpackBreakpad` to support Gradle Configuration Cache working before `unpackBreakpad`
+            // actually had a chance to run.
+            headersDirs.from("src/main/cpp", "src/breakpad/cpp", breakpadLocationNoDependency.get().dir("src"))
+            sourceSets {
+                main {
+                    // This task depends on breakpad headers being present.
+                    compileTask.configure {
+                        dependsOn(unpackBreakpad)
                     }
                 }
-                onlyIf { it.family == Family.OSX }
             }
-        } else {
-            module("impl_crashHandler") {
-                srcRoot.set(layout.projectDirectory.dir("src/crashHandler/noop"))
-                sourceSets {
-                    main {}
-                }
-            }
+            onlyIf { it.family == Family.OSX }
         }
 
         module("noop_crashHandler") {
             srcRoot.set(layout.projectDirectory.dir("src/crashHandler/noop"))
+            headersDirs.from("src/main/cpp")
             sourceSets {
                 main {}
             }
         }
 
         module("xctest_launcher") {
-            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"))
 
             sourceSets {
                 main {}
@@ -664,7 +580,7 @@ bitcode {
     }
 }
 
-val objcExportApi by configurations.creating {
+val objcExportApi = configurations.create("objcExportApi") {
     isCanBeConsumed = true
     isCanBeResolved = false
     attributes {
@@ -679,7 +595,7 @@ artifacts {
     add(objcExportApi.name, layout.projectDirectory.dir("src/objcExport/cpp"))
 }
 
-val runtimeBitcode by configurations.creating {
+val runtimeBitcode = configurations.create("runtimeBitcode") {
     isCanBeConsumed = false
     isCanBeResolved = true
     attributes {
@@ -706,13 +622,13 @@ targetList.forEach { target ->
     }
 }
 
-val hostRuntime by tasks.registering {
+val hostRuntime = tasks.register("hostRuntime") {
     description = "Build all main runtime modules for host"
     group = CompileToBitcodeExtension.BUILD_TASK_GROUP
     dependsOn("${PlatformInfo.hostName}Runtime")
 }
 
-val hostRuntimeTests by tasks.registering {
+val hostRuntimeTests = tasks.register("hostRuntimeTests") {
     description = "Runs all runtime tests for host"
     group = CompileToBitcodeExtension.VERIFICATION_TASK_GROUP
     dependsOn("${PlatformInfo.hostName}RuntimeTests")
@@ -722,7 +638,7 @@ tasks.named("assemble") {
     dependsOn(targetList.map { "${it}Runtime" })
 }
 
-val hostAssemble by tasks.registering {
+val hostAssemble = tasks.register("hostAssemble") {
     dependsOn("${PlatformInfo.hostName}Runtime")
 }
 
@@ -737,7 +653,7 @@ tasks.named("clean", Delete::class) {
 
 val nativeBootstrapDistribution = registerNativeBootstrapDistribution()
 
-val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
+val stdlibBuildTask = tasks.register("stdlibBuildTask", KonanCompileTask::class) {
     group = BasePlugin.BUILD_GROUP
     description = "Build the Kotlin/Native standard library"
 
@@ -754,7 +670,6 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "-Xallow-kotlin-package",
             "-Xexplicit-api=strict",
             "-Xexpect-actual-classes",
-            "-Xklib-ir-inliner=intra-module",
             "-Xcontext-parameters",
             "-Xname-based-destructuring=complete",
             "-Xcollection-literals",
@@ -781,7 +696,7 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "-Xwarning-level=REDUNDANT_CLI_ARG:disabled",
     ))
 
-    val common by sourceSets.creating {
+    val common = sourceSets.create("common") {
         srcDir(project(":kotlin-stdlib").projectDir.resolve("common/src/kotlin"))
         srcDir(project(":kotlin-stdlib").projectDir.resolve("common/src/generated"))
         srcDir(project(":kotlin-stdlib").projectDir.resolve("unsigned/src"))
@@ -790,26 +705,26 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
         srcDir(project(":kotlin-test").projectDir.resolve("common/src/main/kotlin"))
     }
 
-    val commonNonJvm by sourceSets.creating {
+    val commonNonJvm = sourceSets.create("commonNonJvm") {
         srcDir(project(":kotlin-stdlib").projectDir.resolve("common-non-jvm/src"))
     }
 
-    val nativeWasm by sourceSets.creating {
+    val nativeWasm = sourceSets.create("nativeWasm") {
         srcDir(project(":kotlin-stdlib").projectDir.resolve("native-wasm/src/"))
     }
 
-    val nativeWasmWasi by sourceSets.creating {
+    val nativeWasmWasi = sourceSets.create("nativeWasmWasi") {
         srcDir(project(":kotlin-stdlib").projectDir.resolve("native-wasm/wasi/"))
     }
 
-    val nativeMain by sourceSets.creating {
+    val nativeMain = sourceSets.create("nativeMain") {
         srcDir(project(":kotlin-native:Interop:Runtime").projectDir.resolve("src/main/kotlin"))
         srcDir(project(":kotlin-native:Interop:Runtime").projectDir.resolve("src/native/kotlin"))
         srcDir(project.file("src/main/kotlin"))
     }
 }
 
-val nativeStdlib by tasks.registering(Sync::class) {
+val nativeStdlib = tasks.register("nativeStdlib", Sync::class) {
     from(stdlibBuildTask)
     into(project.layout.buildDirectory.dir("nativeStdlib"))
 }

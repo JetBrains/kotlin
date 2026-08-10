@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.HasMetadata
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.backend.ast.metadata.wasMovedFromItsDeclarationPlace
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import java.util.LinkedHashSet
 
 /**
  * Moving a declaration of the temporary variable without an initializer to the closest assignment.
@@ -29,8 +28,7 @@ import java.util.LinkedHashSet
  * 5) Searches for the Lowest Common Ancestor (LCA) among all JsBlocks where the temporary variables are assigned or used.
  * 6) If the LCA is found in the set of JsBlocks where the temporary variable is assigned, we can move the declaration to the assignment.
  */
-class MoveTemporaryVariableDeclarationToAssignment(private val body: JsBlock) {
-    private var hasChanges = false
+internal class MoveTemporaryVariableDeclarationToAssignment(private val body: JsBlock) : FunctionPostProcessorStep() {
 
     private val varUsedInBlocks = hashMapOf<JsName, HashSet<JsBlock>>()
     private val varAssignedInBlocks = hashMapOf<JsName, HashSet<JsBlock>>()
@@ -45,13 +43,11 @@ class MoveTemporaryVariableDeclarationToAssignment(private val body: JsBlock) {
         get() = synthetic || wasMovedFromItsDeclarationPlace
 
 
-    fun apply(): Boolean {
+    override fun apply() {
         analyze()
         perform()
 
         require(removedVarDeclarations.isEmpty())
-
-        return hasChanges
     }
 
     private fun analyze() {

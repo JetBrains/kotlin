@@ -7,12 +7,10 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addGetter
 import org.jetbrains.kotlin.ir.builders.declarations.addProperty
@@ -250,15 +248,13 @@ interface IrBuilderWithPluginContext {
             }
         }
 
-        anonymousInit.buildWithScope { initIrBody ->
-            initIrBody.body =
-                DeclarationIrBuilder(
-                    compilerContext,
-                    initIrBody.symbol,
-                    initIrBody.startOffset,
-                    initIrBody.endOffset
-                ).irBlockBody(body = body)
-        }
+        anonymousInit.body =
+            DeclarationIrBuilder(
+                compilerContext,
+                anonymousInit.symbol,
+                anonymousInit.startOffset,
+                anonymousInit.endOffset
+            ).irBlockBody(body = body)
     }
 
     fun IrBuilderWithScope.irBinOp(name: Name, lhs: IrExpression, rhs: IrExpression): IrExpression {
@@ -277,14 +273,6 @@ interface IrBuilderWithPluginContext {
             irObject.defaultType,
             irObject.symbol
         )
-
-    fun <T : IrDeclaration> T.buildWithScope(builder: (T) -> Unit): T =
-        also { irDeclaration ->
-            @OptIn(ObsoleteDescriptorBasedAPI::class)
-            compilerContext.symbolTable.withReferenceScope(irDeclaration) {
-                builder(irDeclaration)
-            }
-        }
 
     class BranchBuilder(
         val irWhen: IrWhen,
@@ -451,13 +439,11 @@ interface IrBuilderWithPluginContext {
         return irInvoke(compilerContext.lazyFunctionSymbol, listOf(enumElement, lambdaExpression), listOf(returnType), lazyIrType)
     }
 
-    context(irBuilder: IrBuilderWithScope) @OptIn(ObsoleteDescriptorBasedAPI::class)
+    context(irBuilder: IrBuilderWithScope)
     fun wrapperClassReference(classType: IrType): IrClassReference {
         if (compilerContext.platform.isJvm()) {
             // "Byte::class" -> "java.lang.Byte::class"
-//          TODO: get rid of descriptor
-            val wrapperFqName =
-                KotlinBuiltIns.getPrimitiveType(classType.classOrNull!!.descriptor)?.let(JvmPrimitiveType::get)?.wrapperFqName
+            val wrapperFqName = classType.getPrimitiveType()?.let(JvmPrimitiveType::get)?.wrapperFqName
             if (wrapperFqName != null) {
                 val wrapperClass = compilerContext.finderForBuiltins().findClass(ClassId.topLevel(wrapperFqName))
                     ?: error("Primitive wrapper class for $classType not found: $wrapperFqName")

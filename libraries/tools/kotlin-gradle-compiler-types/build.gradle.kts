@@ -19,4 +19,4 @@ dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
 }
 
-exposeSourcesForDocumentationEmbedding(setOf(kotlin.sourceSets.getByName("main")))
+exposeSourcesForDocumentationEmbedding(setOf(kotlin.sourceSets.main.get()))

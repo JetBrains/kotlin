@@ -29,4 +29,5 @@ KaConstructorSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of dep"
   deprecation: null
+  javaMethodName: null
   importableFqName: two.SimpleTypeAlias

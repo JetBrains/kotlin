@@ -5,15 +5,25 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.internal.GradleInternal
 import org.gradle.api.logging.LogLevel
+import org.gradle.internal.operations.BuildOperationListener
+import org.gradle.internal.operations.BuildOperationListenerManager
+import org.gradle.internal.operations.DefaultBuildOperationListenerManager
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.formatSize
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.internal.build.metrics.GradleBuildMetricsData
+import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.GRADLE_DEVELOCITY_PLUGIN_VERSION
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.GRADLE_ENTERPRISE_PLUGIN_VERSION
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.BuildOperationRecordImpl
@@ -24,17 +34,14 @@ import org.junit.jupiter.api.DisplayName
 import java.io.ObjectInputStream
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.io.path.*
 import kotlin.streams.asSequence
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
-import  org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
-import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
-import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.GRADLE_DEVELOCITY_PLUGIN_VERSION
-import kotlin.test.assertContains
+import kotlin.test.fail
 
 @DisplayName("Build reports")
 class BuildReportsIT : KGPBaseTest() {
@@ -323,11 +330,11 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     val nativeBuildExpectedMetrics = arrayOf(
-        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("InlineFunctionSerializationPreProcessing"),
-        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("ValidateIrBeforeLowering"),
-        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("ValidateIrAfterLowering"),
-        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("llvm-default.AlwaysInlinerPass"),
-        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("InlineFunctionSerializationPreProcessing"),
+        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("InlineFunctionSerializationPreProcessing", IR_PRE_LOWERING),
+        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("ValidateIrBeforeLowering", IR_LOWERING),
+        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("ValidateIrAfterLowering", IR_LOWERING),
+        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("llvm-default.AlwaysInlinerPass", BACKEND),
+        CustomBuildTimeMetric.createIfDoesNotExistAndReturn("InlineFunctionSerializationPreProcessing", IR_PRE_LOWERING),
         RUN_COMPILATION_IN_WORKER,
         NATIVE_IN_PROCESS,
         IR_PRE_LOWERING,
@@ -544,6 +551,71 @@ class BuildReportsIT : KGPBaseTest() {
                 input.readObject() as GradleBuildMetricsData
             }
         }
+    }
+
+    @Suppress("DEPRECATION")
+    @DisplayName("BuildMetricsService unsubscribes from BuildOperationListenerManager on close")
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_1],
+    )
+    @GradleTest
+    @JvmGradlePluginTests
+    fun testBuildOperationListenerUnsubscribed(gradleVersion: GradleVersion) {
+        project(
+            "simpleProject", gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                buildReport = listOf(BuildReportType.JSON),
+                configurationCache = ConfigurationCacheValue.DISABLED
+            )
+        ) {
+            val errorMessage = "BuildMetricsService should remove itself from BuildOperationListenerManager"
+            fun assertBuildMetricServiceIsNotRegistered(buildOperationListeners: List<BuildOperationListener>) {
+                val classNames = buildOperationListeners.map { lister ->
+                    val delegateField = lister.javaClass.getDeclaredField("delegate").apply { isAccessible = true }
+                    (delegateField.get(lister)).javaClass.simpleName
+                }
+                if (classNames.firstOrNull { it.startsWith("BuildMetricsService") } != null) {
+                    fail(errorMessage)
+                }
+            }
+
+            if (gradleVersion.baseVersion >= GradleVersion.version("9.1")) {
+                buildScriptInjection {
+                    val buildOperationListenerManager =
+                        (project.gradle as GradleInternal).services.get(BuildOperationListenerManager::class.java) as DefaultBuildOperationListenerManager
+
+                    project.gradle.buildFinished {
+                        val listenersField = buildOperationListenerManager.javaClass.getDeclaredField("listeners")
+                        listenersField.isAccessible = true
+                        @Suppress("UNCHECKED_CAST")
+                        val buildOperationListeners =
+                            listenersField.get(buildOperationListenerManager) as AtomicReference<List<BuildOperationListener>>
+
+                        assertBuildMetricServiceIsNotRegistered(buildOperationListeners.get())
+                    }
+                }
+            } else {
+                buildScriptInjection {
+                    val buildOperationListenerManager =
+                        (project.gradle as GradleInternal).services.get(BuildOperationListenerManager::class.java) as DefaultBuildOperationListenerManager
+                    project.gradle.buildFinished {
+                        val listenersField = buildOperationListenerManager.javaClass.getDeclaredField("listeners")
+                        listenersField.isAccessible = true
+                        @Suppress("UNCHECKED_CAST")
+                        val buildOperationListeners = listenersField.get(buildOperationListenerManager) as List<BuildOperationListener>
+
+                        assertBuildMetricServiceIsNotRegistered(buildOperationListeners)
+                    }
+                }
+            }
+
+            build(
+                "compileKotlin",
+            ) {
+                assertOutputDoesNotContain(errorMessage)
+            }
+        }
+
     }
 
     @DisplayName("custom value limit")
@@ -1134,7 +1206,7 @@ class BuildReportsIT : KGPBaseTest() {
                     taskName = null,
                     NATIVE_IN_PROCESS,
                     CustomBuildTimeMetric.createIfDoesNotExistAndReturn("UpgradeCallableReferences", IR_PRE_LOWERING),
-                    CustomBuildTimeMetric.createIfDoesNotExistAndReturn("AssertionWrapperLowering", IR_PRE_LOWERING),
+                    CustomBuildTimeMetric.createIfDoesNotExistAndReturn("NativeAssertionWrapperLowering", IR_PRE_LOWERING),
                     CustomBuildTimeMetric.createIfDoesNotExistAndReturn("AvoidLocalFOsInInlineFunctionsLowering", IR_PRE_LOWERING),
                     CustomBuildTimeMetric.createIfDoesNotExistAndReturn("LateinitLowering", IR_PRE_LOWERING)
                 ) { buildExecutionData ->

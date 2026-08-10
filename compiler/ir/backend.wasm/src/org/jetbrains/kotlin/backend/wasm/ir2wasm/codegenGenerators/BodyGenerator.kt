@@ -592,6 +592,20 @@ class BodyGenerator(
     override fun visitSetField(expression: IrSetField) {
         val field = expression.symbol.owner
         val receiver = expression.receiver
+        val expressionValue = expression.value
+
+        // Skip redundant field initializers that set fields to type-default values, since we
+        // already initialize fields to type-default values in the code that initializes the objects
+        // at creation time. See the tests e.g. fieldInitializerOptimization.kt and
+        // CorrectOrder3.kt. But also see KT-15642 for more about the original JVM behavior itself.
+        if (functionContext.irFunction is IrConstructor &&
+            expression.origin == IrStatementOrigin.INITIALIZE_FIELD &&
+            expressionValue is IrConst &&
+            isDefaultValueForType(field.type, expressionValue)
+        ) {
+            body.buildGetUnit()
+            return
+        }
 
         val location = expression.getSourceLocation()
 
@@ -612,6 +626,17 @@ class BodyGenerator(
 
         body.buildGetUnit()
     }
+
+    private fun isDefaultValueForType(type: IrType, const: IrConst): Boolean =
+        when {
+            type.isBoolean() -> const.value is Boolean && const.value == false
+            type.isChar() -> const.value is Char && (const.value as Char).code == 0
+            type.isByte() || type.isShort() || type.isInt() || type.isLong() ->
+                const.value is Number && (const.value as Number).toLong() == 0L
+            type.isFloat() -> const.value is Float && (const.value as Float).equals(0.0f)
+            type.isDouble() -> const.value is Double && (const.value as Double).equals(0.0)
+            else -> const.kind == IrConstKind.Null
+        }
 
     override fun visitGetValue(expression: IrGetValue) {
         val valueSymbol = expression.symbol
@@ -1009,6 +1034,24 @@ class BodyGenerator(
         return typeCodegenContext.referenceWasmFunctionType(WasmFunctionType(emptyList(), listOf(anyRefNull, cont0RefNull)))
     }
 
+    // `invokeArity` is the number of `SuspendFunctionN.invoke` parameters:
+    // the suspend function object itself, N arguments and `completion`.
+    private fun generateSuspendFunToContref(
+        function: IrFunction,
+        invokeArity: Int,
+        location: SourceLocation
+    ) {
+        val suspendFunctionClassType = function.parameters[0].type
+        val suspendFunctionInvoke = irBuiltIns.suspendFunctionN(invokeArity).getSimpleFunction("invoke")!!
+        val contType = typeCodegenContext.referenceContType(invokeArity + 2)
+        val bindContType = typeCodegenContext.referenceContType(0)
+
+        body.buildGetLocal(functionContext.referenceLocal(0), location)
+        castAnyToInvokable(suspendFunctionInvoke.owner, suspendFunctionClassType.classOrFail.owner, location)
+        body.buildContNew(contType, location)
+        body.buildContBind(contType, bindContType, location)
+    }
+
     // Return true if generated.
     // Assumes call arguments are already on the stack
     private fun tryToGenerateIntrinsicCall(
@@ -1315,27 +1358,15 @@ class BodyGenerator(
                 generateResumeIntrinsicsEpilogue(wasmContinuation, location)
             }
 
-            // interface lookup for `kotlin.coroutines.SuspendFunction0.invoke`
+            // interface lookup for `kotlin.coroutines.SuspendFunction(0|1|2).invoke`
             // converting `invoke` into wasm continuation - cont.new
             // passing coroutine object as the first argument of `invoke` - cont.bind
-            in wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendFunctionToContref ?: emptyList() -> {
-                val intrinsicIndex =
-                    wasmSymbols.coroutinesStackSwitchingIntrinsics
-                        ?.suspendFunctionToContref!!
-                        .indexOfFirst { it == function.symbol }
-                val arity = intrinsicIndex + 2
-                val suspendFunctionClassType = function.parameters[0].type
-                val suspendFunctionInvoke = suspendFunctionClassType.classOrFail.functions.singleOrNull {
-                    it.owner.name.asString() == "invoke"
-                } ?: error("No `invoke` function for suspend function type\n${suspendFunctionClassType.dumpKotlinLike()}")
-                val contType = typeCodegenContext.referenceContType(arity)
-                val bindContType = typeCodegenContext.referenceContType(0)
-
-                body.buildGetLocal(functionContext.referenceLocal(0), location)
-                castAnyToInvokable(suspendFunctionInvoke.owner, suspendFunctionClassType.classOrFail.owner, location)
-                body.buildContNew(contType, location)
-                body.buildContBind(contType, bindContType, location)
-            }
+            wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendFunction0ToContref ->
+                generateSuspendFunToContref(function, invokeArity = 0, location)
+            wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendFunction1ToContref ->
+                generateSuspendFunToContref(function, invokeArity = 1, location)
+            wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendFunction2ToContref ->
+                generateSuspendFunToContref(function, invokeArity = 2, location)
 
             wasmSymbols.wasmArrayCopy -> {
                 val immediate = typeCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)

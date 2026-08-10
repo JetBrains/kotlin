@@ -488,10 +488,6 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
             model(it, "asKaType")
         }
 
-        test<AbstractJavaGetterSetterNameTest> {
-            model(it, "javaGetterSetterName")
-        }
-
         test<AbstractMapToJvmTypeDescriptorTest> {
             model(it, "mapToJvmTypeDescriptor")
         }

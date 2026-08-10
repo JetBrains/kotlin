@@ -33,7 +33,7 @@ object FirWasmJsCastChecker : FirPlatformSpecificCastChecker() {
             ?: FirCastOperatorsChecker.Applicability.APPLICABLE
     }
 
-    private fun FirCastOperatorsChecker.Applicability.isImpossibleCastOrIsCheck() =
+    private fun FirCastOperatorsChecker.Applicability.isImpossibleCastOrIsCheck(): Boolean =
         this == FirCastOperatorsChecker.Applicability.IMPOSSIBLE_CAST || this == FirCastOperatorsChecker.Applicability.IMPOSSIBLE_IS_CHECK
 
     context(context: CheckerContext)

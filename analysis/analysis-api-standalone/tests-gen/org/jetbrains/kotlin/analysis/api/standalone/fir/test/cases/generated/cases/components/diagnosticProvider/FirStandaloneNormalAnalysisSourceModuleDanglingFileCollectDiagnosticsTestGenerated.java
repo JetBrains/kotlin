@@ -177,6 +177,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
   }
 
   @Test
+  @TestMetadata("equalityBoundFromLibrary.kt")
+  public void testEqualityBoundFromLibrary() {
+    run("equalityBoundFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("errorsInFunctionalInterfacesInstances.kt")
   public void testErrorsInFunctionalInterfacesInstances() {
     run("errorsInFunctionalInterfacesInstances.kt");
@@ -655,6 +661,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
     @TestMetadata("deprecationAtTopLevel.kt")
     public void testDeprecationAtTopLevel() {
       run("deprecationAtTopLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("destructuringEntrySuppression.kt")
+    public void testDestructuringEntrySuppression() {
+      run("destructuringEntrySuppression.kt");
     }
 
     @Test

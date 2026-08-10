@@ -6,8 +6,8 @@
 #include "GCImpl.hpp"
 
 #include "Common.h"
-#include "GC.hpp"
-#include "GCStatistics.hpp"
+#include "gc/GC.hpp"
+#include "gc/GCStatistics.hpp"
 #include "KAssert.h"
 #include "Logging.hpp"
 
@@ -56,12 +56,12 @@ ALWAYS_INLINE OBJ_GETTER(gc::weakRefReadBarrier, std_support::atomic_ref<ObjHead
 }
 
 bool gc::isMarked(ObjHeader* object) noexcept {
-    RuntimeAssert(false, "Should not reach here");
+    // Could be reached in unit tests.
     return true;
 }
 
 ALWAYS_INLINE bool gc::tryResetMark(GC::ObjectData& objectData) noexcept {
-    RuntimeAssert(false, "Should not reach here");
+    // Could be reached in unit tests.
     return true;
 }
 

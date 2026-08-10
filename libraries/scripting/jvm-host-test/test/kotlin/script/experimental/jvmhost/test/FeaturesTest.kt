@@ -6,7 +6,6 @@
 package kotlin.script.experimental.jvmhost.test
 
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
 import org.jetbrains.kotlin.test.compileJavaFiles
 import org.junit.jupiter.api.io.TempDir
@@ -36,9 +35,7 @@ class FeaturesTest {
                 dependencies(JvmDependency(destDir))
             }
 
-            val compiler =
-                if (isRunningTestOnK2) JvmScriptCompiler()
-                else JvmScriptCompiler.createLegacy()
+            val compiler = JvmScriptCompiler()
 
             compiler.invoke(File(srcDir, "test.samwr.kts").toScriptSource(), baseConfig).let { res ->
                 when (res) {
@@ -60,7 +57,7 @@ class FeaturesTest {
             }
             JvmScriptCompiler(
                 defaultJvmScriptingHostConfiguration,
-                if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration),
+                compilerProxy = null,
             )(File(srcDir, "test.samwr.kts").toScriptSource(), configWithSwr).onFailure { res ->
                 fail("Compilation failed:\n  ${res.reports.joinToString("\n  ")}")
             }

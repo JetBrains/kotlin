@@ -41,9 +41,9 @@ import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 class ComposerParamTransformTests : AbstractIrTransformTest() {
     private fun composerParam(
@@ -284,9 +284,9 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
                                 ComposeNames.ComposerParameter
                             ) {
                                 assertEquals(
-                                    "Composer unexpectedly captured",
                                     currentComposer,
-                                    value
+                                    value,
+                                    "Composer unexpectedly captured",
                                 )
                             }
                         }
@@ -706,6 +706,37 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
         validator = noZombieLocalClassSymbols(),
     )
 
+    // Regression test for KT-88028
+    @Test
+    fun overriddenDefaultParameterSuperCallCrossModule() =
+        verifyGoldenCrossModuleComposeIrTransform(
+            dependencySource = """
+            package base
+
+            import androidx.compose.runtime.Composable
+
+            interface Typography {
+                @Composable
+                fun foo(value: Int? = null): Int {
+                    return 0
+                }
+            }
+        """.trimIndent(),
+            source = """
+            package main
+
+            import androidx.compose.runtime.Composable
+            import base.Typography
+
+            object TypographyImpl : Typography {
+                @Composable
+                override fun foo(value: Int?): Int {
+                    return super.foo(value)
+                }
+            }
+        """.trimIndent()
+        )
+
     // Regression test for CMP-9325
     @Test
     fun testAnonymousObjectWithTypeParamInInlineComposable() = verifyGoldenComposeIrTransform(
@@ -758,10 +789,10 @@ private fun noZombieLocalClassSymbols(): (IrElement) -> Unit = { root ->
             val owner = cls.owner
             if (owner.isAnonymousObject || owner.isLocal) {
                 assertTrue(
+                    cls in declaredLocalClassSymbols,
                     "Type references local class '${owner.name}' that is not declared in " +
                             "the current IR file — likely a zombie symbol left by a deep copy " +
                             "in ComposerParamTransformer (CMP-9325)",
-                    cls in declaredLocalClassSymbols
                 )
             }
         }

@@ -9,3 +9,4 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertyWithGetterKt]]
         REFERENCE_EXPRESSION[referencedName=Int]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]

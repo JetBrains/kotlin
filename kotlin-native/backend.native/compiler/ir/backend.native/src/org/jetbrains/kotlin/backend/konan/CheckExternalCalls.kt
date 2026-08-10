@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,12 +10,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.OBJC_RETAIN_AUTORELEASED_RETURN_VALUE
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.library.uniqueName
-
-private fun LLVMValueRef.isLLVMBuiltin(): Boolean {
-    val name = this.name ?: return false
-    return name.startsWith("llvm.")
-}
-
 
 private class CallsChecker(generationState: NativeGenerationState, goodFunctions: List<String>) {
     private val llvm = generationState.llvm
@@ -66,9 +60,9 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
         fun cleanCalledFunction(value: LLVMValueRef): ExternalCallInfo? {
             return when {
                 LLVMIsAFunction(value) != null -> {
-                    val valueOrSpecial = value.takeIf { !it.isLLVMBuiltin() }
+                    val valueOrSpecial = value.takeIf { !it.isLLVMBuiltin }
                             ?: LLVMConstIntToPtr(llvm.int64(CALLED_LLVM_BUILTIN), llvm.pointerType)!!
-                    ExternalCallInfo(value.name!!, valueOrSpecial).takeIf { value.isExternalFunction() }
+                    ExternalCallInfo(value.valueName!!, valueOrSpecial).takeIf { value.isExternalFunction() }
                 }
                 LLVMIsACastInst(value) != null -> cleanCalledFunction(LLVMGetOperand(value, 0)!!)
                 isIndirectCallArgument(value) -> ExternalCallInfo(null, value) // this is a callback call
@@ -81,7 +75,7 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
                 }
                 LLVMIsAGlobalAlias(value) != null -> cleanCalledFunction(LLVMAliasGetAliasee(value)!!)
                 else -> {
-                    TODO("not implemented call argument ${llvm2string(value)} called in ${llvm2string(this)}")
+                    TODO("not implemented call argument ${value.toValueString()} called in ${this.toValueString()}")
                 }
             }
         }
@@ -112,9 +106,9 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
                 (invoke instructions are intertwined with basic blocks, so getting the next instruction requires more code).
                 The function doesn't throw, so nobody should generate "invokes" to it anyway.
                 */
-                check(LLVMIsACallInst(call) != null) { "Expected a call instruction, not invoke: ${llvm2string(call)}" }
+                check(LLVMIsACallInst(call) != null) { "Expected a call instruction, not invoke: ${call.toValueString()}" }
                 val nextInstruction = LLVMGetNextInstruction(call)
-                check(nextInstruction != null) { "Expected a next instruction after ${llvm2string(call)}" }
+                check(nextInstruction != null) { "Expected a next instruction after ${call.toValueString()}" }
                 nextInstruction
             } else {
                 /*
@@ -164,7 +158,7 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
                     calledPtrLlvm = when (val typeKind = LLVMGetTypeKind(calleeInfo.calledPtr.type)) {
                         LLVMTypeKind.LLVMPointerTypeKind -> calleeInfo.calledPtr
                         LLVMTypeKind.LLVMIntegerTypeKind -> LLVMBuildIntToPtr(builder, calleeInfo.calledPtr, llvm.pointerType, "")!!
-                        else -> TODO("Unsupported typeKind=${typeKind} of calledPtr=${llvm2string(calleeInfo.calledPtr)}")
+                        else -> TODO("Unsupported typeKind=${typeKind} of calledPtr=${calleeInfo.calledPtr.toValueString()}")
                     }
                 }
             }
@@ -176,9 +170,9 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
     }
 
     fun processFunction(function: LLVMValueRef) {
-        if (function.name == checkerFunction.name) return
+        if (function.valueName == checkerFunction.name) return
         getBasicBlocks(function).forEach {
-            processBasicBlock(function.name!!, it)
+            processBasicBlock(function.valueName!!, it)
         }
     }
 
@@ -187,10 +181,6 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
         const val CALLED_LLVM_BUILTIN: Long = -2
     }
 }
-
-private const val functionListGlobal = "Kotlin_callsCheckerKnownFunctions"
-private const val functionListSizesGlobal = "Kotlin_callsCheckerKnownFunctionsCounts"
-private const val functionListSizesSizeGlobal = "Kotlin_callsCheckerKnownFunctionsCountsCount"
 
 internal fun checkLlvmModuleExternalCalls(generationState: NativeGenerationState) {
     val llvm = generationState.llvm
@@ -217,80 +207,5 @@ internal fun checkLlvmModuleExternalCalls(generationState: NativeGenerationState
     getFunctions(llvm.module)
             .filter { !it.isExternalFunction() && it !in ignoredFunctions }
             .forEach(checker::processFunction)
-    // otherwise optimiser can inline it
-    staticData.getGlobal(functionListGlobal)?.setExternallyInitialized(true)
-    staticData.getGlobal(functionListSizesGlobal)?.setExternallyInitialized(true)
-    staticData.getGlobal(functionListSizesSizeGlobal)?.setExternallyInitialized(true)
     verifyModule(llvm.module)
 }
-
-// this should be a separate pass, to handle DCE correctly
-internal fun addFunctionsListSymbolForChecker(generationState: NativeGenerationState) {
-    val llvm = generationState.llvm
-    val staticData = llvm.staticData
-    val context = generationState.context
-
-    val functions = getFunctions(llvm.module)
-            .filter { !it.isExternalFunction() }
-            .map { constPointer(it) }
-            .toList()
-
-    val libName = context.config.libraryToCache?.klib?.uniqueName ?: context.config.moduleId
-    // The function-list global must be unique per object file. When a per-file cache is produced, every file becomes
-    // a separate object, so the file id has to be a part of the symbol name; otherwise these objects would clash with
-    // a "duplicate symbol" linker error once several of them are linked together.
-    // Note: checking for CacheDeserializationStrategy.MultipleFiles is not needed, as it will split into single files
-    // by TopLevelPhases.kt->runBackend->splitIntoFragments.
-    val cacheKey = (generationState.cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile)
-            ?.let { perFileCheckerCacheKey(libName, CacheSupport.cacheFileId(it.fqName, it.filePath)) }
-            ?: libName
-
-    staticData.placeGlobalConstArray(cacheKey.knownFunctionsGlobalName, llvm.pointerType, functions, isExported = true)
-    staticData.placeGlobal(cacheKey.knownFunctionsCountGlobalName, llvm.constInt32(functions.size), isExported = true)
-
-    if (generationState.config.isFinalBinary) {
-        // Reference the function-list globals of exactly the caches that are linked into the binary. This must mirror
-        // the binary selection in [resolveCacheBinaries]: a monolithic cache contributes a single library-keyed global,
-        // while a per-file cache contributes one global per linked file (keyed by [CacheSupport.cacheFileId]).
-        // Note that the dependency kind alone is not enough: a monolithic cache may still be referenced via CertainFiles.
-        val cacheKeys = generationState.dependenciesTracker.allCachedBitcodeDependencies.flatMap { dependency ->
-            val library = dependency.library
-            when (val cache = context.config.cachedLibraries.getLibraryCache(library)) {
-                null -> error("Library ${library.path} is expected to be cached")
-
-                is CachedLibraries.Cache.Monolithic -> listOf(library.uniqueName)
-
-                is CachedLibraries.Cache.PerFile -> {
-                    (dependency.kind as? DependenciesTracker.DependencyKind.CertainFiles)?.files
-                            ?.map { perFileCheckerCacheKey(library.uniqueName, it.name) }
-                            ?: cache.fileIds.map { perFileCheckerCacheKey(library.uniqueName, it) }
-                }
-            }
-        } + cacheKey
-
-        val allFunctionListsArray = llvm.exportedGlobalPointerArray(staticData, cacheKeys.map { it.knownFunctionsGlobalName })
-        val allFunctionSizesListsArray = llvm.exportedGlobalPointerArray(staticData, cacheKeys.map { it.knownFunctionsCountGlobalName })
-
-        staticData.getOrCreateExportedGlobal(llvm.pointerType, functionListGlobal).setInitializer(allFunctionListsArray)
-        staticData.getOrCreateExportedGlobal(llvm.pointerType, functionListSizesGlobal).setInitializer(allFunctionSizesListsArray)
-        staticData.getOrCreateExportedGlobal(llvm.int32Type, functionListSizesSizeGlobal).setInitializer(llvm.constInt32(cacheKeys.size))
-    }
-    verifyModule(llvm.module)
-}
-
-
-private val String.knownFunctionsGlobalName
-    get() = "_Konan_callsCheckerKnownFunctions_${this}"
-
-private val String.knownFunctionsCountGlobalName
-    get() = "_Konan_callsCheckerKnownFunctionsCount_${this}"
-
-private fun perFileCheckerCacheKey(libName: String, cacheFileId: String): String = "${libName}_$cacheFileId"
-
-private fun KotlinStaticData.getOrCreateExportedGlobal(type: LLVMTypeRef, name: String) =
-        staticData.getGlobal(name) ?: staticData.createGlobal(type, name, isExported = true)
-
-private fun CodegenLlvmHelpers.exportedGlobalPointerArray(staticData: KotlinStaticData, values: List<String>) =
-        staticData.placeGlobalConstArray("", pointerType, values.map {
-            staticData.getOrCreateExportedGlobal(pointerType, it).pointer
-        })

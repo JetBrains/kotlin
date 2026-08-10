@@ -1,0 +1,13 @@
+-Xuse-fir-lt=false
+-Xallow-any-scripts-in-source-roots
+$TESTDATA_DIR$/src/common.kt
+$TESTDATA_DIR$/src/jvm.kt
+$TESTDATA_DIR$/src/s.kts
+-Xcommon-sources
+$TESTDATA_DIR$/src/common.kt
+-cp
+.
+-d
+$TEMP_DIR$
+-XXLanguage\:+MultiPlatformProjects
+-Xexpect-actual-classes

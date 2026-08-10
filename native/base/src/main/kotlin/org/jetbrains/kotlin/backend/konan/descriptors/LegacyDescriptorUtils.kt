@@ -5,14 +5,18 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.metadata.deserialization.hasCompanionExtensionReceiver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
@@ -162,3 +166,18 @@ val arraysWithFixedSizeItems = setOf(
     "kotlin.DoubleArray",
     "kotlin.BooleanArray"
 )
+
+/**
+ * `true` if the [CallableMemberDescriptor] is a companion extension.
+ *
+ * **NOTE**: this only works for descriptors deserialized from klibs; for others always returns `false`
+ */
+@K1Deprecation
+@InternalKotlinNativeApi
+val CallableMemberDescriptor.isDeserializedAndHasCompanionExtensionReceiver: Boolean
+    get() = when (this) {
+        is SimpleFunctionDescriptor -> (this as? DeserializedSimpleFunctionDescriptor)?.proto?.hasCompanionExtensionReceiver() ?: false
+        is PropertyAccessorDescriptor -> correspondingProperty.isDeserializedAndHasCompanionExtensionReceiver
+        is PropertyDescriptor -> (this as? DeserializedPropertyDescriptor)?.proto?.hasCompanionExtensionReceiver() ?: false
+        else -> false
+    }

@@ -106,6 +106,7 @@ public interface KaUseSiteVisibilityChecker : org.jetbrains.kotlin.analysis.api.
         "createUseSiteVisibilityChecker(useSiteFile, receiverExpression, position)",
         "org.jetbrains.kotlin.analysis.api.visibility.createUseSiteVisibilityChecker",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaExperimentalApi
 @KaContextParameterApi
@@ -133,6 +134,7 @@ public fun createUseSiteVisibilityChecker(
         "this.isVisibleInClass(classSymbol)",
         "org.jetbrains.kotlin.analysis.api.visibility.isVisibleInClass",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaExperimentalApi
 @KaContextParameterApi
@@ -157,6 +159,7 @@ public fun KaCallableSymbol.isVisibleInClass(classSymbol: KaClassSymbol): Boolea
         "symbol.isPublicApi",
         "org.jetbrains.kotlin.analysis.api.visibility.isPublicApi",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)

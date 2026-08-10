@@ -81,12 +81,6 @@ object JVMConfigurationKeys {
     val USE_FAST_JAR_FILE_SYSTEM = CompilerConfigurationKey.create<Boolean>("USE_FAST_JAR_FILE_SYSTEM")
 
     @JvmField
-    val USE_JAVAC = CompilerConfigurationKey.create<Boolean>("USE_JAVAC")
-
-    @JvmField
-    val COMPILE_JAVA = CompilerConfigurationKey.create<Boolean>("COMPILE_JAVA")
-
-    @JvmField
     val ADDITIONAL_JAVA_MODULES = CompilerConfigurationKey.create<List<String>>("ADDITIONAL_JAVA_MODULES")
 
     @JvmField
@@ -168,17 +162,13 @@ object JVMConfigurationKeys {
     @JvmField
     val IGNORED_ANNOTATIONS_FOR_BRIDGES = CompilerConfigurationKey.create<List<String>>("IGNORED_ANNOTATIONS_FOR_BRIDGES")
 
-    // Path to outputs of common fragments metadata for KMP JVM IC
-    @JvmField
-    val COMMON_FRAGMENTS_OUTPUT_DIR = CompilerConfigurationKey.create<File>("COMMON_FRAGMENTS_OUTPUT_DIR")
-
     // Tracks generated in-module JVM metadata for KMP JVM IC
     @JvmField
     val IC_METADATA_TRACKER = CompilerConfigurationKey.create<ICJvmMetadataTracker>("IC_METADATA_TRACKER")
 
-    // Enable classpath metadata for KMP incremental compilation
+    // Use fragment metadata found on the compilation classpath to perform incremental compilation
     @JvmField
-    val USE_IC_CLASSPATH_METADATA = CompilerConfigurationKey.create<Boolean>("USE_IC_CLASSPATH_METADATA")
+    val USE_METADATA_ON_INCREMENTAL_CLASSPATH = CompilerConfigurationKey.create<Boolean>("USE_METADATA_ON_INCREMENTAL_CLASSPATH")
 
     // Use java-direct as frontend Java facade
     @JvmField
@@ -265,14 +255,6 @@ var CompilerConfiguration.usePsiClassFilesReading: Boolean
 var CompilerConfiguration.useFastJarFileSystem: Boolean
     get() = getBoolean(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM)
     set(value) { put(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM, value) }
-
-var CompilerConfiguration.useJavac: Boolean
-    get() = getBoolean(JVMConfigurationKeys.USE_JAVAC)
-    set(value) { put(JVMConfigurationKeys.USE_JAVAC, value) }
-
-var CompilerConfiguration.compileJava: Boolean
-    get() = getBoolean(JVMConfigurationKeys.COMPILE_JAVA)
-    set(value) { put(JVMConfigurationKeys.COMPILE_JAVA, value) }
 
 var CompilerConfiguration.additionalJavaModules: List<String>
     get() = getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES)
@@ -366,17 +348,13 @@ var CompilerConfiguration.ignoredAnnotationsForBridges: List<String>
     get() = getList(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES)
     set(value) { put(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES, value) }
 
-var CompilerConfiguration.commonFragmentsOutputDir: File?
-    get() = get(JVMConfigurationKeys.COMMON_FRAGMENTS_OUTPUT_DIR)
-    set(value) { putIfNotNull(JVMConfigurationKeys.COMMON_FRAGMENTS_OUTPUT_DIR, value) }
-
 var CompilerConfiguration.icMetadataTracker: ICJvmMetadataTracker?
     get() = get(JVMConfigurationKeys.IC_METADATA_TRACKER)
     set(value) { putIfNotNull(JVMConfigurationKeys.IC_METADATA_TRACKER, value) }
 
-var CompilerConfiguration.useIcClasspathMetadata: Boolean
-    get() = getBoolean(JVMConfigurationKeys.USE_IC_CLASSPATH_METADATA)
-    set(value) { put(JVMConfigurationKeys.USE_IC_CLASSPATH_METADATA, value) }
+var CompilerConfiguration.useMetadataOnIncrementalClasspath: Boolean
+    get() = getBoolean(JVMConfigurationKeys.USE_METADATA_ON_INCREMENTAL_CLASSPATH)
+    set(value) { put(JVMConfigurationKeys.USE_METADATA_ON_INCREMENTAL_CLASSPATH, value) }
 
 var CompilerConfiguration.useJavaDirect: Boolean
     get() = getBoolean(JVMConfigurationKeys.USE_JAVA_DIRECT)

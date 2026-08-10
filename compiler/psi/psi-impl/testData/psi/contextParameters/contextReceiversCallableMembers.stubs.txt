@@ -29,6 +29,10 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=valueA]
+          OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+          REFERENCE_EXPRESSION[referencedName=valueB]
       PROPERTY[fqName=ContextReceiversCallableMembers.property, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=property]
         MODIFIER_LIST[private]
           CONTEXT_PARAMETER_LIST
@@ -53,6 +57,10 @@ FILE[kind=File[packageFqName=<root>]]
             REFERENCE_EXPRESSION[referencedName=Int]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=valueA]
+            OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+            REFERENCE_EXPRESSION[referencedName=valueB]
       PROPERTY[fqName=ContextReceiversCallableMembers.propertyWithSetter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=propertyWithSetter]
         MODIFIER_LIST[private]
           CONTEXT_PARAMETER_LIST
@@ -77,6 +85,10 @@ FILE[kind=File[packageFqName=<root>]]
             REFERENCE_EXPRESSION[referencedName=Int]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=valueA]
+            OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+            REFERENCE_EXPRESSION[referencedName=valueB]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=v]
@@ -86,9 +98,11 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
   CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
     CLASS_BODY
       PROPERTY[fqName=B.valueB, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=valueB]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=11]

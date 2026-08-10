@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.backend.js.PropertyLazyInitialization
 import org.jetbrains.kotlin.ir.backend.js.ReflectionSymbols
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -43,7 +42,6 @@ import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.wasm.config.wasmUseStackSwitchingProposal
 
 class WasmBackendContext(
-    val module: ModuleDescriptor,
     override val irBuiltIns: IrBuiltIns,
     override val symbolTable: SymbolTable,
     val irModuleFragment: IrModuleFragment,
@@ -62,12 +60,14 @@ class WasmBackendContext(
     // Place to store declarations excluded from code generation
     private val excludedDeclarations = mutableMapOf<FqName, IrPackageFragment>()
 
-    fun getExcludedPackageFragmentOrCreate(fqName: FqName): IrPackageFragment = excludedDeclarations.getOrPut(fqName) {
-        IrExternalPackageFragmentImpl(
-            DescriptorlessExternalPackageFragmentSymbol(),
-            fqName
-        )
-    }
+    fun getExcludedPackageFragmentOrCreate(fqName: FqName, module: IrModuleFragment): IrPackageFragment =
+        excludedDeclarations.getOrPut(fqName) {
+            IrExternalPackageFragmentImpl(
+                DescriptorlessExternalPackageFragmentSymbol(),
+                fqName,
+                module,
+            )
+        }
 
     fun getExcludedPackageFragment(fqName: FqName): IrPackageFragment? = excludedDeclarations.get(fqName)
 
@@ -141,10 +141,13 @@ class WasmBackendContext(
 
     override val additionalExportedDeclarations = hashSetOf<IrDeclaration>()
 
-    override val bodilessBuiltInsPackageFragment: IrPackageFragment = IrExternalPackageFragmentImpl(
-        DescriptorlessExternalPackageFragmentSymbol(),
-        FqName("kotlin")
-    )
+    override val bodilessBuiltInsPackageFragment: IrPackageFragment by lazy {
+        IrExternalPackageFragmentImpl(
+            DescriptorlessExternalPackageFragmentSymbol(),
+            FqName("kotlin"),
+            module = irBuiltIns.moduleFragment,
+        )
+    }
 
     companion object {
         internal const val SPECIAL_INTERFACE_TABLE_SIZE = 22

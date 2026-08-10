@@ -1,0 +1,50 @@
+FILE: inlineableFunction2.kt
+    public final fun runInlineable(block: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|): R|kotlin/Unit| {
+        R|<local>/block|.R|SubstitutionOverride<some/MyInlineableFunction0.invoke: R|kotlin/Unit|>|()
+    }
+    public final fun test(): R|kotlin/Int| {
+        lvar x: R|kotlin/Int| = Int(0)
+        lval l: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>| = fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+             {
+                lval <unary>: R|kotlin/Int| = R|<local>/x|
+                R|<local>/x| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+
+        }
+
+        lval l2: R|some/MyInlineableFunction0<kotlin/Unit>| = @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|kotlin/io/println|(R|<local>/x|)
+        }
+
+        R|/runInlineable|(R|<local>/l|)
+        R|/runInlineable|(<L> = runInlineable@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+             {
+                lval <unary>: R|kotlin/Int| = R|<local>/x|
+                R|<local>/x| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+
+        }
+        )
+        R|/runInlineable|(<L> = @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() runInlineable@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+             {
+                lval <unary>: R|kotlin/Int| = R|<local>/x|
+                R|<local>/x| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+
+        }
+        )
+        ^test R|<local>/x|
+    }
+    public final fun box(): R|kotlin/String| {
+        lval res1: R|kotlin/Int| = R|/test|()
+        when () {
+            !=(R|<local>/res1|, Int(3)) ->  {
+                ^box <strcat>(String(Fail: ), R|<local>/res1|)
+            }
+        }
+
+        ^box String(OK)
+    }

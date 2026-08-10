@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.collections.set
+import kotlin.io.path.absolutePathString
 import kotlin.text.contains
 
 @Tag("klib")
@@ -103,8 +104,8 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
             "non-existent-klib.klib",
             "non-existent-dir/non-existent-klib",
             "non-existent-dir/non-existent-klib.klib",
-            modules.modules[0].sourceFile.parentFile.resolve("non-existent-klib").absolutePath,
-            modules.modules[0].sourceFile.parentFile.resolve("non-existent-klib.klib").absolutePath,
+            (modules.modules[0] as RegularKlibTestSourceModule).sourceFile.parent.resolve("non-existent-klib").absolutePathString(),
+            (modules.modules[0] as RegularKlibTestSourceModule).sourceFile.parent.resolve("non-existent-klib.klib").absolutePathString(),
         ).forEach { libraryPath ->
             modules.compileToKlibsViaCli(
                 extraCliArgs = listOf(
@@ -297,6 +298,64 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         }
     }
 
+    @Test
+    fun `Compiler rejects libraries from the distribution and C-interop libraries as included and exported libs`() {
+        val librariesDir = testRunSettings.get<KotlinNativeHome>().librariesDir
+        val target = testRunSettings.get<KotlinNativeTargets>().testTarget
+
+        val stdlibPath: String = librariesDir.resolve("common/stdlib").absolutePath
+        val posixPath: String = librariesDir.resolve("platform/${target.name}/org.jetbrains.kotlin.native.platform.posix").absolutePath
+
+        var regularLibPath: String? = null
+        var cinteropLibPath: String? = null
+
+        newSourceModules {
+            addRegularModule("r")
+            addCInteropModule("c")
+        }.compileToKlibsViaCli { module, successKlib ->
+            when (module.name) {
+                "r" -> regularLibPath = successKlib.resultingArtifact.klibFile.absolutePath
+                "c" -> cinteropLibPath = successKlib.resultingArtifact.klibFile.absolutePath
+            }
+        }
+
+        checkNotNull(regularLibPath)
+        checkNotNull(cinteropLibPath)
+
+        listOf(
+            K2NativeCompilerArguments::includes.cliArgument,
+            K2NativeCompilerArguments::exportedLibraries.cliArgument,
+        ).forEach { testedCliParameter ->
+            // try it with different combinations of "-no..." flags:
+            listOf(
+                emptyList(),
+                listOf("-nostdlib"),
+                listOf("-no-default-libs"),
+                listOf("-nostdlib", "-no-default-libs"),
+            ).forEach { extraNoSmthFlags ->
+                newSourceModules {
+                    addRegularModule("test")
+                }.compileToKlibsViaCli(
+                    extraCliArgs = extraNoSmthFlags + listOf(
+                        "-l", stdlibPath,
+                        "-l", posixPath,
+                        "-l", regularLibPath,
+                        "-l", cinteropLibPath,
+                        "$testedCliParameter=$stdlibPath",
+                        "$testedCliParameter=$posixPath",
+                        "$testedCliParameter=$regularLibPath",
+                        "$testedCliParameter=$cinteropLibPath",
+                    )
+                ) { _, successKlib ->
+                    successKlib.assertProblematicIncludedOrExportedLibs(
+                        cliParameter = testedCliParameter,
+                        stdlibPath, posixPath, cinteropLibPath
+                    )
+                }
+            }
+        }
+    }
+
     private fun doTestIrProviders(irProviderName: String) {
         newSourceModules {
             addRegularModule("a")
@@ -392,6 +451,26 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
 
         assertEquals(1, toolOutput.size)
         assertTrue(": $friendPath" in toolOutput[0])
+    }
+
+    private fun TestCompilationResult.Success<out KLIB>.assertProblematicIncludedOrExportedLibs(
+        cliParameter: String,
+        vararg pathsOfExpectedProblematicIncludes: String,
+    ) {
+        val compilationToolCall = loggedData as LoggedData.CompilationToolCall
+        assertEquals(ExitCode.OK, compilationToolCall.exitCode)
+
+        val toolOutput = compilationToolCall.toolOutput.lineSequence()
+            .filter { "KLIB loader:" in it }
+            .toList()
+
+        assertEquals(pathsOfExpectedProblematicIncludes.size, toolOutput.size)
+
+        val pathsOfActualProblematicIncludes = toolOutput.map { message ->
+            message.substringAfterLast("cannot be used in $cliParameter CLI argument: ").trim()
+        }
+
+        assertEquals(pathsOfExpectedProblematicIncludes.toSet(), pathsOfActualProblematicIncludes.toSet())
     }
 
     companion object {

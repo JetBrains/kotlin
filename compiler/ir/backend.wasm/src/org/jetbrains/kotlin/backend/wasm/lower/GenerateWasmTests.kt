@@ -28,6 +28,9 @@ internal class GenerateWasmTests(private val backendContext: WasmBackendContext)
         val generator = TestGenerator(context = backendContext)
         irModule.files.forEach { irFile ->
             val testContainerIfAny = generator.createTestContainer(irFile)
+            // If no `@kotlin.test.Test`-annotated class is found, `testContainerIfAny` is `null` and no suite is registered here,
+            // so no `startUnitTests` export is produced for this module.
+            // Hence, a module with a single test (compiled via the isolated/box-export path) never gets a unit-test-runner entry point.
             if (testContainerIfAny != null) {
                 val declarator = backendContext.irFactory.stageController.restrictTo(testContainerIfAny) {
                     makeTestFunctionDeclarator(irFile, testContainerIfAny)

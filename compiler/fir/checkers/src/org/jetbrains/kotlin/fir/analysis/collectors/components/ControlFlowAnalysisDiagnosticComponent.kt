@@ -42,9 +42,14 @@ class ControlFlowAnalysisDiagnosticComponent(
     private val variableAssignmentCheckers = declarationCheckers.variableAssignmentCfaBasedCheckers
 
     private fun analyze(declaration: FirControlFlowGraphOwner, context: CheckerContext) {
+        analyze(declaration, declaration.controlFlowGraphReference?.controlFlowGraph, context)
+    }
+
+    private fun analyze(declaration: FirElement, graph: ControlFlowGraph?, context: CheckerContext) {
+        if (graph == null) return
+        if (graph.isSubGraph) return
+
         context(context, reporter) {
-            val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return
-            if (graph.isSubGraph) return
             cfaCheckers.forEach { it.analyze(graph) }
 
             val collector = LocalPropertyCollector().apply { declaration.acceptChildren(this, graph.subGraphs.toSet()) }
@@ -71,7 +76,8 @@ class ControlFlowAnalysisDiagnosticComponent(
     // ------------------------------- Class initializer -------------------------------
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: CheckerContext) {
-        analyze(regularClass, data)
+        analyze(regularClass, regularClass.controlFlowGraphReference?.controlFlowGraph, data)
+        analyze(regularClass, regularClass.staticControlFlowGraphReference?.controlFlowGraph, data)
     }
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: CheckerContext) {

@@ -16,7 +16,11 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
+import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -41,13 +45,7 @@ class MemoryOptimizationsTest {
     @Test
     fun testBasicFlexibleTypeCase(): Unit = runWithDisposable { testRootDisposable ->
         @Suppress("DEPRECATION_ERROR")
-        val moduleDescriptor = JvmResolveUtil.analyze(
-            KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                testRootDisposable,
-                ConfigurationKind.ALL,
-                TestJdkKind.FULL_JDK
-            )
-        ).moduleDescriptor
+        val moduleDescriptor = JvmResolveUtil.analyze(createEnvironment(testRootDisposable)).moduleDescriptor
 
         val appendableClass =
             moduleDescriptor.findClassAcrossModuleDependencies(ClassId.topLevel(FqName("java.lang.Appendable")))!!
@@ -76,11 +74,7 @@ class MemoryOptimizationsTest {
                 |}
                 """.trimMargin()
 
-        val environment =
-            KotlinTestUtils
-                .createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                    testRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK
-                )
+        val environment = createEnvironment(testRootDisposable)
 
         @Suppress("DEPRECATION_ERROR")
         val moduleDescriptor =
@@ -110,4 +104,12 @@ class MemoryOptimizationsTest {
 
         assertTrue(foo.original !== foo)
     }
+
+    @OptIn(CoreEnvironmentDeprecation::class)
+    private fun createEnvironment(disposable: Disposable): KotlinCoreEnvironment =
+        KotlinCoreEnvironment.createForTests(
+            disposable,
+            KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK, KtTestUtil.getAnnotationsJar()),
+            EnvironmentConfigFiles.JVM_CONFIG_FILES,
+        )
 }

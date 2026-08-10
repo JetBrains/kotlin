@@ -1,0 +1,63 @@
+FILE: nonStubbedInitializers.kt
+    public? final? fun compute(): Int {
+        ^compute IntegerLiteral(0)
+    }
+    public? final? fun evaluate(block: ( () -> Int )): Int {
+        ^evaluate block#()
+    }
+    public? final? fun combine(value: Int, block: ( () -> Int )): Int {
+        ^combine value#.plus#(block#())
+    }
+    public? final? val trailingLambda: Int = evaluate#(<L> = evaluate@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        IntegerLiteral(1)
+    }
+    )
+        public? get(): Int
+    public? final? val positionalLambdaArgument: Int = evaluate#(evaluate@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        IntegerLiteral(2)
+    }
+    )
+        public? get(): Int
+    public? final? val namedLambdaArgument: Int = evaluate#(block = evaluate@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        IntegerLiteral(3)
+    }
+    )
+        public? get(): Int
+    public? final? val mixedArguments: Int = combine#(IntegerLiteral(4), combine@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        IntegerLiteral(5)
+    }
+    )
+        public? get(): Int
+    public? final? val parenthesizedLambdaArgument: Int = evaluate#(evaluate@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        IntegerLiteral(9)
+    }
+    )
+        public? get(): Int
+    public? final? val conditional: Int = when () {
+        ==(compute#(), IntegerLiteral(0)) ->  {
+            IntegerLiteral(6)
+        }
+        else ->  {
+            IntegerLiteral(7)
+        }
+    }
+
+        public? get(): Int
+    public? final? val objectLiteral: Any = object : Any {
+        private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+            super<Any>()
+        }
+
+    }
+
+        public? get(): Any
+    public? final? val callableReference: ( () -> Int ) = ::compute#
+        public? get(): ( () -> Int )
+    public? final? val interpolation: String = <strcat>(compute#())
+        public? get(): String
+    public? final? fun expressionBodyWithLambda(): Int {
+        ^expressionBodyWithLambda evaluate#(<L> = evaluate@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            IntegerLiteral(8)
+        }
+        )
+    }

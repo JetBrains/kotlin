@@ -526,6 +526,7 @@ enum class LanguageFeature(
     ProperSupportOfInnerClassesInCallableReferenceLHS(sinceVersion = KOTLIN_2_5, "KTLC-388"),
     DontIgnoreUpperBoundViolatedOnImplicitArguments(KOTLIN_2_5, "KTLC-287"),
     AllowAnnotationsOnArgumentsOfAnnotations(KOTLIN_2_5, "KT-87016"),
+    ConsiderLambdaArrayConstructorsInlinableInBodiesOfInlineFunctions(KOTLIN_2_5, "KT-29890"),
     ReportDeprecatedCompanionInDelegation(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-408"),
     ReportDeprecationsOfOuterImportedClasses(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-397"),
     ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds(KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-358"),
@@ -539,6 +540,7 @@ enum class LanguageFeature(
     ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-396"),
     FixApplicabilityOfEmptyIntersection(sinceVersion = KOTLIN_2_5, "KT-86740"),
     EnhancementsOfSecondIncorporationKind25(KOTLIN_2_5, "KT-85879"),
+    NoWhenBranchMatchedExceptionWithMessage(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, issue = "KT-86518"),
     NameBasedDestructuring(sinceVersion = KOTLIN_2_5, "KT-19627"),
     JsAllowExportingAnnotationClasses(sinceVersion = KOTLIN_2_5, "KT-85599"),
     JsAllowExportingStarProjection(sinceVersion = KOTLIN_2_5, "KT-83462"),
@@ -566,6 +568,8 @@ enum class LanguageFeature(
     ReportReificationProblemsInDnnAndFlexible(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-399"),
     ForbidJavaClassPropertyReferences(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-375"),
     ReportSubclassCantCallCompanionProtectedNonStaticWithGenerics(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-412"),
+    ConcurrentMapPurelyImplemented(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-416"),
+    JsIntegerDivisionCheck(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-17719"),
 
     // End of 2.* language features --------------------------------------------------
 
@@ -797,7 +801,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
             str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }
 
         // Version status
-        //              1.0..1.9       2.0..2.1      2.2..2.5       2.6..2.7
+        //              1.0..1.9       2.0..2.2      2.3..2.5       2.6..2.7
         // Language:  UNSUPPORTED --> DEPRECATED ---> STABLE ---> EXPERIMENTAL
         // API:       UNSUPPORTED --> DEPRECATED ---> STABLE ---> EXPERIMENTAL
 
@@ -808,7 +812,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
         val FIRST_SUPPORTED = KOTLIN_2_0
 
         @JvmField
-        val FIRST_NON_DEPRECATED = KOTLIN_2_2
+        val FIRST_NON_DEPRECATED = KOTLIN_2_3
 
         @JvmField
         val LATEST_STABLE = KOTLIN_2_5

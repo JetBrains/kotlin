@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAg
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -21,6 +22,7 @@ import kotlin.io.path.writeText
 /**
  * Avoid using this DSL unless you face a scenario that can't be solved within the scenario DSL
  */
+@SmokeTest
 class ExampleIncrementalCompilationTest : BaseCompilationTest() {
     @DisplayName("Sample IC test with a single module")
     @DefaultStrategyAgnosticCompilationTest

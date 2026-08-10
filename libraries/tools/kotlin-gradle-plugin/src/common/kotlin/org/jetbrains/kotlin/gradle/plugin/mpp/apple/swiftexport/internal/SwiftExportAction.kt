@@ -78,7 +78,6 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
             outputPath = parameters.outputPath.getFile().toPath(),
             stableDeclarationsOrder = parameters.stableDeclarationsOrder.getOrElse(true),
             distribution = parameters.konanDistribution.get(),
-            renderDocComments = parameters.renderDocComments.getOrElse(false),
             logger = swiftExportLogger,
             konanTarget = parameters.konanTarget.get(),
         )

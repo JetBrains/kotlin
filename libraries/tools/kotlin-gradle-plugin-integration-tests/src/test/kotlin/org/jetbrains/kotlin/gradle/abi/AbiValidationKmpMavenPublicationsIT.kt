@@ -130,7 +130,7 @@ class AbiValidationKmpMavenPublicationsIT : KGPBaseTest() {
             }
 
             buildAndFail("updateKotlinAbi") {
-                assertContains(output, "Android targets are not supported by ABI validation when Maven binary sources mode is enabled")
+                assertContains(output, "Android targets are not supported by ABI validation when the Maven binary sources mode is enabled")
             }
         }
     }

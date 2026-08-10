@@ -17,8 +17,8 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class CodegenMetadataTests : AbstractCodegenTest() {
     override fun CompilerConfiguration.updateConfiguration() {
@@ -92,7 +92,7 @@ class CodegenMetadataTests : AbstractCodegenTest() {
         val main = loader.loadClass("Main").methods.single { it.name == "main" }
         val delegates = main.invoke(null)
 
-        assertEquals(delegates, listOf("foo", "fooComposable"))
+        assertEquals(listOf("foo", "fooComposable"), delegates)
     }
 
     companion object {

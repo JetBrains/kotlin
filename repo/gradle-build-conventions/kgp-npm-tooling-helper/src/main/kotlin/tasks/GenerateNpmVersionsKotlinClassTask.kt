@@ -50,21 +50,18 @@ internal constructor() : DefaultTask() {
         val dependenciesWithActualVersions = computeDependencyVersions()
 
         val npmVersions = createNpmVersionsClass(
-            dependencyVersions = dependenciesWithActualVersions
+            dependencies = dependenciesWithActualVersions
         )
 
         createNpmVersionsFile(npmVersions)
     }
 
     /**
-     * Determine the resolved versions of dependencies of the root package.
+     * Determine the requested and resolved versions of dependencies of the root package.
      *
      * ### Implementation
      *
      * First, get the names of the root package's dependencies.
-     *
-     * Ignore the versions of the root package's dependencies:
-     * they are the requested versions, which might not match the resolved versions.
      *
      * Next, determine the resolved version for each root package dependency.
      *
@@ -73,7 +70,7 @@ internal constructor() : DefaultTask() {
      * For example, the requested version of `is-even` is `^1.0.0` (note the pinned version),
      * but the resolved version is `1.0.1` (which is not pinned).
      *
-     * ```json
+     * ```json5
      * // package-lock.json
      * {
      *   "name": "kotlin-npm-tooling",
@@ -83,14 +80,15 @@ internal constructor() : DefaultTask() {
      *       "dependencies": {
      *         "is-even": "^1.0.0"
      *       }
+     *     },
      *     "node_modules/is-even": {
-     *       "version": "1.0.1"
+     *         "version": "1.0.1"
      *     }
      *   }
      * }
      * ```
      */
-    private fun computeDependencyVersions(): Map<String, String> {
+    private fun computeDependencyVersions(): SortedSet<NpmDep> {
         val npmLockFile = npmLockFile.get().asFile
 
         val packageLockJson = PackageLockJson.decodeFromString(npmLockFile.readText())
@@ -98,48 +96,54 @@ internal constructor() : DefaultTask() {
         val rootPackage = packageLockJson.packages[""]
         requireNotNull(rootPackage) { "Missing root package in ${npmLockFile.invariantSeparatorsPath}" }
 
-        return rootPackage.dependencies.mapValues { (id, _) ->
+        return rootPackage.dependencies.map { (id, requestedVersion) ->
+
             val entry = packageLockJson.packages["node_modules/$id"]
                 ?: error("Missing entry for $id in ${npmLockFile.invariantSeparatorsPath}")
 
-            when {
-                // Must use the requested version if the dep is resolved from a git url,
-                // https://docs.npmjs.com/cli/v11/configuring-npm/package-json#git-urls-as-dependencies
-                // because `version` is inaccurate for git URLs
-                // (Example: Kotlin Karma has a git tag of v6.4.5, but the package version is 6.4.4.)
-                entry.resolved != null && entry.resolved.startsWith("git+") ->
-                    packageLockJson.packages[""]?.dependencies?.get(id)
-                entry.version != null ->
-                    entry.version
-                else ->
-                    null
-            } ?: error("Could not find version for $id in ${npmLockFile.invariantSeparatorsPath}. $entry")
-        }
+            val resolvedVersion =
+                when {
+                    // Must use the requested version if the dep is resolved from a git url,
+                    // https://docs.npmjs.com/cli/v11/configuring-npm/package-json#git-urls-as-dependencies
+                    // because `version` is inaccurate for git URLs
+                    // (Example: Kotlin Karma has a git tag of v6.4.5, but the package version is 6.4.4.)
+                    entry.resolved != null && entry.resolved.startsWith("git+") ->
+                        requestedVersion
+                    entry.version != null ->
+                        entry.version
+                    else ->
+                        null
+                } ?: error("Could not find version for $id in ${npmLockFile.invariantSeparatorsPath}. $entry")
+
+            NpmDep(
+                name = id,
+                requestedVersion = requestedVersion,
+                resolvedVersion = resolvedVersion,
+            )
+        }.toSortedSet()
+    }
+
+    private class NpmDep(
+        val name: String,
+        val requestedVersion: String,
+        val resolvedVersion: String,
+    ) : Comparable<NpmDep> {
+        /**
+         * Pretty camelCased display name, for use as a Kotlin property name.
+         */
+        val displayName: String =
+            name.removePrefix("@")
+                .split("-", "/")
+                .joinToString("") { it.replaceFirstChar { c -> c.uppercase(Locale.ROOT) } }
+                .replaceFirstChar { it.lowercase(Locale.ROOT) }
+
+        override fun compareTo(other: NpmDep): Int =
+            displayName.compareTo(other.displayName)
     }
 
     private fun createNpmVersionsClass(
-        dependencyVersions: Map<String, String>,
+        dependencies: SortedSet<NpmDep>,
     ): String {
-        class NpmDep(
-            val name: String,
-            val version: String,
-        ) {
-            /**
-             * Pretty camelCased display name, for use as a Kotlin property name.
-             */
-            val displayName: String =
-                name.removePrefix("@")
-                    .split("-", "/")
-                    .joinToString("") { it.replaceFirstChar { c -> c.uppercase(Locale.ROOT) } }
-                    .replaceFirstChar { it.lowercase(Locale.ROOT) }
-        }
-
-        val dependencies = dependencyVersions
-            .map { (name, version) ->
-                NpmDep(name, version)
-            }
-            .sortedBy { it.displayName }
-
         return buildString {
             appendLine(copyrightHeader.get().asFile.readText())
             appendLine("package org.jetbrains.kotlin.gradle.targets.js")
@@ -148,11 +152,13 @@ internal constructor() : DefaultTask() {
             appendLine()
             appendLine("/**")
             appendLine(" * Versions of npm dependencies used by Kotlin Gradle plugin.")
+            appendLine(" *")
+            appendLine(" * The versions are the resolved versions, extracted from KGP's `kotlin-npm-tooling/package-lock.json`.")
             appendLine(" */")
             appendLine("// Generated class. Do not modify directly!")
             appendLine("class $npmVersionsClassName : Serializable {")
             dependencies.forEach { dep ->
-                appendLine("    val ${dep.displayName} = NpmPackageVersion(\"${dep.name}\", \"${dep.version}\")")
+                appendLine("    val ${dep.displayName} = NpmPackageVersion(\"${dep.name}\")")
             }
             appendLine()
             appendLine("    val allDependencies: List<NpmPackageVersion> = listOf(")
@@ -160,6 +166,38 @@ internal constructor() : DefaultTask() {
                 appendLine("        ${dep.displayName},")
             }
             appendLine("    )")
+            appendLine()
+            appendLine("    /**")
+            appendLine("     * The original requested versions from KGP's `kotlin-npm-tooling/package.json`.")
+            appendLine("     */")
+            appendLine("    internal val requestedVersions: Map<NpmPackageVersion, String> = mapOf(")
+            dependencies.forEach { dep ->
+                appendLine("        ${dep.displayName} to \"${dep.requestedVersion}\",")
+            }
+            appendLine("    )")
+            appendLine()
+            appendLine("    internal companion object {")
+            appendLine()
+            appendLine("        /**")
+            appendLine("         * Create a new [NpmPackageVersion], ")
+            appendLine("         * using the default version from [defaultVersions].")
+            appendLine("         */")
+            appendLine("        private fun NpmPackageVersion(name: String): NpmPackageVersion =")
+            appendLine("            NpmPackageVersion(")
+            appendLine("                name = name,")
+            appendLine("                version = defaultVersions.getValue(name),")
+            appendLine("            )")
+            appendLine()
+            appendLine("        /**")
+            appendLine("         * The default versions from KGP's `kotlin-npm-tooling/package.json`.")
+            appendLine("         * The values declared in [allDependencies] may be overwritten by users.")
+            appendLine("         */")
+            appendLine("        internal val defaultVersions: Map<String, String> = mapOf(")
+            dependencies.forEach { dep ->
+                appendLine("            \"${dep.name}\" to \"${dep.resolvedVersion}\",")
+            }
+            appendLine("        )")
+            appendLine("    }")
             appendLine("}")
         }
     }

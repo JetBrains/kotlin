@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaBuiltinFunctionTypeFamilies
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionTypeFamily
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.name.ClassId
 
 @KaImplementationDetail
 @SubclassOptInRequired(KaImplementationDetail::class)
@@ -22,16 +23,12 @@ public interface KaInternalsTypeInformationProvider {
     @KaExperimentalApi
     public fun functionTypeFamily(type: KaType): KaFunctionTypeFamily?
 
-    @KaExperimentalApi
     public fun isFunctionType(type: KaType): Boolean
 
-    @KaExperimentalApi
     public fun isKFunctionType(type: KaType): Boolean
 
-    @KaExperimentalApi
     public fun isSuspendFunctionType(type: KaType): Boolean
 
-    @KaExperimentalApi
     public fun isKSuspendFunctionType(type: KaType): Boolean
 
     public fun isNullable(type: KaType): Boolean
@@ -39,40 +36,6 @@ public interface KaInternalsTypeInformationProvider {
     public fun isMarkedNullable(type: KaType): Boolean
 
     public fun hasFlexibleNullability(type: KaType): Boolean
-
-    public fun isUnitType(type: KaType): Boolean
-
-    public fun isIntType(type: KaType): Boolean
-
-    public fun isLongType(type: KaType): Boolean
-
-    public fun isShortType(type: KaType): Boolean
-
-    public fun isByteType(type: KaType): Boolean
-
-    public fun isFloatType(type: KaType): Boolean
-
-    public fun isDoubleType(type: KaType): Boolean
-
-    public fun isCharType(type: KaType): Boolean
-
-    public fun isBooleanType(type: KaType): Boolean
-
-    public fun isStringType(type: KaType): Boolean
-
-    public fun isCharSequenceType(type: KaType): Boolean
-
-    public fun isAnyType(type: KaType): Boolean
-
-    public fun isNothingType(type: KaType): Boolean
-
-    public fun isUIntType(type: KaType): Boolean
-
-    public fun isULongType(type: KaType): Boolean
-
-    public fun isUShortType(type: KaType): Boolean
-
-    public fun isUByteType(type: KaType): Boolean
 
     public fun expandedSymbol(type: KaType): KaClassSymbol?
 
@@ -82,11 +45,10 @@ public interface KaInternalsTypeInformationProvider {
 
     public fun isNestedArray(type: KaType): Boolean
 
-    public fun isPrimitive(type: KaType): Boolean
-
-    @KaExperimentalApi
     public fun defaultInitializer(type: KaType): String?
 
     @KaExperimentalApi
     public fun builtinFunctionTypeFamilies(): KaBuiltinFunctionTypeFamilies
+
+    public fun classId(type: KaType): ClassId?
 }

@@ -13,6 +13,7 @@ FILE[kind=File[packageFqName=a]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY
             TYPE_REFERENCE
@@ -22,6 +23,7 @@ FILE[kind=File[packageFqName=a]]
           FUN[fqName=a.InheritingClasses.A.of, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[open]
             VALUE_PARAMETER_LIST
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
           FUN[fqName=a.InheritingClasses.A.af, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=af]
             MODIFIER_LIST[abstract]
             VALUE_PARAMETER_LIST
@@ -30,6 +32,7 @@ FILE[kind=File[packageFqName=a]]
                 REFERENCE_EXPRESSION[referencedName=Int]
           PROPERTY[fqName=a.InheritingClasses.A.op, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=op]
             MODIFIER_LIST[open]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
           PROPERTY[fqName=a.InheritingClasses.A.ap, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ap]
             MODIFIER_LIST[abstract]
             TYPE_REFERENCE
@@ -50,13 +53,17 @@ FILE[kind=File[packageFqName=a]]
           FUN[fqName=a.InheritingClasses.B.of, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[override]
             VALUE_PARAMETER_LIST
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
           FUN[fqName=a.InheritingClasses.B.af, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=af]
             MODIFIER_LIST[override]
             VALUE_PARAMETER_LIST
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
           PROPERTY[fqName=a.InheritingClasses.B.op, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=op]
             MODIFIER_LIST[override]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
           PROPERTY[fqName=a.InheritingClasses.B.ap, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=ap]
             MODIFIER_LIST[override]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
       CLASS[classId=a/InheritingClasses.C, fqName=a.InheritingClasses.C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=C, superNames=[]]
         CLASS_BODY
           PROPERTY[fqName=a.InheritingClasses.C.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]

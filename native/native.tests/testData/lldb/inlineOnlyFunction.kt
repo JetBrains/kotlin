@@ -1,4 +1,6 @@
 // KIND: STANDALONE_LLDB
+// INPUT_DATA_FILE: inlineOnlyFunction.in
+// OUTPUT_DATA_FILE: inlineOnlyFunction.out
 
 
 fun foo() {}

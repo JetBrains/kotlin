@@ -67,15 +67,21 @@ fun B(y: Foo, %composer: Composer?, %changed: Int) {
 }
 val foo: Function4<Int, Foo, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda%529523933
 internal object ComposableSingletons%TestKt {
-  val lambda%529523933: Function4<Int, Foo, Composer, Int, Unit> = composableLambdaInstance(<>, false) { x: Int, y: Foo, %composer: Composer?, %changed: Int ->
-    sourceInformation(%composer, "invalid source info at 1: 'CN(x,y)10@288L4,11@297L4:Test.kt'")
-    if (isTraceInProgress()) {
-      traceEventStart(<>, %changed, -1, <>)
+  val lambda%529523933: Function4<Int, Foo, Composer, Int, Unit>?
+    get() {
+      if (field == null) {
+        field = composableLambdaInstance(<>, false) { x: Int, y: Foo, %composer: Composer?, %changed: Int ->
+          sourceInformation(%composer, "invalid source info at 1: 'CN(x,y)10@288L4,11@297L4:Test.kt'")
+          if (isTraceInProgress()) {
+            traceEventStart(<>, %changed, -1, <>)
+          }
+          A(x, %composer, 0b1110 and %changed)
+          B(y, %composer, 0b1110 and %changed shr 0b0011)
+          if (isTraceInProgress()) {
+            traceEventEnd()
+          }
+        }
+      }
+      return field
     }
-    A(x, %composer, 0b1110 and %changed)
-    B(y, %composer, 0b1110 and %changed shr 0b0011)
-    if (isTraceInProgress()) {
-      traceEventEnd()
-    }
-  }
 }

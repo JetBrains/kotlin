@@ -91,7 +91,7 @@ object FirUnresolvedInMiddleOfImportChecker : FirDeclarationSyntaxChecker<FirFil
     /**
      * Gets the short outermost class name. For example, `foo.bar.Foo` -> `Foo`. `foo.bar.Outer.Inner.InnerAgain` -> `Outer`.
      */
-    private fun ClassId.getOutermostClassName() = relativeClassName.pathSegments().first().asString()
+    private fun ClassId.getOutermostClassName(): String = relativeClassName.pathSegments().first().asString()
 
     private fun isClassIdPointingToEnumEntry(session: FirSession, classId: ClassId): Boolean {
         val enumClassId = classId.outerClassId ?: return false

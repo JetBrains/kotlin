@@ -85,10 +85,6 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
     override val visibility: KaSymbolVisibility
         get() = withValidityAssertion { (compilerVisibilityByPsi ?: firSymbol.visibility).asKaSymbolVisibility }
 
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    override val compilerVisibility: Visibility
-        get() = withValidityAssertion { compilerVisibilityByPsi ?: firSymbol.visibility }
-
     abstract val modalityByPsi: KaSymbolModality?
 
     override val modality: KaSymbolModality
@@ -404,9 +400,6 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
                     backingPsi.hasDelegate() -> if (backingPsi.cameFromKotlinLibrary) null else false
                     backingPsi.fieldDeclaration != null -> true
                     !backingPsi.hasModifier(KtTokens.FINAL_KEYWORD) && (backingPsi.containingClassOrObject as? KtClass)?.isInterface() == true -> false
-
-                    // At least on Kotlin/JVM platform the backing field is not materialized for annotation properties
-                    backingPsi.cameFromKotlinLibrary && backingPsi.containingClassOrObject?.isAnnotation() == true -> null
                     !backingPsi.hasRegularGetter -> true
                     backingPsi.isVar && !backingPsi.hasRegularSetter -> true
                     else -> null
@@ -556,7 +549,16 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
         }
 
     override val hasBackingField: Boolean
-        get() = withValidityAssertion { true }
+        get() = withValidityAssertion {
+            // A compiled annotation class declares its properties as constructor parameters, and at least on Kotlin/JVM
+            // the backing field of such a property is not materialized
+            val parameter = backingPsi
+            if (parameter != null && parameter.cameFromKotlinLibrary && parameter.containingClassOrObject?.isAnnotation() == true) {
+                firSymbol.hasBackingField
+            } else {
+                true
+            }
+        }
 }
 
 /**

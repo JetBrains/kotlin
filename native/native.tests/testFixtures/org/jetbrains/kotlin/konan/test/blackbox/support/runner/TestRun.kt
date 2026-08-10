@@ -130,6 +130,16 @@ sealed interface TestRunParameter {
         }
     }
 
+    /**
+     * Enables the test run retry: if the run itself or the checks of its result fail,
+     * the whole sequence is re-executed, up to [maxRetries] times.
+     *
+     * @see AbstractRunner.run
+     */
+    class WithRetriesOnFailure(val maxRetries: Int) : TestRunParameter {
+        override fun applyTo(programArgs: MutableList<String>) = Unit
+    }
+
     // Currently, used only for logging the data.
     class WithExpectedOutputData(val expectedOutputDataFile: File) : TestRunParameter {
         override fun applyTo(programArgs: MutableList<String>) = Unit

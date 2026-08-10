@@ -43,6 +43,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: a
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -90,6 +91,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: null
 
 KaEnumEntrySymbol:
@@ -170,6 +172,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -247,6 +250,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getI
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -286,8 +290,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getI
-  javaSetterName: null
   isInline: false
   importableFqName: null
 
@@ -369,6 +371,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -455,6 +458,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: null
 
 KaEnumEntrySymbol:
@@ -535,6 +539,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -621,6 +626,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -702,6 +708,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyEnumClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getI
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -741,8 +748,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: MyEnumClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getI
-  javaSetterName: null
   isInline: false
   importableFqName: null
 

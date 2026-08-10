@@ -15,4 +15,14 @@ FILE[kind=File[packageFqName=test]]
     CLASS_BODY
       FUN[fqName=test.AnnotatedFlexibleTypes.foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         VALUE_PARAMETER_LIST
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=javaClass]
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=foo]
+            VALUE_ARGUMENT_LIST
       PROPERTY[fqName=test.AnnotatedFlexibleTypes.bar, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=bar]
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=javaClass]
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=bar]
+            VALUE_ARGUMENT_LIST

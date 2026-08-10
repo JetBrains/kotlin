@@ -113,8 +113,19 @@ object FirLombokAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Pl
             )
         )
         this[LombokNames.BUILDER_ID] = ImplementedAnnotationsInfo(
-            setOf(
+            allowedTargetsMap = setOf(
                 KotlinTarget.CLASS,
+            )
+        )
+        this[LombokNames.BUILDER_DEFAULT_ID] = ImplementedAnnotationsInfo(
+            allowedTargetsMap = setOf(
+                KotlinTarget.PROPERTY,
+            )
+        )
+        this[LombokNames.SINGULAR_ID] = ImplementedAnnotationsInfo(
+            allowedTargetsMap = setOf(
+                KotlinTarget.PROPERTY,
+                KotlinTarget.VALUE_PARAMETER,
             )
         )
     }

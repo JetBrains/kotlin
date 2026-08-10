@@ -1,0 +1,26 @@
+public open class ParameterNames : R|kotlin/Any| {
+    public open fun foo(longMethodParam: R|kotlin/Long|, intMethodParam: R|kotlin/Int|): R|kotlin/Unit|
+
+    public/*package*/ open static fun bar(staticMethodParam: R|test/ParameterNames!|): R|kotlin/Unit|
+
+    public constructor(longConstructorParam: R|kotlin/Long|, stringConstructorParam: R|kotlin/String!|): R|test/ParameterNames|
+
+    public/*package*/ final enum class Enum : R|kotlin/Enum<test/ParameterNames.Enum!>| {
+        public final static enum entry E: R|test/ParameterNames.Enum|
+        private constructor(doubleEnumParam: R|kotlin/Double|, stringEnumParam: R|kotlin/String!|): R|test/ParameterNames.Enum|
+
+        public final static fun values(): R|kotlin/Array<test/ParameterNames.Enum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|test/ParameterNames.Enum| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<test/ParameterNames.Enum>|
+            public static get(): R|kotlin/enums/EnumEntries<test/ParameterNames.Enum>|
+
+    }
+    public/*package*/ open inner class Inner : R|kotlin/Any| {
+        public test/ParameterNames.constructor(doubleInnerParam: R|kotlin/Double|, objectInnerParam: R|kotlin/Any!|): R|test/ParameterNames.Inner|
+
+    }
+}

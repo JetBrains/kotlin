@@ -189,15 +189,15 @@ enabledTargets(platformManager).forEach { target ->
     }
 }
 
-val hostInstall by tasks.registering {
+val hostInstall = tasks.register("hostInstall") {
     dependsOn("${PlatformInfo.hostName}Install")
 }
 
-val hostCache by tasks.registering {
+val hostCache = tasks.register("hostCache") {
     dependsOn("${PlatformInfo.hostName}Cache")
 }
 
-val cache by tasks.registering {
+val cache = tasks.register("cache") {
     dependsOn(tasks.withType(KonanCacheTask::class.java))
 
     group = BasePlugin.BUILD_GROUP

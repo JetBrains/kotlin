@@ -31,6 +31,7 @@ KtUserType(100,107): 'MyClass'
 KtNameReferenceExpression(100,107): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -81,6 +82,7 @@ KtUserType(165,172): 'MyClass'
 KtNameReferenceExpression(165,172): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -116,6 +118,7 @@ KtUserType(224,231): 'MyClass'
 KtNameReferenceExpression(224,231): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -124,6 +127,7 @@ KtNameReferenceExpression(224,231): 'MyClass'
 KtNameReferenceExpression(234,249): 'NestedInheritor'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.NestedInheritor
@@ -147,6 +151,7 @@ KtUserType(274,280): 'String'
 KtNameReferenceExpression(274,280): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -164,6 +169,7 @@ KtDotQualifiedExpression(318,341): 'MyClass.NestedInheritor'
 KtNameReferenceExpression(318,325): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -172,6 +178,7 @@ KtNameReferenceExpression(318,325): 'MyClass'
 KtNameReferenceExpression(326,341): 'NestedInheritor'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.NestedInheritor
@@ -201,6 +208,7 @@ KtUserType(361,364): 'Int'
 KtNameReferenceExpression(361,364): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -218,6 +226,7 @@ KtCallExpression(372,532): 'receiveMyClass('
 KtNameReferenceExpression(372,386): 'receiveMyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /receiveMyClass(m: MyClass): kotlin.Unit
@@ -244,6 +253,7 @@ KtBinaryExpression(400,406): 'i == 0'
 KtNameReferenceExpression(400,401): 'i'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       i: kotlin.Int
@@ -252,6 +262,7 @@ KtNameReferenceExpression(400,401): 'i'
 KtOperationReferenceExpression(402,404): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
@@ -266,6 +277,7 @@ KtContainerNodeForControlStructureBody(408,423): 'NestedInheritor'
 KtNameReferenceExpression(408,423): 'NestedInheritor'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.NestedInheritor
@@ -289,6 +301,7 @@ KtBinaryExpression(441,447): 'i == 1'
 KtNameReferenceExpression(441,442): 'i'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       i: kotlin.Int
@@ -297,6 +310,7 @@ KtNameReferenceExpression(441,442): 'i'
 KtOperationReferenceExpression(443,445): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
@@ -311,6 +325,7 @@ KtContainerNodeForControlStructureBody(449,460): 'myClassProp'
 KtNameReferenceExpression(449,460): 'myClassProp'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val myClassProp: MyClass
@@ -334,6 +349,7 @@ KtBinaryExpression(478,484): 'i == 2'
 KtNameReferenceExpression(478,479): 'i'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       i: kotlin.Int
@@ -342,6 +358,7 @@ KtNameReferenceExpression(478,479): 'i'
 KtOperationReferenceExpression(480,482): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
@@ -356,6 +373,7 @@ KtContainerNodeForControlStructureBody(486,496): 'stringProp'
 KtNameReferenceExpression(486,496): 'stringProp'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val stringProp: kotlin.String
@@ -367,6 +385,7 @@ KtContainerNodeForControlStructureBody(510,526): 'ClassMemberAlias'
 KtNameReferenceExpression(510,526): 'ClassMemberAlias'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val ClassMemberAlias: MyClass.NestedInheritor

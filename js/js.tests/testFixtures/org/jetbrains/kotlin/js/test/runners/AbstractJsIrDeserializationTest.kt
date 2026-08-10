@@ -5,17 +5,14 @@
 
 package org.jetbrains.kotlin.js.test.runners
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.IGNORE_IR_DESERIALIZATION_TEST
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
  * Base class for IR deserialization tests, configured with FIR frontend.
@@ -23,7 +20,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 abstract class AbstractJsIrDeserializationTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-    private val useIrInlinerAtFirstCompilationPhase: Boolean
 ) : AbstractJsBlackBoxCodegenTestBase(TargetBackend.JS_IR, pathToTestDir, testGroupOutputDirPrefix) {
     override val backendFacades: JsBackendFacades
         get() = JsBackendFacades.WithSeparatedDeserialization
@@ -38,12 +34,6 @@ abstract class AbstractJsIrDeserializationTest(
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                runIf(useIrInlinerAtFirstCompilationPhase) {
-                    LANGUAGE with listOf(
-                        "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                        "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                    )
-                }
                 +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
                 FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
             }
@@ -55,28 +45,6 @@ abstract class AbstractJsIrDeserializationTest(
 }
 
 abstract class AbstractJsIrDeserializationCodegenBoxTest : AbstractJsIrDeserializationTest(
-    pathToTestDir = "compiler/testData/codegen/box/",
+    pathToTestDir = "compiler/testData/codegen/",
     testGroupOutputDirPrefix = "irDeserialization/codegenBox/",
-    useIrInlinerAtFirstCompilationPhase = false,
 )
-
-abstract class AbstractJsIrDeserializationCodegenBoxInlineTest : AbstractJsIrDeserializationTest(
-    pathToTestDir = "compiler/testData/codegen/boxInline/",
-    testGroupOutputDirPrefix = "irDeserialization/codegenBoxInline/",
-    useIrInlinerAtFirstCompilationPhase = false,
-)
-
-abstract class AbstractJsIrDeserializationCodegenBoxWithInlinedFunInKlibTest(
-    pathToTestDir: String = "compiler/testData/codegen/box/",
-    testGroupOutputDirPrefix: String = "irDeserialization/codegenBoxWithInlinedFunInKlib/",
-) : AbstractJsIrDeserializationTest(
-    pathToTestDir,
-    testGroupOutputDirPrefix,
-    useIrInlinerAtFirstCompilationPhase = true,
-)
-
-abstract class AbstractJsIrDeserializationCodegenBoxInlineWithInlinedFunInKlibTest :
-    AbstractJsIrDeserializationCodegenBoxWithInlinedFunInKlibTest(
-        pathToTestDir = "compiler/testData/codegen/boxInline/",
-        testGroupOutputDirPrefix = "irDeserialization/codegenBoxInlineWithInlinedFunInKlib/",
-    )

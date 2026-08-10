@@ -97,4 +97,5 @@ FILE fqName:<root> fileName:/kt69534.kt
                       CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public final fun noWhenBranchMatchedException (): kotlin.Nothing declared in kotlin.internal.ir' type=kotlin.Nothing origin=null
+              then: CALL 'internal final fun throwNoWhenBranchMatchedException (subject: kotlin.Any): kotlin.Nothing declared in kotlin.internal' type=kotlin.Nothing origin=null
+                ARG subject: GET_VAR 'val tmp_0: <root>.Sas declared in <root>.foo' type=<root>.Sas origin=null

@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation Secur
 language = Objective-C
 package = platform.CoreBluetooth
 modules = CoreBluetooth
+apiNotesSwiftName = true
 
 compilerOpts = -framework CoreBluetooth
 linkerOpts = -framework CoreBluetooth

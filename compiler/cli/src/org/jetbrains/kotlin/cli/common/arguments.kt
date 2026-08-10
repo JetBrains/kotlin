@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.cli.CliDiagnostics.REMOVED_CLI_ARG
 import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENTS_ARG_NAME
 import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_DEPENDENCIES_ARG_NAME
 import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME
-import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_INCREMENTAL_CLASSPATH_ARG_NAME
 import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_REFINES_ARG_NAME
 import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_SOURCES_ARG_NAME
 import org.jetbrains.kotlin.cli.common.arguments.*
@@ -36,7 +35,7 @@ import java.io.File
 
 fun CompilerConfiguration.setupCommonArguments(
     arguments: CommonCompilerArguments,
-    createMetadataVersion: ((IntArray) -> BinaryVersion)? = null
+    createMetadataVersion: ((IntArray) -> BinaryVersion)? = null,
 ) {
     treatWarningsAsErrors = arguments.allWarningsAsErrors
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
@@ -118,6 +117,7 @@ fun CompilerConfiguration.setupMetadataVersion(
         }
     }
 }
+
 fun CommonCompilerArgumentsConfigurator.Reporter.Companion.fromConfiguration(configuration: CompilerConfiguration): CommonCompilerArgumentsConfigurator.Reporter {
     return object : CommonCompilerArgumentsConfigurator.Reporter {
         override fun reportWarning(message: String) {
@@ -301,7 +301,6 @@ private object FragmentArgs {
     val FRAGMENT_SOURCES_ARG_NAME = CommonCompilerArguments::fragmentSources.cliArgument
     val FRAGMENT_DEPENDENCIES_ARG_NAME = CommonCompilerArguments::fragmentDependencies.cliArgument
     val FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME = CommonCompilerArguments::fragmentFriendDependencies.cliArgument
-    val FRAGMENT_INCREMENTAL_CLASSPATH_ARG_NAME = CommonCompilerArguments::fragmentIncrementalClasspath.cliArgument
 }
 
 private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonCompilerArguments): HmppCliModuleStructure? {
@@ -402,7 +401,6 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
             sourceDependencies = emptyMap(),
             moduleDependencies = emptyMap(),
             friendDependencies = emptyMap(),
-            incrementalDependencies = emptyMap(),
         )
     }
 
@@ -460,9 +458,6 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     if (arguments.fragmentFriendDependencies.isNotEmpty() && !arguments.separateKmpCompilationScheme) {
         reportError("$FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME flag could be used only with ${CommonCompilerArguments::separateKmpCompilationScheme.cliArgument}")
     }
-    if (arguments.fragmentIncrementalClasspath.isNotEmpty() && arguments.incrementalCompilation != true) {
-        reportError("$FRAGMENT_INCREMENTAL_CLASSPATH_ARG_NAME flag could be used only with ${CommonCompilerArguments::incrementalCompilation.cliArgument}")
-    }
 
     fun buildFragmentDependencyMap(arguments: Array<String>?, argumentName: String): Map<HmppCliModule, MutableList<String>> {
         return buildMap {
@@ -488,7 +483,6 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     val moduleDependencies = buildFragmentDependencyMap(arguments.fragmentDependencies, FRAGMENT_DEPENDENCIES_ARG_NAME)
     val friendDependencies = buildFragmentDependencyMap(arguments.fragmentFriendDependencies, FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME)
-    val incrementalDependencies = buildFragmentDependencyMap(arguments.fragmentIncrementalClasspath, FRAGMENT_INCREMENTAL_CLASSPATH_ARG_NAME)
 
-    return HmppCliModuleStructure(modules, sourceDependencies, moduleDependencies, friendDependencies, incrementalDependencies)
+    return HmppCliModuleStructure(modules, sourceDependencies, moduleDependencies, friendDependencies)
 }

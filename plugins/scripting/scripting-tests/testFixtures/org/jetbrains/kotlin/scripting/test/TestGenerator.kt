@@ -5,18 +5,72 @@
 
 package org.jetbrains.kotlin.scripting.test
 
+import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.model.annotation
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.canFreezeIDE
+import org.jetbrains.kotlin.scripting.test.definitions.AbstractScriptWithCustomDefBlackBoxCodegenTest
+import org.jetbrains.kotlin.scripting.test.definitions.AbstractScriptWithCustomDefDiagnosticsTestBase
+import org.jetbrains.kotlin.scripting.test.repl.AbstractReplViaApiDiagnosticsTest
+import org.jetbrains.kotlin.scripting.test.repl.AbstractReplViaApiEvaluationTest
+import org.jetbrains.kotlin.scripting.test.repl.AbstractReplWithTestExtensionsCodegenTest
+import org.jetbrains.kotlin.scripting.test.repl.AbstractReplWithTestExtensionsDiagnosticsTest
+import org.jetbrains.kotlin.scripting.test.runners.AbstractFirLightTreeCustomScriptCodegenTest
+import org.jetbrains.kotlin.scripting.test.runners.AbstractFirPsiCustomScriptCodegenTest
+import org.jetbrains.kotlin.scripting.test.runners.AbstractFirScriptCodegenTest
+import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticPsiTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractFirPsiBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("plugins/scripting/scripting-tests/tests-gen", "plugins/scripting/scripting-tests") {
+            testClass<AbstractCliTest>(
+                "org.jetbrains.kotlin.scripting.test.cli.ScriptingCliTestGenerated",
+                annotations = listOf(annotation<Execution>("value" to ExecutionMode.SAME_THREAD))
+            ) {
+                model("testData/cli/arguments", extension = "args", testMethod = "doJvmTest", recursive = false)
+                model("testData/cli/arguments/kmp", extension = "args", testMethod = "doJvmTest", recursive = false)
+            }
+
             testClass<AbstractScriptWithCustomDefDiagnosticsTestBase> {
-                model("testData/diagnostics/testScripts", extension = "kts")
+                model("testData/diagnostics/scriptsWithCustomDefinitions", extension = "kts")
+            }
+
+            testClass<AbstractPhasedJvmDiagnosticPsiTest>(
+                "org.jetbrains.kotlin.scripting.test.runners.PhasedScriptingPsiTestGenerated"
+            ) {
+                model(
+                    "testData/diagnostics/general",
+                    skipTestAllFilesCheck = true,
+                    pattern = TestGeneratorUtil.KT_OR_KTS.canFreezeIDE,
+                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                )
             }
 
             testClass<AbstractScriptWithCustomDefBlackBoxCodegenTest> {
-                model("testData/codegen/testScripts", extension = "kts")
+                model("testData/codegen/scriptsWithCustomDefinitions", extension = "kts")
+            }
+
+            testClass<AbstractFirPsiBlackBoxCodegenTest>(
+                "org.jetbrains.kotlin.scripting.test.runners.FirScriptingPsiBlackBoxCodegenTestGenerated"
+            ) {
+                model("testData/codegen/regularBox")
+            }
+
+            testClass<AbstractFirScriptCodegenTest> {
+                model("testData/codegen/scripting", pattern = "^(.*)\\.kts?$", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
+            testClass<AbstractFirPsiCustomScriptCodegenTest> {
+                model("testData/codegen/customScript", pattern = "^(.*)$")
+            }
+
+            testClass<AbstractFirLightTreeCustomScriptCodegenTest> {
+                model("testData/codegen/customScript", pattern = "^(.*)$")
             }
 
             testClass<AbstractReplWithTestExtensionsDiagnosticsTest> {

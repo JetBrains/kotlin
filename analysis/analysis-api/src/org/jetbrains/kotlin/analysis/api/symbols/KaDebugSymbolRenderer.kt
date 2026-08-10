@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaDeprecation
 import org.jetbrains.kotlin.analysis.api.contracts.description.Context
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.contracts.description.renderKaContractEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -96,9 +97,8 @@ public class KaDebugRenderer(
                     renderComputedValue("returnValueStatus", printer, currentSymbolStack) { symbol.returnValueStatus }
                 }
 
-                if (symbol is KaPropertySymbol) {
-                    renderComputedValue("javaGetterName", printer, currentSymbolStack) { symbol.javaGetterName }
-                    renderComputedValue("javaSetterName", printer, currentSymbolStack) { symbol.javaSetterName }
+                if (symbol is KaFunctionSymbol) {
+                    renderComputedValue("javaMethodName", printer, currentSymbolStack) { symbol.javaMethodName }
                 }
 
                 if (symbol is KaKotlinPropertySymbol) {
@@ -502,4 +502,3 @@ public class KaDebugRenderer(
         )
     }
 }
-

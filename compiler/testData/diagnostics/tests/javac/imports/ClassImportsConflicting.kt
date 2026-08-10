@@ -1,6 +1,5 @@
 // DISABLE_JAVA_FACADE
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_JAVAC
 // FILE: b.kt
 package b
 

@@ -3420,7 +3420,7 @@ KtBinaryExpression(1136,1141): 'b + 1'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.plus(b: Int): Unit' is inapplicable because of a receiver type mismatch.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.plus(b: Int): Unit' is inapplicable for operator '+' because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1136,1137): 'b'
@@ -3558,7 +3558,7 @@ KtOperationReferenceExpression(1138,1139): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.plus(b: Int): Unit' is inapplicable because of a receiver type mismatch.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.plus(b: Int): Unit' is inapplicable for operator '+' because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtConstantExpression(1140,1141): '1'
@@ -3649,7 +3649,7 @@ KtPrefixExpression(1150,1152): '+b'
         callableId = /unaryPlus
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.unaryPlus(): Unit' is inapplicable because of a receiver type mismatch.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.unaryPlus(): Unit' is inapplicable for operator '+' because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtOperationReferenceExpression(1150,1151): '+'
@@ -3737,7 +3737,7 @@ KtOperationReferenceExpression(1150,1151): '+'
         callableId = /unaryPlus
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.unaryPlus(): Unit' is inapplicable because of a receiver type mismatch.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.unaryPlus(): Unit' is inapplicable for operator '+' because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1151,1152): 'b'
@@ -5912,7 +5912,7 @@ KtBinaryExpression(1376,1381): 'b + 1'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.plus(b: Int): Unit' is inapplicable because of a receiver type mismatch.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.plus(b: Int): Unit' is inapplicable for operator '+' because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1376,1377): 'b'
@@ -6021,7 +6021,7 @@ KtOperationReferenceExpression(1378,1379): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.plus(b: Int): Unit' is inapplicable because of a receiver type mismatch.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.plus(b: Int): Unit' is inapplicable for operator '+' because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtConstantExpression(1380,1381): '1'
@@ -6083,7 +6083,7 @@ KtPrefixExpression(1386,1388): '+b'
         callableId = /unaryPlus
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.unaryPlus(): Unit' is inapplicable because of a receiver type mismatch.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.unaryPlus(): Unit' is inapplicable for operator '+' because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtOperationReferenceExpression(1386,1387): '+'
@@ -6142,7 +6142,7 @@ KtOperationReferenceExpression(1386,1387): '+'
         callableId = /unaryPlus
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.unaryPlus(): Unit' is inapplicable because of a receiver type mismatch.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'context(a: A) fun A.unaryPlus(): Unit' is inapplicable for operator '+' because of a receiver type mismatch.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(1387,1388): 'b'

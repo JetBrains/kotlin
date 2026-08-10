@@ -178,13 +178,13 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         }
     }
 
-    private fun isIdentityComparedWithImplicitBoxing(l: TypeInfo, r: TypeInfo, session: FirSession) =
+    private fun isIdentityComparedWithImplicitBoxing(l: TypeInfo, r: TypeInfo, session: FirSession): Boolean =
         arePrimitiveAndNonPrimitiveSupertypeRespectively(l, r, session) || arePrimitiveAndNonPrimitiveSupertypeRespectively(r, l, session)
 
-    private fun arePrimitiveAndNonPrimitiveSupertypeRespectively(l: TypeInfo, r: TypeInfo, session: FirSession) =
+    private fun arePrimitiveAndNonPrimitiveSupertypeRespectively(l: TypeInfo, r: TypeInfo, session: FirSession): Boolean =
         l.isNotNullPrimitive && !r.isNotNullPrimitive && l.type.isSubtypeOf(r.type, session)
 
-    private fun getSourceLessInapplicabilityDiagnostic(forceWarning: Boolean) = when {
+    private fun getSourceLessInapplicabilityDiagnostic(forceWarning: Boolean): KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = when {
         forceWarning -> FirErrors.INCOMPATIBLE_TYPES_WARNING
         else -> FirErrors.INCOMPATIBLE_TYPES
     }
@@ -300,7 +300,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
  *
  * See: [org.jetbrains.kotlin.types.TypeIntersector.intersectTypes]
  */
-internal fun isCaseMissedByK1Intersector(a: TypeInfo, b: TypeInfo) =
+internal fun isCaseMissedByK1Intersector(a: TypeInfo, b: TypeInfo): Boolean =
     a.canHaveSubtypesAccordingToK1 && b.canHaveSubtypesAccordingToK1
 
 /**

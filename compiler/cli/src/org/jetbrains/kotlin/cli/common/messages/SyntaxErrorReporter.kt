@@ -95,8 +95,8 @@ object SyntaxErrorReporter {
         if (hasIncompatibleClasses) {
             messageCollector.report(
                 ERROR,
-                "Incompatible classes were found in dependencies. " +
-                        "Remove them from the classpath or use '-Xskip-metadata-version-check' to suppress errors"
+                "Incompatible classes were found in dependencies that could not be read by this version of the compiler. " +
+                        "Consider updating the compiler version, removing the classes from the classpath, or using '-Xskip-metadata-version-check' to suppress this error."
             )
         }
 

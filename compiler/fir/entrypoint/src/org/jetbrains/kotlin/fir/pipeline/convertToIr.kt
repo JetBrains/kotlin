@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.validation.*
 import org.jetbrains.kotlin.ir.validation.checkers.IrNestedOffsetRangeChecker
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrClassSuperTypesChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrExpressionBodyInFunctionChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallTypeArgumentCountChecker
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCrossFileFieldUs
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrValueAccessScopeChecker
 import org.jetbrains.kotlin.ir.validation.checkers.symbol.IrVisibilityChecker
 import org.jetbrains.kotlin.ir.validation.checkers.type.IrTypeParameterScopeChecker
+import org.jetbrains.kotlin.ir.validation.withBasicChecks
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -97,7 +99,7 @@ fun AllModulesFrontendOutput.convertToIrAndActualize(
     visibilityConverter: Fir2IrVisibilityConverter,
     kotlinBuiltIns: KotlinBuiltIns,
     typeSystemContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
-    specialAnnotationsProvider: IrSpecialAnnotationsProvider?,
+    createSpecialAnnotationsProvider: ((IrModuleFragment) -> IrSpecialAnnotationsProvider)?,
     extraActualDeclarationExtractorsInitializer: (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor>,
     commonMemberStorage: Fir2IrCommonMemberStorage = Fir2IrCommonMemberStorage(),
     irModuleFragmentPostCompute: (IrModuleFragment) -> Unit = { _ -> },
@@ -111,7 +113,7 @@ fun AllModulesFrontendOutput.convertToIrAndActualize(
         visibilityConverter,
         kotlinBuiltIns,
         typeSystemContextProvider,
-        specialAnnotationsProvider,
+        createSpecialAnnotationsProvider,
         extraActualDeclarationExtractorsInitializer,
         commonMemberStorage,
         irModuleFragmentPostCompute,
@@ -128,7 +130,7 @@ private class Fir2IrPipeline(
     val visibilityConverter: Fir2IrVisibilityConverter,
     val kotlinBuiltIns: KotlinBuiltIns,
     val typeSystemContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
-    val specialAnnotationsProvider: IrSpecialAnnotationsProvider?,
+    val createSpecialAnnotationsProvider: ((IrModuleFragment) -> IrSpecialAnnotationsProvider)?,
     val extraActualDeclarationExtractorsInitializer: (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor>,
     val commonMemberStorage: Fir2IrCommonMemberStorage,
     val irModuleFragmentPostCompute: (IrModuleFragment) -> Unit,
@@ -185,7 +187,7 @@ private class Fir2IrPipeline(
                 generatedDataValueClassSyntheticFunctions,
                 irMangler,
                 kotlinBuiltIns,
-                specialAnnotationsProvider,
+                createSpecialAnnotationsProvider,
                 firProvidersWithGeneratedFiles.getValue(output.session.moduleData),
                 syntheticIrBuiltinsSymbolsContainer,
                 fakeOverrideResolver,
@@ -513,7 +515,8 @@ private class Fir2IrPipeline(
             module,
             irBuiltIns,
             IrValidatorConfig(checkTreeConsistency = true, checkUnboundSymbols = true)
-                .withBasicFirstStageChecks()
+                .withBasicChecks()
+                .withVarargChecks()
                 //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
                 .withCheckers(
                     IrCallValueArgumentCountChecker,
@@ -521,21 +524,19 @@ private class Fir2IrPipeline(
                     IrValueAccessScopeChecker,
                     IrTypeParameterScopeChecker,
                     IrVisibilityChecker.Strict,
+                    IrClassSuperTypesChecker,
                 )
-                .withVarargChecks()
                 .applyIf(extension == null) {
                     // KT-80065: This checker is known to trigger on a lot of internal and external compiler plugins,
                     //  while most of them, somehow, work. It is disabled for now, not to cause too much breakage.
                     withCheckers(IrCallTypeArgumentCountChecker)
                 }
-                .applyIf(
+                .applyIf(validateForKlibSerialization) {
                     // On JVM we may sometimes generate non-private fields (KT-71243), and we allow plugins to do so too.
-                    validateForKlibSerialization
-                ) {
                     withCheckers(IrFieldVisibilityChecker)
                 }
                 .applyIf(validateForKlibSerialization) {
-                    // Serializing IrExpressionBody in IrFunction.body is not supported
+                    // Serializing IrExpressionBody in IrFunction.body is not supported.
                     withCheckers(IrExpressionBodyInFunctionChecker)
                 }
                 .withCheckersByName(

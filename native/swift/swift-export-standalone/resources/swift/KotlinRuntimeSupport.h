@@ -5,6 +5,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 NSString * _Nullable __root____getExceptionMessage__TypesOfArguments__ExportedKotlinPackages_kotlin_Exception__(void * exception);
 
+// SwiftError reverse/forward error-bridging helpers
+void * SwiftError_create(void * box);
+void * _Nullable SwiftError_retainedThrowableRef(void * ref);
+void * _Nullable SwiftError_unwrapBoxOrNull(void * ref);
+
 // _KotlinBridgeable bridge functions for primitive types
 void * KotlinBridgeable_Int8_box(int8_t value);
 int8_t KotlinBridgeable_Int8_unbox(void * ref);

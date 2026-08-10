@@ -9,6 +9,8 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 /**
  * Represents a postfix unary expression where the operator follows the operand.
@@ -25,10 +27,21 @@ public class KtPostfixExpression extends KtUnaryExpression {
         super(node);
     }
 
+    @KtImplementationDetail
+    public KtPostfixExpression(@NotNull KotlinPlaceHolderStub<KtPostfixExpression> stub) {
+        super(stub, KtStubBasedElementTypes.POSTFIX_EXPRESSION);
+    }
+
     @Override
     @Nullable @IfNotParsed
     public KtExpression getBaseExpression() {
-        return PsiTreeUtil.getPrevSiblingOfType(getOperationReference(), KtExpression.class);
+        KtOperationReferenceExpression operationReference = getOperationReference();
+        KtExpression stubBasedOperand = operationReference.getStubBasedOperandBefore$org_jetbrains_kotlin_psi_api();
+        if (stubBasedOperand != null) {
+            return stubBasedOperand;
+        }
+
+        return PsiTreeUtil.getPrevSiblingOfType(operationReference, KtExpression.class);
     }
 
     @Override

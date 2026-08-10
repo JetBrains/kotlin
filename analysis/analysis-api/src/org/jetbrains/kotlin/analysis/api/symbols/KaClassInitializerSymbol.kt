@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 
 /**
  * [KaClassInitializerSymbol] represents an [anonymous initializer declaration](https://kotlinlang.org/docs/reference/grammar.html#anonymousInitializer)
@@ -28,8 +25,5 @@ public abstract class KaClassInitializerSymbol : KaDeclarationSymbol {
     final override val isExternal: Boolean get() = withValidityAssertion { false }
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.CLASS }
 
-    @KaExperimentalApi
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
     //endregion
 }

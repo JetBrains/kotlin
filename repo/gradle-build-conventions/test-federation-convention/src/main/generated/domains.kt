@@ -9,6 +9,7 @@ enum class Domain {
     Native,
     CoreLibs,
     AnalysisApi,
+    BuildToolsApi,
     SwiftExport,
     CompilerPlugins,
     Gradle,
@@ -23,84 +24,91 @@ enum class Domain {
 
 internal object CompilerDomainInfo : DomainInfo {
     override val domain = Domain.Compiler
-    override val include: List<String> = listOf("compiler/**", "core/**", "build-common/**", "compiler/psi/parser/**", "plugins/plugin-sandbox/**", "plugins/scripting/**", "jps/**")
-    override val exclude: List<String> = listOf("compiler/psi/**")
+    override val include: List<String> = listOf("compiler", "core", "build-common", "compiler/psi/parser", "jps")
+    override val exclude: List<String> = listOf("compiler/psi", "compiler/build-tools", "compiler/incremental-compilation-*", "compiler/daemon", "compiler/compiler-runner", "compiler/compiler-runner-unshaded", "compiler/plugin-api", "compiler/ir/backend.wasm", "compiler/ir/backend.js", "compiler/ir/serialization.js", "compiler/ir/backend.native", "compiler/ir/ir.objcinterop", "compiler/ir/serialization.native")
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo) }
 }
 
 internal object WasmDomainInfo : DomainInfo {
     override val domain = Domain.Wasm
-    override val include: List<String> = listOf("wasm/**", "js/js.translator/testData/**")
+    override val include: List<String> = listOf("compiler/ir/backend.wasm", "wasm", "js/js.translator/testData", "js/js.sourcemap", "js/typescript-export-model", "js/typescript-printer", "libraries/tools/dukat", "js/js.tests/testFixtures/org/jetbrains/kotlin", "js/js.config/src/org/jetbrains/kotlin/js/config")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
 }
 
 internal object JsDomainInfo : DomainInfo {
     override val domain = Domain.Js
-    override val include: List<String> = listOf("js/**", "libraries/tools/analysis-api-based-klib-reader/**")
+    override val include: List<String> = listOf("js", "compiler/ir/backend.js", "compiler/ir/serialization.js", "libraries/tools/analysis-api-based-klib-reader", "libraries/tools/dukat")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
 }
 
 internal object NativeDomainInfo : DomainInfo {
     override val domain = Domain.Native
-    override val include: List<String> = listOf("native/**", "kotlin-native/**")
-    override val exclude: List<String> = listOf("native/swift/**")
+    override val include: List<String> = listOf("compiler/ir/backend.native", "compiler/ir/ir.objcinterop", "compiler/ir/serialization.native", "native", "kotlin-native")
+    override val exclude: List<String> = listOf("native/swift")
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
 }
 
 internal object CoreLibsDomainInfo : DomainInfo {
     override val domain = Domain.CoreLibs
-    override val include: List<String> = listOf("libraries/stdlib/**", "libraries/reflect/**", "libraries/kotlin.test/**")
+    override val include: List<String> = listOf("libraries/stdlib", "libraries/tools/kotlin-annotations-jvm", "core/metadata*", "core/reflect*", "core/descriptors.runtime", "libraries/kotlinx-metadata", "libraries/reflect", "libraries/kotlin.test", "libraries/tools/jdk-api-validator")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf() }
 }
 
 internal object AnalysisApiDomainInfo : DomainInfo {
     override val domain = Domain.AnalysisApi
-    override val include: List<String> = listOf("analysis/**", "compiler/psi/**", "prepare/analysis-api/**")
-    override val exclude: List<String> = listOf("compiler/psi/parser/**")
+    override val include: List<String> = listOf("analysis", "compiler/psi", "prepare/analysis-api", "plugins/plugin-sandbox", "plugins/scripting")
+    override val exclude: List<String> = listOf("compiler/psi/parser")
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
+}
+
+internal object BuildToolsApiDomainInfo : DomainInfo {
+    override val domain = Domain.BuildToolsApi
+    override val include: List<String> = listOf("build-common", "compiler/build-tools", "compiler/incremental-compilation-*", "compiler/daemon", "compiler/compiler-runner", "compiler/compiler-runner-unshaded")
+    override val exclude: List<String> = listOf()
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo) }
 }
 
 internal object SwiftExportDomainInfo : DomainInfo {
     override val domain = Domain.SwiftExport
-    override val include: List<String> = listOf("native/swift/**", "libraries/tools/analysis-api-based-klib-reader/**")
+    override val include: List<String> = listOf("native/swift", "libraries/tools/analysis-api-based-klib-reader")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(AnalysisApiDomainInfo) }
 }
 
 internal object CompilerPluginsDomainInfo : DomainInfo {
     override val domain = Domain.CompilerPlugins
-    override val include: List<String> = listOf("plugins/**")
+    override val include: List<String> = listOf("compiler/plugin-api", "plugins", "libraries/tools/kotlin-main-kts", "libraries/tools/kotlin-main-kts-test", "libraries/scripting")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo) }
 }
 
 internal object GradleDomainInfo : DomainInfo {
     override val domain = Domain.Gradle
-    override val include: List<String> = listOf("libraries/tools/*gradle*/**")
+    override val include: List<String> = listOf("build-common", "libraries/tools/*gradle*", "compiler/build-tools/kotlin-build-statistics")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf() }
 }
 
 internal object MavenDomainInfo : DomainInfo {
     override val domain = Domain.Maven
-    override val include: List<String> = listOf("libraries/tools/*maven*/**")
+    override val include: List<String> = listOf("libraries/tools/*maven*")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf() }
 }
 
 internal object IntelliJDomainInfo : DomainInfo {
     override val domain = Domain.IntelliJ
-    override val include: List<String> = listOf("prepare/ide-plugin-dependencies/**")
+    override val include: List<String> = listOf("prepare/ide-plugin-dependencies")
     override val exclude: List<String> = listOf()
-    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, AnalysisApiDomainInfo, CoreLibsDomainInfo) }
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, AnalysisApiDomainInfo, CoreLibsDomainInfo, BuildToolsApiDomainInfo, CompilerPluginsDomainInfo) }
 }
 
 internal object BuildInfrastructureDomainInfo : DomainInfo {
     override val domain = Domain.BuildInfrastructure
-    override val include: List<String> = listOf("repo/**", "gradle/**", "build.gradle.kts", "settings.gradle.kts", "gradle.properties", "scripts/**", ".space/**", ".idea/**")
+    override val include: List<String> = listOf("repo", "gradle", "build.gradle.kts", "settings.gradle.kts", "gradle.properties", "scripts", ".space", ".idea")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf() }
 }
@@ -121,6 +129,7 @@ internal val allDomainInfos: List<DomainInfo> by lazy {
         NativeDomainInfo,
         CoreLibsDomainInfo,
         AnalysisApiDomainInfo,
+        BuildToolsApiDomainInfo,
         SwiftExportDomainInfo,
         CompilerPluginsDomainInfo,
         GradleDomainInfo,

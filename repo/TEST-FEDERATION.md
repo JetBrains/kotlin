@@ -5,6 +5,22 @@ The CI can verify commits into such Domains independently.
 'Plain old tests' of 'unaffected Domains' are not required for commits to prove correctness.
 All tests, however, will be executed on master builds.
 
+## Table of contents
+
+- [What is a Domain? (Quick intuition)](#what-is-a-domain-quick-intuition)
+- [Defining Domains](#defining-domains)
+- [`^affects` commit command](#affects-commit-command)
+  - [Domains fully affecting other Domains](#domains-fully-affecting-other-domains)
+- [Local testing](#local-testing)
+  - [Verifying domains](#verifying-domains)
+  - [Updating the dump](#updating-the-dump)
+  - [Checking domain dependencies](#checking-domain-dependencies)
+- [Smoke Tests: Verifying commits on the federal level](#smoke-tests-verifying-commits-on-the-federal-level)
+- [Running a small subset of tests, as smoke tests, automatically](#running-a-small-subset-of-tests-as-smoke-tests-automatically)
+- [Contracts between Domains](#contracts-between-domains--single-tests--test-suites-affected-by-other-domains)
+  - [Contracts require approval from the target team](#contracts-require-approval-from-the-target-team)
+- [Nightly Tests](#nightly-tests)
+
 ### What is a Domain? (Quick intuition)
 
 A Domain is a **CI ownership and impact unit**, not an architecture concept.
@@ -28,13 +44,15 @@ e.g., the `Native` domain could be defined as:
 ```yaml
 Native:
   include:
-    - "native/**"
-    - "kotlin-native/**"
+    - "native"
+    - "kotlin-native"
   fullyAffectedBy:
     - Compiler
 ```
 
-Files belonging to this 'Native' domain are included using the `native/**` and `kotlin-native/**` globs.
+Entries under `include` and `exclude` can be directory paths or glob patterns. A directory path matches the directory and
+all its descendants, so the `Native` domain above includes everything under the `native` and `kotlin-native` directories.
+When `include` and `exclude` entries overlap, the most specific matching entry takes precedence.
 A domain is always marked as 'affected' if any file, belonging to the domain, is changed.
 
 ## '^affects' commit command
@@ -61,12 +79,14 @@ a change isolated within the 'Native' domain will not affect the 'Compiler' doma
 Note: 'fullyAffectedBy' is **not** transitive. All dependencies have to be listed explicitly. 
 This allows for some modules acting as 'API' boundaries.
 
-### Verifying the declaration: [domain.dump.txt](./domain.dump.txt)
+### Local testing
+
+#### Verifying domains
 
 The declared domains will be 'expanded' into the actual files belonging to each domain. The dump file will be verified on CI.
+The file can be found here [domains.dump.txt](domains.dump.txt).
 
-#### Verifying domains or updating the dump
-
+Locally, it can be ran us:
 ```shell
 ./gradlew :gradle-build-conventions:test-federation-convention:test --tests "org.jetbrains.kotlin.testFederation.DomainsDumpTest" --rerun
 ```
@@ -80,6 +100,28 @@ This can be done by executing the 'update-domains' script:
 cd ..
 ./scripts/update-domains.sh
 ```
+
+#### Checking domain dependencies
+
+You can verify dependencies between domains by making a relevant change,
+committing it locally and then invoking this command:
+```shell
+./gradlew -Ptest.federation.enabled=true inferAffectedDomains
+```
+
+If you want to check how some specific task would work when only specific domains were changed, you need to run 
+
+```shell
+./gradlew -Ptest.federation.enabled=true -Ptest.federation.mode=Smoke -Ptest.federation.affected.domains="XXX" :some:module:test
+```
+
+Available values for affected domains (`XXX`):
+- some single domain (e.g. `-Ptest.federation.affected.domains=CompilerPlugins`)
+- several affected domains (e.g. `-Ptest.federation.affected.domains=Wasm;Js`)
+- all domains affected: `-Ptest.federation.affected.domains="*"`
+- none domains affected: `-Ptest.federation.affected.domains="<none>"`
+
+For other properties and their values you can check [runtimeEnvironment.kt](./test-federation-runtime/src/main/kotlin/org/jetbrains/kotlin/testFederation/runtimeEnvironment.kt).
 
 ### Smoke Tests: Verifying commits on the federal level
 

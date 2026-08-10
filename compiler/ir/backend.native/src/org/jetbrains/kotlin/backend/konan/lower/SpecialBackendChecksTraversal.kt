@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.isClass
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.objcinterop.*
@@ -217,7 +216,6 @@ private class BackendChecker(
     }
 
     // Already migrated to FIR Checker: FirNativeObjCOutletChecker.checkCanGenerateOutletSetterImp()
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun checkCanGenerateOutletSetterImp(property: IrProperty) {
 
         val outlet = "@${InteropFqNames.objCOutlet}"
@@ -229,8 +227,8 @@ private class BackendChecker(
             reportError(it, "$outlet must not have ${it.kind} parameters")
         }
 
-        val type = property.descriptor.type
-        if (!type.isObjCObjectType())
+        val type = property.getter?.returnType
+        if (type != null && !type.isObjCObjectType())
             reportError(property, "Unexpected $outlet type: ${property.getter?.returnType?.classFqName}\n" +
                     "Only Objective-C object types are supported here")
 

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.buildtools.internal.wasm.operations
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
@@ -25,21 +24,18 @@ internal class WasmLinkingOperationImpl private constructor(
     override val klib: Path,
     override val destination: Path,
     compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-    buildIdToSessionFlagFile: MutableMap<ProjectId, java.io.File>,
-) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
+) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(compilerArguments),
     WasmLinkingOperation, WasmLinkingOperation.Builder,
     DeepCopyable<WasmLinkingOperationImpl> {
     constructor(
         klib: Path,
         destination: Path,
         compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-        buildIdToSessionFlagFile: MutableMap<ProjectId, java.io.File>,
     ) : this(
         options = Options(WasmLinkingOperation::class),
         klib = klib,
         destination = destination,
         compilerArguments = compilerArguments,
-        buildIdToSessionFlagFile = buildIdToSessionFlagFile
     ) {
         initializeOptions(this::class, options)
     }
@@ -52,7 +48,6 @@ internal class WasmLinkingOperationImpl private constructor(
             klib,
             destination,
             compilerArguments.deepCopy(),
-            buildIdToSessionFlagFile,
         )
     }
 

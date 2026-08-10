@@ -2033,12 +2033,6 @@ private fun KaDiagnosticConverterBuilder.addConversions41() {
             token,
         )
     }
-    add(FirErrors.VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS) { firDiagnostic ->
-        ValueClassCannotHaveContextReceiversImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.CANNOT_INFER_VISIBILITY_WARNING) { firDiagnostic ->
         CannotInferVisibilityWarningImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
@@ -4333,6 +4327,12 @@ private fun KaDiagnosticConverterBuilder.addConversions96() {
             token,
         )
     }
+    add(FirJvmErrors.JVM_EXPOSE_BOXED_CAN_BE_REPLACED_WITH_JVM_NAME) { firDiagnostic ->
+        JvmExposeBoxedCanBeReplacedWithJvmNameImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions97() {
@@ -4560,7 +4560,7 @@ private fun KaDiagnosticConverterBuilder.addConversions102() {
         UnresolvedReferenceImpl(
             firDiagnostic.a,
             firDiagnostic.b,
-            firDiagnostic.c?.let { firSymbolBuilder.typeBuilder.buildKtType(it) },
+            firDiagnostic.c?.let { firSymbolBuilder.typeBuilder.buildKtType(it.type) },
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -7570,6 +7570,7 @@ private fun KaDiagnosticConverterBuilder.addConversions170() {
     add(FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER) { firDiagnostic ->
         UnresolvedReferenceWrongReceiverImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic.b,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

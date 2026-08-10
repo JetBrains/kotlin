@@ -60,18 +60,6 @@ The only observable effect is that a custom ABI version is written to KLIB manif
             field = value
         }
 
-    @all:Deprecated("")
-    @Argument(
-        value = "-Xklib-normalize-absolute-path",
-        description = "Normalize absolute paths in klibs.",
-        deprecatedVersion = "2.4.20",
-    )
-    var normalizeAbsolutePath: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @Argument(
         value = "-Xklib-relative-path-base",
         description = """Relativize all the paths stored in a klib using the given path prefixes.

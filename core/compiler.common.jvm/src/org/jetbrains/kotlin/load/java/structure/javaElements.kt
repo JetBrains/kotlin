@@ -90,6 +90,7 @@ interface JavaClass : JavaClassifier, JavaTypeParameterListOwner, JavaModifierLi
     val isAnnotationType: Boolean
     val isEnum: Boolean
     val isRecord: Boolean
+    val isValue: Boolean
     val isSealed: Boolean
     val permittedTypes: Sequence<JavaClassifierType>
     val lightClassOriginKind: LightClassOriginKind?

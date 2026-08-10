@@ -204,7 +204,7 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         return this.containingDeclarations.asReversed().getOrNull(outerLevel + correction)
     }
 
-    private fun FirClassLikeSymbol<*>.isCompanion() = (this as? FirRegularClassSymbol)?.isCompanion == true
+    private fun FirClassLikeSymbol<*>.isCompanion(): Boolean = (this as? FirRegularClassSymbol)?.isCompanion == true
 
     private fun FirDeclaration.hasAnnotationNamedAs(classId: ClassId, session: FirSession): Boolean {
         return findAnnotation(classId, session) != null

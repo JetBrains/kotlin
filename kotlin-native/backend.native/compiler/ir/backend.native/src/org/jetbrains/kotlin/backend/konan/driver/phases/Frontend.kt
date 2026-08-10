@@ -28,7 +28,6 @@ sealed class FrontendPhaseOutput {
             val moduleDescriptor: ModuleDescriptor,
             val bindingContext: BindingContext,
             val frontendServices: FrontendServices,
-            val environment: KotlinCoreEnvironment,
     ) : FrontendPhaseOutput()
 }
 
@@ -77,7 +76,7 @@ internal val FrontendPhase = createSimpleNamedCompilerPhase(
     val bindingContext = analysisResult.bindingContext
 
     if (analysisResult.shouldGenerateCode) {
-        FrontendPhaseOutput.Full(moduleDescriptor, bindingContext, context.frontendServices, input)
+        FrontendPhaseOutput.Full(moduleDescriptor, bindingContext, context.frontendServices)
     } else {
         FrontendPhaseOutput.ShouldNotGenerateCode
     }

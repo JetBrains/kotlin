@@ -91,7 +91,7 @@ class KonanDriver(
             configuration.filesToCache = fileNames
         }
 
-        var config = NativeSecondStageCompilationConfig(project, configuration)
+        val config = NativeSecondStageCompilationConfig(project, configuration)
 
         if (configuration.listTargets) {
             config.targetManager.list()
@@ -136,8 +136,13 @@ class KonanDriver(
 
         val cacheBuilder = CacheBuilder(config, compilationSpawner)
         if (cacheBuilder.needToBuild()) {
+            // Build missing caches.
             cacheBuilder.build()
-            config = NativeSecondStageCompilationConfig(project, configuration) // TODO: Just set freshly built caches.
+
+            // Reload `CacheSupport` inside `NativeSecondStageCompilationConfig` to reflect the up-to-date state of just built caches.
+            // This is important for further correct compilation of the resulting binary.
+            config.reloadCacheSupport()
+
             // Parallel cache build might have already built our asked-to-build cache. Check for that and return early if true.
             if (!hasCompilerInput && config.libraryToCache == null)
                 return

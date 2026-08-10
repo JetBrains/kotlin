@@ -40,6 +40,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=NewModifiersKt]]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[inline]
           VALUE_PARAMETER_LIST
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=false, mayHaveContract=false]
           MODIFIER_LIST[data]
           VALUE_PARAMETER_LIST
@@ -47,6 +48,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=NewModifiersKt]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
       PROPERTY[fqName=A.z, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=z]
         TYPE_REFERENCE
           USER_TYPE
@@ -59,6 +61,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=NewModifiersKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Double]
+        FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.0]
         PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[inline]
         PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]

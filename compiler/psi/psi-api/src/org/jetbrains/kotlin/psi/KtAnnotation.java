@@ -64,6 +64,13 @@ public class KtAnnotation extends KtElementImplStub<KotlinPlaceHolderStub<KtAnno
      * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeAnnotationEntry(this, entry)}
      * instead.
      */
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeAnnotationEntry(this, entry)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.removeAnnotationEntry(entry)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.removeAnnotationEntry"
+            )
+    )
     @Deprecated
     public void removeEntry(@NotNull KtAnnotationEntry entry) {
         KtPsiMutationService.getInstance().removeAnnotationEntry(this, entry);

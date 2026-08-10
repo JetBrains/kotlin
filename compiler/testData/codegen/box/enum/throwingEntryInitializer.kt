@@ -1,6 +1,8 @@
 // ISSUE: KT-87009
 // DISABLE_IR_VISIBILITY_CHECKS: ANY
 // FULL_JDK
+// IGNORE_BACKEND: WASM
+// ^^^ KT-88074 Package renaming leads to the mismatch with the expected message
 
 package foo
 
@@ -28,13 +30,13 @@ fun box(): String {
         if (e.message != null) return "FAIL 1.4: message must be null, got ${e.message}"
     }
 
+    @Suppress("INVISIBLE_REFERENCE")
     try {
         Color.BLACK
         return "FAIL 2.1: should throw"
-    } catch (e: Error /* NoClassDefFoundError */) {
+    } catch (e: NoClassDefFoundError) {
         if (BACKEND_UNDER_TEST != "ANDROID") {
             val expectedMessage = when (BACKEND_UNDER_TEST) {
-                "NATIVE" -> "There was an error during file or class initialization"
                 "JS_IR", "JS_IR_ES6" -> "Could not initialize class Color"
                 else -> "Could not initialize class foo.Color"
             }
@@ -50,13 +52,13 @@ fun box(): String {
         if (e.message != "huh") return "FAIL 3.3: message must be 'huh', was '${e.message}'"
     }
 
+    @Suppress("INVISIBLE_REFERENCE")
     try {
         ThrowsMyError.NONTHROWING
         return "FAIL 4.1: should throw"
-    } catch (e: Error /* NoClassDefFoundError */) {
+    } catch (e: NoClassDefFoundError) {
         if (BACKEND_UNDER_TEST != "ANDROID") {
             val expectedMessage = when (BACKEND_UNDER_TEST) {
-                "NATIVE" -> "There was an error during file or class initialization"
                 "JS_IR", "JS_IR_ES6" -> "Could not initialize class ThrowsMyError"
                 else -> "Could not initialize class foo.ThrowsMyError"
             }

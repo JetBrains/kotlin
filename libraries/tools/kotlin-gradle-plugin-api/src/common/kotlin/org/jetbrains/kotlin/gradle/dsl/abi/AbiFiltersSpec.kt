@@ -10,7 +10,7 @@ import org.gradle.api.provider.SetProperty
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 
 /**
- *  A set of filtering rules that restrict Application Binary Interface (ABI) declarations from being included in a dump.
+ * A set of filtering rules that restrict Application Binary Interface (ABI) declarations from being included in a dump.
  *
  * The rules combine inclusion and exclusion of declarations.
  * Each filter can be written as either a class name filter (see [AbiFilterSetSpec.byNames]) or an annotation filter (see [AbiFilterSetSpec.annotatedWith]).
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
  *
  * In order for a declaration (class, field, property, or function) to be included in the dump, it must pass **all** inclusion and exclusion filters.
  *
- * A declaration successfully passes the exclusion filter if it does not match any of the class name (see [AbiFilterSetSpec.byNames]) or annotation  (see [AbiFilterSetSpec.annotatedWith]) filter rules.
+ * A declaration successfully passes the exclusion filter if it does not match any of the class name (see [AbiFilterSetSpec.byNames]) or annotation (see [AbiFilterSetSpec.annotatedWith]) filter rules.
  *
  * A declaration successfully passes the inclusion filter if no inclusion rules exist, if it matches any inclusion rule, or if at least one of its members (relevant for class declaration) matches any inclusion rule.
  *
@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 @ExperimentalAbiValidation
 interface AbiFiltersSpec {
     /**
-     *  A set of filtering rules that restrict ABI declarations from being included in a dump.
+     * A set of filtering rules that restrict ABI declarations from being included in a dump.
      *
      * The rules combine inclusion and exclusion of declarations.
      * Each filter can be written as either a class name filter (see [AbiFilterSetSpec.byNames]) or an annotation filter (see [AbiFilterSetSpec.annotatedWith]).
@@ -191,6 +191,7 @@ interface AbiFiltersSpec {
  *         annotatedWith.add("foo.PublicApi")
  *     }
  * }
+ * ```
  *
  * Exclusion filters:
  *
@@ -209,7 +210,7 @@ interface AbiFiltersSpec {
 @ExperimentalAbiValidation
 interface AbiFilterSetSpec {
     /**
-     * Filter by a name.
+     * Filters declarations by name.
      *
      * The name filter compares the symbol qualified name with the value in the filter:
      *
@@ -235,7 +236,7 @@ interface AbiFilterSetSpec {
      *
      * Name templates are allowed, with support for wildcards such as `**`, `*`, and `?`:
      * - `**` - Matches zero or more characters, including periods.
-     * - `*` - Matches zero or more characters excluding periods. Use this to specify a single class name.
+     * - `*` - Matches zero or more characters, excluding periods. Specifies a single class name.
      * - `?` - Matches exactly one character.
      *
      * ```kotlin
@@ -249,7 +250,7 @@ interface AbiFilterSetSpec {
     val byNames: SetProperty<String>
 
     /**
-     * Filter by annotations placed on the declaration.
+     * Filters declarations by annotations placed on them.
      *
      * If a class, top-level function or property, or class member (a property or a function) is annotated with one of the specified annotations, then this declaration matches the filter.
      *
@@ -260,7 +261,7 @@ interface AbiFilterSetSpec {
      *
      * Name templates are allowed, with support for wildcards such as `**`, `*`, and `?`:
      * - `**` - Matches zero or more characters, including periods.
-     * - `*` - Matches zero or more characters excluding periods. Use this to specify a single class name.
+     * - `*` - Matches zero or more characters, excluding periods. Specifies a single class name.
      * - `?` - Matches exactly one character.
      *
      * Example:
@@ -275,7 +276,7 @@ interface AbiFilterSetSpec {
      *
      * **Important**:
      * The annotation **must** have a [Retention] of [BINARY][AnnotationRetention.BINARY] or [RUNTIME][AnnotationRetention.RUNTIME] type.
-     * Annotations with [SOURCE][AnnotationRetention.SOURCE] retention cannot be analyzed and will be ignored.
+     * Annotations with [SOURCE][AnnotationRetention.SOURCE] retention cannot be analyzed and are ignored.
      *
      */
     val annotatedWith: SetProperty<String>

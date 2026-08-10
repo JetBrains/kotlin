@@ -21,13 +21,9 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgConsistencyHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
+import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWasmTest
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -35,6 +31,7 @@ import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmen
 import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlin.wasm.test.converters.WasmPreSerializationLoweringFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDtsHandler
@@ -47,7 +44,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
     private val targetPlatform: TargetPlatform,
     private val pathToTestDir: String,  // must be set to the common path prefix for all testroots provided for a certain class in GenerateWasmTests.kt
     private val testGroupOutputDirPrefix: String,
-) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
+) : AbstractKotlinCompilerWasmTest(targetBackend) {
 
     abstract val afterBackendFacade: Constructor<AbstractTestFacade<A, BinaryArtifacts.Wasm>>
     abstract val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
@@ -139,6 +136,9 @@ fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput
         useAdditionalSourceProviders(it)
     }
 
+    @OptIn(org.jetbrains.kotlin.test.TestInfrastructureInternals::class)
+    useModuleStructureTransformers(WasmCoroutineHelpersModuleTransformer)
+
     useAdditionalService(::LibraryProvider)
 
     useFailureSuppressors(
@@ -193,8 +193,8 @@ fun TestConfigurationBuilder.commonConfigurationForWasmSecondStageTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
 ) {
-    val pathToRootOutputDir = System.getProperty("kotlin.wasm.test.root.out.dir") ?: error("'kotlin.wasm.test.root.out.dir' is not set")
-    val pathToNodeDir = System.getProperty("kotlin.wasm.test.node.dir") ?: error("'kotlin.wasm.test.node.dir' is not set")
+    val pathToRootOutputDir = System.getProperty("kotlin.wasm.test.root.out.dir") ?: testInfraError("'kotlin.wasm.test.root.out.dir' is not set")
+    val pathToNodeDir = System.getProperty("kotlin.wasm.test.node.dir") ?: testInfraError("'kotlin.wasm.test.node.dir' is not set")
     defaultDirectives {
         WasmEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR with pathToRootOutputDir
         WasmEnvironmentConfigurationDirectives.PATH_TO_NODE_DIR with pathToNodeDir

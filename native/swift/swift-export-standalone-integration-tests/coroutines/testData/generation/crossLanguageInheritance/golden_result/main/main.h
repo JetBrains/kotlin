@@ -25,6 +25,14 @@ _Bool AsyncGreeter_greet__TypesOfArguments__Swift_String____reverse_swift(void *
 
 _Bool AsyncGreeter_salutation__reverse_swift(void * self, void * continuation, void * exception, void * cancellation);
 
+_Bool AsyncOverloaded_overloaded__TypesOfArguments__Swift_String_Swift_Int32____reverse_swift(void * self, NSString * arg1, int32_t arg2, void * continuation, void * exception, void * cancellation);
+
+_Bool AsyncOverloaded_overloaded__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * arg1, void * continuation, void * exception, void * cancellation);
+
+_Bool AsyncOverloaded_same__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t arg, void * continuation, void * exception, void * cancellation);
+
+_Bool AsyncOverloaded_same__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * arg, void * continuation, void * exception, void * cancellation);
+
 _Bool AsyncAbstractBase_abstractGreet(void * self, _Bool (^continuation)(NSString *), _Bool (^exception)(void * _Nullable ), void * cancellation);
 
 _Bool AsyncAbstractBase_concreteGreet(void * self, _Bool (^continuation)(NSString *), _Bool (^exception)(void * _Nullable ), void * cancellation);
@@ -63,6 +71,24 @@ _Bool AsyncGreeter_greet__TypesOfArguments__Swift_String__(void * self, NSString
 
 _Bool AsyncGreeter_salutation(void * self, _Bool (^continuation)(NSString *), _Bool (^exception)(void * _Nullable ), void * cancellation);
 
+_Bool AsyncOverloaded_overloaded(void * self, _Bool (^continuation)(NSString *), _Bool (^exception)(void * _Nullable ), void * cancellation);
+
+_Bool AsyncOverloaded_overloaded__TypesOfArguments__Swift_String__(void * self, NSString * arg1, _Bool (^continuation)(NSString *), _Bool (^exception)(void * _Nullable ), void * cancellation);
+
+_Bool AsyncOverloaded_overloaded__TypesOfArguments__Swift_String_Swift_Int32__(void * self, NSString * arg1, int32_t arg2, _Bool (^continuation)(NSString *), _Bool (^exception)(void * _Nullable ), void * cancellation);
+
+_Bool AsyncOverloaded_overloaded__TypesOfArguments__Swift_String___direct(void * self, NSString * arg1, _Bool (^continuation)(NSString *), _Bool (^exception)(void * _Nullable ), void * cancellation);
+
+_Bool AsyncOverloaded_overloaded__TypesOfArguments__Swift_String_Swift_Int32___direct(void * self, NSString * arg1, int32_t arg2, _Bool (^continuation)(NSString *), _Bool (^exception)(void * _Nullable ), void * cancellation);
+
+_Bool AsyncOverloaded_same__TypesOfArguments__Swift_String__(void * self, NSString * arg, _Bool (^continuation)(NSString *), _Bool (^exception)(void * _Nullable ), void * cancellation);
+
+_Bool AsyncOverloaded_same__TypesOfArguments__Swift_Int32__(void * self, int32_t arg, _Bool (^continuation)(NSString *), _Bool (^exception)(void * _Nullable ), void * cancellation);
+
+_Bool AsyncOverloaded_same__TypesOfArguments__Swift_String___direct(void * self, NSString * arg, _Bool (^continuation)(NSString *), _Bool (^exception)(void * _Nullable ), void * cancellation);
+
+_Bool AsyncOverloaded_same__TypesOfArguments__Swift_Int32___direct(void * self, int32_t arg, _Bool (^continuation)(NSString *), _Bool (^exception)(void * _Nullable ), void * cancellation);
+
 void * __root___AsyncBase_init_allocate();
 
 _Bool __root___AsyncBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
@@ -71,9 +97,13 @@ void * __root___AsyncGreeterBase_init_allocate();
 
 _Bool __root___AsyncGreeterBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
+void * __root___AsyncOverloaded_init_allocate();
+
+_Bool __root___AsyncOverloaded_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 _Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(void * pointerToBlock, NSString * _1);
 
-_Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(void * pointerToBlock, NSError * _Nullable _1);
+_Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(void * pointerToBlock, void * _Nullable _1);
 
 _Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * pointerToBlock, int32_t _1);
 

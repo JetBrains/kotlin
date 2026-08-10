@@ -1,0 +1,14 @@
+public open class Basic : R|kotlin/Any| {
+    public/*package*/ open fun <R : R|kotlin/Any!|, @R|org/jetbrains/annotations/NotNull|() _A : R|@EnhancedNullability R & Any|, @R|org/jetbrains/annotations/Nullable|() K> foo(r: R|R!|): R|kotlin/Unit|
+
+    public constructor(): R|test/Basic|
+
+    public abstract interface G<@R|org/jetbrains/annotations/NotNull|() T : R|@EnhancedNullability kotlin/Any|> : R|kotlin/Any| {
+        public abstract fun <@R|org/jetbrains/annotations/NotNull|() R : R|@EnhancedNullability kotlin/Any|> foo(r: R|@EnhancedNullability R|): R|kotlin/Unit|
+
+    }
+    public abstract interface G1<T : R|kotlin/Any!|, E : R|T!|, @R|org/jetbrains/annotations/NotNull|() X : R|@EnhancedNullability kotlin/Any|> : R|kotlin/Any| {
+        public abstract fun <R : R|kotlin/Any!|, @R|org/jetbrains/annotations/Nullable|() _A : R|@EnhancedNullability R?|> foo(r: R|R!|): R|kotlin/Unit|
+
+    }
+}

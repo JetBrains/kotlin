@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportExecu
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportTestExecutionKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportTestExecutionService
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.fingerprintJson
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.XCTestHelpers
 import org.jetbrains.kotlin.gradle.testbase.assertDirectoryExists
@@ -447,8 +448,18 @@ internal fun TestProject.initDefaultKmp(
 internal val materializedDumpEntries = listOf("clangDump.sh", "ldDump.sh", "clang_args_dump", "ld_args_dump")
 
 
-internal fun parseSwiftPMFingerprint(fingerprintFile: Path): String =
-    fingerprintFile.toFile().readText().trim().split("\n")[1]
+@Serializable
+internal data class SwiftImportFingerprint(
+    val taskInvalidationFingerprint: String,
+    val incrementalFingerprint: String,
+)
+
+
+internal fun parseSwiftPMFingerprint(fingerprintFile : Path) : SwiftImportFingerprint =
+    JsonHolder.fingerprintJson.decodeFromString<SwiftImportFingerprint>(fingerprintFile.readText())
+
+internal fun parseSwiftPMIncrementalFingerprint(fingerprintFile: Path): String =
+    parseSwiftPMFingerprint(fingerprintFile).incrementalFingerprint
 
 internal fun swiftPMXcodeBuildFingerprint(
     projectDir: Path,
@@ -465,7 +476,7 @@ internal fun swiftPMFingerprintCheckoutDir(
     projectDir: Path,
     rootProject: Path,
 ): Path {
-    val packageFingerprint = parseSwiftPMFingerprint(swiftPMSyntheticPackageFingerprint(projectDir))
+    val packageFingerprint = parseSwiftPMIncrementalFingerprint(swiftPMSyntheticPackageFingerprint(projectDir))
     return rootProject.resolve(SHARED_CHECKOUT_DIR).resolve(packageFingerprint)
 
 }
@@ -479,7 +490,7 @@ private fun swiftPMXcodeDumpRoot(
     rootDir: Path,
     fingerprintFile: Path,
 ): Path =
-    rootDir.resolve(SHARED_XCODE_DUMP_DIR).resolve(parseSwiftPMFingerprint(fingerprintFile))
+    rootDir.resolve(SHARED_XCODE_DUMP_DIR).resolve(parseSwiftPMIncrementalFingerprint(fingerprintFile))
 
 private fun swiftPMXcodeDumpPath(
     rootDir: Path,
@@ -510,7 +521,7 @@ internal fun swiftPMXcodebuildDerivedDataPath(
         "swiftImportDd/dd_$sdk",
     )
 
-internal fun TestProject.localXcodebuildFingerprint(
+internal fun TestProject.localXcodebuildFingerprintFile(
     projectName: String? = null,
     sdk: String,
 ): Path =
@@ -519,7 +530,7 @@ internal fun TestProject.localXcodebuildFingerprint(
         sdk = sdk,
     )
 
-internal fun TestProject.localPackageFingerprint(
+internal fun TestProject.localPackageFingerprintFile(
     projectName: String? = null,
 ): Path =
     swiftPMPackageFingerprint(
@@ -532,7 +543,7 @@ internal fun TestProject.localDumpDir(
 ): Path =
     swiftPMXcodebuildClangDumpPath(
         rootDir = projectPath,
-        hashFile = localXcodebuildFingerprint(projectName, sdk),
+        hashFile = localXcodebuildFingerprintFile(projectName, sdk),
         sdk = sdk,
     )
 
@@ -542,19 +553,19 @@ internal fun TestProject.localDerivedDataDir(
 ): Path =
     swiftPMXcodebuildDerivedDataPath(
         rootDir = projectPath,
-        hashFile = localXcodebuildFingerprint(projectName, sdk),
+        hashFile = localXcodebuildFingerprintFile(projectName, sdk),
         sdk = sdk,
     )
 
 internal fun TestProject.localIphoneosDumpFingerprintFile(
     projectName: String? = null,
 ): Path =
-    localXcodebuildFingerprint(projectName, "iphoneos")
+    localXcodebuildFingerprintFile(projectName, "iphoneos")
 
 internal fun TestProject.localIphonesimulatorDumpFingerprintFile(
     projectName: String? = null,
 ): Path =
-    localXcodebuildFingerprint(projectName, "iphonesimulator")
+    localXcodebuildFingerprintFile(projectName, "iphonesimulator")
 
 internal fun TestProject.localIphoneosDumpDir(
     projectName: String? = null,
@@ -578,9 +589,6 @@ internal fun TestProject.localIphonesimulatorDerivedDataDir(
 
 internal fun sharedRootBucketDir(dumpDir: Path): Path =
     dumpDir.parent.parent
-
-internal fun xcodeDumpFingerprintStamp(dumpDir: Path): Path =
-    dumpDir.resolve("xcode-dump-fingerprint.json")
 
 internal fun assertDumpDirectoryContainsXcodebuildArgsDump(dumpDir: Path) {
     assertDirectoryExists(dumpDir)
@@ -1087,6 +1095,23 @@ private object JsonHolder {
     val json = Json {
         ignoreUnknownKeys = true
     }
+
+    val fingerprintJson = Json {
+        encodeDefaults = true
+        ignoreUnknownKeys = true
+
+    }
+}
+
+internal fun Path.writeFingerprint(incrementalFingerprint: String) {
+    writeText(
+        JsonHolder.fingerprintJson.encodeToString(
+            SwiftImportFingerprint(
+                taskInvalidationFingerprint = "versioned-$incrementalFingerprint",
+                incrementalFingerprint = incrementalFingerprint,
+            )
+        )
+    )
 }
 
 private inline fun <reified T> runAppleToolCommand(

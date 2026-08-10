@@ -1,0 +1,12 @@
+
+edition = "2024";
+package androidx.compose.compiler.plugins;
+option java_package = "androidx.compose.compiler.plugins";
+import "google/protobuf/java_features.proto";
+
+option features.(pb.java).large_enum = true;
+
+enum LargeEnum {
+  LARGE_A = 0;
+  LARGE_B = 1;
+}

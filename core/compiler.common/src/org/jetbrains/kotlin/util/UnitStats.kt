@@ -37,6 +37,7 @@ data class UnitStats(
     val hasErrors: Boolean = false,
     val filesCount: Int,
     val linesCount: Int,
+    val measuredCpuAndUserTime: Boolean,
 
     // The following properties can be null in case of errors on previous stages.
     // For instance, if there is a syntax error in analysis, other stats info is not initialized.

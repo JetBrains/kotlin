@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 
 /**
  * Represents a Kotlin script file containing top-level statements and declarations.
@@ -66,7 +67,8 @@ open class KtScript : KtNamedDeclarationStub<KotlinScriptStub>, KtDeclarationCon
         get() = findNotNullChildByClass(KtBlockExpression::class.java)
 
     override fun getDeclarations(): List<KtDeclaration> {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this.blockExpression, KtDeclaration::class.java)
+        return stub?.getChildrenByType(KtTokenSets.DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY)?.toList()
+            ?: PsiTreeUtil.getChildrenOfTypeAsList(this.blockExpression, KtDeclaration::class.java)
     }
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {

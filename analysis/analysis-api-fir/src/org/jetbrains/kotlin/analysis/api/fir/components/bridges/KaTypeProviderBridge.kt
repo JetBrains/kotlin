@@ -43,8 +43,8 @@ import org.jetbrains.kotlin.analysis.api.types.withNullability as withNullabilit
  * [org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeProvider] proxy.
  *
  * The deprecated/hidden members ([approximateToSuperPublicDenotable], [withNullability] with [KaTypeNullability][org.jetbrains.kotlin.analysis.api.types.KaTypeNullability],
- * [KaNamedClassSymbol.defaultType][org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol], [dispatchReceiverType]) and
- * [collectImplicitReceiverTypes] (KT-75549) are intentionally not migrated to endpoints; they keep their original bodies here.
+ * [dispatchReceiverType]) and [collectImplicitReceiverTypes] (KT-75549) are intentionally not migrated to endpoints; they keep their
+ * original bodies here.
  */
 internal class KaTypeProviderBridge(
     override val analysisSessionProvider: () -> KaFirSession,
@@ -105,6 +105,13 @@ internal class KaTypeProviderBridge(
     override val KaType.arrayElementType: KaType?
         get() = context(analysisSession) { arrayElementTypeEndpoint }
 
+    @Deprecated(
+        message = "The API is obsolete. Use `scopeContext` instead.",
+        replaceWith = ReplaceWith(
+            expression = "position.containingKtFile.scopeContext(position).implicitReceivers.map { it.type }",
+            imports = ["org.jetbrains.kotlin.analysis.api.components.scopeContext"],
+        )
+    )
     override fun collectImplicitReceiverTypes(position: KtElement): List<KaType> =
         analysisSession.typeProvider.collectImplicitReceiverTypes(position)
 

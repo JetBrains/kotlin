@@ -1,0 +1,45 @@
+FILE[kind=File[packageFqName=test]]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=test]
+  IMPORT_LIST
+  CLASS[classId=test/Empty, fqName=test.Empty, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Empty, superNames=[]]
+    MODIFIER_LIST[annotation]
+  CLASS[classId=test/Single, fqName=test.Single, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Single, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Single]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.Single.value, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=value]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+  CLASS[classId=test/Defaults, fqName=test.Defaults, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Defaults, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Defaults]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.Defaults.int, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=int]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+        VALUE_PARAMETER[fqName=test.Defaults.string, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=string]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+          STRING_TEMPLATE
+            LITERAL_STRING_TEMPLATE_ENTRY[text=s]
+        VALUE_PARAMETER[fqName=test.Defaults.array, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=array]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=IntArray]
+          COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+  CLASS[classId=test/Varargs, fqName=test.Varargs, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Varargs, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Varargs]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=test.Varargs.values, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=values]
+          MODIFIER_LIST[vararg]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]

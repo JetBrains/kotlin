@@ -35,15 +35,15 @@ abstract class KtClassOrObject :
     override fun getSuperTypeListEntries(): List<KtSuperTypeListEntry> = getSuperTypeList()?.entries.orEmpty()
 
     @Deprecated(
-        "Use addSuperType(superTypeListEntry) instead",
-        ReplaceWith("this.addSuperType(superTypeListEntry)", "org.jetbrains.kotlin.idea.base.psi.addSuperType"),
+        message = "Use addSuperType(superTypeListEntry) instead",
+        replaceWith = ReplaceWith("this.addSuperType(superTypeListEntry)", "org.jetbrains.kotlin.idea.base.psi.addSuperType"),
     )
     fun addSuperTypeListEntry(superTypeListEntry: KtSuperTypeListEntry): KtSuperTypeListEntry =
         KtPsiMutationService.getInstance().addSuperType(this, superTypeListEntry)
 
     @Deprecated(
-        "Use removeSuperType(superTypeListEntry) instead",
-        ReplaceWith("this.removeSuperType(superTypeListEntry)", "org.jetbrains.kotlin.idea.base.psi.removeSuperType"),
+        message = "Use removeSuperType(superTypeListEntry) instead",
+        replaceWith = ReplaceWith("this.removeSuperType(superTypeListEntry)", "org.jetbrains.kotlin.idea.base.psi.removeSuperType"),
     )
     fun removeSuperTypeListEntry(superTypeListEntry: KtSuperTypeListEntry) {
         KtPsiMutationService.getInstance().removeSuperType(this, superTypeListEntry)
@@ -56,15 +56,15 @@ abstract class KtClassOrObject :
         getStubOrPsiChild(KtStubBasedElementTypes.CLASS_BODY)
 
     @Deprecated(
-        "Use addMemberDeclaration(declaration) instead",
-        ReplaceWith("this.addMemberDeclaration(declaration)", "org.jetbrains.kotlin.idea.base.psi.addMemberDeclaration"),
+        message = "Use addMemberDeclaration(declaration) instead",
+        replaceWith = ReplaceWith("this.addMemberDeclaration(declaration)", "org.jetbrains.kotlin.idea.base.psi.addMemberDeclaration"),
     )
     inline fun <reified T : KtDeclaration> addDeclaration(declaration: T): T =
         KtPsiMutationService.getInstance().addMemberDeclaration(this, declaration)
 
     @Deprecated(
-        "Use addMemberDeclarationAfter(declaration, anchor) instead",
-        ReplaceWith(
+        message = "Use addMemberDeclarationAfter(declaration, anchor) instead",
+        replaceWith = ReplaceWith(
             "this.addMemberDeclarationAfter(declaration, anchor)",
             "org.jetbrains.kotlin.idea.base.psi.addMemberDeclarationAfter",
         ),
@@ -73,8 +73,8 @@ abstract class KtClassOrObject :
         KtPsiMutationService.getInstance().addMemberDeclarationAfter(this, declaration, anchor)
 
     @Deprecated(
-        "Use addMemberDeclarationBefore(declaration, anchor) instead",
-        ReplaceWith(
+        message = "Use addMemberDeclarationBefore(declaration, anchor) instead",
+        replaceWith = ReplaceWith(
             "this.addMemberDeclarationBefore(declaration, anchor)",
             "org.jetbrains.kotlin.idea.base.psi.addMemberDeclarationBefore",
         ),
@@ -168,8 +168,8 @@ abstract class KtClassOrObject :
 
 
 @Deprecated(
-    "Use getOrCreateClassBody() instead",
-    ReplaceWith("this.getOrCreateClassBody()", "org.jetbrains.kotlin.idea.base.psi.getOrCreateClassBody"),
+    message = "Use getOrCreateClassBody() instead",
+    replaceWith = ReplaceWith("this.getOrCreateClassBody()", "org.jetbrains.kotlin.idea.base.psi.getOrCreateClassBody"),
 )
 fun KtClassOrObject.getOrCreateBody(): KtClassBody = KtPsiMutationService.getInstance().getOrCreateClassBody(this)
 

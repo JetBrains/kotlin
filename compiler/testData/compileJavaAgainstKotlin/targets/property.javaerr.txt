@@ -1,4 +1,2 @@
-property.java:4:5:compiler.err.annotation.type.not.applicable
-property.java:6:5:compiler.err.annotation.type.not.applicable
-
-
+property.java:5:5:compiler.err.annotation.type.not.applicable
+property.java:7:5:compiler.err.annotation.type.not.applicable

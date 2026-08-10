@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include "GC.hpp"
-#include "GCState.hpp"
-#include "MainGCThread.hpp"
+#include "gc/GC.hpp"
+#include "gc/GCState.hpp"
+#include "gc/MainGCThread.hpp"
 #include "StwmsGCTraits.hpp"
 
 namespace kotlin::gc {

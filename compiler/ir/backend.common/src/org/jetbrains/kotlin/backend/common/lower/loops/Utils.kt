@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 /** Return the negated value if the expression is const, otherwise call unaryMinus(). */
 internal fun IrExpression.negate(): IrExpression {
     return when (val value = (this as? IrConst)?.value as? Number) {
-        is Int -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Int, -value)
-        is Long -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Long, -value)
+        is Int -> IrConstImpl.int(startOffset, endOffset, type, -value)
+        is Long -> IrConstImpl.long(startOffset, endOffset, type, -value)
         else -> {
             // This expression's type could be Nothing from an exception throw, in which case the unary minus function will not exist.
             if (type.isNothing()) return this
@@ -51,9 +51,9 @@ internal fun IrExpression.negate(): IrExpression {
 /** Return `this - 1` if the expression is const, otherwise call dec(). */
 internal fun IrExpression.decrement(): IrExpression {
     return when (val thisValue = (this as? IrConst)?.value) {
-        is Int -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Int, thisValue - 1)
-        is Long -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Long, thisValue - 1)
-        is Char -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Char, thisValue - 1)
+        is Int -> IrConstImpl.int(startOffset, endOffset, type, thisValue - 1)
+        is Long -> IrConstImpl.long(startOffset, endOffset, type, thisValue - 1)
+        is Char -> IrConstImpl.char(startOffset, endOffset, type, thisValue - 1)
         else -> {
             val decFun = type.getClass()!!.functions.single {
                 it.name == OperatorNameConventions.DEC &&

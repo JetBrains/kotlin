@@ -4,9 +4,9 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 /**
  * Represents a JavaScript if statement.
@@ -91,6 +91,6 @@ public final class JsIf extends SourceInfoAwareJsNode implements JsStatement {
         JsStatement thenCopy = AstUtil.deepCopy(thenStatement);
         JsStatement elseCopy = AstUtil.deepCopy(elseStatement);
 
-        return new JsIf(ifCopy, thenCopy, elseCopy).withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsIf(ifCopy, thenCopy, elseCopy), this);
     }
 }

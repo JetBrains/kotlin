@@ -1,7 +1,10 @@
 [versions]
-dokka = "2.2.0-Beta"
+dokka = "2.3.0-dev-431"
 
 [libraries]
 kotlin-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 dokka-versioning = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "dokka" }
 dokka-playground = { module = "org.jetbrains.dokka:kotlin-playground-samples-plugin", version.ref = "dokka" }
+dokka-base = { module = "org.jetbrains.dokka:dokka-base", version.ref = "dokka" }
+dokka-core = { module = "org.jetbrains.dokka:dokka-core", version.ref = "dokka" }
+dokka-analysisKotlinApi = { module = "org.jetbrains.dokka:analysis-kotlin-api", version.ref = "dokka" }

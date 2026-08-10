@@ -1,0 +1,36 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final val /a // /a|{}a[0]
+    final fun <get-a>(): kotlin/String // /a.<get-a>|<get-a>(){}[0]
+final val /b // /b|{}b[0]
+    final fun <get-b>(): kotlin/String // /b.<get-b>|<get-b>(){}[0]
+final val /c // /c|{}c[0]
+    final fun <get-c>(): kotlin/String // /c.<get-c>|<get-c>(){}[0]
+final val /d // /d|{}d[0]
+    final fun <get-d>(): kotlin/Boolean // /d.<get-d>|<get-d>(){}[0]
+final val /e // /e|{}e[0]
+    final fun <get-e>(): kotlin/String // /e.<get-e>|<get-e>(){}[0]
+final var /f // /f|{}f[0]
+    final fun <get-f>(): kotlin/Int // /f.<get-f>|<get-f>(){}[0]
+    final fun <set-f>(kotlin/Int) // /f.<set-f>|<set-f>(kotlin.Int){}[0]
+final val /g // /g|{}g[0]
+    final fun <get-g>(): kotlin/Int // /g.<get-g>|<get-g>(){}[0]
+final val /h // /h|{}h[0]
+    final fun <get-h>(): kotlin/String // /h.<get-h>|<get-h>(){}[0]
+final const val /i // /i|{}i[0]
+    final fun <get-i>(): kotlin/Int // /i.<get-i>|<get-i>(){}[0]
+final val /j // /j|{}j[0]
+    final fun <get-j>(): kotlin/Any // /j.<get-j>|<get-j>(){}[0]
+final val /k // /k|{}k[0]
+    final fun <get-k>(): kotlin/Function1<kotlin/String, kotlin/String> // /k.<get-k>|<get-k>(){}[0]
+final val /l // /l|{}l[0]
+    final fun <get-l>(): kotlin/Function1<kotlin/String, kotlin/String> // /l.<get-l>|<get-l>(){}[0]
+final val /m // /m|{}m[0]
+    final inline fun <get-m>(): kotlin/String // /m.<get-m>|<get-m>(){}[0]
+final val /n // /n|{}n[0]
+    final inline fun <get-n>(): kotlin/String // /n.<get-n>|<get-n>(){}[0]
+final fun /foo(): kotlin/String // /foo|foo(){}[0]

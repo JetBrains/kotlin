@@ -113,6 +113,10 @@ dependencies {
     implementation(libs.gson)
     implementation(project(":d8-configuration"))
     implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+
+    implementation(project(":test-federation-convention")) {
+        isTransitive = false
+    }
 }
 
 tasks.register("checkBuild") {

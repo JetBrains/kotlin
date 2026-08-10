@@ -90,7 +90,23 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
+    open fun visitStaticEnterNode(node: StaticEnterNode, data: D): R {
+        return visitNode(node, data)
+    }
+
+    open fun visitStaticExitNode(node: StaticExitNode, data: D): R {
+        return visitNode(node, data)
+    }
+
     open fun visitLocalClassExitNode(node: LocalClassExitNode, data: D): R {
+        return visitNode(node, data)
+    }
+
+    open fun visitEnumEntryEnterNode(node: EnumEntryEnterNode, data: D): R {
+        return visitNode(node, data)
+    }
+
+    open fun visitEnumEntryExitNode(node: EnumEntryExitNode, data: D): R {
         return visitNode(node, data)
     }
 

@@ -14,4 +14,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] derivedClass.kt
         }
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Any|> create([ResolvedTo(ANNOTATION_ARGUMENTS)] x: R|T|): R|Derived<T>| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Any|> create([ResolvedTo(BODY_RESOLVE)] x: R|T|): R|Derived<T>| {
+        ^create R|/Derived.Derived|<R|T|>(R|<local>/x|)
+    }

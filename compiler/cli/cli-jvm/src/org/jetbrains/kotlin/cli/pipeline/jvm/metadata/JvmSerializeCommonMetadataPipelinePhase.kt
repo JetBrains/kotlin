@@ -9,21 +9,19 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataInMemorySerializationArtifact
-import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataKlibInMemorySerializerPhase
-import org.jetbrains.kotlin.config.commonFragmentsOutputDir
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.icMetadataTracker
+import org.jetbrains.kotlin.config.useMetadataOnIncrementalClasspath
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
-import org.jetbrains.kotlin.library.SerializedFirMetadata
-import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
-import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
-import org.jetbrains.kotlin.library.metadata.parseModuleHeader
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
+import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
+import org.jetbrains.kotlin.incremental.components.ICJvmMetadataTracker
+import org.jetbrains.kotlin.util.metadataVersion
 import java.io.File
-import java.nio.file.Path
-import kotlin.io.path.notExists
-import kotlin.io.path.readBytes
 
 internal object JvmSerializeCommonMetadataPipelinePhase : PipelinePhase<JvmFrontendPipelineArtifact, JvmFrontendPipelineArtifact>(
     name = "JvmSerializeCommonMetadataPipelinePhase",
@@ -37,82 +35,56 @@ internal object JvmSerializeCommonMetadataPipelinePhase : PipelinePhase<JvmFront
 
     private fun serializeFragmentsIfNeeded(input: JvmFrontendPipelineArtifact) {
         val configuration = input.configuration
-        val outputDir = configuration.commonFragmentsOutputDir ?: return
+        if (!configuration.useMetadataOnIncrementalClasspath) return
+
         val commonFragmentOutputs = input.frontendOutput.outputs.dropLast(1)
         if (commonFragmentOutputs.isEmpty()) return
 
-        for (output in commonFragmentOutputs) {
-            val inputForPhase = MetadataFrontendPipelineArtifact(
-                AllModulesFrontendOutput(listOf(output)),
-                configuration = configuration,
-                sourceFiles = input.sourceFiles,
-            )
+        val icMetadataTracker = configuration.requireIcMetadataTracker()
+        val metadataVersion = configuration.metadataVersion()
+        val languageVersionSettings = configuration.languageVersionSettings
+        val exportKDoc = languageVersionSettings.supportsFeature(LanguageFeature.ExportKDocDocumentationToKlib)
 
+        commonFragmentOutputs.forEach { output ->
             val moduleName = output.session.moduleData.name.asStringStripSpecialMarkers()
-            val destinationDir = outputDir.resolve(moduleName)
+            val firResult = AllModulesFrontendOutput(listOf(output))
 
-            val serializedMetadata = MetadataKlibInMemorySerializerPhase.executePhase(inputForPhase)
+            firResult.outputs.forEach { (session, scopeSession, fir) ->
+                val serializerExtension = FirKLibSerializerExtension(
+                    session = session,
+                    scopeSession = scopeSession,
+                    firProvider = session.firProvider,
+                    metadataVersion = metadataVersion,
+                    exportKDoc = exportKDoc,
+                    additionalMetadataProvider = null,
+                )
 
-            configuration.icMetadataTracker?.let { metadataTracker ->
-                serializedMetadata.firMetadata.fragments.flatten().forEach { firFile ->
-                    // Fragments without a source path come from content generated for compiler plugins. We intentionally
-                    // don't track them: IC always marks such generated files as dirty before compilation, so their
-                    // metadata is regenerated on every round and never needs to be restored from the cache.
-                    firFile.path?.let { metadataTracker.report(moduleName, File(it), firFile.content) }
+                fir.forEach { firFile ->
+                    val sourceFile = firFile.sourceFile?.path?.let { File(it) }
+                    if (sourceFile == null) {
+                        // Fragments without a source path come from content generated for compiler plugins. We intentionally
+                        // don't track them: IC always marks such generated files as dirty before compilation, so their
+                        // metadata is regenerated on every round and never needs to be restored from the cache.
+                        return@forEach
+                    }
+
+                    val packageFragment = serializeSingleFirFile(
+                        firFile,
+                        session,
+                        scopeSession,
+                        actualizedExpectDeclarations = null,
+                        serializerExtension,
+                        languageVersionSettings,
+                    )
+
+                    icMetadataTracker.report(moduleName, sourceFile, packageFragment.toByteArray())
                 }
             }
-
-            val metadataInMemory =
-                serializedMetadata.mergeMetadataHeader(loadPreviousMetadataHeader(destinationDir.toPath()))
-
-            JvmMetadataKlibFileWriterPhase.writeToDisc(
-                metadataInMemory,
-                destinationDir
-            )
         }
     }
 
-    private fun MetadataInMemorySerializationArtifact.mergeMetadataHeader(previousMetadataHeader: KlibMetadataProtoBuf.Header?): MetadataInMemorySerializationArtifact {
-        if (previousMetadataHeader == null) return this
-
-        (val firMetadata, val configuration) = this
-        val currentMetadataHeader = parseModuleHeader(firMetadata.module)
-
-        val header = KlibMetadataProtoBuf.Header.newBuilder().apply {
-            moduleName = currentMetadataHeader.moduleName
-            flags = currentMetadataHeader.flags
-
-            addAllPackageFragmentName(buildSet {
-                addAll(currentMetadataHeader.packageFragmentNameList)
-                addAll(previousMetadataHeader.packageFragmentNameList)
-            })
-        }.build()
-
-        return MetadataInMemorySerializationArtifact(
-            SerializedFirMetadata(header.toByteArray(), firMetadata.fragments, firMetadata.fragmentNames, firMetadata.metadataVersion),
-            configuration
-        )
-    }
-
-    /**
-     * Loads the module header produced by the previous compilation, or `null` if there is none yet.
-     *
-     * The header is read directly from the metadata output directory. This is a temporary workaround
-     * to unblock testing: the proper incremental flow should report the header output via the file
-     * mapping tracker, store it in the incremental cache, and have `IncrementalFirProvider` load the
-     * previous header from that cache instead of from the file system.
-     *
-     * TODO(KT-87249): Handle package removals and incremental tracking. The previous header is currently merged
-     *  as-is, so package fragments that are no longer produced by the compilation are kept around even when some
-     *  of them are already obsolete. Eventually this file may be removed altogether, see KT-87197.
-     */
-    private fun loadPreviousMetadataHeader(directory: Path): KlibMetadataProtoBuf.Header? {
-        val moduleHeaderFile = KlibMetadataComponentLayout(directory).moduleHeaderFile
-
-        if (moduleHeaderFile.notExists()) {
-            return null
+    private fun CompilerConfiguration.requireIcMetadataTracker(): ICJvmMetadataTracker =
+        requireNotNull(icMetadataTracker) {
+            "Misconfiguration: `icMetadataTracker` must be registered for KMP projects when `useMetadataOnIncrementalClasspath` is enabled."
         }
-
-        return parseModuleHeader(moduleHeaderFile.readBytes())
-    }
 }

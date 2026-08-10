@@ -121,8 +121,9 @@ internal fun ThrowCharacterCodingException(): Nothing {
 }
 
 @ExportForCppRuntime
-internal fun ThrowFileFailedToInitializeException(reason: Throwable?) {
-    staticInitializationFailure(reason, null)
+internal fun StaticInitializationFailure(reason: Throwable?, typeInfo: NativePtr): Nothing {
+    val klass = if (typeInfo.isNull()) null else KClassImpl<Any>(typeInfo)
+    staticInitializationFailure(reason, klass?.qualifiedName ?: klass?.simpleName)
 }
 
 @ExportForCppRuntime

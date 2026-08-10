@@ -39,6 +39,7 @@ public interface KaEvaluator : KaSessionComponent {
         "this.evaluate()",
         "org.jetbrains.kotlin.analysis.api.evaluation.evaluate",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -59,6 +60,7 @@ public fun KtExpression.evaluate(): KaConstantValue? {
         "this.evaluateAsAnnotationValue()",
         "org.jetbrains.kotlin.analysis.api.evaluation.evaluateAsAnnotationValue",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)

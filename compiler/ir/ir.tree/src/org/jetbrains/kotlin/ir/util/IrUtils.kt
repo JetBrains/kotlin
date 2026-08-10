@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.error.ErrorModuleDescriptor
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
@@ -650,6 +652,7 @@ fun IrExpression.shallowCopyOrNull(): IrExpression? =
     }
 
 internal fun IrConst.shallowCopy() = IrConstImpl(
+    constructorIndicator = null,
     startOffset,
     endOffset,
     type,
@@ -672,6 +675,8 @@ fun IrExpression.remapReceiver(oldReceiver: IrValueParameter?, newReceiver: IrVa
                     } else argument
             }
         }
+    is IrTypeOperatorCall ->
+        IrTypeOperatorCallImpl(startOffset, endOffset, type, operator, typeOperand, argument.remapReceiver(oldReceiver, newReceiver))
     else -> shallowCopy()
 }
 
@@ -1624,6 +1629,12 @@ fun IrDeclaration.isPublishedApi(): Boolean =
 
 const val SKIP_BODIES_ERROR_DESCRIPTION = "skipBodies"
 
+/**
+ * A special module fragment used when we don't have a real module, and we don't care about it.
+ * For example, when we need a module in tests, or we want to generate a declaration that is not going to be used from real modules.
+ */
+val IrErrorModuleFragment = IrModuleFragmentImpl(ErrorModuleDescriptor)
+
 // === Junkyard ===
 
 @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20, replaceWith = "createThisReceiverParameter()")
@@ -1688,4 +1699,3 @@ val IrSimpleFunction.isTrivialGetter: Boolean
 
 fun IrSimpleFunction.findOverriddenMethodOfAny() =
     allOverridden().firstOrNull { it.parentClassOrNull?.isAny() == true }
-

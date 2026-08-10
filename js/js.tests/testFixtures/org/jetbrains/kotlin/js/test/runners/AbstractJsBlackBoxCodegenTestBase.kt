@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJsTest
 import org.jetbrains.kotlin.test.services.AbstractEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
@@ -42,7 +42,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase(
     targetBackend: TargetBackend,
     private val pathToTestDir: String,
     private val testGroupOutputDirPrefix: String,
-) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
+) : AbstractKotlinCompilerJsTest(targetBackend) {
     /**
      * There can be several configurations of JS codegen/box tests, which differ in a way how backend part
      * of the test pipeline is executed.
@@ -281,7 +281,8 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(
     }
 
     configureKlibArtifactsHandlersStep {
-        useHandlers(::KlibBackendDiagnosticsHandler, ::KlibAbiDumpAfterInliningVerifyingHandler, ::KlibAbiDumpHandler)
+        // TODO KT-87965: Also use KlibAbiDumpAfterInliningVerifyingHandler here to fully turn or IR Inliner checks in all testrunners, inlcluding TS export
+        useHandlers(::KlibBackendDiagnosticsHandler, ::KlibAbiDumpHandler)
     }
 
     useFailureSuppressors(

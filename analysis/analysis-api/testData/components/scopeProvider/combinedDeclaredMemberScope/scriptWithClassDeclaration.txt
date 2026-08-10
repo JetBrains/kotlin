@@ -83,6 +83,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaScriptModule "Script scriptWithClassDeclaration.kts"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: foo
 
 KaKotlinPropertySymbol:
@@ -124,6 +125,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script scriptWithClassDeclaration.kts"
     deprecation: null
+    javaMethodName: get$$result
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -159,8 +161,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script scriptWithClassDeclaration.kts"
   deprecation: null
-  javaGetterName: get$$result
-  javaSetterName: null
   isInline: false
   importableFqName: $$result
 

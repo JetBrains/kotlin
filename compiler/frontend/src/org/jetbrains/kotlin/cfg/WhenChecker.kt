@@ -66,7 +66,7 @@ private interface WhenExhaustivenessChecker {
 private object WhenOnExpectExhaustivenessChecker {
     fun getMissingCase(subjectDescriptor: ClassDescriptor?): WhenMissingCase? {
         return runIf(subjectDescriptor?.isExpect == true) {
-            when (subjectDescriptor!!.kind) {
+            when (subjectDescriptor.kind) {
                 ClassKind.CLASS -> WhenMissingCase.ConditionTypeIsExpect.SealedClass
                 ClassKind.INTERFACE -> WhenMissingCase.ConditionTypeIsExpect.SealedInterface
                 ClassKind.ENUM_CLASS -> WhenMissingCase.ConditionTypeIsExpect.Enum

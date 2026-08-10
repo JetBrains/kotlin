@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.isFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.isKSuspendFunctionInvoke
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -59,7 +61,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         createPackageFragmentDescriptor: (FqName, ModuleDescriptor) -> PackageFragmentDescriptor = ::FirPackageFragmentDescriptor,
     ): IrExternalPackageFragment {
         val symbol = IrExternalPackageFragmentSymbolImpl(createPackageFragmentDescriptor(fqName, module.descriptor))
-        return IrExternalPackageFragmentImpl(symbol, fqName)
+        return IrExternalPackageFragmentImpl(symbol, fqName, module)
     }
 
     // ------------------------------------ functions ------------------------------------
@@ -80,10 +82,10 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         val updatedOrigin = when {
             isLambda -> IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
             isBaseInvokeFunction -> IrDeclarationOrigin.FUNCTION_INTERFACE_MEMBER
-            !predefinedOrigin.isExternal && // we should preserve origin for external enums
-                    namedFunction?.isStatic == true &&
-                    namedFunction.name in Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES
-            -> IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
+
+            function.getContainingClass()?.let { function.isGeneratedStaticEnumMember(it) } == true &&
+                    !predefinedOrigin.isExternal // we should preserve origin for external enums
+                -> IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
 
             // Kotlin built-in class and Java originated method (Collection.forEach, etc.)
             // It's necessary to understand that such methods do not belong to DefaultImpls but actually generated as default
@@ -225,10 +227,8 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         allowLazyDeclarationsCreation: Boolean
     ): IrProperty = convertCatching(property) {
         val origin = when {
-            !predefinedOrigin.isExternal &&
-                    property.isStatic &&
-                    property.name in Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES
-            -> IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
+            property.getContainingClass()?.let { property.isGeneratedStaticEnumMember(it) } == true &&
+                    !predefinedOrigin.isExternal -> IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
 
             else -> property.computeIrOrigin(
                 predefinedOrigin,
@@ -967,10 +967,8 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         }
 
         private fun computeContainingClass(parent: IrDeclarationParent?): IrClass? {
-            return if (parent is IrClass && !parent.isNonCachedSourceFileFacade) {
+            return runIf(parent is IrClass && !parent.isNonCachedSourceFileFacade) {
                 parent
-            } else {
-                null
             }
         }
     }

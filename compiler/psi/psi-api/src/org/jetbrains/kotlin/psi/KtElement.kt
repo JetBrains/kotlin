@@ -20,7 +20,9 @@ interface KtElement : NavigatablePsiElement, KtPureElement {
     @KtNonPublicApi
     fun rawDelete()
 
-    @Deprecated("Don't use getReference() on KtElement for the choice is unpredictable")
+    @Deprecated(
+        message = "Don't use getReference() on KtElement for the choice is unpredictable",
+    )
     override fun getReference(): PsiReference?
 }
 

@@ -24,7 +24,7 @@ class FirDefaultSimpleImportingScope(
     private val excludedImportNames: Set<FqName>,
 ) : FirAbstractSimpleImportingScope(session, scopeSession) {
 
-    private fun FirImport.resolve(importResolveTransformer: FirImportResolveTransformer) =
+    private fun FirImport.resolve(importResolveTransformer: FirImportResolveTransformer): FirResolvedImport? =
         importResolveTransformer.transformImport(this, null) as? FirResolvedImport
 
     override val simpleImports: Map<Name, List<FirResolvedImport>> = run {

@@ -8,17 +8,18 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(FunctionalBox::class, "4main13FunctionalBoxC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(GenericWithComparableUpperBound::class, "4main31GenericWithComparableUpperBoundC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Holder::class, "4main6HolderC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(HolderConstrained::class, "4main17HolderConstrainedC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(IdentityProcessor::class, "4main17IdentityProcessorC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Pair::class, "4main4PairC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(StringProducer::class, "4main14StringProducerC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(TripleBox::class, "4main9TripleBoxC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(A::class, "_A")
-@file:kotlin.native.internal.objc.BindClassToObjCName(AFactory::class, "_AFactory")
-@file:kotlin.native.internal.objc.BindClassToObjCName(B::class, "_B")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Consumer::class, "_Consumer")
-@file:kotlin.native.internal.objc.BindClassToObjCName(ConsumerProducer::class, "_ConsumerProducer")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Processor::class, "_Processor")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Producer::class, "_Producer")
+@file:kotlin.native.internal.objc.BindClassToObjCName(A::class, "_main_A")
+@file:kotlin.native.internal.objc.BindClassToObjCName(AFactory::class, "_main_AFactory")
+@file:kotlin.native.internal.objc.BindClassToObjCName(B::class, "_main_B")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Consumer::class, "_main_Consumer")
+@file:kotlin.native.internal.objc.BindClassToObjCName(ConsumerProducer::class, "_main_ConsumerProducer")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Processor::class, "_main_Processor")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Producer::class, "_main_Producer")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
@@ -168,6 +169,13 @@ public fun Demo_foo_get(self: kotlin.native.internal.NativePtr): Int {
 public fun GenericWithComparableUpperBound_t_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as GenericWithComparableUpperBound<kotlin.Comparable<kotlin.Any?>>
     val _result = run { __self.t }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("HolderConstrained_xs_get")
+public fun HolderConstrained_xs_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as HolderConstrained<kotlin.Any>
+    val _result = run { __self.xs }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -409,6 +417,18 @@ public fun __root___bar__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSup
     val __param2 = if (param2 == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(param2) as kotlin.Any
     val _result = run { bar<kotlin.Any?>(__param1, __param2) }
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___bar_get")
+public fun __root___bar_get(): kotlin.native.internal.NativePtr {
+    val _result = run { bar }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___baz_get")
+public fun __root___baz_get(): kotlin.native.internal.NativePtr {
+    val _result = run { baz }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___createMap__TypesOfArguments__Swift_Array_main_Pair___")

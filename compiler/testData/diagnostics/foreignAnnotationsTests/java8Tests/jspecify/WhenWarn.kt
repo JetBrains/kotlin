@@ -95,6 +95,13 @@ fun test_9(): Int {
     }
 }
 
+fun test_9_1(): Int {
+    return when (val x: J = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.getNullable()<!>) {
+        J.A -> 1
+        J.B -> 2
+    }
+}
+
 fun test_10(): Int {
     return when (J.getNullable()) {
         J.A -> 1
@@ -117,5 +124,21 @@ fun test_12(): Int {
         J.B -> 2
         null -> 3
         <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 4
+    }
+}
+
+fun test_13(): Int {
+    return when (J.getNullable()) {
+        J.A -> 1
+        J.B, null -> 2
+    }
+}
+
+fun test_14(): Int {
+    val e = J.getNullable()
+    if (e == null) return 0
+    return <!UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS!>when<!> (e) {
+        J.A -> 1
+        J.B -> 2
     }
 }

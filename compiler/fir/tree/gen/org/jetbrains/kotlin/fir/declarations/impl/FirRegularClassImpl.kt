@@ -43,6 +43,7 @@ internal class FirRegularClassImpl(
     @property:DirectDeclarationsAccess
     override val declarations: MutableList<FirDeclaration>,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
+    override var staticControlFlowGraphReference: FirControlFlowGraphReference?,
     override val name: Name,
     override val symbol: FirRegularClassSymbol,
     override var companionObjectSymbol: FirRegularClassSymbol?,
@@ -68,6 +69,7 @@ internal class FirRegularClassImpl(
         controlFlowGraphReference?.accept(visitor, data)
         declarations.forEach { it.accept(visitor, data) }
         annotations.forEach { it.accept(visitor, data) }
+        staticControlFlowGraphReference?.accept(visitor, data)
         superTypeRefs.forEach { it.accept(visitor, data) }
         contextParameters.forEach { it.accept(visitor, data) }
     }
@@ -78,6 +80,7 @@ internal class FirRegularClassImpl(
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformDeclarations(transformer, data)
         transformAnnotations(transformer, data)
+        staticControlFlowGraphReference = staticControlFlowGraphReference?.transform(transformer, data)
         transformSuperTypeRefs(transformer, data)
         transformContextParameters(transformer, data)
         return this
@@ -133,6 +136,10 @@ internal class FirRegularClassImpl(
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
+    }
+
+    override fun replaceStaticControlFlowGraphReference(newStaticControlFlowGraphReference: FirControlFlowGraphReference?) {
+        staticControlFlowGraphReference = newStaticControlFlowGraphReference
     }
 
     override fun replaceCompanionObjectSymbol(newCompanionObjectSymbol: FirRegularClassSymbol?) {

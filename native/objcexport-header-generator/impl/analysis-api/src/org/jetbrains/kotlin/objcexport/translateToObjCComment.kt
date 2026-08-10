@@ -64,8 +64,14 @@ internal fun KaSession.translateToObjCComment(
 
     val visibilityComments = function.buildObjCVisibilityComment("method")
 
-    val paramComments = function.valueParameters.mapNotNull { parameterSymbol ->
-        val param = parameters.find { parameter -> parameter.name == parameterSymbol.name.asString() }
+    val allParams = listOfNotNull(function.receiverParameter) + function.valueParameters
+    val paramComments = allParams.mapNotNull { parameterSymbol ->
+        val parameterSymbolName = when (parameterSymbol) {
+            is KaReceiverParameterSymbol -> "receiver"
+            else -> parameterSymbol.name.asString()
+        }
+
+        val param = parameters.find { parameter -> parameter.name == parameterSymbolName }
         param?.let { renderedObjCDocumentedParamAnnotations(it, parameterSymbol) }
     }
     val annotationsComments = translateToObjCComment(function.annotations)
@@ -75,7 +81,7 @@ internal fun KaSession.translateToObjCComment(
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mustBeDocumentedParamAttributeList]
  */
-private fun KaSession.renderedObjCDocumentedParamAnnotations(parameter: ObjCParameter, parameterSymbol: KaValueParameterSymbol): String? {
+private fun KaSession.renderedObjCDocumentedParamAnnotations(parameter: ObjCParameter, parameterSymbol: KaParameterSymbol): String? {
     val renderedAnnotationsString = getObjCDocumentedAnnotations(parameterSymbol)
         .mapNotNull { annotation -> renderAnnotation(annotation) }
         .ifEmpty { return null }

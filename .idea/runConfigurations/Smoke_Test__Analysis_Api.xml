@@ -1,16 +1,10 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Smoke Test: Analysis Api" type="GradleRunConfiguration" factoryName="Gradle" folderName="Smoke Tests">
     <ExternalSystemSettings>
-      <option name="env">
-        <map>
-          <entry key="TEST_FEDERATION_ENABLED" value="true" />
-          <entry key="TEST_FEDERATION_MODE" value="Smoke" />
-        </map>
-      </option>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="--continue" />
+      <option name="scriptParameters" value="-Ptest.federation.enabled=true -Ptest.federation.mode=Smoke -Ptest.federation.affected.domains=&lt;none&gt; --continue" />
       <option name="taskDescriptions">
         <list />
       </option>

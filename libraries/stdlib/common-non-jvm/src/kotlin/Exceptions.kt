@@ -85,7 +85,17 @@ public actual open class ArithmeticException : RuntimeException {
     public actual constructor(message: String?) : super(message)
 }
 
-internal actual open class ExceptionInInitializerError : Error {
+/**
+ * Equivalent to `java.lang.ExceptionInInitializerError`.
+ */
+internal class ExceptionInInitializerError : Error {
     constructor(message: String) : super(message)
-    actual constructor(cause: Throwable) : super(null, cause)
+    constructor(cause: Throwable) : super(null, cause)
+}
+
+/**
+ * Equivalent to `java.lang.NoClassDefFoundError`.
+ */
+internal class NoClassDefFoundError : Error {
+    constructor(message: String?) : super(message)
 }

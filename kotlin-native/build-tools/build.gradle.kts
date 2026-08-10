@@ -5,9 +5,9 @@
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
+    @Suppress("DEPRECATION")
     val rootBuildDirectory by extra(project.file("../.."))
     apply(from = rootBuildDirectory.resolve("kotlin-native/gradle/loadRootProperties.gradle"))
 
@@ -38,9 +38,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}")
 }
 
-val compileKotlin: KotlinCompile by tasks
-
-compileKotlin.apply {
+tasks.compileKotlin {
     compilerOptions {
         optIn.add("kotlin.ExperimentalStdlibApi")
         freeCompilerArgs.addAll(

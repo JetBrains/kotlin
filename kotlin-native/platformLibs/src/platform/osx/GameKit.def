@@ -2,6 +2,7 @@ depends = AppKit ApplicationServices CFCGTypes CFNetwork CloudKit Cocoa Contacts
 language = Objective-C
 package = platform.GameKit
 modules = GameKit
+apiNotesSwiftName = true
 
 compilerOpts = -framework GameKit
 linkerOpts = -framework GameKit

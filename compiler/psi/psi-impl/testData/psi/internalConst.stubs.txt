@@ -5,5 +5,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InternalConstKt]]
   IMPORT_LIST
   PROPERTY[fqName=FOO2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=FOO2]
     MODIFIER_LIST[private const]
+    FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.14]
   PROPERTY[fqName=FOO, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=FOO]
     MODIFIER_LIST[internal const]
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.14]
+      OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+      REFERENCE_EXPRESSION[referencedName=FOO2]

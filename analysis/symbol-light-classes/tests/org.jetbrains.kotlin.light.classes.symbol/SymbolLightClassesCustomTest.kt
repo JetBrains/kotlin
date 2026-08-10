@@ -9,8 +9,7 @@ import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiEnumConstant
 import com.intellij.psi.PsiLiteralExpression
 import com.intellij.psi.PsiMethod
-import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
-import org.jetbrains.kotlin.analysis.api.components.directDiagnostics
+import org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
@@ -86,7 +85,7 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
         val property = companion.declarations.first() as KtProperty
 
         // Trigger full body resolve for property. This is crucial to resolve only the property first
-        analyze(property) { property.directDiagnostics(KaDiagnosticCheckerFilter.ONLY_COMMON_CHECKERS) }
+        analyze(property) { property.diagnostics().toList() }
         assertMethodAnnotation(topLevelClass, testServices)
     }
 

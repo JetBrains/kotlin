@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.util.ImplementationStatus
 
 @KaImplementationDetail
 @SubclassOptInRequired(KaImplementationDetail::class)
@@ -42,8 +41,6 @@ public interface KaInternalsSymbolRelationProvider {
     public fun isDirectSubClassOf(symbol: KaClassSymbol, superClass: KaClassSymbol): Boolean
 
     public fun intersectionOverriddenSymbols(symbol: KaCallableSymbol): List<KaCallableSymbol>
-
-    public fun getImplementationStatus(symbol: KaCallableSymbol, parentClassSymbol: KaClassSymbol): ImplementationStatus?
 
     @KaExperimentalApi
     public fun implementationState(symbol: KaCallableSymbol, implementerClassSymbol: KaClassSymbol): KaCallableImplementationState?

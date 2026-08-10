@@ -78,4 +78,5 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library lib"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: valueOf
   importableFqName: MyKotlinEnum.valueOf

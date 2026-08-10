@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("FunctionName", "DEPRECATION")
+@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.gradle.unitTests
 
@@ -120,7 +120,6 @@ class XCFrameworkTaskTest {
                     iosX64(),
                     watchosArm64(),
                     watchosDeviceArm64(),
-                    watchosArm32(),
                 ).forEach {
                     it.binaries.framework {
                         xcframework.add(this)
@@ -171,7 +170,6 @@ class XCFrameworkTaskTest {
             listOf(
                 project.buildFile("bin/watchosArm64/releaseFramework/test.framework"),
                 project.buildFile("bin/watchosDeviceArm64/releaseFramework/test.framework"),
-                project.buildFile("bin/watchosArm32/releaseFramework/test.framework"),
             ),
             watchosUniversalFrameworkTask.frameworks.map { it.file },
         )

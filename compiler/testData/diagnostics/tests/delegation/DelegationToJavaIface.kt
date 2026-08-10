@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// JAVAC_EXPECTED_FILE
 
 class TestIface(r : Runnable) : Runnable by r {}
 

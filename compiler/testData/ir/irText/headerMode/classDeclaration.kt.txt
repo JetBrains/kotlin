@@ -1,0 +1,66 @@
+class A {
+  constructor() /* primary */
+
+  fun funA(): String {
+  }
+
+  inline fun funB(): String {
+    return "A.funB body"
+  }
+
+  fun funD(): Int {
+  }
+
+  inline fun funE(): String {
+    local fun funF(): String {
+      return "funF body"
+    }
+
+    return funF()
+  }
+
+  @OptIn(markerClass = [ExperimentalContracts::class])
+  fun isNotNull(value: Any?): Boolean {
+  }
+
+}
+
+class C : B {
+  inner class D {
+    constructor() /* primary */
+
+    fun funA(): String {
+    }
+
+  }
+
+  constructor() /* primary */
+
+  override fun funB(): String {
+  }
+
+}
+
+class E {
+  constructor() /* primary */
+
+  fun funA(): String {
+  }
+
+}
+
+class F : E {
+  constructor() /* primary */
+
+  override fun funA(): String {
+  }
+
+}
+
+interface B {
+  fun funA(): String {
+  }
+
+  abstract fun funB(): String
+
+}

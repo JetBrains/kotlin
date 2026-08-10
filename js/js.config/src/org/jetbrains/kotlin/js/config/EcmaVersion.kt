@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.js.config
 
 @Suppress("EnumEntryName")
 enum class EcmaVersion {
-    es5, es2015;
+    es5, es2015, es2020;
 
     companion object {
         fun defaultVersion(): EcmaVersion {
@@ -15,7 +15,17 @@ enum class EcmaVersion {
         }
 
         fun latestSupportedVersion(): EcmaVersion {
-            return es2015
+            return es2020
+        }
+
+        fun fromName(name: String): EcmaVersion? {
+            return entries.firstOrNull { it.name == name }
         }
     }
 }
+
+val EcmaVersion?.supportsEsModules: Boolean
+    get() = this != null && this >= EcmaVersion.es2015
+
+val EcmaVersion?.supportsPerFileGranularity: Boolean
+    get() = this != null && this >= EcmaVersion.es2015

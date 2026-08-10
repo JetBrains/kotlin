@@ -72,7 +72,7 @@ internal object CompilationServiceImpl : CompilationService {
         return ClasspathEntrySnapshotImpl(
             ClasspathEntrySnapshotter.snapshot(
                 classpathEntry,
-                ClasspathEntrySnapshotter.Settings(granularity, parseInlinedLocalClasses),
+                ClasspathEntrySnapshotter.Settings(granularity, parseInlinedLocalClasses, expandTypeAliases = false),
                 DoNothingBuildMetricsReporter
             )
         )

@@ -1,0 +1,22 @@
+FILE: LambdaInConcurrentMap.kt
+    public final fun <K, V> R|java/util/concurrent/ConcurrentMap<K, V>|.forEachValue(action: R|(V) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun <K, V> R|java/util/concurrent/ConcurrentMap<K, V>|.replaceIfPresent(k: R|K|, v: R|V|): R|kotlin/Unit| {
+        when () {
+            this@R|/replaceIfPresent|.R|kotlin/collections/contains|<R|K!|, R|V!|>(R|<local>/k|) ->  {
+                this@R|/replaceIfPresent|.R|kotlin/collections/set|<R|K!|, R|V!|>(R|<local>/k|, R|<local>/v|)
+                Unit
+            }
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        lval map: R|java/util/concurrent/ConcurrentHashMap<kotlin/String, kotlin/Int>| = R|java/util/concurrent/ConcurrentHashMap.ConcurrentHashMap|<R|kotlin/String!|, R|kotlin/Int!|>()
+        R|<local>/map|.R|/forEachValue|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String, relevantFeature=ConcurrentMapPurelyImplemented) kotlin/String!|, R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/Int, relevantFeature=ConcurrentMapPurelyImplemented) kotlin/Int!|>(<L> = forEachValue@fun <anonymous>(v: R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/Int, relevantFeature=ConcurrentMapPurelyImplemented) kotlin/Int!|): R|kotlin/Unit| <inline=NoInline>  {
+            R|<local>/v|?.{ $subj$.R|kotlin/Int.plus|(Int(2)) }
+            R|<local>/v|.R|kotlin/Int.minus|(Int(2))
+        }
+        )
+        R|<local>/map|.R|/replaceIfPresent|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String, relevantFeature=ConcurrentMapPurelyImplemented) kotlin/String!|, R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/Int, relevantFeature=ConcurrentMapPurelyImplemented) kotlin/Int!|>(String(), Null(null))
+        R|<local>/map|.R|/replaceIfPresent|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String, relevantFeature=ConcurrentMapPurelyImplemented) kotlin/String!|, R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/Int, relevantFeature=ConcurrentMapPurelyImplemented) kotlin/Int!|>(Null(null), Int(0))
+    }

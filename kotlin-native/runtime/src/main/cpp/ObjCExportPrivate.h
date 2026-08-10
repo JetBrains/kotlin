@@ -10,7 +10,6 @@
 
 #import <objc/runtime.h>
 
-#import "KotlinBase.h"
 #import "Types.h"
 #import "Memory.h"
 #import "ObjCExport.h"

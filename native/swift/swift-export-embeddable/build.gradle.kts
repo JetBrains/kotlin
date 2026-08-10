@@ -9,14 +9,14 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 description = "Runner for Swift Export (for embedding purpose)"
 
 publish()
 
-val validateSwiftExportEmbeddable by tasks.registering
+val validateSwiftExportEmbeddable = tasks.register("validateSwiftExportEmbeddable")
 
 dependencies {
     embedded(project(":native:swift:sir")) { isTransitive = false }
@@ -66,7 +66,7 @@ dependencies {
     )
     val validateAllDependenciesWereInheritedCorrectly = inheritAndValidateExternalDependencies(
         sourceConfiguration = projectsToInheritDependenciesFrom,
-        targetConfiguration = configurations.getByName("runtimeOnly"),
+        targetConfiguration = configurations.runtimeOnly.get(),
         dependenciesToInherit = dependenciesToInherit,
     )
     validateSwiftExportEmbeddable.configure { dependsOn(validateAllDependenciesWereInheritedCorrectly) }

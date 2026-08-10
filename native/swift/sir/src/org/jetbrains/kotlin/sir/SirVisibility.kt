@@ -12,3 +12,12 @@ enum class SirVisibility : Comparable<SirVisibility> {
     PACKAGE,
     PUBLIC,
 }
+
+val SirVisibility.value: String
+    get() = when (this) {
+        SirVisibility.PRIVATE -> "private"
+        SirVisibility.FILEPRIVATE -> "fileprivate"
+        SirVisibility.INTERNAL -> "internal"
+        SirVisibility.PACKAGE -> "package"
+        SirVisibility.PUBLIC -> "public"
+    }

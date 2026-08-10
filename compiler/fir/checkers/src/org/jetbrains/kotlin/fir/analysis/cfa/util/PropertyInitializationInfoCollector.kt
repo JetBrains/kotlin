@@ -113,6 +113,17 @@ class PropertyInitializationInfoCollector(
         )
     }
 
+    override fun visitEnumEntryExitNode(
+        node: EnumEntryExitNode,
+        data: PathAwareControlFlowInfo<VariableInitializationEvent, EventOccurrencesRangeAtNode>,
+    ): PathAwareControlFlowInfo<VariableInitializationEvent, EventOccurrencesRangeAtNode> {
+        val dataForNode = visitNode(node, data)
+        return dataForNode.overwriteRange(
+            node.fir.symbol,
+            EventOccurrencesRangeAtNode(MarkedEventOccurrencesRange.ExactlyOnce(node), mustBeLateinit = false),
+        )
+    }
+
     override fun visitEdge(
         from: CFGNode<*>,
         to: CFGNode<*>,

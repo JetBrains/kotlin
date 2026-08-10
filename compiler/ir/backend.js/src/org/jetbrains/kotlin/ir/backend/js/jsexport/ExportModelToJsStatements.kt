@@ -7,16 +7,9 @@ package org.jetbrains.kotlin.ir.backend.js.jsexport
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsAstUtils
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.defineProperty
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsAssignment
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.prototypeOf
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsElementAccess
-import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.ir.util.irError
@@ -24,10 +17,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
-class ExportModelToJsStatements(
-    private val staticContext: JsStaticContext,
-    private val es6mode: Boolean,
-) {
+class ExportModelToJsStatements(private val staticContext: JsStaticContext) {
     private val allowImplementingInterfaces = staticContext.backendContext.configuration.languageVersionSettings.supportsFeature(
         LanguageFeature.JsExportInterfacesInImplementableWay
     )

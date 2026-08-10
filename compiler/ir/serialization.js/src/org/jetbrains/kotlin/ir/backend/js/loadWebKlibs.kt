@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.LoadedKlibs
 import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqueNames
-import org.jetbrains.kotlin.backend.common.loadFriendLibraries
+import org.jetbrains.kotlin.backend.common.selectLibrariesByPaths
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
-import org.jetbrains.kotlin.cli.common.testEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsLibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.ir.backend.js.checkers.WasmLibrarySpecialCompatibilityChecker
@@ -37,14 +36,14 @@ fun loadWebKlibs(
         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
         configuration.zipFileSystemAccessor?.let { zipFileSystemAccessor(it) }
     }.load()
-        .apply { reportLoadingProblemsIfAny(configuration, allAsErrors = configuration.testEnvironment) }
+        .apply { reportLoadingProblemsIfAny(configuration) }
         // TODO (KT-76785): Handling of duplicated names is a workaround that needs to be removed in the future.
         .eliminateLibrariesWithDuplicatedUniqueNames(configuration)
 
     return LoadedKlibs(
         all = result.librariesStdlibFirst,
-        friends = result.loadFriendLibraries(configuration.friendLibraries),
-        included = result.loadFriendLibraries(listOfNotNull(configuration.includes)).firstOrNull()
+        friends = result.selectLibrariesByPaths(libraryPaths = configuration.friendLibraries),
+        included = result.selectLibrariesByPaths(libraryPaths = listOfNotNull(configuration.includes)).firstOrNull()
     ).also { klibs ->
         if (!configuration.skipLibrarySpecialCompatibilityChecks) {
             val isWasm = platformChecker is KlibPlatformChecker.Wasm

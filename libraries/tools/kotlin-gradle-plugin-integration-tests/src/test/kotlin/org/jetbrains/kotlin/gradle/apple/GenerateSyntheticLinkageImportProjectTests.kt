@@ -31,7 +31,6 @@ import org.junit.jupiter.api.condition.OS
 import kotlin.String
 import kotlin.io.path.createDirectories
 import kotlin.io.path.pathString
-import kotlin.io.path.readText
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
@@ -305,21 +304,21 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
                     ":$generatePackageTask",
                     ":$subProjectName:$generatePackageTask",
                 ) {
+                    val subProjectFingerprintFile =
+                        subProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
+                    val rootProjectFingerprintFile =
+                        projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
 
                     assertTasksExecuted(
                         ":$generatePackageTask",
                         ":$subProjectName:$generatePackageTask",
                     )
 
-                    val subProjectGeneratePackageHash = subProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
-                        .readText()
-                        .trim()
-                        .split("\n")[1]
+                    val subProjectGeneratePackageHash =
+                        parseSwiftPMIncrementalFingerprint(subProjectFingerprintFile)
 
-                    val rootProjectGeneratePackageHash = projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
-                        .readText()
-                        .trim()
-                        .split("\n")[1]
+                    val rootProjectGeneratePackageHash =
+                        parseSwiftPMIncrementalFingerprint(rootProjectFingerprintFile)
 
                     assertEquals(
                         subProjectGeneratePackageHash,
@@ -388,21 +387,21 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
                     ":$generatePackageTask",
                     ":$subProjectName:$generatePackageTask",
                 ) {
+                    val subProjectFingerprintFile =
+                        subProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
+                    val rootProjectFingerprintFile =
+                        projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
 
                     assertTasksExecuted(
                         ":$generatePackageTask",
                         ":$subProjectName:$generatePackageTask",
                     )
 
-                    val subProjectGeneratePackageHash = subProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
-                        .readText()
-                        .trim()
-                        .split("\n")[1]
+                    val subProjectGeneratePackageHash =
+                        parseSwiftPMIncrementalFingerprint(subProjectFingerprintFile)
 
-                    val rootProjectGeneratePackageHash = projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
-                        .readText()
-                        .trim()
-                        .split("\n")[1]
+                    val rootProjectGeneratePackageHash =
+                        parseSwiftPMIncrementalFingerprint(rootProjectFingerprintFile)
 
                     assertNotEquals(
                         subProjectGeneratePackageHash,

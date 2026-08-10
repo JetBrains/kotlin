@@ -1,5 +1,10 @@
 // KIND: STANDALONE_LLDB
-
+// IGNORE_NATIVE: cacheMode=STATIC_ONLY_DIST
+// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
+// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
+// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
+// INPUT_DATA_FILE: stdlibRelativePaths.in
+// OUTPUT_DATA_FILE: stdlibRelativePaths.out
 fun main() {
     // Ideally, we should be testing relative paths in user klibs as well.
     // But that turned out to be trickier than expected.

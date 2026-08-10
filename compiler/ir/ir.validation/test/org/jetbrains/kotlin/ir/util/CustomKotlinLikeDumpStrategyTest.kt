@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 /**
@@ -47,7 +46,7 @@ import org.junit.jupiter.api.Test
  */
 class CustomKotlinLikeDumpStrategyTest {
 
-    private val pkg = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), FqName("test"))
+    private val pkg = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), FqName("test"), IrErrorModuleFragment)
 
     private data class TestIr(
         val instanceFactory: IrClass,

@@ -36,7 +36,6 @@ import kotlin.io.path.exists
  */
 class KlibWriter(init: KlibWriterSpec.() -> Unit) {
     private var format: KlibFormat = KlibFormat.Directory
-    private var allowIncrementalOverwriting: Boolean = false
     private val componentWriters = mutableListOf<KlibComponentWriter>()
 
     private var moduleName: String? = null
@@ -52,10 +51,6 @@ class KlibWriter(init: KlibWriterSpec.() -> Unit) {
 
             override fun format(format: KlibFormat) {
                 this@KlibWriter.format = format
-            }
-
-            override fun allowIncrementalOverwriting(allowed: Boolean) {
-                this@KlibWriter.allowIncrementalOverwriting = allowed
             }
 
             override fun include(vararg writers: KlibComponentWriter) {
@@ -94,10 +89,6 @@ class KlibWriter(init: KlibWriterSpec.() -> Unit) {
 
     @OptIn(ExperimentalPathApi::class)
     fun writeTo(destinationPath: Path) {
-        check(!allowIncrementalOverwriting || format != KlibFormat.ZipArchive) {
-            "Writing a KLIB in ZIP format if `allowIncrementalOverwriting` is set to `true` is not supported."
-        }
-
         val allComponentWriters: List<KlibComponentWriter> = buildList {
             this += componentWriters
 
@@ -118,7 +109,7 @@ class KlibWriter(init: KlibWriterSpec.() -> Unit) {
                 //   Path(".").absolute().parent != null
                 destinationPath.absolute().parent.createDirectories()
             }
-            !allowIncrementalOverwriting -> {
+            else -> {
                 destinationPath.deleteRecursively()
             }
         }
@@ -183,7 +174,6 @@ class KlibWriter(init: KlibWriterSpec.() -> Unit) {
 
 interface KlibWriterSpec {
     fun format(format: KlibFormat)
-    fun allowIncrementalOverwriting(allowed: Boolean)
     fun include(vararg writers: KlibComponentWriter)
     fun include(writers: Collection<KlibComponentWriter>)
     fun manifest(init: KlibManifestWriterSpec.() -> Unit)

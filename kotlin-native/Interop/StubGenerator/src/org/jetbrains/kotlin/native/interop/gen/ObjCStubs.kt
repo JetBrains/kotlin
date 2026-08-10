@@ -445,8 +445,11 @@ internal abstract class ObjCContainerStubBuilder(
         // Add all methods declared in the class or protocol:
         var methods = container.declaredMethods(isMeta)
 
-        // Exclude those which are identically declared in super types:
-        methods -= superMethods
+        // Exclude those which are identically declared in super types.
+        // `swiftName` is excluded from the comparison (see isSameDeclarationIgnoringSwiftName): a subclass
+        // that redeclares an inherited method without its own `swift_name` still inherits the base's Swift
+        // name, so such a redeclaration must be dropped rather than re-emitted as a duplicate.
+        methods = methods.filter { declared -> superMethods.none { declared.isSameDeclarationIgnoringSwiftName(it) } }
 
         // Add some special methods from super types:
         methods += superMethods.filter { it.containsInstancetype() || it.isInit }

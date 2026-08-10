@@ -8,10 +8,6 @@ package org.jetbrains.kotlin.test.directives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object DiagnosticsDirectives : SimpleDirectivesContainer() {
-    val WITH_NEW_INFERENCE by directive(
-        description = "Enables rendering different diagnostics for old and new inference"
-    )
-
     val DIAGNOSTICS by stringDirective(
         description = """
             Enables or disables rendering of specific diagnostics. 

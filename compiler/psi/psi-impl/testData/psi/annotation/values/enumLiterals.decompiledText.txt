@@ -16,12 +16,13 @@ EnumLiteral.class:
 
   package test
 
-  public final annotation class EnumLiteral public constructor(e1: test.E, e2: test.E, e3: test.E) : kotlin.Annotation {
-      public final val e1: test.E /* compiled code */
+  public final annotation class EnumLiteral public constructor(
+      public final val e1: test.E,
 
-      public final val e2: test.E /* compiled code */
+      public final val e2: test.E,
 
-      public final val e3: test.E /* compiled code */
+      public final val e3: test.E,
+  ) : kotlin.Annotation {
   }
 
 WithEnumLiteral.class:
@@ -30,5 +31,6 @@ WithEnumLiteral.class:
 
   package test
 
-  @test.EnumLiteral public final class WithEnumLiteral public constructor() {
+  @test.EnumLiteral(e1 = test.E.E1, e2 = test.E.E2, e3 = test.E.E2)
+  public final class WithEnumLiteral public constructor() {
   }

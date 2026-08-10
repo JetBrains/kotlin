@@ -2,8 +2,6 @@
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("FunctionName")
-
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.InvalidUserDataException
@@ -253,7 +251,6 @@ class LanguageSettingsTests {
             "androidRelease" to "compileReleaseKotlinAndroid",
             "androidUnitTest" to "compileDebugUnitTestKotlinAndroid",
             "androidUnitTestDebug" to "compileDebugUnitTestKotlinAndroid",
-            "androidUnitTestRelease" to "compileReleaseUnitTestKotlinAndroid",
             "appleMain" to "compileKotlinMetadata",
             "appleTest" to "compileKotlinMetadata",
             "commonMain" to "compileKotlinMetadata",

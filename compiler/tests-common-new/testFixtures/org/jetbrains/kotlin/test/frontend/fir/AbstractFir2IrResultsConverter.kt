@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -24,13 +22,16 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.*
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isAnyPlatformStdlib
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
+import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.name.Name.special
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -54,7 +55,7 @@ abstract class AbstractFir2IrResultsConverter(
     protected abstract fun createFir2IrExtensions(compilerConfiguration: CompilerConfiguration): Fir2IrExtensions
     protected abstract fun createFir2IrVisibilityConverter(): Fir2IrVisibilityConverter
     protected abstract fun createTypeSystemContextProvider(): (IrBuiltIns) -> IrTypeSystemContext
-    protected abstract fun createSpecialAnnotationsProvider(): IrSpecialAnnotationsProvider?
+    protected abstract fun createSpecialAnnotationsProvider(): ((IrModuleFragment) -> IrSpecialAnnotationsProvider)?
     protected abstract fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor>
 
     protected abstract fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinLibrary>
@@ -94,7 +95,6 @@ abstract class AbstractFir2IrResultsConverter(
         val libraries: List<KotlinLibrary> = resolveLibraries(module, compilerConfiguration)
         val [dependencies: List<ModuleDescriptor>, builtIns: KotlinBuiltIns?] = loadModuleDescriptors(
             libraries,
-            compilerConfiguration.languageVersionSettings,
             testServices
         )
 
@@ -109,7 +109,7 @@ abstract class AbstractFir2IrResultsConverter(
             createFir2IrVisibilityConverter(),
             builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
             createTypeSystemContextProvider(),
-            specialAnnotationsProvider = createSpecialAnnotationsProvider(),
+            createSpecialAnnotationsProvider = createSpecialAnnotationsProvider(),
             extraActualDeclarationExtractorsInitializer = createExtraActualDeclarationExtractorInitializer(),
         ).also {
             (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = dependencies }
@@ -146,7 +146,6 @@ abstract class AbstractFir2IrResultsConverter(
 
     private fun loadModuleDescriptors(
         libraries: List<KotlinLibrary>,
-        languageVersionSettings: LanguageVersionSettings,
         testServices: TestServices
     ): Pair<List<ModuleDescriptor>, KotlinBuiltIns?> {
         val stdlib: KotlinLibrary? = libraries.firstOrNull { it.isAnyPlatformStdlib }
@@ -159,13 +158,12 @@ abstract class AbstractFir2IrResultsConverter(
                 // TODO: check safety of the approach of creating a separate storage manager per library
                 val storageManager = LockBasedStorageManager("ModulesStructure")
 
-                val moduleDescriptor = klibFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-                    library,
-                    languageVersionSettings,
-                    storageManager,
-                    builtIns,
-                    lookupTracker = LookupTracker.DO_NOTHING
-                )
+                val moduleName = special("<${library.uniqueName}>")
+                val moduleOrigin = DeserializedKlibModuleOrigin(library)
+                val moduleDescriptor = if (builtIns != null)
+                    klibFactories.DefaultDescriptorFactory.createDescriptor(moduleName, storageManager, builtIns!!, moduleOrigin)
+                else
+                    klibFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(moduleName, storageManager, moduleOrigin)
                 dependencies += moduleDescriptor
                 moduleDescriptor.setDependencies(dependencies.toList())
 

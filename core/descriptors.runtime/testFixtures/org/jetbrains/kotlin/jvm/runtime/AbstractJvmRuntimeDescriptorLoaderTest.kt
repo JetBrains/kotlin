@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.jvm.runtime
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.ObsoleteTestInfrastructure
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -18,7 +14,6 @@ import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
 import org.jetbrains.kotlin.descriptors.runtime.structure.classId
 import org.jetbrains.kotlin.incremental.components.LookupLocation
-import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
@@ -32,59 +27,71 @@ import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
-import org.jetbrains.kotlin.test.*
-import org.jetbrains.kotlin.test.TestFiles.TestFileFactoryNoModules
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.backend.handlers.JvmBinaryArtifactHandler
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
+import org.jetbrains.kotlin.test.configuration.setupJvmPipelineSteps
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.TestFailureSuppressorBySingleDirective
+import org.jetbrains.kotlin.test.model.TestFile
+import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJvmTest
+import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.isJavaFile
+import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.Configuration
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor
+import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
 import java.net.URLClassLoader
 import java.util.regex.Pattern
 
-abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
-    companion object {
-        private val renderer = DescriptorRenderer.withOptions {
-            withDefinedIn = false
-            excludedAnnotationClasses = setOf(
-                FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)
-            )
-            overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE
-            parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
-            includePropertyConstant = false
-            verbose = true
-            annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
-            renderDefaultAnnotationArguments = true
-            modifiers = DescriptorRendererModifier.ALL
+/**
+ * Verifies that the runtime, reflection-based descriptor loader ([org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData])
+ * produces descriptors matching the ones produced by K1 source analysis (or a golden `*.runtime.txt` file).
+ */
+abstract class AbstractJvmRuntimeDescriptorLoaderTest : AbstractKotlinCompilerJvmTest() {
+    override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
+        setupJvmPipelineSteps(FirParser.LightTree)
+
+        defaultDirectives {
+            +ConfigurationDirectives.WITH_STDLIB
+            +JvmEnvironmentConfigurationDirectives.WITH_REFLECT
+        }
+
+        useSourcePreprocessor(::MakeJavaAnnotationsRuntimeRetained)
+        useFailureSuppressors(::RuntimeDescriptorLoaderTestSuppressor)
+
+        configureJvmArtifactsHandlersStep {
+            useHandlers(::RuntimeDescriptorLoaderHandler)
         }
     }
+}
 
-    protected open val defaultJdkKind: TestJdkKind = TestJdkKind.MOCK_JDK
+private class RuntimeDescriptorLoaderHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
+    override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
+        checkArtifact(info)
 
-    // NOTE: this test does a dirty hack of text substitution to make all annotations defined in source code retain at runtime.
-    // Specifically each @interface in Java sources is extended by @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
-    // Also type related annotations are removed from Java because they are invisible at runtime
-    protected fun runTest(fileName: String) {
-        val file = ForTestCompileRuntime.transformTestDataPath(fileName)
-        val text = FileUtil.loadFile(file, true)
+        // Flush the compiled Kotlin classes to disk. If there are Java classes, they're already compiled there by JavaCompilerFacade.
+        val outputDir = testServices.compiledClassesManager.compileKotlinToDiskAndGetOutputDir(module, info.classFileFactory)
 
-        if (InTextDirectivesUtils.isDirectiveDefined(text, "SKIP_IN_RUNTIME_TEST")) return
-        if (InTextDirectivesUtils.isDirectiveDefined(text, "IGNORE_FIR_METADATA_LOADING_K1")) return
+        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
 
-        val jdkKind =
-            if (InTextDirectivesUtils.isDirectiveDefined(text, "FULL_JDK")) TestJdkKind.FULL_JDK
-            else defaultJdkKind
+        val classLoader = URLClassLoader(arrayOf(outputDir.toURI().toURL()), ForTestCompileRuntime.runtimeAndReflectJarClassLoader())
 
-        compileFile(file, text, jdkKind)
-
-        val classLoader = URLClassLoader(arrayOf(tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeAndReflectJarClassLoader())
-
-        val actual = createReflectedPackageView(classLoader)
+        val actual = createReflectedPackageView(classLoader, outputDir)
 
         val comparatorConfiguration = Configuration(
-            /* checkPrimaryConstructors = */ fileName.endsWith(".kt"),
+            /* checkPrimaryConstructors = */ testDataFile.name.endsWith(".kt"),
             /* checkPropertyAccessors = */ true,
             /* includeMethodsOfKotlinAny = */ false,
             /* renderDeclarationsFromOtherModules = */ true,
@@ -94,69 +101,28 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
             errorTypesForbidden(), renderer
         )
 
-        val differentResultFile = KotlinTestUtils.replaceExtension(file, "runtime.txt")
-        if (differentResultFile.exists()) {
-            RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile(actual, comparatorConfiguration, differentResultFile)
-            return
-        }
-
-        val expected = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
-            tmpdir, testRootDisposable, jdkKind, ConfigurationKind.ALL, true, false, false, false, null
-        ).first
-
-        RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptors(expected, actual, comparatorConfiguration, null)
+        val expectedFile = testDataFile.withExtension("runtime.txt")
+        RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile(actual, comparatorConfiguration, expectedFile)
     }
+
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
     private fun DeclarationDescriptor.isJavaAnnotationConstructor() =
         this is ClassConstructorDescriptor &&
                 containingDeclaration is JavaClassDescriptor &&
                 containingDeclaration.kind == ClassKind.ANNOTATION_CLASS
 
-    @OptIn(ObsoleteTestInfrastructure::class)
-    private fun compileFile(file: File, text: String, jdkKind: TestJdkKind) {
-        val fileName = file.name
-        when {
-            fileName.endsWith(".java") -> {
-                val sources = TestFiles.createTestFiles(
-                    fileName,
-                    text,
-                    object : TestFileFactoryNoModules<File>() {
-                        override fun create(fileName: String, text: String, directives: Directives): File {
-                            val targetFile = File(tmpdir, fileName)
-                            targetFile.writeText(adaptJavaSource(text))
-                            return targetFile
-                        }
-                    }
-                )
-                LoadDescriptorUtil.compileJavaWithAnnotationsJar(sources, tmpdir, emptyList(), null, false)
-            }
-            fileName.endsWith(".kt") -> {
-                val environment = KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                    testRootDisposable, ConfigurationKind.ALL, jdkKind
-                )
-
-                AbstractLoadJavaTest.updateConfigurationWithDirectives(file.readText(), environment.configuration)
-
-                for (root in environment.configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)) {
-                    LOG.info("root: $root")
-                }
-                val ktFile = KtTestUtil.createFile(file.path, text, environment.project)
-                GenerationUtils.compileFilesTo(listOf(ktFile), environment, tmpdir)
-            }
-        }
-    }
-
-    private fun createReflectedPackageView(classLoader: URLClassLoader): SyntheticPackageViewForTest {
+    private fun createReflectedPackageView(classLoader: URLClassLoader, outputDir: File): SyntheticPackageViewForTest {
         val moduleData = RuntimeModuleData.create(classLoader)
         val module = moduleData.module
 
-        val generatedPackageDir = File(tmpdir, LoadDescriptorUtil.TEST_PACKAGE_FQNAME.pathSegments().single().asString())
+        val generatedPackageDir = File(outputDir, LoadDescriptorUtil.TEST_PACKAGE_FQNAME.pathSegments().single().asString())
         val allClassFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.class"), generatedPackageDir)
 
         val packageScopes = arrayListOf<MemberScope>()
         val classes = arrayListOf<ClassDescriptor>()
         for (classFile in allClassFiles) {
-            val className = classFile.toRelativeString(tmpdir).substringBeforeLast(".class").replace('/', '.').replace('\\', '.')
+            val className = classFile.toRelativeString(outputDir).substringBeforeLast(".class").replace('/', '.').replace('\\', '.')
 
             val klass = classLoader.loadClass(className).sure { "Couldn't load class $className" }
             val binaryClass = ReflectKotlinClass.create(klass)
@@ -180,18 +146,6 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
         // Since runtime package view descriptor doesn't support getAllDescriptors(), we construct a synthetic package view here.
         // It has in its scope descriptors for all the classes and top level members generated by the compiler
         return SyntheticPackageViewForTest(module, packageScopes, classes)
-    }
-
-    private fun adaptJavaSource(text: String): String {
-        val typeAnnotations = arrayOf("NotNull", "Nullable", "ReadOnly", "Mutable")
-        val adaptedSource = typeAnnotations.fold(text) { result, annotation -> result.replace("@$annotation", "") }
-        if ("@Retention" !in adaptedSource) {
-            return adaptedSource.replace(
-                "@interface",
-                "@java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) @interface"
-            )
-        }
-        return adaptedSource
     }
 
     private class SyntheticPackageViewForTest(
@@ -258,6 +212,45 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
         }
     }
 
+    companion object {
+        private val renderer = DescriptorRenderer.withOptions {
+            withDefinedIn = false
+            excludedAnnotationClasses = setOf(
+                FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)
+            )
+            overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE
+            parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
+            includePropertyConstant = false
+            verbose = true
+            annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
+            renderDefaultAnnotationArguments = true
+            modifiers = DescriptorRendererModifier.ALL
+        }
+    }
 }
 
-private val LOG = Logger.getInstance(AbstractJvmRuntimeDescriptorLoaderTest::class.java)
+private class RuntimeDescriptorLoaderTestSuppressor(testServices: TestServices) : TestFailureSuppressorBySingleDirective(
+    RuntimeDescriptorLoaderDirectives.SKIP_IN_RUNTIME_TEST,
+    RuntimeDescriptorLoaderDirectives,
+    testServices,
+)
+
+private object RuntimeDescriptorLoaderDirectives : SimpleDirectivesContainer() {
+    val SKIP_IN_RUNTIME_TEST by directive("Skip this test in the runtime reflection descriptor loader test")
+}
+
+private class MakeJavaAnnotationsRuntimeRetained(testServices: TestServices) : SourceFilePreprocessor(testServices) {
+    override fun process(file: TestFile, content: String): String {
+        if (!file.isJavaFile) return content
+
+        val typeAnnotations = arrayOf("NotNull", "Nullable", "ReadOnly", "Mutable")
+        val adaptedSource = typeAnnotations.fold(content) { result, annotation -> result.replace("@$annotation", "") }
+        if ("@Retention" !in adaptedSource) {
+            return adaptedSource.replace(
+                "@interface",
+                "@java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) @interface"
+            )
+        }
+        return adaptedSource
+    }
+}

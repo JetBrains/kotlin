@@ -3,9 +3,6 @@
 // TARGET_BACKEND: NATIVE
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 
-// DISABLE_IR_VISIBILITY_CHECKS: NATIVE
-// ^^^ Because AtomicFU plugin generates an IR property reference node that refers to a private property, KT-85180.
-
 // FILE: foo.kt
 class Foo {
     internal val a: kotlinx.atomicfu.AtomicInt = kotlinx.atomicfu.atomic(0)

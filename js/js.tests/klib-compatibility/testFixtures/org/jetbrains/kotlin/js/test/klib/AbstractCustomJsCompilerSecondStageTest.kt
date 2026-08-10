@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.klib.setupCustomLVForKlibForwardCompatibilityTest
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJsTest
 import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Tag
 import java.io.File
 
 @Tag("custom-second-stage")
-open class AbstractCustomJsCompilerSecondStageTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
+open class AbstractCustomJsCompilerSecondStageTest : AbstractKotlinCompilerJsTest(TargetBackend.JS_IR) {
     override fun createKotlinStandardLibrariesPathProvider(): KotlinStandardLibrariesPathProvider {
         return if (customJsCompilerSettings.defaultLanguageVersion >= LanguageVersion.LATEST_STABLE)
             super.createKotlinStandardLibrariesPathProvider()

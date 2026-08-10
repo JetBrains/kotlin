@@ -164,7 +164,7 @@ class JvmBinaryAnnotationDeserializer(
         val signature = getPropertySignature(propertyProto, nameResolver, typeTable, synthetic = true) ?: return emptyList()
         val classIsInterface = containingClassProto?.let { Flags.CLASS_KIND.get(it.flags) == ProtoBuf.Class.Kind.INTERFACE } ?: false
         val jvmClassFlags = runIf(containingClassProto?.hasExtension(JvmProtoBuf.jvmClassFlags) == true) {
-            containingClassProto?.getExtension(JvmProtoBuf.jvmClassFlags)
+            containingClassProto.getExtension(JvmProtoBuf.jvmClassFlags)
         }
         val allCompatibilityModeIsEnabled = jvmClassFlags?.let { JvmFlags.IS_COMPILED_IN_COMPATIBILITY_MODE.get(it) } ?: true
         return findJvmBinaryClassAndLoadMemberAnnotations(

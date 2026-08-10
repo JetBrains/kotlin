@@ -216,6 +216,7 @@ KaConstructorSymbol:
   getContainingJvmClassName: Anno5
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: Anno5
 
 KaNamedClassSymbol:
@@ -379,6 +380,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: f
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -466,6 +468,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: X
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getX
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -508,8 +511,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: X
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getX
-  javaSetterName: null
   isInline: false
   importableFqName: null
 
@@ -670,6 +671,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: foo
 
 KaTypeParameterSymbol:
@@ -797,4 +799,5 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo2
   importableFqName: foo2

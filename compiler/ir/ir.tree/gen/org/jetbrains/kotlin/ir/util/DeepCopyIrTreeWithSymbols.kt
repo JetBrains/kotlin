@@ -366,6 +366,7 @@ open class DeepCopyIrTreeWithSymbols(
         IrExternalPackageFragmentImpl(
             packageFqName = declaration.packageFqName,
             symbol = symbolRemapper.getDeclaredExternalPackageFragment(declaration.symbol),
+            module = transformedModule ?: declaration.module,
         ).apply {
             declarations.assignFrom(declaration.declarations) { it.transform() }
             processAttributes(declaration)

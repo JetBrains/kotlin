@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 
 @KaImplementationDetail
 abstract class KaBaseTypeInformationProvider<T : KaSession> : KaBaseSessionComponent<T>(), KaInternalsTypeInformationProvider {
@@ -41,41 +41,6 @@ abstract class KaBaseTypeInformationProvider<T : KaSession> : KaBaseSessionCompo
         functionTypeFamily(type) == builtinFunctionTypeFamilies().kSuspendFunction
     }
 
-    override fun isUnitType(type: KaType): Boolean = type.withValidityAssertion { type.isClassType(KaStandardTypeClassIds.UNIT) }
-
-    override fun isIntType(type: KaType): Boolean = type.withValidityAssertion { type.isClassType(KaStandardTypeClassIds.INT) }
-
-    override fun isLongType(type: KaType): Boolean = type.withValidityAssertion { type.isClassType(KaStandardTypeClassIds.LONG) }
-
-    override fun isShortType(type: KaType): Boolean = type.withValidityAssertion { type.isClassType(KaStandardTypeClassIds.SHORT) }
-
-    override fun isByteType(type: KaType): Boolean = type.withValidityAssertion { type.isClassType(KaStandardTypeClassIds.BYTE) }
-
-    override fun isFloatType(type: KaType): Boolean = type.withValidityAssertion { type.isClassType(KaStandardTypeClassIds.FLOAT) }
-
-    override fun isDoubleType(type: KaType): Boolean = type.withValidityAssertion { type.isClassType(KaStandardTypeClassIds.DOUBLE) }
-
-    override fun isCharType(type: KaType): Boolean = type.withValidityAssertion { type.isClassType(KaStandardTypeClassIds.CHAR) }
-
-    override fun isBooleanType(type: KaType): Boolean = type.withValidityAssertion { type.isClassType(KaStandardTypeClassIds.BOOLEAN) }
-
-    override fun isStringType(type: KaType): Boolean = type.withValidityAssertion { type.isClassType(KaStandardTypeClassIds.STRING) }
-
-    override fun isCharSequenceType(type: KaType): Boolean =
-        type.withValidityAssertion { type.isClassType(KaStandardTypeClassIds.CHAR_SEQUENCE) }
-
-    override fun isAnyType(type: KaType): Boolean = type.withValidityAssertion { type.isClassType(KaStandardTypeClassIds.ANY) }
-
-    override fun isNothingType(type: KaType): Boolean = type.withValidityAssertion { type.isClassType(KaStandardTypeClassIds.NOTHING) }
-
-    override fun isUIntType(type: KaType): Boolean = type.withValidityAssertion { type.isClassType(StandardNames.FqNames.uInt) }
-
-    override fun isULongType(type: KaType): Boolean = type.withValidityAssertion { type.isClassType(StandardNames.FqNames.uLong) }
-
-    override fun isUShortType(type: KaType): Boolean = type.withValidityAssertion { type.isClassType(StandardNames.FqNames.uShort) }
-
-    override fun isUByteType(type: KaType): Boolean = type.withValidityAssertion { type.isClassType(StandardNames.FqNames.uByte) }
-
     override fun expandedSymbol(type: KaType): KaClassSymbol? = type.withValidityAssertion {
         when (type) {
             is KaClassType -> when (val symbol = type.symbol) {
@@ -86,40 +51,37 @@ abstract class KaBaseTypeInformationProvider<T : KaSession> : KaBaseSessionCompo
         }
     }
 
-    override fun isPrimitive(type: KaType): Boolean = type.withValidityAssertion {
-        if (type !is KaClassType) return false
-        return type.classId in KaStandardTypeClassIds.PRIMITIVES
-    }
-
     override fun defaultInitializer(type: KaType): String? = type.withValidityAssertion {
         when {
             isMarkedNullable(type) -> "null"
-            isIntType(type) || isLongType(type) || isShortType(type) || isByteType(type) -> "0"
-            isFloatType(type) -> "0.0f"
-            isDoubleType(type) -> "0.0"
-            isCharType(type) -> "'\\u0000'"
-            isBooleanType(type) -> "false"
-            isUnitType(type) -> "Unit"
-            isStringType(type) -> "\"\""
-            isUIntType(type) -> "0.toUInt()"
-            isULongType(type) -> "0.toULong()"
-            isUShortType(type) -> "0.toUShort()"
-            isUByteType(type) -> "0.toUByte()"
-            else -> null
+            else -> when (classId(type)) {
+                KaStandardTypeClassIds.INT,
+                KaStandardTypeClassIds.LONG,
+                KaStandardTypeClassIds.SHORT,
+                KaStandardTypeClassIds.BYTE,
+                    -> "0"
+                KaStandardTypeClassIds.FLOAT -> "0.0f"
+                KaStandardTypeClassIds.DOUBLE -> "0.0"
+                KaStandardTypeClassIds.CHAR -> "'\\u0000'"
+                KaStandardTypeClassIds.BOOLEAN -> "false"
+                KaStandardTypeClassIds.UNIT -> "Unit"
+                KaStandardTypeClassIds.STRING -> "\"\""
+                StandardClassIds.UInt -> "0.toUInt()"
+                StandardClassIds.ULong -> "0.toULong()"
+                StandardClassIds.UShort -> "0.toUShort()"
+                StandardClassIds.UByte -> "0.toUByte()"
+                else -> null
+            }
         }
     }
 
     override fun builtinFunctionTypeFamilies(): KaBuiltinFunctionTypeFamilies = KaBaseBuiltinFunctionTypeFamilies
 
-    /**
-     * Checks whether the given [KaType] is a class type with the given [ClassId].
-     *
-     * This mirrors the (non-migrated, KT-68881) `isClassType(classId)` operation of the legacy
-     * `KaTypeInformationProvider` and is used by the migrated proxy methods above.
-     */
-    private fun KaType.isClassType(classId: ClassId): Boolean = withValidityAssertion {
-        if (this !is KaClassType) return false
-        return this.classId == classId
+    override fun classId(type: KaType): ClassId? = withValidityAssertion {
+        when (type) {
+            is KaClassType -> type.classId
+            else -> null
+        }
     }
 }
 

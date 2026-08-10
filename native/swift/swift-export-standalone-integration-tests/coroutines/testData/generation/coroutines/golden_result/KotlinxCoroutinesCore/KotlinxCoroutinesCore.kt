@@ -1,10 +1,10 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.Flow::class, "_Flow")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.FlowCollector::class, "_FlowCollector")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.MutableSharedFlow::class, "_MutableSharedFlow")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.MutableStateFlow::class, "_MutableStateFlow")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.SharedFlow::class, "_SharedFlow")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.StateFlow::class, "_StateFlow")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.Flow::class, "_ExportedKotlinPackages_kotlinx_coroutines_flow_Flow")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.FlowCollector::class, "_ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.MutableSharedFlow::class, "_ExportedKotlinPackages_kotlinx_coroutines_flow_MutableSharedFlow")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.MutableStateFlow::class, "_ExportedKotlinPackages_kotlinx_coroutines_flow_MutableStateFlow")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.SharedFlow::class, "_ExportedKotlinPackages_kotlinx_coroutines_flow_SharedFlow")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.StateFlow::class, "_ExportedKotlinPackages_kotlinx_coroutines_flow_StateFlow")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
@@ -24,11 +24,26 @@ internal external fun kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArgumen
 public suspend fun kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: kotlinx.coroutines.flow.FlowCollector<kotlin.Any?>, value: kotlin.Any?): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __value = if (value == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(value)
-    return suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+    return suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
         val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
         val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
         val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
         kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __value, _continuation, _exception, _cancellation)
+    }
+}
+
+@ImportedBridge("kotlinx_coroutines_flow_Flow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector____reverse_swift")
+internal external fun kotlinx_coroutines_flow_Flow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector____reverse_swift(self: kotlin.native.internal.NativePtr, collector: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.flow.Flow::class, "collect")
+public suspend fun kotlinx_coroutines_flow_Flow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector____reverse(self: kotlinx.coroutines.flow.Flow<kotlin.Any?>, collector: kotlinx.coroutines.flow.FlowCollector<kotlin.Any?>): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __collector = kotlin.native.internal.ref.createRetainedExternalRCRef(collector)
+    return suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
+        val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+        val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+        val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+        kotlinx_coroutines_flow_Flow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector____reverse_swift(__self, __collector, _continuation, _exception, _cancellation)
     }
 }
 
@@ -39,7 +54,7 @@ internal external fun kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArg
 public suspend fun kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: kotlinx.coroutines.flow.MutableSharedFlow<kotlin.Any?>, value: kotlin.Any?): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __value = if (value == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(value)
-    return suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+    return suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
         val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
         val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
         val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
@@ -111,6 +126,21 @@ public fun kotlinx_coroutines_flow_MutableStateFlow_value_set__TypesOfArguments_
     return run<Unit> { _result }
 }
 
+@ImportedBridge("kotlinx_coroutines_flow_SharedFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector____reverse_swift")
+internal external fun kotlinx_coroutines_flow_SharedFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector____reverse_swift(self: kotlin.native.internal.NativePtr, collector: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.flow.SharedFlow::class, "collect")
+public suspend fun kotlinx_coroutines_flow_SharedFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector____reverse(self: kotlinx.coroutines.flow.SharedFlow<kotlin.Any?>, collector: kotlinx.coroutines.flow.FlowCollector<kotlin.Any?>): Nothing {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __collector = kotlin.native.internal.ref.createRetainedExternalRCRef(collector)
+    return suspendSwiftCoroutine { continuation: Function1<Nothing, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
+        val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+        val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+        val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+        kotlinx_coroutines_flow_SharedFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector____reverse_swift(__self, __collector, _continuation, _exception, _cancellation)
+    }
+}
+
 @ImportedBridge("kotlinx_coroutines_flow_SharedFlow_replayCache_get__reverse_swift")
 internal external fun kotlinx_coroutines_flow_SharedFlow_replayCache_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
@@ -142,8 +172,8 @@ public fun KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__T
 @ExportedBridge("KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___")
 public fun KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
-    val ___1 = if (_1 == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<platform.Foundation.NSError>(_1)
-    val _result = run { (__pointerToBlock as Function1<platform.Foundation.NSError?, Unit>).invoke(___1) }
+    val ___1 = if (_1 == kotlin.native.internal.NativePtr.NULL) null else throwableFromReverseBridge(_1)
+    val _result = run { (__pointerToBlock as Function1<kotlin.Throwable?, Unit>).invoke(___1) }
     return run { _result; true }
 }
 
@@ -152,7 +182,7 @@ public fun kotlinx_coroutines_flow_FlowCollector__TypesOfArguments__U28Swift_Opt
     val __function = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->Boolean>(function);
         suspend { arg0: kotlin.Any? ->
-            suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
+            suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
                 val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
                 val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
                 val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
@@ -180,7 +210,7 @@ public fun kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_O
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -189,6 +219,32 @@ public fun kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_O
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
     swiftCoroutine(__continuation, __exception, __cancellation) {
         __self.emit(__value)
+    }
+}
+
+@ExportedBridge("kotlinx_coroutines_flow_Flow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__")
+public fun kotlinx_coroutines_flow_Flow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self: kotlin.native.internal.NativePtr, collector: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.flow.Flow<kotlin.Any?>
+    val __collector = kotlin.native.internal.ref.dereferenceExternalRCRef(collector) as kotlinx.coroutines.flow.FlowCollector<kotlin.Any?>
+    val __continuation = run {
+        val kotlinFun = convertBlockPtrToKotlinFunction<(Boolean)->Boolean>(continuation);
+        { arg0: Unit ->
+            val _arg0 = run { arg0; true }
+            val _result = kotlinFun(_arg0)
+            run<Unit> { _result }
+        }
+    }
+    val __exception = run {
+        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
+        { arg0: kotlin.Throwable? ->
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
+            run<Unit> { _result }
+        }
+    }
+    val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        __self.collect(__collector)
     }
 }
 
@@ -206,7 +262,7 @@ public fun kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swi
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Any? ->
+        { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = kotlinFun(_arg0)
             run<Unit> { _result }
@@ -263,6 +319,32 @@ public fun kotlinx_coroutines_flow_MutableStateFlow_value_set__TypesOfArguments_
     val __newValue = if (newValue == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as kotlin.Any
     val _result = run { __self.value = __newValue }
     return run { _result; true }
+}
+
+@ExportedBridge("kotlinx_coroutines_flow_SharedFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__")
+public fun kotlinx_coroutines_flow_SharedFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self: kotlin.native.internal.NativePtr, collector: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.flow.SharedFlow<kotlin.Any?>
+    val __collector = kotlin.native.internal.ref.dereferenceExternalRCRef(collector) as kotlinx.coroutines.flow.FlowCollector<kotlin.Any?>
+    val __continuation = run {
+        val kotlinFun = convertBlockPtrToKotlinFunction<(Boolean)->Boolean>(continuation);
+        { arg0: Nothing ->
+            val _arg0 = arg0
+            val _result = kotlinFun(_arg0)
+            run<Unit> { _result }
+        }
+    }
+    val __exception = run {
+        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
+        { arg0: kotlin.Throwable? ->
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
+            run<Unit> { _result }
+        }
+    }
+    val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        __self.collect(__collector)
+    }
 }
 
 @ExportedBridge("kotlinx_coroutines_flow_SharedFlow_replayCache_get")

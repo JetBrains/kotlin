@@ -1,0 +1,34 @@
+0_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final annotation class Negative public constructor(
+      public final val i: kotlin.Int,
+
+      public final val l: kotlin.Long,
+
+      public final val b: kotlin.Byte,
+
+      public final val s: kotlin.Short,
+
+      public final val d: kotlin.Double,
+
+      public final val f: kotlin.Float,
+  ) : kotlin.Annotation {
+  }
+
+1_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Negative(i = -2147483648, l = -9223372036854775808L, b = -128, s = -32768, d = -1.7976931348623157E308, f = -3.4028235E38F)
+  public final class WithMinValues public constructor() {
+  }
+
+2_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Negative(i = -1, l = -1L, b = -1, s = -1, d = -1.0, f = -1.0F)
+  public final class WithNegativeLiterals public constructor() {
+  }

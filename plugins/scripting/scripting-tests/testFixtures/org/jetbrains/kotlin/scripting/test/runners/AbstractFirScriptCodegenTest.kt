@@ -1,0 +1,218 @@
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.scripting.test.runners
+
+import org.jetbrains.kotlin.KtPsiSourceFile
+import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.codegen.GeneratedClassLoader
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
+import org.jetbrains.kotlin.test.backend.handlers.*
+import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.irHandlersStep
+import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
+import org.jetbrains.kotlin.test.configuration.commonBackendHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
+import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
+import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
+import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
+import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJvmTest
+import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
+import java.net.URLClassLoader
+
+open class AbstractFirScriptAndReplCodegenTest(
+    val parser: FirParser,
+    val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>> = ::FirFrontendFacade
+) : AbstractKotlinCompilerJvmTest() {
+
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        configureFirParser(parser)
+
+        globalDefaults {
+            frontend = FrontendKinds.FIR
+            targetPlatform = JvmPlatforms.defaultJvmPlatform
+            dependencyKind = DependencyKind.Source
+        }
+
+        useConfigurators(
+            ::CommonEnvironmentConfigurator,
+            ::JvmEnvironmentConfigurator,
+            ::ScriptingPluginEnvironmentConfigurator
+        )
+
+        facadeStep(frontendFacade)
+        firHandlersStep {
+            useHandlers(
+                ::FirDiagnosticsHandler
+            )
+            commonFirHandlersForCodegenTest()
+        }
+
+        facadeStep(::Fir2IrResultsConverter)
+        irHandlersStep {
+            useHandlers(
+                ::IrTextDumpHandler,
+                ::IrPrettyKotlinDumpHandler,
+            )
+            commonIrHandlersForCodegenTest()
+        }
+        facadeStep(::JvmIrBackendFacade)
+        jvmArtifactsHandlersStep {
+            commonBackendHandlersForCodegenTest()
+            useHandlers(
+                ::BytecodeListingHandler,
+            )
+        }
+
+        enableMetaInfoHandler()
+
+        useFailureSuppressors(
+            ::FirFailingTestSuppressor,
+            ::BlackBoxCodegenSuppressor
+        )
+    }
+}
+
+open class AbstractFirScriptCodegenTest(parser: FirParser = FirParser.LightTree) : AbstractFirScriptAndReplCodegenTest(parser) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            jvmArtifactsHandlersStep {
+                useHandlers(
+                    ::FirJvmScriptRunChecker
+                )
+            }
+        }
+    }
+}
+
+class FirJvmScriptRunChecker(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
+
+    private var scriptProcessed = false
+
+    override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
+        checkArtifact(info)
+        val fileInfos = info.fileInfos.ifEmpty { return }
+        val classLoader = generatedTestClassLoader(testServices, module, info.classFileFactory, addClassPathFromConfiguration = true)
+        try {
+            for (fileInfo in fileInfos) {
+                when (val sourceFile = fileInfo.sourceFile) {
+                    is KtPsiSourceFile -> (sourceFile.psiFile as? KtFile)?.let { ktFile ->
+                        ktFile.script?.fqName?.let { scriptFqName ->
+                            runAndCheckScript(ktFile.text, scriptFqName, classLoader)
+                            scriptProcessed = true
+                        }
+                    }
+                    else -> {
+                        fileInfo.sourceFile.getContentsAsStream().reader(Charsets.UTF_8).use { reader ->
+                            runAndCheckScript(
+                                reader.readText(),
+                                // TODO: implement more robust script FQName extraction (KT-83955)
+                                fileInfo.info.fileClassFqName.let {
+                                    it.parent().child(Name.identifier(it.shortName().asString().removeSuffix("Kt")))
+                                },
+                                classLoader
+                            )
+                            scriptProcessed = true
+                        }
+                    }
+                }
+            }
+        } finally {
+            classLoader.dispose()
+        }
+    }
+
+    private fun runAndCheckScript(
+        scriptText: String,
+        scriptFqName: FqName,
+        classLoader: GeneratedClassLoader,
+    ) {
+        val expected = Regex("// expected: (\\S+): (.*)").findAll(scriptText).map {
+            it.groups[1]!!.value to it.groups[2]!!.value
+        }
+
+        val scriptClass = classLoader.loadClass(scriptFqName.asString())
+        val ctor = scriptClass.constructors.single()
+        val scriptParams = scriptText.readListAfterColon("param")
+        val scriptReceivers = scriptText.readListAfterColon("receiver")
+        val scriptEnvironmentVars = scriptText.readMapAfterColon("envVar")
+        val arrayOfParameters = (scriptParams + scriptReceivers + scriptEnvironmentVars.values).toTypedArray()
+        val scriptInstance = if (ctor.parameters.first().type.isArray) {
+            ctor.newInstance(arrayOfParameters)
+        } else {
+            ctor.newInstance(*arrayOfParameters)
+        }
+        for ([fieldName, expectedValue] in expected) {
+            if (expectedValue == "<nofield>") {
+                try {
+                    scriptClass.getDeclaredField(fieldName)
+                    assertions.fail { "must have no field $fieldName" }
+                } catch (_: NoSuchFieldException) {
+                    continue
+                }
+            }
+
+            val field = scriptClass.getDeclaredField(fieldName)
+            field.isAccessible = true
+            val result = field[scriptInstance]
+            val resultString = result?.toString() ?: "null"
+            assertions.assertEquals(expectedValue, resultString) { "comparing field $fieldName" }
+        }
+    }
+
+    private fun String.readListAfterColon(name: String): List<String> {
+        return Regex("$name: (\\S.*)").find(this)?.let { it.groups[1]?.value?.split(" ") }
+            .orEmpty()
+    }
+
+    private fun String.readMapAfterColon(name: String): Map<String, String> {
+        return Regex("$name: (\\S.*)").find(this)?.let { it.groups[1]?.value?.split(" ") }
+            .orEmpty()
+            .associate { line ->
+                line.substringBefore('=') to line.substringAfter('=')
+            }
+    }
+
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+        if (!scriptProcessed) {
+            assertions.fail { "Can't find script to test" }
+        }
+    }
+}
+
+class ScriptingPluginEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        val pluginClasspath = testServices.standardLibrariesPathProvider.scriptingPluginFilesForTests()
+        val pluginClassLoader = URLClassLoader(pluginClasspath.map { it.toURI().toURL() }.toTypedArray(), this::class.java.classLoader)
+
+        val pluginK2RegistrarClass = pluginClassLoader.loadClass(CLICompiler.SCRIPT_PLUGIN_K2_REGISTRAR_NAME)
+
+        @OptIn(ExperimentalCompilerApi::class)
+        (pluginK2RegistrarClass.getDeclaredConstructor().newInstance() as? CompilerPluginRegistrar)?.also {
+            configuration.add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, it)
+        }
+    }
+}

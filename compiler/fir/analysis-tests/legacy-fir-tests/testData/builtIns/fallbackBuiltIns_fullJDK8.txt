@@ -412,6 +412,10 @@ public abstract interface CharSequence : R|kotlin/Any| {
     public abstract val length: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
+    public open fun chars(): R|java/util/stream/IntStream!|
+
+    public open fun codePoints(): R|java/util/stream/IntStream!|
+
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
@@ -512,6 +516,10 @@ public final enum class DeprecationLevel : R|kotlin/Enum<kotlin/DeprecationLevel
 
     public final override val ordinal: R|kotlin/Int|
         public get(): R|kotlin/Int|
+
+    public final override fun getDeclaringClass(): R|java/lang/Class<kotlin/DeprecationLevel!>!|
+
+    protected/*protected and package*/ final override fun finalize(): R|kotlin/Unit|
 
     private constructor(): R|kotlin/DeprecationLevel|
 
@@ -725,6 +733,10 @@ public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|j
 
     public final val ordinal: R|kotlin/Int|
         public get(): R|kotlin/Int|
+
+    public final fun getDeclaringClass(): R|java/lang/Class<E!>!|
+
+    protected/*protected and package*/ final fun finalize(): R|kotlin/Unit|
 
     public constructor<E : R|kotlin/Enum<E>|>(name: R|kotlin/String| = STUB, ordinal: R|kotlin/Int| = STUB): R|kotlin/Enum<E>|
 
@@ -1464,6 +1476,10 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
         public final override val ordinal: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
+        public final override fun getDeclaringClass(): R|java/lang/Class<kotlin/RequiresOptIn.Level!>!|
+
+        protected/*protected and package*/ final override fun finalize(): R|kotlin/Unit|
+
         private constructor(): R|kotlin/RequiresOptIn.Level|
 
         public final companion object Companion : R|kotlin/Any| {
@@ -1689,6 +1705,10 @@ public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSe
 
     public open fun hashCode(): R|kotlin/Int|
 
+    public open fun chars(): R|java/util/stream/IntStream!|
+
+    public open fun codePoints(): R|java/util/stream/IntStream!|
+
     public constructor(): R|kotlin/String|
 
     public final companion object Companion : R|kotlin/Any| {
@@ -1739,11 +1759,33 @@ public open class Throwable : R|kotlin/Any|, R|java/io/Serializable| {
     public open val cause: R|kotlin/Throwable?|
         public get(): R|kotlin/Throwable?|
 
+    public open fun getLocalizedMessage(): R|kotlin/String!|
+
+    public open fun initCause(p0: R|kotlin/Throwable!|): R|kotlin/Throwable!|
+
+    public open fun toString(): R|kotlin/String|
+
+    public open fun printStackTrace(): R|kotlin/Unit|
+
+    public open fun printStackTrace(p0: R|java/io/PrintStream!|): R|kotlin/Unit|
+
+    public open fun printStackTrace(p0: R|java/io/PrintWriter!|): R|kotlin/Unit|
+
+    public open fun fillInStackTrace(): R|kotlin/Throwable!|
+
+    public open fun getStackTrace(): R|ft<kotlin/Array<java/lang/StackTraceElement!>, kotlin/Array<out java/lang/StackTraceElement!>?>|
+
+    public open fun setStackTrace(p0: R|ft<kotlin/Array<java/lang/StackTraceElement!>, kotlin/Array<out java/lang/StackTraceElement!>?>|): R|kotlin/Unit|
+
+    public final fun addSuppressed(p0: R|kotlin/Throwable!|): R|kotlin/Unit|
+
+    public final fun getSuppressed(): R|ft<kotlin/Array<kotlin/Throwable!>, kotlin/Array<out kotlin/Throwable!>?>|
+
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
 
-    public open fun toString(): R|kotlin/String|
+    protected/*protected and package*/ constructor(p0: R|kotlin/String!|, p1: R|kotlin/Throwable!|, p2: R|kotlin/Boolean|, p3: R|kotlin/Boolean|): R|java/lang/Throwable|
 
     public constructor(message: R|kotlin/String?|, cause: R|kotlin/Throwable?|): R|kotlin/Throwable|
 
@@ -1802,6 +1844,8 @@ public abstract class BooleanIterator : R|kotlin/collections/Iterator<kotlin/Boo
 
     public abstract override operator fun hasNext(): R|kotlin/Boolean|
 
+    public open override fun forEachRemaining(p0: R|@EnhancedNullability java/util/function/Consumer<in @EnhancedNullability kotlin/Boolean>|): R|kotlin/Unit|
+
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
@@ -1819,6 +1863,8 @@ public abstract class ByteIterator : R|kotlin/collections/Iterator<kotlin/Byte>|
 
     public abstract override operator fun hasNext(): R|kotlin/Boolean|
 
+    public open override fun forEachRemaining(p0: R|@EnhancedNullability java/util/function/Consumer<in @EnhancedNullability kotlin/Byte>|): R|kotlin/Unit|
+
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
@@ -1835,6 +1881,8 @@ public abstract class CharIterator : R|kotlin/collections/Iterator<kotlin/Char>|
     public abstract fun nextChar(): R|kotlin/Char|
 
     public abstract override operator fun hasNext(): R|kotlin/Boolean|
+
+    public open override fun forEachRemaining(p0: R|@EnhancedNullability java/util/function/Consumer<in @EnhancedNullability kotlin/Char>|): R|kotlin/Unit|
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
@@ -1858,11 +1906,19 @@ public abstract interface Collection<out E> : R|kotlin/collections/Iterable<E>| 
     public abstract val size: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
+    public open fun spliterator(): R|@EnhancedNullability java/util/Spliterator<E!>|
+
+    public open fun stream(): R|@EnhancedNullability java/util/stream/Stream<@EnhancedNullability E>|
+
+    public open fun parallelStream(): R|@EnhancedNullability java/util/stream/Stream<@EnhancedNullability E>|
+
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
 
     public open fun toString(): R|kotlin/String|
+
+    public open override fun forEach(p0: R|java/util/function/Consumer<in E!>!|): R|kotlin/Unit|
 
 }
 
@@ -1872,6 +1928,8 @@ public abstract class DoubleIterator : R|kotlin/collections/Iterator<kotlin/Doub
     public abstract fun nextDouble(): R|kotlin/Double|
 
     public abstract override operator fun hasNext(): R|kotlin/Boolean|
+
+    public open override fun forEachRemaining(p0: R|@EnhancedNullability java/util/function/Consumer<in @EnhancedNullability kotlin/Double>|): R|kotlin/Unit|
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
@@ -1890,6 +1948,8 @@ public abstract class FloatIterator : R|kotlin/collections/Iterator<kotlin/Float
 
     public abstract override operator fun hasNext(): R|kotlin/Boolean|
 
+    public open override fun forEachRemaining(p0: R|@EnhancedNullability java/util/function/Consumer<in @EnhancedNullability kotlin/Float>|): R|kotlin/Unit|
+
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
@@ -1907,6 +1967,8 @@ public abstract class IntIterator : R|kotlin/collections/Iterator<kotlin/Int>| {
 
     public abstract override operator fun hasNext(): R|kotlin/Boolean|
 
+    public open override fun forEachRemaining(p0: R|@EnhancedNullability java/util/function/Consumer<in @EnhancedNullability kotlin/Int>|): R|kotlin/Unit|
+
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
@@ -1920,6 +1982,10 @@ public abstract class IntIterator : R|kotlin/collections/Iterator<kotlin/Int>| {
 public abstract interface Iterable<out T> : R|kotlin/Any| {
     public abstract operator fun iterator(): R|kotlin/collections/Iterator<T>|
 
+    public open fun forEach(p0: R|java/util/function/Consumer<in T!>!|): R|kotlin/Unit|
+
+    public open fun spliterator(): R|@EnhancedNullability java/util/Spliterator<@EnhancedNullability T>|
+
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
@@ -1932,6 +1998,8 @@ public abstract interface Iterator<out T> : R|kotlin/Any| {
     public abstract operator fun next(): R|T|
 
     public abstract operator fun hasNext(): R|kotlin/Boolean|
+
+    public open fun forEachRemaining(p0: R|@EnhancedNullability java/util/function/Consumer<in @EnhancedNullability T>|): R|kotlin/Unit|
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
@@ -1965,11 +2033,23 @@ public abstract interface List<out E> : R|kotlin/collections/Collection<E>| {
     public abstract val size: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
+    public open fun spliterator(): R|@EnhancedNullability java/util/Spliterator<E!>|
+
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
 
     public open fun toString(): R|kotlin/String|
+
+    public open override fun stream(): R|@EnhancedNullability java/util/stream/Stream<@EnhancedNullability E>|
+
+    public open override fun parallelStream(): R|@EnhancedNullability java/util/stream/Stream<@EnhancedNullability E>|
+
+    public open override fun forEach(p0: R|java/util/function/Consumer<in E!>!|): R|kotlin/Unit|
+
+    public open fun getFirst(): R|E|
+
+    public open fun getLast(): R|E|
 
 }
 
@@ -1992,6 +2072,8 @@ public abstract interface ListIterator<out T> : R|kotlin/collections/Iterator<T>
 
     public open fun toString(): R|kotlin/String|
 
+    public open override fun forEachRemaining(p0: R|@EnhancedNullability java/util/function/Consumer<in @EnhancedNullability T>|): R|kotlin/Unit|
+
 }
 
 public abstract class LongIterator : R|kotlin/collections/Iterator<kotlin/Long>| {
@@ -2000,6 +2082,8 @@ public abstract class LongIterator : R|kotlin/collections/Iterator<kotlin/Long>|
     public abstract fun nextLong(): R|kotlin/Long|
 
     public abstract override operator fun hasNext(): R|kotlin/Boolean|
+
+    public open override fun forEachRemaining(p0: R|@EnhancedNullability java/util/function/Consumer<in @EnhancedNullability kotlin/Long>|): R|kotlin/Unit|
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
@@ -2033,6 +2117,8 @@ public abstract interface Map<K, out V> : R|kotlin/Any| {
 
     public abstract val entries: R|kotlin/collections/Set<kotlin/collections/Map.Entry<K, V>>|
         public get(): R|kotlin/collections/Set<kotlin/collections/Map.Entry<K, V>>|
+
+    public open fun forEach(p0: R|@EnhancedNullability java/util/function/BiConsumer<in @EnhancedNullability K, in @EnhancedNullability V>|): R|kotlin/Unit|
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
@@ -2072,14 +2158,22 @@ public abstract interface MutableCollection<E> : R|kotlin/collections/Collection
 
     public abstract fun clear(): R|kotlin/Unit|
 
+    public abstract override val size: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
     public abstract override fun isEmpty(): R|kotlin/Boolean|
 
     public abstract override operator fun contains(element: R|E|): R|kotlin/Boolean|
 
     public abstract override fun containsAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
 
-    public abstract override val size: R|kotlin/Int|
-        public get(): R|kotlin/Int|
+    public open fun removeIf(p0: R|@EnhancedNullability java/util/function/Predicate<in @EnhancedNullability E>|): R|kotlin/Boolean|
+
+    public open override fun spliterator(): R|@EnhancedNullability java/util/Spliterator<E!>|
+
+    public open override fun stream(): R|@EnhancedNullability java/util/stream/Stream<@EnhancedNullability E>|
+
+    public open override fun parallelStream(): R|@EnhancedNullability java/util/stream/Stream<@EnhancedNullability E>|
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
@@ -2087,10 +2181,16 @@ public abstract interface MutableCollection<E> : R|kotlin/collections/Collection
 
     public open fun toString(): R|kotlin/String|
 
+    public open override fun forEach(p0: R|java/util/function/Consumer<in E!>!|): R|kotlin/Unit|
+
 }
 
 public abstract interface MutableIterable<out T> : R|kotlin/collections/Iterable<T>| {
     public abstract operator fun iterator(): R|kotlin/collections/MutableIterator<T>|
+
+    public open override fun forEach(p0: R|java/util/function/Consumer<in T!>!|): R|kotlin/Unit|
+
+    public open override fun spliterator(): R|@EnhancedNullability java/util/Spliterator<@EnhancedNullability T>|
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
@@ -2103,9 +2203,11 @@ public abstract interface MutableIterable<out T> : R|kotlin/collections/Iterable
 public abstract interface MutableIterator<out T> : R|kotlin/collections/Iterator<T>| {
     public abstract fun remove(): R|kotlin/Unit|
 
+    public abstract override operator fun hasNext(): R|kotlin/Boolean|
+
     public abstract override operator fun next(): R|T|
 
-    public abstract override operator fun hasNext(): R|kotlin/Boolean|
+    public open override fun forEachRemaining(p0: R|@EnhancedNullability java/util/function/Consumer<in @EnhancedNullability T>|): R|kotlin/Unit|
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
@@ -2142,6 +2244,9 @@ public abstract interface MutableList<E> : R|kotlin/collections/List<E>|, R|kotl
 
     public abstract fun subList(fromIndex: R|kotlin/Int|, toIndex: R|kotlin/Int|): R|kotlin/collections/MutableList<E>|
 
+    public abstract override val size: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
     public abstract override fun isEmpty(): R|kotlin/Boolean|
 
     public abstract override operator fun contains(element: R|E|): R|kotlin/Boolean|
@@ -2150,20 +2255,35 @@ public abstract interface MutableList<E> : R|kotlin/collections/List<E>|, R|kotl
 
     public abstract override fun containsAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
 
+    public open fun replaceAll(p0: R|@EnhancedNullability java/util/function/UnaryOperator<@EnhancedNullability E>|): R|kotlin/Unit|
+
+    public open fun sort(p0: R|java/util/Comparator<in E!>!|): R|kotlin/Unit|
+
     public abstract override operator fun get(index: R|kotlin/Int|): R|E|
 
     public abstract override fun indexOf(element: R|E|): R|kotlin/Int|
 
     public abstract override fun lastIndexOf(element: R|E|): R|kotlin/Int|
 
-    public abstract override val size: R|kotlin/Int|
-        public get(): R|kotlin/Int|
+    public open override fun spliterator(): R|@EnhancedNullability java/util/Spliterator<E!>|
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
 
     public open fun toString(): R|kotlin/String|
+
+    public open override fun removeIf(p0: R|@EnhancedNullability java/util/function/Predicate<in @EnhancedNullability E>|): R|kotlin/Boolean|
+
+    public open override fun stream(): R|@EnhancedNullability java/util/stream/Stream<@EnhancedNullability E>|
+
+    public open override fun parallelStream(): R|@EnhancedNullability java/util/stream/Stream<@EnhancedNullability E>|
+
+    public open override fun forEach(p0: R|java/util/function/Consumer<in E!>!|): R|kotlin/Unit|
+
+    public open override fun getFirst(): R|E|
+
+    public open override fun getLast(): R|E|
 
 }
 
@@ -2192,6 +2312,8 @@ public abstract interface MutableListIterator<T> : R|kotlin/collections/ListIter
 
     public open fun toString(): R|kotlin/String|
 
+    public open override fun forEachRemaining(p0: R|@EnhancedNullability java/util/function/Consumer<in @EnhancedNullability T>|): R|kotlin/Unit|
+
 }
 
 public abstract interface MutableMap<K, V> : R|kotlin/collections/Map<K, V>| {
@@ -2214,6 +2336,9 @@ public abstract interface MutableMap<K, V> : R|kotlin/collections/Map<K, V>| {
     public abstract val entries: R|kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<K, V>>|
         public get(): R|kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<K, V>>|
 
+    public abstract override val size: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
     public abstract override fun isEmpty(): R|kotlin/Boolean|
 
     public abstract override fun containsKey(key: R|K|): R|kotlin/Boolean|
@@ -2224,8 +2349,23 @@ public abstract interface MutableMap<K, V> : R|kotlin/collections/Map<K, V>| {
 
     @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/PlatformDependent|() public open override fun getOrDefault(key: R|K|, defaultValue: R|V|): R|V|
 
-    public abstract override val size: R|kotlin/Int|
-        public get(): R|kotlin/Int|
+    public open override fun forEach(p0: R|@EnhancedNullability java/util/function/BiConsumer<in @EnhancedNullability K, in @EnhancedNullability V>|): R|kotlin/Unit|
+
+    public open fun replaceAll(p0: R|@EnhancedNullability java/util/function/BiFunction<in @EnhancedNullability K, in @EnhancedNullability V, out @EnhancedNullability V>|): R|kotlin/Unit|
+
+    public open fun putIfAbsent(p0: R|@EnhancedNullability K|, p1: R|@EnhancedNullability V|): R|@EnhancedNullability V?|
+
+    public open fun replace(p0: R|@EnhancedNullability K|, p1: R|@EnhancedNullability V|, p2: R|@EnhancedNullability V|): R|kotlin/Boolean|
+
+    public open fun replace(p0: R|@EnhancedNullability K|, p1: R|@EnhancedNullability V|): R|@EnhancedNullability V?|
+
+    public open fun computeIfAbsent(p0: R|@EnhancedNullability K|, p1: R|@EnhancedNullability java/util/function/Function<in @EnhancedNullability K, out @EnhancedNullability V>|): R|@EnhancedNullability V|
+
+    public open fun computeIfPresent(p0: R|@EnhancedNullability K|, p1: R|@EnhancedNullability java/util/function/BiFunction<in @EnhancedNullability K, in @EnhancedNullability V & Any, out @EnhancedNullability V?>|): R|@EnhancedNullability V?|
+
+    public open fun compute(p0: R|@EnhancedNullability K|, p1: R|@EnhancedNullability java/util/function/BiFunction<in @EnhancedNullability K, in @EnhancedNullability V?, out @EnhancedNullability V?>|): R|@EnhancedNullability V?|
+
+    public open fun merge(p0: R|@EnhancedNullability K|, p1: R|@EnhancedNullability V & Any|, p2: R|@EnhancedNullability java/util/function/BiFunction<in @EnhancedNullability V & Any, in @EnhancedNullability V & Any, out @EnhancedNullability V?>|): R|@EnhancedNullability V?|
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
@@ -2236,17 +2376,17 @@ public abstract interface MutableMap<K, V> : R|kotlin/collections/Map<K, V>| {
     public abstract interface MutableEntry<K, V> : R|kotlin/collections/Map.Entry<K, V>| {
         @R|kotlin/IgnorableReturnValue|() public abstract fun setValue(newValue: R|V|): R|V|
 
-        public abstract override val key: R|K|
-            public get(): R|K|
-
-        public abstract override val value: R|V|
-            public get(): R|V|
-
         public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
         public open fun hashCode(): R|kotlin/Int|
 
         public open fun toString(): R|kotlin/String|
+
+        public abstract override val key: R|K|
+            public get(): R|K|
+
+        public abstract override val value: R|V|
+            public get(): R|V|
 
     }
 
@@ -2282,20 +2422,30 @@ public abstract interface MutableSet<E> : R|kotlin/collections/Set<E>|, R|kotlin
 
     public abstract fun clear(): R|kotlin/Unit|
 
+    public abstract override val size: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
     public abstract override fun isEmpty(): R|kotlin/Boolean|
 
     public abstract override operator fun contains(element: R|E|): R|kotlin/Boolean|
 
     public abstract override fun containsAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
 
-    public abstract override val size: R|kotlin/Int|
-        public get(): R|kotlin/Int|
+    public open override fun spliterator(): R|@EnhancedNullability java/util/Spliterator<E!>|
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
 
     public open fun toString(): R|kotlin/String|
+
+    public open override fun removeIf(p0: R|@EnhancedNullability java/util/function/Predicate<in @EnhancedNullability E>|): R|kotlin/Boolean|
+
+    public open override fun stream(): R|@EnhancedNullability java/util/stream/Stream<@EnhancedNullability E>|
+
+    public open override fun parallelStream(): R|@EnhancedNullability java/util/stream/Stream<@EnhancedNullability E>|
+
+    public open override fun forEach(p0: R|java/util/function/Consumer<in E!>!|): R|kotlin/Unit|
 
 }
 
@@ -2311,11 +2461,19 @@ public abstract interface Set<out E> : R|kotlin/collections/Collection<E>| {
     public abstract val size: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
+    public open fun spliterator(): R|@EnhancedNullability java/util/Spliterator<E!>|
+
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
 
     public open fun toString(): R|kotlin/String|
+
+    public open override fun stream(): R|@EnhancedNullability java/util/stream/Stream<@EnhancedNullability E>|
+
+    public open override fun parallelStream(): R|@EnhancedNullability java/util/stream/Stream<@EnhancedNullability E>|
+
+    public open override fun forEach(p0: R|java/util/function/Consumer<in E!>!|): R|kotlin/Unit|
 
 }
 
@@ -2325,6 +2483,8 @@ public abstract class ShortIterator : R|kotlin/collections/Iterator<kotlin/Short
     public abstract fun nextShort(): R|kotlin/Short|
 
     public abstract override operator fun hasNext(): R|kotlin/Boolean|
+
+    public open override fun forEachRemaining(p0: R|@EnhancedNullability java/util/function/Consumer<in @EnhancedNullability kotlin/Short>|): R|kotlin/Unit|
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
@@ -2359,6 +2519,10 @@ public open class CharProgression : R|kotlin/collections/Iterable<kotlin/Char>| 
 
     public final val step: R|kotlin/Int|
         public get(): R|kotlin/Int|
+
+    public open override fun forEach(p0: R|java/util/function/Consumer<in kotlin/Char!>!|): R|kotlin/Unit|
+
+    public open override fun spliterator(): R|@EnhancedNullability java/util/Spliterator<@EnhancedNullability kotlin/Char>|
 
     internal constructor(start: R|kotlin/Char|, endInclusive: R|kotlin/Char|, step: R|kotlin/Int|): R|kotlin/ranges/CharProgression|
 
@@ -2397,6 +2561,8 @@ internal final class CharProgressionIterator : R|kotlin/collections/CharIterator
     private final var next: R|kotlin/Int|
         private get(): R|kotlin/Int|
         private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    public open override fun forEachRemaining(p0: R|@EnhancedNullability java/util/function/Consumer<in @EnhancedNullability kotlin/Char>|): R|kotlin/Unit|
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
@@ -2438,6 +2604,10 @@ public final class CharRange : R|kotlin/ranges/CharProgression|, R|kotlin/ranges
 
     public final val step: R|kotlin/Int|
         public get(): R|kotlin/Int|
+
+    public open override fun forEach(p0: R|java/util/function/Consumer<in kotlin/Char!>!|): R|kotlin/Unit|
+
+    public open override fun spliterator(): R|@EnhancedNullability java/util/Spliterator<@EnhancedNullability kotlin/Char>|
 
     public constructor(start: R|kotlin/Char|, endInclusive: R|kotlin/Char|): R|kotlin/ranges/CharRange|
 
@@ -2496,6 +2666,10 @@ public open class IntProgression : R|kotlin/collections/Iterable<kotlin/Int>| {
     public final val step: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
+    public open override fun forEach(p0: R|java/util/function/Consumer<in kotlin/Int!>!|): R|kotlin/Unit|
+
+    public open override fun spliterator(): R|@EnhancedNullability java/util/Spliterator<@EnhancedNullability kotlin/Int>|
+
     internal constructor(start: R|kotlin/Int|, endInclusive: R|kotlin/Int|, step: R|kotlin/Int|): R|kotlin/ranges/IntProgression|
 
     public final companion object Companion : R|kotlin/Any| {
@@ -2533,6 +2707,8 @@ internal final class IntProgressionIterator : R|kotlin/collections/IntIterator| 
     private final var next: R|kotlin/Int|
         private get(): R|kotlin/Int|
         private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    public open override fun forEachRemaining(p0: R|@EnhancedNullability java/util/function/Consumer<in @EnhancedNullability kotlin/Int>|): R|kotlin/Unit|
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
@@ -2575,6 +2751,10 @@ public final class IntRange : R|kotlin/ranges/IntProgression|, R|kotlin/ranges/C
     public final val step: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
+    public open override fun forEach(p0: R|java/util/function/Consumer<in kotlin/Int!>!|): R|kotlin/Unit|
+
+    public open override fun spliterator(): R|@EnhancedNullability java/util/Spliterator<@EnhancedNullability kotlin/Int>|
+
     public constructor(start: R|kotlin/Int|, endInclusive: R|kotlin/Int|): R|kotlin/ranges/IntRange|
 
     public final companion object Companion : R|kotlin/Any| {
@@ -2613,6 +2793,10 @@ public open class LongProgression : R|kotlin/collections/Iterable<kotlin/Long>| 
     public final val step: R|kotlin/Long|
         public get(): R|kotlin/Long|
 
+    public open override fun forEach(p0: R|java/util/function/Consumer<in kotlin/Long!>!|): R|kotlin/Unit|
+
+    public open override fun spliterator(): R|@EnhancedNullability java/util/Spliterator<@EnhancedNullability kotlin/Long>|
+
     internal constructor(start: R|kotlin/Long|, endInclusive: R|kotlin/Long|, step: R|kotlin/Long|): R|kotlin/ranges/LongProgression|
 
     public final companion object Companion : R|kotlin/Any| {
@@ -2650,6 +2834,8 @@ internal final class LongProgressionIterator : R|kotlin/collections/LongIterator
     private final var next: R|kotlin/Long|
         private get(): R|kotlin/Long|
         private set(value: R|kotlin/Long|): R|kotlin/Unit|
+
+    public open override fun forEachRemaining(p0: R|@EnhancedNullability java/util/function/Consumer<in @EnhancedNullability kotlin/Long>|): R|kotlin/Unit|
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
@@ -2691,6 +2877,10 @@ public final class LongRange : R|kotlin/ranges/LongProgression|, R|kotlin/ranges
 
     public final val step: R|kotlin/Long|
         public get(): R|kotlin/Long|
+
+    public open override fun forEach(p0: R|java/util/function/Consumer<in kotlin/Long!>!|): R|kotlin/Unit|
+
+    public open override fun spliterator(): R|@EnhancedNullability java/util/Spliterator<@EnhancedNullability kotlin/Long>|
 
     public constructor(start: R|kotlin/Long|, endInclusive: R|kotlin/Long|): R|kotlin/ranges/LongRange|
 

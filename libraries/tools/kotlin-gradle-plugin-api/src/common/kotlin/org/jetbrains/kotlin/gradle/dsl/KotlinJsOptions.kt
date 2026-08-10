@@ -164,7 +164,7 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
     /**
      * Generate JS files for the specified ECMA version.
      *
-     * Possible values: "es5", "es2015"
+     * Possible values: "es5", "es2015", "es2020"
      *
      * Default value: "es5"
      */

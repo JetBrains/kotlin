@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SHARED_CHECKOUT_DIR
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SHARED_SYNTHETIC_PACKAGE_DIR
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SerializeSwiftPMDependenciesMetadataForLockFiles
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FingerprintSyntheticPackage
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ValidateLocalSwiftPMDependencies
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.junit.jupiter.api.DisplayName
@@ -677,7 +677,6 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ":$sharedProjectName:${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
                         ":$sharedProjectName:$expectedSharedGenerateUmbrellaPackageTaskName",
                         ":$sharedProjectName:$expectedSharedFetchUmbrellaPackageTaskName",
-                        ":$sharedProjectName:${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}",
                         ":$sharedProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}"
                     )
                 }
@@ -785,10 +784,26 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         }
                     }
                 }
+
+                val syntheticPackageFingerprintFile = projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
+
                 build("fetchSyntheticImportProjectPackages", "-P${useExactVersionKey}=true") {
                     assertResolvedVersions(
                         persistedPackageResolvedSyncPath,
                         checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
+                        listOf(
+                            packageRepo to "1.0.1",
+                        )
+                    )
+
+                    val syntheticPackageFingerprint = parseSwiftPMIncrementalFingerprint(syntheticPackageFingerprintFile)
+                    val packageResolved = projectPath.resolve(SHARED_SYNTHETIC_PACKAGE_DIR).resolve(syntheticPackageFingerprint).resolve("Package.resolved")
+                    val checkoutDir = projectPath.resolve(SHARED_CHECKOUT_DIR).resolve(syntheticPackageFingerprint).resolve("checkouts")
+
+
+                    assertResolvedVersions(
+                        packageResolved,
+                        checkoutRepoDir = checkoutDir,
                         listOf(
                             packageRepo to "1.0.1",
                         )
@@ -800,7 +815,6 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ":${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
                         ":${GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(identifier)}",
                         ":${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(identifier)}",
-                        ":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}",
                         ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
                     )
                 }
@@ -809,6 +823,19 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                     assertResolvedVersions(
                         persistedPackageResolvedSyncPath,
                         checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
+                        listOf(
+                            packageRepo to "1.0.1",
+                        )
+                    )
+
+                    val syntheticPackageFingerprint = parseSwiftPMIncrementalFingerprint(syntheticPackageFingerprintFile)
+                    val packageResolved = projectPath.resolve(SHARED_SYNTHETIC_PACKAGE_DIR).resolve(syntheticPackageFingerprint).resolve("Package.resolved")
+                    val checkoutDir = projectPath.resolve(SHARED_CHECKOUT_DIR).resolve(syntheticPackageFingerprint).resolve("checkouts")
+
+
+                    assertResolvedVersions(
+                        packageResolved,
+                        checkoutRepoDir = checkoutDir,
                         listOf(
                             packageRepo to "1.0.1",
                         )
@@ -833,7 +860,6 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ":${GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(identifier)}",
                         ":${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(identifier)}",
                         ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
-                        ":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}",
                     )
                 }
 
@@ -983,9 +1009,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ":right:validateLocalSwiftPMDependencies",
                         ":right:computeLocalPackageDependencyInputFiles",
                         ":right:generateSyntheticLinkageSwiftPMImportProjectForCinteropsAndLdDump",
-                        ":right:syncPersistedPackageResolvedToSynthetic",
                         ":right:fetchSyntheticImportProjectPackages",
-                        ":right:syncSyntheticPackageResolvedToPersisted",
                         ":right:dumpXcodebuildArgsIphonesimulator",
                         ":right:convertSyntheticImportProjectIntoDefFileIphonesimulator",
                         ":right:compileKotlinIosSimulatorArm64",
@@ -1007,7 +1031,6 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ":generateUmbrellaPackageIdentifierBasedResolutionForDefault",
                         ":fetchUmbrellaPackageIdentifierForDefault",
                         ":left:iosSimulatorArm64ProcessResources",
-                        ":left:syncPersistedPackageResolvedToSynthetic",
                         ":left:fetchSyntheticImportProjectPackages",
                         ":left:fingerprintXcodebuildIphonesimulator",
                         ":left:dumpXcodebuildArgsIphonesimulator",

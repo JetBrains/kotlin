@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.psi.stubs
 import com.intellij.psi.stubs.NamedStub
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -202,6 +203,29 @@ interface KotlinModifierListStub : KotlinStubElement<KtDeclarationModifierList> 
 @SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinNameReferenceExpressionStub : KotlinStubElement<KtNameReferenceExpression> {
     val referencedName: String
+}
+
+@KtImplementationDetail
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinOperationReferenceExpressionStub : KotlinStubElement<KtOperationReferenceExpression> {
+    /**
+     * The name of the referenced operation.
+     *
+     * For operator symbols, this is the symbol itself (e.g., `-` for [org.jetbrains.kotlin.lexer.KtTokens.MINUS]).
+     * For infix function calls, this is the function name (e.g., `shl`).
+     *
+     * @see org.jetbrains.kotlin.psi.KtOperationReferenceExpression.getReferencedName
+     */
+    val referencedName: String
+
+    /**
+     * The token type of the referenced operation.
+     *
+     * For infix function calls, this is [org.jetbrains.kotlin.lexer.KtTokens.IDENTIFIER].
+     *
+     * @see org.jetbrains.kotlin.psi.KtOperationReferenceExpression.getReferencedNameElementType
+     */
+    val operationToken: IElementType
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)

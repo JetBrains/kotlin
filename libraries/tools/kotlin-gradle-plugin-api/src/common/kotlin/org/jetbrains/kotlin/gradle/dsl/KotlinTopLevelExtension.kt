@@ -34,16 +34,16 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 interface KotlinTopLevelExtension : KotlinTopLevelExtensionConfig, KotlinSourceSetContainer {
 
     /**
-     * Configures [Java toolchain](https://docs.gradle.org/current/userguide/toolchains.html)
-     * both for Kotlin JVM and Java tasks in the project.
+     * Configures the [Java toolchain](https://docs.gradle.org/current/userguide/toolchains.html)
+     * both for Kotlin/JVM and Java tasks in the project.
      *
      * @param action - action to configure [JavaToolchainSpec]
      */
     fun jvmToolchain(action: Action<JavaToolchainSpec>)
 
     /**
-     * Configures [Java toolchain](https://docs.gradle.org/current/userguide/toolchains.html)
-     * both for Kotlin JVM and Java tasks in the project.
+     * Configures the [Java toolchain](https://docs.gradle.org/current/userguide/toolchains.html)
+     * both for Kotlin/JVM and Java tasks in the project.
      *
      * @param jdkVersion - JDK version as number. For example, 17 for Java 17.
      */
@@ -52,8 +52,8 @@ interface KotlinTopLevelExtension : KotlinTopLevelExtensionConfig, KotlinSourceS
     /**
      * Configures Kotlin daemon JVM arguments for all tasks in this project.
      *
-     * **Note**: In case other projects are using different JVM arguments,
-     * a new instance of Kotlin daemon will be started.
+     * **Note**: If other projects are using different JVM arguments,
+     * a new instance of Kotlin daemon is started.
      */
     @ExperimentalKotlinGradlePluginApi
     @get:JvmSynthetic
@@ -66,17 +66,17 @@ interface KotlinTopLevelExtension : KotlinTopLevelExtensionConfig, KotlinSourceS
      *
      * Be careful with reading the property's value as eager reading will finalize the value and prevent it from being configured.
      *
-     * Note: Currently only has an effect if the `kotlin.compiler.runViaBuildToolsApi` Gradle property is set to `true`.
+     * Note: This value only has an effect if the `kotlin.compiler.runViaBuildToolsApi` Gradle property is set to `true`.
      */
     @ExperimentalKotlinGradlePluginApi
     @ExperimentalBuildToolsApi
     val compilerVersion: Property<String>
 
     /**
-     * Can be used to configure objects that are not yet created, or will be created in
+     * This function can be used to configure objects that are not yet created, or are created by
      * 'afterEvaluate' (for example, typically for Android source sets containing flavors and buildTypes).
      *
-     * Will fail project evaluation if the domain object is not created before 'afterEvaluate' listeners in the buildscript.
+     * Project evaluation will fail if the domain object is not created before 'afterEvaluate' listeners in the buildscript.
      *
      * @param configure Called inline if the value is already present. Called once the domain object is created.
      */
@@ -102,7 +102,7 @@ interface KotlinTopLevelExtension : KotlinTopLevelExtensionConfig, KotlinSourceS
      * }
      * ```
      *
-     * Accessing this property causes ABI validation to be enabled and corresponding tasks to be created.
+     * Accessing this property causes ABI validation to be enabled and the corresponding tasks to be created.
      *
      * Note that this DSL is experimental, and it will likely change in future versions until it is stable.
      *

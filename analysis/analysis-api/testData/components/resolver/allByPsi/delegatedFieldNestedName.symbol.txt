@@ -7,6 +7,7 @@ KtPackageDirective(15,29): 'package second'
 KtNameReferenceExpression(23,29): 'second'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second
@@ -48,6 +49,7 @@ KtUserType(32,38): 'Target'
 KtNameReferenceExpression(32,38): 'Target'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/Target
@@ -68,6 +70,7 @@ KtDotQualifiedExpression(39,60): 'AnnotationTarget.TYPE'
 KtNameReferenceExpression(39,55): 'AnnotationTarget'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/AnnotationTarget
@@ -76,6 +79,7 @@ KtNameReferenceExpression(39,55): 'AnnotationTarget'
 KtNameReferenceExpression(56,60): 'TYPE'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/AnnotationTarget.TYPE
@@ -105,6 +109,7 @@ KtUserType(91,94): 'Int'
 KtNameReferenceExpression(91,94): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -209,6 +214,7 @@ KtUserType(226,230): 'Anno'
 KtNameReferenceExpression(226,230): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/Anno
@@ -232,6 +238,7 @@ KtConstantExpression(231,232): '0'
 KtOperationReferenceExpression(233,234): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -240,6 +247,7 @@ KtOperationReferenceExpression(233,234): '+'
 KtNameReferenceExpression(235,240): 'outer'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val outer: kotlin.Int
@@ -254,6 +262,7 @@ KtUserType(242,291): 'Base<@Anno(1 + outer) Base<@Anno(2 + outer) Int>>'
 KtNameReferenceExpression(242,246): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/Base
@@ -301,6 +310,7 @@ KtUserType(248,252): 'Anno'
 KtNameReferenceExpression(248,252): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/Anno
@@ -324,6 +334,7 @@ KtConstantExpression(253,254): '1'
 KtOperationReferenceExpression(255,256): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -332,6 +343,7 @@ KtOperationReferenceExpression(255,256): '+'
 KtNameReferenceExpression(257,262): 'outer'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val outer: kotlin.Int
@@ -346,6 +358,7 @@ KtUserType(264,290): 'Base<@Anno(2 + outer) Int>'
 KtNameReferenceExpression(264,268): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/Base
@@ -393,6 +406,7 @@ KtUserType(270,274): 'Anno'
 KtNameReferenceExpression(270,274): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/Anno
@@ -416,6 +430,7 @@ KtConstantExpression(275,276): '2'
 KtOperationReferenceExpression(277,278): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -424,6 +439,7 @@ KtOperationReferenceExpression(277,278): '+'
 KtNameReferenceExpression(279,284): 'outer'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val outer: kotlin.Int
@@ -438,6 +454,7 @@ KtUserType(286,289): 'Int'
 KtNameReferenceExpression(286,289): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -446,6 +463,7 @@ KtNameReferenceExpression(286,289): 'Int'
 KtNameReferenceExpression(295,304): 'Companion'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/MyClass.Companion
@@ -493,6 +511,7 @@ KtUserType(311,315): 'Anno'
 KtNameReferenceExpression(311,315): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/Anno
@@ -516,6 +535,7 @@ KtConstantExpression(316,317): '4'
 KtOperationReferenceExpression(318,319): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -524,6 +544,7 @@ KtOperationReferenceExpression(318,319): '+'
 KtNameReferenceExpression(320,325): 'outer'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val outer: kotlin.Int
@@ -538,6 +559,7 @@ KtUserType(327,358): 'Second<@Anno(5 + outer) String>'
 KtNameReferenceExpression(327,333): 'Second'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/Second
@@ -585,6 +607,7 @@ KtUserType(335,339): 'Anno'
 KtNameReferenceExpression(335,339): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/Anno
@@ -608,6 +631,7 @@ KtConstantExpression(340,341): '5'
 KtOperationReferenceExpression(342,343): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -616,6 +640,7 @@ KtOperationReferenceExpression(342,343): '+'
 KtNameReferenceExpression(344,349): 'outer'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val outer: kotlin.Int
@@ -630,6 +655,7 @@ KtUserType(351,357): 'String'
 KtNameReferenceExpression(351,357): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -638,6 +664,7 @@ KtNameReferenceExpression(351,357): 'String'
 KtNameReferenceExpression(362,374): 'NestedObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/MyClass.NestedObject
@@ -697,6 +724,7 @@ KtUserType(401,405): 'Anno'
 KtNameReferenceExpression(401,405): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/Anno
@@ -744,6 +772,7 @@ KtConstantExpression(406,407): '6'
 KtOperationReferenceExpression(408,409): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionError:
     candidateSymbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int,
@@ -776,6 +805,7 @@ KtOperationReferenceExpression(408,409): '+'
 KtNameReferenceExpression(410,415): 'inner'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val inner: kotlin.String
@@ -790,6 +820,7 @@ KtUserType(417,466): 'Base<@Anno(7 + inner) Base<@Anno(8 + inner) Int>>'
 KtNameReferenceExpression(417,421): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/Base
@@ -837,6 +868,7 @@ KtUserType(423,427): 'Anno'
 KtNameReferenceExpression(423,427): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/Anno
@@ -884,6 +916,7 @@ KtConstantExpression(428,429): '7'
 KtOperationReferenceExpression(430,431): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionError:
     candidateSymbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int,
@@ -916,6 +949,7 @@ KtOperationReferenceExpression(430,431): '+'
 KtNameReferenceExpression(432,437): 'inner'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val inner: kotlin.String
@@ -930,6 +964,7 @@ KtUserType(439,465): 'Base<@Anno(8 + inner) Int>'
 KtNameReferenceExpression(439,443): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/Base
@@ -977,6 +1012,7 @@ KtUserType(445,449): 'Anno'
 KtNameReferenceExpression(445,449): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/Anno
@@ -1024,6 +1060,7 @@ KtConstantExpression(450,451): '8'
 KtOperationReferenceExpression(452,453): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionError:
     candidateSymbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int,
@@ -1056,6 +1093,7 @@ KtOperationReferenceExpression(452,453): '+'
 KtNameReferenceExpression(454,459): 'inner'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val inner: kotlin.String
@@ -1070,6 +1108,7 @@ KtUserType(461,464): 'Int'
 KtNameReferenceExpression(461,464): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -1144,6 +1183,7 @@ KtUserType(560,564): 'Anno'
 KtNameReferenceExpression(560,564): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/Anno
@@ -1167,6 +1207,7 @@ KtConstantExpression(565,566): '9'
 KtOperationReferenceExpression(567,568): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -1175,6 +1216,7 @@ KtOperationReferenceExpression(567,568): '+'
 KtNameReferenceExpression(569,574): 'inner'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val inner: kotlin.Int
@@ -1189,6 +1231,7 @@ KtUserType(576,608): 'Second<@Anno(10 + inner) String>'
 KtNameReferenceExpression(576,582): 'Second'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/Second
@@ -1236,6 +1279,7 @@ KtUserType(584,588): 'Anno'
 KtNameReferenceExpression(584,588): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/Anno
@@ -1259,6 +1303,7 @@ KtConstantExpression(589,591): '10'
 KtOperationReferenceExpression(592,593): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -1267,6 +1312,7 @@ KtOperationReferenceExpression(592,593): '+'
 KtNameReferenceExpression(594,599): 'inner'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val inner: kotlin.Int
@@ -1281,6 +1327,7 @@ KtUserType(601,607): 'String'
 KtNameReferenceExpression(601,607): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String

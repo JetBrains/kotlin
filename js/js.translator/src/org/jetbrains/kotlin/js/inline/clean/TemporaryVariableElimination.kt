@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.inline.clean
@@ -96,14 +85,13 @@ import org.jetbrains.kotlin.js.translate.utils.splitToRanges
  * }
  *
  */
-internal class TemporaryVariableElimination(private val function: JsFunction) {
+internal class TemporaryVariableElimination(private val function: JsFunction) : FunctionPostProcessorStep() {
     private val root = function.body
     private val definitions = mutableMapOf<JsName, Int>()
     private val usages = mutableMapOf<JsName, Int>()
     private val definedValues = mutableMapOf<JsName, JsExpression>()
     private val temporary = mutableSetOf<JsName>()
     private val capturedInClosure = mutableSetOf<JsName>()
-    private var hasChanges = false
     private val localVariables = function.collectLocalVariables()
 
     // During `perform` phase we collect all variables we should substitute and all statements we should remove later,
@@ -113,11 +101,10 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
 
     private val namesWithSideEffects = mutableSetOf<JsName>()
 
-    fun apply(): Boolean {
+    override fun apply() {
         analyze()
         perform()
         cleanUp()
-        return hasChanges
     }
 
     private fun analyze() {
@@ -207,6 +194,14 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
             override fun visitDefault(x: JsDefault) = withNewScope { super.visitDefault(x) }
 
             override fun visitCatch(x: JsCatch) = withNewScope { super.visitCatch(x) }
+
+            override fun visitBlock(x: JsBlock) {
+                if (x.isTransparent) {
+                    super.visitBlock(x)
+                } else {
+                    withNewScope { super.visitBlock(x) }
+                }
+            }
 
             override fun visitFunction(x: JsFunction) {
                 for (freeVar in x.collectFreeVariables()) {

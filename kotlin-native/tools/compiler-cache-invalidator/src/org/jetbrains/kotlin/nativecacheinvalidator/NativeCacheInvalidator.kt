@@ -83,9 +83,34 @@ private fun FingerprintedDistribution.validateStaleCache(cache: Cache): Boolean 
 }
 
 context(logger: Logger)
+private fun FingerprintedDistribution.removeEmptyCacheDirectories() {
+    /*
+    A quick hack for per-file caches after removing stale caches.
+
+    The layout of per-file caches is different from that of regular caches.
+    Basically, a per-file cache is a directory which has regular caches inside.
+    So, after removing stale caches, this directory remains existing but empty.
+    Some parts of the compiler treat its existence that as a sign that the cache already exists and skip the building.
+    This is not right, and leads to KT-87996, for example.
+
+    Just remove empty directories within `systemCacheRoot` to make it more consistent and workaround the issue.
+    Not the best solution, but the easiest one. Considering that this code isn't used in production, this is good enough.
+    */
+    systemCacheRoot.walk()
+            .filter { it.list()?.isEmpty() == true } // Only empty directories
+            .toList() // Just in case, don't delete during the walk: convert `Sequence` to `List` to separate the steps.
+            .forEach {
+                logger.info("Removing empty cache directory ${it.toRelativeString(distributionRoot)}")
+                it.delete()
+            }
+}
+
+context(logger: Logger)
 fun Distribution.invalidateStaleCaches() = with(fingerprinted) {
     collectCaches().forEach {
         if (!validateStaleCache(it))
             it.rootDir.deleteRecursively()
     }
+
+    removeEmptyCacheDirectories()
 }

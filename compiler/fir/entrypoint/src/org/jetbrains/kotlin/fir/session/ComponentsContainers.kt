@@ -104,6 +104,7 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirMustUseReturnValueStatusComponent::class, FirMustUseReturnValueStatusComponent.create(languageVersionSettings))
     register(FirInlineCheckerPlatformSpecificComponent::class, FirInlineCheckerPlatformSpecificComponent.NonJvmDefault)
     register(FirExpectActualMappingStorage::class, FirExpectActualMappingStorage(this))
+    register(FirSealedSiblingsCalculator::class, FirSealedSiblingsCalculator(this))
     register(FirInlineConstTrackerComponent::class, FirInlineConstTrackerComponent.Default)
 }
 

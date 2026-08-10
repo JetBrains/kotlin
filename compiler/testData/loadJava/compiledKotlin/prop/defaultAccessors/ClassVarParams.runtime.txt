@@ -1,0 +1,20 @@
+package test
+
+public final class ClassVarParams {
+    /*primary*/ public constructor ClassVarParams(/*0*/ kotlin.String, /*1*/ kotlin.Int, /*2*/ kotlin.Long, /*3*/ java.util.Date, /*4*/ kotlin.Any, /*5*/ java.lang.Object)
+    public final var pr1: kotlin.String
+        public final fun `<get-pr1>`(): kotlin.String
+        public final fun `<set-pr1>`(/*0*/ kotlin.String): kotlin.Unit
+    internal final var pr2: kotlin.Int
+        internal final fun `<get-pr2>`(): kotlin.Int
+        internal final fun `<set-pr2>`(/*0*/ kotlin.Int): kotlin.Unit
+    private final var pr3: kotlin.Long
+        private final fun `<get-pr3>`(): kotlin.Long
+        private final fun `<set-pr3>`(/*0*/ kotlin.Long): kotlin.Unit
+    protected final var pr4: java.util.Date
+        protected final fun `<get-pr4>`(): java.util.Date
+        protected final fun `<set-pr4>`(/*0*/ java.util.Date): kotlin.Unit
+    public final var pr5: kotlin.Any
+        public final fun `<get-pr5>`(): kotlin.Any
+        public final fun `<set-pr5>`(/*0*/ kotlin.Any): kotlin.Unit
+}

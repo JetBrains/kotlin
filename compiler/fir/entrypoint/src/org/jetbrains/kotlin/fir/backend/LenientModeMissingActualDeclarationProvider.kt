@@ -321,60 +321,23 @@ class LenientModeMissingActualDeclarationProvider(
     }
 
     private fun generateDefaultReturnValue(returnType: IrType): IrConstImpl {
-        var kind: IrConstKind
-        var value: Any?
+        val type = returnType.removeAnnotations()
 
-        when (returnType) {
-            builtins.stringType -> {
-                kind = IrConstKind.String
-                value = ""
-            }
-            builtins.booleanType -> {
-                kind = IrConstKind.Boolean
-                value = false
-            }
-            builtins.byteType -> {
-                kind = IrConstKind.Byte
-                value = 0.toByte()
-            }
-            builtins.shortType -> {
-                kind = IrConstKind.Short
-                value = 0.toShort()
-            }
-            builtins.intType -> {
-                kind = IrConstKind.Int
-                value = 0
-            }
-            builtins.longType -> {
-                kind = IrConstKind.Long
-                value = 0L
-            }
-            builtins.charType -> {
-                kind = IrConstKind.Char
-                value = Char.MIN_VALUE
-            }
-            builtins.floatType -> {
-                kind = IrConstKind.Float
-                value = 0.0f
-            }
-            builtins.doubleType -> {
-                kind = IrConstKind.Double
-                value = 0.0
-            }
+        return when (returnType) {
+            builtins.stringType -> IrConstImpl.string(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type, value = "")
+            builtins.booleanType -> IrConstImpl.boolean(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type, value = false)
+            builtins.byteType -> IrConstImpl.byte(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type, value = 0)
+            builtins.shortType -> IrConstImpl.short(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type, value = 0)
+            builtins.intType -> IrConstImpl.int(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type, value = 0)
+            builtins.longType -> IrConstImpl.long(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type, value = 0)
+            builtins.charType -> IrConstImpl.char(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type, value = Char.MIN_VALUE)
+            builtins.floatType -> IrConstImpl.float(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type, value = 0.0f)
+            builtins.doubleType -> IrConstImpl.double(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type, value = 0.0)
             else -> {
                 require(returnType.isNullable()) { "Cannot generate default return value for ${returnType.render()}" }
-                kind = IrConstKind.Null
-                value = null
+                IrConstImpl.constNull(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET, type = type)
             }
         }
-
-        return IrConstImpl(
-            startOffset = UNDEFINED_OFFSET,
-            endOffset = UNDEFINED_OFFSET,
-            type = returnType.removeAnnotations(),
-            kind = kind,
-            value = value
-        )
     }
 
     private fun fillFunction(function: IrFunction, owner: IrFunction, parent: IrDeclarationParent) {

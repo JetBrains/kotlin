@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CloudKit CoreFoundation CoreFoundationBase CoreLoc
 language = Objective-C
 package = platform.CoreData
 modules = CoreData
+apiNotesSwiftName = true
 
 compilerOpts = -framework CoreData
 linkerOpts = -framework CoreData

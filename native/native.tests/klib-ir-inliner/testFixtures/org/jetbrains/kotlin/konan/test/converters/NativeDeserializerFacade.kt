@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.converters
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.IrBuiltInsForLinker
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
@@ -119,7 +118,6 @@ class NativeDeserializerFacade(
         @OptIn(InternalSymbolFinderAPI::class)
         val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings)
 
-        irLinker.init(null)
         ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
         irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
 
@@ -170,7 +168,7 @@ class NativeDeserializerFacade(
 
 object CInteropModuleDeserializerFactoryMock : CInteropModuleDeserializerFactory {
     override fun createIrModuleDeserializer(
-        moduleDescriptor: ModuleDescriptor,
+        moduleFragment: IrModuleFragment,
         klib: KotlinLibrary,
         linker: KonanIrLinker,
     ): IrModuleDeserializer {

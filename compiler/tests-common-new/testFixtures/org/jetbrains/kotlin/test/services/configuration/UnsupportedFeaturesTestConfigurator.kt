@@ -36,6 +36,7 @@ class UnsupportedFeaturesTestConfigurator(testServices: TestServices) : MetaTest
                         // It actually was fine in 1.9 as well, so let's run the whole testsuit for 1.9 as well.
                         languageFeature != LanguageFeature.JsAllowValueClassesInExternals &&
                         languageFeature != LanguageFeature.JsAllowImplementingFunctionInterface &&
+                        !languageFeature.testOnly &&
                         !languageFeature.isSupportedInLV(languageVersion)
             }
     }

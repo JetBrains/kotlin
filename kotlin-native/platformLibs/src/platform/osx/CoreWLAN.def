@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Cor
 language = Objective-C
 package = platform.CoreWLAN
 modules = CoreWLAN
+apiNotesSwiftName = true
 
 compilerOpts = -framework CoreWLAN
 linkerOpts = -framework CoreWLAN

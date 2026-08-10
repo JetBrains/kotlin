@@ -40,12 +40,12 @@ object FirWasmJsEqualityChecker : FirPlatformSpecificEqualityChecker() {
     private val ConeIntersectionType.hasJsAnyOrJsReference: Boolean
         get() = intersectedTypes.any { isJsAnyOrJsReference(it) }
 
-    private fun ConeKotlinType.isJsAny() = classId == JsStandardClassIds.JsAny
+    private fun ConeKotlinType.isJsAny(): Boolean = classId == JsStandardClassIds.JsAny
 
     private inline fun minApplicabilityAmongJsTypesComponents(
         type: ConeKotlinType,
         predicate: (ConeKotlinType) -> Applicability,
-    ) = when {
+    ): Applicability = when {
         type is ConeIntersectionType && type.hasJsAnyOrJsReference -> type.intersectedTypes
             .filter { isJsAnyOrJsReference(it) }.minOfOrNull(predicate)
             ?: Applicability.APPLICABLE

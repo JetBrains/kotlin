@@ -18,6 +18,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=StringTemplatesKt]]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
     FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=buzz]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=f]
@@ -31,3 +32,4 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=StringTemplatesKt]]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]

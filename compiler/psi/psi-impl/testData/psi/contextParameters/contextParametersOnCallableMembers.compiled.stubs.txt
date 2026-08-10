@@ -41,6 +41,12 @@ ContextParametersOnCallableMembers.class:
       CLASS_BODY
         PROPERTY[fqName=ContextParametersOnCallableMembers.property, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=property]
           MODIFIER_LIST[public final]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+              valueArguments: [ ]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=MyAnnotation]
             CONTEXT_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
                 TYPE_REFERENCE
@@ -50,12 +56,6 @@ ContextParametersOnCallableMembers.class:
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=B]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
-              valueArguments: [ ]
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=MyAnnotation]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -71,6 +71,12 @@ ContextParametersOnCallableMembers.class:
             VALUE_PARAMETER_LIST
         PROPERTY[fqName=ContextParametersOnCallableMembers.propertyWithSetter, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=propertyWithSetter]
           MODIFIER_LIST[public final]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+              valueArguments: [ ]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=MyAnnotation]
             CONTEXT_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
                 TYPE_REFERENCE
@@ -80,12 +86,6 @@ ContextParametersOnCallableMembers.class:
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=B]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
-              valueArguments: [ ]
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=MyAnnotation]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -110,6 +110,12 @@ ContextParametersOnCallableMembers.class:
                     REFERENCE_EXPRESSION[referencedName=Int]
         FUN[fqName=ContextParametersOnCallableMembers.function, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=function]
           MODIFIER_LIST[public final]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+              valueArguments: [ ]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=MyAnnotation]
             CONTEXT_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
                 TYPE_REFERENCE
@@ -119,12 +125,6 @@ ContextParametersOnCallableMembers.class:
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=B]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
-              valueArguments: [ ]
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=MyAnnotation]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE

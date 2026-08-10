@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
+import org.jetbrains.kotlin.fir.types.coneTypeOrNull
+import org.jetbrains.kotlin.fir.types.contains
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrInitializer
 import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession
@@ -117,8 +119,15 @@ open class FirDeclarationsResolveTransformer(
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): FirEnumEntry {
         if (implicitTypeOnly) return enumEntry
+
+        dataFlowAnalyzer.enterEnumEntry(enumEntry)
         return context.withEnumEntry(enumEntry) {
-            (enumEntry.transformChildren(this, data) as FirEnumEntry)
+            val result = (enumEntry.transformChildren(this, data) as FirEnumEntry)
+
+            val controlFlowGraph = dataFlowAnalyzer.exitEnumEntry()
+            result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
+
+            result
         }
     }
 
@@ -292,7 +301,7 @@ open class FirDeclarationsResolveTransformer(
             if (session.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
                 !property.isConst &&
                 property.returnTypeRef !is FirImplicitTypeRef &&
-                property.initializer !is FirAnonymousObjectExpression
+                !property.hasAnonymousReturnType(session)
             ) {
                 property.replaceInitializer(null)
             }
@@ -966,9 +975,11 @@ open class FirDeclarationsResolveTransformer(
             action()
         }
 
-        val controlFlowGraph = dataFlowAnalyzer.exitClass()
-        if (controlFlowGraph != null) {
-            result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
+        dataFlowAnalyzer.exitClass()?.let { (memberGraph, staticGraph) ->
+            result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(memberGraph))
+            if (staticGraph != null) {
+                result.replaceStaticControlFlowGraphReference(FirControlFlowGraphReferenceImpl(staticGraph))
+            }
         }
 
         return result
@@ -989,9 +1000,8 @@ open class FirDeclarationsResolveTransformer(
             val result = context.withAnonymousObject(anonymousObject) {
                 transformDeclarationContent(anonymousObject, data) as FirAnonymousObject
             }
-            val graph = dataFlowAnalyzer.exitClass()
-            if (graph != null) {
-                result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(graph))
+            dataFlowAnalyzer.exitClass()?.let { (memberGraph) ->
+                result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(memberGraph))
             }
             result
         }
@@ -1690,4 +1700,10 @@ open class FirDeclarationsResolveTransformer(
 
     private val FirFunction.bodyResolved: Boolean
         get() = body?.hasResolvedType == true
+
+    private fun FirProperty.hasAnonymousReturnType(session: FirSession): Boolean {
+        return returnTypeRef.coneTypeOrNull?.contains { coneType ->
+            coneType.toSymbol(session)?.fir is FirAnonymousObject
+        } == true
+    }
 }

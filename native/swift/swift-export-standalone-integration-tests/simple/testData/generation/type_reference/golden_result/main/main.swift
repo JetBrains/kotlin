@@ -5,7 +5,7 @@ import KotlinRuntimeSupport
 
 public protocol INTERFACE: KotlinRuntime.KotlinBase, main._INTERFACE {
 }
-@objc(_INTERFACE)
+@objc(_main_INTERFACE)
 public protocol _INTERFACE {
 }
 public protocol __INTERFACE: KotlinRuntimeSupport._KotlinBridgeable {
@@ -408,7 +408,7 @@ public func produce_DATA_OBJECT() -> ExportedKotlinPackages.namespace.deeper.DAT
     return ExportedKotlinPackages.namespace.deeper.DATA_OBJECT.__createClassWrapper(externalRCRef: __root___produce_DATA_OBJECT())
 }
 public func produce_INTERFACE() -> any main.INTERFACE {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___produce_INTERFACE()) as! any main.INTERFACE
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___produce_INTERFACE(), conformsTo: main.INTERFACE.Type.self) as! any main.INTERFACE
 }
 public func produce_OPEN_CLASS() -> main.OPEN_CLASS {
     return main.OPEN_CLASS.__createClassWrapper(externalRCRef: __root___produce_OPEN_CLASS())
@@ -482,12 +482,15 @@ public func setExtensionVarOnNullableRef(
 ) -> Swift.Void {
     return { __root___extensionVarOnNullableRef_set__TypesOfArgumentsE__Swift_Optional_main_Class_without_package__Swift_String__(receiver.map { it in it.__externalRCRef() } ?? nil, v); return () }()
 }
+@_documentation(visibility: internal)
 extension main.INTERFACE where Self : main.__INTERFACE {
 }
 extension main.INTERFACE {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.INTERFACE, main.__INTERFACE where Wrapped : main._INTERFACE {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._INTERFACE {
 }
 extension ExportedKotlinPackages.namespace.deeper {

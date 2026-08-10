@@ -69,7 +69,7 @@ internal abstract class FirBaseTowerResolveTask(
     protected val companionBlocksEnabled = LanguageFeature.CompanionBlocks.isEnabled()
     protected val companionExtensionsEnabled = LanguageFeature.CompanionExtensions.isEnabled()
 
-    open fun interceptTowerGroup(towerGroup: TowerGroup) = towerGroup
+    open fun interceptTowerGroup(towerGroup: TowerGroup): TowerGroup = towerGroup
     open fun onSuccessfulLevel(towerGroup: TowerGroup) {}
 
     protected suspend inline fun processLevel(
@@ -140,7 +140,7 @@ internal abstract class FirBaseTowerResolveTask(
     protected fun ReceiverValue.toDispatchReceiverMemberScopeTowerLevel(
         extensionReceiver: ReceiverValue? = null,
         skipSynthetics: Boolean = false,
-    ) = DispatchReceiverMemberScopeTowerLevel(
+    ): DispatchReceiverMemberScopeTowerLevel = DispatchReceiverMemberScopeTowerLevel(
         components, this,
         givenExtensionReceiver = extensionReceiver?.receiverExpression,
         skipSynthetics = skipSynthetics,

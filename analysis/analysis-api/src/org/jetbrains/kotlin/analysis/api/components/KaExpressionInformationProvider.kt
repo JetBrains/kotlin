@@ -318,6 +318,7 @@ public fun KtWhenExpression.computeMissingCases(): List<KaWhenMissingCase> {
         "this.isUsedAsExpression",
         "org.jetbrains.kotlin.analysis.api.expressions.isUsedAsExpression",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -351,6 +352,7 @@ public val KtExpression.isUsedAsExpression: Boolean
         "this.isUsedAsResultOfLambda",
         "org.jetbrains.kotlin.analysis.api.expressions.isUsedAsResultOfLambda",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaExperimentalApi
 @KaContextParameterApi
@@ -416,6 +418,7 @@ public val KtExpression.isUsedAsResultOfLambda: Boolean
         "this.isStableForSmartCasting",
         "org.jetbrains.kotlin.analysis.api.expressions.isStableForSmartCasting",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaExperimentalApi
 @KaContextParameterApi

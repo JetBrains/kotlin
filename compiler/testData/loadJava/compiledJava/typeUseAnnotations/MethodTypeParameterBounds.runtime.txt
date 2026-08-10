@@ -1,0 +1,32 @@
+package test
+
+public/*package*/ abstract class MethodTypeParameterBounds {
+    public/*package*/ constructor MethodTypeParameterBounds()
+    public/*package*/ open fun </*0*/ T : kotlin.Any!> f1(/*0*/ T!): kotlin.Unit
+    public/*package*/ open fun </*0*/ _A : kotlin.Any!> f10(/*0*/ _A!): kotlin.Unit where _A : test.MethodTypeParameterBounds.I2<in kotlin.Int!>!, _A : test.MethodTypeParameterBounds.I3<out kotlin.String!>!
+    public/*package*/ open fun </*0*/ _A : test.MethodTypeParameterBounds.I4<kotlin.Array<(out) kotlin.Int!>!>!> f11(/*0*/ _A!): kotlin.Unit where _A : test.MethodTypeParameterBounds.I2<out kotlin.Array<(out) kotlin.Int!>!>!, _A : test.MethodTypeParameterBounds.I3<out kotlin.Array<(out) kotlin.Int!>!>!
+    public/*package*/ open fun </*0*/ _A : test.MethodTypeParameterBounds.I4<kotlin.IntArray!>!> f12(/*0*/ _A!): kotlin.Unit where _A : test.MethodTypeParameterBounds.I2<out kotlin.IntArray!>!, _A : test.MethodTypeParameterBounds.I3<out kotlin.IntArray!>!
+    public/*package*/ open fun </*0*/ _A : test.MethodTypeParameterBounds.I4<kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) kotlin.Int!>!>!>!>!> f13(/*0*/ _A!): kotlin.Unit where _A : test.MethodTypeParameterBounds.I2<out kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) kotlin.Int!>!>!>!>!>!, _A : test.MethodTypeParameterBounds.I3<out kotlin.Array<(out) kotlin.Array<(out) kotlin.Int!>!>!>!
+    public/*package*/ abstract fun </*0*/ _A : test.MethodTypeParameterBounds.I4<kotlin.Array<(out) kotlin.IntArray!>!>!> f14(/*0*/ _A!): kotlin.Unit where _A : test.MethodTypeParameterBounds.I2<out kotlin.Array<(out) kotlin.Array<(out) kotlin.IntArray!>!>!>!, _A : test.MethodTypeParameterBounds.I3<out kotlin.Array<(out) kotlin.Array<(out) kotlin.IntArray!>!>!>!
+    public/*package*/ open fun </*0*/ _A : kotlin.Any!, /*1*/ B : test.MethodTypeParameterBounds.I3<_A!>!> f15(/*0*/ _A!): kotlin.Unit where B : test.MethodTypeParameterBounds.I2<_A!>!
+    public/*package*/ open fun </*0*/ _A : kotlin.Any!, /*1*/ B : kotlin.Int!> f2(/*0*/ _A!, /*1*/ B!): kotlin.Unit
+    public/*package*/ open fun </*0*/ _A : kotlin.Any!, /*1*/ B : kotlin.Any!> f3(/*0*/ _A!, /*1*/ B!): kotlin.Unit where B : test.MethodTypeParameterBounds.I1!
+    public/*package*/ open fun </*0*/ _A : B!, /*1*/ B : kotlin.Any!> f4(/*0*/ _A!, /*1*/ B!): kotlin.Unit
+    public/*package*/ open fun </*0*/ _A : kotlin.Any!, /*1*/ B : _A!> f5(/*0*/ _A!, /*1*/ B!): kotlin.Unit
+    public/*package*/ open fun </*0*/ _A : test.MethodTypeParameterBounds.I1!> f6(): kotlin.Unit
+    public/*package*/ abstract fun </*0*/ _A : kotlin.Any!, /*1*/ B : _A!> f7(/*0*/ _A!, /*1*/ B!): kotlin.Unit
+    public/*package*/ abstract fun </*0*/ _A : test.MethodTypeParameterBounds.I1!, /*1*/ B : kotlin.Any!, /*2*/ C : kotlin.Any!, /*3*/ D : E!, /*4*/ E : kotlin.Any!, /*5*/ F : kotlin.Any!> f8(/*0*/ _A!, /*1*/ B!, /*2*/ C!, /*3*/ D!, /*4*/ E!, /*5*/ F!): kotlin.Unit
+    public/*package*/ open fun </*0*/ _A : kotlin.Any!> f9(/*0*/ _A!): kotlin.Unit where _A : test.MethodTypeParameterBounds.I2<kotlin.Int!>!, _A : test.MethodTypeParameterBounds.I3<kotlin.String!>!
+
+    public/*package*/ interface I1 {
+    }
+
+    public/*package*/ interface I2</*0*/ T : kotlin.Any!> {
+    }
+
+    public/*package*/ interface I3</*0*/ T : kotlin.Any!> {
+    }
+
+    public/*package*/ interface I4</*0*/ T : kotlin.Any!> {
+    }
+}

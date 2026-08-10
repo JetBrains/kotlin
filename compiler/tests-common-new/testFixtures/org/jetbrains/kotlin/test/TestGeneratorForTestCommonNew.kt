@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.runners.AbstractDirectivesValidatorTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractCompileJavaAgainstKotlinTest
 import org.jetbrains.kotlin.test.runners.codegen.inlineScopes.*
 
 fun main(args: Array<String>) {
@@ -36,6 +37,10 @@ fun main(args: Array<String>) {
         }
 
         testGroup(testsRoot, testDataRoot = "compiler/testData") {
+            testClass<AbstractCompileJavaAgainstKotlinTest> {
+                model("compileJavaAgainstKotlin")
+            }
+
             // ------------- Inline scopes tests duplication -------------
 
             testClass<AbstractFirBytecodeTextTestWithInlineScopes> {

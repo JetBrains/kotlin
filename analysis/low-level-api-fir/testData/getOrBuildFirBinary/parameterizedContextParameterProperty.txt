@@ -1,6 +1,7 @@
 KT element: KtProperty
 KT element text:
-context(context: A) public val <A> myContextOf: A /* compiled code */
+context(context: A)
+public val <A> myContextOf: A /* compiled code */
     public final inline get() { /* compiled code */ }
 FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind

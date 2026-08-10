@@ -17,8 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
-import org.junit.Assume.assumeTrue
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class DefaultParamTransformTests : AbstractIrTransformTest() {
     private fun defaultParams(

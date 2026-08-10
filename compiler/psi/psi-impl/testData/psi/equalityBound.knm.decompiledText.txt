@@ -1,0 +1,34 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public typealias BaseAlias = Base
+
+public interface Base {
+    public abstract operator fun equals(@kotlin.EqualityBound(bound = Base::class) other: kotlin.Any?): kotlin.Boolean
+}
+
+public final class Inherited public constructor() : Base {
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+}
+
+public final class Generic<T> public constructor() {
+    public open operator fun equals(@kotlin.EqualityBound(bound = Generic::class) other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+}
+
+public final class Aliased public constructor() : Base {
+    public open operator fun equals(@kotlin.EqualityBound(bound = Base::class) other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+}
+
+public final data class Data public constructor(value: kotlin.Int) {
+    public final val value: kotlin.Int /* compiled code */
+
+    public final operator fun component1(): kotlin.Int { /* compiled code */ }
+
+    public final fun copy(value: kotlin.Int = COMPILED_CODE): Data { /* compiled code */ }
+
+    public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+
+    public open fun hashCode(): kotlin.Int { /* compiled code */ }
+
+    public open fun toString(): kotlin.String { /* compiled code */ }
+}

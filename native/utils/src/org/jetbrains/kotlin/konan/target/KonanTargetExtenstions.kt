@@ -58,7 +58,6 @@ fun KonanTarget.supports64BitMulOverflow(): Boolean = when (this) {
 // TODO: Add explicit WATCHOS_DEVICE_ARM64 after compiler update.
 fun KonanTarget.supportsIosCrashLog(): Boolean = when (this) {
     KonanTarget.IOS_ARM64 -> true
-    KonanTarget.WATCHOS_ARM32 -> true
     KonanTarget.WATCHOS_ARM64 -> true
     KonanTarget.TVOS_ARM64 -> true
     else -> false

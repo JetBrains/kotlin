@@ -123,12 +123,36 @@ WithSimpleOperations.kt:
                 REFERENCE_EXPRESSION[referencedName=Simple]
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
+              BINARY_EXPRESSION
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+                OPERATION_REFERENCE[operationToken=DIV, referencedName=/]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=6]
             VALUE_ARGUMENT[isSpread=false]
+              BINARY_EXPRESSION
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12L]
+                OPERATION_REFERENCE[operationToken=PERC, referencedName=%]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5L]
             VALUE_ARGUMENT[isSpread=false]
               INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
             VALUE_ARGUMENT[isSpread=false]
+              BINARY_EXPRESSION
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3]
+                OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.0]
             VALUE_ARGUMENT[isSpread=false]
+              BINARY_EXPRESSION
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3F]
+                OPERATION_REFERENCE[operationToken=MUL, referencedName=*]
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=2.0F]
             VALUE_ARGUMENT[isSpread=false]
               CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
             VALUE_ARGUMENT[isSpread=false]
+              BINARY_EXPRESSION
+                BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+                OPERATION_REFERENCE[operationToken=ANDAND, referencedName=&&]
+                BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
             VALUE_ARGUMENT[isSpread=false]
+              BINARY_EXPRESSION
+                BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
+                OPERATION_REFERENCE[operationToken=OROR, referencedName=||]
+                BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]

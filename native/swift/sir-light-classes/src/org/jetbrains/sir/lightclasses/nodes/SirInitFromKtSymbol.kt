@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.sir.providers.utils.isAbstract
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.util.*
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
-import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.*
@@ -48,8 +47,11 @@ internal sealed class SirInitFromKtSymbol(
         return translateParameters() + listOfNotNull(getOuterParameterOfInnerClass())
     }
 
+    private val kdocElements: KDocElements? by lazyWithSessions {
+        KDocElements(this)
+    }
     override val documentation: String? by lazyWithSessions {
-        ktSymbol.documentation()
+        translateDocumentation(kdocElements)
     }
 
     override val isRequired: Boolean = false
@@ -73,6 +75,7 @@ internal sealed class SirInitFromKtSymbol(
                 add(SirAttribute.NonOverride)
             }
             replaceOrAddPropagatedUnavailability { parameters.flatMap { it.type.unavailableTypes } }
+            addDocumentationVisibility(kdocElements)
         }
     }
 

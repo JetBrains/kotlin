@@ -18,7 +18,13 @@ package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
 import androidx.compose.compiler.plugins.kotlin.Classpath
-import org.junit.Test
+import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
+import com.intellij.openapi.util.io.FileUtil
+import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.backend.common.output.OutputFile
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
 
 class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
     @Test
@@ -564,4 +570,225 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
         }
         """
     )
+
+    @Test
+    fun testDeserializeRepeatedComposableTarget() {
+        checkCrossModule(
+            dependencySource = """
+            import androidx.compose.runtime.*
+
+            @Retention(AnnotationRetention.BINARY)
+            @ComposableTargetMarker(description = "A W Composable")
+            @Target(AnnotationTarget.FUNCTION)
+            annotation class WComposable
+
+            @Retention(AnnotationRetention.BINARY)
+            @ComposableTargetMarker(description = "An X Composable")
+            @Target(AnnotationTarget.FUNCTION)
+            annotation class XComposable
+
+            @Composable @WComposable @XComposable fun WX() { }
+
+            @Composable
+            fun CallWX() {
+                WX()
+            }
+        """,
+            expectedText = """
+                import androidx.compose.runtime.*
+
+                @Composable
+                @ComposableTarget("z")
+                fun WXInZ() {
+                    <!COMPOSE_APPLIER_CALL_MISMATCH!>CallWX<!>()
+                }
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun testDeserializePositionalComposableInferredTargetConstraints() {
+        checkCrossModule(
+            dependencySource = """
+            import androidx.compose.runtime.*
+
+            @Retention(AnnotationRetention.BINARY)
+            @ComposableTargetMarker(description = "A W Composable")
+            @Target(
+                AnnotationTarget.FUNCTION,
+                AnnotationTarget.TYPE,
+            )
+            annotation class WComposable
+
+            @Retention(AnnotationRetention.BINARY)
+            @ComposableTargetMarker(description = "An X Composable")
+            @Target(
+                AnnotationTarget.FUNCTION,
+                AnnotationTarget.TYPE,
+            )
+            annotation class XComposable
+
+            @Retention(AnnotationRetention.BINARY)
+            @ComposableTargetMarker(description = "A Y Composable")
+            @Target(
+                AnnotationTarget.FUNCTION,
+                AnnotationTarget.TYPE,
+            )
+            annotation class YComposable
+
+            @Retention(AnnotationRetention.BINARY)
+            @ComposableTargetMarker(description = "A Z Composable")
+            @Target(
+                AnnotationTarget.FUNCTION,
+                AnnotationTarget.TYPE,
+            )
+            annotation class ZComposable
+
+            @Composable @WComposable @XComposable fun WX() { }
+
+            @Composable
+            fun CallWX(content: @Composable @YComposable @ZComposable () -> Unit):
+                    @Composable @WComposable @XComposable (
+                        content: @Composable @YComposable @ZComposable () -> Unit,
+                    ) -> Unit 
+            {
+                WX()
+                return {}
+            }
+        """,
+            expectedText = """
+                import androidx.compose.runtime.*
+
+                @Composable
+                @ZComposable
+                fun WXInZ() {
+                    <!COMPOSE_APPLIER_CALL_MISMATCH!>CallWX<!> {}
+                }
+
+                @Composable
+                fun WXInYZ() {
+                    CallWX { <!COMPOSE_APPLIER_CALL_MISMATCH!>WX<!>() }
+                }
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun testDeserializeIndexedComposableInferredTargetConstraints() {
+        checkCrossModule(
+            dependencySource = """
+            import androidx.compose.runtime.*
+
+            @Retention(AnnotationRetention.BINARY)
+            @ComposableTargetMarker(description = "A W Composable")
+            @Target(
+                AnnotationTarget.FUNCTION,
+                AnnotationTarget.TYPE,
+            )
+            annotation class WComposable
+
+            @Retention(AnnotationRetention.BINARY)
+            @ComposableTargetMarker(description = "An X Composable")
+            @Target(
+                AnnotationTarget.FUNCTION,
+                AnnotationTarget.TYPE,
+            )
+            annotation class XComposable
+
+            @Retention(AnnotationRetention.BINARY)
+            @ComposableTargetMarker(description = "A Y Composable")
+            @Target(
+                AnnotationTarget.FUNCTION,
+                AnnotationTarget.TYPE,
+            )
+            annotation class YComposable
+
+            @Retention(AnnotationRetention.BINARY)
+            @ComposableTargetMarker(description = "A Z Composable")
+            @Target(
+                AnnotationTarget.FUNCTION,
+                AnnotationTarget.TYPE,
+            )
+            annotation class ZComposable
+
+            @Composable @YComposable fun Y() { }
+
+            @Composable
+            fun CallContent(content: @Composable @WComposable @XComposable () -> Unit):
+                    @Composable @ComposableOpenTarget(1) @YComposable @ZComposable (
+                        content: @Composable @ComposableOpenTarget(1) @YComposable @ZComposable () -> Unit,
+                    ) -> Unit 
+            {
+                content()
+                return {}
+            }
+        """,
+            expectedText = """
+                import androidx.compose.runtime.*
+                
+                @Composable
+                @ZComposable
+                fun WXInZ() {
+                    <!COMPOSE_APPLIER_CALL_MISMATCH!>CallContent<!> {}
+                }
+
+                @Composable
+                fun YInWX() {
+                    CallContent { <!COMPOSE_APPLIER_CALL_MISMATCH!>Y<!>() }
+                }
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun testFileScopeTargetConstraints() = check(
+        """
+        @file:ComposableTarget("Y")
+        @file:ComposableTarget("Z")
+
+        import androidx.compose.runtime.Composable
+        import androidx.compose.runtime.ComposableTarget
+
+        @Composable @ComposableTarget("X") fun X() {}
+
+        @Composable
+        fun AssumesYZ() {
+            <!COMPOSE_APPLIER_CALL_MISMATCH!>X<!>()
+        }
+        """
+    )
+
+    /**
+     * Confirms that when the source code in [expectedText] is analyzed, the diagnostics specified
+     * in [expectedText] are found as expected.
+     *
+     * @param dependencySource Source compiled as a different module than [expectedText], that
+     * [expectedText] may depend on. This source will not be analyzed.
+     */
+    private fun checkCrossModule(
+        @Language("kotlin")
+        dependencySource: String,
+        @Language("kotlin")
+        expectedText: String,
+        ignoreParseErrors: Boolean = false,
+    ) {
+        createClassLoader(
+            platformSourceFiles = listOf(SourceFile("extra.kt", dependencySource)),
+        ).allGeneratedFiles.writeToDir(classesDirectory)
+
+        check(
+            expectedText = expectedText,
+            ignoreParseErrors = ignoreParseErrors,
+            additionalPaths = listOf(classesDirectory)
+        )
+    }
+
+    @field:TempDir
+    lateinit var classesDirectory: File
 }
+
+private fun OutputFile.writeToDir(directory: File) =
+    FileUtil.writeToFile(File(directory, relativePath), asByteArray())
+
+private fun Collection<OutputFile>.writeToDir(directory: File) = forEach { it.writeToDir(directory) }
+

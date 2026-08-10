@@ -562,8 +562,7 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
 
     is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.classId.asString(), null, null, session)
     is ConeUnresolvedNameError -> {
-        val receiverClassLikeType = receiverType?.unwrapToSimpleTypeUsingLowerBound() as? ConeClassLikeType
-        FirErrors.UNRESOLVED_REFERENCE.createOn(source, name.asString(), operatorToken, receiverClassLikeType, session)
+        FirErrors.UNRESOLVED_REFERENCE.createOn(source, name.asString(), operatorToken, receiverInfo, session)
     }
     is ConeUnresolvedTypeQualifierError -> {
         when {
@@ -616,7 +615,7 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     is ConeInapplicableWrongReceiver -> when (val diagnostic = primaryDiagnostic) {
         is DynamicReceiverExpectedButWasNonDynamic ->
             FirErrors.DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC.createOn(source, diagnostic.actualType, session)
-        else -> FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER.createOn(source, this.candidateSymbol, session)
+        else -> FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER.createOn(source, this.candidateSymbol, this.operatorToken, session)
     }
     is ConeNoCompanionObject -> FirErrors.NO_COMPANION_OBJECT.createOn(source, this.candidateSymbol as FirClassLikeSymbol<*>, session)
 

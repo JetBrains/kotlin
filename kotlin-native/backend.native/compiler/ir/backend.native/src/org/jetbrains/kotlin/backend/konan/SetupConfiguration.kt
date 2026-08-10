@@ -156,6 +156,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     }
 
     when {
+        @Suppress("DEPRECATION")
         arguments.generateWorkerTestRunner -> put(GENERATE_TEST_RUNNER, TestRunnerKind.WORKER)
         arguments.generateTestRunner -> put(GENERATE_TEST_RUNNER, TestRunnerKind.MAIN_THREAD)
         arguments.generateNoExitTestRunner -> put(GENERATE_TEST_RUNNER, TestRunnerKind.MAIN_THREAD_NO_EXIT)
@@ -214,21 +215,8 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     parseShortModuleName(arguments, this@setupFromArguments, outputKind)?.let {
         konanShortModuleName = it
     }
-    put(FAKE_OVERRIDE_VALIDATOR, arguments.fakeOverrideValidator)
     putIfNotNull(PRE_LINK_CACHES, parsePreLinkCachesValue(this@setupFromArguments, arguments.preLinkCaches))
     putIfNotNull(OVERRIDE_KONAN_PROPERTIES, parseOverrideKonanProperties(arguments, this@setupFromArguments))
-    when (arguments.destroyRuntimeMode) {
-        null -> {}
-        "legacy" -> {
-            report(KONAN_ARGUMENT_ERROR, "New MM is incompatible with 'legacy' destroy runtime mode.")
-        }
-        "on-shutdown" -> {
-            report(KONAN_ARGUMENT_STRONG_WARNING, "-Xdestroy-runtime-mode switch is deprecated and will be removed in a future release.")
-        }
-        else -> {
-            report(KONAN_ARGUMENT_ERROR, "Unsupported destroy runtime mode ${arguments.destroyRuntimeMode}")
-        }
-    }
 
     val gcFromArgument = when (arguments.gc) {
         null -> null
@@ -306,10 +294,9 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         }
     })
     putIfNotNull(RUNTIME_LOGS, arguments.runtimeLogs)
-    putIfNotNull(BUNDLE_ID, parseBundleId(arguments, outputKind, this@setupFromArguments))
     arguments.testDumpOutputPath?.let { put(TEST_DUMP_OUTPUT_PATH, it) }
 
-    setupPartialLinkageConfig(arguments, KONAN_ARGUMENT_STRONG_WARNING, KONAN_ARGUMENT_ERROR)
+    setupPartialLinkageConfig(arguments, KONAN_ARGUMENT_ERROR)
 
     put(OMIT_FRAMEWORK_BINARY, arguments.omitFrameworkBinary)
     putIfNotNull(COMPILE_FROM_BITCODE, parseCompileFromBitcode(arguments, this@setupFromArguments, outputKind))
@@ -324,6 +311,14 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 
     putIfNotNull(LLVM_MODULE_PASSES, arguments.llvmModulePasses)
     putIfNotNull(LLVM_LTO_PASSES, arguments.llvmLTOPasses)
+
+    get(BinaryOptions.globalDataLazyInit)?.let {
+        if (!it) {
+            report(KONAN_ARGUMENT_ERROR, "Eager Global Data initialization is no longer supported")
+        } else {
+            report(KONAN_ARGUMENT_STRONG_WARNING, "Binary option globalDataLazyInit is deprecated and will be removed in a future release")
+        }
+    }
 }
 
 private fun String.absoluteNormalizedFile() = java.io.File(this).absoluteFile.normalize()
@@ -520,21 +515,6 @@ private fun parseKeyValuePairs(
         null
     }
 }?.toMap()
-
-private fun parseBundleId(
-        arguments: K2NativeCompilerArguments,
-        outputKind: CompilerOutputKind,
-        configuration: CompilerConfiguration
-): String? {
-    val argumentValue = arguments.bundleId
-    return if (argumentValue != null && outputKind != CompilerOutputKind.FRAMEWORK) {
-        configuration.report(KONAN_ARGUMENT_STRONG_WARNING, "Setting a bundle ID is only supported when producing a framework " +
-                "but the compiler is producing ${outputKind.name.lowercase()}")
-        null
-    } else {
-        argumentValue
-    }
-}
 
 private fun parseSerializedDependencies(
         arguments: K2NativeCompilerArguments,

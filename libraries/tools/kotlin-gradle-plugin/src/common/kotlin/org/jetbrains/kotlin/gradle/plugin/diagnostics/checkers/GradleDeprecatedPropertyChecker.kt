@@ -10,9 +10,13 @@ import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_DEPRECATED_TEST_PROPERTY
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JVM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
@@ -115,6 +119,11 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
                 Kotlin Gradle plugin has run JVM compilations using the Build Tools API by default since Kotlin 2.3.20. The legacy mode is deprecated and will be removed in Kotlin 2.5.0. Please create an issue if something is not working correctly when the Build Tools API is active: https://kotl.in/issue
             """.trimIndent()
         ), // since 2.4.0
+        DeprecatedProperty(
+            propertyName = "kotlin.pluginLoadedInMultipleProjects.ignore",
+            details = "This property should not be used in normal circumstances. If your build doesn't work without it, please consider " +
+                    "filing an issue and providing details: https://kotl.in/issue.",
+        ), // since 2.5.0
     )
 
     private val errorDeprecatedProperties: List<DeprecatedProperty> = listOf(
@@ -126,6 +135,14 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
             KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION,
             "See https://kotl.in/KT-75161 for details.",
         ),
+        DeprecatedProperty(
+            propertyName = KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION,
+            details = "This property has no effect. Unsafe incremental compilation optimizations are now enabled per target: use " +
+                    "$KOTLIN_JVM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION, " +
+                    "$KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION or " +
+                    "$KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION instead. " +
+                    "See https://kotl.in/KT-87522 for details.",
+        ), // since 2.5.0
     )
 
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {

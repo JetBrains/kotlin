@@ -658,6 +658,8 @@ class IrValidatorTest {
         val file = createIrFile()
         val klass = IrFactoryImpl.buildClass {
             name = Name.identifier("MyClass")
+        }.apply {
+            superTypes = listOf(TestIrBuiltins.anyType)
         }
         val publicField = IrFactoryImpl.buildField {
             name = Name.identifier("publicField")
@@ -696,7 +698,7 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: Kotlin fields are expected to always be private
                     FIELD name:publicField type:kotlin.Any visibility:public
-                      inside CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]
+                      inside CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[kotlin.Any]
                         inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
@@ -707,7 +709,7 @@ class IrValidatorTest {
                     [IR VALIDATION] IrValidatorTest: Kotlin fields are expected to always be private
                     FIELD name:lateinitField type:kotlin.Any visibility:public
                       inside PROPERTY name:lateinitProperty visibility:public modality:FINAL [lateinit,val]
-                        inside CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]
+                        inside CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[kotlin.Any]
                           inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
@@ -844,6 +846,7 @@ class IrValidatorTest {
         val memberField = buildClass {
             name = Name.identifier("MyClass")
         }.let { clazz ->
+            clazz.superTypes = listOf(TestIrBuiltins.anyType)
             file.addChild(clazz)
             clazz.addField("memberField").also { it.visibility = DescriptorVisibilities.PRIVATE}
         }
@@ -906,6 +909,8 @@ class IrValidatorTest {
         val file = createIrFile()
         val klass = IrFactoryImpl.buildClass {
             name = Name.identifier("MyClass")
+        }.apply {
+            superTypes = listOf(TestIrBuiltins.anyType)
         }
         file.addChild(klass)
         val tp = klass.addTypeParameter {
@@ -947,6 +952,8 @@ class IrValidatorTest {
         val file = createIrFile()
         val outerClass = IrFactoryImpl.buildClass {
             name = Name.identifier("Outer")
+        }.apply {
+            superTypes = listOf(TestIrBuiltins.anyType)
         }
         val outerTP = outerClass.addTypeParameter {
             name = Name.identifier("T")
@@ -964,10 +971,14 @@ class IrValidatorTest {
         val innerClass = IrFactoryImpl.buildClass {
             isInner = true
             name = Name.identifier("Inner")
+        }.apply {
+            superTypes = listOf(TestIrBuiltins.anyType)
         }
         outerClass.addChild(innerClass)
         val nestedClass = IrFactoryImpl.buildClass {
             name = Name.identifier("Nested")
+        }.apply {
+            superTypes = listOf(TestIrBuiltins.anyType)
         }
         outerClass.addChild(nestedClass)
 
@@ -1009,8 +1020,8 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: The following element references a type parameter 'TYPE_PARAMETER name:T index:0 variance: superTypes:[] reified:false' that is not available in the current scope.
                     FUN name:nestedClassMethod visibility:public modality:FINAL <> () returnType:org.sample.Outer<T of org.sample.Outer> [companion]
-                      inside CLASS CLASS name:Nested modality:FINAL visibility:public superTypes:[]
-                        inside CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[]
+                      inside CLASS CLASS name:Nested modality:FINAL visibility:public superTypes:[kotlin.Any]
+                        inside CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]
                           inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
@@ -1023,8 +1034,8 @@ class IrValidatorTest {
                       inside RETURN type=kotlin.Nothing from='public final fun nestedClassMethod (): org.sample.Outer<T of org.sample.Outer> [companion] declared in org.sample.Outer.Nested'
                         inside BLOCK_BODY
                           inside FUN name:nestedClassMethod visibility:public modality:FINAL <> () returnType:org.sample.Outer<T of org.sample.Outer> [companion]
-                            inside CLASS CLASS name:Nested modality:FINAL visibility:public superTypes:[]
-                              inside CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[]
+                            inside CLASS CLASS name:Nested modality:FINAL visibility:public superTypes:[kotlin.Any]
+                              inside CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]
                                 inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 2, 3, null),
@@ -1037,8 +1048,8 @@ class IrValidatorTest {
                       inside RETURN type=kotlin.Nothing from='public final fun nestedClassMethod (): org.sample.Outer<T of org.sample.Outer> [companion] declared in org.sample.Outer.Nested'
                         inside BLOCK_BODY
                           inside FUN name:nestedClassMethod visibility:public modality:FINAL <> () returnType:org.sample.Outer<T of org.sample.Outer> [companion]
-                            inside CLASS CLASS name:Nested modality:FINAL visibility:public superTypes:[]
-                              inside CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[]
+                            inside CLASS CLASS name:Nested modality:FINAL visibility:public superTypes:[kotlin.Any]
+                              inside CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]
                                 inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 2, 3, null),
@@ -1832,6 +1843,8 @@ class IrValidatorTest {
         val file = createIrFile("test.kt")
         val klass = IrFactoryImpl.buildClass {
             name = Name.identifier("MyClass")
+        }.apply {
+            superTypes = listOf(TestIrBuiltins.anyType)
         }
         val subclass = IrFactoryImpl.buildClass {
             name = Name.identifier("MySubclass")
@@ -2060,6 +2073,8 @@ class IrValidatorTest {
         val myObject = IrFactoryImpl.buildClass {
             name = Name.identifier("MyObject")
             kind = ClassKind.OBJECT
+        }.apply {
+            superTypes = listOf(TestIrBuiltins.anyType)
         }
 
         val incorrectGetObjectValue = IrGetObjectValueImpl(
@@ -2088,7 +2103,7 @@ class IrValidatorTest {
                     WARNING,
                     """
                     [IR VALIDATION] IrValidatorTest: unexpected type: expected org.sample.MyObject, got kotlin.Int
-                    GET_OBJECT 'CLASS OBJECT name:MyObject modality:FINAL visibility:public superTypes:[]' type=kotlin.Int
+                    GET_OBJECT 'CLASS OBJECT name:MyObject modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Int
                       inside BLOCK_BODY
                         inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
                           inside FILE fqName:org.sample fileName:test.kt
@@ -2318,6 +2333,8 @@ class IrValidatorTest {
         val myClass = IrFactoryImpl.buildClass {
             name = Name.identifier("MyClass")
             kind = ClassKind.CLASS
+        }.apply {
+            superTypes = listOf(TestIrBuiltins.anyType)
         }
         val constructor = IrFactoryImpl.buildConstructor {
             isPrimary = true
@@ -2379,6 +2396,8 @@ class IrValidatorTest {
         val myClass = IrFactoryImpl.buildClass {
             name = Name.identifier("MyClass")
             kind = ClassKind.CLASS
+        }.apply {
+            superTypes = listOf(TestIrBuiltins.anyType)
         }
         val function = IrFactoryImpl.buildFun {
             name = Name.identifier("foo")
@@ -2415,7 +2434,7 @@ class IrValidatorTest {
                     WARNING,
                     """
                     [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.Unit, got kotlin.Int
-                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]' type=kotlin.Int
+                    INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Int
                       inside BLOCK_BODY
                         inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
                           inside FILE fqName:org.sample fileName:test.kt
@@ -2534,8 +2553,10 @@ class IrValidatorTest {
         val file = createIrFile("test.kt")
         val klass = IrFactoryImpl.buildClass {
             name = Name.identifier("MyClass")
+        }.apply {
+            superTypes = listOf(TestIrBuiltins.anyType)
+            createThisReceiverParameter()
         }
-        klass.createThisReceiverParameter()
         file.addChild(klass)
         val ctorWithDispatchParameter = klass.addConstructor()
         ctorWithDispatchParameter.addValueParameter {
@@ -2560,7 +2581,7 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: Constructors of non-inner classes can't have dispatch receiver parameters
                     CONSTRUCTOR visibility:public <> (<this>:org.sample.MyClass) returnType:org.sample.MyClass
-                      inside CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]
+                      inside CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[kotlin.Any]
                         inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
@@ -2570,7 +2591,7 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: Constructors can't have extension receiver parameters
                     CONSTRUCTOR visibility:public <> (<this>:org.sample.MyClass) returnType:org.sample.MyClass
-                      inside CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]
+                      inside CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[kotlin.Any]
                         inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
@@ -3249,6 +3270,32 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create(null, 0, 0, null),
                 ),
+            ),
+        )
+    }
+
+    @Test
+    fun `class without superTypes`() {
+        val file = createIrFile("test.kt")
+
+        val klass = IrFactoryImpl.buildClass {
+            name = Name.identifier("MyClass")
+        }
+
+        file.addChild(klass)
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: IrClass must have at least one supertype
+                    CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]
+                      inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                )
             ),
         )
     }

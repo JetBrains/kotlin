@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProject
 import kotlin.test.Test
 
-@Suppress("FunctionName")
 class AndroidPublicationNotConfiguredTest {
     private fun testProject(block: ProjectInternal.() -> Unit): ProjectInternal {
         val project = buildProject()

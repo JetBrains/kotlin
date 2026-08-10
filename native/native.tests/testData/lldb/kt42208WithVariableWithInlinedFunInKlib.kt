@@ -1,6 +1,8 @@
 // KIND: STANDALONE_LLDB
 // FREE_COMPILER_ARGS: -Xklib-ir-inliner=full
-
+// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
+// INPUT_DATA_FILE: kt42208WithVariableWithInlinedFunInKlib.in
+// OUTPUT_DATA_FILE: kt42208WithVariableWithInlinedFunInKlib.out
 
 
 

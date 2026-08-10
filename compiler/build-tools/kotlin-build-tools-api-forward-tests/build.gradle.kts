@@ -1,7 +1,4 @@
 import org.gradle.kotlin.dsl.invoke
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 plugins {
@@ -11,7 +8,7 @@ plugins {
     `jvm-test-suite`
     id("test-symlink-transformation")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 val noArgCompilerPlugin = configurations.dependencyScope("noArgCompilerPlugin")
@@ -77,8 +74,8 @@ val scriptingCompilerPluginResolvable = configurations.resolvable("scriptingComp
     extendsFrom(scriptingCompilerPlugin.get())
 }
 
-val unpackedResources by configurations.dependencyScope("unpackedResources")
-val unpackedResourcesResolvable by configurations.resolvable("unpackedResourcesResolvable") {
+val unpackedResources = configurations.dependencyScope("unpackedResources")
+val unpackedResourcesResolvable = configurations.resolvable("unpackedResourcesResolvable") {
     // Wire the dependency declarations
     extendsFrom(unpackedResources)
     // These attributes must be compatible with the producer
@@ -312,7 +309,6 @@ testing {
                 implementation(project())
                 implementation(project(":compiler:build-tools:kotlin-build-tools-api-forward-tests:shared"))
                 implementation(project(":kotlin-tooling-core"))
-                implementation(project(":compiler:test-security-manager"))
                 implementation(project(":compiler:arguments"))
             }
             targets.all {
@@ -322,9 +318,6 @@ testing {
                         javaLauncher = JdkMajorVersion.JDK_1_8,
                         skipInLocalBuild = false
                     ) {
-                        @OptIn(TemporaryTestFederationApi::class)
-                        smokeTestConfig = SmokeTestConfig.RunAllTests
-
                         systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
                         systemProperty(
                             "kotlin.daemon.custom.run.files.path.for.tests",

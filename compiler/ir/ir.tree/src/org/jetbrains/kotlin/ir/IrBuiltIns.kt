@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -196,20 +196,9 @@ abstract class IrBuiltIns : SymbolFinderHolder {
     abstract fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol
 
     abstract val operatorsPackageFragment: IrExternalPackageFragment
-    abstract val kotlinInternalPackageFragment: IrExternalPackageFragment
 
-    protected fun createIntrinsicConstEvaluationClass(): IrClass {
-        return irFactory.buildClass {
-            name = StandardClassIds.Annotations.IntrinsicConstEvaluation.shortClassName
-            kind = ClassKind.ANNOTATION_CLASS
-            modality = Modality.FINAL
-        }.apply {
-            parent = kotlinInternalPackageFragment
-            createThisReceiverParameter()
-            addConstructor { isPrimary = true }
-            addFakeOverrides(IrTypeSystemContextImpl(this@IrBuiltIns))
-        }
-    }
+    val moduleFragment: IrModuleFragment
+        get() = operatorsPackageFragment.module
 
     companion object {
         val KOTLIN_INTERNAL_IR_FQN = FqName("kotlin.internal.ir")

@@ -7,6 +7,7 @@ KtPackageDirective(31,46): 'package another'
 KtNameReferenceExpression(39,46): 'another'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       another
@@ -27,6 +28,7 @@ KtDotQualifiedExpression(55,62): 'one.two'
 KtNameReferenceExpression(55,58): 'one'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one
@@ -35,6 +37,7 @@ KtNameReferenceExpression(55,58): 'one'
 KtNameReferenceExpression(59,62): 'two'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
@@ -43,6 +46,7 @@ KtNameReferenceExpression(59,62): 'two'
 KtNameReferenceExpression(63,77): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject
@@ -63,6 +67,7 @@ KtDotQualifiedExpression(85,92): 'one.two'
 KtNameReferenceExpression(85,88): 'one'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one
@@ -71,6 +76,7 @@ KtNameReferenceExpression(85,88): 'one'
 KtNameReferenceExpression(89,92): 'two'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
@@ -79,6 +85,7 @@ KtNameReferenceExpression(89,92): 'two'
 KtNameReferenceExpression(93,107): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject
@@ -87,6 +94,7 @@ KtNameReferenceExpression(93,107): 'TopLevelObject'
 KtNameReferenceExpression(108,111): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
@@ -107,6 +115,7 @@ KtDotQualifiedExpression(119,126): 'one.two'
 KtNameReferenceExpression(119,122): 'one'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one
@@ -115,6 +124,7 @@ KtNameReferenceExpression(119,122): 'one'
 KtNameReferenceExpression(123,126): 'two'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
@@ -123,6 +133,7 @@ KtNameReferenceExpression(123,126): 'two'
 KtNameReferenceExpression(127,141): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject
@@ -131,6 +142,7 @@ KtNameReferenceExpression(127,141): 'TopLevelObject'
 KtNameReferenceExpression(142,145): 'bar'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val bar: kotlin.Int
@@ -151,6 +163,7 @@ KtDotQualifiedExpression(153,160): 'one.two'
 KtNameReferenceExpression(153,156): 'one'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one
@@ -159,6 +172,7 @@ KtNameReferenceExpression(153,156): 'one'
 KtNameReferenceExpression(157,160): 'two'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
@@ -167,6 +181,7 @@ KtNameReferenceExpression(157,160): 'two'
 KtNameReferenceExpression(161,175): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject
@@ -175,6 +190,7 @@ KtNameReferenceExpression(161,175): 'TopLevelObject'
 KtNameReferenceExpression(176,188): 'NestedObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject.NestedObject
@@ -198,6 +214,7 @@ KtDotQualifiedExpression(196,203): 'one.two'
 KtNameReferenceExpression(196,199): 'one'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one
@@ -206,6 +223,7 @@ KtNameReferenceExpression(196,199): 'one'
 KtNameReferenceExpression(200,203): 'two'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
@@ -214,6 +232,7 @@ KtNameReferenceExpression(200,203): 'two'
 KtNameReferenceExpression(204,218): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject
@@ -222,6 +241,7 @@ KtNameReferenceExpression(204,218): 'TopLevelObject'
 KtNameReferenceExpression(219,231): 'NestedObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject.NestedObject
@@ -230,6 +250,7 @@ KtNameReferenceExpression(219,231): 'NestedObject'
 KtNameReferenceExpression(232,235): 'baz'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
@@ -253,6 +274,7 @@ KtDotQualifiedExpression(243,250): 'one.two'
 KtNameReferenceExpression(243,246): 'one'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one
@@ -261,6 +283,7 @@ KtNameReferenceExpression(243,246): 'one'
 KtNameReferenceExpression(247,250): 'two'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
@@ -269,6 +292,7 @@ KtNameReferenceExpression(247,250): 'two'
 KtNameReferenceExpression(251,265): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject
@@ -277,6 +301,7 @@ KtNameReferenceExpression(251,265): 'TopLevelObject'
 KtNameReferenceExpression(266,278): 'NestedObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject.NestedObject
@@ -285,6 +310,7 @@ KtNameReferenceExpression(266,278): 'NestedObject'
 KtNameReferenceExpression(279,282): 'doo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       var doo: kotlin.String
@@ -311,6 +337,7 @@ KtDotQualifiedExpression(326,333): 'one.two'
 KtNameReferenceExpression(326,329): 'one'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one
@@ -319,6 +346,7 @@ KtNameReferenceExpression(326,329): 'one'
 KtNameReferenceExpression(330,333): 'two'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
@@ -327,6 +355,7 @@ KtNameReferenceExpression(330,333): 'two'
 KtNameReferenceExpression(334,348): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject
@@ -338,6 +367,7 @@ KtProperty(353,391): 'val importedTopObject = TopLevelObject'
 KtNameReferenceExpression(377,391): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject
@@ -355,6 +385,7 @@ KtDotQualifiedExpression(415,435): 'TopLevelObject.foo()'
 KtNameReferenceExpression(415,429): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject
@@ -369,6 +400,7 @@ KtCallExpression(430,435): 'foo()'
 KtNameReferenceExpression(430,433): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
@@ -389,6 +421,7 @@ KtCallExpression(458,463): 'foo()'
 KtNameReferenceExpression(458,461): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
@@ -409,6 +442,7 @@ KtDotQualifiedExpression(487,505): 'TopLevelObject.bar'
 KtNameReferenceExpression(487,501): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject
@@ -417,6 +451,7 @@ KtNameReferenceExpression(487,501): 'TopLevelObject'
 KtNameReferenceExpression(502,505): 'bar'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val bar: kotlin.Int
@@ -428,6 +463,7 @@ KtProperty(510,531): 'val importedBar = bar'
 KtNameReferenceExpression(528,531): 'bar'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val bar: kotlin.Int
@@ -442,6 +478,7 @@ KtDotQualifiedExpression(564,591): 'TopLevelObject.NestedObject'
 KtNameReferenceExpression(564,578): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject
@@ -450,6 +487,7 @@ KtNameReferenceExpression(564,578): 'TopLevelObject'
 KtNameReferenceExpression(579,591): 'NestedObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject.NestedObject
@@ -461,6 +499,7 @@ KtProperty(596,635): 'val importedNestedObject = NestedObject'
 KtNameReferenceExpression(623,635): 'NestedObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject.NestedObject
@@ -481,6 +520,7 @@ KtDotQualifiedExpression(659,686): 'TopLevelObject.NestedObject'
 KtNameReferenceExpression(659,673): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject
@@ -489,6 +529,7 @@ KtNameReferenceExpression(659,673): 'TopLevelObject'
 KtNameReferenceExpression(674,686): 'NestedObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject.NestedObject
@@ -503,6 +544,7 @@ KtCallExpression(687,692): 'baz()'
 KtNameReferenceExpression(687,690): 'baz'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
@@ -523,6 +565,7 @@ KtDotQualifiedExpression(721,739): 'NestedObject.baz()'
 KtNameReferenceExpression(721,733): 'NestedObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject.NestedObject
@@ -537,6 +580,7 @@ KtCallExpression(734,739): 'baz()'
 KtNameReferenceExpression(734,737): 'baz'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
@@ -557,6 +601,7 @@ KtCallExpression(762,767): 'baz()'
 KtNameReferenceExpression(762,765): 'baz'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
@@ -580,6 +625,7 @@ KtDotQualifiedExpression(791,818): 'TopLevelObject.NestedObject'
 KtNameReferenceExpression(791,805): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject
@@ -588,6 +634,7 @@ KtNameReferenceExpression(791,805): 'TopLevelObject'
 KtNameReferenceExpression(806,818): 'NestedObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject.NestedObject
@@ -596,6 +643,7 @@ KtNameReferenceExpression(806,818): 'NestedObject'
 KtNameReferenceExpression(819,822): 'doo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       var doo: kotlin.String
@@ -613,6 +661,7 @@ KtDotQualifiedExpression(851,867): 'NestedObject.doo'
 KtNameReferenceExpression(851,863): 'NestedObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelObject.NestedObject
@@ -621,6 +670,7 @@ KtNameReferenceExpression(851,863): 'NestedObject'
 KtNameReferenceExpression(864,867): 'doo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       var doo: kotlin.String
@@ -632,6 +682,7 @@ KtProperty(872,893): 'val importedDoo = doo'
 KtNameReferenceExpression(890,893): 'doo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       var doo: kotlin.String
@@ -646,6 +697,7 @@ KtBinaryExpression(899,910): 'doo = "str"'
 KtNameReferenceExpression(899,902): 'doo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       var doo: kotlin.String
@@ -654,6 +706,7 @@ KtNameReferenceExpression(899,902): 'doo'
 KtOperationReferenceExpression(903,904): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   null
 
 KtStringTemplateExpression(905,910): '"str"'

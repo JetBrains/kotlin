@@ -1,0 +1,12 @@
+public open class MethodReceiver<T : R|kotlin/Any!|> : R|kotlin/Any| {
+    public open fun f1(): R|kotlin/Unit|
+
+    public constructor<T : R|kotlin/Any!|>(): R|test/MethodReceiver<T>|
+
+    public/*package*/ open inner class MethodReceiver3<T : R|kotlin/Any!|, K : R|kotlin/Any!|, L : R|kotlin/Any!|, Outer(T) : R|kotlin/Any!|> : R|kotlin/Any| {
+        public open fun f1(): R|kotlin/Unit|
+
+        public/*package*/ test/MethodReceiver<T>.constructor<T : R|kotlin/Any!|, K : R|kotlin/Any!|, L : R|kotlin/Any!|>(): R|test/MethodReceiver.MethodReceiver3<T, K, L, T>|
+
+    }
+}

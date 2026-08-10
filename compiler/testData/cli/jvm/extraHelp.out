@@ -20,9 +20,6 @@ where advanced options include:
                              0 means use one thread per processor core.
                              The default value is 1.
   -Xbuild-file=<path>        Path to the .xml build file to compile.
-  -Xcommon-fragments-metadata-destination
-                             Specifies the destination for common fragments metadata.
-                             This metadata is used solely for incremental compilation and should not be used directly.
   -Xdebug                    Enable debug mode for compilation.
                              Currently this includes spilling all variables in a suspending context regardless of whether they are alive.
                              If API Level >= 2.2 -- no-op.
@@ -118,9 +115,6 @@ where advanced options include:
   -Xsupport-compatqual-checker-framework-annotations=enable|disable
                              Specify the behavior for Checker Framework 'compatqual' annotations ('NullableDecl'/'NonNullDecl').
                              The default value is 'enable'.
-  -Xsuppress-deprecated-jvm-target-warning
-                             Suppress warnings about deprecated JVM target versions.
-                             This option has no effect and will be deleted in a future version.
   -Xsuppress-missing-builtins-error
                              Suppress the "cannot access built-in declaration" error (useful with '-no-stdlib').
   -Xtype-enhancement-improvements-strict-mode
@@ -130,9 +124,10 @@ where advanced options include:
   -Xuse-14-inline-classes-mangling-scheme
                              Use the scheme for inline class mangling from version 1.4 instead of the one from 1.4.30.
   -Xuse-fast-jar-file-system Use the fast implementation of Jar FS. This may speed up compilation time, but it is experimental.
-  -Xuse-ic-classpath-metadata Use classpath metadata for incremental compilation.
-                             This is used solely for incremental compilation and should not be used directly.
   -Xuse-inline-scopes-numbers Use inline scopes numbers for inline marker variables.
+  -Xuse-metadata-on-incremental-classpath
+                             Use fragment metadata found on the compilation classpath to perform incremental compilation.
+                             This flag is intended for incremental compilation only and should not be used directly.
   -Xuse-old-class-files-reading Use the old implementation for reading class files. This may slow down the compilation and cause problems with Groovy interop.
                              This can be used in the event of problems with the new implementation.
   -Xuse-type-table           Use a type table in metadata serialization.
@@ -187,6 +182,8 @@ where advanced options include:
   -Xdetailed-perf            Enable more detailed performance statistics (Experimental).
                              For Native, the performance report includes execution time and lines processed per second for every individual lowering.
                              For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
+                             Additionally enables measurements for User and CPU time for all targets. Note that this could cause performance degradation on Linux
+                               machines, so use this mode with caution.
   -Xdirect-java-actualization Enable experimental direct Java actualization support.
   -Xdisable-default-scripting-plugin
                              Don't enable the scripting plugin by default.
@@ -226,10 +223,6 @@ where advanced options include:
                              Declare common klib friend dependencies for the specific fragment.
                              This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
                              The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-  -Xfragment-incremental-classpath=<fragment name>:<path>
-                             Declare common klib incremental dependencies (results from the previous compilation) for the specific fragment.
-                             This argument can be specified for any HMPP module except the platform leaf module: it takes incremental
-                               dependencies from the platform specific incremental service.
   -Xfragment-refines=<fromModuleName>:<onModuleName>
                              Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.
   -Xfragment-sources=<fragment name>:<path>
@@ -278,7 +271,8 @@ where advanced options include:
   -Xprofile-phases           Profile backend phases.
   -Xrender-internal-diagnostic-names
                              Render the internal names of warnings and errors.
-  -Xrepl                     Run Kotlin REPL (deprecated)
+  -Xrepl                     Run Kotlin REPL.
+                             The option is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. REPL is deprecated.
   -Xreport-all-warnings      Report all warnings even if errors are found.
   -Xreport-output-files      Report the source-to-output file mapping.
   -Xreport-perf              Report detailed performance statistics.
@@ -288,19 +282,17 @@ where advanced options include:
   -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
   -Xskip-prerelease-check    Allow loading pre-release classes.
   -Xstdlib-compilation       Enables special features which are relevant only for stdlib compilation.
-  -Xsuppress-api-version-greater-than-language-version-error
-                             Suppress error about API version greater than language version.
-                             Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.
   -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
   -Xsuppress-warning=<WARNING_NAME>
-                             Suppress specified warning module-wide. This option is deprecated in favor of "-Xwarning-level" flag
+                             Suppress specified warning module-wide.
+                             The option is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings).
   -Xunrestricted-builder-inference
                              Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
   -Xuse-fir-experimental-checkers
                              Enable experimental frontend IR checkers that are not yet ready for production.
                              The option is deprecated since Kotlin 2.2.20. It will be removed in one of the future releases.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
-                             Warning: This feature is not yet production-ready.
+                             The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases.
   -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
                              The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases. The light tree mode is enabled by default, and it will become the only available mode in one of the future releases.
   -Xverbose-phases           Be verbose while performing the given backend phases.

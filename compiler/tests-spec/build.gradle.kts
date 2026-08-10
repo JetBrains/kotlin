@@ -4,7 +4,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
     id("java-test-fixtures")
 }
 
@@ -35,9 +35,17 @@ sourceSets {
 
 testsJar()
 
-val generateFeatureInteractionSpecTestData by generator("org.jetbrains.kotlin.spec.utils.tasks.GenerateFeatureInteractionSpecTestDataKt", testSourceSet)
+val generateFeatureInteractionSpecTestData by generator(
+    "org.jetbrains.kotlin.spec.utils.tasks.GenerateFeatureInteractionSpecTestDataKt",
+    testSourceSet,
+    registerInAggregateGenerateSources = false
+)
 
-val printSpecTestsStatistic by generator("org.jetbrains.kotlin.spec.utils.tasks.PrintSpecTestsStatisticKt", testSourceSet)
+val printSpecTestsStatistic by generator(
+    "org.jetbrains.kotlin.spec.utils.tasks.PrintSpecTestsStatisticKt",
+    testSourceSet,
+    registerInAggregateGenerateSources = false
+)
 
 projectTests {
     testData(isolated, "testData")
@@ -65,5 +73,6 @@ projectTests {
     testGenerator(
         "org.jetbrains.kotlin.spec.utils.tasks.GenerateSpecTestsKt",
         taskName = "generateSpecTests",
+        excludeFromAggregateGeneratorTask = true,
     )
 }

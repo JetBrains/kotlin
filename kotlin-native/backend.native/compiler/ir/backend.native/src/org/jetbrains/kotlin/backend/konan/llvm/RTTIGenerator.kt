@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.NativeRuntimeNames
 
 internal class RTTIGenerator(
         override val generationState: NativeGenerationState,
@@ -381,11 +380,11 @@ internal class RTTIGenerator(
 
     private fun mapRuntimeType(type: LLVMTypeRef, isObjectType: Boolean): Int {
         if (isObjectType) {
-            require(type == llvm.pointerType) { "Expected object type, got ${llvmtype2string(type)}" }
+            require(type == llvm.pointerType) { "Expected object type, got ${type.toTypeString()}" }
             return RT_OBJECT
         }
 
-        return primitiveRuntimeTypeMap[type] ?: throw Error("Unmapped type: ${llvmtype2string(type)}")
+        return primitiveRuntimeTypeMap[type] ?: throw Error("Unmapped type: ${type.toTypeString()}")
     }
 
     private val debugRuntimeOrNull: LLVMModuleRef? by lazy {

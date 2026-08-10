@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation Secur
 language = Objective-C
 package = platform.CryptoTokenKit
 modules = CryptoTokenKit
+apiNotesSwiftName = true
 
 compilerOpts = -framework CryptoTokenKit
 linkerOpts = -framework CryptoTokenKit

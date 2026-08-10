@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.classId
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.java.classKind
 import org.jetbrains.kotlin.fir.java.modality
@@ -91,10 +90,6 @@ internal class KaFirPsiJavaClassSymbol private constructor(
 
     override val visibility: KaSymbolVisibility
         get() = withValidityAssertion { javaClass.visibility.asKaSymbolVisibility }
-
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    override val compilerVisibility: Visibility
-        get() = withValidityAssertion { javaClass.visibility }
 
     override val isInner: Boolean
         get() = withValidityAssertion { classId.outerClassId != null && !javaClass.isStatic }

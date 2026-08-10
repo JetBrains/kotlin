@@ -193,7 +193,6 @@ class JvmIrCodegenFactory(
 
         generateModuleMetadata(input.context)
         if (state.config.languageVersionSettings.getFlag(JvmAnalysisFlags.outputBuiltinsMetadata)) {
-            require(state.config.useFir) { "Stdlib is expected to be compiled by K2" }
             serializeBuiltinsMetadata(allBuiltins, context)
         }
 

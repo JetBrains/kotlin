@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Cor
 language = Objective-C
 package = platform.NetworkExtension
 modules = NetworkExtension
+apiNotesSwiftName = true
 
 compilerOpts = -framework NetworkExtension
 linkerOpts = -framework NetworkExtension

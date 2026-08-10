@@ -17,8 +17,8 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 /* ktlint-disable max-line-length */
 class DurableFunctionKeyCodegenTests : AbstractCodegenSignatureTest() {

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
@@ -200,10 +199,6 @@ public interface KaTypeProvider : KaSessionComponent {
     @KaExperimentalApi
     public val KaValueParameterSymbol.varargArrayType: KaType?
 
-    @KaNoContextParameterBridgeRequired
-    @Deprecated("Use `defaultType` from `KaClassifierSymbol` directly", level = DeprecationLevel.HIDDEN)
-    public val KaNamedClassSymbol.defaultType: KaType get() = defaultType
-
     /**
      * The common supertype of the given [KaType]s.
      *
@@ -258,7 +253,7 @@ public interface KaTypeProvider : KaSessionComponent {
     @Deprecated(
         "Use `withNullability(Boolean)` instead",
         ReplaceWith("withNullability(newNullability.isNullable)"),
-        level = DeprecationLevel.ERROR
+        level = DeprecationLevel.HIDDEN
     )
     @Suppress("DEPRECATION_ERROR")
     public fun KaType.withNullability(newNullability: KaTypeNullability): KaType =
@@ -287,6 +282,12 @@ public interface KaTypeProvider : KaSessionComponent {
      * Collects all the implicit receiver types available at the given [position]. The resulting list is ordered from the outermost to the
      * innermost receiver type.
      */
+    @Deprecated(
+        message = "The API is obsolete. Use `scopeContext` instead.",
+        replaceWith = ReplaceWith(
+            expression = "position.containingKtFile.scopeContext(position).implicitReceivers.map { it.type }",
+        )
+    )
     public fun collectImplicitReceiverTypes(position: KtElement): List<KaType>
 
     /**
@@ -423,6 +424,7 @@ public abstract class KaBuiltinTypes : org.jetbrains.kotlin.analysis.api.types.K
         "builtinTypes",
         "org.jetbrains.kotlin.analysis.api.types.builtinTypes",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -490,6 +492,7 @@ public fun KaType.approximateToSuperPublicDenotableOrSelf(approximateLocalTypes:
         "this.approximateToDenotableSupertype(allowLocalDenotableTypes)",
         "org.jetbrains.kotlin.analysis.api.types.approximateToDenotableSupertype",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -514,6 +517,7 @@ public fun KaType.approximateToDenotableSupertype(allowLocalDenotableTypes: Bool
         "this.approximateToDenotableSupertypeOrSelf(allowLocalDenotableTypes)",
         "org.jetbrains.kotlin.analysis.api.types.approximateToDenotableSupertypeOrSelf",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -538,6 +542,7 @@ public fun KaType.approximateToDenotableSupertypeOrSelf(allowLocalDenotableTypes
         "this.approximateToDenotableSubtype()",
         "org.jetbrains.kotlin.analysis.api.types.approximateToDenotableSubtype",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -560,6 +565,7 @@ public fun KaType.approximateToDenotableSubtype(): KaType? {
         "this.approximateToDenotableSubtypeOrSelf()",
         "org.jetbrains.kotlin.analysis.api.types.approximateToDenotableSubtypeOrSelf",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -604,6 +610,7 @@ public fun KaType.approximateToDenotableSubtypeOrSelf(): KaType {
         "this.approximateToDenotableSupertype(position)",
         "org.jetbrains.kotlin.analysis.api.types.approximateToDenotableSupertype",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -628,6 +635,7 @@ public fun KaType.approximateToDenotableSupertype(position: KtElement): KaType? 
         "this.approximateToDenotableSupertypeOrSelf(position)",
         "org.jetbrains.kotlin.analysis.api.types.approximateToDenotableSupertypeOrSelf",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -669,6 +677,7 @@ public fun KaType.approximateToDenotableSupertypeOrSelf(position: KtElement): Ka
         "augmentedByWarningLevelAnnotations",
         "org.jetbrains.kotlin.analysis.api.types.augmentedByWarningLevelAnnotations",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -688,6 +697,7 @@ public val KaType.augmentedByWarningLevelAnnotations: KaType
         "defaultType",
         "org.jetbrains.kotlin.analysis.api.types.defaultType",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -708,6 +718,7 @@ public val KaClassifierSymbol.defaultType: KaType
         "defaultTypeWithStarProjections",
         "org.jetbrains.kotlin.analysis.api.types.defaultTypeWithStarProjections",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -729,6 +740,7 @@ public val KaClassifierSymbol.defaultTypeWithStarProjections: KaType
         "varargArrayType",
         "org.jetbrains.kotlin.analysis.api.types.varargArrayType",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -746,6 +758,7 @@ public val KaValueParameterSymbol.varargArrayType: KaType?
         "commonSupertype",
         "org.jetbrains.kotlin.analysis.api.types.commonSupertype",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -763,6 +776,7 @@ public val Iterable<KaType>.commonSupertype: KaType
         "commonSupertype",
         "org.jetbrains.kotlin.analysis.api.types.commonSupertype",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -780,6 +794,7 @@ public val Array<KaType>.commonSupertype: KaType
         "type",
         "org.jetbrains.kotlin.analysis.api.types.type",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -810,6 +825,7 @@ public val KtTypeReference.type: KaType
         "receiverType",
         "org.jetbrains.kotlin.analysis.api.types.receiverType",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -825,6 +841,7 @@ public val KtDoubleColonExpression.receiverType: KaType?
         "this.withNullability(isMarkedNullable)",
         "org.jetbrains.kotlin.analysis.api.types.withNullability",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -845,6 +862,7 @@ public fun KaType.withNullability(isMarkedNullable: Boolean): KaType {
         "this.upperBoundIfFlexible()",
         "org.jetbrains.kotlin.analysis.api.types.upperBoundIfFlexible",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -863,6 +881,7 @@ public fun KaType.upperBoundIfFlexible(): KaType {
         "this.lowerBoundIfFlexible()",
         "org.jetbrains.kotlin.analysis.api.types.lowerBoundIfFlexible",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -881,6 +900,7 @@ public fun KaType.lowerBoundIfFlexible(): KaType {
         "this.hasCommonSubtypeWith(that)",
         "org.jetbrains.kotlin.analysis.api.types.hasCommonSubtypeWith",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -896,8 +916,16 @@ public fun KaType.hasCommonSubtypeWith(that: KaType): Boolean {
  * Collects all the implicit receiver types available at the given [position]. The resulting list is ordered from the outermost to the
  * innermost receiver type.
  */
+@Deprecated(
+    message = "The API is obsolete. Use `scopeContext` instead.",
+    replaceWith = ReplaceWith(
+        expression = "position.containingKtFile.scopeContext(position).implicitReceivers.map { it.type }",
+        imports = ["org.jetbrains.kotlin.analysis.api.components.scopeContext"],
+    )
+)
 context(session: KaSession)
 public fun collectImplicitReceiverTypes(position: KtElement): List<KaType> {
+    @Suppress("DEPRECATION")
     return with(session) {
         collectImplicitReceiverTypes(
             position = position,
@@ -925,6 +953,7 @@ public fun collectImplicitReceiverTypes(position: KtElement): List<KaType> {
         "this.directSupertypes(shouldApproximate)",
         "org.jetbrains.kotlin.analysis.api.types.directSupertypes",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -954,6 +983,7 @@ public fun KaType.directSupertypes(shouldApproximate: Boolean): Sequence<KaType>
         "directSupertypes",
         "org.jetbrains.kotlin.analysis.api.types.directSupertypes",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -973,6 +1003,7 @@ public val KaType.directSupertypes: Sequence<KaType>
         "this.allSupertypes(shouldApproximate)",
         "org.jetbrains.kotlin.analysis.api.types.allSupertypes",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -996,6 +1027,7 @@ public fun KaType.allSupertypes(shouldApproximate: Boolean): Sequence<KaType> {
         "allSupertypes",
         "org.jetbrains.kotlin.analysis.api.types.allSupertypes",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -1029,6 +1061,7 @@ public val KaCallableSymbol.dispatchReceiverType: KaType?
         "arrayElementType",
         "org.jetbrains.kotlin.analysis.api.types.arrayElementType",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)

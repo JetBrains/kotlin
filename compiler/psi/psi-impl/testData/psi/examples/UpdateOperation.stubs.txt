@@ -28,11 +28,62 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UpdateOperationKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Int]
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=from]
+                  REFERENCE_EXPRESSION[referencedName=x]
               VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=y]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Int]
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=from]
+                  REFERENCE_EXPRESSION[referencedName=y]
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=Pair]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  REFERENCE_EXPRESSION[referencedName=x]
+                VALUE_ARGUMENT[isSpread=false]
+                  REFERENCE_EXPRESSION[referencedName=y]
   PROPERTY[fqName=p, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=p]
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=Point]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+        VALUE_ARGUMENT[isSpread=false]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
   PROPERTY[fqName=p1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=p1]
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=Point]
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=Copy]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            REFERENCE_EXPRESSION[referencedName=p]
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=x]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
   PROPERTY[fqName=p2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=p2]
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=Point]
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=Copy]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            REFERENCE_EXPRESSION[referencedName=p1]
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=y]
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
+              INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
   PROPERTY[fqName=p3, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=p3]
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=Point]
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=Copy]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            REFERENCE_EXPRESSION[referencedName=p]

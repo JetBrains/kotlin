@@ -16,6 +16,12 @@ FILE[kind=File[packageFqName=<root>]]
     CLASS_BODY
   CLASS[classId=/ContextReceiversOnClass, fqName=ContextReceiversOnClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ContextReceiversOnClass, superNames=[]]
     MODIFIER_LIST[private open]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+        valueArguments: [ ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=MyAnnotation]
       CONTEXT_PARAMETER_LIST
         CONTEXT_RECEIVER[label=null]
           TYPE_REFERENCE
@@ -25,12 +31,6 @@ FILE[kind=File[packageFqName=<root>]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=B]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
-        valueArguments: [ ]
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=MyAnnotation]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ContextReceiversOnClass]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST

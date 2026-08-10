@@ -18,12 +18,9 @@ package org.jetbrains.kotlin.js.inline.clean
 
 import org.jetbrains.kotlin.js.backend.ast.*
 
-internal class DeadCodeElimination(private val root: JsStatement) {
-    var hasChanges = false
-
-    fun apply(): Boolean {
+internal class DeadCodeElimination(private val root: JsStatement) : FunctionPostProcessorStep() {
+    override fun apply() {
         EliminationVisitor().accept(root)
-        return hasChanges
     }
 
     inner class EliminationVisitor : RecursiveJsVisitor() {

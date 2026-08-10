@@ -114,7 +114,6 @@ internal val konanTargetNameMapping = mapOf(
     "ios_arm64" to "iosArm64",
     "ios_x64" to "iosX64",
     "ios_simulator_arm64" to "iosSimulatorArm64",
-    "watchos_arm32" to "watchosArm32",
     "watchos_arm64" to "watchosArm64",
     "watchos_x64" to "watchosX64",
     "watchos_simulator_arm64" to "watchosSimulatorArm64",

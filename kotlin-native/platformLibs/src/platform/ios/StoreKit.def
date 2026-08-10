@@ -2,6 +2,7 @@ depends = BackgroundAssets CFCGTypes CFNetwork CoreFoundation CoreFoundationBase
 language = Objective-C
 package = platform.StoreKit
 modules = StoreKit
+apiNotesSwiftName = true
 
 compilerOpts = -framework StoreKit
 linkerOpts = -framework StoreKit

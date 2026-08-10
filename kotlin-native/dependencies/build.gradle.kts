@@ -25,19 +25,19 @@ nativeDependenciesDownloader {
 /**
  * Download all dependencies.
  */
-val update by tasks.registering {
+val update = tasks.register("update") {
     platformManager.allTargetsWithSanitizers.forEach {
         dependsOn(nativeDependencies.targetDependency(it))
     }
 }
 
 // TODO: This sort of task probably belongs to :kotlin-native
-val rmDotKonan by tasks.registering(Delete::class) {
+val rmDotKonan = tasks.register("rmDotKonan", Delete::class) {
     val dir = System.getenv("KONAN_DATA_DIR") ?: "${System.getProperty("user.home")}/.konan"
     delete(dir)
 }
 
-val llvmDevBinaryData by configurations.creating {
+val llvmDevBinaryData = configurations.create("llvmDevBinaryData") {
     isCanBeConsumed = true
     isCanBeResolved = false
 }

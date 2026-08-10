@@ -101,7 +101,7 @@ public interface KtNodeTypes {
     @NotNull IElementType ESCAPE_STRING_TEMPLATE_ENTRY  = KtStubBasedElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY;
     @NotNull IElementType STRING_INTERPOLATION_PREFIX   = KtStubBasedElementTypes.STRING_INTERPOLATION_PREFIX;
 
-    @NotNull IElementType PARENTHESIZED             = new KtNodeType("PARENTHESIZED", KtParenthesizedExpression::new);
+    @NotNull IElementType PARENTHESIZED             = KtStubBasedElementTypes.PARENTHESIZED;
     @NotNull IElementType RETURN                    = new KtNodeType("RETURN", KtReturnExpression::new);
     @NotNull IElementType THROW                     = new KtNodeType("THROW", KtThrowExpression::new);
     @NotNull IElementType CONTINUE                  = new KtNodeType("CONTINUE", KtContinueExpression::new);
@@ -128,18 +128,18 @@ public interface KtNodeTypes {
 
     @NotNull IElementType REFERENCE_EXPRESSION     = KtStubBasedElementTypes.REFERENCE_EXPRESSION;
     @NotNull IElementType ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION = KtStubBasedElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION;
-    @NotNull IElementType OPERATION_REFERENCE       = new KtNodeType("OPERATION_REFERENCE", KtOperationReferenceExpression::new);
+    @NotNull IElementType OPERATION_REFERENCE       = KtStubBasedElementTypes.OPERATION_REFERENCE;
     @NotNull IElementType LABEL                     = new KtNodeType("LABEL", KtLabelReferenceExpression::new);
 
     @NotNull IElementType LABEL_QUALIFIER           = new KtNodeType("LABEL_QUALIFIER", KtContainerNode::new);
 
     @NotNull IElementType THIS_EXPRESSION           = new KtNodeType("THIS_EXPRESSION", KtThisExpression::new);
     @NotNull IElementType SUPER_EXPRESSION          = new KtNodeType("SUPER_EXPRESSION", KtSuperExpression::new);
-    @NotNull IElementType BINARY_EXPRESSION         = new KtNodeType("BINARY_EXPRESSION", KtBinaryExpression::new);
+    @NotNull IElementType BINARY_EXPRESSION         = KtStubBasedElementTypes.BINARY_EXPRESSION;
     @NotNull IElementType BINARY_WITH_TYPE          = new KtNodeType("BINARY_WITH_TYPE", KtBinaryExpressionWithTypeRHS::new);
     @NotNull IElementType IS_EXPRESSION             = new KtNodeType("IS_EXPRESSION", KtIsExpression::new);
-    @NotNull IElementType PREFIX_EXPRESSION         = new KtNodeType("PREFIX_EXPRESSION", KtPrefixExpression::new);
-    @NotNull IElementType POSTFIX_EXPRESSION        = new KtNodeType("POSTFIX_EXPRESSION", KtPostfixExpression::new);
+    @NotNull IElementType PREFIX_EXPRESSION         = KtStubBasedElementTypes.PREFIX_EXPRESSION;
+    @NotNull IElementType POSTFIX_EXPRESSION        = KtStubBasedElementTypes.POSTFIX_EXPRESSION;
     @NotNull IElementType LABELED_EXPRESSION        = new KtNodeType("LABELED_EXPRESSION", KtLabeledExpression::new);
     @NotNull IElementType CALL_EXPRESSION           = KtStubBasedElementTypes.CALL_EXPRESSION;
     @NotNull IElementType ARRAY_ACCESS_EXPRESSION   = new KtNodeType("ARRAY_ACCESS_EXPRESSION", KtArrayAccessExpression::new);
@@ -149,7 +149,7 @@ public interface KtNodeTypes {
     @NotNull IElementType CLASS_LITERAL_EXPRESSION  = KtStubBasedElementTypes.CLASS_LITERAL_EXPRESSION;
     @NotNull IElementType SAFE_ACCESS_EXPRESSION    = new KtNodeType("SAFE_ACCESS_EXPRESSION", KtSafeQualifiedExpression::new);
 
-    @NotNull IElementType OBJECT_LITERAL            = new KtNodeType("OBJECT_LITERAL", KtObjectLiteralExpression::new);
+    @NotNull IElementType OBJECT_LITERAL            = KtStubBasedElementTypes.OBJECT_LITERAL;;
 
     @NotNull IElementType WHEN                      = new KtNodeType("WHEN", KtWhenExpression::new);
     @NotNull IElementType WHEN_ENTRY                = new KtNodeType("WHEN_ENTRY", KtWhenEntry::new);

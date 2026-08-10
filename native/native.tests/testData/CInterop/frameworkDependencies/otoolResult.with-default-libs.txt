@@ -1,0 +1,7 @@
+main.kexe:
+	CoreFoundation.framework
+	Foundation.framework
+	XCTest.framework
+	libSystem.dylib
+	libc++.dylib
+	libobjc.dylib

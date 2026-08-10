@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 description = "A set of integration tests for Swift Export Standalone with Coroutines as a dependency"

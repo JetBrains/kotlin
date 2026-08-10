@@ -30,7 +30,7 @@ interface I {
 
 interface I1 {
     companion {
-        <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+        <!INAPPLICABLE_JVM_FIELD, INAPPLICABLE_JVM_FIELD!>@JvmField<!>
         private val X = 1
     }
 }

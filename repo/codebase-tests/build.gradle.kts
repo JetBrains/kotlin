@@ -24,6 +24,10 @@ dependencies {
 
     testImplementation(testFixtures("org.jetbrains.kotlin:repo-test-fixtures"))
     testImplementation("org.jetbrains.kotlin:test-federation-convention")
+    testImplementation(testFederationRuntime)
+    testImplementation("org.jetbrains.kotlin:buildsrc-compat") {
+        isTransitive = false
+    }
     testImplementation(gradleTestKit())
     testImplementation(libs.intellij.asm)
 }
@@ -60,7 +64,6 @@ projectTests {
         dependsOn(":compileAll")
         workingDir = rootDir
         jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
-        withJunit5ParallelExecution(2)
 
         jvmArgumentProviders.add(objects.newInstance<TestSystemPropertiesProvider>().apply {
             spaceCodeOwnersFile.from(rootDir.resolve(".space/CODEOWNERS"))
@@ -73,6 +76,18 @@ projectTests {
     withJvmStdlibAndReflect()
     withScriptRuntime()
     withTestJar()
+}
+
+tasks.withType<Test>().configureEach {
+    /* Nested/Deep debugging support */
+    val debuggerDispatchPort = providers.systemProperty("idea.debugger.dispatch.port")
+    inputs.property("idea.debugger.dispatch.port", debuggerDispatchPort).optional(true)
+
+    doFirst {
+        if (debuggerDispatchPort.isPresent) {
+            systemProperty("idea.debugger.dispatch.port", debuggerDispatchPort.get())
+        }
+    }
 }
 
 testsJar()

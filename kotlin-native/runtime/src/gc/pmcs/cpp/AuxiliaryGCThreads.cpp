@@ -7,11 +7,11 @@
 
 #include "AuxiliaryGCThreads.hpp"
 
-#include "Allocator.hpp"
+#include "alloc/Allocator.hpp"
 #include "Barriers.hpp"
-#include "GCScheduler.hpp"
-#include "GCState.hpp"
-#include "MarkAndSweepUtils.hpp"
+#include "gcScheduler/GCScheduler.hpp"
+#include "gc/GCState.hpp"
+#include "gc/MarkAndSweepUtils.hpp"
 #include "ParallelMark.hpp"
 
 using namespace kotlin;

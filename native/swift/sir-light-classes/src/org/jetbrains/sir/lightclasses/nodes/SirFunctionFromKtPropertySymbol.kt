@@ -35,15 +35,17 @@ import org.jetbrains.kotlin.sir.util.unavailableTypes
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
-import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.sirModality
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.KDocElements
 import org.jetbrains.sir.lightclasses.utils.OverrideStatus
 import org.jetbrains.sir.lightclasses.utils.baseBridgeName
 import org.jetbrains.sir.lightclasses.utils.computeIsOverride
+import org.jetbrains.sir.lightclasses.utils.addDocumentationVisibility
 import org.jetbrains.sir.lightclasses.utils.selfType
 import org.jetbrains.sir.lightclasses.utils.translateContextParameters
+import org.jetbrains.sir.lightclasses.utils.translateDocumentation
 import org.jetbrains.sir.lightclasses.utils.translateExtensionParameter
 import org.jetbrains.sir.lightclasses.utils.translateParameters
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
@@ -71,7 +73,7 @@ internal class SirFunctionFromKtPropertySymbol(
         }
         prefix + ktPropertySymbol.sirDeclarationName().replaceFirstChar { it.titlecase() }
     }
-    private val contextParameters: Pair<SirParameter, List<SirParameter>>? by lazy {
+    internal val contextParameters: Pair<SirParameter, List<SirParameter>>? by lazy {
         translateContextParameters()
     }
     override val contextParameter: SirParameter? get() = contextParameters?.first
@@ -84,8 +86,11 @@ internal class SirFunctionFromKtPropertySymbol(
     override val returnType: SirType by lazy {
         translateReturnType()
     }
+    private val kdocElements: KDocElements? by lazyWithSessions {
+        KDocElements(this)
+    }
     override val documentation: String? by lazyWithSessions {
-        ktPropertySymbol.documentation()
+        translateDocumentation(kdocElements)
     }
 
     override var parent: SirDeclarationParent
@@ -121,6 +126,7 @@ internal class SirFunctionFromKtPropertySymbol(
                     add(returnType)
                 }.flatMap { it.unavailableTypes }
             }
+            addDocumentationVisibility(kdocElements)
         }
     }
 

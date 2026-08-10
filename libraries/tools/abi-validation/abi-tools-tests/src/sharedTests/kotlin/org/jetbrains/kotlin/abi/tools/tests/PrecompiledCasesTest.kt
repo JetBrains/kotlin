@@ -29,6 +29,9 @@ class PrecompiledCasesTest {
     fun parcelable() = snapshotAPIAndCompare()
 
     @Test
+    fun composableSingletons() = snapshotAPIAndCompare()
+
+    @Test
     fun jar() {
         val testDir = baseOutputPath.resolve(testMethodName)
         val target = testDir.resolve(testMethodName + ".txt")

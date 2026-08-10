@@ -44,6 +44,7 @@ FILE[kind=File[packageFqName=<root>]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=Queue.tail, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=tail]
         MODIFIER_LIST[private]
         TYPE_REFERENCE
@@ -54,6 +55,7 @@ FILE[kind=File[packageFqName=<root>]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
+        NULL[kind=NULL, value=null]
       FUN[fqName=Queue.push, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=push]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
@@ -68,3 +70,7 @@ FILE[kind=File[packageFqName=<root>]]
         MODIFIER_LIST[override]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION[referencedName=head]
+            OPERATION_REFERENCE[operationToken=EQEQ, referencedName===]
+            NULL[kind=NULL, value=null]

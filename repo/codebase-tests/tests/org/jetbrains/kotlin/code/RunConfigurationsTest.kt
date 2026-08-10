@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("RedundantIf")
+
 package org.jetbrains.kotlin.code
 
 import org.gradle.testkit.runner.GradleRunner
@@ -20,6 +22,7 @@ import kotlin.io.path.inputStream
 import kotlin.io.path.listDirectoryEntries
 import kotlin.streams.asStream
 
+@GradleLock
 @NightlyTest
 class RunConfigurationsTest {
     @TestFactory
@@ -28,11 +31,21 @@ class RunConfigurationsTest {
             .asSequence()
             .filter { configFile -> !configFile.isGitIgnored() }
             .mapNotNull { configFile -> parseGradleRunConfiguration(configFile) }
+            .filter { config -> !config.isIgnored() }
             .map { config ->
                 DynamicTest.dynamicTest(config.name) {
                     testDryRunConfiguration(config)
                 }
             }.asStream()
+    }
+
+    private fun GradleRunConfiguration.isIgnored(): Boolean {
+        /* native compiler images require GraalVM */
+        if (this.taskNames.any { it.startsWith(":kotlin-compiler-native-image") }) {
+            return true
+        }
+
+        return false
     }
 
     private fun testDryRunConfiguration(config: GradleRunConfiguration) {

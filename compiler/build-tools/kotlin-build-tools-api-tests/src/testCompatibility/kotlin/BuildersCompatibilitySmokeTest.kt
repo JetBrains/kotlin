@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.supportsMetadata
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
@@ -31,6 +32,7 @@ import java.nio.file.Paths
 import kotlin.io.path.toPath
 import kotlin.io.path.writeText
 
+@SmokeTest
 class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
 
     @DisplayName("Test builders produce independent operations")

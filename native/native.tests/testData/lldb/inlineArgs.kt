@@ -1,4 +1,6 @@
 // KIND: STANDALONE_LLDB
+// INPUT_DATA_FILE: inlineArgs.in
+// OUTPUT_DATA_FILE: inlineArgs.out
 
 
 inline fun foo(x: Int, y: Int, z: Int = 5): Int {

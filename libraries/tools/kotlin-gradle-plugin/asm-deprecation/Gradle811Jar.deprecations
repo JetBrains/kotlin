@@ -15,6 +15,7 @@ package org.jetbrains.kotlin.cli.common.modules
 package org.jetbrains.kotlin.cli.common.output
 package org.jetbrains.kotlin.cli.common.profiling
 package org.jetbrains.kotlin.cli.common.repl
+package org.jetbrains.kotlin.cli.js
 package org.jetbrains.kotlin.cli.jvm.compiler
 package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
 package org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline
@@ -32,6 +33,7 @@ package org.jetbrains.kotlin.compilerRunner.btapi.js
 package org.jetbrains.kotlin.compilerRunner.btapi.jvm
 package org.jetbrains.kotlin.compilerRunner.btapi.metadata
 package org.jetbrains.kotlin.compilerRunner.btapi.wasm
+package org.jetbrains.kotlin.components
 package org.jetbrains.kotlin.config
 package org.jetbrains.kotlin.incremental
 package org.jetbrains.kotlin.incremental.components

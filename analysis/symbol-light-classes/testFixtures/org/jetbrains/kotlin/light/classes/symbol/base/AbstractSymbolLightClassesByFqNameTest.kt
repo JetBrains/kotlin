@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.base
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -13,12 +14,16 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.asJava.LightClassTestCommon
 import org.jetbrains.kotlin.asJava.PsiClassRenderer
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import java.nio.file.Path
 
 abstract class AbstractSymbolLightClassesByFqNameTest(
     configurator: AnalysisApiTestConfigurator,
     override val isTestAgainstCompiledCode: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = super.additionalDirectives + listOf(SymbolLightClassesParentingCheckDirectives)
+
     override fun getRenderResult(
         ktFile: KtFile,
         ktFiles: List<KtFile>,
@@ -32,6 +37,12 @@ abstract class AbstractSymbolLightClassesByFqNameTest(
             LightClassTestCommon::removeEmptyDefaultImpls,
             if (isTestAgainstCompiledCode) MembersFilterForCompiledClasses else PsiClassRenderer.MembersFilter.DEFAULT,
         )
+    }
+
+    override fun supplementaryLightClasses(ktFiles: List<KtFile>): Collection<PsiClass> {
+        val fqName = LightClassTestCommon.fqNameInTestDataFile(testDataPath.toFile())
+        // NB: unlike [getRenderResult], the lookup is not restricted to the main file first
+        return listOfNotNull(findLightClass(fqName, ktFiles.first().project))
     }
 }
 

@@ -56,11 +56,14 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
 
     private fun fillConfiguration(configuration: CompilerConfiguration, arguments: K2JSCompilerArguments) {
         val targetVersion = initializeAndCheckTargetVersion(arguments, configuration)
+
+        val isES2020 = targetVersion == EcmaVersion.es2020
+        val isES2015PlusTarget = targetVersion != null && targetVersion >= EcmaVersion.es2015
+
         configuration.optimizeGeneratedJs = arguments.optimizeGeneratedJs
-        val isES2015 = targetVersion == EcmaVersion.es2015
         configuration.moduleKind = configuration.moduleKind
             ?: moduleKindMap[arguments.moduleKind]
-                    ?: ModuleKind.ES.takeIf { isES2015 }
+                    ?: ModuleKind.ES.takeIf { isES2015PlusTarget }
                     ?: ModuleKind.UMD
 
         initializeFinalArtifactConfiguration(configuration, arguments)
@@ -71,11 +74,11 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         configuration.propertyLazyInitialization = arguments.irPropertyLazyInitialization
         configuration.generatePolyfills = arguments.generatePolyfills
         configuration.generateInlineAnonymousFunctions = arguments.irGenerateInlineAnonymousFunctions
-        configuration.useEs6Classes = arguments.useEsClasses ?: isES2015
-        configuration.compileSuspendAsJsGenerator = arguments.useEsGenerators ?: isES2015
-        configuration.compileLambdasAsEs6ArrowFunctions = arguments.useEsArrowFunctions ?: isES2015
-        configuration.compileLongAsBigint = arguments.compileLongAsBigInt ?: false
-        configuration.exportUntypedAsUnknown = arguments.exportUntypedAsUnknown
+        configuration.useEs6Classes = arguments.useEsClasses ?: isES2015PlusTarget
+        configuration.compileSuspendAsJsGenerator = arguments.useEsGenerators ?: isES2015PlusTarget
+        configuration.compileLambdasAsEs6ArrowFunctions = arguments.useEsArrowFunctions ?: isES2015PlusTarget
+        configuration.compileLongAsBigint = arguments.compileLongAsBigInt ?: isES2020
+        configuration.exportUntypedAsUnknown = arguments.useUnknownInsteadAny
 
         configuration.targetPlatform = JsPlatforms.defaultJsPlatform
 

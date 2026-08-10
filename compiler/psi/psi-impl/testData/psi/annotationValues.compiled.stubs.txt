@@ -11,7 +11,7 @@ AnnotationValues.class:
       CLASS_BODY
         CLASS[classId=test/AnnotationValues.WithSimple, fqName=test.AnnotationValues.WithSimple, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithSimple, superNames=[]]
           MODIFIER_LIST[public final]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
               valueArguments: [
                 i -> 12
                 l -> 12.toLong()
@@ -29,13 +29,50 @@ AnnotationValues.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=Simple]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=i]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=l]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12L]
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=b]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=b2]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=d]
+                  FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3]
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=f]
+                  FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3F]
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=c]
+                  CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=bool1]
+                  BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=bool2]
+                  BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithSimple]
             MODIFIER_LIST[public]
             VALUE_PARAMETER_LIST
           CLASS_BODY
         CLASS[classId=test/AnnotationValues.WithStringLiteral, fqName=test.AnnotationValues.WithStringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithStringLiteral, superNames=[]]
           MODIFIER_LIST[public final]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=StringLiteral]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=StringLiteral]
               valueArguments: [
                 s1 -> "some"
                 s2 -> ""
@@ -47,13 +84,28 @@ AnnotationValues.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=StringLiteral]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=s1]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=some]
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=s2]
+                  STRING_TEMPLATE
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=s3]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=H12]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithStringLiteral]
             MODIFIER_LIST[public]
             VALUE_PARAMETER_LIST
           CLASS_BODY
         CLASS[classId=test/AnnotationValues.WithEnumLiteral, fqName=test.AnnotationValues.WithEnumLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithEnumLiteral, superNames=[]]
           MODIFIER_LIST[public final]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=EnumLiteral]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=EnumLiteral]
               valueArguments: [
                 e1 -> E.E1
                 e2 -> E.E2
@@ -65,13 +117,38 @@ AnnotationValues.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=EnumLiteral]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=e1]
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=test]
+                      REFERENCE_EXPRESSION[referencedName=E]
+                    REFERENCE_EXPRESSION[referencedName=E1]
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=e2]
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=test]
+                      REFERENCE_EXPRESSION[referencedName=E]
+                    REFERENCE_EXPRESSION[referencedName=E2]
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=e3]
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=test]
+                      REFERENCE_EXPRESSION[referencedName=E]
+                    REFERENCE_EXPRESSION[referencedName=E2]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithEnumLiteral]
             MODIFIER_LIST[public]
             VALUE_PARAMETER_LIST
           CLASS_BODY
         CLASS[classId=test/AnnotationValues.WithVarArg, fqName=test.AnnotationValues.WithVarArg, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithVarArg, superNames=[]]
           MODIFIER_LIST[public final]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=VarArg]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=VarArg]
               valueArguments: [ v -> [1, 2, 3] ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
@@ -79,13 +156,21 @@ AnnotationValues.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=VarArg]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=v]
+                  COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=3]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithVarArg]
             MODIFIER_LIST[public]
             VALUE_PARAMETER_LIST
           CLASS_BODY
         CLASS[classId=test/AnnotationValues.WithArrays, fqName=test.AnnotationValues.WithArrays, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithArrays, superNames=[]]
           MODIFIER_LIST[public final]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Arrays]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=Arrays]
               valueArguments: [
                 ia -> [1, 2, 3]
                 la -> [1.toLong()]
@@ -100,13 +185,46 @@ AnnotationValues.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=Arrays]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=ia]
+                  COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=3]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=la]
+                  COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=fa]
+                  COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=da]
+                  COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                    FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=2.2]
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=ca]
+                  COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                    CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=ba]
+                  COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
+                    BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+                    BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithArrays]
             MODIFIER_LIST[public]
             VALUE_PARAMETER_LIST
           CLASS_BODY
         CLASS[classId=test/AnnotationValues.WithClassLiteral, fqName=test.AnnotationValues.WithClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithClassLiteral, superNames=[]]
           MODIFIER_LIST[public final]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=ClassLiteral]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=ClassLiteral]
               valueArguments: [
                 c1 -> NormalClass(value=test/AnnotationValues.WithClassLiteral)
                 c2 -> NormalClass(value=kotlin/String)
@@ -117,6 +235,23 @@ AnnotationValues.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=ClassLiteral]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=c1]
+                  CLASS_LITERAL_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
+                        REFERENCE_EXPRESSION[referencedName=test]
+                        REFERENCE_EXPRESSION[referencedName=AnnotationValues]
+                      REFERENCE_EXPRESSION[referencedName=WithClassLiteral]
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=c2]
+                  CLASS_LITERAL_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=String]
           TYPE_PARAMETER_LIST
             TYPE_PARAMETER[fqName=null, name=T]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithClassLiteral]
@@ -125,7 +260,7 @@ AnnotationValues.class:
           CLASS_BODY
         CLASS[classId=test/AnnotationValues.WithNested, fqName=test.AnnotationValues.WithNested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithNested, superNames=[]]
           MODIFIER_LIST[public final]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Outer]
+            ANNOTATION_ENTRY[hasValueArguments=true, shortName=Outer]
               valueArguments: [
                 some -> "value"
                 nested -> Value(classId=test/Nested, argumentsMapping={i=12, s="nested value"})
@@ -136,6 +271,29 @@ AnnotationValues.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=Outer]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=some]
+                  STRING_TEMPLATE
+                    LITERAL_STRING_TEMPLATE_ENTRY[text=value]
+                VALUE_ARGUMENT[isSpread=false]
+                  VALUE_ARGUMENT_NAME
+                    REFERENCE_EXPRESSION[referencedName=nested]
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=test]
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=Nested]
+                      VALUE_ARGUMENT_LIST
+                        VALUE_ARGUMENT[isSpread=false]
+                          VALUE_ARGUMENT_NAME
+                            REFERENCE_EXPRESSION[referencedName=i]
+                          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+                        VALUE_ARGUMENT[isSpread=false]
+                          VALUE_ARGUMENT_NAME
+                            REFERENCE_EXPRESSION[referencedName=s]
+                          STRING_TEMPLATE
+                            LITERAL_STRING_TEMPLATE_ENTRY[text=nested value]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithNested]
             MODIFIER_LIST[public]
             VALUE_PARAMETER_LIST
@@ -158,7 +316,7 @@ AnnotationValuesKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
 
 
 Arrays.class:
@@ -171,37 +329,43 @@ Arrays.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Arrays]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=ia]
+          VALUE_PARAMETER[fqName=test.Arrays.ia, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ia]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=IntArray]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=la]
+          VALUE_PARAMETER[fqName=test.Arrays.la, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=la]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=LongArray]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=fa]
+          VALUE_PARAMETER[fqName=test.Arrays.fa, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=fa]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=FloatArray]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=da]
+          VALUE_PARAMETER[fqName=test.Arrays.da, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=da]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=DoubleArray]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=ca]
+          VALUE_PARAMETER[fqName=test.Arrays.ca, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ca]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=CharArray]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=ba]
+          VALUE_PARAMETER[fqName=test.Arrays.ba, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ba]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -215,48 +379,6 @@ Arrays.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=test.Arrays.ia, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ia]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=IntArray]
-        PROPERTY[fqName=test.Arrays.la, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=la]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=LongArray]
-        PROPERTY[fqName=test.Arrays.fa, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=fa]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=FloatArray]
-        PROPERTY[fqName=test.Arrays.da, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=da]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=DoubleArray]
-        PROPERTY[fqName=test.Arrays.ca, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ca]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=CharArray]
-        PROPERTY[fqName=test.Arrays.ba, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ba]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=BooleanArray]
 
 
 ClassLiteral.class:
@@ -269,7 +391,8 @@ ClassLiteral.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ClassLiteral]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c1]
+          VALUE_PARAMETER[fqName=test.ClassLiteral.c1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=c1]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -279,7 +402,8 @@ ClassLiteral.class:
                 REFERENCE_EXPRESSION[referencedName=KClass]
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=STAR]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c2]
+          VALUE_PARAMETER[fqName=test.ClassLiteral.c2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=c2]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -297,28 +421,6 @@ ClassLiteral.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=test.ClassLiteral.c1, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c1]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=reflect]
-              REFERENCE_EXPRESSION[referencedName=KClass]
-              TYPE_ARGUMENT_LIST
-                TYPE_PROJECTION[projectionKind=STAR]
-        PROPERTY[fqName=test.ClassLiteral.c2, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c2]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=reflect]
-              REFERENCE_EXPRESSION[referencedName=KClass]
-              TYPE_ARGUMENT_LIST
-                TYPE_PROJECTION[projectionKind=STAR]
 
 
 E.class:
@@ -360,19 +462,22 @@ EnumLiteral.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=EnumLiteral]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=e1]
+          VALUE_PARAMETER[fqName=test.EnumLiteral.e1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=e1]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=E]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=e2]
+          VALUE_PARAMETER[fqName=test.EnumLiteral.e2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=e2]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=E]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=e3]
+          VALUE_PARAMETER[fqName=test.EnumLiteral.e3, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=e3]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -386,27 +491,6 @@ EnumLiteral.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=test.EnumLiteral.e1, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=e1]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=test]
-              REFERENCE_EXPRESSION[referencedName=E]
-        PROPERTY[fqName=test.EnumLiteral.e2, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=e2]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=test]
-              REFERENCE_EXPRESSION[referencedName=E]
-        PROPERTY[fqName=test.EnumLiteral.e3, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=e3]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=test]
-              REFERENCE_EXPRESSION[referencedName=E]
 
 
 Nested.class:
@@ -419,13 +503,15 @@ Nested.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
+          VALUE_PARAMETER[fqName=test.Nested.i, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=i]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
+          VALUE_PARAMETER[fqName=test.Nested.s, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -439,20 +525,6 @@ Nested.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=test.Nested.i, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Int]
-        PROPERTY[fqName=test.Nested.s, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=String]
 
 
 Outer.class:
@@ -465,13 +537,15 @@ Outer.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Outer]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=some]
+          VALUE_PARAMETER[fqName=test.Outer.some, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=some]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=nested]
+          VALUE_PARAMETER[fqName=test.Outer.nested, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=nested]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -485,20 +559,6 @@ Outer.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=test.Outer.some, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=some]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=String]
-        PROPERTY[fqName=test.Outer.nested, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nested]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=test]
-              REFERENCE_EXPRESSION[referencedName=Nested]
 
 
 Simple.class:
@@ -511,55 +571,64 @@ Simple.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Simple]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
+          VALUE_PARAMETER[fqName=test.Simple.i, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=i]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=l]
+          VALUE_PARAMETER[fqName=test.Simple.l, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=l]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Long]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+          VALUE_PARAMETER[fqName=test.Simple.b, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Byte]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b2]
+          VALUE_PARAMETER[fqName=test.Simple.b2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b2]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Byte]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=d]
+          VALUE_PARAMETER[fqName=test.Simple.d, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=d]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Double]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=f]
+          VALUE_PARAMETER[fqName=test.Simple.f, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=f]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Float]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c]
+          VALUE_PARAMETER[fqName=test.Simple.c, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=c]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Char]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=bool1]
+          VALUE_PARAMETER[fqName=test.Simple.bool1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=bool1]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Boolean]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=bool2]
+          VALUE_PARAMETER[fqName=test.Simple.bool2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=bool2]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -573,69 +642,6 @@ Simple.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=test.Simple.i, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Int]
-        PROPERTY[fqName=test.Simple.l, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=l]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Long]
-        PROPERTY[fqName=test.Simple.b, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=b]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Byte]
-        PROPERTY[fqName=test.Simple.b2, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=b2]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Byte]
-        PROPERTY[fqName=test.Simple.d, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=d]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Double]
-        PROPERTY[fqName=test.Simple.f, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=f]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Float]
-        PROPERTY[fqName=test.Simple.c, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Char]
-        PROPERTY[fqName=test.Simple.bool1, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=bool1]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Boolean]
-        PROPERTY[fqName=test.Simple.bool2, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=bool2]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=Boolean]
 
 
 StringLiteral.class:
@@ -648,19 +654,22 @@ StringLiteral.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=StringLiteral]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s1]
+          VALUE_PARAMETER[fqName=test.StringLiteral.s1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s1]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s2]
+          VALUE_PARAMETER[fqName=test.StringLiteral.s2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s2]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s3]
+          VALUE_PARAMETER[fqName=test.StringLiteral.s3, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s3]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -674,27 +683,6 @@ StringLiteral.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=test.StringLiteral.s1, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s1]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=String]
-        PROPERTY[fqName=test.StringLiteral.s2, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s2]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=String]
-        PROPERTY[fqName=test.StringLiteral.s3, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s3]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=String]
 
 
 VarArg.class:
@@ -707,8 +695,8 @@ VarArg.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=VarArg]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=v]
-            MODIFIER_LIST[vararg]
+          VALUE_PARAMETER[fqName=test.VarArg.v, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=v]
+            MODIFIER_LIST[public final vararg]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -722,10 +710,3 @@ VarArg.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=test.VarArg.v, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=v]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=IntArray]

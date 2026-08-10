@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.isObject
@@ -22,9 +24,11 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -40,6 +44,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -60,6 +65,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -78,6 +84,14 @@ class Fir2IrVisitor(
     val annotationMode: Boolean
         get() = _annotationMode
     private val unitType: ConeClassLikeType = session.builtinTypes.unitType.coneType
+
+    private val generateNoWhenBranchMatchedExceptionWithMessage: Boolean = LanguageFeature.NoWhenBranchMatchedExceptionWithMessage.isEnabled()
+
+    private val throwNoWhenBranchMatchedExceptionSymbol by lazy {
+        session.symbolProvider.getTopLevelFunctionSymbols(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("throwNoWhenBranchMatchedException"))
+            .singleOrNull()
+            ?.toIrSymbolForCall(null, null) as? IrSimpleFunctionSymbol
+    }
 
     internal inline fun <T> withAnnotationMode(enableAnnotationMode: Boolean = true, block: () -> T): T {
         val oldAnnotationMode = _annotationMode
@@ -1143,7 +1157,7 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun extractOperationFromDynamicSetCall(functionCall: FirFunctionCall) =
+    private fun extractOperationFromDynamicSetCall(functionCall: FirFunctionCall): FirFunctionCall? =
         functionCall.dynamicVarargArguments?.lastOrNull() as? FirFunctionCall
 
     private fun FirStatement.unwrapDesugaredAssignmentValueReference(): FirStatement =
@@ -1369,15 +1383,38 @@ class Fir2IrVisitor(
                     flattenElse = origin == IrStatementOrigin.IF,
                 )
                 if (isProperlyExhaustive && whenExpression.branches.none { it.condition is FirElseIfTrueCondition }) {
-                    val irResult = IrCallImplWithShape(
-                        startOffset, endOffset, builtins.nothingType,
-                        builtins.noWhenBranchMatchedExceptionSymbol,
-                        typeArgumentsCount = 0,
-                        valueArgumentsCount = 0,
-                        contextParameterCount = 0,
-                        hasDispatchReceiver = false,
-                        hasExtensionReceiver = false,
-                    )
+                    val throwNoWhenBranchMatchedExceptionSymbol =
+                        runIf(generateNoWhenBranchMatchedExceptionWithMessage && subjectVariable != null) {
+                            throwNoWhenBranchMatchedExceptionSymbol
+                        }
+
+                    val irResult = if (throwNoWhenBranchMatchedExceptionSymbol != null && subjectVariable != null) {
+                        IrCallImplWithShape(
+                            startOffset, endOffset, builtins.nothingType,
+                            throwNoWhenBranchMatchedExceptionSymbol,
+                            typeArgumentsCount = 0,
+                            valueArgumentsCount = 1,
+                            contextParameterCount = 0,
+                            hasDispatchReceiver = false,
+                            hasExtensionReceiver = false,
+                        ).apply {
+                            // If the when is exhaustive, it must handle the null case on nullable subject.
+                            // Therefore, it's safe to insert a not-null cast.
+                            arguments[0] = IrGetValueImpl(startOffset, endOffset, subjectVariable.type, subjectVariable.symbol).applyIf(subjectVariable.type.canBeNull()) {
+                                Fir2IrImplicitCastInserter.implicitCastOrExpression(this, c.builtins.anyType)
+                            }
+                        }
+                    } else {
+                        IrCallImplWithShape(
+                            startOffset, endOffset, builtins.nothingType,
+                            builtins.noWhenBranchMatchedExceptionSymbol,
+                            typeArgumentsCount = 0,
+                            valueArgumentsCount = 0,
+                            contextParameterCount = 0,
+                            hasDispatchReceiver = false,
+                            hasExtensionReceiver = false,
+                        )
+                    }
                     irBranches += IrElseBranchImpl(
                         IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true), irResult
                     )
@@ -1836,7 +1873,7 @@ class Fir2IrVisitor(
         return visitResolvedQualifier(errorResolvedQualifier, data)
     }
 
-    private fun LogicOperationKind.toIrDynamicOperator() = when (this) {
+    private fun LogicOperationKind.toIrDynamicOperator(): IrDynamicOperator = when (this) {
         LogicOperationKind.AND -> IrDynamicOperator.ANDAND
         LogicOperationKind.OR -> IrDynamicOperator.OROR
     }

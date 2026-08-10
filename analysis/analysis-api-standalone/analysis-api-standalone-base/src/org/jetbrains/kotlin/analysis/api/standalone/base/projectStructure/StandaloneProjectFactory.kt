@@ -19,6 +19,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.*
+import com.intellij.psi.impl.PsiJavaModuleModificationTracker
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.impl.smartPointers.PsiClassReferenceTypePointerFactory
 import com.intellij.psi.impl.smartPointers.SmartPointerManagerImpl
@@ -165,6 +166,10 @@ object StandaloneProjectFactory {
             registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
             registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
 
+            // Java module resolution (e.g., of module import declarations in Java sources) caches its results with
+            // this tracker as a dependency, so it must be present in the project.
+            registerService(PsiJavaModuleModificationTracker::class.java, PsiJavaModuleModificationTracker::class.java)
+
             // The Java language level must be configured before Java source files are parsed. See `findJvmRootsForJavaFiles`.
             setupHighestLanguageLevel()
         }
@@ -283,6 +288,7 @@ object StandaloneProjectFactory {
             ),
             SingleJavaFileRootsIndex(singleJavaFileRoots),
             usePsiClassFilesReading = true,
+            javaModuleFinder = javaModuleFinder,
             perfManager = null, // Don't care about pure compiler performance in Analysis API
         )
 

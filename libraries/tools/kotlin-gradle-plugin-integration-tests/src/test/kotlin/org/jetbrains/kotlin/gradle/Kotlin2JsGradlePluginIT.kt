@@ -79,6 +79,44 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("es2020 target produces ES modules and compiles Long as bigint by default")
+    @GradleTest
+    fun testEs2020TargetProducesEsModulesWithBigIntLongs(gradleVersion: GradleVersion) {
+        project("simple-js-executable", gradleVersion) {
+            projectPath.resolve("src/jsMain/kotlin/Main.kt").writeText(
+                """
+                |package com.example
+                |
+                |fun main() {
+                |    val value: Long = 1234567890123L
+                |    println(value.toString())
+                |}
+                """.trimMargin()
+            )
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    compilerOptions {
+                        target.set("es2020")
+                    }
+                }
+            }
+            build("build") {
+                // es2020 implies ES modules, just like es2015, so the output uses the `.mjs` extension.
+                val outputFile = projectPath.resolve("build/js/packages/js-executable/kotlin/js-executable.mjs")
+
+                assertFileExists(outputFile)
+                // es2020 enables `-Xes-long-as-bigint` by default, so Long literals are emitted as bigint (`<value>n`).
+                assertFileContains(outputFile, "1234567890123n")
+
+                val packageJson = projectPath.resolve("build/js/packages/js-executable/")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let { Gson().fromJson(it.readText(), PackageJson::class.java) }
+
+                assertEquals("kotlin/js-executable.mjs", packageJson.main)
+            }
+        }
+    }
+
     @DisplayName("nodejs CLI arguments as main function arguments")
     @GradleTest
     fun testNodeJsMainArguments(gradleVersion: GradleVersion) {

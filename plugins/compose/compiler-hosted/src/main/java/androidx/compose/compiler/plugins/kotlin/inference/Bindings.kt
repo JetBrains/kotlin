@@ -17,11 +17,13 @@
 package androidx.compose.compiler.plugins.kotlin.inference
 
 /**
- * The value of a binding. If [token] is not null, the binding is bound to [token]. [size] is the
- * number of [Binding] instances that share this value. This is used to optimize unifying open
- * bindings. [index] is not used directly but makes debugging easier.
+ * The value of a binding. If [token] is not null, the binding is bound to [token]. If [token] is
+ * null, the binding is open. If [allowedTokens] is not null, then the binding may only be bound to
+ * an element of [allowedTokens]. [size] is the number of [Binding] instances that share this value.
+ * This is used to optimize unifying open bindings. [index] is not used directly but makes debugging
+ * easier.
  */
-class Value(var token: String?, var observers: Set<Bindings>) {
+class Value(var token: String?, var observers: Set<Bindings>, var allowedTokens: Set<String>? = null) {
     var size: Int = 1
     val index = valueIndex++
 }
@@ -29,23 +31,39 @@ class Value(var token: String?, var observers: Set<Bindings>) {
 private var valueIndex = 0
 
 /**
- * A binding that is either closed (with a non-null [token]) or open. Unified bindings are linked
- * together in a circular list by [Bindings]. All linked bindings are all closed simultaneously
- * when anyone of them is unified to a closed binding.
+ * A binding that is either closed (with a non-null [token]) or open. If [allowedTokens] is not
+ * null, then the binding may only be bound to an element of [allowedTokens]. Unified bindings are
+ * linked together in a circular list by [Bindings]. All linked bindings are all closed
+ * simultaneously when anyone of them is unified to a closed binding.
  *
  * @param token the applier token the binding is bound to if it is closed.
+ * @param allowedTokens the set of tokens that this binding may be bound to, or null if this binding
+ *        may be bound to any token
  */
-class Binding(token: String? = null, observers: Set<Bindings>) {
+class Binding(token: String? = null, observers: Set<Bindings>, allowedTokens: Set<String>? = null) {
     /**
      * The token that is bound to this binding. If [token] is null then the binding is still open.
      */
     val token: String? get() = value.token
+    val allowedTokens: Set<String>? get() = value.allowedTokens
+
+    /**
+     * The set of tokens that this binding is effectively allowed to be bound to, or null if it may
+     * be to be bound to any token.
+     *
+     * A binding that has a non-null `token` field always has a null `allowedTokens` field, but we
+     * consider it to effectively have one allowed token, the one in its `token` field.
+     */
+    val effectiveAllowedTokens: Set<String>?
+        get() = token?.let {
+            setOf(it)
+        } ?: allowedTokens
 
     /**
      * The value of the binding. All linked bindings share the same value which also maintains
      * the count of linked bindings.
      */
-    var value: Value = Value(token, observers)
+    var value: Value = Value(token, observers, allowedTokens)
 
     /**
      * The linked list next pointer. The list is circular an always non-empty as a binding will
@@ -55,7 +73,12 @@ class Binding(token: String? = null, observers: Set<Bindings>) {
     var next = this
 
     override fun toString(): String {
-        return value.token?.let { "Binding(token = $it)" } ?: "Binding(${value.index})"
+        val sb = StringBuilder()
+        sb.append("Binding(")
+        value.token?.let { sb.append("token = $it") } ?: sb.append(value.index)
+        value.allowedTokens?.let { sb.append(", allowedTokens = ${it.joinToString(separator = ", ", prefix = "{", postfix = "}")}") }
+        sb.append(")")
+        return sb.toString()
     }
 }
 
@@ -71,9 +94,13 @@ class Bindings {
     private val listeners = mutableListOf<() -> Unit>()
 
     /**
-     * Create a fresh open applier binding variable
+     * Create a fresh open applier binding variable. If [allowedTokens] is not null, then the
+     * binding variable may only be bound to an element of [allowedTokens].
      */
-    fun open() = Binding(observers = setOf(this))
+    fun open(allowedTokens: Set<String>? = null): Binding {
+        assert(allowedTokens == null || allowedTokens.size > 1)
+        return Binding(token = null, observers = setOf(this), allowedTokens)
+    }
 
     /**
      * Create a closed applier binding variable
@@ -129,16 +156,37 @@ class Bindings {
         val aValue = a.value
         val bValue = b.value
         if (aValue == bValue) return true
+
         val aValueSize = aValue.size
         val bValueSize = bValue.size
         val newObservers = aValue.observers + bValue.observers
+
+        val aEffectiveAllowedTokens = a.effectiveAllowedTokens
+        val bEffectiveAllowedTokens = b.effectiveAllowedTokens
+
+        val newAllowedTokens = when {
+            aEffectiveAllowedTokens != null && bEffectiveAllowedTokens != null ->
+                (aEffectiveAllowedTokens intersect bEffectiveAllowedTokens).also {
+                    if (it.isEmpty()) return false
+                }
+            aEffectiveAllowedTokens != null -> aEffectiveAllowedTokens
+            else -> bEffectiveAllowedTokens
+        }
+
+        if (newAllowedTokens != null && newAllowedTokens.size == 1) {
+            val token = newAllowedTokens.single()
+            return bind(a, token) && bind(b, token)
+        }
+
         if (aValueSize > bValueSize) {
             aValue.size += bValueSize
             aValue.observers = newObservers
+            aValue.allowedTokens = newAllowedTokens
             unifyValues(b, aValue)
         } else {
             bValue.size += aValueSize
             bValue.observers = newObservers
+            bValue.allowedTokens = newAllowedTokens
             unifyValues(a, bValue)
         }
 
@@ -160,6 +208,16 @@ class Bindings {
     // Bind the binding to a token. It binds all bindings in the same list to the token.
     private fun bind(binding: Binding, token: String): Boolean {
         val value = binding.value
+
+        val allowedTokens = value.allowedTokens
+        if (allowedTokens != null) {
+            if (token in allowedTokens) {
+                value.allowedTokens = null
+            } else {
+                return false
+            }
+        }
+
         value.token = token
         bindingValueChanged(value)
         value.observers = emptySet()

@@ -94,6 +94,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IOSamplesKt]]
             REFERENCE_EXPRESSION[referencedName=Int]
       PROPERTY[fqName=FileInput.nextUsed, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=nextUsed]
         MODIFIER_LIST[private]
+        BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
       FUN[fqName=FileInput.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST

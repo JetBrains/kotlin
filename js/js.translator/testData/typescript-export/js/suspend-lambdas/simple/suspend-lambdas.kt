@@ -138,6 +138,15 @@ suspend fun callHandlerFromAbstractClass(holder: AbstractClassWithSuspendLambdaP
     holder.handler(x)
 
 @JsExport
+suspend fun callAnonymousAbstractClassHandler(): String {
+    val holder = object : AbstractClassWithSuspendLambdaProp() {
+        override val handler: suspend (Int) -> String = { "anon:$it" }
+    }
+
+    return callHandlerFromAbstractClass(holder, 42)
+}
+
+@JsExport
 suspend fun callbackThatThrows(callback: suspend () -> String): String =
     try {
         callback()

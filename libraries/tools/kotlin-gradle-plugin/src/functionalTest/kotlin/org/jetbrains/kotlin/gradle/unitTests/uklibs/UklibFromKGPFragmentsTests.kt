@@ -3,7 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("FunctionName")
 @file:OptIn(ExperimentalWasmDsl::class)
 
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
@@ -276,7 +275,7 @@ class UklibFromKGPFragmentsTests {
                 linuxArm64()
                 linuxX64()
 
-                val customLinuxMain by sourceSets.creating
+                val customLinuxMain = sourceSets.create("customLinuxMain")
                 sourceSets.linuxArm64Main.get().dependsOn(customLinuxMain)
                 sourceSets.linuxX64Main.get().dependsOn(customLinuxMain)
             }

@@ -75,9 +75,9 @@ internal val IrClass.isGeneratedLambdaClass: Boolean
 internal object JvmVisibilityPolicy : VisibilityPolicy {
     // Note: any condition that results in non-`LOCAL` visibility here should be duplicated in `JvmLocalDeclarationPopupLowering`,
     // else it won't detect the class as local.
-    override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
+    override fun forClass(declaration: IrClass, inPublicInlineScope: Boolean): DescriptorVisibility =
         if (declaration.isGeneratedLambdaClass) {
-            scopedVisibility(inInlineFunctionScope)
+            scopedVisibility(inPublicInlineScope)
         } else {
             declaration.visibility
         }
@@ -91,6 +91,6 @@ internal object JvmVisibilityPolicy : VisibilityPolicy {
     override fun forCapturedField(value: IrValueSymbol): DescriptorVisibility =
         JavaDescriptorVisibilities.PACKAGE_VISIBILITY // avoid requiring a synthetic accessor for it
 
-    private fun scopedVisibility(inInlineFunctionScope: Boolean): DescriptorVisibility =
-        if (inInlineFunctionScope) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+    private fun scopedVisibility(makePublic: Boolean): DescriptorVisibility =
+        if (makePublic) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
 }

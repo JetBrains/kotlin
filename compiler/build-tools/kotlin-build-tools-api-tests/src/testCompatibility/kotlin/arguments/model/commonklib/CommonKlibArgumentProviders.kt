@@ -79,7 +79,7 @@ private fun namedInvalidRawValueBtaV2ArgumentConfigurations(): List<Named<Pair<C
 private fun namedArgumentConfiguration(
     argumentPredicate: (CommonKlibArgumentTestDescriptor<*>) -> Boolean = { true },
 ): List<Named<CommonKlibArgumentConfiguration<*>>> {
-    val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedStrategyArguments()
+    val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedToolchainProviders()
     val compilerArguments = commonKlibCompilerArguments.filter { argumentPredicate(it) }
 
     return btaVersions.flatMap { namedKotlinToolchains ->
@@ -87,7 +87,7 @@ private fun namedArgumentConfiguration(
             descriptor.operationKinds.mapNotNull { operationKind ->
                 named(
                     namedKotlinToolchains.name + "[${operationKind.displayName}][${descriptor.argumentName}]",
-                    CommonKlibArgumentConfiguration(namedKotlinToolchains.payload, descriptor, operationKind)
+                    CommonKlibArgumentConfiguration(namedKotlinToolchains.payload(), descriptor, operationKind)
                 )
             }
         }

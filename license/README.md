@@ -227,6 +227,10 @@ any distributions of the compiler, libraries or plugin:
       - License: MIT ([license/third_party/testdata/lombok_license.txt][lombok])
       - Origin: Project Lombok, Copyright (C) 2009-2013 The Project Lombok Authors
 
+ - Path: plugins/lombok/lombok.k2/src/org/jetbrains/kotlin/lombok/generators
+      - License: MIT ([license/third_party/testdata/lombok_license.txt][lombok])
+      - Origin: Project Lombok, Copyright (C) 2015 The Project Lombok Authors
+
  - Path: idea/idea-android/tests/org/jetbrains/kotlin/android/AndroidTestBase.java
       - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
       - Origin: Copyright (C) 2011-15 The Android Open Source Project

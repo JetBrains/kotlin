@@ -1,4 +1,6 @@
 FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] incompletePropertyWithDelegate.kt
-    public final [ResolvedTo(CONTRACTS)] fun [ResolvedTo(CONTRACTS)] R|kotlin/String|.getValue([ResolvedTo(CONTRACTS)] x: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] y: R|kotlin/reflect/KProperty<*>|): <implicit> { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/String|.getValue([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Any?|, [ResolvedTo(BODY_RESOLVE)] y: R|kotlin/reflect/KProperty<*>|): R|kotlin/String| {
+        ^getValue String()
+    }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val x: R|kotlin/String|by LAZY_EXPRESSION
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| { LAZY_BLOCK }

@@ -193,6 +193,7 @@ CONSTRUCTOR:
   getContainingJvmClassName: null
   getContainingModule: KaDanglingFileModule "Temporary file"
   deprecation: null
+  javaMethodName: null
   importableFqName: IntPredicate
 
 FUNCTIONAL INTERFACE:

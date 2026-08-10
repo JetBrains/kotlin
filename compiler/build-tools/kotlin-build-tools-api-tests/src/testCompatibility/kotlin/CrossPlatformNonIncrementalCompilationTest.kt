@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogCon
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputsContains
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.expectFailWithError
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.writeText
 
@@ -17,6 +18,7 @@ import kotlin.io.path.writeText
  * Tests that verify compilation behavior across all supported platforms (JVM, JS, Wasm and metadata).
  * Each test runs the same logic against every platform the current compiler supports, via [ProjectCreator].
  */
+@SmokeTest
 class CrossPlatformNonIncrementalCompilationTest : BaseCompilationTest() {
     @DisplayName("Compilation with syntax error fails on all platforms")
     @BtaV2StrategyAndPlatformAgnosticCompilationTest

@@ -83,10 +83,55 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaForbiddenKt]]
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=listOf]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          DOT_QUALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=foo]
+              REFERENCE_EXPRESSION[referencedName=bar]
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=something]
+              VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          STRING_TEMPLATE
+            LITERAL_STRING_TEMPLATE_ENTRY[text=foo bar something]
+        VALUE_ARGUMENT[isSpread=false]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=listOf]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          DOT_QUALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=foo]
+              REFERENCE_EXPRESSION[referencedName=bar]
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=something]
+              VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+        VALUE_ARGUMENT[isSpread=false]
+          STRING_TEMPLATE
+            LITERAL_STRING_TEMPLATE_ENTRY[text=foo bar something]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=listOf]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          DOT_QUALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=foo]
+              REFERENCE_EXPRESSION[referencedName=bar]
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=something]
+              VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+        VALUE_ARGUMENT[isSpread=false]
+          STRING_TEMPLATE
+            LITERAL_STRING_TEMPLATE_ENTRY[text=foo bar something]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
   FUN[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
@@ -129,10 +174,24 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaForbiddenKt]]
             REFERENCE_EXPRESSION[referencedName=Any]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=foo]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+      LAMBDA_ARGUMENT[isSpread=false]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=foo]
+      LAMBDA_ARGUMENT[isSpread=false]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=foo]
+      VALUE_ARGUMENT_LIST
+        VALUE_ARGUMENT[isSpread=false]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+      LAMBDA_ARGUMENT[isSpread=false]
   FUN[fqName=Number, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=Number]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]

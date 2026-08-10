@@ -1,0 +1,22 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) settings set stop-disassembly-display never
+(lldb) command script import <path to lldb script>
+(lldb) b 9
+Breakpoint 1: where = lldb_kt47198WithBody.kexe`kfun:#foo(kotlin.Int){} + <breakpoint offset> at kt47198.kt:9:1, address = <memory address>
+(lldb) r
+Process <process id> launched: <path to executable>
+Process <process id> stopped
+* thread #<thread id>, stop reason = breakpoint 1.1
+    frame #0: <frame pc> lldb_kt47198WithBody.kexe`kfun:#foo(a=33){} at kt47198.kt:9:1
+   6
+   7
+   8
+-> 9   	fun foo(a:Int){
+    	^
+   10  	    print("a: ${'$'}a")
+   11  	}
+   12
+(lldb) fr v
+(int) a = 33
+(lldb) q

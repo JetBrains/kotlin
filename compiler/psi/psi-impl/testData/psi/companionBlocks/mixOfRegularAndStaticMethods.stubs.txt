@@ -12,10 +12,13 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       PROPERTY[fqName=C.regular2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=regular2]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=String]
+        STRING_TEMPLATE
+          LITERAL_STRING_TEMPLATE_ENTRY[text=r2]
       FUN[fqName=C.regular3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=regular3]
         VALUE_PARAMETER_LIST
       COMPANION_BLOCK
@@ -25,6 +28,7 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Long]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2L]
           FUN[fqName=C.static3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=static3]
             VALUE_PARAMETER_LIST
       FUN[fqName=C.regular4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=regular4]

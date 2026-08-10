@@ -3954,22 +3954,23 @@ open class PsiRawFirBuilder(
             }
         }
 
-        private fun buildErrorNonLocalDeclarationForDanglingModifierList(modifierList: KtModifierList) = buildDanglingModifierList {
-            this.source = modifierList.toFirSourceElement(KtFakeSourceElementKind.DanglingModifierList)
-            moduleData = baseModuleData
-            origin = FirDeclarationOrigin.Source
-            diagnostic = ConeDanglingModifierOnTopLevel
-            symbol = FirDanglingModifierSymbol()
-            withContainerSymbol(symbol) {
-                for (annotationEntry in modifierList.annotationEntries) {
-                    annotations += annotationEntry.convert<FirAnnotation>()
-                }
+        private fun buildErrorNonLocalDeclarationForDanglingModifierList(modifierList: KtModifierList): FirDanglingModifierList =
+            buildDanglingModifierList {
+                this.source = modifierList.toFirSourceElement(KtFakeSourceElementKind.DanglingModifierList)
+                moduleData = baseModuleData
+                origin = FirDeclarationOrigin.Source
+                diagnostic = ConeDanglingModifierOnTopLevel
+                symbol = FirDanglingModifierSymbol()
+                withContainerSymbol(symbol) {
+                    for (annotationEntry in modifierList.annotationEntries) {
+                        annotations += annotationEntry.convert<FirAnnotation>()
+                    }
 
-                contextParameters.addContextParameters(modifierList.contextParameterLists, symbol)
+                    contextParameters.addContextParameters(modifierList.contextParameterLists, symbol)
+                }
+            }.apply {
+                containingClassAttr = currentDispatchReceiverType()?.lookupTag
             }
-        }.apply {
-            containingClassAttr = currentDispatchReceiverType()?.lookupTag
-        }
     }
 }
 

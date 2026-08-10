@@ -4,8 +4,8 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 /**
  * Represents a javascript expression for array access.
@@ -65,6 +65,6 @@ public final class JsArrayAccess extends JsAssignableExpression {
         JsExpression arrayCopy = AstUtil.deepCopy(arrayExpression);
         JsExpression indexCopy = AstUtil.deepCopy(indexExpression);
 
-        return new JsArrayAccess(arrayCopy, indexCopy).withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsArrayAccess(arrayCopy, indexCopy), this);
     }
 }

@@ -82,7 +82,10 @@ class ImplicitValueStorage private constructor(
         }
     }
 
-    private fun PersistentSetMultimap<Name, ImplicitReceiverValue<*>>.putIfNameIsNotNull(name: Name?, value: ImplicitReceiverValue<*>) =
+    private fun PersistentSetMultimap<Name, ImplicitReceiverValue<*>>.putIfNameIsNotNull(
+        name: Name?,
+        value: ImplicitReceiverValue<*>,
+    ): PersistentSetMultimap<Name, ImplicitReceiverValue<*>> =
         if (name != null)
             put(name, value)
         else

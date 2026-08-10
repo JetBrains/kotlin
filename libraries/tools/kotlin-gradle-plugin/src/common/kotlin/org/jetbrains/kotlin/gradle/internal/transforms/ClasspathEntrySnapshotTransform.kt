@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_LEVEL
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation.Companion.EXPAND_TYPE_ALIASES
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation.Companion.GRANULARITY
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation.Companion.PARSE_INLINED_LOCAL_CLASSES
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
@@ -59,6 +60,9 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
         @get:Input
         abstract val parseInlinedLocalClasses: Property<Boolean>
 
+        @get:Input
+        abstract val expandTypeAliases: Property<Boolean>
+
         @get:Internal
         abstract val buildSessionService: Property<BuildSessionService>
     }
@@ -95,6 +99,7 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
             parameters.gradleReadOnlyDependenciesCacheDir.orNull?.asFile
         )
         val parseInlinedLocalClasses = parameters.parseInlinedLocalClasses.get()
+        val expandTypeAliases = parameters.expandTypeAliases.get()
 
         val buildSession = parameters.buildSessionService.get().getOrCreateBuildSession(
             parameters.classLoadersCachingService.get(),
@@ -106,6 +111,7 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
             .apply {
                 this[GRANULARITY] = granularity
                 this[PARSE_INLINED_LOCAL_CLASSES] = parseInlinedLocalClasses
+                this[EXPAND_TYPE_ALIASES] = expandTypeAliases
             }.build()
         val snapshot = buildSession.executeOperation(snapshotOperation)
         snapshot.saveSnapshot(snapshotOutputFile)

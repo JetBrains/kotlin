@@ -11,13 +11,12 @@ import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.org.objectweb.asm.Type
 
 @KaImplementationDetail
 @SubclassOptInRequired(KaImplementationDetail::class)
@@ -37,8 +36,6 @@ public interface KaInternalsJavaInteroperabilityComponent {
 
     public fun mapToJvmTypeDescriptor(type: KaType): String
 
-    public fun mapToJvmType(type: KaType, mode: TypeMappingMode): Type
-
     public fun isPrimitiveBacked(type: KaType): Boolean
 
     public fun namedClassSymbol(psiClass: PsiClass): KaNamedClassSymbol?
@@ -50,4 +47,6 @@ public interface KaInternalsJavaInteroperabilityComponent {
     public fun javaGetterName(symbol: KaPropertySymbol): Name
 
     public fun javaSetterName(symbol: KaPropertySymbol): Name?
+
+    public fun javaMethodName(function: KaFunctionSymbol): String?
 }

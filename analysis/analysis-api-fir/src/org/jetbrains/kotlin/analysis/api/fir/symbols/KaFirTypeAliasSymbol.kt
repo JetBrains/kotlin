@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -56,10 +55,6 @@ internal class KaFirTypeAliasSymbol private constructor(
 
     override val visibility: KaSymbolVisibility
         get() = withValidityAssertion { (backingPsi?.visibility ?: firSymbol.visibility).asKaSymbolVisibility }
-
-    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
-    override val compilerVisibility: Visibility
-        get() = withValidityAssertion { backingPsi?.visibility ?: firSymbol.visibility }
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion {

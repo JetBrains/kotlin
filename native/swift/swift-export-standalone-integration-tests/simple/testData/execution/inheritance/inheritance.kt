@@ -108,3 +108,84 @@ interface Labeled {
 
 fun readDisplay(l: Labeled): String = l.display
 fun readBase(l: Labeled): String = l.base
+
+// --- Throwing reverse bridges ---
+
+class MyKotlinException(message: String) : RuntimeException(message)
+
+// A plain Kotlin class that is NOT a `Throwable`: Swift may retroactively conform its exported class to
+// `Swift.Error` and throw it from an override. Kotlin cannot rethrow a non-throwable, so it has to travel as a
+// boxed `SwiftError` — and come back out to Swift as the very same instance.
+class NotAThrowable(val tag: String)
+
+// Open `@Throws` method with a non-Unit return and a parameter: a Swift override may throw a Swift
+// error, which must surface to a Kotlin caller as a thrown exception (reverse error bridge).
+open class Thrower {
+    @Throws(Throwable::class)
+    open fun mightThrow(prefix: String): String = prefix + "-kotlin-ok"
+}
+
+// Calls the (possibly Swift-overridden) method and reports what propagated back to Kotlin.
+fun callMightThrowCatching(t: Thrower, prefix: String): String = try {
+    "ok:" + t.mightThrow(prefix)
+} catch (e: MyKotlinException) {
+    "kotlin-exception:" + e.message
+} catch (e: Throwable) {
+    "throwable:" + (e.message ?: "?")
+}
+
+// A Kotlin super that throws: used to check that a Kotlin exception let-propagate by a Swift override
+// (which called `super`) comes home to Kotlin as the ORIGINAL Kotlin exception (identity preserved).
+open class SuperThrower {
+    @Throws(Throwable::class)
+    open fun boom(): String = throw MyKotlinException("kotlin-boom")
+}
+
+fun callBoomCatching(s: SuperThrower): String = try {
+    s.boom()
+} catch (e: MyKotlinException) {
+    "kotlin-exception:" + e.message
+} catch (e: Throwable) {
+    "throwable:" + (e.message ?: "?")
+}
+
+// Round-trip: a Swift override throws a Swift error; this `@Throws` relay propagates it back out to
+// Swift, where it must arrive as the SAME Swift error (forward SwiftError unwrap).
+open class Relayer {
+    @Throws(Throwable::class)
+    open fun relay(): String = "kotlin-relay"
+}
+
+@Throws(Throwable::class)
+fun callRelay(r: Relayer): String = r.relay()
+// --- Overloads (KT-87875) ---
+
+// Overloaded members: each overload's reverse bridge must take over the virtual table slot of that
+// exact overload, so Kotlin-side dispatch reaches the matching Swift override. `pick()` is final and
+// therefore has no slot at all; `same` overloads are told apart by their parameter types only.
+open class Overloads {
+    fun pick(): String = "kotlin-final"
+    open fun pick(arg1: String): String = "kotlin-pick($arg1)"
+    open fun pick(arg1: String, arg2: Int): String = "kotlin-pick($arg1, $arg2)"
+    open fun same(arg: String): String = "kotlin-same-string($arg)"
+    open fun same(arg: Int): String = "kotlin-same-int($arg)"
+}
+
+fun callPick1(o: Overloads, arg1: String): String = o.pick(arg1)
+fun callPick2(o: Overloads, arg1: String, arg2: Int): String = o.pick(arg1, arg2)
+fun callSameString(o: Overloads, arg: String): String = o.same(arg)
+fun callSameInt(o: Overloads, arg: Int): String = o.same(arg)
+
+// Overloads declared in an interface: their reverse bridges land in the interface table instead.
+interface OverloadedSpeaker {
+    fun say(): String
+    fun say(times: Int): String
+}
+
+open class OverloadedSpeakerBase : OverloadedSpeaker {
+    override fun say(): String = "kotlin-say"
+    override fun say(times: Int): String = "kotlin-say($times)"
+}
+
+fun callSay(s: OverloadedSpeaker): String = s.say()
+fun callSayTimes(s: OverloadedSpeaker, times: Int): String = s.say(times)

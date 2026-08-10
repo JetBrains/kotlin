@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationTarget
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 
 @KaExperimentalApi
 @KaSessionComponentImplementationDetail
@@ -34,14 +31,6 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      */
     @KaExperimentalApi
     public val KaSymbol.isDeprecated: Boolean
-
-    /**
-     * The deprecation status of the given symbol, or `null` if the declaration is not deprecated.
-     */
-    @KaExperimentalApi
-    @Deprecated("Use 'deprecation' instead", level = DeprecationLevel.HIDDEN)
-    @KaNoContextParameterBridgeRequired
-    public val KaSymbol.deprecationStatus: DeprecationInfo?
 
     /**
      * Whether the function symbol meets all the requirements to be declared as an [operator function](https://kotlinlang.org/docs/operator-overloading.html).
@@ -68,47 +57,6 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      */
     @KaExperimentalApi
     public val KaNamedFunctionSymbol.canBeOperator: Boolean
-
-    /**
-     * The deprecation status of the given symbol for the given [annotation use-site target](https://kotlinlang.org/docs/annotations.html#annotation-use-site-targets),
-     * or `null` if the declaration is not deprecated.
-     */
-    @KaExperimentalApi
-    @Deprecated("Use 'deprecation()' instead", level = DeprecationLevel.HIDDEN)
-    @KaNoContextParameterBridgeRequired
-    public fun KaSymbol.deprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo?
-
-    /**
-     * The deprecation status of the given property getter, or `null` if the getter is not deprecated.
-     */
-    @KaExperimentalApi
-    @Deprecated(
-        message = "Use 'deprecation' directly instead",
-        replaceWith = ReplaceWith("this.getter?.deprecation"),
-        level = DeprecationLevel.HIDDEN,
-    )
-    @KaNoContextParameterBridgeRequired
-    public val KaPropertySymbol.getterDeprecationStatus: DeprecationInfo?
-
-    /**
-     * The deprecation status of the given property setter, or `null` if the setter is not deprecated or doesn't exist.
-     */
-    @KaExperimentalApi
-    @Deprecated(
-        message = "Use 'deprecation' directly instead",
-        replaceWith = ReplaceWith("this.setter?.deprecation"),
-        level = DeprecationLevel.HIDDEN,
-    )
-    @KaNoContextParameterBridgeRequired
-    public val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?
-
-    /**
-     * A set of applicable targets for an annotation class symbol, or `null` if the symbol is not an annotation class.
-     */
-    @KaExperimentalApi
-    @Deprecated("Use 'applicableAnnotationTargets' instead", level = DeprecationLevel.HIDDEN)
-    @KaNoContextParameterBridgeRequired
-    public val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
 
     /**
      * A set of applicable targets for an annotation class symbol, or `null` if the symbol is not an annotation class.
@@ -260,21 +208,6 @@ public sealed class KaReturnValueStatus(public val name: String) {
 }
 
 /**
- * A set of applicable targets for an annotation class symbol, or `null` if the symbol is not an annotation class.
- */
-@Deprecated("Use 'applicableAnnotationTargets' instead", level = DeprecationLevel.HIDDEN)
-@KaExperimentalApi
-@KaCustomContextParameterBridge
-context(session: KaSession)
-public val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
-    get() {
-        @Suppress("UNCHECKED_CAST")
-        @OptIn(KaSessionComponentImplementationDetail::class)
-        return KaSymbolInformationProvider::class.java.getDeclaredMethod("getAnnotationApplicableTargets", KaClassSymbol::class.java)
-            .invoke(session, this) as Set<KotlinTarget>?
-    }
-
-/**
  * The deprecation status of the given symbol, or `null` if the symbol is not deprecated.
  *
  * This considers deprecation annotations applied to the symbol itself and, for property-related
@@ -284,6 +217,7 @@ public val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
     replaceWith = ReplaceWith("this.deprecation", "org.jetbrains.kotlin.analysis.api.symbols.deprecation"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -299,6 +233,7 @@ public val KaSymbol.deprecation: KaDeprecation?
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
     replaceWith = ReplaceWith("this.isDeprecated", "org.jetbrains.kotlin.analysis.api.symbols.isDeprecated"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -332,6 +267,7 @@ public val KaSymbol.isDeprecated: Boolean
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
     replaceWith = ReplaceWith("this.canBeOperator", "org.jetbrains.kotlin.analysis.api.symbols.canBeOperator"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -345,6 +281,7 @@ public val KaNamedFunctionSymbol.canBeOperator: Boolean
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
     replaceWith = ReplaceWith("this.applicableAnnotationTargets", "org.jetbrains.kotlin.analysis.api.symbols.applicableAnnotationTargets"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -360,6 +297,7 @@ public val KaClassSymbol.applicableAnnotationTargets: Set<KaAnnotationTarget>?
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
     replaceWith = ReplaceWith("this.isInline", "org.jetbrains.kotlin.analysis.api.symbols.isInline"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -373,6 +311,7 @@ public val KaKotlinPropertySymbol.isInline: Boolean
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
     replaceWith = ReplaceWith("this.importableFqName", "org.jetbrains.kotlin.analysis.api.symbols.importableFqName"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -395,6 +334,7 @@ public val KaSymbol.importableFqName: FqName?
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
     replaceWith = ReplaceWith("this.defaultAnnotationTargets", "org.jetbrains.kotlin.analysis.api.symbols.defaultAnnotationTargets"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -409,6 +349,7 @@ public val KaSymbol.defaultAnnotationTargets: Set<KaAnnotationTarget>?
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
     replaceWith = ReplaceWith("this.returnValueStatus", "org.jetbrains.kotlin.analysis.api.symbols.returnValueStatus"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -425,6 +366,7 @@ public val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
     replaceWith = ReplaceWith("this.containingFileAnnotations", "org.jetbrains.kotlin.analysis.api.symbols.containingFileAnnotations"),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)

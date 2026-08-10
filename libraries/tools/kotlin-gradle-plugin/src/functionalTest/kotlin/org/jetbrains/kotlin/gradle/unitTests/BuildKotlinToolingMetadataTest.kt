@@ -4,7 +4,7 @@
  */
 
 /* Associate compilations are not yet supported by the IDE. KT-34102 */
-@file:Suppress("invisible_reference", "invisible_member", "FunctionName", "DuplicatedCode")
+@file:Suppress("invisible_reference", "invisible_member", "DuplicatedCode")
 
 package org.jetbrains.kotlin.gradle.unitTests
 

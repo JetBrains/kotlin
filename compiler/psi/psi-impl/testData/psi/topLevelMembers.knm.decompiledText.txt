@@ -15,7 +15,8 @@ private val certainlyNothing: kotlin.Nothing /* compiled code */
 public val foo.TopLevelMembers.D.Main: foo.TopLevelMembers.D? /* compiled code */
     public final get() { /* compiled code */ }
 
-@field:foo.TopLevelMembers.A internal val Main: foo.TopLevelMembers.D? /* compiled code */
+@field:foo.TopLevelMembers.A
+internal val Main: foo.TopLevelMembers.D? /* compiled code */
 
 public fun funWithBlockBody(): kotlin.Unit { /* compiled code */ }
 
@@ -34,7 +35,8 @@ private typealias Alias<E> = (E) -> E
 public final class Nothing public constructor() {
 }
 
-@kotlin.annotation.Target public final annotation class A public constructor() : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.FIELD])
+public final annotation class A public constructor() : kotlin.Annotation {
 }
 
 public final class D public constructor() {

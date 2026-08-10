@@ -19,10 +19,10 @@ sourceSets {
 
 optInToK1Deprecation()
 
-val embedded by configurations
+val embedded = configurations.embedded.get()
 embedded.isTransitive = false
-configurations.getByName("compileOnly").extendsFrom(embedded)
-configurations.getByName("testApi").extendsFrom(embedded)
+configurations.compileOnly.get().extendsFrom(embedded)
+configurations.testApi.get().extendsFrom(embedded)
 
 dependencies {
     api(kotlinStdlib())

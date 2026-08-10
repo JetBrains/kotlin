@@ -29,3 +29,5 @@ fun setTag(tags: List<String>) {
     val a = "this is another test"
     a.length
 }
+
+fun varargsWithClosure(vararg inp: () -> Unit): Unit = TODO()

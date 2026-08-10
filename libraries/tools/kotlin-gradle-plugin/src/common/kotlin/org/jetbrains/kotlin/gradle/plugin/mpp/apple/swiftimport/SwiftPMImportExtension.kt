@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency.Remote.Repository
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency.Remote.Version
 import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -534,6 +535,20 @@ sealed class SwiftPMDependency : Serializable {
         }
     }
 }
+
+/**
+ * Converts [SwiftPMImportMetadata.konanTargets] names to [SwiftPMDependency.Platform] values.
+ * Non-Apple targets are ignored. An empty result means no implicit platform constraint.
+ */
+internal fun Set<String>.toSwiftPMPlatforms(): Set<SwiftPMDependency.Platform> =
+    mapNotNull { name ->
+        KonanTarget.predefinedTargets[name]?.takeIf { it.family.isAppleFamily }?.swiftPMPlatform()
+    }.toSet()
+
+/** Converts [KonanTarget]s to [SwiftPMDependency.Platform] values. Non-Apple targets are ignored. */
+@JvmName("konanTargetsToSwiftPMPlatforms")
+internal fun Set<KonanTarget>.toSwiftPMPlatforms(): Set<SwiftPMDependency.Platform> =
+    filter { it.family.isAppleFamily }.map { it.swiftPMPlatform() }.toSet()
 
 
 /** Controls persisted `Package.resolved` synchronization for SwiftPM import. */

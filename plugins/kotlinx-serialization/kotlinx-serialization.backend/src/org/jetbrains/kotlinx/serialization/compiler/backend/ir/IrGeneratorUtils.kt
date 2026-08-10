@@ -20,13 +20,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.FqNameEqualityChecker
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.superTypes
 
-// TODO KT-53096
 fun IrPluginContext.generateBodyForDefaultConstructor(declaration: IrConstructor): IrBody? {
     val type = declaration.returnType as? IrSimpleType ?: return null
 
@@ -54,10 +52,10 @@ fun IrClass.addDefaultConstructorBodyIfAbsent(ctx: IrPluginContext) {
 }
 
 /**
- * Find the [parentType] heirs along the chain up to [childType], with order from [childType] to the [parentType],
- * or `null` of [childType] isn't inheritor of [parentType].
+ * Returns the type path from [childType] to [parentType], inclusive,
+ * or an empty list if [childType] is not a subtype of [parentType].
  */
-fun findPath(childType: IrSimpleType, parentType: IrSimpleType): List<IrSimpleType>? {
+fun findSupertypePath(childType: IrSimpleType, parentType: IrSimpleType): List<IrSimpleType> {
     return findPathInternal(childType, parentType)
 }
 
@@ -65,25 +63,25 @@ private fun findPathInternal(
     type: IrSimpleType,
     targetParentType: IrSimpleType,
     prev: List<IrSimpleType> = emptyList(),
-): List<IrSimpleType>? {
+): List<IrSimpleType> {
     val current = prev + type
     if (FqNameEqualityChecker.areEqual(targetParentType.classifier, type.classifier)) return current
 
     type.superTypes().asSequence().filterIsInstance<IrSimpleType>().forEach {
         val result = findPathInternal(it, targetParentType, current)
-        if (result != null) return result
+        if (result.isNotEmpty()) return result
     }
 
-    return null
+    return emptyList()
 }
 
 /**
- * Try to find the use of type parameter of the parent type ([path]`.last()`) in the child ([path]`.first()`)
+ * Tries to map the type parameter at [indexInChild] from the child type
+ * ([supertypePath].first()) to the parent type ([supertypePath].last()).
  *
- * It checks whether a type parameter with the [indexInChild] index is inherited from the [path]`.last()` parent,
- * if so, the index of the parent's type parameter is returned, if not, `null`.
+ * Returns its index in the parent type, or `null` if it is not propagated through the path.
  *
- * If [path] is empty then `null` is returned.
+ * If [supertypePath] is empty then `null` is returned.
  *
  * Example:
  * ```
@@ -92,16 +90,16 @@ private fun findPathInternal(
  * ```
  * Path is [`B`, `A`]
  *  - for [indexInChild]` = 0` function will return `2`
- *  - for [indexInChild]` = 1` function will return `null` - index aren't reused in `A`
- *  - for [indexInChild]` = 2` function will return `null` - no type parameter with such index in `B`
+ *  - for [indexInChild]` = 1` function will return `null` - the type parameter is not used in `A`
+ *  - for [indexInChild]` = 2` function will return `null` - `B` has no type parameter at this index
  */
-fun mapTypeParameterIndex(indexInChild: Int, path: List<IrSimpleType>): Int? {
-    if (path.isEmpty()) return null
+fun findIndexInParent(indexInChild: Int, supertypePath: List<IrSimpleType>): Int? {
+    if (supertypePath.isEmpty()) return null
 
-    var expectedType: IrSimpleType = path[0]
+    var expectedType: IrSimpleType = supertypePath[0]
     var expectedIndex = indexInChild
 
-    path.forEach { type ->
+    supertypePath.forEach { type ->
         type.arguments.forEachIndexed { i, arg ->
             val typeParameter = ((type.arguments[i] as? IrSimpleType)?.classifier as? IrTypeParameterSymbol)?.owner ?: return@forEachIndexed
             if (typeParameter.index == expectedIndex && typeParameter.belongsClass(expectedType)) {
@@ -126,18 +124,6 @@ private fun IrTypeParameter.belongsClass(typeOfClass: IrSimpleType): Boolean {
 
     val classId = classOfType.classId
     return classId != null && classId == classInParameter.classId
-}
-
-/**
- * Returns index in [serializableClass] of type parameters used as type argument in [this].
- */
-internal fun IrTypeArgument.indexInClass(serializableClass: IrClass): Int? {
-    val rootTypeParameter = serializableClass.typeParameters.firstOrNull { param ->
-        // TODO is it ok?
-        param.symbol == (this as? IrSimpleType)?.classifier
-    }
-
-    return rootTypeParameter?.index
 }
 
 /**

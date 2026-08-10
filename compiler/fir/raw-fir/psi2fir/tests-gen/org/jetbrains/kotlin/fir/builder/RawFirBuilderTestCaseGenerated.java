@@ -144,6 +144,12 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
     }
 
     @Test
+    @TestMetadata("callInitializers.kt")
+    public void testCallInitializers() {
+      run("callInitializers.kt");
+    }
+
+    @Test
     @TestMetadata("classLevelDestructuringWithAnnotation.kt")
     public void testClassLevelDestructuringWithAnnotation() {
       run("classLevelDestructuringWithAnnotation.kt");
@@ -177,6 +183,12 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
     @TestMetadata("constantInRepl.repl.kts")
     public void testConstantInRepl_repl() {
       run("constantInRepl.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("constantInitializers.kt")
+    public void testConstantInitializers() {
+      run("constantInitializers.kt");
     }
 
     @Test
@@ -519,6 +531,12 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
     @TestMetadata("noPrimaryConstructor.kt")
     public void testNoPrimaryConstructor() {
       run("noPrimaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("nonStubbedInitializers.kt")
+    public void testNonStubbedInitializers() {
+      run("nonStubbedInitializers.kt");
     }
 
     @Test

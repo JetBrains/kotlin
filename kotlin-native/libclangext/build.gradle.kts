@@ -63,7 +63,7 @@ native {
     }
 }
 
-val cppApiElements by configurations.creating {
+val cppApiElements = configurations.create("cppApiElements") {
     isCanBeConsumed = true
     isCanBeResolved = false
     attributes {
@@ -72,7 +72,7 @@ val cppApiElements by configurations.creating {
     }
 }
 
-val cppLinkElements by configurations.creating {
+val cppLinkElements = configurations.create("cppLinkElements") {
     isCanBeConsumed = true
     isCanBeResolved = false
     attributes {

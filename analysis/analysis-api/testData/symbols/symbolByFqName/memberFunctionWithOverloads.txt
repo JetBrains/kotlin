@@ -51,6 +51,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: listIterator
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -145,4 +146,5 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: listIterator
   importableFqName: null

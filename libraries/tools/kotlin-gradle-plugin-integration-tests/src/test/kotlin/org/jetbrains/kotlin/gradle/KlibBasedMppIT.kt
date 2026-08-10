@@ -383,7 +383,9 @@ open class KlibBasedMppIT : KGPBaseTest() {
     private fun classpathHasKNStdlib(classpath: Iterable<String>) = classpath.any { "klib/common/stdlib" in it.replace("\\", "/") }
 
     private fun BuildResult.getClasspath(taskPath: String): Iterable<String> {
-        return output.lines().single { it.startsWith(taskPath) && "Kotlin compiler args:" in it }
+        val outputForTask = extractOutputForTask(taskPath)
+        val argsPrefix = "Kotlin compiler args:"
+        return outputForTask.lines().single { argsPrefix in it }
             .substringAfter("-classpath ").substringBefore(" -").split(File.pathSeparator)
     }
 

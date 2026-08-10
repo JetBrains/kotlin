@@ -22,7 +22,6 @@ val additionalCompilerProjects = listOf(
 )
 
 val excludedCompilerProjects = listOf(
-    ":compiler:javac-wrapper",
     ":compiler:incremental-compilation-impl",
     ":compiler:build-tools:kotlin-build-statistics",
     ":kotlin-compiler-runner-unshaded",

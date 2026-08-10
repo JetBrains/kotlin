@@ -23,16 +23,16 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 @Deprecated(
-    "Moved to the IntelliJ Kotlin plugin",
-    ReplaceWith("EditCommaSeparatedListHelper", "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper")
+    message = "Moved to the IntelliJ Kotlin plugin",
+    replaceWith = ReplaceWith("EditCommaSeparatedListHelper", "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"),
 )
 object EditCommaSeparatedListHelper {
     @Deprecated(
-        "Moved to the IntelliJ Kotlin plugin",
-        ReplaceWith(
+        message = "Moved to the IntelliJ Kotlin plugin",
+        replaceWith = ReplaceWith(
             "EditCommaSeparatedListHelper.addItem(list, allItems, item, prefix)",
             "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"
-        )
+        ),
     )
     @Suppress("DEPRECATION")
     @JvmOverloads
@@ -41,11 +41,11 @@ object EditCommaSeparatedListHelper {
     }
 
     @Deprecated(
-        "Moved to the IntelliJ Kotlin plugin",
-        ReplaceWith(
+        message = "Moved to the IntelliJ Kotlin plugin",
+        replaceWith = ReplaceWith(
             "EditCommaSeparatedListHelper.addItemAfter(list, allItems, item, anchor, prefix)",
             "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"
-        )
+        ),
     )
     @Suppress("UNCHECKED_CAST")
     @JvmOverloads
@@ -76,11 +76,11 @@ object EditCommaSeparatedListHelper {
     }
 
     @Deprecated(
-        "Moved to the IntelliJ Kotlin plugin",
-        ReplaceWith(
+        message = "Moved to the IntelliJ Kotlin plugin",
+        replaceWith = ReplaceWith(
             "EditCommaSeparatedListHelper.addItemBefore(list, allItems, item, anchor, prefix)",
             "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"
-        )
+        ),
     )
     @Suppress("DEPRECATION")
     @JvmOverloads
@@ -108,11 +108,11 @@ object EditCommaSeparatedListHelper {
     }
 
     @Deprecated(
-        "Moved to the IntelliJ Kotlin plugin",
-        ReplaceWith(
+        message = "Moved to the IntelliJ Kotlin plugin",
+        replaceWith = ReplaceWith(
             "EditCommaSeparatedListHelper.removeItem(item)",
             "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"
-        )
+        ),
     )
     fun <TItem : KtElement> removeItem(item: TItem) {
         var comma = item.siblings(withItself = false).firstOrNull { it !is PsiWhiteSpace && it !is PsiComment }

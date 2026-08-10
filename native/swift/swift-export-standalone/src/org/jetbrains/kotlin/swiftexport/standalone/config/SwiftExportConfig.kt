@@ -21,7 +21,6 @@ import kotlin.io.path.Path
 public data class SwiftExportConfig(
     val outputPath: Path,
     val stableDeclarationsOrder: Boolean = false,
-    val renderDocComments: Boolean = false,
     val enableCoroutinesSupport: Boolean = false,
     val distribution: Distribution = Distribution(KotlinNativePaths.homePath.absolutePath),
     val konanTarget: KonanTarget,
@@ -44,7 +43,7 @@ public data class SwiftExportConfig(
         InputModule(
             "KotlinStdlib",
             Path(distribution.stdlib),
-            SwiftModuleConfig(shouldBeFullyExported = false)
+            SwiftModuleConfig(exportMode = SwiftModuleExportMode.Transitive)
         )
 
     private fun createInputModuleForPlatformLibs(platformLibsRootFile: File) = platformLibsRootFile.list()!!
@@ -52,7 +51,7 @@ public data class SwiftExportConfig(
             InputModule(
                 name = it.split(".").last(),
                 platformLibsRootFile.resolve(it).toPath(),
-                SwiftModuleConfig(shouldBeFullyExported = false)
+                SwiftModuleConfig(exportMode = SwiftModuleExportMode.Transitive)
             )
         }.toSet()
 }

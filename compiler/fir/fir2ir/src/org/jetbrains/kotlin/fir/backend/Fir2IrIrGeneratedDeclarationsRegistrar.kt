@@ -442,7 +442,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         )
     }
 
-    private fun TypeConverter.updateFunctionCommon(firFunction: FirFunction, irFunction: IrFunction) = with(firFunction) {
+    private fun TypeConverter.updateFunctionCommon(firFunction: FirFunction, irFunction: IrFunction): Unit = with(firFunction) {
         replaceReturnTypeRef(irFunction.returnType.toConeType().toFirResolvedTypeRef())
         val contextParameters = mutableListOf<FirValueParameter>()
         val valueParameters = mutableListOf<FirValueParameter>()

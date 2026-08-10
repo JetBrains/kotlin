@@ -246,7 +246,6 @@ internal val appleNativeTarget = listOf(
     "tvosX64",
     "tvosArm64",
     "tvosSimulatorArm64",
-    "watchosArm32",
     "watchosArm64",
     "watchosX64",
     "watchosSimulatorArm64",

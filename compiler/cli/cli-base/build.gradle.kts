@@ -8,7 +8,7 @@ plugins {
     id("gradle-plugin-compiler-dependency-configuration")
     id("generated-sources")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -57,10 +57,9 @@ sourceSets {
     "test" {
         projectDefault()
     }
-}
-
-val jdk9: SourceSet by sourceSets.creating {
-    java.srcDir("srcJdk9")
+    "jdk9" {
+        java.srcDir("srcJdk9")
+    }
 }
 
 configurations["jdk9CompileClasspath"].extendsFrom(configurations.compileClasspath)
@@ -89,7 +88,7 @@ tasks.jar.configure {
     exclude("META-INF/extensions/*.xml.**")
 
     into("META-INF/versions/9") {
-        from(jdk9.output)
+        from(sourceSets["jdk9"].output)
         exclude("META-INF/**")
     }
     manifest {

@@ -10,6 +10,7 @@ enum class Domain {
     Native,
     CoreLibs,
     AnalysisApi,
+    BuildToolsApi,
     SwiftExport,
     CompilerPlugins,
     Gradle,

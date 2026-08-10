@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-
 description = "Kotlin Mock Runtime for Tests"
 
 plugins {
@@ -14,7 +12,7 @@ project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
 val stdlibProjectDir = file("$rootDir/libraries/stdlib")
 
-val builtinsMetadata: Configuration by configurations.creating
+val builtinsMetadata = configurations.create("builtinsMetadata")
 
 dependencies {
     builtinsMetadata(project(":kotlin-stdlib"))
@@ -48,6 +46,7 @@ val copyCommonSources = tasks.register<Sync>("copyCommonSources") {
             "kotlin/annotations/WasExperimental.kt",
             "kotlin/annotations/ReturnValue.kt",
             "kotlin/internal/Annotations.kt",
+            "kotlin/internal/throwNoWhenBranchMatchedException.kt",
             "kotlin/internal/AnnotationsBuiltin.kt",
             "kotlin/concurrent/atomics/AtomicArrays.common.kt",
             "kotlin/concurrent/atomics/Atomics.common.kt",
@@ -79,6 +78,7 @@ val copySources = tasks.register<Sync>("copySources") {
             "kotlin/collections/TypeAliases.kt",
             "kotlin/enums/EnumEntriesJVM.kt",
             "kotlin/io/Serializable.kt",
+            "kotlin/internal/throwNoWhenBranchMatchedException.kt",
         )
 
     from(stdlibProjectDir.resolve("jvm/builtins"))
@@ -90,7 +90,7 @@ val copySources = tasks.register<Sync>("copySources") {
 kotlin {
     jvm {
         compilations {
-            val main by getting {
+            val main = getByName("main") {
                 compileTaskProvider.configure {
                     compilerOptions {
                         moduleName = "kotlin-stdlib"
@@ -135,7 +135,7 @@ kotlin {
                 compileOnly(project(":kotlin-stdlib"))
             }
         }
-        val jvmMain by getting {
+        val jvmMain = getByName("jvmMain") {
             kotlin {
                 srcDir("jvm-src")
                 srcDir(copySources)
@@ -144,7 +144,7 @@ kotlin {
     }
 }
 
-val jvmJar by tasks.existing(Jar::class) {
+val jvmJar = tasks.named("jvmJar", Jar::class) {
     archiveAppendix = null
     dependsOn(builtinsMetadata)
     from {

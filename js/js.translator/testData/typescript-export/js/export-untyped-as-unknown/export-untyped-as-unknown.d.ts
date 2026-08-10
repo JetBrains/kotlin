@@ -2,19 +2,19 @@ declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
     namespace foo {
-        const _any: unknown;
+        const _any: NonNullable<unknown>;
         const _nullable_any: unknown;
-        const _array_any: Array<unknown>;
-        function consumeAny(value: unknown): unknown;
+        const _array_any: Array<NonNullable<unknown>>;
+        function consumeAny(value: NonNullable<unknown>): NonNullable<unknown>;
         function consumeNullableAny(value: unknown): unknown;
         function produceDynamic(): unknown;
         function consumeDynamic(value: unknown): unknown;
         function consumeNullableDynamic(value: unknown): unknown;
         class WithDynamicMembers {
             constructor();
-            get anyProperty(): unknown;
+            get anyProperty(): NonNullable<unknown>;
             get dynamicProperty(): unknown;
-            anyMethod(value: unknown): unknown;
+            anyMethod(value: NonNullable<unknown>): NonNullable<unknown>;
             dynamicMethod(value: unknown): unknown;
         }
         namespace WithDynamicMembers {
@@ -23,5 +23,7 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => WithDynamicMembers;
             }
         }
+        function consumeImplicitlyExported(value: NonNullable<unknown>/* foo.ImplicitlyExported */): void;
+        function produceImplicitlyExported(): NonNullable<unknown>/* foo.ImplicitlyExported */;
     }
 }

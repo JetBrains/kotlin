@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub;
 import org.jetbrains.kotlin.psi.utils.ConstantExpressionUtils;
@@ -21,8 +19,7 @@ import org.jetbrains.kotlin.psi.utils.ConstantExpressionUtils;
  * //      ^^
  * }</pre>
  */
-public class KtConstantExpression
-        extends KtElementImplStub<KotlinConstantExpressionStub> implements KtExpression {
+public class KtConstantExpression extends KtExpressionImplStub<KotlinConstantExpressionStub> {
     public KtConstantExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -34,11 +31,6 @@ public class KtConstantExpression
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
         return visitor.visitConstantExpression(this, data);
-    }
-
-    @Override
-    public PsiElement replace(@NotNull PsiElement newElement) throws IncorrectOperationException {
-        return KtPsiMutationService.getInstance().replaceExpression(this, newElement, true, super::replace);
     }
 
     @Override

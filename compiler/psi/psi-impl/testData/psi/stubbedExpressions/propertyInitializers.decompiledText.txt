@@ -1,0 +1,71 @@
+Holder.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public object Holder {
+      public const val inObject: kotlin.Int = 10
+
+      public final val inferred: kotlin.Int /* compiled code */
+
+      public const val infinityInObject: kotlin.Double = kotlin.Double.POSITIVE_INFINITY
+  }
+
+PropertyInitializersKt.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public const val boolean: kotlin.Boolean = 1
+
+  public const val byte: kotlin.Byte = 1
+
+  public const val short: kotlin.Short = 2
+
+  public const val int: kotlin.Int = 3
+
+  public const val long: kotlin.Long = 4L
+
+  public const val float: kotlin.Float = 5.0F
+
+  public const val double: kotlin.Double = 6.6
+
+  public const val char: kotlin.Char = 99
+
+  public const val string: kotlin.String = "s"
+
+  public const val negative: kotlin.Int = -7
+
+  public const val sum: kotlin.Int = 3
+
+  public const val parenthesized: kotlin.Int = 8
+
+  public const val concatenation: kotlin.String = "ab"
+
+  public const val reference: kotlin.Int = 3
+
+  public const val qualified: kotlin.Int = 3
+
+  public const val infinity: kotlin.Double = kotlin.Double.POSITIVE_INFINITY
+
+  public const val nan: kotlin.Float = kotlin.Float.NaN
+
+  public const val intrinsicCall: kotlin.String = "12"
+
+  public const val intrinsicProperty: kotlin.Int = 3
+
+  public val nonConst: kotlin.Int /* compiled code */
+
+  public var mutable: kotlin.String /* compiled code */
+
+WithMember.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public final class WithMember public constructor() {
+      public final val member: kotlin.Char /* compiled code */
+  }

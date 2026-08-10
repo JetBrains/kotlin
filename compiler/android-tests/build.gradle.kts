@@ -11,7 +11,7 @@ plugins {
     kotlin("jvm")
     id("android-sdk-provisioner")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -119,5 +119,6 @@ val generateAndroidTests by generator(
     "org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator",
     testSourceSet,
     inputKind = GeneratorInputKind.RuntimeClasspath,
+    registerInAggregateGenerateSources = false,
 ) {
 }

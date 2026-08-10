@@ -22,10 +22,7 @@ internal abstract class KotlinKProperty<out V>(
 ) : KotlinKCallable<V>(overriddenStorage), ReflectKProperty<V> {
     override val name: String get() = kmProperty.name
 
-    private val extensionReceiverType: KmType? by lazy(PUBLICATION) {
-        @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
-        kmProperty.receiverParameterType.takeUnless { kmProperty.isStatic }
-    }
+    private val extensionReceiverType: KmType? get() = kmProperty.receiverParameterType
 
     override val allParameters: List<KParameter> by lazy(PUBLICATION) {
         computeParameters(

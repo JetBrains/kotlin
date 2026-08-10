@@ -68,16 +68,6 @@ public interface JsCompilerKlibArguments : JsCompilerArguments,
         JsCompilerKlibArgument("X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS", KotlinReleaseVersion(1, 5, 32))
 
     /**
-     * Enable exporting suspend functions to JavaScript/TypeScript.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_ENABLE_SUSPEND_FUNCTION_EXPORTING: JsCompilerKlibArgument<Boolean> =
-        JsCompilerKlibArgument("X_ENABLE_SUSPEND_FUNCTION_EXPORTING", KotlinReleaseVersion(2, 3, 0))
-
-    /**
      * Enable exporting of Kotlin interfaces to implement them from JavaScript/TypeScript.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -86,5 +76,15 @@ public interface JsCompilerKlibArguments : JsCompilerArguments,
     @ExperimentalCompilerArgument
     public val X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT: JsCompilerKlibArgument<Boolean> =
         JsCompilerKlibArgument("X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT", KotlinReleaseVersion(2, 3, 20))
+
+    /**
+     * Enable exporting suspend functions to JavaScript/TypeScript.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_ENABLE_SUSPEND_FUNCTION_EXPORTING: JsCompilerKlibArgument<Boolean> =
+        JsCompilerKlibArgument("X_ENABLE_SUSPEND_FUNCTION_EXPORTING", KotlinReleaseVersion(2, 3, 0))
   }
 }

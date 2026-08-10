@@ -12,11 +12,17 @@ FILE[kind=File[packageFqName=p]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=I]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
       PROPERTY[fqName=p.PrivateToThis.bar, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=bar]
         MODIFIER_LIST[private]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=I]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
       PROPERTY[fqName=p.PrivateToThis.val_with_accessors, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=val_with_accessors]
         MODIFIER_LIST[private]
         TYPE_REFERENCE
@@ -24,6 +30,9 @@ FILE[kind=File[packageFqName=p]]
             REFERENCE_EXPRESSION[referencedName=I]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          POSTFIX_EXPRESSION
+            NULL[kind=NULL, value=null]
+            OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
       PROPERTY[fqName=p.PrivateToThis.var_with_accessors, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=var_with_accessors]
         MODIFIER_LIST[private]
         TYPE_REFERENCE
@@ -31,6 +40,9 @@ FILE[kind=File[packageFqName=p]]
             REFERENCE_EXPRESSION[referencedName=I]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          POSTFIX_EXPRESSION
+            NULL[kind=NULL, value=null]
+            OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -43,3 +55,6 @@ FILE[kind=File[packageFqName=p]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=I]
+        POSTFIX_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=EXCLEXCL, referencedName=!!]

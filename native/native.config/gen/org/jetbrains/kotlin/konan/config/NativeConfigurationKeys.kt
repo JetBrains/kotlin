@@ -21,19 +21,12 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 object NativeConfigurationKeys {
-    // Bundle ID to be set in Info.plist of a produced framework.
-    @JvmField
-    val BUNDLE_ID = CompilerConfigurationKey.create<String>("BUNDLE_ID")
-
     // Check dependencies and download the missing ones.
     @JvmField
     val CHECK_DEPENDENCIES = CompilerConfigurationKey.create<Boolean>("CHECK_DEPENDENCIES")
 
     @JvmField
     val DEBUG = CompilerConfigurationKey.create<Boolean>("DEBUG")
-
-    @JvmField
-    val FAKE_OVERRIDE_VALIDATOR = CompilerConfigurationKey.create<Boolean>("FAKE_OVERRIDE_VALIDATOR")
 
     @JvmField
     val EMIT_LAZY_OBJC_HEADER_FILE = CompilerConfigurationKey.create<String>("EMIT_LAZY_OBJC_HEADER_FILE")
@@ -284,10 +277,6 @@ object NativeConfigurationKeys {
 
 }
 
-var CompilerConfiguration.bundleId: String?
-    get() = get(NativeConfigurationKeys.BUNDLE_ID)
-    set(value) { put(NativeConfigurationKeys.BUNDLE_ID, requireNotNull(value) { "nullable values are not allowed" }) }
-
 var CompilerConfiguration.checkDependencies: Boolean
     get() = getBoolean(NativeConfigurationKeys.CHECK_DEPENDENCIES)
     set(value) { put(NativeConfigurationKeys.CHECK_DEPENDENCIES, value) }
@@ -295,10 +284,6 @@ var CompilerConfiguration.checkDependencies: Boolean
 var CompilerConfiguration.debug: Boolean
     get() = getBoolean(NativeConfigurationKeys.DEBUG)
     set(value) { put(NativeConfigurationKeys.DEBUG, value) }
-
-var CompilerConfiguration.fakeOverrideValidator: Boolean
-    get() = getBoolean(NativeConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)
-    set(value) { put(NativeConfigurationKeys.FAKE_OVERRIDE_VALIDATOR, value) }
 
 var CompilerConfiguration.emitLazyObjcHeaderFile: String?
     get() = get(NativeConfigurationKeys.EMIT_LAZY_OBJC_HEADER_FILE)

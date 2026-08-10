@@ -7,6 +7,7 @@ KtPackageDirective(51,63): 'package test'
 KtNameReferenceExpression(59,63): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test
@@ -90,6 +91,7 @@ KtDotQualifiedExpression(232,239): 'O.foo()'
 KtNameReferenceExpression(232,233): 'O'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/O
@@ -104,6 +106,7 @@ KtCallExpression(234,239): 'foo()'
 KtNameReferenceExpression(234,237): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/O.foo(): kotlin.Unit
@@ -121,6 +124,7 @@ KtDotQualifiedExpression(244,251): 'E.Entry'
 KtNameReferenceExpression(244,245): 'E'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/E
@@ -129,6 +133,7 @@ KtNameReferenceExpression(244,245): 'E'
 KtNameReferenceExpression(246,251): 'Entry'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/E.Entry

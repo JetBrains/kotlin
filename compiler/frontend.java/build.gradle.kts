@@ -29,3 +29,4 @@ sourceSets {
 }
 
 optInToK1Deprecation()
+optInToObsoleteDescriptorBasedAPI()

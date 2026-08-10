@@ -1,9 +1,11 @@
 KT element: KtClass
 KT element text:
 public interface MyInterface {
-    @test.RegularAnno public abstract val property: @test.TypeAnno kotlin.String
+    @test.RegularAnno
+    public abstract val property: @test.TypeAnno kotlin.String
 
-    @test.RegularAnno public abstract fun function(@test.RegularAnno argument: @test.TypeAnno kotlin.Int): @test.TypeAnno kotlin.Int
+    @test.RegularAnno
+    public abstract fun function(@test.RegularAnno argument: @test.TypeAnno kotlin.Int): @test.TypeAnno kotlin.Int
 }
 FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind

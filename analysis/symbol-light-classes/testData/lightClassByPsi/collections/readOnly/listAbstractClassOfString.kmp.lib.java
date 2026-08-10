@@ -5,7 +5,7 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
 public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
   private final int size;
 
-  @kotlin.SinceKotlin()
+  @kotlin.SinceKotlin(version = "2.0")
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
   @kotlin.js.JsDontExportDefaultImplementation()

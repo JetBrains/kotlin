@@ -61,12 +61,8 @@ object JsArtifactsDumpHandler {
 
     private fun String.replacePaths(testServices: TestServices): String = supportedTranslationModes.fold(this) { s, translationMode ->
         val outputDir = getOutputDir(translationMode, testServices)
-        JsEnvironmentConfigurator
-            .getJsArtifactsOutputDir(testServices, translationMode)
-            .listFiles { it.isFile }!!
-            .fold(s) { s, file ->
-                s.replace(file.absolutePath, outputDir.resolve(file.name).absolutePath)
-            }
+        val artifactDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, translationMode)
+        s.replace(artifactDir.absolutePath + "/", outputDir.absolutePath + "/")
     }
 
     private fun getOutputDir(translationMode: TranslationMode, testServices: TestServices): File {

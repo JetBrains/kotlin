@@ -522,6 +522,7 @@ object FirTree : AbstractFirTreeBuilder() {
             withReplace = true
         }
         +annotations
+        +field("staticControlFlowGraphReference", controlFlowGraphReference, withReplace = true, nullable = true)
     }
 
     val regularClass: Element by element(Declaration) {
@@ -932,6 +933,9 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val enumEntry: Element by element(Declaration) {
         parent(variable)
+        parent(controlFlowGraphOwner)
+
+        customParentInVisitor = variable
 
         +declaredSymbol(enumEntrySymbolType)
     }

@@ -15,25 +15,25 @@ public enum AnnotationsOnEnumEntry /* two.AnnotationsOnEnumEntry*/ {
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@java.lang.annotation.Target()
-@kotlin.annotation.Target(allowedTargets = {})
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD})
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.FIELD})
 public abstract @interface FieldExplicitly /* two.FieldExplicitly*/ {
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@java.lang.annotation.Target()
-@kotlin.annotation.Target(allowedTargets = {})
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD})
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.FIELD})
 public abstract @interface FieldImplicitly /* two.FieldImplicitly*/ {
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@java.lang.annotation.Target()
-@kotlin.annotation.Target(allowedTargets = {})
+@java.lang.annotation.Target(value = {})
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY})
 public abstract @interface PropertyExplicitly /* two.PropertyExplicitly*/ {
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@java.lang.annotation.Target()
-@kotlin.annotation.Target(allowedTargets = {})
+@java.lang.annotation.Target(value = {})
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY})
 public abstract @interface PropertyImplicitly /* two.PropertyImplicitly*/ {
 }

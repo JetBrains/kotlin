@@ -36,6 +36,9 @@ open class BaseTestRunProvider {
                 // Note: TestRunParameter.WithLLDB adds program arguments and would therefore conflict
                 // with other TestRunParameters that do the same (such as WithTCTestLogger).
                 add(TestRunParameter.WithLLDB(testCase.extras<NoTestRunnerExtras>().arguments))
+                // LLDB-driven test runs are flaky for reasons unrelated to the code under test
+                // (e.g. KT-84923, KT-87414), so give them a second chance.
+                add(TestRunParameter.WithRetriesOnFailure(maxRetries = 1))
             }
             TestKind.STANDALONE_NO_TR -> {
                 assertTrue(testName == null)

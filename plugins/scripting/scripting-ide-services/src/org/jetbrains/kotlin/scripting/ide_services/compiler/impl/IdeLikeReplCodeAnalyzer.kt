@@ -2,6 +2,7 @@
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.scripting.ide_services.compiler.impl
 
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 
+@Deprecated("This declaration would be removed in future versions", level = DeprecationLevel.ERROR)
 class IdeLikeReplCodeAnalyzer(
     private val environment: KotlinCoreEnvironment,
     implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter

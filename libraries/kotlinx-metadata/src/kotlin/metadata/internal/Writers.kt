@@ -128,11 +128,12 @@ private fun WriteContext.writeConstructor(kmConstructor: KmConstructor): ProtoBu
     return t
 }
 
-@OptIn(ExperimentalContextParameters::class)
+@OptIn(ExperimentalContextParameters::class, ExperimentalCompanionBlocksAndExtensions::class)
 private fun WriteContext.writeFunction(kmFunction: KmFunction): ProtoBuf.Function.Builder {
     val t = ProtoBuf.Function.newBuilder()
     t.addAllTypeParameter(kmFunction.typeParameters.map { writeTypeParameter(it).build() })
     kmFunction.receiverParameterType?.let { t.receiverType = writeType(it).build() }
+    kmFunction.companionExtensionReceiverType?.let { t.companionExtensionReceiverType = writeType(it).build() }
 
     t.addAllContextParameter(kmFunction.contextParameters.map { writeValueParameter(it).build() })
     t.addAllContextReceiverType(kmFunction.contextParameters.map { writeType(it.type).build() })
@@ -159,7 +160,7 @@ private fun WriteContext.writeFunction(kmFunction: KmFunction): ProtoBuf.Functio
     return t
 }
 
-@OptIn(ExperimentalContextParameters::class)
+@OptIn(ExperimentalContextParameters::class, ExperimentalCompanionBlocksAndExtensions::class)
 public fun WriteContext.writeProperty(kmProperty: KmProperty): ProtoBuf.Property.Builder {
     val t = ProtoBuf.Property.newBuilder()
 
@@ -167,6 +168,7 @@ public fun WriteContext.writeProperty(kmProperty: KmProperty): ProtoBuf.Property
         t.addTypeParameter(writeTypeParameter(tp).build())
     }
     kmProperty.receiverParameterType?.let { t.receiverType = writeType(it).build() }
+    kmProperty.companionExtensionReceiverType?.let { t.companionExtensionReceiverType = writeType(it).build() }
 
     t.addAllContextParameter(kmProperty.contextParameters.map { writeValueParameter(it).build() })
     t.addAllContextReceiverType(kmProperty.contextParameters.map { writeType(it.type).build() })

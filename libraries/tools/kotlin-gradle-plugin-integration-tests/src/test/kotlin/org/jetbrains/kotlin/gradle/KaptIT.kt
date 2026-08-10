@@ -783,8 +783,6 @@ open class KaptIT : KaptBaseIT() {
             "localAnnotationProcessor".withPrefix,
             gradleVersion,
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://jitpack.io")),
-            // KT-76289 KAPT Gradle Project Isolation Violation
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
         ) {
             build("build")
 
@@ -934,8 +932,6 @@ open class KaptIT : KaptBaseIT() {
         project(
             "kt19179".withPrefix,
             gradleVersion,
-            // KT-76289 KAPT Gradle Project Isolation Violation
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
         ) {
 
             build("build") {
@@ -999,8 +995,6 @@ open class KaptIT : KaptBaseIT() {
         project(
             "kt33847".withPrefix,
             gradleVersion,
-            // KT-76289 KAPT Gradle Project Isolation Violation
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
         ) {
 
             build("build") {
@@ -1204,8 +1198,6 @@ open class KaptIT : KaptBaseIT() {
             "localAnnotationProcessor".withPrefix,
             gradleVersion,
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://jitpack.io")),
-            // KT-76289 KAPT Gradle Project Isolation Violation
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
         ) {
             build("assemble")
 
@@ -1293,8 +1285,6 @@ open class KaptIT : KaptBaseIT() {
         project(
             "repeatableAnnotations".withPrefix,
             gradleVersion,
-            // KT-76289 KAPT Gradle Project Isolation Violation
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
         ) {
             build("build") {
                 assertKaptSuccessful()
@@ -1309,8 +1299,6 @@ open class KaptIT : KaptBaseIT() {
         project(
             "useGeneratedKotlinSource".withPrefix,
             gradleVersion,
-            // KT-76289 KAPT Gradle Project Isolation Violation
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
         ) {
             build("build") {
                 assertKaptSuccessful()
@@ -1369,8 +1357,6 @@ open class KaptIT : KaptBaseIT() {
         project(
             "multipass".withPrefix,
             gradleVersion,
-            // KT-76289 KAPT Gradle Project Isolation Violation
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
         ) {
             build("build") {
                 assertKaptSuccessful()

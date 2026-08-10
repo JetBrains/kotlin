@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.sir.providers.utils.SimpleUnsupportedDeclarationRepo
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleExportMode
 import org.jetbrains.kotlin.swiftexport.standalone.translation.TranslationResult
 import org.jetbrains.kotlin.swiftexport.standalone.translation.translateCrossReferencingModulesTransitively
 import org.jetbrains.kotlin.swiftexport.standalone.translation.translateModulePublicApi
@@ -167,18 +168,20 @@ private fun translateModules(
         platformLibraries = config.platformLibsInputModule,
         cinteropReexportLibrary = cinteropReexportLibs.singleOrNull(),
     )
-    val explicitModulesTranslationResults = allModules
-        .filter { it.config.shouldBeFullyExported }
-        .map { translateModulePublicApi(it, kaModules, config) }
-    val transitiveExportRoots = allModules
-        .filterNot { it.config.shouldBeFullyExported }
-        .mapNotNull { kaModules.inputsToModules[it] }
-        .associateWith { inputModule ->
-            explicitModulesTranslationResults
-                .flatMap { it.externalTypeDeclarationReferences[inputModule] ?: emptyList() }
-        }
-    val transitiveModulesTranslationResults = translateCrossReferencingModulesTransitively(transitiveExportRoots, kaModules, config)
-    return explicitModulesTranslationResults + transitiveModulesTranslationResults
+    kaModules.use { kaModules ->
+        val explicitModulesTranslationResults = allModules
+            .filter { it.config.exportMode == SwiftModuleExportMode.Full }
+            .map { translateModulePublicApi(it, kaModules, config) }
+        val transitiveExportRoots = allModules
+            .filterNot { it.config.exportMode == SwiftModuleExportMode.Full }
+            .mapNotNull { kaModules.inputsToModules[it] }
+            .associateWith { inputModule ->
+                explicitModulesTranslationResults
+                    .flatMap { it.externalTypeDeclarationReferences[inputModule] ?: emptyList() }
+            }
+        val transitiveModulesTranslationResults = translateCrossReferencingModulesTransitively(transitiveExportRoots, kaModules, config)
+        return explicitModulesTranslationResults + transitiveModulesTranslationResults
+    }
 }
 
 /**
@@ -204,7 +207,6 @@ private fun writeKotlinPackagesModule(
 ): SwiftExportModule.SwiftOnly {
     val swiftSources = SirPrinter(
         stableDeclarationsOrder = true,
-        renderDocComments = false,
     ).print(
         sirModule
     ).swiftSource

@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.ES_2015
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.MODULE_ES
+import org.jetbrains.kotlin.cli.js.targetVersion
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.js.config.supportsPerFileGranularity
 
 class K2JSCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsConfigurator() {
     override fun configureAnalysisFlags(
@@ -19,7 +20,7 @@ class K2JSCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsConfig
         languageVersion: LanguageVersion,
     ): MutableMap<AnalysisFlag<*>, Any> = with(arguments) {
         require(this is K2JSCompilerArguments)
-        if (irPerFile && (moduleKind != MODULE_ES && target != ES_2015)) {
+        if (irPerFile && (moduleKind != MODULE_ES && !targetVersion.supportsPerFileGranularity)) {
             reporter.reportError(
                 "Per-file compilation can't be used with any `moduleKind` except `es` (ECMAScript Modules)"
             )

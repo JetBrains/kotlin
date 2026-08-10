@@ -12,6 +12,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InfiniteLoopKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Boolean]
+    BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
   FUN[fqName=test_2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_2]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]

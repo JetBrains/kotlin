@@ -153,6 +153,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleSingleSymbolByPsiTestGenerated 
   }
 
   @Test
+  @TestMetadata("functionWithEscapedJvmName.kt")
+  public void testFunctionWithEscapedJvmName() {
+    run("functionWithEscapedJvmName.kt");
+  }
+
+  @Test
+  @TestMetadata("functionWithEscapedName.kt")
+  public void testFunctionWithEscapedName() {
+    run("functionWithEscapedName.kt");
+  }
+
+  @Test
   @TestMetadata("functionWithNestedDefinitelyNotNullType.kt")
   public void testFunctionWithNestedDefinitelyNotNullType() {
     run("functionWithNestedDefinitelyNotNullType.kt");
@@ -222,6 +234,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSingleSymbolByPsiTestGenerated 
   @TestMetadata("innerTypeAlias.kt")
   public void testInnerTypeAlias() {
     run("innerTypeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("internalFunctionWithEscapedName.kt")
+  public void testInternalFunctionWithEscapedName() {
+    run("internalFunctionWithEscapedName.kt");
   }
 
   @Test
@@ -393,6 +411,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleSingleSymbolByPsiTestGenerated 
   }
 
   @Test
+  @TestMetadata("propertyWithDotName.kt")
+  public void testPropertyWithDotName() {
+    run("propertyWithDotName.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithEscapedName.kt")
+  public void testPropertyWithEscapedName() {
+    run("propertyWithEscapedName.kt");
+  }
+
+  @Test
   @TestMetadata("propertyWithInlineGetterAndSetter.kt")
   public void testPropertyWithInlineGetterAndSetter() {
     run("propertyWithInlineGetterAndSetter.kt");
@@ -405,9 +435,27 @@ public class FirIdeNormalAnalysisSourceLikeModuleSingleSymbolByPsiTestGenerated 
   }
 
   @Test
+  @TestMetadata("propertyWithIsPrefixedName.kt")
+  public void testPropertyWithIsPrefixedName() {
+    run("propertyWithIsPrefixedName.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithJvmNameOnAccessors.kt")
+  public void testPropertyWithJvmNameOnAccessors() {
+    run("propertyWithJvmNameOnAccessors.kt");
+  }
+
+  @Test
   @TestMetadata("propertyWithReceiverAnnotation.kt")
   public void testPropertyWithReceiverAnnotation() {
     run("propertyWithReceiverAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithoutName.kt")
+  public void testPropertyWithoutName() {
+    run("propertyWithoutName.kt");
   }
 
   @Test
@@ -516,6 +564,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleSingleSymbolByPsiTestGenerated 
   @TestMetadata("valueClass.kt")
   public void testValueClass() {
     run("valueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassUnderlyingProperty.kt")
+  public void testValueClassUnderlyingProperty() {
+    run("valueClassUnderlyingProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassUnderlyingPropertyWithValueClassType.kt")
+  public void testValueClassUnderlyingPropertyWithValueClassType() {
+    run("valueClassUnderlyingPropertyWithValueClassType.kt");
   }
 
   @Test

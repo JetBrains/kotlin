@@ -7,6 +7,7 @@ KtPackageDirective(70,82): 'package test'
 KtNameReferenceExpression(78,82): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test
@@ -57,6 +58,7 @@ KtUserType(122,126): 'Base'
 KtNameReferenceExpression(122,126): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Base
@@ -89,6 +91,7 @@ KtUserType(145,149): 'Base'
 KtNameReferenceExpression(145,149): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Base
@@ -103,6 +106,7 @@ KtWhenExpression(157,212): 'when (b) {'
 KtNameReferenceExpression(163,164): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       b: test.Base
@@ -135,6 +139,7 @@ KtUserType(179,183): 'Base'
 KtNameReferenceExpression(179,183): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Base
@@ -143,6 +148,7 @@ KtNameReferenceExpression(179,183): 'Base'
 KtNameReferenceExpression(184,189): 'Child'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: QualifierCanBeRemoved
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Base.Child
@@ -166,6 +172,7 @@ KtCallExpression(196,206): 'hashCode()'
 KtNameReferenceExpression(196,204): 'hashCode'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int

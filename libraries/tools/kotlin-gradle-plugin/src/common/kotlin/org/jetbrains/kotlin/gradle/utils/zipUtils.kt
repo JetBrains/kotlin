@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
+import kotlin.streams.asSequence
 
 internal fun copyZipFilePartially(sourceZipFile: File, destinationZipFile: File, path: String) {
     requireValidZipDirectoryPath(path)

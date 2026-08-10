@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.defaults
 
+import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.MODULE_NAME
@@ -70,6 +71,7 @@ class ModuleNameCompilationTest : BaseCompilationTest() {
                 @Suppress("DEPRECATION_ERROR")
                 it[USE_FIR_RUNNER] = true
             }, compilationConfigAction = {
+                @OptIn(DeprecatedCompilerArgument::class)
                 it.compilerArguments[CommonCompilerArguments.X_USE_FIR_IC] = true
                 it.compilerArguments[MODULE_NAME] = EXPLICIT_NULL_MODULE_NAME_MARKER
             })

@@ -6776,6 +6776,7 @@ final fun kotlin.internal/getProgressionLastElement(kotlin/Int, kotlin/Int, kotl
 final fun kotlin.internal/getProgressionLastElement(kotlin/Long, kotlin/Long, kotlin/Long): kotlin/Long // kotlin.internal/getProgressionLastElement|getProgressionLastElement(kotlin.Long;kotlin.Long;kotlin.Long){}[0]
 final fun kotlin.internal/getProgressionLastElement(kotlin/UInt, kotlin/UInt, kotlin/Int): kotlin/UInt // kotlin.internal/getProgressionLastElement|getProgressionLastElement(kotlin.UInt;kotlin.UInt;kotlin.Int){}[0]
 final fun kotlin.internal/getProgressionLastElement(kotlin/ULong, kotlin/ULong, kotlin/Long): kotlin/ULong // kotlin.internal/getProgressionLastElement|getProgressionLastElement(kotlin.ULong;kotlin.ULong;kotlin.Long){}[0]
+final fun kotlin.internal/throwNoWhenBranchMatchedException(kotlin/Any): kotlin/Nothing // kotlin.internal/throwNoWhenBranchMatchedException|throwNoWhenBranchMatchedException(kotlin.Any){}[0]
 final fun kotlin.internal/throwUninitializedPropertyAccessException(kotlin/String): kotlin/Nothing // kotlin.internal/throwUninitializedPropertyAccessException|throwUninitializedPropertyAccessException(kotlin.String){}[0]
 final fun kotlin.internal/throwUnsupportedOperationException(kotlin/String): kotlin/Nothing // kotlin.internal/throwUnsupportedOperationException|throwUnsupportedOperationException(kotlin.String){}[0]
 final fun kotlin.io/print(kotlin/Any?) // kotlin.io/print|print(kotlin.Any?){}[0]
@@ -14580,7 +14581,10 @@ final inline fun <#A: kotlin/Any?> kotlin.wasm.unsafe/withScopedMemoryAllocator(
 final suspend fun <#A: kotlin/Any?> kotlin.wasm.internal/returnIfSuspended(kotlin/Any?): #A // kotlin.wasm.internal/returnIfSuspended|returnIfSuspended(kotlin.Any?){0§<kotlin.Any?>}[0]
 
 // Targets: [wasmJs, wasmWasi]
-final suspend inline fun <#A: kotlin/Any?> kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturn(kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Any?>): #A // kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturn|suspendCoroutineUninterceptedOrReturn(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Any?>){0§<kotlin.Any?>}[0]
+final suspend fun <#A: kotlin/Any?> kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturnIntrinsic(kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Any?>): #A // kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturnIntrinsic|suspendCoroutineUninterceptedOrReturnIntrinsic(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Any?>){0§<kotlin.Any?>}[0]
+
+// Targets: [wasmJs, wasmWasi]
+final suspend inline fun <#A: kotlin/Any?> kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturn(noinline kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Any?>): #A // kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturn|suspendCoroutineUninterceptedOrReturn(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Any?>){0§<kotlin.Any?>}[0]
 
 // Targets: [wasmJs, wasmWasi]
 final suspend inline fun kotlin.wasm.internal/getCoroutineContext(): kotlin.coroutines/CoroutineContext // kotlin.wasm.internal/getCoroutineContext|getCoroutineContext(){}[0]
@@ -14686,6 +14690,7 @@ abstract interface <#A: out kotlin/Any?> kotlin.js.collections/JsReadonlySet // 
 
 // Targets: [js]
 abstract interface kotlin.js/Console { // kotlin.js/Console|null[0]
+    abstract fun debug(kotlin/Array<out kotlin/Any?>...) // kotlin.js/Console.debug|debug(kotlin.Array<out|kotlin.Any?>...){}[0]
     abstract fun dir(kotlin/Any) // kotlin.js/Console.dir|dir(kotlin.Any){}[0]
     abstract fun error(kotlin/Array<out kotlin/Any?>...) // kotlin.js/Console.error|error(kotlin.Array<out|kotlin.Any?>...){}[0]
     abstract fun info(kotlin/Array<out kotlin/Any?>...) // kotlin.js/Console.info|info(kotlin.Array<out|kotlin.Any?>...){}[0]

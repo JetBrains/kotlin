@@ -38,7 +38,8 @@ fun ScriptEngine.runTestFunction(
     }
     var script = when {
         entryModulePath != null && entryModulePath.endsWith(ESM_EXTENSION) -> "globalThis".also {
-            eval("import('${entryModulePath.escapePath()}').then(module => Object.assign(globalThis, module)).catch(console.error)")
+            // language="JavaScript"
+            eval("import('${entryModulePath.escapePath()}').then(module => Object.assign(globalThis, module)).catch(e => console.error(e.stack))")
         }
         withModuleSystem -> "$KOTLIN_TEST_INTERNAL.require('" + testModuleName!! + "')"
         testModuleName === null -> "this"

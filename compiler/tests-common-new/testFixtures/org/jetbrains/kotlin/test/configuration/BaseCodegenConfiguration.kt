@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JVM_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SMAP
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RUN_DEX_CHECKER
@@ -300,6 +301,9 @@ fun TestConfigurationBuilder.configureModernJavaWhenNeeded() {
     forTestsMatching("compiler/testData/codegen/boxModernJdk/testsWithValhalla/*") {
         defaultDirectives { configureValhallaDefaultDirectives() }
         useMetaTestConfigurators(::ValhallaJdkAvailabilitySkipper)
+        configureNamedHandlersStep(JVM_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Jvm, skipMissingStep = true) {
+            useHandlers(::JvmWriteFlagsHandler)
+        }
     }
 }
 

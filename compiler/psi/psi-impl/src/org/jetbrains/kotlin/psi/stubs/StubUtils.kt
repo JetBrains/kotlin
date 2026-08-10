@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.psi.stubs
 
-import com.intellij.lang.ASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractSerializationVisitor
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeBean
@@ -49,7 +47,6 @@ object StubUtils {
     }
 
     @JvmStatic
-    @Suppress("DEPRECATION") // KT-78356
     fun createClassId(parentStub: StubElement<*>, currentDeclaration: KtClassLikeDeclaration): ClassId? {
         if (currentDeclaration is KtObjectDeclaration && currentDeclaration.isObjectLiteral()) {
             return null
@@ -58,7 +55,7 @@ object StubUtils {
         return when (parentStub) {
             is KotlinFileStub -> parentStub.createTopLevelClassId(currentDeclaration)
             is KotlinScriptStub -> parentStub.createClassId(currentDeclaration)
-            is KotlinPlaceHolderStub<*> if parentStub.stubType == KtStubElementTypes.CLASS_BODY -> {
+            is KotlinPlaceHolderStub<*> if parentStub.elementType == KtStubElementTypes.CLASS_BODY -> {
                 val containingClassStub = parentStub.parentStub as? KotlinClassifierStub
                 if (containingClassStub != null && currentDeclaration !is KtEnumEntry) {
                     containingClassStub.classId?.createNestedClassId(currentDeclaration.nameAsSafeName)
@@ -84,17 +81,6 @@ object StubUtils {
             fileStub.createTopLevelClassId(snippetClassName).createNestedClassId(currentDeclaration.nameAsSafeName)
         } else {
             fileStub.createTopLevelClassId(currentDeclaration)
-        }
-    }
-
-    @JvmStatic
-    internal tailrec fun isDeclaredInsideValueArgument(node: ASTNode?): Boolean {
-        val parent = node?.treeParent
-        return when (parent?.elementType) {
-            // Constants are allowed only in the argument position
-            KtStubElementTypes.VALUE_ARGUMENT -> true
-            null, in KtTokenSets.DECLARATION_TYPES -> false
-            else -> isDeclaredInsideValueArgument(parent)
         }
     }
 

@@ -776,7 +776,6 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                 kotlin("multiplatform")
             }
 
-            val isXcodeLessThan27 = Xcode.findCurrent().version.major < 27
             buildScriptInjection {
                 project.applyMultiplatform {
                     val targets = mutableListOf(
@@ -790,9 +789,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                         watchosSimulatorArm64(),
                         watchosDeviceArm64(),
                     )
-                    if (isXcodeLessThan27) {
-                        targets.add(watchosArm32())
-                    }
+
                     targets.forEach {
                         it.binaries.framework {
                             baseName = "Shared"
@@ -841,9 +838,6 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                 "linkDebugFrameworkWatchosSimulatorArm64",
                 "linkDebugFrameworkWatchosDeviceArm64",
             )
-            if (isXcodeLessThan27) {
-                linkTasks.add("linkDebugFrameworkWatchosArm32")
-            }
 
             build(*linkTasks.toTypedArray())
 

@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] annotation.kt
     @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class base : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=base] constructor(): R|base| {
             super<R|kotlin/Any|>()
@@ -50,10 +50,10 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation.kt
 
     }
     @R|base|[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|base|[Types]() y: R|@R|base|()  kotlin/Int|): R|@R|base|()  kotlin/Int| { LAZY_BLOCK }
-    @R|base|[Types]() public final [ResolvedTo(CONTRACTS)] val z: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(CONTRACTS)] get(): <implicit>
-    @R|base|[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val x: R|kotlin/collections/Map<@R|base|()  kotlin/Int, kotlin/collections/List<@R|base|()  kotlin/Int>>| = LAZY_EXPRESSION
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/collections/Map<@R|base|()  kotlin/Int, kotlin/collections/List<@R|base|()  kotlin/Int>>|
+    @R|base|[Types]() public final [ResolvedTo(BODY_RESOLVE)] val z: R|kotlin/Int| = Int(0)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    @R|base|[Types]() public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/collections/Map<@R|base|()  kotlin/Int, kotlin/collections/List<@R|base|()  kotlin/Int>>| = <Unresolved name: mapOf>#()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/collections/Map<@R|base|()  kotlin/Int, kotlin/collections/List<@R|base|()  kotlin/Int>>|
     @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) @R|base|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class derived : R|base|, R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=derived] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/derived.x] x: R|kotlin/Int|): R|derived| {
             super<R|kotlin/Any|>()
@@ -106,7 +106,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation.kt
 
     }
     @R|derived|[Types](x = Int(1) [evaluated = Int(1)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun fooDerived([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|derived|[Types](x = Int(1) [evaluated = Int(1)]) y: R|@R|derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int|): R|@R|derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int| { LAZY_BLOCK }
-    @R|derived|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] val zDerived: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(CONTRACTS)] get(): <implicit>
-    @R|derived|[Types](x = Int(1) [evaluated = Int(1)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val xDerived: R|kotlin/collections/Map<@R|derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int, kotlin/collections/List<@R|derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int>>| = LAZY_EXPRESSION
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/collections/Map<@R|derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int, kotlin/collections/List<@R|derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int>>|
+    @R|derived|[Types](x = Int(1) [evaluated = Int(1)]) public final [ResolvedTo(BODY_RESOLVE)] val zDerived: R|kotlin/Int| = Int(0)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    @R|derived|[Types](x = Int(1) [evaluated = Int(1)]) public final [ResolvedTo(BODY_RESOLVE)] val xDerived: R|kotlin/collections/Map<@R|derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int, kotlin/collections/List<@R|derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int>>| = <Unresolved name: mapOf>#()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/collections/Map<@R|derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int, kotlin/collections/List<@R|derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int>>|

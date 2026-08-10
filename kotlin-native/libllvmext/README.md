@@ -8,6 +8,9 @@ are generated in [llvmInterop](../llvmInterop). Kotlin additions should be prefi
 `src/main/cpp` contains C++ sources. The sources should follow [LLVM coding convention](https://llvm.org/docs/CodingStandards.html).
 Kotlin additions should be put inside `llvm::kotlin`.
 
+For IDE support, use `:kotlin-native:compdb` to generate the Compilation Database in `kotlin-native/compile_commands.json` which is supported
+by CLion and clangd.
+
 [FileCheck](https://llvm.org/docs/CommandGuide/FileCheck.html) is used for testing custom LLVM passes.
 Use `./gradlew :kotlin-native:libllvmext:test` to run all the tests.
 The tests are declared in [testData/fileCheck](testData/fileCheck) as `.ll` files. The tests consist of
@@ -40,3 +43,4 @@ Custom LLVM passes live in the [Passes](src/main/cpp/Passes) directory:
 - `RemoveRedundantSafepointsPass` (`kotlin-remove-sp`): function pass, that removes unnecessary prologue
   safepoints from functions; useful, when run after LLVM inlining; can be configured as
   `kotlin-remove-sp<inline>` to additionally inline the remaining safepoints.
+- `ModuleCallsCheckerPass` (`kotlin-calls-checker-module`): module pass for external calls checker instrumentation; creates module contructor; should be run after DCE

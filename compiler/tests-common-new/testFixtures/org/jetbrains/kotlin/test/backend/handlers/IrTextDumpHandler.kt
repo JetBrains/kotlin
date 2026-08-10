@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions.FlagsFilter
 import org.jetbrains.kotlin.ir.util.allOverridden
-import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.dumpOrFail
 import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.test.services.independentSourceDirectoryPathsTransit
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -151,7 +150,7 @@ class IrTextDumpHandler(
         assertions.assertAll(
             externalClassIds.map { externalClassId ->
                 {
-                    val classDump = info.findExternalClass(externalClassId).dump(dumpOptions)
+                    val classDump = info.findExternalClass(externalClassId).dumpOrFail(dumpOptions)
                     val suffix = ".__${externalClassId.replace("/", ".")}"
                     val expectedFile = baseFile.withSuffixAndExtension(suffix, getDumpExtension())
                     assertions.assertEqualsToFile(expectedFile, classDump)
@@ -169,30 +168,15 @@ class IrTextDumpHandler(
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val moduleStructure = testServices.moduleStructure
         val actualDump = baseDumper.generateResultingDump()
         val baseDumpExtension = getBaseDumpExtension()
-        val baseGoldenFile = moduleStructure.originalTestDataFiles.first()
-            .withExtension(baseDumpExtension)
 
-        val hasTargetSpecificDifferenceDirective = validateTargetSpecificDumpFile(
-            testServices, assertions, baseGoldenFile,
+        validateTargetSpecificDumpFile(
+            testServices, assertions,
             baseDumpExtension = baseDumpExtension,
             actualDump,
             isKotlinLikeDump = false,
         )
-
-        if (!hasTargetSpecificDifferenceDirective) {
-            checkOneExpectedFile(baseGoldenFile, actualDump)
-        }
-    }
-
-    private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {
-        if (actualDump.isNotEmpty()) {
-            assertions.assertEqualsToFile(expectedFile, actualDump)
-        } else {
-            assertions.assertFileDoesntExist(expectedFile, directive)
-        }
     }
 
     private fun getBaseDumpExtension(): String {

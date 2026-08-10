@@ -7,8 +7,6 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
@@ -17,23 +15,10 @@ import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.LeanJavaClassFinder
-import org.jetbrains.kotlin.java.direct.util.DefaultJavaSourceFileReader
-import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
-import java.nio.file.Path
-
-/**
- * Shared local VFS used by the tests below to convert `@TempDir` paths into [VirtualFile]s
- * that `JavaClassFinderOverAstImpl` and `extractFileInfoLightweight` now consume. The instance
- * is stateless (no VFS refresh) so reusing it across tests is safe.
- */
-internal val testLocalFs = KotlinLocalFileSystem()
-
-internal fun Path.toVirtualFile(): VirtualFile =
-    testLocalFs.findFileByNioFile(this)
-        ?: error("Could not obtain VirtualFile for path: $this (does it exist?)")
+import java.io.File
 
 /**
  * Light-tree snapshot used by tests that need direct AST navigation.
@@ -88,23 +73,15 @@ private class SameFileOnlyClassFinder(private val context: () -> JavaResolutionC
         }
         return current
     }
-
-    override fun collectInheritedInnerClasses(classId: ClassId): Map<String, Set<ClassId>> = emptyMap()
-
-    override fun getDirectSupertypes(classId: ClassId): List<ClassId> = emptyList()
 }
 
 /**
  * Test-only [JavaClassFinderOverAstImpl] factory that supplies a dummy source-kind [FirSession].
  */
-internal fun JavaClassFinderOverAstImpl(
-    sourceRoots: List<VirtualFile>,
-    sourceFileReader: JavaSourceFileReader = DefaultJavaSourceFileReader,
-): JavaClassFinderOverAstImpl =
+internal fun JavaClassFinderOverAstImpl(sourceRoots: List<File>): JavaClassFinderOverAstImpl =
     JavaClassFinderOverAstImpl(
         createDummyFirSessionForTests(),
         JavaSourceRootEntry.fromRootsWithoutPrefix(sourceRoots),
-        sourceFileReader,
     )
 
 /**

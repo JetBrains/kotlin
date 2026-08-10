@@ -139,6 +139,8 @@ class BackendJsSymbols(
     val jsMult by CallableIds.jsMult.functionSymbol()
     val jsDiv by CallableIds.jsDiv.functionSymbol()
     val jsMod by CallableIds.jsMod.functionSymbol()
+    val jsIdiv by CallableIds.idiv.functionSymbol()
+    val jsIrem by CallableIds.irem.functionSymbol()
 
     val jsPlusAssign by CallableIds.jsPlusAssign.functionSymbol()
     val jsMinusAssign by CallableIds.jsMinusAssign.functionSymbol()
@@ -588,6 +590,8 @@ private object CallableIds {
     val jsMult = "jsMult".jsCallableId
     val jsDiv = "jsDiv".jsCallableId
     val jsMod = "jsMod".jsCallableId
+    val idiv = "idiv".jsCallableId
+    val irem = "irem".jsCallableId
     val jsPlusAssign = "jsPlusAssign".jsCallableId
     val jsMinusAssign = "jsMinusAssign".jsCallableId
     val jsMultAssign = "jsMultAssign".jsCallableId

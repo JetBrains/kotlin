@@ -259,7 +259,8 @@ abstract class FirWebCommonExternalChecker(
                 && this !is FirPropertyAccessor
     }
 
-    private fun FirCallableDeclaration.isNullableProperty() = this is FirProperty && returnTypeRef.coneType.isMarkedOrFlexiblyNullable
+    private fun FirCallableDeclaration.isNullableProperty(): Boolean =
+        this is FirProperty && returnTypeRef.coneType.isMarkedOrFlexiblyNullable
 
     private fun FirDeclaration.hasValidExternalBody(): Boolean {
         val body = when (this) {

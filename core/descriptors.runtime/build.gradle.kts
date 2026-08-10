@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
@@ -20,6 +20,7 @@ dependencies {
     compileOnly(project(":core:reflection.common.jvm"))
 
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":generators:test-generator")))
     testFixturesImplementation(project(":core:reflection.common.jvm"))
     testFixturesApi(intellijCore())
@@ -40,7 +41,6 @@ optInToK1Deprecation()
 
 projectTests {
     testData(project(":compiler").isolated, "testData/loadJava")
-    testData(project(":compiler").isolated, "testData/loadJava8")
     withJvmStdlibAndReflect()
     withMockJdkAnnotationsJar()
     withMockJdkRuntime()

@@ -1,7 +1,8 @@
 KT element: KtClass
 KT element text:
 public final class LibraryClass public constructor() {
-    @kotlin.jvm.JvmInline public final value class LibraryNestedValueClass public constructor(value: pack.LibraryClass) {
+    @kotlin.jvm.JvmInline
+    public final value class LibraryNestedValueClass public constructor(value: pack.LibraryClass) {
         public final val value: pack.LibraryClass /* compiled code */
 
         public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }

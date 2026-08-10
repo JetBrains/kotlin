@@ -8,4 +8,6 @@ FILE[kind=File[packageFqName=<root>]]
         CLASS_BODY
           PROPERTY[fqName=MyClass.Companion.token, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=token]
             MODIFIER_LIST[const]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=token]
       PROPERTY[fqName=MyClass.token, hasBackingField=null, hasDelegate=true, hasDelegateExpression=true, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=token]

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.util.allParameters
 import org.jetbrains.kotlin.sir.util.name
 import org.jetbrains.kotlin.sir.util.swiftFqName
+import org.jetbrains.kotlin.sir.util.swiftIdentifier
 
 public class SirTrampolineFunction(
     public val source: SirFunction,
@@ -69,4 +70,5 @@ public class SirTrampolineFunction(
     )
 }
 
-private val SirParameter.forward: String? get() = this.name?.let { name -> this.argumentName?.let { "$it: $name" } ?: name }
+private val SirParameter.forward: String?
+    get() = this.name?.let { name -> this.argumentName?.let { "${it.swiftIdentifier}: ${name.swiftIdentifier}" } ?: name.swiftIdentifier }

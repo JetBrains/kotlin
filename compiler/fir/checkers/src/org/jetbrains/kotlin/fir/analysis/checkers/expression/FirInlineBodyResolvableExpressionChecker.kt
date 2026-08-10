@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.isInlinable
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
@@ -145,8 +147,11 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
 
                 val valueParameterOfOriginalInlineFunction = inlinableParameters.firstOrNull { it == resolvedArgumentSymbol }
                 if (valueParameterOfOriginalInlineFunction != null) {
+                    val calledFunctionIsInline = calledFunctionSymbol.isInline ||
+                            LanguageFeature.ConsiderLambdaArrayConstructorsInlinableInBodiesOfInlineFunctions.isEnabled() &&
+                            calledFunctionSymbol.isArrayLambdaConstructor()
                     val factory = when {
-                        calledFunctionSymbol.isInline -> when {
+                        calledFunctionIsInline -> when {
                             !valueParameter.isInlinable(session) -> {
                                 FirErrors.USAGE_IS_NOT_INLINABLE
                             }

@@ -42,9 +42,9 @@ public interface JsNode {
      */
     void traverse(JsVisitorWithContext visitor, JsContext ctx);
 
-    List<JsComment> getCommentsBeforeNode();
+    @Nullable List<JsComment> getCommentsBeforeNode();
 
-    List<JsComment> getCommentsAfterNode();
+    @Nullable List<JsComment> getCommentsAfterNode();
 
     void setCommentsBeforeNode(List<JsComment> comment);
 

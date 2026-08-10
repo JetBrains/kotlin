@@ -4,9 +4,9 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 import java.util.List;
 
@@ -63,6 +63,6 @@ public final class JsInvocation extends JsExpression.JsExpressionHasArguments {
     public JsInvocation deepCopy() {
         JsExpression qualifierCopy = AstUtil.deepCopy(qualifier);
         List<JsExpression> argumentsCopy = AstUtil.deepCopy(arguments);
-        return new JsInvocation(qualifierCopy, argumentsCopy).withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsInvocation(qualifierCopy, argumentsCopy), this);
     }
 }

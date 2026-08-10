@@ -108,7 +108,7 @@ open class DefaultValues(
         "\"es5\"",
         typeOf<String>(),
         typeOf<String>(),
-        possibleValues = listOf("\"es5\"", "\"es2015\"")
+        possibleValues = listOf("\"es5\"", "\"es2015\"", "\"es2020\"")
     )
 
     object JsModuleKinds : DefaultValues(

@@ -43,7 +43,7 @@ class MppJvmWithJavaIT : KGPBaseTest() {
         project(
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
-            // KT-76289 KAPT Gradle Project Isolation Violation
+            // https://github.com/gradle/gradle/issues/27569 - maven-publish is incompatible with isolated projects in Gradle 8.6.
             buildOptions = defaultBuildOptions.disableIsolatedProjects(),
         ) {
             includeOtherProjectAsSubmodule(

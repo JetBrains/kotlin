@@ -121,4 +121,5 @@ KaPropertySetterSymbol:
   getContainingJvmClassName: TypeAnnotationsOnPropertySetterParameterTypeKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: setFoo
   importableFqName: null

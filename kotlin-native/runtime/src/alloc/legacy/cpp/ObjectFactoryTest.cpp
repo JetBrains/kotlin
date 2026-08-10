@@ -15,7 +15,7 @@
 
 #include "FinalizerHooksTestSupport.hpp"
 #include "ObjectFactoryAllocator.hpp"
-#include "ObjectOps.hpp"
+#include "mm/ObjectOps.hpp"
 #include "ObjectTestSupport.hpp"
 #include "concurrent/ScopedThread.hpp"
 #include "TestSupport.hpp"

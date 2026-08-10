@@ -147,7 +147,8 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             projectName = "kotlinBuiltins",
             gradleVersion = gradleVersion,
             enableKotlinDaemonMemoryLimitInMb = null,
-            addHeapDumpOptions = false
+            addHeapDumpOptions = false,
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
         ) {
             setupProject(this)
 
@@ -213,6 +214,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS,
+                runViaBuildToolsApi = false,
             )
         ) {
             subProject("app").kotlinSourcesDir().resolve("classes.kt").modify {

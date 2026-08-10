@@ -18,7 +18,9 @@ ContextReceiversOnClass.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  context(A, B) @MyAnnotation private open class ContextReceiversOnClass public constructor() {
+  @MyAnnotation
+  context(A, B)
+  private open class ContextReceiversOnClass public constructor() {
   }
 
 MyAnnotation.class:

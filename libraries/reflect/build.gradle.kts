@@ -39,13 +39,13 @@ publish()
 val core = "$rootDir/core"
 val relocatedCoreSrc = "${layout.buildDirectory.get().asFile}/core-relocated"
 
-val proguardDeps by configurations.creating
-val proguardAdditionalInJars by configurations.creating
+val proguardDeps = configurations.create("proguardDeps")
+val proguardAdditionalInJars = configurations.create("proguardAdditionalInJars")
 
-val embedded by configurations
+val embedded = configurations.embedded.get()
 embedded.isTransitive = false
 
-configurations.getByName("compileOnly").extendsFrom(embedded)
+configurations.compileOnly.get().extendsFrom(embedded)
 
 val bundle = configurations.dependencyScope("bundle")
 configurations {
@@ -106,7 +106,7 @@ dependencies {
 
 if (kotlinBuildProperties.includeJava9) {
     val java9PatchModule = configurations.register("java9PatchModule") {
-        extendsFrom(configurations.getByName("compileOnly"))
+        extendsFrom(configurations.compileOnly.get())
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
         isCanBeResolved = true
     }
@@ -211,7 +211,7 @@ val reflectShadowJar = tasks.register<ShadowJar>("reflectShadowJar") {
     }
 }
 
-val stripMetadata by tasks.registering {
+val stripMetadata = tasks.register("stripMetadata") {
     dependsOn(reflectShadowJar)
     val inputJar = provider { reflectShadowJar.get().outputs.files.singleFile }
     val outputJar = fileFrom(base.libsDirectory.asFile.get(), "${base.archivesName.get()}-$version-stripped.jar")

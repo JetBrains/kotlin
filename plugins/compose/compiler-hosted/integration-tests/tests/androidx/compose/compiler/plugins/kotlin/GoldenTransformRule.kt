@@ -16,11 +16,10 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import org.junit.Assert
-import org.junit.rules.TestRule
-import org.junit.rules.TestWatcher
-import org.junit.runner.Description
-import org.junit.runners.model.Statement
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.extension.BeforeTestExecutionCallback
+import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.params.ParameterizedClass
 import java.io.File
 import java.io.FileNotFoundException
 import java.nio.file.Files
@@ -48,27 +47,26 @@ class GoldenTransformRule(
     private val generateGoldens: Boolean = env(ENV_GENERATE_GOLDEN),
     private val generateGoldenFiles: Set<String> = envList(ENV_GENERATE_GOLDEN).toSet(),
     private val generateMissingGoldens: Boolean = !env("CI"),
-) : TestRule {
+) : BeforeTestExecutionCallback {
     private lateinit var goldenFile: File
     private lateinit var testIdentifier: String
 
-    private val testWatcher = object : TestWatcher() {
-        override fun starting(description: Description) {
-            val goldenFilePath = getGoldenFilePath(description.className, description.methodName)
-            goldenFile = File(goldenFilePath)
-            testIdentifier = "${description.className}_${description.methodName}"
-        }
-    }
 
     private fun getGoldenFilePath(
         className: String,
         methodName: String,
     ) = "$pathToGoldens/$className/$methodName.$GOLDEN_FILE_TYPE"
 
-    override fun apply(base: Statement, description: Description): Statement {
-        return base.run {
-            testWatcher.apply(this, description)
+    override fun beforeTestExecution(context: ExtensionContext) {
+        val className = context.requiredTestClass.name
+        val method = context.requiredTestMethod
+        val methodName = if (context.requiredTestClass.isAnnotationPresent(ParameterizedClass::class.java)) {
+            "${method.name}[${context.parent.orElseThrow().displayName}]"
+        } else {
+            method.name
         }
+        goldenFile = File(getGoldenFilePath(className, methodName))
+        testIdentifier = "${className}_$methodName"
     }
 
     /**
@@ -94,7 +92,9 @@ class GoldenTransformRule(
         }
 
         // Use absolute path in the assert error so studio shows it as a link
-        Assert.assertEquals(
+        assertEquals(
+            loadedTestInfo.transformed,
+            testInfo.transformed,
             "Transformed source does not match golden file:" +
                     "\n${goldenFile.absolutePath}\n" +
                     "To regenerate golden files, set GENERATE_GOLDEN=\"${
@@ -103,8 +103,6 @@ class GoldenTransformRule(
                     "to generate all the files).\n" +
                     "The environment variable can be a comma delimited list of names (the quotes are " +
                     "optional)",
-            loadedTestInfo.transformed,
-            testInfo.transformed
         )
     }
 

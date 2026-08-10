@@ -1,126 +1,126 @@
 FILE: annotationArguments.kt
     @Arrays(<collectionLiteralCall>(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral(3)), <collectionLiteralCall>(Long(1)), <collectionLiteralCall>(), <collectionLiteralCall>(Double(2.2)), <collectionLiteralCall>(Char(a)), <collectionLiteralCall>(Boolean(true), Boolean(false))) public final? class WithArrays : R|kotlin/Any| {
-        public? [ContainingClassKey=WithArrays] constructor(): R|WithArrays| {
+        public? [ContainingClassKey=WithArrays] constructor(): R|test/WithArrays| {
             super<R|kotlin/Any|>()
         }
 
     }
     @Arrays(intArrayOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral(3)), longArrayOf#(Long(1)), floatArrayOf#(), doubleArrayOf#(Double(2.2)), charArrayOf#(Char(a)), booleanArrayOf#(Boolean(true), Boolean(false))) public final? class WithExplicitArrays : R|kotlin/Any| {
-        public? [ContainingClassKey=WithExplicitArrays] constructor(): R|WithExplicitArrays| {
+        public? [ContainingClassKey=WithExplicitArrays] constructor(): R|test/WithExplicitArrays| {
             super<R|kotlin/Any|>()
         }
 
     }
     @ClassLiteral(<getClass>(WithClassLiteral#), <getClass>(Boolean#)) public final? class WithClassLiteral : R|kotlin/Any| {
-        public? [ContainingClassKey=WithClassLiteral] constructor(): R|WithClassLiteral| {
+        public? [ContainingClassKey=WithClassLiteral] constructor(): R|test/WithClassLiteral| {
             super<R|kotlin/Any|>()
         }
 
     }
     @EnumLiteral(E1#, E#.E2#, e3 = test#.E#.E2#) public final? class WithEnumLiteral : R|kotlin/Any| {
-        public? [ContainingClassKey=WithEnumLiteral] constructor(): R|WithEnumLiteral| {
+        public? [ContainingClassKey=WithEnumLiteral] constructor(): R|test/WithEnumLiteral| {
             super<R|kotlin/Any|>()
         }
 
     }
     @VarArg(IntegerLiteral(1)) public final? class OneVararg : R|kotlin/Any| {
-        public? [ContainingClassKey=OneVararg] constructor(): R|OneVararg| {
+        public? [ContainingClassKey=OneVararg] constructor(): R|test/OneVararg| {
             super<R|kotlin/Any|>()
         }
 
     }
     @VarArg(IntegerLiteral(1), IntegerLiteral(2)) public final? class TwoVararg : R|kotlin/Any| {
-        public? [ContainingClassKey=TwoVararg] constructor(): R|TwoVararg| {
+        public? [ContainingClassKey=TwoVararg] constructor(): R|test/TwoVararg| {
             super<R|kotlin/Any|>()
         }
 
     }
     @VarArg(IntegerLiteral(1), IntegerLiteral(2), VarArg#.CONSTANT#) public final? class ThreeVararg : R|kotlin/Any| {
-        public? [ContainingClassKey=ThreeVararg] constructor(): R|ThreeVararg| {
+        public? [ContainingClassKey=ThreeVararg] constructor(): R|test/ThreeVararg| {
             super<R|kotlin/Any|>()
         }
 
     }
     @VarArg(*<collectionLiteralCall>(IntegerLiteral(1), IntegerLiteral(2), VarArg#.CONSTANT#, IntegerLiteral(4))) public final? class SpreadVararg : R|kotlin/Any| {
-        public? [ContainingClassKey=SpreadVararg] constructor(): R|SpreadVararg| {
+        public? [ContainingClassKey=SpreadVararg] constructor(): R|test/SpreadVararg| {
             super<R|kotlin/Any|>()
         }
 
     }
     @Outer(String(value), nested = Nested#(IntegerLiteral(0), String(nested value))) public final? class WithNested : R|kotlin/Any| {
-        public? [ContainingClassKey=WithNested] constructor(): R|WithNested| {
+        public? [ContainingClassKey=WithNested] constructor(): R|test/WithNested| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @Outer(String(value), foo#.Nested#(IntegerLiteral(1), String(nested value))) public final? class WithQualifiedNested : R|kotlin/Any| {
-        public? [ContainingClassKey=WithQualifiedNested] constructor(): R|WithQualifiedNested| {
+    @Outer(String(value), test#.Nested#(IntegerLiteral(1), String(nested value))) public final? class WithQualifiedNested : R|kotlin/Any| {
+        public? [ContainingClassKey=WithQualifiedNested] constructor(): R|test/WithQualifiedNested| {
             super<R|kotlin/Any|>()
         }
 
     }
     @Simple(test#.Simple#.Companion#.CONST1#) public final? class Qualified : R|kotlin/Any| {
-        public? [ContainingClassKey=Qualified] constructor(): R|Qualified| {
+        public? [ContainingClassKey=Qualified] constructor(): R|test/Qualified| {
             super<R|kotlin/Any|>()
         }
 
     }
     @Simple(test#.Simple#.Companion#.CONST1#.plus#(Simple#.CONST2#)) public final? class Sum : R|kotlin/Any| {
-        public? [ContainingClassKey=Sum] constructor(): R|Sum| {
+        public? [ContainingClassKey=Sum] constructor(): R|test/Sum| {
             super<R|kotlin/Any|>()
         }
 
     }
     @Simple(test#.Simple#.Companion#.CONST1#.unaryMinus#()) public final? class Negative : R|kotlin/Any| {
-        public? [ContainingClassKey=Negative] constructor(): R|Negative| {
+        public? [ContainingClassKey=Negative] constructor(): R|test/Negative| {
             super<R|kotlin/Any|>()
         }
 
     }
     @Simple(test#.Simple#.Companion#.CONST1#.unaryMinus#().unaryMinus#().unaryMinus#()) public final? class Negative2 : R|kotlin/Any| {
-        public? [ContainingClassKey=Negative2] constructor(): R|Negative2| {
+        public? [ContainingClassKey=Negative2] constructor(): R|test/Negative2| {
             super<R|kotlin/Any|>()
         }
 
     }
     @Simple(test#.Simple#.Companion#.CONST1#.unaryMinus#().unaryMinus#()) public final? class Positive : R|kotlin/Any| {
-        public? [ContainingClassKey=Positive] constructor(): R|Positive| {
+        public? [ContainingClassKey=Positive] constructor(): R|test/Positive| {
             super<R|kotlin/Any|>()
         }
 
     }
     @Simple(IntegerLiteral(12), Long(12), IntegerLiteral(12), Double(3.3), Float(3.3), Char(a), Boolean(true), Boolean(false)) public final? class WithSimple : R|kotlin/Any| {
-        public? [ContainingClassKey=WithSimple] constructor(): R|WithSimple| {
+        public? [ContainingClassKey=WithSimple] constructor(): R|test/WithSimple| {
             super<R|kotlin/Any|>()
         }
 
     }
     @Simple(IntegerLiteral(12), Long(12), IntegerLiteral(12), d = Double(3.3), f = Float(3.3), c = Char(a), b1 = Boolean(true), b2 = Boolean(false)) public final? class WithNamedSimple : R|kotlin/Any| {
-        public? [ContainingClassKey=WithNamedSimple] constructor(): R|WithNamedSimple| {
+        public? [ContainingClassKey=WithNamedSimple] constructor(): R|test/WithNamedSimple| {
             super<R|kotlin/Any|>()
         }
 
     }
     @Simple(IntegerLiteral(12).div#(IntegerLiteral(6)), Long(12).rem#(Long(5)), IntegerLiteral(12), Double(3.3).minus#(Double(3.0)), Float(3.3).times#(Float(2.0)), Char(a), Boolean(true) && Boolean(false), Boolean(false) || Boolean(true)) public final? class WithSimpleOperations : R|kotlin/Any| {
-        public? [ContainingClassKey=WithSimpleOperations] constructor(): R|WithSimpleOperations| {
+        public? [ContainingClassKey=WithSimpleOperations] constructor(): R|test/WithSimpleOperations| {
             super<R|kotlin/Any|>()
         }
 
     }
     @Simple(IntegerLiteral(12).toByte#()) public final? class WithConversionCall : R|kotlin/Any| {
-        public? [ContainingClassKey=WithConversionCall] constructor(): R|WithConversionCall| {
+        public? [ContainingClassKey=WithConversionCall] constructor(): R|test/WithConversionCall| {
             super<R|kotlin/Any|>()
         }
 
     }
     @ConversionCallConsumer(IntegerLiteral(12).toByte#()) public final? class WithResolvedConversionCall : R|kotlin/Any| {
-        public? [ContainingClassKey=WithResolvedConversionCall] constructor(): R|WithResolvedConversionCall| {
+        public? [ContainingClassKey=WithResolvedConversionCall] constructor(): R|test/WithResolvedConversionCall| {
             super<R|kotlin/Any|>()
         }
 
     }
     public final? annotation class ConversionCallConsumer : R|kotlin/Annotation| {
-        public? [ContainingClassKey=ConversionCallConsumer] constructor([CorrespondingProperty=/ConversionCallConsumer.b] b: Byte): R|ConversionCallConsumer| {
+        public? [ContainingClassKey=ConversionCallConsumer] constructor([CorrespondingProperty=test/ConversionCallConsumer.b] b: Byte): R|test/ConversionCallConsumer| {
             super<R|kotlin/Any|>()
         }
 
@@ -129,19 +129,19 @@ FILE: annotationArguments.kt
 
     }
     @StringLiteral(String(some), String(), <strcat>(String(H), CONSTANT#)) public final? class WithStringLiteral : R|kotlin/Any| {
-        public? [ContainingClassKey=WithStringLiteral] constructor(): R|WithStringLiteral| {
+        public? [ContainingClassKey=WithStringLiteral] constructor(): R|test/WithStringLiteral| {
             super<R|kotlin/Any|>()
         }
 
     }
     @StringLiteral(<strcat>(String(some), String(1)), String().plus#(CONSTANT#).plus#(String(2)), <strcat>(<strcat>(CONSTANT#), String(3))) public final? class WithStringLiteralConcat : R|kotlin/Any| {
-        public? [ContainingClassKey=WithStringLiteralConcat] constructor(): R|WithStringLiteralConcat| {
+        public? [ContainingClassKey=WithStringLiteralConcat] constructor(): R|test/WithStringLiteralConcat| {
             super<R|kotlin/Any|>()
         }
 
     }
     @StringLiteral(<strcat>(CONSTANT#), <strcat>(CONSTANT#), <strcat>(CONSTANT#)) public final? class WithStringInterpolationPrefix : R|kotlin/Any| {
-        public? [ContainingClassKey=WithStringInterpolationPrefix] constructor(): R|WithStringInterpolationPrefix| {
+        public? [ContainingClassKey=WithStringInterpolationPrefix] constructor(): R|test/WithStringInterpolationPrefix| {
             super<R|kotlin/Any|>()
         }
 
@@ -150,26 +150,206 @@ FILE: annotationArguments.kt
         ^ Unit
     }
     )) public final? class LongStringTemplateEntryWithTwoExpressions : R|kotlin/Any| {
-        public? [ContainingClassKey=LongStringTemplateEntryWithTwoExpressions] constructor(): R|LongStringTemplateEntryWithTwoExpressions| {
+        public? [ContainingClassKey=LongStringTemplateEntryWithTwoExpressions] constructor(): R|test/LongStringTemplateEntryWithTwoExpressions| {
             super<R|kotlin/Any|>()
         }
 
     }
     @Deprecated(String(Deprecated), ReplaceWith#(String(NewClass), String(foo.bar.baz.NewClass)), DeprecationLevel#.HIDDEN#) public final? class Another : R|kotlin/Any| {
-        public? [ContainingClassKey=Another] constructor(): R|Another| {
+        public? [ContainingClassKey=Another] constructor(): R|test/Another| {
             super<R|kotlin/Any|>()
         }
 
     }
     @Arrays(<collectionLiteralCall>(bar#?.{ $subj$.foo#(String(str)) }, baz#.bar#?.{ $subj$.doo# }, !=(IntegerLiteral(1), IntegerLiteral(2)))) public final? class WithIncorrectArguments : R|kotlin/Any| {
-        public? [ContainingClassKey=WithIncorrectArguments] constructor(): R|WithIncorrectArguments| {
+        public? [ContainingClassKey=WithIncorrectArguments] constructor(): R|test/WithIncorrectArguments| {
             super<R|kotlin/Any|>()
         }
 
     }
     @kotlin.Deprecated(String(Deprecated), kotlin#.ReplaceWith#(String(NewClass), String(foo.bar.baz.NewClass)), level = kotlin#.DeprecationLevel#.HIDDEN#) public final? class Qualified : R|kotlin/Any| {
-        public? [ContainingClassKey=Qualified] constructor(): R|Qualified| {
+        public? [ContainingClassKey=Qualified] constructor(): R|test/Qualified| {
             super<R|kotlin/Any|>()
         }
 
     }
+    public final? annotation class Arrays : R|kotlin/Annotation| {
+        public? [ContainingClassKey=Arrays] constructor([CorrespondingProperty=test/Arrays.ia] ia: IntArray, [CorrespondingProperty=test/Arrays.la] la: LongArray, [CorrespondingProperty=test/Arrays.fa] fa: FloatArray, [CorrespondingProperty=test/Arrays.da] da: DoubleArray, [CorrespondingProperty=test/Arrays.ca] ca: CharArray, [CorrespondingProperty=test/Arrays.ba] ba: BooleanArray): R|test/Arrays| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val ia: IntArray = R|<local>/ia|
+            public? [ContainingClassKey=Arrays] get(): IntArray
+
+        public? final? [IsFromPrimaryConstructor=true] val la: LongArray = R|<local>/la|
+            public? [ContainingClassKey=Arrays] get(): LongArray
+
+        public? final? [IsFromPrimaryConstructor=true] val fa: FloatArray = R|<local>/fa|
+            public? [ContainingClassKey=Arrays] get(): FloatArray
+
+        public? final? [IsFromPrimaryConstructor=true] val da: DoubleArray = R|<local>/da|
+            public? [ContainingClassKey=Arrays] get(): DoubleArray
+
+        public? final? [IsFromPrimaryConstructor=true] val ca: CharArray = R|<local>/ca|
+            public? [ContainingClassKey=Arrays] get(): CharArray
+
+        public? final? [IsFromPrimaryConstructor=true] val ba: BooleanArray = R|<local>/ba|
+            public? [ContainingClassKey=Arrays] get(): BooleanArray
+
+    }
+    public final? annotation class ClassLiteral : R|kotlin/Annotation| {
+        public? [ContainingClassKey=ClassLiteral] constructor([CorrespondingProperty=test/ClassLiteral.c1] c1: KClass<*>, [CorrespondingProperty=test/ClassLiteral.c2] c2: KClass<*>): R|test/ClassLiteral| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val c1: KClass<*> = R|<local>/c1|
+            public? [ContainingClassKey=ClassLiteral] get(): KClass<*>
+
+        public? final? [IsFromPrimaryConstructor=true] val c2: KClass<*> = R|<local>/c2|
+            public? [ContainingClassKey=ClassLiteral] get(): KClass<*>
+
+    }
+    public final? enum class E : R|kotlin/Enum<test/E>| {
+        private [ContainingClassKey=E] constructor(): R|test/E| {
+            super<R|kotlin/Enum<test/E>|>()
+        }
+
+        public final static [ContainingClassKey=E] enum entry E1: R|test/E|
+        public final static [ContainingClassKey=E] enum entry E2: R|test/E|
+        public final static [ContainingClassKey=E] fun values(): R|kotlin/Array<test/E>| {
+        }
+
+        public final static [ContainingClassKey=E] fun valueOf(value: R|kotlin/String|): R|test/E| {
+        }
+
+        public final static [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<test/E>|
+            public static get(): R|kotlin/enums/EnumEntries<test/E>|
+
+    }
+    public final? annotation class EnumLiteral : R|kotlin/Annotation| {
+        public? [ContainingClassKey=EnumLiteral] constructor([CorrespondingProperty=test/EnumLiteral.e1] e1: E, [CorrespondingProperty=test/EnumLiteral.e2] e2: E, [CorrespondingProperty=test/EnumLiteral.e3] e3: E): R|test/EnumLiteral| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val e1: E = R|<local>/e1|
+            public? [ContainingClassKey=EnumLiteral] get(): E
+
+        public? final? [IsFromPrimaryConstructor=true] val e2: E = R|<local>/e2|
+            public? [ContainingClassKey=EnumLiteral] get(): E
+
+        public? final? [IsFromPrimaryConstructor=true] val e3: E = R|<local>/e3|
+            public? [ContainingClassKey=EnumLiteral] get(): E
+
+    }
+    public final? annotation class VarArg : R|kotlin/Annotation| {
+        public? [ContainingClassKey=VarArg] constructor([CorrespondingProperty=test/VarArg.v] vararg v: Int): R|test/VarArg| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val v: Int = R|<local>/v|
+            public? [ContainingClassKey=VarArg] get(): Int
+
+        public final? companion object Companion : R|kotlin/Any| {
+            private [ContainingClassKey=Companion] constructor(): R|test/VarArg.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? const val CONSTANT: <implicit> = IntegerLiteral(3)
+                public? [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+    }
+    public final? annotation class Nested : R|kotlin/Annotation| {
+        public? [ContainingClassKey=Nested] constructor([CorrespondingProperty=test/Nested.i] i: Int, [CorrespondingProperty=test/Nested.s] s: String): R|test/Nested| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ContainingClassKey=Nested] get(): Int
+
+        public? final? [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ContainingClassKey=Nested] get(): String
+
+    }
+    public final? annotation class Outer : R|kotlin/Annotation| {
+        public? [ContainingClassKey=Outer] constructor([CorrespondingProperty=test/Outer.some] some: String, [CorrespondingProperty=test/Outer.nested] nested: Nested): R|test/Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val some: String = R|<local>/some|
+            public? [ContainingClassKey=Outer] get(): String
+
+        public? final? [IsFromPrimaryConstructor=true] val nested: Nested = R|<local>/nested|
+            public? [ContainingClassKey=Outer] get(): Nested
+
+    }
+    public final? annotation class Simple : R|kotlin/Annotation| {
+        public? [ContainingClassKey=Simple] constructor([CorrespondingProperty=test/Simple.i] i: Int = IntegerLiteral(0), [CorrespondingProperty=test/Simple.l] l: Long = IntegerLiteral(0), [CorrespondingProperty=test/Simple.b] b: Byte = IntegerLiteral(0), [CorrespondingProperty=test/Simple.d] d: Double = Double(0.0), [CorrespondingProperty=test/Simple.f] f: Float = Float(0.0), [CorrespondingProperty=test/Simple.c] c: Char = Char( ), [CorrespondingProperty=test/Simple.b1] b1: Boolean = Boolean(false), [CorrespondingProperty=test/Simple.b2] b2: Boolean = Boolean(false)): R|test/Simple| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ContainingClassKey=Simple] get(): Int
+
+        public? final? [IsFromPrimaryConstructor=true] val l: Long = R|<local>/l|
+            public? [ContainingClassKey=Simple] get(): Long
+
+        public? final? [IsFromPrimaryConstructor=true] val b: Byte = R|<local>/b|
+            public? [ContainingClassKey=Simple] get(): Byte
+
+        public? final? [IsFromPrimaryConstructor=true] val d: Double = R|<local>/d|
+            public? [ContainingClassKey=Simple] get(): Double
+
+        public? final? [IsFromPrimaryConstructor=true] val f: Float = R|<local>/f|
+            public? [ContainingClassKey=Simple] get(): Float
+
+        public? final? [IsFromPrimaryConstructor=true] val c: Char = R|<local>/c|
+            public? [ContainingClassKey=Simple] get(): Char
+
+        public? final? [IsFromPrimaryConstructor=true] val b1: Boolean = R|<local>/b1|
+            public? [ContainingClassKey=Simple] get(): Boolean
+
+        public? final? [IsFromPrimaryConstructor=true] val b2: Boolean = R|<local>/b2|
+            public? [ContainingClassKey=Simple] get(): Boolean
+
+        public final? companion object Companion : R|kotlin/Any| {
+            private [ContainingClassKey=Companion] constructor(): R|test/Simple.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? const val CONST1: <implicit> = IntegerLiteral(1)
+                public? [ContainingClassKey=Companion] get(): <implicit>
+
+            public? final? const val CONST2: <implicit> = IntegerLiteral(2)
+                public? [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+    }
+    public final? annotation class StringLiteral : R|kotlin/Annotation| {
+        public? [ContainingClassKey=StringLiteral] constructor([CorrespondingProperty=test/StringLiteral.s1] s1: String, [CorrespondingProperty=test/StringLiteral.s2] s2: String, [CorrespondingProperty=test/StringLiteral.s3] s3: String): R|test/StringLiteral| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val s1: String = R|<local>/s1|
+            public? [ContainingClassKey=StringLiteral] get(): String
+
+        public? final? [IsFromPrimaryConstructor=true] val s2: String = R|<local>/s2|
+            public? [ContainingClassKey=StringLiteral] get(): String
+
+        public? final? [IsFromPrimaryConstructor=true] val s3: String = R|<local>/s3|
+            public? [ContainingClassKey=StringLiteral] get(): String
+
+    }
+    public final? annotation class InvalidArguments : R|kotlin/Annotation| {
+        public? [ContainingClassKey=InvalidArguments] constructor([CorrespondingProperty=test/InvalidArguments.s] s: String): R|test/InvalidArguments| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ContainingClassKey=InvalidArguments] get(): String
+
+    }
+    public? final? const val CONSTANT: <implicit> = IntegerLiteral(0)
+        public? get(): <implicit>

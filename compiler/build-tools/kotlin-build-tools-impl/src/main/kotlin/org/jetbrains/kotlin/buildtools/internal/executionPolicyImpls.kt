@@ -15,10 +15,13 @@ import kotlin.io.path.Path
 
 internal object InProcessExecutionPolicyImpl : ExecutionPolicy.InProcess
 
-internal class DaemonExecutionPolicyImpl private constructor(private val options: Options = Options(ExecutionPolicy.WithDaemon::class)) :
-    ExecutionPolicy.WithDaemon, ExecutionPolicy.WithDaemon.Builder, DeepCopyable<DaemonExecutionPolicyImpl> {
+internal class DaemonExecutionPolicyImpl private constructor(
+    private val options: Options = Options(ExecutionPolicy.WithDaemon::class),
+) : ExecutionPolicy.WithDaemon, ExecutionPolicy.WithDaemon.Builder, DeepCopyable<DaemonExecutionPolicyImpl> {
 
-    constructor() : this(Options(ExecutionPolicy.WithDaemon::class)) {
+    constructor() : this(
+        Options(ExecutionPolicy.WithDaemon::class),
+    ) {
         initializeOptions(this::class, options)
     }
 

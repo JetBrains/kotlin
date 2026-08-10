@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
+import org.jetbrains.kotlin.ir.util.moduleFragment
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class Fir2IrComponentsStorage(
@@ -33,7 +35,7 @@ class Fir2IrComponentsStorage(
     generatedDataValueClassSyntheticFunctionsStorage: MutableMap<IrClass, DataValueClassGeneratedMembersInfo>,
     override val irMangler: KotlinMangler.IrMangler,
     kotlinBuiltIns: KotlinBuiltIns,
-    override val specialAnnotationsProvider: IrSpecialAnnotationsProvider?,
+    createSpecialAnnotationsProvider: ((IrModuleFragment) -> IrSpecialAnnotationsProvider)?,
     override val firProvider: FirProviderWithGeneratedFiles,
     syntheticIrBuiltinsSymbolsContainer: Fir2IrSyntheticIrBuiltinsSymbolsContainer,
     fakeOverrideResolver: SymbolRemapper,
@@ -79,4 +81,9 @@ class Fir2IrComponentsStorage(
 
     override val adapterGenerator: AdapterGenerator = AdapterGenerator(this, conversionScope)
     override val implicitCastInserter: Fir2IrImplicitCastInserter = Fir2IrImplicitCastInserter(this, conversionScope)
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    override val specialAnnotationsProvider: IrSpecialAnnotationsProvider? by lazy {
+        createSpecialAnnotationsProvider?.invoke(builtins.anyClass.owner.moduleFragment)
+    }
 }

@@ -64,7 +64,7 @@ abstract class AbstractKlibAbiDumpBeforeInliningSavingHandler(
     testServices: TestServices,
 ) : AbstractIrHandler(
     testServices = testServices,
-    failureDisablesNextSteps = true,
+    failureDisablesNextSteps = false,
     doNotRunIfThereWerePreviousFailures = true,
 ) {
     override val directiveContainers get() = listOf(KlibAbiConsistencyDirectives)
@@ -127,7 +127,7 @@ class FirJsKlibAbiDumpBeforeInliningSavingHandler(testServices: TestServices) :
 class KlibAbiDumpAfterInliningVerifyingHandler(testServices: TestServices) : BinaryArtifactHandler<BinaryArtifacts.KLib>(
     testServices,
     ArtifactKinds.KLib,
-    failureDisablesNextSteps = true,
+    failureDisablesNextSteps = false,
     doNotRunIfThereWerePreviousFailures = true,
 ) {
     private val dumper = MultiModuleInfoDumper()

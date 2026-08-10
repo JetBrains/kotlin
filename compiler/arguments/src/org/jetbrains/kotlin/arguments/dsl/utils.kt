@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.arguments.dsl
 
 import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.types.*
 
@@ -51,3 +52,9 @@ val SearchPathType.Companion.defaultNull: SearchPathType
 
 val PathListType.Companion.defaultEmpty: PathListType
     get() = PathListType()
+
+val KotlinReleaseVersion.previous: KotlinReleaseVersion?
+    get() = KotlinReleaseVersion.entries.getOrNull(ordinal - 1)
+
+val KotlinReleaseVersion.next: KotlinReleaseVersion?
+    get() = KotlinReleaseVersion.entries.getOrNull(ordinal + 1)

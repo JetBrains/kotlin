@@ -1,0 +1,28 @@
+class OriginalClass
+
+@kotlin.jvm.JvmInline
+inline class ValueClass(original: OriginalClass) {
+  val original: OriginalClass
+
+  fun funWithoutParameters()
+
+  fun funWithSelfParameter(v: ValueClass)
+
+  val property: kotlin.Int
+    get()
+
+  val propertyWithValueClassType: ValueClass
+    get()
+
+  override fun toString(): kotlin.String
+
+  companion object {
+    val companionProperty: kotlin.Int
+
+    val companionPropertyWithValueClassType: ValueClass?
+
+    fun companionFunction()
+
+    fun companionFunctionWithValueClassType(): ValueClass?
+  }
+}

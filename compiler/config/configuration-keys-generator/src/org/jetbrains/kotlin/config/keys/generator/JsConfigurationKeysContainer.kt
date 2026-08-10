@@ -87,8 +87,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
         "Dump declarations' reachability info to file during performing DCE.", throwOnNull = false,
     )
 
-    val FAKE_OVERRIDE_VALIDATOR by key<Boolean>()
-
     val PROPERTY_LAZY_INITIALIZATION by key<Boolean>()
 
     val GENERATE_INLINE_ANONYMOUS_FUNCTIONS by key<Boolean>("Translate lambdas into inline anonymous functions.")

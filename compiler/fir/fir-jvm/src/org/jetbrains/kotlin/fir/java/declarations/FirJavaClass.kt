@@ -98,6 +98,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     override val hasLazyNestedClassifiers: Boolean get() = true
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
+    override val staticControlFlowGraphReference: FirControlFlowGraphReference? get() = null
 
     override val contextParameters: List<FirValueParameter>
         get() = emptyList()
@@ -160,6 +161,10 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     fun directSupertypeClassIds(): List<ClassId> = directSupertypeClassIdsCache
 
+    // returns original visibility to avoid triggering status transformers application
+    // NB: according to the assertions in the [applyStatusTransformerExtensions] the transformers should not change the visibility
+    val nonEnhancedVisibility: Visibility get() = originalStatus.visibility
+
     // TODO: the lazy annotations is a workaround for KT-55387, some non-lazy solution should probably be used instead
     override val annotations: List<FirAnnotation> get() = annotationList
 
@@ -210,6 +215,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {}
+    override fun replaceStaticControlFlowGraphReference(newStaticControlFlowGraphReference: FirControlFlowGraphReference?) {}
 
     override val companionObjectSymbol: FirRegularClassSymbol?
         get() = null

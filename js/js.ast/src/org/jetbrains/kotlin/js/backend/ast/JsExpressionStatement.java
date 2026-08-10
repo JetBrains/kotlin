@@ -52,6 +52,6 @@ public final class JsExpressionStatement extends AbstractNode implements JsState
     @NotNull
     @Override
     public JsExpressionStatement deepCopy() {
-        return new JsExpressionStatement(expression.deepCopy()).withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsExpressionStatement(expression.deepCopy()), this);
     }
 }

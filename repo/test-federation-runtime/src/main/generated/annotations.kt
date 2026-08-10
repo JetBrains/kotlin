@@ -47,6 +47,13 @@ annotation class AffectedByCoreLibs
 annotation class AffectedByAnalysisApi
 
 /**
+* Will mark tests as 'affected by' the given domain [Domain.BuildToolsApi].
+* Such tests will run, additionally, for all commits affecting the BuildToolsApi domain.
+*/
+@Tag("affectedBy:BuildToolsApi")
+annotation class AffectedByBuildToolsApi
+
+/**
 * Will mark tests as 'affected by' the given domain [Domain.SwiftExport].
 * Such tests will run, additionally, for all commits affecting the SwiftExport domain.
 */
@@ -102,6 +109,7 @@ fun affectedByAnnotationOf(domain: Domain) = when (domain) {
     Domain.Native -> AffectedByNative::class
     Domain.CoreLibs -> AffectedByCoreLibs::class
     Domain.AnalysisApi -> AffectedByAnalysisApi::class
+    Domain.BuildToolsApi -> AffectedByBuildToolsApi::class
     Domain.SwiftExport -> AffectedBySwiftExport::class
     Domain.CompilerPlugins -> AffectedByCompilerPlugins::class
     Domain.Gradle -> AffectedByGradle::class

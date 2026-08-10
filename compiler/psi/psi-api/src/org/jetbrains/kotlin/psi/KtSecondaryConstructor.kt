@@ -50,8 +50,8 @@ class KtSecondaryConstructor : KtConstructor<KtSecondaryConstructor> {
     fun hasImplicitDelegationCall(): Boolean = getDelegationCall().isImplicit
 
     @Deprecated(
-        "Use convertImplicitDelegationCallToExplicit(isThis) instead",
-        ReplaceWith(
+        message = "Use convertImplicitDelegationCallToExplicit(isThis) instead",
+        replaceWith = ReplaceWith(
             "this.convertImplicitDelegationCallToExplicit(isThis)",
             "org.jetbrains.kotlin.idea.base.psi.convertImplicitDelegationCallToExplicit",
         ),

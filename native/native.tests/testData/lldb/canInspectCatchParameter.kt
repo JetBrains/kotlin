@@ -1,4 +1,9 @@
 // KIND: STANDALONE_LLDB
+// INPUT_DATA_FILE: canInspectCatchParameter.in
+// OUTPUT_DATA_FILE: canInspectCatchParameter.out
+
+
+
 
 fun main() {
     try {

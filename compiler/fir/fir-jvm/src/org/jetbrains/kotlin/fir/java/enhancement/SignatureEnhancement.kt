@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.fir.java.enhancement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fakeElement
@@ -24,6 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.expressions.ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
@@ -72,6 +75,7 @@ import org.jetbrains.kotlin.types.model.TypeSystemContext
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import java.util.EnumMap
 
 class FirSignatureEnhancement(
     private val owner: FirJavaClass,
@@ -800,31 +804,65 @@ class FirSignatureEnhancement(
 
 
     fun enhanceSuperTypes(nonEnhancedSuperTypes: List<FirTypeRef>): List<FirTypeRef> {
-        val purelyImplementedSupertype = getPurelyImplementedSupertype(moduleData.session)
-        val purelyImplementedSupertypeClassId = purelyImplementedSupertype?.classId
+        val purelyImplementedSupertypeWithEnhancement = getPurelyImplementedSupertypesWithEnhancement(moduleData.session)
+        val purelyImplementedSupertypeClassIds = purelyImplementedSupertypeWithEnhancement.types.map { it.classId }
+        val purelyImplementedSupertypeClassIdForWarning = purelyImplementedSupertypeWithEnhancement.enhancedTypeForWarning?.classId
         return buildList {
             nonEnhancedSuperTypes.mapNotNullTo(this) { superType ->
                 enhanceSuperType(superType).takeUnless {
-                    purelyImplementedSupertypeClassId != null && it.coneType.classId == purelyImplementedSupertypeClassId
+                    it.coneType.classId in purelyImplementedSupertypeClassIds ||
+                            it.coneType.classId == purelyImplementedSupertypeClassIdForWarning
                 }
             }
-            purelyImplementedSupertype?.let {
+            purelyImplementedSupertypeWithEnhancement.types.forEach {
+                add(buildResolvedTypeRef { coneType = it })
+            }
+            purelyImplementedSupertypeWithEnhancement.enhancedTypeForWarning?.let {
                 add(buildResolvedTypeRef { coneType = it })
             }
         }
     }
 
-    private fun getPurelyImplementedSupertype(session: FirSession): ConeKotlinType? {
+    private data class TypesWithEnhancement(val types: List<ConeKotlinType>, val enhancedTypeForWarning: ConeKotlinType?)
+
+    private fun getPurelyImplementedSupertypesWithEnhancement(session: FirSession): TypesWithEnhancement {
         val purelyImplementedClassIdFromAnnotation = owner.annotations
             .firstOrNull { it.unexpandedClassId?.asSingleFqName() == JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION }
             ?.let { (it.argumentMapping.mapping.values.firstOrNull() as? FirLiteralExpression) }
             ?.let { it.value as? String }
             ?.takeIf { it.isNotBlank() && isValidJavaFqName(it) }
             ?.let { ClassId.topLevel(FqName(it)) }
-        val purelyImplementedClassId = purelyImplementedClassIdFromAnnotation
-            ?: FakePureImplementationsProvider.getPurelyImplementedInterface(owner.symbol.classId)
-            ?: return null
-        val superTypeSymbol = session.symbolProvider.getClassLikeSymbolByClassId(purelyImplementedClassId) ?: return null
+        val purelyImplementedClassIds = listOfNotNull(
+            purelyImplementedClassIdFromAnnotation,
+            FakePureImplementationsProviderWithUpdates.getPurelyImplementedInterface(
+                owner.symbol.classId,
+                languageVersionSettings = session.languageVersionSettings
+            ),
+            FakePureImplementationsProvider.getPurelyImplementedInterface(owner.symbol.classId),
+        )
+        val purelyImplementedClassIdForWarnings =
+            FakePureImplementationsProviderWithUpdates.getPurelyImplementedInterfaceForWarnings(
+                owner.symbol.classId,
+                languageVersionSettings = session.languageVersionSettings
+            )
+        return TypesWithEnhancement(
+            types = purelyImplementedClassIds.mapNotNull {
+                it.buildPurelyImplementedSupertypeWithEnhancement(session, purelyImplementedClassIdFromAnnotation)
+            },
+            enhancedTypeForWarning = purelyImplementedClassIdForWarnings?.buildPurelyImplementedSupertypeWithEnhancement(
+                session,
+                purelyImplementedClassIdFromAnnotation,
+                relevantFeatureForAttributeIfNeeded = LanguageFeature.ConcurrentMapPurelyImplemented
+            )
+        )
+    }
+
+    private fun ClassId.buildPurelyImplementedSupertypeWithEnhancement(
+        session: FirSession,
+        purelyImplementedClassIdFromAnnotation: ClassId?,
+        relevantFeatureForAttributeIfNeeded: LanguageFeature? = null,
+    ): ConeKotlinType? {
+        val superTypeSymbol = session.symbolProvider.getClassLikeSymbolByClassId(this) ?: return null
         val superTypeParameterSymbols = superTypeSymbol.typeParameterSymbols
         val typeParameters = owner.typeParameters
         val supertypeParameterCount = superTypeParameterSymbols.size
@@ -840,11 +878,79 @@ class FirSignatureEnhancement(
             else -> return null
         }
         return ConeClassLikeTypeImpl(
-            purelyImplementedClassId.toLookupTag(),
-            parametersAsTypeProjections.toTypedArray(),
+            toLookupTag(),
+            if (relevantFeatureForAttributeIfNeeded == null) {
+                parametersAsTypeProjections.toTypedArray()
+            } else {
+                parametersAsTypeProjections.map { type ->
+                    ConeFlexibleType(
+                        lowerBound = type.withAttributes(
+                            type.attributes.add(
+                                ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
+                                    coneType = type,
+                                    relevantFeature = relevantFeatureForAttributeIfNeeded
+                                )
+                            )
+                        ),
+                        upperBound = ConeTypeParameterType(type.lookupTag, isMarkedNullable = true),
+                        isTrivial = true,
+                    )
+                }.toTypedArray()
+            },
             isMarkedNullable = false
         )
     }
+
+    object FakePureImplementationsProviderWithUpdates {
+        fun getPurelyImplementedInterface(classFqName: ClassId, languageVersionSettings: LanguageVersionSettings): ClassId? {
+            for ([feature, map] in pureImplementationsClassIds.entries) {
+                if (!languageVersionSettings.supportsFeature(feature)) continue
+                map[classFqName]?.let { return it }
+            }
+            return null
+        }
+
+        fun getPurelyImplementedInterfaceForWarnings(classFqName: ClassId, languageVersionSettings: LanguageVersionSettings): ClassId? {
+            for ([feature, map] in pureImplementationsClassIds.entries) {
+                if (languageVersionSettings.supportsFeature(feature)) continue
+                map[classFqName]?.let { return it }
+            }
+            return null
+        }
+
+        private val pureImplementationsClassIds: EnumMap<LanguageFeature, MutableMap<ClassId, ClassId>> =
+            EnumMap(LanguageFeature::class.java)
+
+        context(feature: LanguageFeature)
+        private infix fun ClassId.implementedWith(implementations: List<ClassId>) {
+            val destination = pureImplementationsClassIds[feature]!!
+            implementations.forEach {
+                require(it !in destination)
+                destination[it] = this
+            }
+        }
+
+        @Suppress("SameParameterValue")
+        private fun withFeature(feature: LanguageFeature, action: context(LanguageFeature) () -> Unit) {
+            if (pureImplementationsClassIds[feature] == null) {
+                pureImplementationsClassIds[feature] = mutableMapOf()
+            }
+            context(feature) { action() }
+        }
+
+        init {
+            withFeature(LanguageFeature.ConcurrentMapPurelyImplemented) {
+                // See KT-8761
+                ClassId.topLevel(FqName("java.util.concurrent.ConcurrentMap")) implementedWith fqNameListOf(
+                    "java.util.concurrent.ConcurrentHashMap", "java.util.concurrent.ConcurrentSkipListMap",
+                )
+            }
+        }
+
+        @Suppress("SameParameterValue")
+        private fun fqNameListOf(vararg names: String): List<ClassId> = names.map { ClassId.topLevel(FqName(it)) }
+    }
+
 
     private fun enhanceSuperType(type: FirTypeRef): FirTypeRef =
         EnhancementSignatureParts(

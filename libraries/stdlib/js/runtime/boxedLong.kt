@@ -306,7 +306,7 @@ internal fun Long.multiply(other: Long): Long {
 @UsedFromCompilerGeneratedCode
 internal fun Long.divide(other: Long): Long {
     if (other.isZero()) {
-        throw Exception("division by zero")
+        throw ArithmeticException("/ by zero")
     } else if (isZero()) {
         return ZERO
     }

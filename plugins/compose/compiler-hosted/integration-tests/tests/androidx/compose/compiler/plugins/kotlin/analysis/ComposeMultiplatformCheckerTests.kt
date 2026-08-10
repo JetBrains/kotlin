@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class ComposeMultiplatformCheckerTests : AbstractComposeDiagnosticsTest() {
     override fun CompilerConfiguration.updateConfiguration() {

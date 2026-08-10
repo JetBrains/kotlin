@@ -265,3 +265,4 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsKt]]
           REFERENCE_EXPRESSION[referencedName=bar]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]

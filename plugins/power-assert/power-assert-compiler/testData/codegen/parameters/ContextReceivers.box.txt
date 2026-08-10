@@ -4,6 +4,16 @@ context1Assert("test".length == 5)
                       4      false
 ---
 test2: ---
+context1Assert("test".length == 5)
+                      |      |
+                      4      false
+---
+test3: ---
+context2Assert("test".length == 5)
+                      |      |
+                      4      false
+---
+test4: ---
 context2Assert("test".length == 5)
                       |      |
                       4      false

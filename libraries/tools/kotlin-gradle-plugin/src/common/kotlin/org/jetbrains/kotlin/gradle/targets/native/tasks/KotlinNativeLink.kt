@@ -18,6 +18,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Optional
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.compilerRunner.*
@@ -53,9 +54,8 @@ import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 import java.io.Serializable
-import java.util.Locale
+import java.util.*
 import javax.inject.Inject
-import kotlin.collections.map
 
 /**
  * A task producing a final binary from a compilation.
@@ -334,9 +334,9 @@ constructor(
 
         dependencyClasspath { args ->
             args.libraries = runSafe {
-                libraries.exclude(excludeDependencies).files.filterKlibsPassedToCompiler()
+                libraries.exclude(excludeDependencies).files.filterKlibsPassedToCompiler(this@KotlinNativeLink)
             }?.toPathsArray() ?: emptyArray()
-            args.exportedLibraries = runSafe { exportLibraries.files.filterKlibsPassedToCompiler() }?.toPathsArray() ?: emptyArray()
+            args.exportedLibraries = runSafe { exportLibraries.files.filterKlibsPassedToCompiler(this@KotlinNativeLink) }?.toPathsArray() ?: emptyArray()
             args.friendModules = runSafe { friendModule.files.toList().takeIf { it.isNotEmpty() } }
                 ?.joinToString(File.pathSeparator) { it.absolutePath }
         }
@@ -354,7 +354,8 @@ constructor(
             .allDependencies
             .filterIsInstance<ResolvedDependencyResult>()
             .forEach {
-                val dependencyFiles = exportLibrariesResolvedConfiguration.getArtifacts(it).map { it.file }.filterKlibsPassedToCompiler()
+                val dependencyFiles = exportLibrariesResolvedConfiguration.getArtifacts(it).map { it.file }
+                    .filterKlibsPassedToCompiler(this@KotlinNativeLink)
                 if (!apiFiles.files.containsAll(dependencyFiles)) {
                     failed.add(it)
                 }

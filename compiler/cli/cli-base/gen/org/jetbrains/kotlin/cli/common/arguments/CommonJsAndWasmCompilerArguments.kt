@@ -21,16 +21,6 @@ sealed class CommonJsAndWasmCompilerArguments : CommonKlibBasedCompilerArguments
         }
 
     @Argument(
-        value = "-Xfake-override-validator",
-        description = "Enable the IR fake override validator.",
-    )
-    var fakeOverrideValidator: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xfriend-modules",
         valueDescription = "<path>",
         description = "Paths to friend modules.",

@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.containsErrorTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
@@ -165,12 +167,14 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             declaration.hasActualModifier() &&
             expectedSingleCandidate.isFakeOverride(expectContainingClass, expectActualMatchingContext)
         ) {
-            reporter.reportOn(
-                source,
-                FirErrors.ACTUAL_WITHOUT_EXPECT,
-                symbol,
-                matchingCompatibilityToMembersMap
-            )
+            if (!declaration.containsErrorTypes()) {
+                reporter.reportOn(
+                    source,
+                    FirErrors.ACTUAL_WITHOUT_EXPECT,
+                    symbol,
+                    matchingCompatibilityToMembersMap
+                )
+            }
             return
         }
 
@@ -416,7 +420,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                 .contains(symbol.correspondingValueParameterFromPrimaryConstructor)
 }
 
-private fun ExpectActualIncompatibility<*>.toDiagnostic() = when (this) {
+private fun ExpectActualIncompatibility<*>.toDiagnostic(): KtDiagnosticFactory3<FirBasedSymbol<*>, FirBasedSymbol<*>, String> = when (this) {
     ExpectActualIncompatibility.ActualFunctionWithOptionalParameters -> error("unreachable")
     is ExpectActualIncompatibility.ClassScopes<*> -> error("unreachable")
     ExpectActualIncompatibility.IgnorabilityIsDifferent -> error("Should be handled before")

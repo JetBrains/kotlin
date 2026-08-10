@@ -2,8 +2,9 @@ Ann.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  public final annotation class Ann public constructor(x: kotlin.String = COMPILED_CODE) : kotlin.Annotation {
-      public final val x: kotlin.String = COMPILED_CODE /* compiled code */
+  public final annotation class Ann public constructor(
+      public final val x: kotlin.String = "",
+  ) : kotlin.Annotation {
   }
 
 AnnotationOnFullNameBasedDestructuringKt.class:

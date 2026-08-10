@@ -1,0 +1,165 @@
+public final class MyClass : java/lang/Object {
+    public void <init>()
+}
+
+public final class MyClassParceler : java/lang/Object, MyIntermediateParceler {
+    public final static MyClassParceler INSTANCE
+
+    static void <clinit>()
+
+    private void <init>()
+
+    public MyClass create(android.os.Parcel parcel)
+
+    public java.lang.Object create(android.os.Parcel parcel)
+
+    public MyClass[] newArray(int size)
+
+    public java.lang.Object[] newArray(int size)
+
+    public void write(MyClass $this$write, android.os.Parcel parcel, int flags)
+
+    public void write(java.lang.Object $this$write, android.os.Parcel parcel, int flags)
+}
+
+public final class MyIntermediateParceler$DefaultImpls : java/lang/Object {
+    public static java.lang.Object[] newArray(MyIntermediateParceler $this, int size)
+}
+
+public abstract interface MyIntermediateParceler : java/lang/Object, kotlinx/parcelize/Parceler {
+
+}
+
+public final class MyNonNullableClassParceler : java/lang/Object, MyIntermediateParceler {
+    public final static MyNonNullableClassParceler INSTANCE
+
+    static void <clinit>()
+
+    private void <init>()
+
+    public MyClass create(android.os.Parcel parcel)
+
+    public java.lang.Object create(android.os.Parcel parcel)
+
+    public MyClass[] newArray(int size)
+
+    public java.lang.Object[] newArray(int size)
+
+    public void write(MyClass $this$write, android.os.Parcel parcel, int flags)
+
+    public void write(java.lang.Object $this$write, android.os.Parcel parcel, int flags)
+}
+
+public final class MyParcelable$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final MyParcelable createFromParcel(android.os.Parcel parcel) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+        LABEL (L1)
+          NEW (MyParcelable)
+          DUP
+          GETSTATIC (MyClassParceler, INSTANCE, LMyClassParceler;)
+          ALOAD (1)
+          INVOKEVIRTUAL (MyClassParceler, create, (Landroid/os/Parcel;)LMyClass;)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          IFNE (L2)
+          ACONST_NULL
+          GOTO (L3)
+        LABEL (L2)
+          GETSTATIC (MyNonNullableClassParceler, INSTANCE, LMyNonNullableClassParceler;)
+          ALOAD (1)
+          INVOKEVIRTUAL (MyNonNullableClassParceler, create, (Landroid/os/Parcel;)LMyClass;)
+        LABEL (L3)
+          INVOKESPECIAL (MyParcelable, <init>, (LMyClass;LMyClass;)V)
+          ARETURN
+        LABEL (L4)
+    }
+
+    public java.lang.Object createFromParcel(android.os.Parcel source) {
+        LABEL (L0)
+          ALOAD (0)
+          ALOAD (1)
+          INVOKEVIRTUAL (MyParcelable$Creator, createFromParcel, (Landroid/os/Parcel;)LMyParcelable;)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final MyParcelable[] newArray(int size)
+
+    public java.lang.Object[] newArray(int size)
+}
+
+public final class MyParcelable : java/lang/Object, android/os/Parcelable {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    private final MyClass myProperty1
+
+    private final MyClass myProperty2
+
+    static void <clinit>()
+
+    public void <init>(MyClass myProperty1, MyClass myProperty2)
+
+    public void <init>(MyClass p0, MyClass p1, int p2, kotlin.jvm.internal.DefaultConstructorMarker p3)
+
+    public void <init>()
+
+    public final MyClass component1()
+
+    public final MyClass component2()
+
+    public final MyParcelable copy(MyClass myProperty1, MyClass myProperty2)
+
+    public static MyParcelable copy$default(MyParcelable p0, MyClass p1, MyClass p2, int p3, java.lang.Object p4)
+
+    public final int describeContents()
+
+    public boolean equals(java.lang.Object other)
+
+    public final MyClass getMyProperty1()
+
+    public final MyClass getMyProperty2()
+
+    public int hashCode()
+
+    public java.lang.String toString()
+
+    public final void writeToParcel(android.os.Parcel dest, int flags) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (dest)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          GETSTATIC (MyClassParceler, INSTANCE, LMyClassParceler;)
+          ALOAD (0)
+          GETFIELD (MyParcelable, myProperty1, LMyClass;)
+          ALOAD (1)
+          ILOAD (2)
+          INVOKEVIRTUAL (MyClassParceler, write, (LMyClass;Landroid/os/Parcel;I)V)
+          ALOAD (0)
+          GETFIELD (MyParcelable, myProperty2, LMyClass;)
+          ASTORE (3)
+          ALOAD (3)
+          IFNONNULL (L1)
+          ALOAD (1)
+          ICONST_0
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          GOTO (L2)
+        LABEL (L1)
+          ALOAD (1)
+          ICONST_1
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          GETSTATIC (MyNonNullableClassParceler, INSTANCE, LMyNonNullableClassParceler;)
+          ALOAD (3)
+          ALOAD (1)
+          ILOAD (2)
+          INVOKEVIRTUAL (MyNonNullableClassParceler, write, (LMyClass;Landroid/os/Parcel;I)V)
+        LABEL (L2)
+        LINENUMBER (28)
+          RETURN
+        LABEL (L3)
+    }
+}

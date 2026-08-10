@@ -1,0 +1,24 @@
+@kotlin.Metadata
+public final class C {
+    // source: 'CompanionFunctions.kt'
+    private synthetic final static field x: java.util.concurrent.atomic.AtomicLong
+    static method <clinit>(): void
+    public method <init>(): void
+    private synthetic final static method getX(): java.util.concurrent.atomic.AtomicLong
+    public final static method test(): long
+}
+
+@kotlin.Metadata
+public final class CompanionFunctionsKt {
+    // source: 'CompanionFunctions.kt'
+    private synthetic final static field a: java.util.concurrent.atomic.AtomicLong
+    private synthetic final static field arr: java.util.concurrent.atomic.AtomicLongArray
+    static method <clinit>(): void
+    private final static method aInc(): long
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private synthetic final static method getA(): java.util.concurrent.atomic.AtomicLong
+    private synthetic final static method getArr(): java.util.concurrent.atomic.AtomicLongArray
+    private synthetic final static method inc$atomicfu$ATOMIC_ARRAY$Long(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int): long
+    private synthetic final static method inc$atomicfu$ATOMIC_FIELD_UPDATER$Long(p0: java.util.concurrent.atomic.AtomicLongFieldUpdater, p1: java.lang.Object): long
+    private synthetic final static method inc$atomicfu$BOXED_ATOMIC$Long(p0: java.util.concurrent.atomic.AtomicLong): long
+}

@@ -55,7 +55,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.firAggressivePruning = from.firAggressivePruning
     to.fragmentDependencies = from.fragmentDependencies.copyOf()
     to.fragmentFriendDependencies = from.fragmentFriendDependencies.copyOf()
-    to.fragmentIncrementalClasspath = from.fragmentIncrementalClasspath.copyOf()
     to.fragmentRefines = from.fragmentRefines.copyOf()
     to.fragmentSources = from.fragmentSources.copyOf()
     to.fragments = from.fragments.copyOf()
@@ -98,6 +97,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.profilePhases = from.profilePhases
     to.progressiveMode = from.progressiveMode
     to.renderInternalDiagnosticNames = from.renderInternalDiagnosticNames
+    @Suppress("DEPRECATION")
     to.repl = from.repl
     to.reportAllWarnings = from.reportAllWarnings
     to.reportOutputFiles = from.reportOutputFiles
@@ -108,12 +108,13 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.skipMetadataVersionCheck = from.skipMetadataVersionCheck
     to.skipPrereleaseCheck = from.skipPrereleaseCheck
     to.stdlibCompilation = from.stdlibCompilation
-    to.suppressApiVersionGreaterThanLanguageVersionError = from.suppressApiVersionGreaterThanLanguageVersionError
     to.suppressVersionWarnings = from.suppressVersionWarnings
+    @Suppress("DEPRECATION")
     to.suppressedDiagnostics = from.suppressedDiagnostics.copyOf()
     to.unrestrictedBuilderInference = from.unrestrictedBuilderInference
     @Suppress("DEPRECATION")
     to.useFirExperimentalCheckers = from.useFirExperimentalCheckers
+    @Suppress("DEPRECATION")
     to.useFirIC = from.useFirIC
     @Suppress("DEPRECATION")
     to.useFirLT = from.useFirLT

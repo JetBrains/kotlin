@@ -1,6 +1,4 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
@@ -12,7 +10,7 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-data-manager")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -46,7 +44,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
 
     testFixturesImplementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
-    testFixturesImplementation(kotlinTest("junit"))
+    testFixturesImplementation(kotlinTest("junit5"))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
 
     testImplementation(testFixtures(project(":analysis:low-level-api-fir")))
@@ -76,8 +74,7 @@ projectTests {
     ) {
         useJUnitPlatform()
 
-        @OptIn(TemporaryTestFederationApi::class)
-        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 5)
+        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 3)
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.api.fir.test.TestGeneratorKt")

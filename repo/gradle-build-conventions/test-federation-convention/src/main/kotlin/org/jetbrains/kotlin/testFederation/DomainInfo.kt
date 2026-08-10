@@ -45,6 +45,9 @@ data class RepositoryPath(private val root: Path, val value: Path) {
      */
     fun resolve(): Path = root.resolve(value)
 
+    val parentOrNull: RepositoryPath?
+        get() = value.parent?.let { parent -> RepositoryPath(root, parent) }
+
     override fun toString(): String {
         return value.toString()
     }
@@ -65,35 +68,49 @@ internal fun Project.repositoryPath(path: Path): RepositoryPath {
  */
 fun DomainInfo.Companion.resolveDomainInfosOf(path: RepositoryPath): List<DomainInfo> {
     val fileSystem = path.fileSystem
-    val value = if (path.resolve().isDirectory()) path.value.resolve(".") else path.value
 
-    val domains = mutableListOf<DomainInfo>()
+    val domains = mutableSetOf<DomainInfo>()
+    val excludes = mutableSetOf<DomainInfo>()
 
-    allDomainInfos.forEach { currentDomain ->
-        var isInclude = false
-        var matchingRule = ""
+    var currentPath: RepositoryPath? = path
+    while(currentPath != null) {
+        val value = currentPath.value
 
-        currentDomain.exclude.forEach { exclude ->
-            if (fileSystem.getPathMatcher("glob:$exclude").matches(value)) {
-                if (exclude.length > matchingRule.length) {
-                    matchingRule = exclude
-                    isInclude = false
+        allDomainInfos.minus(excludes).forEach { currentDomain ->
+            var isInclude = false
+            var isExclude = false
+            var matchingRule = ""
+
+            currentDomain.exclude.forEach { exclude ->
+                if (fileSystem.getPathMatcher("glob:$exclude").matches(value)) {
+                    if (exclude.length > matchingRule.length) {
+                        matchingRule = exclude
+                        isExclude = true
+                        isInclude = false
+                    }
                 }
+            }
+
+            currentDomain.include.forEach { include ->
+                if (fileSystem.getPathMatcher("glob:$include").matches(value)) {
+                    if (include.length > matchingRule.length) {
+                        matchingRule = include
+                        isInclude = true
+                        isExclude = false
+                    }
+                }
+            }
+
+            if (isInclude) {
+                domains += currentDomain
+            }
+
+            if(isExclude) {
+                excludes += currentDomain
             }
         }
 
-        currentDomain.include.forEach { include ->
-            if (fileSystem.getPathMatcher("glob:$include").matches(value)) {
-                if (include.length > matchingRule.length) {
-                    matchingRule = include
-                    isInclude = true
-                }
-            }
-        }
-
-        if (isInclude) {
-            domains += currentDomain
-        }
+        currentPath = currentPath.parentOrNull
     }
 
     if (domains.isEmpty()) {

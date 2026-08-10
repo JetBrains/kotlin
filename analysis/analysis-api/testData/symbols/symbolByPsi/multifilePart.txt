@@ -39,6 +39,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: foo
 
 KaNamedFunctionSymbol:
@@ -113,6 +114,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: foo
 
 KaKotlinPropertySymbol:
@@ -186,6 +188,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: NotMultiFilePartKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getX
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -221,8 +224,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: NotMultiFilePartKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getX
-  javaSetterName: null
   isInline: false
   importableFqName: x
 
@@ -328,6 +329,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: NotMultiFilePartKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getY
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -394,7 +396,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: NotMultiFilePartKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getY
-  javaSetterName: null
   isInline: false
   importableFqName: y

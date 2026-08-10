@@ -629,6 +629,7 @@ class TestProject(
         otherProjectName: String,
         pathPrefix: String,
         newProjectName: String = otherProjectName,
+        configure: GradleProject.() -> Unit = {},
     ) {
         val otherProjectPath = "$pathPrefix/$otherProjectName".testProjectPath
         otherProjectPath.copyRecursively(projectPath.resolve(newProjectName))
@@ -650,6 +651,7 @@ class TestProject(
                 """.trimIndent()
             )
         }
+        subProject(newProjectName).configure()
     }
 
     /**
@@ -735,12 +737,12 @@ private fun jdkToolchainConfiguration(gradleVersion: GradleVersion): List<String
 
 private fun collectGradleJvmOptions(
     enableGradleDaemonMemoryLimitInMb: Int?,
-    useFileLeakDetectorToFile: File?,
+    useFileLeakDetectorToFile: Path?,
     connectSubprocessVMToDebugger: Boolean,
 ): List<String> = buildList {
     if (useFileLeakDetectorToFile != null) {
-        val fileLeakDetector = File("src/test/resources/common/file-leak-detector-1.18-jar-with-dependencies.jar")
-        add("-javaagent:${fileLeakDetector.absolutePath}=trace=${useFileLeakDetectorToFile.absolutePath}")
+        val fileLeakDetector = System.getProperty("fileLeakDetectorJar")
+        add("-javaagent:${fileLeakDetector}=trace=${useFileLeakDetectorToFile.absolutePathString()}")
     }
     // Limiting Gradle daemon heap size to reduce memory pressure on CI agents
     if (enableGradleDaemonMemoryLimitInMb != null) {

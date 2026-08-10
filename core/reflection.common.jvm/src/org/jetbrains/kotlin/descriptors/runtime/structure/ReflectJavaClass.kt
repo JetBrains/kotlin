@@ -127,6 +127,9 @@ class ReflectJavaClass(
     override val isRecord: Boolean
         get() = Java16SealedRecordLoader.loadIsRecord(klass) ?: false
 
+    override val isValue: Boolean
+        get() = !isInterface && !isAnnotationType && !isEnum && ValhallaValueClassLoader.loadIsValue(klass)
+
     override val recordComponents: Collection<JavaRecordComponent>
         get() = (Java16SealedRecordLoader.loadGetRecordComponents(klass) ?: emptyArray()).map(::ReflectJavaRecordComponent)
 
@@ -205,4 +208,15 @@ object Java16SealedRecordLoader {
         @Suppress("UNCHECKED_CAST")
         return getRecordComponents.invoke(clazz) as Array<Any>?
     }
+}
+
+// `Class.isValue()` exists only on a Project Valhalla (JEP 401) JDK. Returns false when the method is unavailable.
+object ValhallaValueClassLoader {
+    private val isValueMethod: Method? = try {
+        Class::class.java.getMethod("isValue")
+    } catch (e: NoSuchMethodException) {
+        null
+    }
+
+    fun loadIsValue(clazz: Class<*>): Boolean = isValueMethod?.invoke(clazz) as? Boolean ?: false
 }

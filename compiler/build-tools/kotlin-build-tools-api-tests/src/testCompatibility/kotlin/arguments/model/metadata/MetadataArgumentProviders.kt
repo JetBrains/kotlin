@@ -76,14 +76,14 @@ private fun namedInvalidRawValueBtaV2ArgumentConfigurations(): List<Named<Pair<M
 private fun namedArgumentConfiguration(
     argumentPredicate: (MetadataArgumentTestDescriptor<*>) -> Boolean = { true },
 ): List<Named<MetadataArgumentConfiguration<*>>> {
-    val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedStrategyArguments()
+    val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedToolchainProviders()
     val compilerArguments = metadataCompilerArguments.filter { argumentPredicate(it) }.map { named("[${it.argumentName}]", it) }
 
     return btaVersions.flatMap { namedKotlinToolchains ->
         compilerArguments.map { namedArgumentDescriptor ->
             named(
                 namedKotlinToolchains.name + namedArgumentDescriptor.name,
-                MetadataArgumentConfiguration(namedKotlinToolchains.payload, namedArgumentDescriptor.payload)
+                MetadataArgumentConfiguration(namedKotlinToolchains.payload(), namedArgumentDescriptor.payload)
             )
         }
     }

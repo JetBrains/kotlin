@@ -11,6 +11,7 @@ import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsJavaInteroperabilityComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -18,9 +19,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.kotlin.analysis.api.javaInterop.asKaType as asKaTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.javaInterop.callableSymbol as callableSymbolEndpoint
 import org.jetbrains.kotlin.analysis.api.javaInterop.containingJvmClassName as containingJvmClassNameEndpoint
@@ -30,7 +29,7 @@ import org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol as namedCl
 
 internal class KaJavaInteroperabilityComponentBridge(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaJavaInteroperabilityComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaJavaInteroperabilityComponent, KaFirSessionComponent {
     private val proxy: KaInternalsJavaInteroperabilityComponent
         get() = analysisSession.javaInteroperabilityComponent
 
@@ -75,13 +74,11 @@ internal class KaJavaInteroperabilityComponentBridge(
         allowNonJvmPlatforms,
     )
 
-    @Deprecated("Use 'mapToJvmTypeDescriptor' instead.", level = DeprecationLevel.HIDDEN)
-    override fun KaType.mapToJvmType(mode: TypeMappingMode): Type =
-        proxy.mapToJvmType(this, mode)
-
+    @Deprecated("Use the 'javaMethodName' endpoint on the property getter instead.")
     override val KaPropertySymbol.javaGetterName: Name
         get() = proxy.javaGetterName(this)
 
+    @Deprecated("Use the 'javaMethodName' endpoint on the property setter instead.")
     override val KaPropertySymbol.javaSetterName: Name?
         get() = proxy.javaSetterName(this)
 }

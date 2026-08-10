@@ -8,7 +8,7 @@
 #include <cstddef>
 #include <type_traits>
 
-#include "Allocator.hpp"
+#include "alloc/Allocator.hpp"
 
 namespace kotlin::alloc {
 

@@ -11,7 +11,7 @@ plugins {
     kotlin("jvm")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 kotlin {
@@ -20,10 +20,10 @@ kotlin {
     }
 }
 
-val embedded by configurations.getting {
+val embedded = configurations.embedded.get().apply {
     isTransitive = false
-    configurations.getByName("compileOnly").extendsFrom(this)
-    configurations.getByName("testImplementation").extendsFrom(this)
+    configurations.compileOnly.get().extendsFrom(this)
+    configurations.testImplementation.get().extendsFrom(this)
 }
 
 dependencies {
@@ -155,7 +155,7 @@ run {
 
 /* Setup backwards compatibility tests */
 run {
-    val compatibilityTestClasspath by configurations.creating {
+    val compatibilityTestClasspath = configurations.create("compatibilityTestClasspath") {
         isCanBeResolved = true
         isCanBeConsumed = false
         attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))

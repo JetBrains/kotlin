@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
@@ -18,17 +17,8 @@ val CompilerConfiguration.partialLinkageConfig: PartialLinkageConfig
 
 fun CompilerConfiguration.setupPartialLinkageConfig(
     arguments: CommonKlibBasedCompilerArguments,
-    warningDiagnosticFactory: KtSourcelessDiagnosticFactory,
     errorDiagnosticFactory: KtSourcelessDiagnosticFactory,
 ) {
-    @Suppress("DEPRECATION")
-    if (arguments.partialLinkageMode != null) {
-        report(
-            warningDiagnosticFactory,
-            "The ${CommonKlibBasedCompilerArguments::partialLinkageMode.cliArgument} argument is deprecated. The partial linkage engine is always turned on."
-        )
-    }
-
     val logLevel = arguments.partialLinkageLogLevel?.let { rawLogLevel ->
         PartialLinkageLogLevel.resolveLogLevel(rawLogLevel)
             ?: return report(

@@ -66,14 +66,8 @@ enum class DirtyFileState(val str: String) {
     REMOVED_FILE("removed file")
 }
 
-interface ICCacheInvalidatingKeys {
-    val stringKeys: List<CompilerConfigurationKey<String>>
-    val booleanKeys: List<CompilerConfigurationKey<Boolean>>
-    val enumKeys: List<CompilerConfigurationKey<Enum<*>>>
-}
-
 interface PlatformDependentICContext {
-    fun getCacheInvalidatingKeys(): ICCacheInvalidatingKeys
+    fun getICCacheStableKeys(): Set<CompilerConfigurationKey<*>>
 
     fun createIrFactory(): IrFactory
 
@@ -139,9 +133,9 @@ class CacheUpdater(
 
     private val cacheRootDir = run {
         val configHash = icHasher.calculateConfigHash(
-            invalidatingKeys = icContext.getCacheInvalidatingKeys(),
             config = compilerConfiguration,
-            artifactConfiguration = artifactConfiguration
+            artifactConfiguration = artifactConfiguration,
+            icCacheStableKeys = icContext.getICCacheStableKeys(),
         )
         File(cacheDir, "version.${configHash.hash.lowBytes.toString(Character.MAX_RADIX)}")
     }

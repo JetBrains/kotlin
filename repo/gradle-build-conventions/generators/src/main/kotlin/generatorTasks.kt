@@ -31,13 +31,17 @@ fun Project.generatedDiagnosticContainersAndCheckerComponents(): TaskProvider<Ja
  * This function creates `generateConfigurationKeys`, which generates
  *   compiler configuration keys passed as arguments (like `CommonConfigurationKeys`)
  */
-fun Project.generatedConfigurationKeys(containerName: String, vararg containerNames: String): TaskProvider<JavaExec> {
+fun Project.generatedConfigurationKeys(
+    containerName: String,
+    vararg containerNames: String,
+    dependOnTaskOutput: Boolean = false,
+): TaskProvider<JavaExec> {
     return generatedSourcesTask(
         taskName = "generateConfigurationKeys",
         generatorProject = ":compiler:config:configuration-keys-generator",
         generatorMainClass = "org.jetbrains.kotlin.config.keys.generator.MainKt",
         argsProvider = { generationRoot -> listOf(generationRoot.toString(), containerName, *containerNames) },
-        dependOnTaskOutput = false
+        dependOnTaskOutput = dependOnTaskOutput,
     )
 }
 
@@ -116,6 +120,7 @@ fun Project.generatedSourcesTask(
 
         outputs.dir(generationRoot)
     }
+    registerInAggregateGenerateSources(taskName)
 
     val dependency: Any = when (dependOnTaskOutput) {
         true -> task

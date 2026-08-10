@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Cor
 language = Objective-C
 package = platform.Accelerate
 modules = Accelerate
+apiNotesSwiftName = true
 
 compilerOpts = -framework Accelerate
 linkerOpts = -framework Accelerate

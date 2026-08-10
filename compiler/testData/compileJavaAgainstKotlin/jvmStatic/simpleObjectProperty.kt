@@ -1,3 +1,16 @@
+// FILE: simpleObjectProperty.java
+package test;
+
+class Test {
+
+    public static void main(String[] args) {
+        A.getB();
+        A.getC(A.INSTANCE);
+    }
+
+}
+
+// FILE: simpleObjectProperty.kt
 package test
 
 object A {

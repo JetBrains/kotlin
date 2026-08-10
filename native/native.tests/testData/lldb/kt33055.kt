@@ -1,5 +1,7 @@
 // KIND: STANDALONE_LLDB
 // FREE_COMPILER_ARGS: -Xg-generate-debug-trampoline=enable
+// INPUT_DATA_FILE: kt33055.in
+// OUTPUT_DATA_FILE: kt33055.out
 
 // FILE: kt33055.kt
 fun question(subject: String, names: Array<String> = emptyArray()): String {

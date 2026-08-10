@@ -91,7 +91,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
     }
 
     private fun getHelloAppBaseDir(): File = ForTestCompileRuntime.transformTestDataPath("compiler/tests-integration/testData/integration/smoke/helloApp")
-    private fun getSimpleScriptBaseDir(): File = ForTestCompileRuntime.transformTestDataPath("compiler/tests-integration/testData/integration/smoke/simpleScript")
+    private fun getSimpleScriptBaseDir(): File = ForTestCompileRuntime.transformTestDataPath("plugins/scripting/scripting-tests/testData/cli/smoke/simpleScript")
 
 
     private fun run(baseDir: File, logName: String, vararg args: String): Int = runJava(baseDir, logName, *args)

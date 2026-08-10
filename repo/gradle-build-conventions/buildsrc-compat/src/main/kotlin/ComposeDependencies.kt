@@ -25,18 +25,6 @@ fun RepositoryHandler.androidXMavenLocal(androidXMavenLocalPath: String?) {
     }
 }
 
-fun RepositoryHandler.androidxSnapshotRepo(composeSnapshotId: String) {
-    maven {
-        url = URI("https://androidx.dev/snapshots/builds/${composeSnapshotId}/artifacts/repository")
-    }.apply {
-        content {
-            includeGroup("androidx.compose.runtime")
-            includeGroup("androidx.collection")
-            includeGroup("androidx.annotation")
-        }
-    }
-}
-
 fun RepositoryHandler.composeGoogleMaven(composeStableVersion: String) {
     google {
         content {
@@ -63,5 +51,9 @@ fun RepositoryHandler.composeGoogleMaven(composeStableVersion: String) {
 
 fun Project.composeRuntime() = compose("runtime", "runtime", composeRuntimeVersion())
 fun Project.composeRuntimeAnnotations() = compose("runtime", "runtime-annotation", composeRuntimeVersion())
+fun Project.composeRuntimeAnnotationsJs() = compose("runtime", "runtime-annotation-js", composeRuntimeVersion())
+fun Project.composeRuntimeAnnotationsJvm() = compose("runtime", "runtime-annotation-jvm", composeRuntimeVersion())
+fun Project.composeRuntimeJs() = compose("runtime", "runtime-js", composeRuntimeVersion())
+fun Project.composeRuntimeDesktop() = compose("runtime", "runtime-desktop", composeRuntimeVersion())
 fun Project.compose(group: String, module: String, version: String = composeStableVersion()) =
     "androidx.compose.$group:$module:$version"

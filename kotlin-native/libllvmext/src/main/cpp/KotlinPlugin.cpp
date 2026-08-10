@@ -4,6 +4,7 @@
 
 #include "KotlinPlugin.h"
 
+#include "Passes/CallsChecker.h"
 #include "Passes/HideSymbols.h"
 #include "Passes/PrepareStackProtector.h"
 #include "Passes/PrepareThreadSanitizer.h"
@@ -72,6 +73,10 @@ PassPluginLibraryInfo getKotlinPluginInfo() {
                    ArrayRef<PassBuilder::PipelineElement>) {
                   if (parsePass(Name, "kotlin-hide-symbols")) {
                     PM.addPass(HideSymbolsPass());
+                    return true;
+                  }
+                  if (parsePass(Name, "kotlin-calls-checker-module")) {
+                    PM.addPass(ModuleCallsCheckerPass());
                     return true;
                   }
                   return false;

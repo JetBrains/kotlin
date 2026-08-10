@@ -12,7 +12,7 @@ plugins {
     id("java-test-fixtures")
 }
 
-val composeCompilerPlugin by configurations.creating
+val composeCompilerPlugin = configurations.create("composeCompilerPlugin")
 
 dependencies {
     testFixturesImplementation(intellijCore())
@@ -26,7 +26,6 @@ dependencies {
     testFixturesApi(project(":compiler:fir:resolve"))
     testFixturesApi(project(":compiler:fir:providers"))
     testFixturesApi(project(":compiler:fir:semantics"))
-    testFixturesApi(project(":compiler:fir:dump"))
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

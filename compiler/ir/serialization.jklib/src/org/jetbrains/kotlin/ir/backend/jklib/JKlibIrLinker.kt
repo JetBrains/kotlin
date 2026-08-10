@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.jklib
 
-
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
@@ -14,22 +13,25 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
-import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -88,17 +90,17 @@ class JKlibIrLinker(
         moduleDescriptor === moduleDescriptor.builtIns.builtInsModule
 
     override fun createModuleDeserializer(
-        moduleDescriptor: ModuleDescriptor,
+        moduleFragment: IrModuleFragment,
         klib: KotlinLibrary?,
         strategyResolver: (String) -> DeserializationStrategy,
     ): IrModuleDeserializer {
         if (klib == null) {
-            return MetadataJVMModuleDeserializer(moduleDescriptor)
+            return MetadataJVMModuleDeserializer(moduleFragment)
         }
 
         val libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
         return JKlibModuleDeserializer(
-            moduleDescriptor,
+            moduleFragment,
             klib,
             strategyResolver,
             libraryAbiVersion,
@@ -118,8 +120,8 @@ class JKlibIrLinker(
     }
 
     private inner class MetadataJVMModuleDeserializer(
-        moduleDescriptor: ModuleDescriptor,
-    ) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
+        moduleFragment: IrModuleFragment,
+    ) : IrModuleDeserializer(moduleFragment, KotlinAbiVersion.CURRENT) {
         override val klib: KotlinLibrary get() = error("'klib' is not available for ${this::class.java}")
 
         override fun contains(idSig: IdSignature): Boolean = resolveDescriptor(idSig) != null
@@ -127,7 +129,7 @@ class JKlibIrLinker(
         override fun getDefinedPackageNames(): Set<FqName>? = null
 
         private val descriptorFinder = DescriptorByIdSignatureFinderImpl(
-            moduleDescriptor,
+            moduleFragment.descriptor,
             descriptorMangler,
             DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY,
         )
@@ -165,37 +167,39 @@ class JKlibIrLinker(
                 stubGenerator.generateMemberStub(symbol.descriptor)
             }
         }
-
-        override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
-
-        override val kind
-            get() = IrModuleDeserializerKind.SYNTHETIC
     }
     private inner class JKlibModuleDeserializer(
-        moduleDescriptor: ModuleDescriptor,
+        moduleFragment: IrModuleFragment,
         klib: KotlinLibrary,
         strategyResolver: (String) -> DeserializationStrategy,
         libraryAbiVersion: KotlinAbiVersion,
     ) : BasicIrModuleDeserializer(
         this,
-        moduleDescriptor,
+        moduleFragment,
         klib,
         strategyResolver,
         libraryAbiVersion,
     ) {
 
         private val descriptorByIdSignatureFinder = DescriptorByIdSignatureFinderImpl(
-            moduleDescriptor,
+            moduleFragment.descriptor,
             descriptorMangler,
             DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY,
         )
 
         private val deserializedSymbols = mutableMapOf<IdSignature, IrSymbol>()
 
-        override fun contains(idSig: IdSignature): Boolean =
-            super.contains(idSig) || descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) != null
+        private fun isKotlinCloneable(idSig: IdSignature): Boolean {
+            val signature = idSig.asPublic() ?: return false
+            return (signature.packageFqName == "kotlin" && signature.firstNameSegment == "Cloneable")
+        }
 
-        override fun getDefinedPackageNames(): Set<FqName> = getPackagesFqNames(moduleDescriptor)
+        override fun contains(idSig: IdSignature): Boolean =
+            super.contains(idSig) ||
+                    // TODO(KT-88375): remove this when kotlin.Cloneable class descriptor is automatically initialized.
+                    (isKotlinCloneable(idSig) && descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) != null)
+
+        override fun getDefinedPackageNames(): Set<FqName> = getPackagesFqNames(moduleFragment.descriptor)
 
         private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
             val result = mutableSetOf<FqName>()
@@ -230,32 +234,29 @@ class JKlibIrLinker(
         }
     }
 
-    override fun createCurrentModuleDeserializer(
-        moduleFragment: IrModuleFragment,
-    ): IrModuleDeserializer = JvmCurrentModuleDeserializer(moduleFragment)
+    override fun postProcess(irBuiltIns: IrBuiltIns, inOrAfterLinkageStep: Boolean) {
+        super.postProcess(irBuiltIns, inOrAfterLinkageStep)
+        if (inOrAfterLinkageStep) {
+            clearFakeOverrideFields()
+        }
+    }
 
-    private inner class JvmCurrentModuleDeserializer(
-        moduleFragment: IrModuleFragment,
-    ) : CurrentModuleDeserializer(moduleFragment) {
-        override fun declareIrSymbol(symbol: IrSymbol) {
-            val descriptor = symbol.descriptor
+    private fun clearFakeOverrideFields() {
+        val visitor = object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
 
-            if (descriptor.isJavaDescriptor()) {
-                // Wrap java declaration with lazy ir
-                if (symbol is IrFieldSymbol) {
-                    declareJavaFieldStub(symbol)
-                } else {
-                    stubGenerator.generateMemberStub(descriptor)
+            override fun visitProperty(declaration: IrProperty) {
+                if (declaration.isFakeOverride && declaration.getter == null) {
+                    declaration.backingField = null
                 }
-                return
+                super.visitProperty(declaration)
             }
+        }
 
-            if (descriptor.isCleanDescriptor()) {
-                stubGenerator.generateMemberStub(descriptor)
-                return
-            }
-
-            super.declareIrSymbol(symbol)
+        deserializersForModules.values.forEach { deserializer ->
+            deserializer.moduleFragment.acceptVoid(visitor)
         }
     }
 }

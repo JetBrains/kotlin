@@ -106,7 +106,6 @@ internal class InlineFunctionDeserializer(
         }
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun deserializeInlineFunction(function: IrFunction) {
         val packageFragment = function.getPackageFragment()
         if (function.parents.any { (it as? IrFunction)?.isInline == true }) {
@@ -115,7 +114,6 @@ internal class InlineFunctionDeserializer(
         }
 
         val signature = function.symbol.signature
-                ?: deserializer.getIdSignature(function.descriptor)
                 ?: error("No signature for ${function.render()}")
         val inlineFunctionReference = inlineFunctionReferences[signature]
                 ?: error("No inline function reference for ${function.render()}, sig = ${signature.render()}")

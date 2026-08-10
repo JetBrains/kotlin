@@ -42,6 +42,10 @@ plugins {
     id("cache-redirector")
 }
 
+gradle.lifecycle.beforeProject {
+    group = "org.jetbrains.kotlin"
+}
+
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
@@ -73,10 +77,11 @@ include(":d8-configuration")
 include(":foreign-class-usage-checker")
 include(":binaryen-configuration")
 include(":nodejs-configuration")
+include(":wasmtime-configuration")
 include(":test-data-manager-convention")
 include(":utilities")
 include(":test-federation-convention")
 include(":repo-test-fixtures")
 include(":java-flight-recorder")
-include(":test-inputs-check-v2")
-
+include(":test-inputs-check")
+include(":file-leak-detector-downloader")

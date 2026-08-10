@@ -1,0 +1,16 @@
+Classifier names:
+
+Callable names:
+  <init>
+  annotationType
+  bytecodeVersion
+  data1
+  data2
+  equals
+  extraInt
+  extraString
+  hashCode
+  kind
+  metadataVersion
+  packageName
+  toString

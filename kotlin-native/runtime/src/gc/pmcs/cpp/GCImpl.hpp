@@ -9,12 +9,12 @@
 
 #include "AuxiliaryGCThreads.hpp"
 #include "Barriers.hpp"
-#include "GC.hpp"
-#include "GCState.hpp"
-#include "MainGCThread.hpp"
+#include "gc/GC.hpp"
+#include "gc/GCState.hpp"
+#include "gc/MainGCThread.hpp"
 #include "ParallelMark.hpp"
 #include "PmcsGCTraits.hpp"
-#include "ThreadData.hpp"
+#include "mm/ThreadData.hpp"
 
 namespace kotlin::gc {
 

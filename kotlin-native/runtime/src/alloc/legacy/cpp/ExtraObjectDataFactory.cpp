@@ -5,8 +5,8 @@
 
 #include "ExtraObjectDataFactory.hpp"
 
-#include "GlobalData.hpp"
-#include "ThreadData.hpp"
+#include "mm/GlobalData.hpp"
+#include "mm/ThreadData.hpp"
 
 using namespace kotlin;
 

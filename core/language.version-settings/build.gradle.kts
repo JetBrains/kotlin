@@ -9,7 +9,7 @@ plugins {
     id("gradle-plugin-compiler-dependency-configuration")
     id("kotlin-git.gradle-build-conventions.foreign-class-usage-checker")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
@@ -42,6 +42,6 @@ projectTests {
     testTask(javaLauncher = JdkMajorVersion.JDK_1_8)
 }
 
-val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {
+val checkForeignClassUsage = tasks.register("checkForeignClassUsage", CheckForeignClassUsageTask::class) {
     outputFile = file("api/language-version-settings-api.foreign")
 }

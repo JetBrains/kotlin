@@ -5,11 +5,11 @@
 
 #pragma once
 
-#include "ExtraObjectData.hpp"
+#include "mm/ExtraObjectData.hpp"
 #include "Memory.h"
 #include "MultiSourceQueue.hpp"
 #include "ObjectAlloc.hpp"
-#include "ThreadRegistry.hpp"
+#include "mm/ThreadRegistry.hpp"
 
 namespace kotlin::alloc {
 

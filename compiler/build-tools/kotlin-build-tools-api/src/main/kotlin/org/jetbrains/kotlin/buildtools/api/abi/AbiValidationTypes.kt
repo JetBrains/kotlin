@@ -10,16 +10,16 @@ import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import java.io.Serializable
 
 /**
- * Set of filtering rules that restrict ABI declarations included in a dump.
+ * A set of filtering rules that restrict ABI declarations included in a dump.
  *
- * The rules combine inclusion and exclusion of declarations.
+ * The rules combine inclusions and exclusions of declarations.
  * Each filter can be written as a filter for the class name (see [INCLUDE_NAMED] or [EXCLUDE_NAMED]), or an annotation filter (see [INCLUDE_ANNOTATED_WITH] or [EXCLUDE_ANNOTATED_WITH]).
  *
  * In order for a declaration (class, field, property, or function) to get into the dump, it must pass the inclusion **and** exclusion filters.
  *
- * A declaration passes the exclusion filters if it does not match any class names (see [EXCLUDE_NAMED]) or annotation  (see [EXCLUDE_ANNOTATED_WITH]) filter rules.
+ * A declaration passes the exclusion filters if it does not match any class names (see [EXCLUDE_NAMED]) or annotation (see [EXCLUDE_ANNOTATED_WITH]) filter rules.
  *
- * A declaration passes the inclusion filters if there are no inclusion rules, or it matches any inclusion rule, or at least one of its members (actual for class declaration) matches any inclusion rule.
+ * A declaration passes the inclusion filters if there are no inclusion rules, or it matches any inclusion rule, or at least one of its members (relevant for class declaration) matches any inclusion rule.
  *
  * @since 2.4.0
  */
@@ -35,7 +35,7 @@ public interface AbiFilters {
     public interface Builder {
 
         /**
-         * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
+         * Gets the value for the option specified by [key] if it was previously [set] or if it has a default value.
          *
          * @return the previously set value for an option
          * @throws IllegalStateException if the option was not set and has no default value
@@ -45,7 +45,7 @@ public interface AbiFilters {
         public operator fun <V> get(key: Option<V>): V
 
         /**
-         * Set the [value] for option specified by [key], overriding any previous value for that option.
+         * Sets the [value] for the option specified by [key], overriding any previous value for that option.
          *
          * @since 2.4.0
          */
@@ -71,7 +71,7 @@ public interface AbiFilters {
     public class Option<V> internal constructor(id: String) : BaseOption<V>(id)
 
     /**
-     * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
+     * Gets the value for the option specified by [key] if it was previously [set] or if it has a default value.
      *
      * @return the previously set value for an option
      * @throws IllegalStateException if the option was not set and has no default value
@@ -82,7 +82,7 @@ public interface AbiFilters {
 
     public companion object {
         /**
-         * Include a class, file-level property, or file-level function in a dump by its name.
+         * Includes a class, file-level property, or file-level function in a dump by its name.
          * Declarations that do not match the specified names, that do not have an annotation from [INCLUDE_ANNOTATED_WITH]
          * and do not have members marked with an annotation from [INCLUDE_ANNOTATED_WITH] are excluded from the dump.
          *
@@ -90,14 +90,14 @@ public interface AbiFilters {
          *
          * - For Kotlin declarations, fully qualified names are used.
          * It is important to keep in mind that dots are used everywhere as separators, even in the case of a nested class.
-         * E.g. for qualified name `foo.bar.Container.Value`, here `Value` is a class nested in `Container`.
+         * For example, for the qualified name `foo.bar.Container.Value`, `Value` is a class nested in `Container`.
          *
          * - For classes from Java sources, canonical names are used.
          * The main motivation is a similar approach to writing the class name - dots are used everywhere as delimiters.
          *
          * Name templates are allowed, with support for wildcards such as `**`, `*`, and `?`:
-         * - `**` - zero or any number of characters
-         * - `*` - zero or any number of characters excluding dot. Using to specify simple class name.
+         * - `**` - zero or any number of characters.
+         * - `*` - zero or any number of characters, excluding dots. Specifies a simple class name.
          * - `?` - any single character.
          *
          * @since 2.4.0
@@ -112,14 +112,14 @@ public interface AbiFilters {
          *
          * - For Kotlin declarations, fully qualified names are used.
          * It is important to keep in mind that dots are used everywhere as separators, even in the case of a nested class.
-         * E.g. for qualified name `foo.bar.Container.Value`, here `Value` is a class nested in `Container`.
+         * For example, for the qualified name `foo.bar.Container.Value`, `Value` is a class nested in `Container`.
          *
          * - For classes from Java sources, canonical names are used.
          * The main motivation is a similar approach to writing the class name - dots are used everywhere as delimiters.
          *
          * Name templates are allowed, with support for wildcards such as `**`, `*`, and `?`:
-         * - `**` - zero or any number of characters
-         * - `*` - zero or any number of characters excluding dot. Using to specify simple class name.
+         * - `**` - zero or any number of characters.
+         * - `*` - zero or any number of characters, excluding dots. Specifies a simple class name.
          * - `?` - any single character.
          *
          * @since 2.4.0
@@ -135,11 +135,11 @@ public interface AbiFilters {
          * The declaration can be a class, a class member (function or property), a top-level function or a top-level property.
          *
          * Name templates are allowed, with support for wildcards such as `**`, `*`, and `?`:
-         * - `**` - zero or any number of characters
-         * - `*` - zero or any number of characters excluding dot. Using to specify simple class name.
+         * - `**` - zero or any number of characters.
+         * - `*` - zero or any number of characters, excluding dots. Specifies a simple class name.
          * - `?` - any single character.
          *
-         * The annotation should not have [Retention] equal to [AnnotationRetention.SOURCE], otherwise, filtering by it will not work.
+         * The annotation should not have [Retention] equal to [AnnotationRetention.SOURCE], otherwise, filtering by it does not work.
          *
          * @since 2.4.0
          */
@@ -153,11 +153,11 @@ public interface AbiFilters {
          * marked by a specific annotation will be excluded from the dump.
          *
          * Name templates are allowed, with support for wildcards such as `**`, `*`, and `?`:
-         * - `**` - zero or any number of characters
-         * - `*` - zero or any number of characters excluding dot. Using to specify simple class name.
+         * - `**` - zero or any number of characters.
+         * - `*` - zero or any number of characters, excluding dots. Specifies a simple class name.
          * - `?` - any single character.
          *
-         * The annotation should not have [Retention] equal to [AnnotationRetention.SOURCE], otherwise, filtering by it will not work.
+         * The annotation should not have [Retention] equal to [AnnotationRetention.SOURCE], otherwise, filtering by it does not work.
          *
          * @since 2.4.0
          */
@@ -167,19 +167,19 @@ public interface AbiFilters {
 }
 
 /**
- * Target name consisting of two parts: a [customizedName] that could be configured by a user, and a [targetType]
- * that specifies a target platform and could not be configured by a user.
+ * The target name consisting of two parts: a [customizedName] that could be configured by a user, and a [targetType]
+ * that specifies a target platform and can't be configured by a user.
  *
  * @since 2.4.0
  */
 @ExperimentalBuildToolsApi
 public class KlibTargetId(
     /**
-     * A type of klib target.
+     * The klib target type.
      */
     public val targetType: KlibTargetType,
     /**
-     * A name of a target that could be configured by a user.
+     * The target name that can be configured by the user.
      * Usually, it's the same name as [KlibTargetType.canonicalName] from [targetType].
      */
     public val customizedName: String
@@ -203,7 +203,7 @@ public class KlibTargetId(
 
 
 /**
- * A type of Kotlin target.
+ * The Kotlin target type.
  * Specifies the platform or native architecture.
  *
  * @since 2.4.0
@@ -220,7 +220,6 @@ public enum class KlibTargetType(public val canonicalName: String) {
     IOS_ARM64("iosArm64"),
     IOS_X64("iosX64"),
     IOS_SIMULATOR_ARM64("iosSimulatorArm64"),
-    WATCHOS_ARM32("watchosArm32"),
     WATCHOS_ARM64("watchosArm64"),
     WATCHOS_X64("watchosX64"),
     WATCHOS_SIMULATOR_ARM64("watchosSimulatorArm64"),
@@ -270,7 +269,6 @@ private val konanTargetMapping = mapOf(
     "ios_arm64" to KlibTargetType.IOS_ARM64,
     "ios_x64" to KlibTargetType.IOS_X64,
     "ios_simulator_arm64" to KlibTargetType.IOS_SIMULATOR_ARM64,
-    "watchos_arm32" to KlibTargetType.WATCHOS_ARM32,
     "watchos_arm64" to KlibTargetType.WATCHOS_ARM64,
     "watchos_x64" to KlibTargetType.WATCHOS_X64,
     "watchos_simulator_arm64" to KlibTargetType.WATCHOS_SIMULATOR_ARM64,

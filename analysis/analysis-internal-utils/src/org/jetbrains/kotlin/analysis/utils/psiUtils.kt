@@ -13,28 +13,29 @@ import org.jetbrains.kotlin.name.FqName
 
 @Deprecated(
     "Unintentionally exposed implementation detail. Get the 'ClassId' from the Java class symbol instead",
-    level = DeprecationLevel.ERROR
+    level = DeprecationLevel.HIDDEN
 )
 public val PsiClass.classId: ClassId?
-    get() {
-        val packageName = (containingFile as? PsiClassOwner)?.packageName ?: return null
-        if (qualifiedName == null) return null
+    get() = computeClassId()
 
-        val classesChain = generateSequence(this) { it.containingClass }
-        if (classesChain.any { it is PsiAnonymousClass }) return null
+private fun PsiClass.computeClassId(): ClassId? {
+    val packageName = (containingFile as? PsiClassOwner)?.packageName ?: return null
+    if (qualifiedName == null) return null
 
-        val classNames = classesChain.mapTo(mutableListOf()) { it.name }.asReversed()
-        if (classNames.any { it == null }) return null
+    val classesChain = generateSequence(this) { it.containingClass }
+    if (classesChain.any { it is PsiAnonymousClass }) return null
 
-        return ClassId(FqName(packageName), FqName(classNames.joinToString(separator = ".")), isLocal = false)
-    }
+    val classNames = classesChain.mapTo(mutableListOf()) { it.name }.asReversed()
+    if (classNames.any { it == null }) return null
 
-@Deprecated("Unintentionally exposed implementation detail. Do not use", level = DeprecationLevel.ERROR)
+    return ClassId(FqName(packageName), FqName(classNames.joinToString(separator = ".")), isLocal = false)
+}
+
+@Deprecated("Unintentionally exposed implementation detail. Do not use", level = DeprecationLevel.HIDDEN)
 public fun PsiClass.isLocalClass(): Boolean {
     val qualifiedName = this.qualifiedName ?: return true
 
-    @Suppress("DEPRECATION_ERROR")
-    val classId = classId ?: return true
+    val classId = computeClassId() ?: return true
 
     /*
     For a local class:

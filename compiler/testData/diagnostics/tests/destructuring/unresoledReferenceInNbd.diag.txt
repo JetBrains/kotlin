@@ -1,0 +1,9 @@
+/unresoledReferenceInNbd.kt:9:10: error: Unresolved reference 'baz' for name-based destructuring on receiver of type 'Foo'. To use positional destructuring, use the 'val [...] = ...' syntax.
+
+/unresoledReferenceInNbd.kt:12:6: error: Upper bounds of 'T' have an empty intersection.
+
+/unresoledReferenceInNbd.kt:12:31: warning: Type 'Foo' is final, so the value of the type parameter is predetermined.
+
+/unresoledReferenceInNbd.kt:13:10: error: Unresolved reference 'baz' for name-based destructuring on receiver of type 'Foo & I'. To use positional destructuring, use the 'val [...] = ...' syntax.
+
+/unresoledReferenceInNbd.kt:17:10: error: Unresolved reference 'baz' for name-based destructuring on receiver of type 'Foo'. To use positional destructuring, use the 'val [...] = ...' syntax.

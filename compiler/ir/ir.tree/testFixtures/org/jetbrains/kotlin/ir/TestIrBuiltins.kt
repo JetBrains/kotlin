@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.util.IrErrorModuleFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import kotlin.reflect.KProperty
@@ -36,7 +37,7 @@ import kotlin.reflect.KProperty
 object TestIrBuiltins : IrBuiltIns() {
     override val symbolFinder by lazy { missingBuiltIn() }
 
-    private val builtinsPackage = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), FqName("kotlin"))
+    private val builtinsPackage = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), FqName("kotlin"), IrErrorModuleFragment)
 
     override val languageVersionSettings: LanguageVersionSettings
         get() = LanguageVersionSettingsImpl.DEFAULT
@@ -261,8 +262,6 @@ object TestIrBuiltins : IrBuiltIns() {
     }
 
     override val operatorsPackageFragment: IrExternalPackageFragment
-        get() = missingBuiltIn()
-    override val kotlinInternalPackageFragment: IrExternalPackageFragment
         get() = missingBuiltIn()
 
     private fun builtinClass(name: String) = object {

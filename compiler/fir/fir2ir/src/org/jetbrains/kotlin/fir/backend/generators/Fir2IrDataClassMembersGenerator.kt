@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COPY
-import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -47,6 +46,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
+import org.jetbrains.kotlin.util.OperatorNameConventions.HASH_CODE
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -106,11 +106,11 @@ class Fir2IrDataClassMembersGenerator(
                 generatedIrFunctions += toStringFunction
             }
 
-            val hashcodeNameContributedFunction = contributedSyntheticFunctions[HASHCODE_NAME]
+            val hashcodeNameContributedFunction = contributedSyntheticFunctions[HASH_CODE]
             if (hashcodeNameContributedFunction != null) {
                 result.add(hashcodeNameContributedFunction)
                 val hashCodeFunction = createSyntheticIrFunctionFromAny(
-                    HASHCODE_NAME,
+                    HASH_CODE,
                     hashcodeNameContributedFunction,
                     c.builtins.intType,
                 )
@@ -143,7 +143,7 @@ class Fir2IrDataClassMembersGenerator(
             val scope = klass.unsubstitutedScope()
             val contributedSyntheticFunctions =
                 buildMap<Name, FirNamedFunction> {
-                    for (name in listOf(EQUALS, HASHCODE_NAME, TO_STRING)) {
+                    for (name in [EQUALS, HASH_CODE, TO_STRING]) {
                         scope.processFunctionsByName(name) {
                             // We won't synthesize a function if there is a user-contributed (non-synthetic) one.
                             if (it.origin !is FirDeclarationOrigin.Synthetic) return@processFunctionsByName
@@ -248,7 +248,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
             for (irFunction in functions) {
                 when (val name = irFunction.name) {
                     TO_STRING -> irDataClassMembersGenerator.generateToStringMethod(irFunction, properties)
-                    HASHCODE_NAME -> irDataClassMembersGenerator.generateHashCodeMethod(irFunction, properties)
+                    HASH_CODE -> irDataClassMembersGenerator.generateHashCodeMethod(irFunction, properties)
                     EQUALS -> irDataClassMembersGenerator.generateEqualsMethod(irFunction, properties)
                     DATA_CLASS_COPY -> {
                         irFunction.origin = GENERATED_DATA_CLASS_MEMBER
@@ -314,7 +314,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                     return getHashCodeFunction(session.builtinTypes.anyType.coneType.toRegularClassSymbol()!!.fir)
                 }
                 val scope = klass.symbol.unsubstitutedScope()
-                return scope.getFunctions(HASHCODE_NAME).first { symbol ->
+                return scope.getFunctions(HASH_CODE).first { symbol ->
                     val function = symbol.fir
                     function.valueParameters.isEmpty() && function.receiverParameter == null && function.contextParameters.isEmpty()
                 }

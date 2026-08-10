@@ -1,126 +1,126 @@
 FILE: annotationArguments.kt
     @Arrays(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithArrays : R|kotlin/Any| {
-        public? [ContainingClassKey=WithArrays] constructor(): R|WithArrays| {
+        public? [ContainingClassKey=WithArrays] constructor(): R|test/WithArrays| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Arrays(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithExplicitArrays : R|kotlin/Any| {
-        public? [ContainingClassKey=WithExplicitArrays] constructor(): R|WithExplicitArrays| {
+        public? [ContainingClassKey=WithExplicitArrays] constructor(): R|test/WithExplicitArrays| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @ClassLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithClassLiteral : R|kotlin/Any| {
-        public? [ContainingClassKey=WithClassLiteral] constructor(): R|WithClassLiteral| {
+        public? [ContainingClassKey=WithClassLiteral] constructor(): R|test/WithClassLiteral| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @EnumLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithEnumLiteral : R|kotlin/Any| {
-        public? [ContainingClassKey=WithEnumLiteral] constructor(): R|WithEnumLiteral| {
+        public? [ContainingClassKey=WithEnumLiteral] constructor(): R|test/WithEnumLiteral| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @VarArg(LAZY_EXPRESSION) public final? class OneVararg : R|kotlin/Any| {
-        public? [ContainingClassKey=OneVararg] constructor(): R|OneVararg| {
+        public? [ContainingClassKey=OneVararg] constructor(): R|test/OneVararg| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @VarArg(LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class TwoVararg : R|kotlin/Any| {
-        public? [ContainingClassKey=TwoVararg] constructor(): R|TwoVararg| {
+        public? [ContainingClassKey=TwoVararg] constructor(): R|test/TwoVararg| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @VarArg(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class ThreeVararg : R|kotlin/Any| {
-        public? [ContainingClassKey=ThreeVararg] constructor(): R|ThreeVararg| {
+        public? [ContainingClassKey=ThreeVararg] constructor(): R|test/ThreeVararg| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @VarArg(LAZY_EXPRESSION) public final? class SpreadVararg : R|kotlin/Any| {
-        public? [ContainingClassKey=SpreadVararg] constructor(): R|SpreadVararg| {
+        public? [ContainingClassKey=SpreadVararg] constructor(): R|test/SpreadVararg| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Outer(LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithNested : R|kotlin/Any| {
-        public? [ContainingClassKey=WithNested] constructor(): R|WithNested| {
+        public? [ContainingClassKey=WithNested] constructor(): R|test/WithNested| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Outer(LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithQualifiedNested : R|kotlin/Any| {
-        public? [ContainingClassKey=WithQualifiedNested] constructor(): R|WithQualifiedNested| {
+        public? [ContainingClassKey=WithQualifiedNested] constructor(): R|test/WithQualifiedNested| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Simple(LAZY_EXPRESSION) public final? class Qualified : R|kotlin/Any| {
-        public? [ContainingClassKey=Qualified] constructor(): R|Qualified| {
+        public? [ContainingClassKey=Qualified] constructor(): R|test/Qualified| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Simple(LAZY_EXPRESSION) public final? class Sum : R|kotlin/Any| {
-        public? [ContainingClassKey=Sum] constructor(): R|Sum| {
+        public? [ContainingClassKey=Sum] constructor(): R|test/Sum| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Simple(LAZY_EXPRESSION) public final? class Negative : R|kotlin/Any| {
-        public? [ContainingClassKey=Negative] constructor(): R|Negative| {
+        public? [ContainingClassKey=Negative] constructor(): R|test/Negative| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Simple(LAZY_EXPRESSION) public final? class Negative2 : R|kotlin/Any| {
-        public? [ContainingClassKey=Negative2] constructor(): R|Negative2| {
+        public? [ContainingClassKey=Negative2] constructor(): R|test/Negative2| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Simple(LAZY_EXPRESSION) public final? class Positive : R|kotlin/Any| {
-        public? [ContainingClassKey=Positive] constructor(): R|Positive| {
+        public? [ContainingClassKey=Positive] constructor(): R|test/Positive| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Simple(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithSimple : R|kotlin/Any| {
-        public? [ContainingClassKey=WithSimple] constructor(): R|WithSimple| {
+        public? [ContainingClassKey=WithSimple] constructor(): R|test/WithSimple| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Simple(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithNamedSimple : R|kotlin/Any| {
-        public? [ContainingClassKey=WithNamedSimple] constructor(): R|WithNamedSimple| {
+        public? [ContainingClassKey=WithNamedSimple] constructor(): R|test/WithNamedSimple| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Simple(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithSimpleOperations : R|kotlin/Any| {
-        public? [ContainingClassKey=WithSimpleOperations] constructor(): R|WithSimpleOperations| {
+        public? [ContainingClassKey=WithSimpleOperations] constructor(): R|test/WithSimpleOperations| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Simple(LAZY_EXPRESSION) public final? class WithConversionCall : R|kotlin/Any| {
-        public? [ContainingClassKey=WithConversionCall] constructor(): R|WithConversionCall| {
+        public? [ContainingClassKey=WithConversionCall] constructor(): R|test/WithConversionCall| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @ConversionCallConsumer(LAZY_EXPRESSION) public final? class WithResolvedConversionCall : R|kotlin/Any| {
-        public? [ContainingClassKey=WithResolvedConversionCall] constructor(): R|WithResolvedConversionCall| {
+        public? [ContainingClassKey=WithResolvedConversionCall] constructor(): R|test/WithResolvedConversionCall| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     public final? annotation class ConversionCallConsumer : R|kotlin/Annotation| {
-        public? [ContainingClassKey=ConversionCallConsumer] constructor([CorrespondingProperty=/ConversionCallConsumer.b] b: Byte): R|ConversionCallConsumer| {
+        public? [ContainingClassKey=ConversionCallConsumer] constructor([CorrespondingProperty=test/ConversionCallConsumer.b] b: Byte): R|test/ConversionCallConsumer| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -129,44 +129,224 @@ FILE: annotationArguments.kt
 
     }
     @StringLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithStringLiteral : R|kotlin/Any| {
-        public? [ContainingClassKey=WithStringLiteral] constructor(): R|WithStringLiteral| {
+        public? [ContainingClassKey=WithStringLiteral] constructor(): R|test/WithStringLiteral| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @StringLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithStringLiteralConcat : R|kotlin/Any| {
-        public? [ContainingClassKey=WithStringLiteralConcat] constructor(): R|WithStringLiteralConcat| {
+        public? [ContainingClassKey=WithStringLiteralConcat] constructor(): R|test/WithStringLiteralConcat| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @StringLiteral(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class WithStringInterpolationPrefix : R|kotlin/Any| {
-        public? [ContainingClassKey=WithStringInterpolationPrefix] constructor(): R|WithStringInterpolationPrefix| {
+        public? [ContainingClassKey=WithStringInterpolationPrefix] constructor(): R|test/WithStringInterpolationPrefix| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @InvalidArguments(LAZY_EXPRESSION) public final? class LongStringTemplateEntryWithTwoExpressions : R|kotlin/Any| {
-        public? [ContainingClassKey=LongStringTemplateEntryWithTwoExpressions] constructor(): R|LongStringTemplateEntryWithTwoExpressions| {
+        public? [ContainingClassKey=LongStringTemplateEntryWithTwoExpressions] constructor(): R|test/LongStringTemplateEntryWithTwoExpressions| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Deprecated(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class Another : R|kotlin/Any| {
-        public? [ContainingClassKey=Another] constructor(): R|Another| {
+        public? [ContainingClassKey=Another] constructor(): R|test/Another| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Arrays(LAZY_EXPRESSION) public final? class WithIncorrectArguments : R|kotlin/Any| {
-        public? [ContainingClassKey=WithIncorrectArguments] constructor(): R|WithIncorrectArguments| {
+        public? [ContainingClassKey=WithIncorrectArguments] constructor(): R|test/WithIncorrectArguments| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @kotlin.Deprecated(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class Qualified : R|kotlin/Any| {
-        public? [ContainingClassKey=Qualified] constructor(): R|Qualified| {
+        public? [ContainingClassKey=Qualified] constructor(): R|test/Qualified| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
+    public final? annotation class Arrays : R|kotlin/Annotation| {
+        public? [ContainingClassKey=Arrays] constructor([CorrespondingProperty=test/Arrays.ia] ia: IntArray, [CorrespondingProperty=test/Arrays.la] la: LongArray, [CorrespondingProperty=test/Arrays.fa] fa: FloatArray, [CorrespondingProperty=test/Arrays.da] da: DoubleArray, [CorrespondingProperty=test/Arrays.ca] ca: CharArray, [CorrespondingProperty=test/Arrays.ba] ba: BooleanArray): R|test/Arrays| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val ia: IntArray = R|<local>/ia|
+            public? [ContainingClassKey=Arrays] get(): IntArray
+
+        public? final? [IsFromPrimaryConstructor=true] val la: LongArray = R|<local>/la|
+            public? [ContainingClassKey=Arrays] get(): LongArray
+
+        public? final? [IsFromPrimaryConstructor=true] val fa: FloatArray = R|<local>/fa|
+            public? [ContainingClassKey=Arrays] get(): FloatArray
+
+        public? final? [IsFromPrimaryConstructor=true] val da: DoubleArray = R|<local>/da|
+            public? [ContainingClassKey=Arrays] get(): DoubleArray
+
+        public? final? [IsFromPrimaryConstructor=true] val ca: CharArray = R|<local>/ca|
+            public? [ContainingClassKey=Arrays] get(): CharArray
+
+        public? final? [IsFromPrimaryConstructor=true] val ba: BooleanArray = R|<local>/ba|
+            public? [ContainingClassKey=Arrays] get(): BooleanArray
+
+    }
+    public final? annotation class ClassLiteral : R|kotlin/Annotation| {
+        public? [ContainingClassKey=ClassLiteral] constructor([CorrespondingProperty=test/ClassLiteral.c1] c1: KClass<*>, [CorrespondingProperty=test/ClassLiteral.c2] c2: KClass<*>): R|test/ClassLiteral| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val c1: KClass<*> = R|<local>/c1|
+            public? [ContainingClassKey=ClassLiteral] get(): KClass<*>
+
+        public? final? [IsFromPrimaryConstructor=true] val c2: KClass<*> = R|<local>/c2|
+            public? [ContainingClassKey=ClassLiteral] get(): KClass<*>
+
+    }
+    public final? enum class E : R|kotlin/Enum<test/E>| {
+        private [ContainingClassKey=E] constructor(): R|test/E| {
+            LAZY_super<R|kotlin/Enum<test/E>|>
+        }
+
+        public final static [ContainingClassKey=E] enum entry E1: R|test/E|
+        public final static [ContainingClassKey=E] enum entry E2: R|test/E|
+        public final static [ContainingClassKey=E] fun values(): R|kotlin/Array<test/E>| {
+        }
+
+        public final static [ContainingClassKey=E] fun valueOf(value: R|kotlin/String|): R|test/E| {
+        }
+
+        public final static [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<test/E>|
+            public static get(): R|kotlin/enums/EnumEntries<test/E>|
+
+    }
+    public final? annotation class EnumLiteral : R|kotlin/Annotation| {
+        public? [ContainingClassKey=EnumLiteral] constructor([CorrespondingProperty=test/EnumLiteral.e1] e1: E, [CorrespondingProperty=test/EnumLiteral.e2] e2: E, [CorrespondingProperty=test/EnumLiteral.e3] e3: E): R|test/EnumLiteral| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val e1: E = R|<local>/e1|
+            public? [ContainingClassKey=EnumLiteral] get(): E
+
+        public? final? [IsFromPrimaryConstructor=true] val e2: E = R|<local>/e2|
+            public? [ContainingClassKey=EnumLiteral] get(): E
+
+        public? final? [IsFromPrimaryConstructor=true] val e3: E = R|<local>/e3|
+            public? [ContainingClassKey=EnumLiteral] get(): E
+
+    }
+    public final? annotation class VarArg : R|kotlin/Annotation| {
+        public? [ContainingClassKey=VarArg] constructor([CorrespondingProperty=test/VarArg.v] vararg v: Int): R|test/VarArg| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val v: Int = R|<local>/v|
+            public? [ContainingClassKey=VarArg] get(): Int
+
+        public final? companion object Companion : R|kotlin/Any| {
+            private [ContainingClassKey=Companion] constructor(): R|test/VarArg.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? const val CONSTANT: <implicit> = LAZY_EXPRESSION
+                public? [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+    }
+    public final? annotation class Nested : R|kotlin/Annotation| {
+        public? [ContainingClassKey=Nested] constructor([CorrespondingProperty=test/Nested.i] i: Int, [CorrespondingProperty=test/Nested.s] s: String): R|test/Nested| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ContainingClassKey=Nested] get(): Int
+
+        public? final? [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ContainingClassKey=Nested] get(): String
+
+    }
+    public final? annotation class Outer : R|kotlin/Annotation| {
+        public? [ContainingClassKey=Outer] constructor([CorrespondingProperty=test/Outer.some] some: String, [CorrespondingProperty=test/Outer.nested] nested: Nested): R|test/Outer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val some: String = R|<local>/some|
+            public? [ContainingClassKey=Outer] get(): String
+
+        public? final? [IsFromPrimaryConstructor=true] val nested: Nested = R|<local>/nested|
+            public? [ContainingClassKey=Outer] get(): Nested
+
+    }
+    public final? annotation class Simple : R|kotlin/Annotation| {
+        public? [ContainingClassKey=Simple] constructor([CorrespondingProperty=test/Simple.i] i: Int = LAZY_EXPRESSION, [CorrespondingProperty=test/Simple.l] l: Long = LAZY_EXPRESSION, [CorrespondingProperty=test/Simple.b] b: Byte = LAZY_EXPRESSION, [CorrespondingProperty=test/Simple.d] d: Double = LAZY_EXPRESSION, [CorrespondingProperty=test/Simple.f] f: Float = LAZY_EXPRESSION, [CorrespondingProperty=test/Simple.c] c: Char = LAZY_EXPRESSION, [CorrespondingProperty=test/Simple.b1] b1: Boolean = LAZY_EXPRESSION, [CorrespondingProperty=test/Simple.b2] b2: Boolean = LAZY_EXPRESSION): R|test/Simple| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ContainingClassKey=Simple] get(): Int
+
+        public? final? [IsFromPrimaryConstructor=true] val l: Long = R|<local>/l|
+            public? [ContainingClassKey=Simple] get(): Long
+
+        public? final? [IsFromPrimaryConstructor=true] val b: Byte = R|<local>/b|
+            public? [ContainingClassKey=Simple] get(): Byte
+
+        public? final? [IsFromPrimaryConstructor=true] val d: Double = R|<local>/d|
+            public? [ContainingClassKey=Simple] get(): Double
+
+        public? final? [IsFromPrimaryConstructor=true] val f: Float = R|<local>/f|
+            public? [ContainingClassKey=Simple] get(): Float
+
+        public? final? [IsFromPrimaryConstructor=true] val c: Char = R|<local>/c|
+            public? [ContainingClassKey=Simple] get(): Char
+
+        public? final? [IsFromPrimaryConstructor=true] val b1: Boolean = R|<local>/b1|
+            public? [ContainingClassKey=Simple] get(): Boolean
+
+        public? final? [IsFromPrimaryConstructor=true] val b2: Boolean = R|<local>/b2|
+            public? [ContainingClassKey=Simple] get(): Boolean
+
+        public final? companion object Companion : R|kotlin/Any| {
+            private [ContainingClassKey=Companion] constructor(): R|test/Simple.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? const val CONST1: <implicit> = LAZY_EXPRESSION
+                public? [ContainingClassKey=Companion] get(): <implicit>
+
+            public? final? const val CONST2: <implicit> = LAZY_EXPRESSION
+                public? [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+    }
+    public final? annotation class StringLiteral : R|kotlin/Annotation| {
+        public? [ContainingClassKey=StringLiteral] constructor([CorrespondingProperty=test/StringLiteral.s1] s1: String, [CorrespondingProperty=test/StringLiteral.s2] s2: String, [CorrespondingProperty=test/StringLiteral.s3] s3: String): R|test/StringLiteral| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val s1: String = R|<local>/s1|
+            public? [ContainingClassKey=StringLiteral] get(): String
+
+        public? final? [IsFromPrimaryConstructor=true] val s2: String = R|<local>/s2|
+            public? [ContainingClassKey=StringLiteral] get(): String
+
+        public? final? [IsFromPrimaryConstructor=true] val s3: String = R|<local>/s3|
+            public? [ContainingClassKey=StringLiteral] get(): String
+
+    }
+    public final? annotation class InvalidArguments : R|kotlin/Annotation| {
+        public? [ContainingClassKey=InvalidArguments] constructor([CorrespondingProperty=test/InvalidArguments.s] s: String): R|test/InvalidArguments| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ContainingClassKey=InvalidArguments] get(): String
+
+    }
+    public? final? const val CONSTANT: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>

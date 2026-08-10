@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.*
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCheckers
@@ -38,6 +37,9 @@ import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isJsStdlib
 import org.jetbrains.kotlin.library.isWasmStdlib
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.name.Name.special
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFir2IrPipelineArtifact>(
@@ -79,13 +81,13 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFi
         val librariesDescriptors = resolvedLibraries.map { resolvedLibrary ->
             val storageManager = LockBasedStorageManager("ModulesStructure")
 
-            val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-                resolvedLibrary,
-                configuration.languageVersionSettings,
-                storageManager,
-                builtInsModule,
-                lookupTracker = LookupTracker.DO_NOTHING
-            )
+            val moduleName = special("<${resolvedLibrary.uniqueName}>")
+            val moduleOrigin = DeserializedKlibModuleOrigin(resolvedLibrary)
+            val moduleDescriptor = if (builtInsModule != null)
+                JsFactories.DefaultDescriptorFactory.createDescriptor(moduleName, storageManager, builtInsModule, moduleOrigin)
+            else
+                JsFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(moduleName, storageManager, moduleOrigin)
+
             dependencies += moduleDescriptor
             moduleDescriptor.setDependencies(ArrayList(dependencies))
 
@@ -104,7 +106,7 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFi
             visibilityConverter = Fir2IrVisibilityConverter.Default,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
             typeSystemContextProvider = ::IrTypeSystemContextImpl,
-            specialAnnotationsProvider = null,
+            createSpecialAnnotationsProvider = null,
             extraActualDeclarationExtractorsInitializer = { emptyList() },
         ) { irModuleFragment ->
             (irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }

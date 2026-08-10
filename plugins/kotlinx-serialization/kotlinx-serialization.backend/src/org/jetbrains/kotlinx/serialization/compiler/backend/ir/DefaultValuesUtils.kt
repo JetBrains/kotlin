@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irGetField
@@ -17,7 +14,9 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.deepCopyWithoutPatchingParents
 import org.jetbrains.kotlin.ir.util.primaryConstructor
@@ -39,7 +38,7 @@ fun IrBuilderWithScope.createPropertyByParamReplacer(
     irClass: IrClass,
     serialProperties: List<IrSerializableProperty>,
     instance: IrValueParameter
-): (ValueParameterDescriptor) -> IrExpression? {
+): (IrValueParameterSymbol) -> IrExpression? {
     fun IrSerializableProperty.irGet(): IrExpression {
         val ownerType = instance.symbol.owner.type
         return getProperty(
@@ -60,7 +59,7 @@ fun IrBuilderWithScope.createPropertyByParamReplacer(
             .toSet()
 
     return { vpd ->
-        val propertyDescriptor = irClass.properties.find { it.name == vpd.name }
+        val propertyDescriptor = irClass.properties.find { it.name == vpd.owner.name }
         if (propertyDescriptor != null) {
             val value = serialPropertiesMap[propertyDescriptor]
             value?.irGet() ?: run {
@@ -81,10 +80,9 @@ fun IrBuilderWithScope.createPropertyByParamReplacer(
     Creates an initializer adapter function that can replace IR expressions of getting constructor parameter value by some other expression.
     Also adapter may replace IR expression of getting `this` value by another expression.
      */
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun createInitializerAdapter(
     irClass: IrClass,
-    paramGetReplacer: (ValueParameterDescriptor) -> IrExpression?,
+    paramGetReplacer: (IrValueParameterSymbol) -> IrExpression?,
     thisGetReplacer: Pair<IrValueSymbol, () -> IrExpression>? = null
 ): (IrExpressionBody) -> IrExpression {
     val constructorParameters = irClass.primaryConstructor?.parameters
@@ -100,10 +98,9 @@ fun createInitializerAdapter(
                 return thisGetReplacer.second()
             }
 
-            val descriptor = symbol.descriptor
-            if (descriptor is ValueParameterDescriptor && symbol in constructorParameters) {
+            if (symbol is IrValueParameterSymbol && symbol in constructorParameters) {
                 // replace `get parameter value` expression
-                paramGetReplacer(descriptor)?.let { return it }
+                paramGetReplacer(symbol)?.let { return it }
             }
 
             // otherwise leave expression as it is

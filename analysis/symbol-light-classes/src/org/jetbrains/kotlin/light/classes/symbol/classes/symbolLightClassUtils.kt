@@ -547,7 +547,7 @@ internal fun createInheritanceList(
 
     fun KaType.needToAddTypeIntoList(): Boolean {
         // Do not add redundant "extends java.lang.Object" anywhere
-        if (this.isAnyType) return false
+        if (this.classId == KaStandardTypeClassIds.ANY) return false
         // Interfaces have only extends lists
         if (lightClass.isInterface) return forExtendsList
 
@@ -749,16 +749,40 @@ internal fun hasValueClassInSignature(
     skipValueParametersCheck: Boolean = false,
     valueParameterPickMask: BitSet? = null,
     skipReturnTypeCheck: Boolean = false,
-): Boolean {
-    if (!skipReturnTypeCheck && hasValueClassInReturnType(callableSymbol)) {
-        return true
-    }
+): Boolean = !skipReturnTypeCheck && hasValueClassInReturnType(callableSymbol) || hasValueClassInParameterPosition(
+    callableSymbol = callableSymbol,
+    skipValueParametersCheck = skipValueParametersCheck,
+    valueParameterPickMask = valueParameterPickMask,
+) { typeForValueClass(it) }
 
-    if (callableSymbol.receiverType?.let { typeForValueClass(it) } == true) return true
-    if (callableSymbol.contextParameters.any { typeForValueClass(it.returnType) }) return true
+/**
+ * Whether the name of the [callableSymbol] is mangled because of a value class in a parameter position: a value parameter,
+ * an extension receiver, or a context parameter.
+ *
+ * @param valueParameterPickMask a bit mask specifying which value parameters of the callable symbol should be picked during the check
+ */
+context(_: KaSession)
+internal fun hasManglingValueClassInParameterPosition(
+    callableSymbol: KaCallableSymbol,
+    valueParameterPickMask: BitSet? = null,
+): Boolean = hasValueClassInParameterPosition(
+    callableSymbol = callableSymbol,
+    skipValueParametersCheck = false,
+    valueParameterPickMask = valueParameterPickMask,
+) { parameterTypeRequiresMangling(it) }
+
+context(_: KaSession)
+private inline fun hasValueClassInParameterPosition(
+    callableSymbol: KaCallableSymbol,
+    skipValueParametersCheck: Boolean,
+    valueParameterPickMask: BitSet?,
+    predicate: (KaType) -> Boolean,
+): Boolean {
+    if (callableSymbol.receiverType?.let { predicate(it) } == true) return true
+    if (callableSymbol.contextParameters.any { predicate(it.returnType) }) return true
     if (!skipValueParametersCheck && callableSymbol is KaFunctionSymbol) {
         return callableSymbol.valueParameters.withIndex().any { [index, valueParameter] ->
-            valueParameterPickMask?.get(index) != false && typeForValueClass(valueParameter.returnType)
+            valueParameterPickMask?.get(index) != false && predicate(valueParameter.returnType)
         }
     }
 
@@ -767,7 +791,8 @@ internal fun hasValueClassInSignature(
 
 context(_: KaSession)
 internal fun hasValueClassInReturnType(callableSymbol: KaCallableSymbol): Boolean {
-    val psiDeclaration = callableSymbol.psi as? KtCallableDeclaration
+    // A declaration without real PSI, e.g., a library or a generated one, always has its type at hand
+    val psiDeclaration = callableSymbol.realPsi as? KtCallableDeclaration
     val shouldCheckType = psiDeclaration == null || psiDeclaration.typeReference != null
     // Only explicitly declared types can be checked to avoid contract violations
     return shouldCheckType && typeForValueClass(callableSymbol.returnType)
@@ -775,14 +800,17 @@ internal fun hasValueClassInReturnType(callableSymbol: KaCallableSymbol): Boolea
 
 /**
  * Whether a declaration would have a mangled name due to value classes in its signature
+ *
+ * @param hasManglingValueClassInParameterType whether there is a value class in a parameter position that mangles the name
+ * @see hasManglingValueClassInParameterPosition
  */
 internal fun hasMangledNameDueValueClassesInSignature(
-    hasValueClassInParameterType: Boolean,
+    hasManglingValueClassInParameterType: Boolean,
     hasValueClassInReturnType: Boolean,
     isTopLevel: Boolean,
 ): Boolean = when {
     // Non-return type is a value class -> mangled name
-    hasValueClassInParameterType -> true
+    hasManglingValueClassInParameterType -> true
 
     // No value class in signature at all -> no mangling
     !hasValueClassInReturnType -> false
@@ -791,10 +819,94 @@ internal fun hasMangledNameDueValueClassesInSignature(
     else -> !isTopLevel
 }
 
-context(session: KaSession)
-internal fun typeForValueClass(type: KaType): Boolean {
-    val symbol = type.expandedSymbol as? KaNamedClassSymbol ?: return false
-    return symbol.isInline
+/**
+ * Whether the JVM name of [symbol] is mangled because of value classes.
+ *
+ * The suffix is either a hash of the signature, as in `classFunInParameter-5lyY9Q4`, or `impl` for a member of a value class,
+ * as in `funWithoutParameters-impl`. Both are computed by `org.jetbrains.kotlin.backend.jvm.InlineClassAbi`.
+ *
+ * Unlike [hasMangledNameDueValueClassesInSignature], the entire decision is made from [symbol] alone, so there is no way
+ * to narrow the checked value parameters down.
+ */
+context(_: KaSession)
+internal fun hasMangledNameDueToValueClasses(symbol: KaCallableSymbol): Boolean {
+    // On the JVM, an accessor has the receiver, the context parameters, and the type of its property, while the symbol
+    // itself only has the receiver
+    val declaration = (symbol as? KaPropertyAccessorSymbol)?.containingDeclaration as? KaCallableSymbol ?: symbol
+    val hasValueClassInReturnType = hasValueClassInReturnType(declaration)
+    val isSetter = symbol is KaPropertySetterSymbol
+
+    val owner = jvmMethodOwner(symbol)
+    val isMangledBySignature = hasMangledNameDueValueClassesInSignature(
+        hasManglingValueClassInParameterType = hasManglingValueClassInParameterPosition(declaration) ||
+                // The type of a property is the parameter type of its setter
+                isSetter && hasValueClassInReturnType && parameterTypeRequiresMangling(declaration.returnType),
+        // A setter has a 'Unit' return type
+        hasValueClassInReturnType = !isSetter && hasValueClassInReturnType,
+        // Note: script declarations are members of a script class, so they are affected by mangling
+        isTopLevel = owner == null,
+    )
+
+    return isMangledBySignature || isNonMaterializedValueClassMember(symbol, owner)
+}
+
+/**
+ * The declaration that owns the JVM method for [symbol], or `null` if the method is placed into a file facade class.
+ *
+ * For a property accessor, the owner of the property is used, as an accessor is never owned by its property on the JVM.
+ */
+context(_: KaSession)
+internal fun jvmMethodOwner(symbol: KaCallableSymbol): KaDeclarationSymbol? {
+    val containingDeclaration = symbol.containingDeclaration
+    return if (containingDeclaration is KaPropertySymbol) containingDeclaration.containingDeclaration else containingDeclaration
+}
+
+/**
+ * Whether [symbol] is a member of a value class that is replaced with a static `-impl` method instead of being materialized as is.
+ */
+context(_: KaSession)
+private fun isNonMaterializedValueClassMember(symbol: KaCallableSymbol, owner: KaDeclarationSymbol?): Boolean {
+    if (owner !is KaNamedClassSymbol || !owner.isInline) return false
+
+    // A member that implements a supertype member keeps an unmangled bridge method
+    val isOverride = when (symbol) {
+        is KaNamedFunctionSymbol -> symbol.isOverride
+        is KaPropertyAccessorSymbol -> (symbol.containingDeclaration as? KaPropertySymbol)?.isOverride == true
+        else -> false
+    }
+
+    if (isOverride) return false
+
+    // The underlying property is materialized as a field, so its getter is not replaced
+    val property = (symbol as? KaPropertyAccessorSymbol)?.containingDeclaration
+    return property !is KaKotlinPropertySymbol || property.primaryConstructorParameter == null
+}
+
+/**
+ * The value class behind [type] after erasure, or `null` if [type] is not represented by a value class.
+ */
+context(_: KaSession)
+private fun valueClassSymbol(type: KaType): KaNamedClassSymbol? {
+    // A value class is final, so it can only be an upper bound of a type parameter as is
+    val candidates = if (type is KaTypeParameterType) type.symbol.upperBounds else listOf(type)
+    return candidates.firstNotNullOfOrNull { candidate ->
+        (candidate.expandedSymbol as? KaNamedClassSymbol)?.takeIf { it.isInline }
+    }
+}
+
+context(_: KaSession)
+internal fun typeForValueClass(type: KaType): Boolean = valueClassSymbol(type) != null
+
+/**
+ * Whether the [type] in a parameter position mangles the name of a declaration.
+ *
+ * Unlike a return type, such a position doesn't mangle a name because of `kotlin.Result`, as the JVM backend excludes it there.
+ * The same check is performed by `org.jetbrains.kotlin.backend.jvm.getRequiresMangling`.
+ */
+context(_: KaSession)
+internal fun parameterTypeRequiresMangling(type: KaType): Boolean {
+    val symbol = valueClassSymbol(type) ?: return false
+    return symbol.classId != StandardClassIds.Result
 }
 
 internal inline fun <reified T : KaClassSymbol> KtClassOrObject.createSymbolPointer(

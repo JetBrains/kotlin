@@ -7,7 +7,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
     id("share-foreign-java-nullability-annotations")
     id("java-test-fixtures")
 }
@@ -19,7 +19,6 @@ dependencies {
     testFixturesApi(project(":compiler:cli"))
     testFixturesApi(project(":compiler:ir.backend.native"))
     testFixturesImplementation(project(":analysis:light-classes-base"))
-    testFixturesImplementation(project(":compiler:cli-jvm:javac-integration"))
     testFixturesImplementation(project(":compiler:ir.tree"))
     testFixturesImplementation(project(":compiler:ir.serialization.native"))
     testFixturesImplementation(project(":compiler:backend.jvm.entrypoint"))
@@ -114,6 +113,7 @@ sourceSets {
 projectTests {
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/compileJavaAgainstKotlin")
     testData(project(":compiler").isolated, "testData/debug")
     testData(project(":compiler").isolated, "testData/ir")
     testData(project(":compiler").isolated, "testData/klib")

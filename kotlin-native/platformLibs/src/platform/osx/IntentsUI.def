@@ -3,5 +3,6 @@ language = Objective-C
 package = platform.IntentsUI
 
 modules = IntentsUI
+apiNotesSwiftName = true
 compilerOpts = -framework IntentsUI
 linkerOpts = -framework IntentsUI

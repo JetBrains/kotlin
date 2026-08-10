@@ -1,0 +1,23 @@
+FILE: nonStubbedInitializers.kt
+    public? final? fun compute(): Int { LAZY_BLOCK }
+    public? final? fun evaluate(block: ( () -> Int )): Int { LAZY_BLOCK }
+    public? final? fun combine(value: Int, block: ( () -> Int )): Int { LAZY_BLOCK }
+    public? final? val trailingLambda: Int = LAZY_EXPRESSION
+        public? get(): Int
+    public? final? val positionalLambdaArgument: Int = LAZY_EXPRESSION
+        public? get(): Int
+    public? final? val namedLambdaArgument: Int = LAZY_EXPRESSION
+        public? get(): Int
+    public? final? val mixedArguments: Int = LAZY_EXPRESSION
+        public? get(): Int
+    public? final? val parenthesizedLambdaArgument: Int = LAZY_EXPRESSION
+        public? get(): Int
+    public? final? val conditional: Int = LAZY_EXPRESSION
+        public? get(): Int
+    public? final? val objectLiteral: Any = LAZY_EXPRESSION
+        public? get(): Any
+    public? final? val callableReference: ( () -> Int ) = LAZY_EXPRESSION
+        public? get(): ( () -> Int )
+    public? final? val interpolation: String = LAZY_EXPRESSION
+        public? get(): String
+    public? final? fun expressionBodyWithLambda(): Int { LAZY_BLOCK }

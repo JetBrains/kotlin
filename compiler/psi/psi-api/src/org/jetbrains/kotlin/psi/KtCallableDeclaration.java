@@ -77,6 +77,13 @@ public interface KtCallableDeclaration extends KtNamedDeclaration, KtDeclaration
      * instead.
      */
     @SuppressWarnings("unused") // used in Kotlin IDE plugin
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.setCallableTypeReference(this, null, typeRef)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.setCallableTypeReference(null, typeRef)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.setCallableTypeReference"
+            )
+    )
     @Deprecated
     @Nullable
     KtTypeReference setTypeReference(@Nullable KtTypeReference typeRef);

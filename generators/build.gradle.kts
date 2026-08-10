@@ -42,10 +42,9 @@ dependencies {
     }
 
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
-    evaluateApi(project(":core:deserialization"))
-    evaluateImplementation(project(":core:descriptors"))
     evaluateApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
     evaluateApi(project(":compiler:ir.tree"))
+    evaluateImplementation(project(":core:compiler.common.jvm"))
     wasmApi(project(":wasm:wasm.ir"))
     wasmApi(kotlinStdlib())
     protobufApi(kotlinStdlib())

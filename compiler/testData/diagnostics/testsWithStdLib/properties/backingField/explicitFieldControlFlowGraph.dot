@@ -90,4 +90,11 @@ digraph explicitFieldControlFlowGraph_kt {
     26 -> {27};
     27 -> {28} [color=green];
 
+    subgraph cluster_9 {
+        color=red
+        29 [label="Enter static <static of Some>" style="filled" fillcolor=red];
+        30 [label="Exit static <static of Some>" style="filled" fillcolor=red];
+    }
+    29 -> {30} [color=green];
+
 }

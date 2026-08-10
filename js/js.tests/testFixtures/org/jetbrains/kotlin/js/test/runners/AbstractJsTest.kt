@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.js.test.runners
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.handlers.JsIrRecompiledArtifactsIdentityHandler
 import org.jetbrains.kotlin.js.test.handlers.JsLineNumberHandler
 import org.jetbrains.kotlin.js.test.handlers.JsSizeHandler
@@ -18,11 +17,10 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.handlers.IrPreprocessedInlineFunctionDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
-import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
-import org.jetbrains.kotlin.test.builders.configureJsArtifactsHandlersStep
-import org.jetbrains.kotlin.test.builders.configureLoweredIrHandlersStep
+import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpAfterInliningVerifyingHandler
+import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE
@@ -32,7 +30,6 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgConsistencyHandler
@@ -58,6 +55,9 @@ abstract class AbstractJsTest(
         super.configure(builder)
         with(builder) {
             setUpDefaultDirectivesForJsBoxTest(parser)
+            defaultDirectives {
+                +CHECK_SAME_ABI_AFTER_INLINING
+            }
             configureFirHandlersStep {
                 useHandlers(
                     ::FirDumpHandler,
@@ -66,13 +66,6 @@ abstract class AbstractJsTest(
                     ::FirResolvedTypesVerifier,
                 )
             }
-            defaultDirectives {
-                LANGUAGE with listOf(
-                    "-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                    "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
-            }
-
             configureJsArtifactsHandlersStep {
                 useHandlers(
                     ::JsIrRecompiledArtifactsIdentityHandler,
@@ -118,81 +111,34 @@ abstract class AbstractJsCodegenBoxTestBase(
         builder.configureIrHandlersStep {
             commonIrHandlersForCodegenTest()
         }
+
+        // TODO KT-87965: Move it to setupCommonHandlersForJsTest() to fully turn or IR Inliner checks in all testrunners, inlcluding TS export
+        builder.configureKlibArtifactsHandlersStep {
+            useHandlers(::KlibAbiDumpAfterInliningVerifyingHandler)
+        }
     }
 }
 
 abstract class AbstractJsCodegenBoxTest : AbstractJsCodegenBoxTestBase(
+    pathToTestDir = "compiler/testData/codegen/",
     testGroupOutputDirPrefix = "codegen/box/"
-)
-
-abstract class AbstractJsCodegenBoxWithInlinedFunInKlibTest(
-    pathToTestDir: String = "compiler/testData/codegen/box/",
-    testGroupOutputDirPrefix: String = "codegen/boxWithInlinedFunInKlib",
-) : AbstractJsCodegenBoxTestBase(pathToTestDir, testGroupOutputDirPrefix) {
+) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                +CHECK_SAME_ABI_AFTER_INLINING
-                LANGUAGE with listOf(
-                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
-            }
-            configureLoweredIrHandlersStep {
-                useHandlers(
-                    { testServices, artifactKind ->
-                        IrTextDumpHandler(
-                            testServices = testServices,
-                            artifactKind = artifactKind,
-                            customExtension = "inlined.ir",
-                            directive = DUMP_IR_AFTER_INLINE,
-                            showOffsets = true,
-                        )
-                    },
-                    ::IrPreprocessedInlineFunctionDumpHandler,
-                )
-            }
-        }
+        builder.configureLoweredIrDumpHandlers()
     }
 }
 
-abstract class AbstractJsCodegenBoxInlineWithInlinedFunInKlibTest : AbstractJsCodegenBoxWithInlinedFunInKlibTest(
-    pathToTestDir = "compiler/testData/codegen/boxInline/",
-    testGroupOutputDirPrefix = "codegen/boxInlineWithInlinedFunInKlib/"
-)
-
-abstract class AbstractJsKlibSyntheticAccessorsBoxWithInlinedFunInKlibTest : AbstractJsCodegenBoxWithInlinedFunInKlibTest(
+abstract class AbstractJsKlibSyntheticAccessorsBoxTest : AbstractJsCodegenBoxTestBase(
     pathToTestDir = "compiler/testData/klib/syntheticAccessors/",
-    testGroupOutputDirPrefix = "klib/syntheticAccessorsWithInlinedFunInKlib/"
+    testGroupOutputDirPrefix = "klib/syntheticAccessors/"
 )
 
-abstract class AbstractJsCodegenInlineTest(
-    pathToTestDir: String = "compiler/testData/codegen/boxInline/",
-    testGroupOutputDirPrefix: String = "codegen/boxInline/"
-) : AbstractJsTest(pathToTestDir, testGroupOutputDirPrefix)
 
-abstract class AbstractJsCodegenInlineWithInlinedFunInKlibTest(
-    pathToTestDir: String = "compiler/testData/codegen/boxInline/",
-    testGroupOutputDirPrefix: String = "codegen/boxInlineWithInlinedKlib/"
-) : AbstractJsCodegenInlineTest(pathToTestDir, testGroupOutputDirPrefix) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                LANGUAGE with listOf(
-                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
-            }
-        }
-    }
-}
-
-abstract class AbstractJsCodegenSplittingInlineWithInlinedFunInKlibTest(
-    pathToTestDir: String = "compiler/testData/codegen/boxInline/",
-    testGroupOutputDirPrefix: String = "codegen/boxInlineSplittedWithInlinedKlib/",
-) : AbstractJsCodegenInlineWithInlinedFunInKlibTest(pathToTestDir, testGroupOutputDirPrefix) {
+abstract class AbstractJsCodegenSplittingTest(
+    pathToTestDir: String = "compiler/testData/codegen/",
+    testGroupOutputDirPrefix: String = "codegen/boxInlineSplitted/",
+) : AbstractJsCodegenBoxTestBase(pathToTestDir, testGroupOutputDirPrefix) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
         get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
 
@@ -206,11 +152,6 @@ abstract class AbstractJsCodegenSplittingInlineWithInlinedFunInKlibTest(
     }
 }
 
-abstract class AbstractJsCodegenSplittingWithInlinedFunInKlibTest : AbstractJsCodegenSplittingInlineWithInlinedFunInKlibTest(
-    pathToTestDir = "compiler/testData/codegen/box/",
-    testGroupOutputDirPrefix = "codegen/boxSplittedWithInlinedKlib/",
-)
-
 abstract class AbstractJsLineNumberTest(
     testGroupOutputDirPrefix: String = "lineNumbers/"
 ) : AbstractJsTest(
@@ -220,23 +161,6 @@ abstract class AbstractJsLineNumberTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureLineNumberTests(::JsLineNumberHandler)
-    }
-}
-
-abstract class AbstractJsLineNumberWithInlinedFunInKlibTest : AbstractJsLineNumberTest(
-    testGroupOutputDirPrefix = "lineNumbersInlined/"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            configureLineNumberTests(::JsLineNumberHandler)
-            defaultDirectives {
-                LANGUAGE with listOf(
-                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
-            }
-        }
     }
 }
 
@@ -286,44 +210,8 @@ abstract class AbstractJsSteppingTest(
     }
 }
 
-abstract class AbstractJsSteppingWithInlinedFunInKlibTest(
-    testGroupOutputDirPrefix: String = "debug/steppingWithInlinedFunInKlib/"
-) : AbstractJsSteppingTest(
-    testGroupOutputDirPrefix = testGroupOutputDirPrefix
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                LANGUAGE with listOf(
-                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
-            }
-        }
-    }
-}
-
 abstract class AbstractJsSteppingSplitTest : AbstractJsSteppingTest(
     testGroupOutputDirPrefix = "debug/steppingSplit/"
-) {
-    override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
-        get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            @OptIn(TestInfrastructureInternals::class)
-            useModuleStructureTransformers(
-                ::SplittingModuleTransformerForBoxTests
-            )
-            useMetaTestConfigurators(::SplittingTestConfigurator)
-        }
-    }
-}
-
-abstract class AbstractJsSteppingSplitWithInlinedFunInKlibTest : AbstractJsSteppingWithInlinedFunInKlibTest(
-    testGroupOutputDirPrefix = "debug/steppingSplitWithInlinedFunInKlib/"
 ) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
         get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
@@ -347,22 +235,6 @@ abstract class AbstractJsCodegenWasmJsInteropTest(
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 )
 
-abstract class AbstractJsCodegenWasmJsInteropWithInlinedFunInKlibTest : AbstractJsCodegenWasmJsInteropTest(
-    testGroupOutputDirPrefix = "codegen/boxWasmJsInteropJsWithInlinedFunInKlib/"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                LANGUAGE with listOf(
-                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
-                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
-            }
-        }
-    }
-}
-
 fun TestConfigurationBuilder.setUpDefaultDirectivesForJsBoxTest(parser: FirParser) {
     defaultDirectives {
         val runIc = getBoolean("kotlin.js.ir.icMode")
@@ -378,4 +250,21 @@ fun TestConfigurationBuilder.setUpDefaultDirectivesForJsBoxTest(parser: FirParse
 
 private fun getBoolean(s: String, default: Boolean): Boolean {
     return System.getProperty(s)?.let { parseBoolean(it) } ?: default
+}
+
+fun TestConfigurationBuilder.configureLoweredIrDumpHandlers() {
+    configureLoweredIrHandlersStep {
+        useHandlers(
+            { testServices, artifactKind ->
+                IrTextDumpHandler(
+                    testServices = testServices,
+                    artifactKind = artifactKind,
+                    customExtension = "inlined.ir",
+                    directive = DUMP_IR_AFTER_INLINE,
+                    showOffsets = true,
+                )
+            },
+            ::IrPreprocessedInlineFunctionDumpHandler,
+        )
+    }
 }

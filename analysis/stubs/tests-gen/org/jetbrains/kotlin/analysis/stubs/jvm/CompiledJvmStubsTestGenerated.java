@@ -581,6 +581,12 @@ public class CompiledJvmStubsTestGenerated extends AbstractCompiledJvmStubsTest 
   }
 
   @Test
+  @TestMetadata("equalityBound.kt")
+  public void testEqualityBound() {
+    run("equalityBound.kt");
+  }
+
+  @Test
   @TestMetadata("escapedNames.kt")
   public void testEscapedNames() {
     run("escapedNames.kt");
@@ -1488,6 +1494,18 @@ public class CompiledJvmStubsTestGenerated extends AbstractCompiledJvmStubsTest 
     }
 
     @Test
+    @TestMetadata("complexAnnotationClass.kt")
+    public void testComplexAnnotationClass() {
+      run("complexAnnotationClass.kt");
+    }
+
+    @Test
+    @TestMetadata("differentDefaultValues.kt")
+    public void testDifferentDefaultValues() {
+      run("differentDefaultValues.kt");
+    }
+
+    @Test
     @TestMetadata("forParameters.kt")
     public void testForParameters() {
       run("forParameters.kt");
@@ -1630,6 +1648,44 @@ public class CompiledJvmStubsTestGenerated extends AbstractCompiledJvmStubsTest 
       @TestMetadata("validExpressions.kt")
       public void testValidExpressions() {
         run("validExpressions.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/psi/psi-impl/testData/psi/annotation/classes")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Classes {
+      private void run(String fileName) {
+        runTest("compiler/psi/psi-impl/testData/psi/annotation/classes/" + fileName);
+      }
+
+      @Test
+      public void testAllFilesPresentInClasses() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/annotation/classes"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("annotated.kt")
+      public void testAnnotated() {
+        run("annotated.kt");
+      }
+
+      @Test
+      @TestMetadata("documented.kt")
+      public void testDocumented() {
+        run("documented.kt");
+      }
+
+      @Test
+      @TestMetadata("plain.kt")
+      public void testPlain() {
+        run("plain.kt");
+      }
+
+      @Test
+      @TestMetadata("withMembers.kt")
+      public void testWithMembers() {
+        run("withMembers.kt");
       }
     }
 
@@ -2049,6 +2105,12 @@ public class CompiledJvmStubsTestGenerated extends AbstractCompiledJvmStubsTest 
       }
 
       @Test
+      @TestMetadata("arrayClassLiterals.kt")
+      public void testArrayClassLiterals() {
+        run("arrayClassLiterals.kt");
+      }
+
+      @Test
       @TestMetadata("arrays.kt")
       public void testArrays() {
         run("arrays.kt");
@@ -2058,6 +2120,18 @@ public class CompiledJvmStubsTestGenerated extends AbstractCompiledJvmStubsTest 
       @TestMetadata("arraysWithNonConstantValue.kt")
       public void testArraysWithNonConstantValue() {
         run("arraysWithNonConstantValue.kt");
+      }
+
+      @Test
+      @TestMetadata("binaryOperatorTokens.kt")
+      public void testBinaryOperatorTokens() {
+        run("binaryOperatorTokens.kt");
+      }
+
+      @Test
+      @TestMetadata("binaryOperatorTokensWithNonConstantValue.kt")
+      public void testBinaryOperatorTokensWithNonConstantValue() {
+        run("binaryOperatorTokensWithNonConstantValue.kt");
       }
 
       @Test
@@ -2085,6 +2159,12 @@ public class CompiledJvmStubsTestGenerated extends AbstractCompiledJvmStubsTest 
       }
 
       @Test
+      @TestMetadata("escapedLiterals.kt")
+      public void testEscapedLiterals() {
+        run("escapedLiterals.kt");
+      }
+
+      @Test
       @TestMetadata("intVarargLiterals.kt")
       public void testIntVarargLiterals() {
         run("intVarargLiterals.kt");
@@ -2097,9 +2177,33 @@ public class CompiledJvmStubsTestGenerated extends AbstractCompiledJvmStubsTest 
       }
 
       @Test
+      @TestMetadata("negativeLiterals.kt")
+      public void testNegativeLiterals() {
+        run("negativeLiterals.kt");
+      }
+
+      @Test
       @TestMetadata("nestedAnnotation.kt")
       public void testNestedAnnotation() {
         run("nestedAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("nonStubbedOperands.kt")
+      public void testNonStubbedOperands() {
+        run("nonStubbedOperands.kt");
+      }
+
+      @Test
+      @TestMetadata("nonStubbedOperandsWithNonConstantValue.kt")
+      public void testNonStubbedOperandsWithNonConstantValue() {
+        run("nonStubbedOperandsWithNonConstantValue.kt");
+      }
+
+      @Test
+      @TestMetadata("postfixOperators.kt")
+      public void testPostfixOperators() {
+        run("postfixOperators.kt");
       }
 
       @Test
@@ -2115,9 +2219,27 @@ public class CompiledJvmStubsTestGenerated extends AbstractCompiledJvmStubsTest 
       }
 
       @Test
+      @TestMetadata("specialFloatingPointLiterals.kt")
+      public void testSpecialFloatingPointLiterals() {
+        run("specialFloatingPointLiterals.kt");
+      }
+
+      @Test
       @TestMetadata("stringLiterals.kt")
       public void testStringLiterals() {
         run("stringLiterals.kt");
+      }
+
+      @Test
+      @TestMetadata("unaryOperators.kt")
+      public void testUnaryOperators() {
+        run("unaryOperators.kt");
+      }
+
+      @Test
+      @TestMetadata("unsignedLiterals.kt")
+      public void testUnsignedLiterals() {
+        run("unsignedLiterals.kt");
       }
     }
   }
@@ -3245,6 +3367,12 @@ public class CompiledJvmStubsTestGenerated extends AbstractCompiledJvmStubsTest 
     @TestMetadata("CodeSpanWithLineBreaks.kt")
     public void testCodeSpanWithLineBreaks() {
       run("CodeSpanWithLineBreaks.kt");
+    }
+
+    @Test
+    @TestMetadata("complexAnnotationClassNonJvm.kt")
+    public void testComplexAnnotationClassNonJvm() {
+      run("complexAnnotationClassNonJvm.kt");
     }
 
     @Test
@@ -4757,6 +4885,56 @@ public class CompiledJvmStubsTestGenerated extends AbstractCompiledJvmStubsTest 
     @TestMetadata("StringTemplateWithTryWithoutBlockInShortEntry.kt")
     public void testStringTemplateWithTryWithoutBlockInShortEntry() {
       run("StringTemplateWithTryWithoutBlockInShortEntry.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/psi/psi-impl/testData/psi/stubbedExpressions")
+  @TestDataPath("$PROJECT_ROOT")
+  public class StubbedExpressions {
+    private void run(String fileName) {
+      runTest("compiler/psi/psi-impl/testData/psi/stubbedExpressions/" + fileName);
+    }
+
+    @Test
+    @TestMetadata("accessorExpressionBodies.kt")
+    public void testAccessorExpressionBodies() {
+      run("accessorExpressionBodies.kt");
+    }
+
+    @Test
+    public void testAllFilesPresentInStubbedExpressions() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/stubbedExpressions"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("callInitializers.kt")
+    public void testCallInitializers() {
+      run("callInitializers.kt");
+    }
+
+    @Test
+    @TestMetadata("functionExpressionBodies.kt")
+    public void testFunctionExpressionBodies() {
+      run("functionExpressionBodies.kt");
+    }
+
+    @Test
+    @TestMetadata("nonStubbedInitializers.kt")
+    public void testNonStubbedInitializers() {
+      run("nonStubbedInitializers.kt");
+    }
+
+    @Test
+    @TestMetadata("parameterDefaultValues.kt")
+    public void testParameterDefaultValues() {
+      run("parameterDefaultValues.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyInitializers.kt")
+    public void testPropertyInitializers() {
+      run("propertyInitializers.kt");
     }
   }
 }

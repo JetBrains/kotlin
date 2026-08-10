@@ -40,12 +40,8 @@ enum class UniqueKind(val llvmName: String) {
 }
 
 internal class LlvmDeclarations(private val unique: Map<UniqueKind, UniqueLlvmDeclarations>) {
-    fun forFunction(function: IrSimpleFunction): LlvmCallable =
-            forFunctionOrNull(function) ?: with(function) {
-                error("$name in $file/${parent.fqNameForIrSerialization}")
-            }
 
-    fun forFunctionOrNull(function: IrSimpleFunction): LlvmCallable? =
+    fun forFunctionOrNull(function: IrSimpleFunction) =
             (function.metadata as? KonanMetadata.Function)?.llvm
 
     fun forClass(irClass: IrClass) =
@@ -124,12 +120,12 @@ private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutB
     context.logMultiple {
         +"$name has following fields:"
         for (i in fieldTypes.indices) {
-            +"  $i: ${llvmtype2string(fieldTypes[i])} at offset ${LLVMOffsetOfElement(runtime.targetData, classType, i)}"
+            +"  $i: ${fieldTypes[i].toTypeString()} at offset ${LLVMOffsetOfElement(runtime.targetData, classType, i)}"
         }
         +"  Overall llvm alignment is ${LLVMABIAlignmentOfType(runtime.targetData, classType)}"
         +"  Overall required alignment is ${alignment}"
         +"  Overall size is ${LLVMABISizeOfType(runtime.targetData, classType)}"
-        +"  Resulting type is ${llvmtype2string(classType)}"
+        +"  Resulting type is ${classType.toTypeString()}"
     }
 
     return ClassBodyAndAlignmentInfo(classType, alignment, indices)
@@ -475,7 +471,7 @@ internal sealed class KonanMetadata(override val name: Name?, val konanLibrary: 
 
     class Class(irClass: IrClass, val llvm: ClassLlvmDeclarations, val layoutBuilder: ClassLayoutBuilder) : Declaration<IrClass>(irClass)
 
-    class Function(irFunction: IrSimpleFunction, val llvm: LlvmCallable) : Declaration<IrSimpleFunction>(irFunction)
+    class Function(irFunction: IrSimpleFunction, val llvm: LlvmFunction) : Declaration<IrSimpleFunction>(irFunction)
 
     class InstanceField(irField: IrField, val llvm: FieldLlvmDeclarations) : Declaration<IrField>(irField)
 

@@ -8,4 +8,4 @@ set _KOTLIN_RUNNER=1
 
 echo warning: the 'kotlin' executable is deprecated; use 'kotlinr' instead to avoid ambiguity with the Kotlin toolchain's 'kotlin' command. 1>&2
 
-call %~dps0kotlinc.bat %*
+call "%~dp0kotlinc.bat" %*

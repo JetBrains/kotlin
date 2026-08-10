@@ -19,7 +19,21 @@ imported_from_cinterop.lib/BaseMeta.<init>|<init>(){}[100]
 imported_from_cinterop.lib/BaseMeta|null[100]
 imported_from_cinterop.lib/Base|null[100]
 
-// Imported signatures: 0
+// Imported signatures: 14
+kotlin/Deprecated|null[0]
+kotlin/DeprecationLevel.ERROR|null[0]
+kotlin/Int|null[0]
+kotlin/ReplaceWith|null[0]
+kotlin/Unit|null[0]
+kotlinx.cinterop.internal/CCall.ConsumesReceiver|null[0]
+kotlinx.cinterop.internal/CCall.ReturnsRetained|null[0]
+kotlinx.cinterop/ExperimentalForeignApi|null[0]
+kotlinx.cinterop/ExternalObjCClass|null[0]
+kotlinx.cinterop/ObjCClassOf|null[0]
+kotlinx.cinterop/ObjCConstructor|null[0]
+kotlinx.cinterop/ObjCMethod|null[0]
+kotlinx.cinterop/ObjCObjectBaseMeta|null[0]
+kotlinx.cinterop/ObjCObjectBase|null[0]
 
 Module: main
 // Declared signatures: 5

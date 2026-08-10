@@ -1,0 +1,50 @@
+Unary.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final annotation class Unary public constructor(
+      public final val i: kotlin.Int,
+
+      public final val l: kotlin.Long,
+
+      public final val d: kotlin.Double,
+
+      public final val f: kotlin.Float,
+
+      public final val b: kotlin.Boolean,
+
+      public final val ia: kotlin.IntArray,
+  ) : kotlin.Annotation {
+  }
+
+WithMinus.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Unary(i = -1, l = -1L, d = -1.0, f = -1.0F, b = false, ia = [-1, -2])
+  public final class WithMinus public constructor() {
+  }
+
+WithNested.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Unary(i = 1, l = 1L, d = 1.0, f = 1.0F, b = true, ia = [1])
+  public final class WithNested public constructor() {
+  }
+
+WithParentheses.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Unary(i = 1, l = 1L, d = 1.0, f = 1.0F, b = true, ia = [1])
+  public final class WithParentheses public constructor() {
+  }
+
+WithPlus.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Unary(i = 1, l = 1L, d = 1.0, f = 1.0F, b = true, ia = [1, 2])
+  public final class WithPlus public constructor() {
+  }

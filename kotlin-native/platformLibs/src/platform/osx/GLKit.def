@@ -2,6 +2,7 @@ depends = AppKit ApplicationServices CFCGTypes CFNetwork CloudKit CoreData CoreF
 language = Objective-C
 package = platform.GLKit
 modules = GLKit
+apiNotesSwiftName = true
 
 compilerOpts = -framework GLKit
 linkerOpts = -framework GLKit

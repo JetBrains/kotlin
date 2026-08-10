@@ -4,8 +4,8 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
 /**
  * A JavaScript return statement.
@@ -53,6 +53,6 @@ public final class JsReturn extends SourceInfoAwareJsNode implements JsStatement
     @NotNull
     @Override
     public JsReturn deepCopy() {
-        return new JsReturn(AstUtil.deepCopy(expression)).withMetadataFrom(this);
+        return AbstractNodeKt.withMetadataFrom(new JsReturn(AstUtil.deepCopy(expression)), this);
     }
 }

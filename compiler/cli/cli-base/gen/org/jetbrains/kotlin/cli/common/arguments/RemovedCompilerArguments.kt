@@ -24,6 +24,21 @@ class RemovedCompilerArguments {
         }
 
     @all:Deprecated(
+        message = "This is temporary solution (see KT-63712) intended to be used only for stdlib build.",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xsuppress-api-version-greater-than-language-version-error",
+        description = "Suppress error about API version greater than language version.",
+        deprecatedVersion = "2.0.0",
+        removedVersion = "2.5.0",
+    )
+    var suppressApiVersionGreaterThanLanguageVersionError: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
         message = "Compiler flag -Xuse-k2 is no more supported. Compiler versions 2.0+ use K2 by default, unless the language version is set to 1.9 or earlier.",
         level = DeprecationLevel.ERROR,
     )
@@ -177,6 +192,21 @@ It has no effect when -language-version is 2.0 or higher.""",
         level = DeprecationLevel.ERROR,
     )
     @Argument(
+        value = "-Xsuppress-deprecated-jvm-target-warning",
+        description = "Suppress warnings about deprecated JVM target versions.",
+        deprecatedVersion = "1.7.20",
+        removedVersion = "2.5.0",
+    )
+    var suppressDeprecatedJvmTargetWarning: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
         value = "-Xuse-javac",
         description = "Use javac for Java source and class file analysis.",
         removedVersion = "2.4.0",
@@ -219,6 +249,35 @@ It has no effect when -language-version is 2.0 or higher.""",
         level = DeprecationLevel.ERROR,
     )
     @Argument(
+        value = "-Xfake-override-validator",
+        description = "Enable the IR fake override validator.",
+        removedVersion = "2.5.0",
+    )
+    var fakeOverrideValidator: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xklib-normalize-absolute-path",
+        description = "Normalize absolute paths in klibs.",
+        deprecatedVersion = "2.4.20",
+        removedVersion = "2.5.0",
+    )
+    var normalizeAbsolutePath: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
         value = "-Xtyped-arrays",
         description = "This option does nothing and is left for compatibility with the legacy backend.",
         deprecatedVersion = "2.1.0",
@@ -246,6 +305,37 @@ It has no effect when -language-version is 2.0 or higher.""",
         }
 
     @all:Deprecated(
+        message = "Use '-Xbinary=bundleId=<id>'.",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xbundle-id",
+        valueDescription = "<id>",
+        description = "Bundle ID to be set in the Info.plist file of the produced framework.",
+        deprecatedVersion = "1.7.20",
+        removedVersion = "2.5.0",
+    )
+    var bundleId: String? = null
+        set(value) {
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xdestroy-runtime-mode",
+        valueDescription = "<mode>",
+        description = "When to destroy the runtime.",
+        removedVersion = "2.5.0",
+    )
+    var destroyRuntimeMode: String? = null
+        set(value) {
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @all:Deprecated(
         message = "Light debug information is enabled by default for Darwin platforms. For other targets use '-Xadd-light-debug=enable' instead.",
         level = DeprecationLevel.ERROR,
     )
@@ -258,6 +348,22 @@ It has no effect when -language-version is 2.0 or higher.""",
     var lightDebugDeprecated: Boolean = false
         set(value) {
             field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xworker-exception-handling",
+        valueDescription = "<mode>",
+        description = "Unhandled exception processing in 'Worker.executeAfter'. Possible values: 'legacy' and 'use-hook'. The default value is 'legacy' and for '-memory-model experimental', the default value is 'use-hook'.",
+        deprecatedVersion = "2.4.20",
+        removedVersion = "2.5.0",
+    )
+    var workerExceptionHandling: String? = null
+        set(value) {
+            field = if (value.isNullOrEmpty()) null else value
         }
 
     @all:Deprecated(

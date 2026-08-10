@@ -444,13 +444,10 @@ fun optimizeGetValue(expression: IrGetValue, isEliminationForbidden: (IrVariable
     // initializer with the constant initializer.
     val variable = expression.symbol.owner
     return when (val replacement = getInlineableValueForTemporaryVal(variable, isEliminationForbidden)) {
-        is IrConst -> IrConstImpl(
-            expression.startOffset,
-            expression.endOffset,
-            replacement.type,
-            replacement.kind,
-            replacement.value
-        )
+        is IrConst -> replacement.shallowCopy().apply {
+            startOffset = expression.startOffset
+            endOffset = expression.endOffset
+        }
         is IrGetValue -> IrGetValueImpl(
             expression.startOffset,
             expression.endOffset,

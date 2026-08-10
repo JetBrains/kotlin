@@ -312,6 +312,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface UnresolvedReferenceWrongReceiver : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = UnresolvedReferenceWrongReceiver::class
         val candidate: KaSymbol
+        val operator: String?
     }
 
     interface InaccessibleOuterClassReceiver : KaFirDiagnostic<PsiElement> {
@@ -1688,10 +1689,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ValueClassCannotBeCloneable : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = ValueClassCannotBeCloneable::class
-    }
-
-    interface ValueClassCannotHaveContextReceivers : KaFirDiagnostic<KtDeclaration> {
-        override val diagnosticClass get() = ValueClassCannotHaveContextReceivers::class
     }
 
     interface NoneApplicable : KaFirDiagnostic<PsiElement> {
@@ -4911,6 +4908,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface JvmExposeBoxedCannotExposePrivate : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = JvmExposeBoxedCannotExposePrivate::class
+    }
+
+    interface JvmExposeBoxedCanBeReplacedWithJvmName : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JvmExposeBoxedCanBeReplacedWithJvmName::class
     }
 
     interface WrongTypeForJavaOverride : KaFirDiagnostic<PsiElement> {

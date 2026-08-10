@@ -23,5 +23,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unit]
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=receiver]
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=body]
+        VALUE_ARGUMENT_LIST
   FUN[fqName=example, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=example]
     VALUE_PARAMETER_LIST

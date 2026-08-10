@@ -1073,10 +1073,13 @@ private fun FirTypeParameterSymbol.allBoundsAreNullableOrUnresolved(session: Fir
     return true
 }
 
-fun FirIntersectionTypeRef.isLeftValidForDefinitelyNotNullable(session: FirSession): Boolean =
-    leftType.coneType.let { it is ConeTypeParameterType && it.canBeNull(session) && !it.isMarkedNullable }
+context(sessionHolder: SessionHolder)
+val FirIntersectionTypeRef.isLeftValidForDefinitelyNotNullable: Boolean
+    get() = leftType.coneType.let { it is ConeTypeParameterType && it.canBeNull() && !it.isMarkedNullable }
 
-val FirIntersectionTypeRef.isRightValidForDefinitelyNotNullable: Boolean get() = rightType.coneType.isAny
+context(sessionHolder: SessionHolder)
+val FirIntersectionTypeRef.isRightValidForDefinitelyNotNullable: Boolean
+    get() = rightType.coneType.fullyExpandedType().isAny
 
 fun ConeKotlinType.isKCallableType(): Boolean {
     return this.classId == StandardClassIds.KCallable

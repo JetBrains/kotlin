@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.spdx.sbom.gradle.SpdxSbomExtension
 
-val resolveDependenciesInAllProjects by tasks.registering {
+val resolveDependenciesInAllProjects = tasks.register("resolveDependenciesInAllProjects") {
     description = "Resolves dependencies in all projects (for dependency verification or populating caches)."
     notCompatibleWithConfigurationCache("Uses project during task execution")
     doNotTrackState("The task must always re-run to ensure that all dependencies are downloaded.")
@@ -43,7 +43,7 @@ val resolveDependenciesInAllProjects by tasks.registering {
     }
 }
 
-val resolveJsTools by tasks.registering {
+val resolveJsTools = tasks.register("resolveJsTools") {
     description = "Resolves JavaScript tools (for dependency verification or populating caches)."
     notCompatibleWithConfigurationCache("Uses project during task execution")
     doNotTrackState("The task must always re-run to ensure that all dependencies are downloaded.")

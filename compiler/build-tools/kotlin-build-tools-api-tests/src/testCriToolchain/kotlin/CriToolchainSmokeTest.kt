@@ -6,9 +6,11 @@
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.cri
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.initializeBtaClassloader
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import java.net.URLClassLoader
 
 // TODO (KT-81581): add more tests with real data to deserialize
 class CriToolchainSmokeTest {
@@ -40,5 +42,36 @@ class CriToolchainSmokeTest {
         val operation = toolchain.cri.createCriSubtypeDataDeserializationOperation(subtypeData)
         val subtypes = toolchain.createBuildSession().use { it.executeOperation(operation) }
         assertTrue(subtypes.toList().isEmpty())
+    }
+
+    @Test
+    @DisplayName("CRI operations do not load compiler application environment classes")
+    fun criOperationsDoNotLoadCompilerApplicationEnvironmentClasses() {
+        initializeBtaClassloader().use { unrestrictedClassloader ->
+            val restrictedClassloader = object : URLClassLoader(unrestrictedClassloader.urLs, unrestrictedClassloader.parent) {
+                override fun loadClass(name: String, resolve: Boolean): Class<*> {
+                    check(name !in applicationEnvironmentClasses) {
+                        "CRI operation attempted to load compiler application environment class $name"
+                    }
+                    return super.loadClass(name, resolve)
+                }
+            }
+            restrictedClassloader.use {
+                val toolchain = KotlinToolchains.loadImplementation(restrictedClassloader)
+                val operation = toolchain.cri.createCriLookupDataDeserializationOperation(ByteArray(1))
+                val lookups = toolchain.createBuildSession().use { it.executeOperation(operation) }
+                assertTrue(lookups.toList().isEmpty())
+            }
+        }
+    }
+
+    private companion object {
+        val applicationEnvironmentClasses = setOf(
+            "com.intellij.core.CoreApplicationEnvironment",
+            "com.intellij.openapi.Disposable",
+            "com.intellij.openapi.util.Disposer",
+            "org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment",
+            "org.jetbrains.kotlin.config.CompilerConfiguration",
+        )
     }
 }

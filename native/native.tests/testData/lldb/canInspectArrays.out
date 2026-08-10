@@ -1,0 +1,24 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) settings set stop-disassembly-display never
+(lldb) command script import <path to lldb script>
+(lldb) b main.kt:15
+Breakpoint 1: where = lldb_canInspectArrays.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + <breakpoint offset> at main.kt:15:11, address = <memory address>
+(lldb) r
+Process <process id> launched: <path to executable>
+Process <process id> stopped
+* thread #<thread id>, stop reason = breakpoint 1.1
+    frame #0: <frame pc> lldb_canInspectArrays.kexe`kfun:#main(args=[]){} at main.kt:15:11
+   12  	    xs[2] = 3
+   13  	    val ys: Array<Any?> = arrayOfNulls(2)
+   14  	    ys[0] = Point(1, 2)
+-> 15  	    return
+    	          ^
+   16  	}
+   17
+   18  	data class Point(val x: Int, val y: Int)
+(lldb) fr var
+(ObjHeader *) args = []
+(ObjHeader *) xs = [1, 2, 3]
+(ObjHeader *) ys = [Point(x=1, y=2), null]
+(lldb) q

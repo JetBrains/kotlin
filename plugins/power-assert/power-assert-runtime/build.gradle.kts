@@ -17,7 +17,7 @@ plugins {
 
 description = "Kotlin Power-Assert Runtime"
 
-val emptyJavadocJar by tasks.registering(Jar::class) {
+val emptyJavadocJar = tasks.register("emptyJavadocJar", Jar::class) {
     archiveClassifier = "javadoc"
 }
 
@@ -92,16 +92,15 @@ kotlin {
         linuxX64()
         linuxArm64()
         watchosSimulatorArm64()
-        watchosArm32()
         watchosArm64()
         tvosSimulatorArm64()
         tvosArm64()
 
         // Tier 3
-        androidNativeArm32()
-        androidNativeArm64()
-        androidNativeX86()
-        androidNativeX64()
+        @Suppress("DEPRECATION") androidNativeArm32()
+        @Suppress("DEPRECATION") androidNativeArm64()
+        @Suppress("DEPRECATION") androidNativeX86()
+        @Suppress("DEPRECATION") androidNativeX64()
         mingwX64()
         watchosDeviceArm64()
         @Suppress("DEPRECATION") macosX64()
@@ -118,9 +117,13 @@ kotlin {
             api(kotlinTest())
         }
         jvmTest.dependencies {
-            implementation(kotlinTest("junit"))
+            implementation(kotlinTest("junit5"))
         }
     }
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }
 
 configureDefaultPublishing()

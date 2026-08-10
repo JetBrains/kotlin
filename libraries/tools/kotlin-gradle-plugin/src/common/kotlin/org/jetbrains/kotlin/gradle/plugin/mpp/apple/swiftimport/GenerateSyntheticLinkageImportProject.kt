@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
@@ -44,10 +43,8 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         project.layout.buildDirectory.dir("kotlin/swiftImport")
     )
 
-    @get:InputFile
-    @get:Optional
-    @get:PathSensitive(PathSensitivity.NONE)
-    abstract val syntheticPackageFingerprint: RegularFileProperty
+    @get:Nested
+    abstract val syntheticPackageFingerprint: SwiftImportFingerprintInput
 
     @get:Internal
     abstract val coordinationService: Property<SwiftImportFingerprintedCoordinationService>
@@ -104,6 +101,16 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
     @get:Inject
     abstract val fs: FileSystemOperations
 
+    init {
+        // The shared package cannot be declared as an output by every coordinated task. Its local output may still be
+        // up-to-date after the root build directory is deleted, so explicitly invalidate the task when the shared marker disappears.
+        outputs.upToDateWhen {
+            syntheticPackageFingerprint.readFingerprintOrNull()?.incrementalFingerprint?.let { fingerprint ->
+                coordinationService.get().sharedPackageGenerationOutputsExist(fingerprint)
+            } ?: true
+        }
+    }
+
     fun configureWithExtension(swiftPMImportExtension: SwiftPMImportExtension) {
         iosDeploymentVersion.set(swiftPMImportExtension.iosMinimumDeploymentTarget)
         macosDeploymentVersion.set(swiftPMImportExtension.macosMinimumDeploymentTarget)
@@ -129,31 +136,32 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
             )
         }
 
-        if (!syntheticPackageFingerprint.isPresent) {
+        if (!syntheticPackageFingerprint.fingerprintFile.isPresent) {
             runPackageGeneration(
                 syntheticImportProjectRoot.get().asFile
             )
             return
-        } else {
-            val claim = coordinationService.get().claimOrJoinPackageGeneration(
-                packageHash = syntheticPackageFingerprint.get().asFile.readText().trim().split("\n")[1]
-            )
-
-            when (claim) {
-                is CoordinationClaim.Existing -> {
-                    coordinationService.get().awaitPackageGeneration(claim.bucket)
-                }
-
-                is CoordinationClaim.Owner -> runOwnerPackageGeneration(
-                    claim.bucket
-                )
-            }
-            syncFromOwner(
-                claim.bucket.ownerSyntheticPackageRoot,
-                syntheticImportProjectRoot.get().asFile,
-            )
-
         }
+
+        val claim = coordinationService.get().claimOrJoinPackageGeneration(
+            packageHash = syntheticPackageFingerprint.readFingerprint().incrementalFingerprint
+        )
+
+        when (claim) {
+            is CoordinationClaim.Existing -> {
+                coordinationService.get().awaitPackageGeneration(claim.bucket)
+            }
+
+            is CoordinationClaim.Owner -> runOwnerPackageGeneration(
+                claim.bucket
+            )
+        }
+        syncFromOwner(
+            claim.bucket.ownerSyntheticPackageRoot,
+            syntheticImportProjectRoot.get().asFile,
+        )
+
+
     }
 
     private fun syncFromOwner(
@@ -234,6 +242,10 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                 }
             }
             transitiveSwiftPMMetadata.get().metadataByDependencyIdentifier.forEach { (dependencyIdentifier, swiftPMDependencies) ->
+                // Implicit platform constraint from the dependency's konanTargets; null means unconstrained.
+                val implicitConstraints: Set<SwiftPMDependency.Platform>? =
+                    swiftPMDependencies.konanTargets.toSwiftPMPlatforms().takeIf { it.isNotEmpty() }
+
                 generatePackageManifest(
                     identifier = dependencyIdentifier.identifier,
                     packageRoot = packageRoot.resolve("${SUBPACKAGES}/${dependencyIdentifier.identifier}"),
@@ -247,6 +259,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                     transitiveSyntheticPackages = setOf(),
                     transitiveSyntheticPackagesPath = "..",
                     binaryTarget = null,
+                    implicitPlatformConstraints = implicitConstraints,
                 )
             }
         }
@@ -290,6 +303,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         transitiveSyntheticPackages: Set<SwiftPMDependencyIdentifier>,
         transitiveSyntheticPackagesPath: String,
         binaryTarget: BinaryTarget?,
+        implicitPlatformConstraints: Set<SwiftPMDependency.Platform>? = null,
     ) {
         val repoDependencies = (directlyImportedSwiftPMDependencies.map { importedPackage ->
             buildString {
@@ -325,6 +339,9 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         } + transitiveSyntheticPackages.map {
             ".package(path: \"${transitiveSyntheticPackagesPath}/${it.identifier}\")"
         })
+        // Skip the condition when it would cover all umbrella platforms anyway.
+        val umbrellaPlatforms: Set<SwiftPMDependency.Platform> = konanTargets.get().toSwiftPMPlatforms()
+
         val targetDependencies = (directlyImportedSwiftPMDependencies.flatMap { dependency ->
             dependency.products.map { product -> product to dependency.packageName }
         }.map { dependency ->
@@ -333,9 +350,13 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                 val dependencyArguments = mutableListOf<String>()
                 dependencyArguments += "  name: \"${dependency.first.name}\""
                 dependencyArguments += "  package: \"${dependency.second}\""
-                val platformConstraints = dependency.first.platformConstraints
-                if (platformConstraints != null) {
-                    val platformsString = platformConstraints.joinToString(", ") { platform -> ".${platform.swiftEnumName}" }
+                val conditionPlatforms = conditionPlatforms(
+                    explicitPlatformConstraints = dependency.first.platformConstraints,
+                    implicitPlatformConstraints = implicitPlatformConstraints,
+                    umbrellaPlatforms = umbrellaPlatforms,
+                )
+                if (conditionPlatforms != null) {
+                    val platformsString = conditionPlatforms.joinToString(", ") { platform -> ".${platform.swiftEnumName}" }
                     dependencyArguments += "  condition: .when(platforms: [${platformsString}])"
                 }
                 appendLine(dependencyArguments.joinToString(",\n"))
@@ -467,6 +488,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
             DYNAMIC,
             INFERRED,
         }
+
         const val TASK_NAME = "generateSyntheticLinkageSwiftPMImportProject"
         const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME = "KotlinMultiplatformLinkedPackage"
         const val SYNTHETIC_IMPORT_DYLIB = "KotlinMultiplatformLinkedPackageDylib"
@@ -490,4 +512,26 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         const val WATCHOS_DEPLOYMENT_TARGET_DEFAULT = "9.0"
         const val TVOS_DEPLOYMENT_TARGET_DEFAULT = "15.0"
     }
+}
+
+/**
+ * Platforms to restrict a `.product(...)` entry to via `condition: .when(platforms: ...)`, or null to skip the condition.
+ *
+ * [explicitPlatformConstraints] is whatever the product itself declares; when set it wins. Otherwise we fall back to
+ * [implicitPlatformConstraints], derived from the dependency's `konanTargets`. An empty set counts as unset (an empty
+ * `condition` would be meaningless). No condition is needed when the result already matches [umbrellaPlatforms].
+ */
+internal fun conditionPlatforms(
+    explicitPlatformConstraints: Set<SwiftPMDependency.Platform>?,
+    implicitPlatformConstraints: Set<SwiftPMDependency.Platform>?,
+    umbrellaPlatforms: Set<SwiftPMDependency.Platform>,
+): Set<SwiftPMDependency.Platform>? {
+    val explicit = explicitPlatformConstraints?.takeIf { it.isNotEmpty() }
+    val implicit = implicitPlatformConstraints?.takeIf { it.isNotEmpty() }
+    val effectiveConstraint = when {
+        explicit != null -> explicit
+        implicit != null -> implicit
+        else -> null
+    }
+    return effectiveConstraint?.takeIf { !it.containsAll(umbrellaPlatforms) }
 }

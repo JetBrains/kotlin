@@ -47,6 +47,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("complexAnnotationClass.kt")
+  public void testComplexAnnotationClass() {
+    run("complexAnnotationClass.kt");
+  }
+
+  @Test
   @TestMetadata("composeAnnotation.kt")
   public void testComposeAnnotation() {
     run("composeAnnotation.kt");
@@ -1211,6 +1217,44 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
     @TestMetadata("publishedApiPropertySetter.kt")
     public void testPublishedApiPropertySetter() {
       run("publishedApiPropertySetter.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/strictEquals")
+  @TestDataPath("$PROJECT_ROOT")
+  public class StrictEquals {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/strictEquals/" + fileName);
+    }
+
+    @Test
+    @TestMetadata("aliasedEqualityBound.kt")
+    public void testAliasedEqualityBound() {
+      run("aliasedEqualityBound.kt");
+    }
+
+    @Test
+    public void testAllFilesPresentInStrictEquals() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirBinary/strictEquals"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("explicitEqualityBound.kt")
+    public void testExplicitEqualityBound() {
+      run("explicitEqualityBound.kt");
+    }
+
+    @Test
+    @TestMetadata("generatedEqualityBound.kt")
+    public void testGeneratedEqualityBound() {
+      run("generatedEqualityBound.kt");
+    }
+
+    @Test
+    @TestMetadata("inheritedEqualityBound.kt")
+    public void testInheritedEqualityBound() {
+      run("inheritedEqualityBound.kt");
     }
   }
 }

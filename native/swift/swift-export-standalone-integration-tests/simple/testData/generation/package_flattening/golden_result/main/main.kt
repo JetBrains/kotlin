@@ -26,6 +26,13 @@ public fun org_kotlin_foo_constant_get(): Int {
     return _result
 }
 
+@ExportedBridge("org_kotlin_foo_fun_with_keywoards__TypesOfArguments__Swift_Int32__")
+public fun org_kotlin_foo_fun_with_keywoards__TypesOfArguments__Swift_Int32__(repeat: Int): Int {
+    val __repeat = repeat
+    val _result = run { org.kotlin.foo.fun_with_keywoards(__repeat) }
+    return _result
+}
+
 @ExportedBridge("org_kotlin_foo_function__TypesOfArguments__Swift_Int32__")
 public fun org_kotlin_foo_function__TypesOfArguments__Swift_Int32__(arg: Int): Int {
     val __arg = arg

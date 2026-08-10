@@ -31,10 +31,10 @@ kotlin {
     sourceSets {
         commonTest.dependencies {
             implementation(project(":kotlin-stdlib-common"))
-            implementation(kotlinTest("junit"))
+            implementation(kotlinTest("junit5"))
         }
 
-        val jvmTest by getting {
+        val jvmTest = getByName("jvmTest") {
             dependsOn(commonTest.get())
 
             dependencies {
@@ -51,6 +51,7 @@ kotlin {
 
                 // external deps
                 implementation(composeRuntime()) { isTransitive = false }
+                implementation(composeRuntimeDesktop()) { isTransitive = false }
                 implementation(project(":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils"))
                 implementation(libs.androidx.collections)
             }

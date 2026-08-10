@@ -23,11 +23,8 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
-import org.junit.Assert.assertEquals
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.io.TempDir
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -80,11 +77,9 @@ fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
         if (result.endsWith("\n")) result else result + "\n"
     }
 
-@RunWith(JUnit4::class)
 abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest() {
-    @JvmField
-    @Rule
-    val sourceDirectory = TemporaryFolder()
+    @field:TempDir
+    lateinit var sourceDirectory: File
 
     protected fun multiplatform(
         @Language("kotlin")
@@ -104,14 +99,14 @@ abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest() {
 
         val jvmOnlyArgs = arrayOf("-no-stdlib")
 
-        val srcDir = sourceDirectory.newFolder("srcs").absolutePath
+        val srcDir = sourceDirectory.resolve("srcs").apply { mkdir() }.absolutePath
         val commonSrc = File(srcDir, "common.kt")
         val jvmSrc = File(srcDir, "jvm.kt")
 
         FileUtil.writeToFile(commonSrc, common)
         FileUtil.writeToFile(jvmSrc, jvm)
 
-        val jvmDest = sourceDirectory.newFolder("jvm").absolutePath
+        val jvmDest = sourceDirectory.resolve("jvm").apply { mkdir() }.absolutePath
 
         val result = K2JVMCompiler().compile(
             jvmSrc,

@@ -20,13 +20,9 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
-class IfStatementReduction(private val root: JsStatement) {
-    private var hasChanges = false
-
-    fun apply(): Boolean {
+internal class IfStatementReduction(private val root: JsStatement) : FunctionPostProcessorStep() {
+    override fun apply() {
         visitor.accept(root)
-
-        return hasChanges
     }
 
     val visitor = object : JsVisitorWithContextImpl() {

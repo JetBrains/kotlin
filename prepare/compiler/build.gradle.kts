@@ -19,63 +19,63 @@ plugins {
 }
 
 
-val fatJarContents by configurations.creating {
+val fatJarContents = configurations.create("fatJarContents") {
     isCanBeResolved = true
     isCanBeConsumed = false
     attributes {
         attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
     }
 }
-val fatJarContentsStripMetadata by configurations.creating
-val fatJarContentsStripServices by configurations.creating
-val fatJarContentsStripVersions by configurations.creating
+val fatJarContentsStripMetadata = configurations.create("fatJarContentsStripMetadata")
+val fatJarContentsStripServices = configurations.create("fatJarContentsStripServices")
+val fatJarContentsStripVersions = configurations.create("fatJarContentsStripVersions")
 
-val compilerVersion by configurations.creating
+val compilerVersion = configurations.create("compilerVersion")
 
-val builtinsMetadata by configurations.creating
+val builtinsMetadata = configurations.create("builtinsMetadata")
 
-val api by configurations
-val proguardLibraries by configurations.creating {
+val api = configurations.api.get()
+val proguardLibraries = configurations.create("proguardLibraries") {
     extendsFrom(api)
 }
 
 // Libraries to copy to the lib directory
-val libraries by configurations.creating {
+val libraries = configurations.create("libraries") {
     exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
 }
 
-val librariesStripVersion by configurations.creating
+val librariesStripVersion = configurations.create("librariesStripVersion")
 
 // for sbom only
-val librariesKotlinTest by configurations.creating
+val librariesKotlinTest = configurations.create("librariesKotlinTest")
 
 // Compiler plugins should be copied without `kotlin-` prefix
-val compilerPlugins by configurations.creating {
+val compilerPlugins = configurations.create("compilerPlugins") {
     exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
 
     isCanBeConsumed = false
     isCanBeResolved = true
 }
-val compilerPluginsCompat by configurations.creating {
+val compilerPluginsCompat = configurations.create("compilerPluginsCompat") {
     exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
 
     isCanBeConsumed = false
     isCanBeResolved = true
 }
 
-val sources by configurations.creating {
+val sources = configurations.create("sources") {
     exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
     isTransitive = false
 }
 
 // contents of dist/maven directory
-val distMavenContents by configurations.creating {
+val distMavenContents = configurations.create("distMavenContents") {
     isTransitive = false
 }
 // contents of dist/common directory
-val distCommonContents by configurations.creating
-val distStdlibMinimalForTests by configurations.creating
-val buildNumber by configurations.creating
+val distCommonContents = configurations.create("distCommonContents")
+val distStdlibMinimalForTests = configurations.create("distStdlibMinimalForTests")
+val buildNumber = configurations.create("buildNumber")
 
 val compilerBaseName = name
 
@@ -197,7 +197,7 @@ dependencies {
     buildNumber(project(":prepare:build.version", configuration = "buildVersion"))
 
     fatJarContents(commonDependency("javax.inject"))
-    fatJarContents(commonDependency("org.jline", "jline"))
+    fatJarContents(variantOf(libs.jline) { classifier("jdk8") })
     fatJarContents(commonDependency("org.fusesource.jansi", "jansi"))
     fatJarContents(protobufFull())
     fatJarContents(commonDependency("com.google.code.findbugs", "jsr305"))
@@ -354,7 +354,7 @@ val proguard = tasks.register<CacheableProguardTask>("proguard") {
 }
 
 val pack: TaskProvider<out DefaultTask> = if (kotlinBuildProperties.proguard) proguard else packCompiler
-val distDir: String by rootProject.extra
+val distDir = rootProject.extra["distDir"] as String
 
 val jar = runtimeJar {
     dependsOn(pack)

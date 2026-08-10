@@ -1,3 +1,46 @@
+class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var <T : Any?> C<T>.z: T
+    get(): T {
+      return <this>.<get-x>()
+    }
+    set(v: T) {
+      <this>.<set-x>(<set-?> = v)
+    }
+
+}
+
+class B {
+  class N {
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    var <T : Any?> C<T>.z: T
+      get(): T {
+        return <this>.<get-x>()
+      }
+      set(v: T) {
+        <this>.<set-x>(<set-?> = v)
+      }
+
+  }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
 class C<T : Any?> {
   var x: T
     field = x
@@ -12,17 +55,47 @@ class C<T : Any?> {
 
 }
 
+class Pair<X : Any?, Y : Any?> {
+  var x: X
+    field = x
+    get
+    set
+
+  var y: Y
+    field = y
+    get
+    set
+
+  constructor(x: X, y: Y) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
 fun test1() {
   use(p = ::y/*<String>(<this> = C<String>(x = "abc")) */)
+  use(p = ::first/*<String, String>(<this> = Pair<String, String>(x = "abc", y = "def")) */)
 }
 
 fun test2(a: Any) {
   a as C<String> /*~> Unit */
   use(p = ::y/*<String>(<this> = a /*as C<String> */) */)
+  a /*as C<String> */ as Pair<String, String> /*~> Unit */
+  use(p = ::first/*<String, String>(<this> = a /*as Pair<String, String> */) */)
 }
 
 fun use(p: KMutableProperty<String>) {
 }
+
+var <X : Any?, Y : Any?> Pair<X, Y>.first: X
+  get(): X {
+    return <this>.<get-x>()
+  }
+  set(v: X) {
+    <this>.<set-x>(<set-?> = v)
+  }
 
 var <T : Any?> C<T>.y: T
   get(): T {

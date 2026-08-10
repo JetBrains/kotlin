@@ -92,6 +92,7 @@ FILE[kind=Facade[packageFqName=one two.three four, facadeFqName=one two.three fo
                       REFERENCE_EXPRESSION[referencedName=Type Parameter]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          NULL[kind=NULL, value=null]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -154,3 +155,23 @@ FILE[kind=Facade[packageFqName=one two.three four, facadeFqName=one two.three fo
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Annotation Class]
+  CLASS[classId=one two/three four/Annotation Class With Arguments, fqName=one two.three four.Annotation Class With Arguments, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotation Class With Arguments, superNames=[]]
+    MODIFIER_LIST[annotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Annotation Class With Arguments]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=one two.three four.Annotation Class With Arguments.parameter name, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=parameter name]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Enum Class]
+  CLASS[classId=one two/three four/Annotated Class, fqName=one two.three four.Annotated Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotated Class, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation Class With Arguments]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Annotation Class With Arguments]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=Enum Class]
+              REFERENCE_EXPRESSION[referencedName=Enum Entry]

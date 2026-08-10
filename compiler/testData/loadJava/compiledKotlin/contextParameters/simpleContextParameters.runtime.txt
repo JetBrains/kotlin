@@ -1,0 +1,25 @@
+package test
+
+context(test.B) public val p: kotlin.Int
+    context(test.B) public fun `<get-p>`(): kotlin.Int
+context(test.B) public val pUnnamed: kotlin.Int
+    context(test.B) public fun `<get-pUnnamed>`(): kotlin.Int
+context(test.A) public fun f(): kotlin.Unit
+context(test.A) public fun fUnnamed(): kotlin.Unit
+
+public interface A {
+}
+
+public final annotation class Ann : kotlin.Annotation {
+    /*primary*/ public constructor Ann()
+}
+
+public interface B {
+}
+
+public final class C {
+    /*primary*/ public constructor C()
+    context(test.B) public final val p: kotlin.Int
+        context(test.B) public final fun `<get-p>`(): kotlin.Int
+    context(test.B) public final fun f(): kotlin.Unit
+}

@@ -15,7 +15,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.autoCacheableFrom = from.autoCacheableFrom.copyOf()
     to.backendThreads = from.backendThreads
     to.binaryOptions = from.binaryOptions.copyOf()
-    to.bundleId = from.bundleId
     to.cacheDirectories = from.cacheDirectories.copyOf()
     to.cachedLibraries = from.cachedLibraries.copyOf()
     to.checkDependencies = from.checkDependencies
@@ -25,14 +24,12 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.debug = from.debug
     to.debugInfoFormatVersion = from.debugInfoFormatVersion
     to.debugPrefixMap = from.debugPrefixMap.copyOf()
-    to.destroyRuntimeMode = from.destroyRuntimeMode
     to.dumpBuiltCachesTo = from.dumpBuiltCachesTo
     to.emitLazyObjCHeader = from.emitLazyObjCHeader
     to.enableAssertions = from.enableAssertions
     to.exportKDoc = from.exportKDoc
     to.exportedLibraries = from.exportedLibraries.copyOf()
     to.externalDependencies = from.externalDependencies
-    to.fakeOverrideValidator = from.fakeOverrideValidator
     to.filesToCache = from.filesToCache.copyOf()
     to.frameworkImportHeaders = from.frameworkImportHeaders.copyOf()
     to.friendModules = from.friendModules
@@ -40,6 +37,7 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.generateDebugTrampolineString = from.generateDebugTrampolineString
     to.generateNoExitTestRunner = from.generateNoExitTestRunner
     to.generateTestRunner = from.generateTestRunner
+    @Suppress("DEPRECATION")
     to.generateWorkerTestRunner = from.generateWorkerTestRunner
     to.headerKlibPath = from.headerKlibPath
     to.includeBinaries = from.includeBinaries.copyOf()
@@ -92,8 +90,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.testDumpOutputPath = from.testDumpOutputPath
     to.verifyBitCode = from.verifyBitCode
     to.verifyCompiler = from.verifyCompiler
-    @Suppress("DEPRECATION")
-    to.workerExceptionHandling = from.workerExceptionHandling
     to.writeDependenciesOfProducedKlibTo = from.writeDependenciesOfProducedKlibTo
 
     return to

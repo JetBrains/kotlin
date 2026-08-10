@@ -54,6 +54,7 @@ sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirControlFlowG
     @DirectDeclarationsAccess
     abstract val declarations: List<FirDeclaration>
     abstract override val annotations: List<FirAnnotation>
+    abstract val staticControlFlowGraphReference: FirControlFlowGraphReference?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)
@@ -73,6 +74,8 @@ sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirControlFlowG
     abstract fun replaceDeclarations(newDeclarations: List<FirDeclaration>)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract fun replaceStaticControlFlowGraphReference(newStaticControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirClass
 

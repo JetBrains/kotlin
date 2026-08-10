@@ -7,6 +7,7 @@ KtPackageDirective(27,39): 'package main'
 KtNameReferenceExpression(35,39): 'main'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       main
@@ -48,6 +49,7 @@ KtUserType(54,58): 'test'
 KtNameReferenceExpression(54,58): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test
@@ -56,6 +58,7 @@ KtNameReferenceExpression(54,58): 'test'
 KtNameReferenceExpression(59,62): 'Top'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Top
@@ -64,6 +67,7 @@ KtNameReferenceExpression(59,62): 'Top'
 KtNameReferenceExpression(63,66): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Top.Foo
@@ -93,6 +97,7 @@ KtDotQualifiedExpression(289,297): 'test.Top'
 KtNameReferenceExpression(289,293): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test
@@ -101,6 +106,7 @@ KtNameReferenceExpression(289,293): 'test'
 KtNameReferenceExpression(294,297): 'Top'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Top
@@ -109,6 +115,7 @@ KtNameReferenceExpression(294,297): 'Top'
 KtNameReferenceExpression(298,301): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Top.Foo
@@ -117,6 +124,7 @@ KtNameReferenceExpression(298,301): 'Foo'
 KtNameReferenceExpression(302,305): 'BAR'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: QualifierCanBeRemoved
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Top.Foo.BAR

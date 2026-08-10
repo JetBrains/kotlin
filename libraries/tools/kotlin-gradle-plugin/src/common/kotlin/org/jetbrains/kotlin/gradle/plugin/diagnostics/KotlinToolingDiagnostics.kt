@@ -306,7 +306,7 @@ internal object KotlinToolingDiagnostics {
             debuggable: Boolean,
             optimized: Boolean,
             contextDescription: String,
-            contextSolution: String
+            contextSolution: String,
         ): ToolingDiagnostic = build {
             title("Incompatible Binary Configuration")
                 .description {
@@ -450,6 +450,35 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object UnsupportedKotlinArchiveUsage : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(
+            libraries: Collection<File>,
+            resolvedByMavenCoordinates: String? = null,
+        ) = build(
+            /* Reporting the diagnostic only once per build requires a good 'id' including the params as input */
+            idSuffix = run {
+                var idHash = resolvedByMavenCoordinates.hashCode()
+                libraries.forEach { path ->
+                    idHash = 31 * idHash + path.path.hashCode()
+                }
+                idHash.toString()
+            }) {
+            title("Unsupported Kotlin Archive (.kar) used")
+                .description(buildString {
+                    appendLine("${libraries.size} use(s) the '.kar' format, which is not supported by this version of Kotlin.")
+                    if (resolvedByMavenCoordinates != null) {
+                        appendLine("Resolved by: '$resolvedByMavenCoordinates'")
+                    }
+
+                    libraries.forEach { library ->
+                        appendLine("  - ${library.path}")
+                    }
+                })
+                .solution("Upgrade Kotlin or downgrade the associated dependency")
+                .documentationLink(URI("https://kotl.in/kar"))
+        }
+    }
+
     object NewNativeVersionDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(nativeVersion: KotlinToolingVersion?, kotlinVersion: KotlinToolingVersion) = build {
             title("Kotlin/Native and Kotlin Versions Incompatible")
@@ -469,7 +498,7 @@ internal object KotlinToolingDiagnostics {
             binaryName: String,
             targetName: String,
             reason: String,
-            issueUrl: URI?
+            issueUrl: URI?,
         ) = build {
             title("Kotlin/Native cache is disabled for $buildType binary '${binaryName}'")
                 .description {
@@ -492,7 +521,7 @@ internal object KotlinToolingDiagnostics {
             buildType: String,
             binaryName: String,
             targetName: String,
-            hostName: String
+            hostName: String,
         ) = build {
             title("Kotlin/Native cache disable configuration is redundant for $buildType binary '$binaryName'")
                 .description {
@@ -1928,7 +1957,7 @@ internal object KotlinToolingDiagnostics {
             title("Local SwiftPM Package Directory Not Found")
                 .description {
                     "Local SwiftPM package directory does not exist: $resolvedPath\n" +
-                    "Path was resolved from: layout.projectDirectory.dir(\"$originalPath\")"
+                            "Path was resolved from: layout.projectDirectory.dir(\"$originalPath\")"
                 }
                 .solutions {
                     listOf(
@@ -1995,10 +2024,10 @@ internal object KotlinToolingDiagnostics {
         operator fun invoke(): ToolingDiagnostic = build {
             title("ABI Validation: no Maven publishing plugin")
                 .description {
-                    "Source of binaries is set to Maven publications, but maven publishing plugin is not applied."
+                    "The binaries source is set to Maven publications, but the Maven publishing plugin is not applied."
                 }
                 .solution {
-                    "Apply `maven-publish` plugin and create Maven publication, or specify `kotlin.abiValidation { binariesSource = MAIN_COMPILATION }` to use output of the main compilation tasks"
+                    "Apply the `maven-publish` plugin and create a Maven publication, or specify `kotlin.abiValidation { binariesSource = MAIN_COMPILATION }` to use the output of the main compilation tasks."
                 }
         }
     }
@@ -2007,10 +2036,10 @@ internal object KotlinToolingDiagnostics {
         operator fun invoke(): ToolingDiagnostic = build {
             title("ABI Validation: Android target unsupported with Maven binary sources mode")
                 .description {
-                    "Android targets are not supported by ABI validation when Maven binary sources mode is enabled"
+                    "Android targets are not supported by ABI validation when the Maven binary sources mode is enabled"
                 }
                 .solution {
-                    "Specify `kotlin.abiValidation { binariesSource = MAIN_COMPILATION }` to use output of the main compilation tasks"
+                    "Specify `kotlin.abiValidation { binariesSource = MAIN_COMPILATION }` to use the output of the main compilation tasks."
                 }
         }
     }
@@ -2158,7 +2187,7 @@ internal object KotlinToolingDiagnostics {
 
     internal object DeprecatedKotlinAndroidPlugin : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke(
-            projectPath: String
+            projectPath: String,
         ) = build {
             title("Deprecated 'org.jetbrains.kotlin.android' plugin usage")
                 .description("The 'org.jetbrains.kotlin.android' plugin in project '$projectPath' is no longer required for Kotlin support since AGP 9.0.")
@@ -2282,7 +2311,7 @@ internal object KotlinToolingDiagnostics {
         DiagnosticGroup.Kgp.Deprecation
     ) {
         operator fun invoke(trace: Throwable? = null) = build(throwable = trace) {
-            title {"sourceSets collection in Kotlin Android is deprecated" }
+            title { "sourceSets collection in Kotlin Android is deprecated" }
                 .description {
                     """
                         Kotlin Source Sets collection in Android extension should not be used and is deprecated now.
@@ -2378,6 +2407,21 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object NonExistentCustomBrowserExecutable : ToolingDiagnosticFactory(
+        predefinedSeverity = ERROR,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(runnerName: String, executable: File) = build {
+            title { "Non-existent custom browser executable" }
+                .description {
+                    "Custom browser executable for runner '$runnerName' does not exist at path: $executable"
+                }
+                .solution {
+                    "Specify a path to an existing browser executable for runner '$runnerName'"
+                }
+        }
+    }
+
     internal object NewJsTestDslNotSupportedForWasmError : ToolingDiagnosticFactory(
         predefinedSeverity = ERROR,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
@@ -2415,6 +2459,31 @@ internal object KotlinToolingDiagnostics {
                 }
                 .solution {
                     "Please use one of the valid values: ${validValues.joinToString(", ")}."
+                }
+        }
+    }
+
+    internal object PluginLoadedInMultipleProjectsError : ToolingDiagnosticFactory(
+        ERROR,
+        DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(loadedInProjects: List<String>) = build {
+            title {
+                "The Kotlin Gradle plugin was loaded multiple times in different subprojects, " +
+                        "which is not supported and may break the build."
+            }
+                .description {
+                    "The Kotlin plugin was loaded in the following projects: " +
+                            loadedInProjects.joinToString(limit = 4, postfix = ".\n") { "'$it'" } +
+                            "This might happen in subprojects that apply the Kotlin plugins with the Gradle " +
+                            "'plugins { ... }' DSL if they specify explicit versions, even if the versions are equal."
+                }
+                .solution {
+                    "Please add the Kotlin plugin to the common parent project or the root project, then remove " +
+                            "the versions in the subprojects. If the parent project does not need the plugin, add " +
+                            "'apply false' to the plugin line. As a last resort, set the " +
+                            "kotlin.pluginLoadedInMultipleProjects.ignore=true property to suppress the error. " +
+                            "See: https://docs.gradle.org/current/userguide/plugins.html#sec:subprojects_plugins_dsl"
                 }
         }
     }

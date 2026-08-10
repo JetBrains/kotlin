@@ -6,3 +6,4 @@ FILE[kind=File[packageFqName=<root>]]
     CLASS_BODY
       FUN[fqName=EmptyEnum.foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         VALUE_PARAMETER_LIST
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]

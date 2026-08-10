@@ -998,10 +998,8 @@ class JavaClassUseSiteMemberScope(
 
     private fun ConeClassLikeType.toFir(session: FirSession): FirRegularClass? {
         val symbol = this.toSymbol(session)
-        return if (symbol is FirRegularClassSymbol) {
+        return runIf(symbol is FirRegularClassSymbol) {
             symbol.fir
-        } else {
-            null
         }
     }
 

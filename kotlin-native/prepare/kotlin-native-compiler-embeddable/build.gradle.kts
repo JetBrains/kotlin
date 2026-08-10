@@ -8,7 +8,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 description = "Embeddable JAR of Kotlin/Native compiler"
@@ -19,7 +19,7 @@ val kotlinNativeEmbeddedClasspath = configurations.resolvable("kotlinNativeEmbed
     extendsFrom(kotlinNativeEmbedded.get())
 }
 
-val kotlinNativeSources by configurations.creating {
+val kotlinNativeSources = configurations.create("kotlinNativeSources") {
     isCanBeConsumed = false
     isCanBeResolved = true
 
@@ -29,7 +29,7 @@ val kotlinNativeSources by configurations.creating {
     }
 }
 
-val kotlinNativeJavadoc by configurations.creating {
+val kotlinNativeJavadoc = configurations.create("kotlinNativeJavadoc") {
     isCanBeConsumed = false
     isCanBeResolved = true
 

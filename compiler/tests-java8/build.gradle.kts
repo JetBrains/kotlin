@@ -4,7 +4,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
     id("java-test-fixtures")
 }
 
@@ -13,7 +13,6 @@ dependencies {
     testImplementation(project(":core:descriptors"))
     testImplementation(project(":core:descriptors.jvm"))
     testImplementation(project(":core:compiler.common.jvm"))
-    testImplementation(project(":compiler:cli-jvm:javac-integration"))
     testImplementation(testFixtures(project(":compiler:tests-compiler-utils")))
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(intellijCore())

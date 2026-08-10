@@ -1,0 +1,54 @@
+var topLevelProp: Some
+
+var Some.topLevelPropInExtension: kotlin.Int
+  get()
+  set(value: kotlin.Int)
+
+fun topLevelFunInReturn(): Some
+
+fun topLevelFunInParameter(s: Some)
+
+fun Some.topLevelFunInExtension()
+
+@kotlin.jvm.JvmName(name = "specialName")
+fun topLevelFunWithJvmName(s: Some)
+
+fun funWithResultInParameter(r: kotlin.Result<kotlin.Int>)
+
+fun <T : Some> funWithValueClassTypeParameter(t: T)
+
+var topLevelPropImplicit: Some
+
+fun topLevelFunInImplicitReturn(): Some
+
+@kotlin.jvm.JvmInline
+inline class Some(value: kotlin.String) {
+  val value: kotlin.String
+}
+
+class RegularClass {
+  var classProp: Some
+
+  var Some.classPropInExtension: kotlin.Int
+    get()
+    set(value: kotlin.Int)
+
+  var resultProp: kotlin.Result<kotlin.Int>
+
+  fun classFunInReturn(): Some
+
+  fun classFunInParameter(s: Some)
+
+  fun Some.classFunInExtension()
+
+  @kotlin.jvm.JvmName(name = "specialName")
+  fun classFunWithJvmName(s: Some)
+
+  internal fun internalClassFunInParameter(s: Some)
+
+  fun funWithResultInReturn(): kotlin.Result<kotlin.Int>
+
+  var classPropImplicit: Some
+
+  fun classFunInImplicitReturn(): Some
+}

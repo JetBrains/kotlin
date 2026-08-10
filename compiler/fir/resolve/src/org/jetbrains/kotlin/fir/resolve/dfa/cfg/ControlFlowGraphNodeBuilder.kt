@@ -256,8 +256,20 @@ fun ControlFlowGraphBuilder.createClassEnterNode(fir: FirClass): ClassEnterNode 
 fun ControlFlowGraphBuilder.createClassExitNode(fir: FirClass): ClassExitNode =
     ClassExitNode(currentGraph, fir, levelCounter)
 
+fun ControlFlowGraphBuilder.createStaticEnterNode(fir: FirClass): StaticEnterNode =
+    StaticEnterNode(currentGraph, fir, levelCounter)
+
+fun ControlFlowGraphBuilder.createStaticExitNode(fir: FirClass): StaticExitNode =
+    StaticExitNode(currentGraph, fir, levelCounter)
+
 fun ControlFlowGraphBuilder.createLocalClassExitNode(fir: FirRegularClass): LocalClassExitNode =
     LocalClassExitNode(currentGraph, fir, levelCounter)
+
+fun ControlFlowGraphBuilder.createEnumEntryEnterNode(fir: FirEnumEntry): EnumEntryEnterNode =
+    EnumEntryEnterNode(currentGraph, fir, levelCounter)
+
+fun ControlFlowGraphBuilder.createEnumEntryExitNode(fir: FirEnumEntry): EnumEntryExitNode =
+    EnumEntryExitNode(currentGraph, fir, levelCounter)
 
 fun ControlFlowGraphBuilder.createEnterValueParameterNode(fir: FirValueParameter): EnterValueParameterNode =
     EnterValueParameterNode(currentGraph, fir, levelCounter)

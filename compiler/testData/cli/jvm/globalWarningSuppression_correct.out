@@ -1,4 +1,4 @@
-warning: [COMPILER_ARGUMENTS_WARNING] Argument "-Xsuppress-warning" is deprecated. Use "-Xwarning-level=UNCHECKED_CAST:disabled" instead (and the same for other warnings)
+warning: [DEPRECATED_CLI_ARG] The argument '-Xsuppress-warning' is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings).
 compiler/testData/cli/jvm/globalWarningSuppression.kt:7:16: error: [CONFLICTING_PROJECTION] Projection conflicts with variance of the corresponding type parameter of 'Out<in Int>'. Remove the projection or replace it with '*'.
 fun bar(x: Out<in Int>) {}
                ^^

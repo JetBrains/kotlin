@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 class KlibAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<BinaryArtifacts.KLib>(
     testServices,
     ArtifactKinds.KLib,
-    failureDisablesNextSteps = true,
+    failureDisablesNextSteps = false,
     doNotRunIfThereWerePreviousFailures = true,
 ) {
     override val directiveContainers get() = listOf(TestDumpDirectives, KlibAbiDumpDirectives)

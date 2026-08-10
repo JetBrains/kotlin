@@ -137,12 +137,13 @@ internal fun CType.toSwiftTypeName(): String = when (this) {
     CType.Float -> "Swift.Float"
     CType.Double -> "Swift.Double"
     CType.Object -> "Swift.UnsafeMutableRawPointer"
+    CType.OutObject -> "Swift.UnsafeMutablePointer<Swift.UnsafeMutableRawPointer?>"
     CType.id -> "Any"
     CType.NSString -> "Swift.String"
     CType.NSError -> "Swift.Error"
     CType.NSObject -> "Any"
     CType.NSNumber -> "Foundation.NSNumber"
-    is CType.NullabilityAnnotated -> wrapped.toSwiftTypeName() + "?"
+    is CType.NullabilityAnnotated -> wrapped.toSwiftTypeName() + if (nullability == CType.Nullability.NONNULL) "" else "?"
     is CType.BlockPointer -> toSwiftTypeName()
     else -> "Any"
 }

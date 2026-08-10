@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.mainKts.test
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
-import org.jetbrains.kotlin.scripting.compiler.plugin.runAndCheckResults
-import org.jetbrains.kotlin.scripting.compiler.plugin.runWithK2JVMCompiler
-import org.jetbrains.kotlin.scripting.compiler.plugin.runWithKotlinLauncherScript
-import org.jetbrains.kotlin.scripting.compiler.plugin.runWithKotlinc
+import org.jetbrains.kotlin.scripting.test.runAndCheckResults
+import org.jetbrains.kotlin.scripting.test.runWithK2JVMCompiler
+import org.jetbrains.kotlin.scripting.test.runWithKotlinLauncherScript
+import org.jetbrains.kotlin.scripting.test.runWithKotlinc
 import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
@@ -118,30 +118,28 @@ class MainKtsIT {
     @OptIn(ExperimentalPathApi::class)
     @Test
     fun testCache() {
-        if (isRunningTestOnK2) {
-            // test fails on K1, which may cause some disruptions, but we plan to drop it very soon anyway, so maybe it's ok
-            val script = File("$TEST_DATA_ROOT/import-test.main.kts").absolutePath
-            val cache = createTempDirectory("main.kts.test")
+        // test fails on K1, which may cause some disruptions, but we plan to drop it very soon anyway, so maybe it's ok
+        val script = File("$TEST_DATA_ROOT/import-test.main.kts").absolutePath
+        val cache = createTempDirectory("main.kts.test")
 
-            try {
-                Assertions.assertTrue(cache.exists() && cache.listDirectoryEntries("*.jar").isEmpty())
-                runWithKotlincAndMainKts(script, OUT_FROM_IMPORT_TEST, cacheDir = cache)
-                val cacheFile = cache.listDirectoryEntries("*.jar").firstOrNull()
-                Assertions.assertTrue(cacheFile != null && cacheFile.exists())
+        try {
+            Assertions.assertTrue(cache.exists() && cache.listDirectoryEntries("*.jar").isEmpty())
+            runWithKotlincAndMainKts(script, OUT_FROM_IMPORT_TEST, cacheDir = cache)
+            val cacheFile = cache.listDirectoryEntries("*.jar").firstOrNull()
+            Assertions.assertTrue(cacheFile != null && cacheFile.exists())
 
-                // run generated jar with java
-                val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
-                val args = listOf(javaExecutable.absolutePath, "-jar", cacheFile!!.toString())
-                runAndCheckResults(
-                    args, OUT_FROM_IMPORT_TEST,
-                    additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to cache.toAbsolutePath().toString())
-                )
+            // run generated jar with java
+            val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
+            val args = listOf(javaExecutable.absolutePath, "-jar", cacheFile!!.toString())
+            runAndCheckResults(
+                args, OUT_FROM_IMPORT_TEST,
+                additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to cache.toAbsolutePath().toString())
+            )
 
-                // this run should use the cached script
-                runWithKotlincAndMainKts(script, OUT_FROM_IMPORT_TEST, cacheDir = cache)
-            } finally {
-                cache.toFile().deleteRecursively()
-            }
+            // this run should use the cached script
+            runWithKotlincAndMainKts(script, OUT_FROM_IMPORT_TEST, cacheDir = cache)
+        } finally {
+            cache.toFile().deleteRecursively()
         }
     }
 
@@ -236,23 +234,30 @@ class MainKtsIT {
                 )
             }
             val mainKtsJar = ForTestCompileRuntime.mainKtsJar()
+            val scriptPath = scr.platformIndependentPathString()
 
             runWithK2JVMCompiler(
-                scr.absolutePath,
+                scriptPath,
                 listOf("hello"),
                 classpath = listOf(mainKtsJar),
             )
 
             runWithK2JVMCompiler(
-                scr.absolutePath,
+                scriptPath,
                 listOf("hello"),
                 classpath = listOf(mainKtsJar),
                 additionalArgs = listOf("-Xuse-fir-lt=false"),
             )
 
             runWithKotlincAndMainKts(
-                scr.absolutePath,
+                scriptPath,
                 listOf("hello"),
+            )
+
+            runWithKotlincAndMainKts(
+                scriptPath,
+                listOf("hello"),
+                additionalArgs = listOf("-Xuse-fir-lt=false"),
             )
         }
     }
@@ -318,14 +323,16 @@ fun runWithKotlincAndMainKts(
     expectedOutPatterns: List<String> = emptyList(),
     expectedErrPatterns: List<String> = emptyList(),
     expectedExitCode: Int = 0,
-    cacheDir: Path? = null
+    cacheDir: Path? = null,
+    additionalArgs: List<String> = emptyList()
 ) {
     runWithKotlinc(
         scriptPath, expectedOutPatterns, expectedErrPatterns, expectedExitCode,
         classpath = listOf(
             ForTestCompileRuntime.mainKtsJar(),
         ),
-        additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to (cacheDir?.toAbsolutePath()?.toString() ?: ""))
+        additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to (cacheDir?.toAbsolutePath()?.toString() ?: "")),
+        additionalArgs = additionalArgs
     )
 }
 

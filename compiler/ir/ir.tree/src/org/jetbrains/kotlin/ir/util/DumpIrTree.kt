@@ -36,12 +36,15 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 fun IrElement.dump(options: DumpIrTreeOptions = DumpIrTreeOptions()): String =
     try {
-        StringBuilder().also { sb ->
-            accept(DumpIrTreeVisitor(sb, options), "")
-        }.toString()
+        dumpOrFail(options)
     } catch (e: Exception) {
         "(Full dump is not available: ${e.message})\n" + render(options)
     }
+
+fun IrElement.dumpOrFail(options: DumpIrTreeOptions = DumpIrTreeOptions()): String =
+    StringBuilder().also { sb ->
+        accept(DumpIrTreeVisitor(sb, options), "")
+    }.toString()
 
 fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions = DumpIrTreeOptions()): String {
     val correctedLineNumber = if (shouldSkipDump()) UNDEFINED_OFFSET else lineNumber

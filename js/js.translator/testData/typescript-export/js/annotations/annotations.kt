@@ -30,6 +30,9 @@ annotation class WithDefaultValue(val level: Int = 0)
 annotation class WithBooleanParam(val enabled: Boolean)
 
 @JsExport
+fun useAnnotationClass(ac: WithStringParam): WithStringParam = ac
+
+@JsExport
 fun withIntroducedAt(
     x: Int,
     @IntroducedAt("1") y: Int = x,

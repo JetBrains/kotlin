@@ -404,7 +404,7 @@ class IrModuleToJsTransformer(
         return JsIrProgramFragment("", file.packageFqName.asString())
             .also {
                 it.dts = tsDeclarations
-                it.exports.statements += ExportModelToJsStatements(staticContext, backendContext.es6mode)
+                it.exports.statements += ExportModelToJsStatements(staticContext)
                     .generateModuleExport(ExportedModule(mainModuleName, exports), internalModuleName, isEsModules)
                 it.computeAndSaveNameBindings(emptySet(), nameGenerator)
             }

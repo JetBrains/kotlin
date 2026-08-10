@@ -9,6 +9,7 @@ where possible options include:
   -generate-test-runner (-tr) Produce a runner for unit tests.
   -generate-worker-test-runner (-trw)
                              Produce a worker runner for unit tests.
+                             The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases. Use '-generate-test-runner' ('-tr')
   -include-binary (-ib) <path> Pack the given external binary into the klib.
   -library (-l) <path>       Link with the given library.
   -linker-option <arg>       Pass the given argument to the linker.

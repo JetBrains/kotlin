@@ -5,10 +5,10 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
-val dataframeRuntimeClasspath by configurations.creating
+val dataframeRuntimeClasspath = configurations.create("dataframeRuntimeClasspath")
 
 dependencies {
     embedded(project(":kotlin-dataframe-compiler-plugin.common")) { isTransitive = false }

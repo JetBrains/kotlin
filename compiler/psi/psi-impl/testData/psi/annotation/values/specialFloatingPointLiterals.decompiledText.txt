@@ -1,0 +1,42 @@
+Special.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final annotation class Special public constructor(
+      public final val d: kotlin.Double,
+
+      public final val f: kotlin.Float,
+  ) : kotlin.Annotation {
+  }
+
+WithNaN.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Special(d = kotlin.Double.NaN, f = kotlin.Float.NaN)
+  public final class WithNaN public constructor() {
+  }
+
+WithNegativeInfinity.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Special(d = kotlin.Double.NEGATIVE_INFINITY, f = kotlin.Float.NEGATIVE_INFINITY)
+  public final class WithNegativeInfinity public constructor() {
+  }
+
+WithNegativeZero.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Special(d = -0.0, f = -0.0F)
+  public final class WithNegativeZero public constructor() {
+  }
+
+WithPositiveInfinity.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Special(d = kotlin.Double.POSITIVE_INFINITY, f = kotlin.Float.POSITIVE_INFINITY)
+  public final class WithPositiveInfinity public constructor() {
+  }

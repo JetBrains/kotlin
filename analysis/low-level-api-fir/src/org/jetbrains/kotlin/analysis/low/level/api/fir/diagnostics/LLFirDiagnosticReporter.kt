@@ -1,32 +1,40 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.AbstractKtSourceElement
-import org.jetbrains.kotlin.KtFakePsiSourceElement
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.SuspiciousFakeSourceCheck
+import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLDiagnostic
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
+/**
+ * Collects diagnostics reported by compiler checkers.
+ *
+ * Suppressed diagnostics are **not** dropped: they are collected as well and marked with [LLDiagnostic.isSuppressed]. This way a single
+ * collection pass serves both clients which need the diagnostics the compiler would report, and clients which analyze suppressions
+ * themselves.
+ */
 internal class LLFirDiagnosticReporter : PendingDiagnosticReporter() {
-    private val pendingDiagnostics = mutableMapOf<PsiElement, MutableList<KtPsiDiagnostic>>()
-    private val _committedDiagnostics = mutableMapOf<PsiElement, MutableList<KtPsiDiagnostic>>()
+    private val pendingDiagnostics = mutableMapOf<PsiElement, MutableList<PendingDiagnostic>>()
+    private val _committedDiagnostics = mutableMapOf<PsiElement, MutableList<LLDiagnostic>>()
 
-    val committedDiagnostics get() = _committedDiagnostics.ifEmpty { emptyMap() }
+    val committedDiagnostics: Map<PsiElement, List<LLDiagnostic>> get() = _committedDiagnostics.ifEmpty { emptyMap() }
+
     override val hasErrors: Boolean
-        get() = committedDiagnostics.any { [_, diagnostics] -> diagnostics.any { it.severity.isError } }
+        get() = committedDiagnostics.any { [_, diagnostics] -> diagnostics.any { !it.isSuppressed && it.diagnostic.severity.isError } }
 
     override val hasWarningsForWError: Boolean
-        get() = committedDiagnostics.any { [_, diagnostics] -> diagnostics.any { it.severity.isErrorWhenWError } }
+        get() = committedDiagnostics.any { [_, diagnostics] ->
+            diagnostics.any { !it.isSuppressed && it.diagnostic.severity.isErrorWhenWError }
+        }
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic == null) return
-        if (context.isDiagnosticSuppressed(diagnostic)) return
 
         // Implicit imports for scripts are currently implemented via FIR-tree mutation (they do not exist in default importing scopes).
         // So as a temporary solution we filter out related diagnostics here.
@@ -37,7 +45,9 @@ internal class LLFirDiagnosticReporter : PendingDiagnosticReporter() {
             is KtLightDiagnostic -> diagnostic.toPsiDiagnostic()
             else -> error("Unknown diagnostic type ${diagnostic::class.simpleName}")
         }
-        pendingDiagnostics.addValueFor(psiDiagnostic.psiElement, psiDiagnostic)
+
+        val pendingDiagnostic = PendingDiagnostic(psiDiagnostic, isSuppressed = context.isDiagnosticSuppressed(diagnostic))
+        pendingDiagnostics.addValueFor(psiDiagnostic.psiElement, pendingDiagnostic)
     }
 
     override fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext, commitEverything: Boolean) {
@@ -45,23 +55,37 @@ internal class LLFirDiagnosticReporter : PendingDiagnosticReporter() {
             val committedList = _committedDiagnostics.getOrPut(diagnosticElement) { mutableListOf() }
             val iterator = pendingList.iterator()
             while (iterator.hasNext()) {
-                val diagnostic = iterator.next()
-                when {
-                    context.isDiagnosticSuppressed(diagnostic as KtDiagnostic) -> {
-                        if (diagnostic.element == element ||
-                            diagnostic.element.startOffset >= element.startOffset && diagnostic.element.endOffset <= element.endOffset
-                        ) {
-                            iterator.remove()
-                        }
-                    }
-                    diagnostic.element == element || commitEverything -> {
-                        iterator.remove()
-                        committedList += diagnostic
-                    }
+                val pendingDiagnostic = iterator.next()
+                val diagnostic = pendingDiagnostic.diagnostic
+
+                // The committing context knows about suppressions which were not yet visible at the reporting site,
+                // but it can only judge diagnostics reported inside the committed element.
+                if (!pendingDiagnostic.isSuppressed && diagnostic.isInside(element)) {
+                    pendingDiagnostic.isSuppressed = context.isDiagnosticSuppressed(diagnostic as KtDiagnostic)
+                }
+
+                if (diagnostic.element == element || commitEverything) {
+                    iterator.remove()
+                    committedList += LLDiagnostic(diagnostic, pendingDiagnostic.isSuppressed)
                 }
             }
         }
     }
+
+    private class PendingDiagnostic(val diagnostic: KtPsiDiagnostic, var isSuppressed: Boolean)
+}
+
+/**
+ * PSI ancestry is checked instead of text range containment, as walking the parent chain is cheaper than computing text ranges:
+ * [PsiElement.getTextRange] has to traverse preceding siblings to compute the start offset.
+ */
+private fun KtPsiDiagnostic.isInside(element: AbstractKtSourceElement): Boolean {
+    if (this.element == element) return true
+
+    val elementPsi = (element as? KtPsiSourceElement)?.psi
+        ?: return this.element.startOffset >= element.startOffset && this.element.endOffset <= element.endOffset
+
+    return elementPsi.isAncestor(psiElement, strict = false)
 }
 
 @OptIn(SuspiciousFakeSourceCheck::class)

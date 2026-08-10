@@ -822,17 +822,6 @@ This works like '--enable-preview' in Java. All class files are marked as compil
     }
 
     compilerArgument {
-        name = "Xsuppress-deprecated-jvm-target-warning"
-        description = """Suppress warnings about deprecated JVM target versions.
-This option has no effect and will be deleted in a future version.""".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_0,
-        )
-    }
-
-    compilerArgument {
         name = "Xtype-enhancement-improvements-strict-mode"
         compilerName = "typeEnhancementImprovementsInStrictMode"
         description = """Enable strict mode for improvements to type enhancement for loaded Java types based on nullability annotations,
@@ -978,25 +967,11 @@ The default value is 'inline'.""",
         )
     }
 
-    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
-        name = "Xcommon-fragments-metadata-destination"
+        name = "Xuse-metadata-on-incremental-classpath"
         description = """
-            Specifies the destination for common fragments metadata.
-            This metadata is used solely for incremental compilation and should not be used directly.
-        """.trimIndent().asReleaseDependent()
-        valueType = PathType.defaultNull
-        argumentType = StringType.defaultNull
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_4_20,
-        )
-    }
-
-    compilerArgument {
-        name = "Xuse-ic-classpath-metadata"
-        description = """
-            Use classpath metadata for incremental compilation.
-            This is used solely for incremental compilation and should not be used directly.
+            Use fragment metadata found on the compilation classpath to perform incremental compilation.
+            This flag is intended for incremental compilation only and should not be used directly.
         """.trimIndent().asReleaseDependent()
         valueType = BooleanType.defaultFalse
 

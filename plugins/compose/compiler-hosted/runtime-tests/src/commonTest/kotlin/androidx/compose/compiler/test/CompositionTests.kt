@@ -26,16 +26,15 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.setMain
 import org.jetbrains.kotlin.testFederation.SmokeTest
-import org.junit.BeforeClass
-import org.junit.experimental.categories.Category
+import org.junit.jupiter.api.BeforeAll
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@Category(SmokeTest::class)
+@SmokeTest
 class CompositionTests {
     companion object {
         @OptIn(ExperimentalCoroutinesApi::class)
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun setupMainDispatcher() {
             Dispatchers.setMain(StandardTestDispatcher())
@@ -554,6 +553,19 @@ class CompositionTests {
         state.value = ChildState(1)
         advance()
         assertEquals(true, result.value)
+    }
+
+    /**
+     * This is a regression test against a bug that caused miscompilation of cross-module calls to
+     * getters and setters. For more details, see https://issuetracker.google.com/issues/537617330.
+     */
+    @Test
+    @OptIn(InternalComposeApi::class)
+    fun testComposableTypeRemappingOfExternalGetter() = compositionTest {
+        compose {
+            val movableContent = MovableContent<Unit> {}
+            movableContent.content
+        }
     }
 }
 

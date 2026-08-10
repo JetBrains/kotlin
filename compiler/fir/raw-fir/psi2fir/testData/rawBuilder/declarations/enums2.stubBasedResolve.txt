@@ -21,8 +21,28 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enums2.kt
         public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|Some| = R|<local>/x|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SomeEnum] get(): R|Some|
 
-        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SomeEnum] enum entry FIRST: R|SomeEnum| = LAZY_EXPRESSION
-        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SomeEnum] enum entry SECOND: R|SomeEnum| = LAZY_EXPRESSION
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SomeEnum] enum entry FIRST: R|SomeEnum| = object : R|SomeEnum| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|SomeEnum|>(Q|O1|)
+            }
+
+            public open override [ResolvedTo(BODY_RESOLVE)] fun check([ResolvedTo(BODY_RESOLVE)] y: R|Some|): R|kotlin/Boolean| {
+                ^check Boolean(true)
+            }
+
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SomeEnum] enum entry SECOND: R|SomeEnum| = object : R|SomeEnum| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|SomeEnum|>(Q|O2|)
+            }
+
+            public open override [ResolvedTo(BODY_RESOLVE)] fun check([ResolvedTo(BODY_RESOLVE)] y: R|Some|): R|kotlin/Boolean| {
+                ^check ==(R|<local>/y|, Q|O2|)
+            }
+
+        }
+
         public abstract [ResolvedTo(BODY_RESOLVE)] fun check([ResolvedTo(BODY_RESOLVE)] y: R|Some|): R|kotlin/Boolean|
 
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SomeEnum] fun values(): R|kotlin/Array<SomeEnum>| {

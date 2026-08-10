@@ -54,6 +54,10 @@ fun testSomething(gradleVersion: GradleVersion) {
 }
 ```
 
+### Assertions on Generated Text
+
+Never assert `contains`/`!contains` on a raw `String` (build output, generated manifests, source files, etc.). Substring checks pass or fail for reasons unrelated to what's being tested and give useless failure diffs. Parse or extract the specific structured value being asserted on (a field, a block, a single line) and assert on that with `assertEquals`/`assertNull`/etc.
+
 ### Build Script Injections
 
 Inject code directly into test project build scripts:

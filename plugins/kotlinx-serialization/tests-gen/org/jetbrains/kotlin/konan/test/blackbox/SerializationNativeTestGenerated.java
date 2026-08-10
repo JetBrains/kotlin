@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
 @Tag("serialization-native")
-@UseExtTestCaseGroupProvider()
+@UseExtTestCaseGroupProvider
 public class SerializationNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   private void run(String fileName) {
     runTest("plugins/kotlinx-serialization/testData/boxIr/" + fileName);
@@ -188,6 +188,12 @@ public class SerializationNativeTestGenerated extends AbstractNativeCodegenBoxTe
   @TestMetadata("generics.kt")
   public void testGenerics() {
     run("generics.kt");
+  }
+
+  @Test
+  @TestMetadata("genericsExtended.kt")
+  public void testGenericsExtended() {
+    run("genericsExtended.kt");
   }
 
   @Test

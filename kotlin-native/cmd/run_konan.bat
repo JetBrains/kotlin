@@ -80,9 +80,7 @@ rem ##########################################################################
 rem # subroutines
 
 :set_home
-  set _BIN_DIR=
-  for %%i in (%~sf0) do set _BIN_DIR=%_BIN_DIR%%%~dpsi
-  set _KONAN_HOME=%_BIN_DIR%..
+  set "_KONAN_HOME=%~dp0.."
 goto :eof
 
 rem Parses "java -version" output and stores the major version to _java_major_version.

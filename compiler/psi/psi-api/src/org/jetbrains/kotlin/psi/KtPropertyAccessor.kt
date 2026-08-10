@@ -61,8 +61,11 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
         listOfNotNull(parameter)
 
     override fun getBodyExpression(): KtExpression? {
-        greenStub?.let {
-            if (!it.hasBody) return null
+        val stub = greenStub
+        if (stub != null) {
+            if (!stub.hasBody) return null
+
+            expressionFromStub?.let { return it }
         }
 
         return findChildByClass(KtExpression::class.java)
@@ -127,17 +130,26 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
     }
 
     @Suppress("unused")
-    @Deprecated("Use typeReference instead", ReplaceWith("typeReference"))
+    @Deprecated(
+        message = "Use typeReference instead",
+        replaceWith = ReplaceWith("typeReference"),
+    )
     open val returnTypeReference: KtTypeReference?
         get() = typeReference
 
     @Suppress("unused")
-    @Deprecated("use `parameterList?.leftParenthesis`", ReplaceWith("parameterList?.leftParenthesis"))
+    @Deprecated(
+        message = "use `parameterList?.leftParenthesis`",
+        replaceWith = ReplaceWith("parameterList?.leftParenthesis"),
+    )
     open val leftParenthesis: PsiElement?
         get() = parameterList?.leftParenthesis
 
     @Suppress("unused")
-    @Deprecated("use `parameterList?.rightParenthesis`", ReplaceWith("parameterList?.rightParenthesis"))
+    @Deprecated(
+        message = "use `parameterList?.rightParenthesis`",
+        replaceWith = ReplaceWith("parameterList?.rightParenthesis"),
+    )
     open val rightParenthesis: PsiElement?
         get() = parameterList?.rightParenthesis
 }

@@ -1,3 +1,4 @@
+warning: language version 2.2 is deprecated and its support will be removed in a future version of Kotlin. Update the version to 2.3.
 compiler/testData/compileKotlinAgainstCustomBinaries/usageOfNestedTypeAliasesWhenTheyAreNotStable/source.kt:1:20: error: the feature "nested type aliases" is only available since language version 2.3
 fun test(nestedTA: C.NestedTA): D {
                    ^^^^^^^^^^

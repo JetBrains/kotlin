@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 
 /**
@@ -70,7 +71,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         configuration: CompilerConfiguration,
         arguments: K2NativeCompilerArguments,
     ) {
-        val commonSources = arguments.commonSources.toSet().map { java.io.File(it).absoluteFile.normalize() }
+        val commonSources = arguments.commonSources.toSet().map { File(it).absoluteFile.normalize() }
         val hmppModuleStructure = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
         arguments.freeArgs.forEach { path ->
             val normalizedPath = java.io.File(path).absoluteFile.normalize()
@@ -86,15 +87,35 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         } ?: NativePlatforms.unspecifiedNativePlatform
 
         configuration.konanLibraries = arguments.libraries.toList()
+
         arguments.friendModules?.let {
             configuration.konanFriendLibraries = it.split(File.pathSeparator).filterNot(String::isEmpty)
-
             configuration.checkForUnexpectedKlibLibraries(
                 librariesToCheck = configuration.konanFriendLibraries,
                 librariesToCheckArgument = K2NativeCompilerArguments::friendModules.cliArgument,
                 allLibraries = configuration.konanLibraries,
                 allLibrariesArgument = K2NativeCompilerArguments::libraries.cliArgument
             )
+        }
+
+        configuration.exportedLibraries = arguments.exportedLibraries.toList()
+        configuration.checkForUnexpectedKlibLibraries(
+            librariesToCheck = configuration.exportedLibraries,
+            librariesToCheckArgument = K2NativeCompilerArguments::exportedLibraries.cliArgument,
+            allLibraries = configuration.konanLibraries,
+            allLibrariesArgument = K2NativeCompilerArguments::libraries.cliArgument
+        )
+
+        // TODO(KT-61096): Add a check when -Xinclude argument can be actually used!
+        configuration.konanIncludedLibraries = arguments.includes.toList()
+
+        // TODO(KT-61096): Add a check when -Xadd-cache argument can be actually used!
+        arguments.libraryToAddToCache?.let { configuration.konanLibraryToAddToCache = it }
+
+        configuration.konanLibraries = buildList {
+            this += configuration.konanLibraries
+            this += configuration.konanIncludedLibraries
+            addIfNotNull(configuration.konanLibraryToAddToCache)
         }
 
         configuration.konanNoStdlib = arguments.nostdlib
@@ -112,14 +133,12 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         arguments.manifestFile?.let { configuration.konanManifestAddend = it }
         arguments.headerKlibPath?.let { configuration.konanGeneratedHeaderKlibPath = it }
         arguments.shortModuleName?.let { configuration.konanShortModuleName = it }
-        configuration.konanIncludedLibraries = arguments.includes.toList()
 
         configuration.konanPrintIr = arguments.printIr
         configuration.konanPrintFiles = arguments.printFiles
         arguments.verifyCompiler?.let {
             configuration.verifyCompiler = it == "true"
         }
-        configuration.fakeOverrideValidator = arguments.fakeOverrideValidator
         arguments.konanDataDir?.let { configuration.konanDataDir = it }
 
         configuration.checkDependencies = arguments.checkDependencies
@@ -130,7 +149,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
             configuration.konanManifestNativeTargets = parseManifestNativeTargets(it, configuration)
         }
 
-        configuration.setupPartialLinkageConfig(arguments, KONAN_ARGUMENT_STRONG_WARNING, KONAN_ARGUMENT_ERROR)
+        configuration.setupPartialLinkageConfig(arguments, KONAN_ARGUMENT_ERROR)
     }
 
     private fun parseManifestNativeTargets(

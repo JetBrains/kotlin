@@ -290,6 +290,8 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable more detailed performance statistics (Experimental).
      * For Native, the performance report includes execution time and lines processed per second for every individual lowering.
      * For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
+     * Additionally enables measurements for User and CPU time for all targets. Note that this could cause performance degradation on Linux
+     *   machines, so use this mode with caution.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
@@ -776,12 +778,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
 
     /**
      * Suppress error about API version greater than language version.
-     * Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.0.0.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR:
         CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR", KotlinReleaseVersion(2, 0, 0))
@@ -797,12 +803,15 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_SUPPRESS_VERSION_WARNINGS", KotlinReleaseVersion(1, 5, 0))
 
     /**
-     * Suppress specified warning module-wide. This option is deprecated in favor of "-Xwarning-level" flag
+     * Suppress specified warning module-wide.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.2.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_SUPPRESS_WARNING: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_SUPPRESS_WARNING", KotlinReleaseVersion(2, 1, 0))
 
@@ -831,12 +840,14 @@ public interface CommonCompilerArguments : CommonToolArguments {
 
     /**
      * Compile using frontend IR internal incremental compilation.
-     * Warning: This feature is not yet production-ready.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_USE_FIR_IC: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_USE_FIR_IC", KotlinReleaseVersion(1, 7, 0))
 

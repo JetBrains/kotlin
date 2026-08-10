@@ -24,6 +24,7 @@ import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicHandlerType
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.VolatilePropertyReference
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.atomicfuRender
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuTransformer.Companion.VOLATILE
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.hasStaticBackingField
 import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuErrorMessages.CONSTRAINTS_MESSAGE
 
 abstract class AbstractAtomicfuIrBuilder(
@@ -120,18 +121,18 @@ abstract class AbstractAtomicfuIrBuilder(
     protected fun irVolatileField(
         name: String,
         valueType: IrType,
-        annotations: List<IrAnnotation>,
+        originalField: IrField,
         parentContainer: IrDeclarationContainer,
     ): IrField {
         return context.irFactory.buildField {
             this.name = Name.identifier(name + VOLATILE)
             this.type = valueType
             isFinal = false
-            isStatic = parentContainer is IrFile
+            isStatic = parentContainer is IrFile || originalField.isStatic
             visibility = DescriptorVisibilities.PRIVATE
             origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FIELD
         }.apply {
-            this.annotations = annotations + atomicfuSymbols.volatileAnnotation
+            this.annotations = originalField.annotations + atomicfuSymbols.volatileAnnotation
             this.parent = parentContainer
         }
     }
@@ -146,7 +147,7 @@ abstract class AbstractAtomicfuIrBuilder(
         return buildAndInitializeNewField(atomicfuField, parentContainer) { atomicFactoryCall: IrExpression? ->
             val valueType = atomicfuSymbols.atomicToPrimitiveType(atomicfuField.type as IrSimpleType)
             val initValue = atomicFactoryCall?.getAtomicFactoryValueArgument()
-            buildVolatileFieldOfType(atomicfuProperty.name.asString(), valueType, atomicfuField.annotations, initValue, parentContainer)
+            buildVolatileFieldOfType(atomicfuProperty.name.asString(), valueType, atomicfuField, initValue, parentContainer)
         }
     }
 
@@ -160,7 +161,7 @@ abstract class AbstractAtomicfuIrBuilder(
     abstract fun buildVolatileFieldOfType(
         name: String,
         valueType: IrType,
-        annotations: List<IrAnnotation>,
+        originalField: IrField,
         initExpr: IrExpression?,
         parentContainer: IrDeclarationContainer,
     ): IrField
@@ -191,7 +192,7 @@ abstract class AbstractAtomicfuIrBuilder(
             atomicArrayField,
             atomicfuProperty.visibility,
             isVar = false,
-            isStatic = parentContainer is IrFile,
+            isStatic = parentContainer is IrFile || atomicfuProperty.hasStaticBackingField,
             parentContainer
         )
         return AtomicArray(atomicArrayProperty)
@@ -342,7 +343,10 @@ abstract class AbstractAtomicfuIrBuilder(
             type = kPropertyClass.defaultType.substitute(substitutionMap),
             symbol = property.symbol,
             typeArgumentsCount = 0,
-            field = backingField.symbol,
+            // Referring a field may violate visibility checks,
+            // but at the same time the field is not needed anywhere down the pipeline,
+            // so we can use value null here. See KT-85180.
+            field = null,
             getter = property.getter?.symbol,
             setter = property.setter?.symbol
         ).apply {

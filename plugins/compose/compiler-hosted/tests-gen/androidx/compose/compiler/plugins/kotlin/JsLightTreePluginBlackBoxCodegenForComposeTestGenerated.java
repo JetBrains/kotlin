@@ -28,6 +28,12 @@ public class JsLightTreePluginBlackBoxCodegenForComposeTestGenerated extends Abs
   }
 
   @Test
+  @TestMetadata("testAbstractComposableWithDefaultParamCrossModule.kt")
+  public void testTestAbstractComposableWithDefaultParamCrossModule() {
+    run("testAbstractComposableWithDefaultParamCrossModule.kt");
+  }
+
+  @Test
   @TestMetadata("testOverrideLambda.kt")
   public void testTestOverrideLambda() {
     run("testOverrideLambda.kt");

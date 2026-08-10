@@ -160,11 +160,14 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 }
 
                 val diagnosticsCollector = compilerConfiguration.diagnosticsCollector
+                lateinit var symbolTable: SymbolTable
                 val generationState = GenerationState(
                     snippetKtFile.project,
                     compilationState.analyzerEngine.module,
                     compilerConfiguration,
-                    jvmBackendClassResolver = K1JvmBackendClassResolverForModuleWithDependencies(compilationState.analyzerEngine.module),
+                    jvmBackendClassResolver = K1JvmBackendClassResolverForModuleWithDependencies(
+                        compilationState.analyzerEngine.module, lazy(LazyThreadSafetyMode.NONE) { symbolTable },
+                    ),
                     diagnosticReporter = diagnosticsCollector,
                 )
 
@@ -179,6 +182,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 val irBackendInput = codegenFactory.convertToIr(
                     generationState, ktFiles, compilationState.analyzerEngine.trace.bindingContext
                 )
+                symbolTable = irBackendInput.symbolTable
 
                 if (CheckDiagnosticCollector.checkHasErrors(compilerConfiguration)) {
                     return failure(messageCollector, *diagnosticsCollector.scriptDiagnostics(snippet).toTypedArray())

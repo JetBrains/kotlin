@@ -794,7 +794,8 @@ class CallAndReferenceGenerator(
         return null
     }
 
-    internal fun findInjectedValue(calleeReference: FirReference) = extensions.findInjectedValue(calleeReference, conversionScope)
+    internal fun findInjectedValue(calleeReference: FirReference): InjectedValue? =
+        extensions.findInjectedValue(calleeReference, conversionScope)
 
     fun convertToIrSetCall(
         variableAssignment: FirVariableAssignment,
@@ -1269,8 +1270,7 @@ class CallAndReferenceGenerator(
     }
 
     private fun FirCallableSymbol<*>.isFunctionFromAny(): Boolean {
-        if (this !is FirNamedFunctionSymbol) return false
-        return isMethodOfAny
+        return this is FirNamedFunctionSymbol && isMethodOfAny
     }
 
     private fun generateErrorCallExpression(

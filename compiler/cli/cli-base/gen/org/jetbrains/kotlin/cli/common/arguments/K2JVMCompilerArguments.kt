@@ -110,17 +110,6 @@ The default value is 1.""",
         }
 
     @Argument(
-        value = "-Xcommon-fragments-metadata-destination",
-        description = """Specifies the destination for common fragments metadata.
-This metadata is used solely for incremental compilation and should not be used directly.""",
-    )
-    var commonFragmentsMetadataDestination: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xdebug",
         description = """Enable debug mode for compilation.
 Currently this includes spilling all variables in a suspending context regardless of whether they are alive.
@@ -572,17 +561,6 @@ The default value is 'enable'.""",
         }
 
     @Argument(
-        value = "-Xsuppress-deprecated-jvm-target-warning",
-        description = """Suppress warnings about deprecated JVM target versions.
-This option has no effect and will be deleted in a future version.""",
-    )
-    var suppressDeprecatedJvmTargetWarning: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xsuppress-missing-builtins-error",
         description = "Suppress the \"cannot access built-in declaration\" error (useful with '-no-stdlib').",
     )
@@ -626,21 +604,21 @@ See KT-45671 for more details.""",
         }
 
     @Argument(
-        value = "-Xuse-ic-classpath-metadata",
-        description = """Use classpath metadata for incremental compilation.
-This is used solely for incremental compilation and should not be used directly.""",
+        value = "-Xuse-inline-scopes-numbers",
+        description = "Use inline scopes numbers for inline marker variables.",
     )
-    var useIcClasspathMetadata: Boolean = false
+    var useInlineScopesNumbers: Boolean = false
         set(value) {
             checkFrozen()
             field = value
         }
 
     @Argument(
-        value = "-Xuse-inline-scopes-numbers",
-        description = "Use inline scopes numbers for inline marker variables.",
+        value = "-Xuse-metadata-on-incremental-classpath",
+        description = """Use fragment metadata found on the compilation classpath to perform incremental compilation.
+This flag is intended for incremental compilation only and should not be used directly.""",
     )
-    var useInlineScopesNumbers: Boolean = false
+    var useMetadataOnIncrementalClasspath: Boolean = false
         set(value) {
             checkFrozen()
             field = value

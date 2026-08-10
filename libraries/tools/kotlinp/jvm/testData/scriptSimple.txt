@@ -34,11 +34,9 @@ public final class ScriptSimple.A : kotlin/Any {
 // ------------------------------------------
 public final class ScriptSimple.B<T#0 /* T */> : kotlin/Any {
 
-  // requires language version 1.7.0 (level=ERROR)
   // signature: <init>(Ljava/lang/Object;)V
   public constructor(v: T#0 & Any)
 
-  // requires language version 1.7.0 (level=ERROR)
   // field: v:Ljava/lang/Object;
   // getter: getV()Ljava/lang/Object;
   public final val v: T#0 & Any

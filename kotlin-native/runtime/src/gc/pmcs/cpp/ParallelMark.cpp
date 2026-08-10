@@ -5,10 +5,10 @@
 
 #include "ParallelMark.hpp"
 
-#include "MarkAndSweepUtils.hpp"
+#include "gc/MarkAndSweepUtils.hpp"
 #include "GCImpl.hpp"
-#include "GCStatistics.hpp"
-#include "ThreadData.hpp"
+#include "gc/GCStatistics.hpp"
+#include "mm/ThreadData.hpp"
 
 using namespace kotlin;
 

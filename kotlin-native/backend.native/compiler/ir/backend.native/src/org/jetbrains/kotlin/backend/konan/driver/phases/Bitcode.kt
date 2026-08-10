@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultLlvmModuleA
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmFunctionAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.addLlvmFunctionEnumAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
-import org.jetbrains.kotlin.backend.konan.llvm.name
+import org.jetbrains.kotlin.backend.konan.llvm.valueName
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
@@ -67,15 +67,10 @@ internal val CheckExternalCallsPhase = createSimpleNamedCompilerPhase<NativeGene
     checkLlvmModuleExternalCalls(context)
 }
 
-/**
- * Rewrites globals for external calls checker after optimizer run.
- */
-internal val RewriteExternalCallsCheckerGlobals = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
-        name = "RewriteExternalCallsCheckerGlobals",
-        postactions = getDefaultLlvmModuleActions(),
-) { context, _ ->
-    addFunctionsListSymbolForChecker(context)
-}
+internal val ModuleCallsChecker = optimizationPipelinePass(
+        name = "ModuleCallsChecker",
+        pipeline = ::ModuleCallsCheckerPipeline
+)
 
 internal class OptimizationState(
         config: NativeSecondStageCompilationConfig,
@@ -125,7 +120,7 @@ internal val StackProtectorPhaseInCompiler = createSimpleNamedCompilerPhase<Opti
             }
             attribute?.let { sspAttribute ->
                 getFunctions(module)
-                        .filter { LLVMIsDeclaration(it) == 0 && it.name != "__clang_call_terminate" }
+                        .filter { LLVMIsDeclaration(it) == 0 && it.valueName != "__clang_call_terminate" }
                         .forEach { addLlvmFunctionEnumAttribute(it, sspAttribute) }
             }
         }
@@ -198,6 +193,9 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
         }
         if (!context.config.runLLVMPassesInCompiler) {
             it.runAndMeasurePhase(RemoveRedundantSafepointsPhaseInLLVM, module)
+        }
+        if (context.config.checkStateAtExternalCalls) {
+            it.runAndMeasurePhase(ModuleCallsChecker, module)
         }
     }
     if (context.config.runLLVMPassesInCompiler) {

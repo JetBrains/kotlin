@@ -17,26 +17,20 @@ import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 class JvmBackendContext(
     val state: GenerationState,
     override val irBuiltIns: IrBuiltIns,
@@ -60,7 +54,7 @@ class JvmBackendContext(
     override val irFactory: IrFactory = IrFactoryImpl
 
     val specialAnnotationsProvider: JvmIrSpecialAnnotationSymbolProvider =
-        JvmIrSpecialAnnotationSymbolProvider()
+        JvmIrSpecialAnnotationSymbolProvider(irBuiltIns.moduleFragment)
     override val typeSystem: IrTypeSystemContext = JvmIrTypeSystemContext(irBuiltIns)
     val defaultTypeMapper = IrTypeMapper(this)
     val defaultMethodSignatureMapper = MethodSignatureMapper(this, defaultTypeMapper)
@@ -80,7 +74,7 @@ class JvmBackendContext(
 
     lateinit var enumEntriesIntrinsicMappingsCache: EnumEntriesIntrinsicMappingsCache
 
-    val isCompilingAgainstJdk8OrLater = state.jvmBackendClassResolver.resolveToClassDescriptors(
+    val isCompilingAgainstJdk8OrLater = state.jvmBackendClassResolver.resolveToClasses(
         Type.getObjectType("java/lang/invoke/LambdaMetafactory")
     ).isNotEmpty()
 
@@ -105,8 +99,8 @@ class JvmBackendContext(
         get() = error("Not supported in JVM")
 
     init {
-        state.mapInlineClass = { descriptor ->
-            defaultTypeMapper.mapType(referenceClass(descriptor).defaultType)
+        state.mapInlineClass = { irClass ->
+            defaultTypeMapper.mapType(irClass.defaultType)
         }
 
         state.reportDuplicateClassNameError = { class1, internalName, class2 ->
@@ -120,12 +114,6 @@ class JvmBackendContext(
             declaration.fileOrNull?.fileForTopLevelPluginDeclarations == true
         }
     }
-
-    fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
-        symbolTable.lazyWrapper.descriptorExtension.referenceClass(descriptor)
-
-    fun referenceTypeParameter(descriptor: TypeParameterDescriptor): IrTypeParameterSymbol =
-        symbolTable.lazyWrapper.descriptorExtension.referenceTypeParameter(descriptor)
 
     override val preferJavaLikeCounterLoop: Boolean
         get() = true

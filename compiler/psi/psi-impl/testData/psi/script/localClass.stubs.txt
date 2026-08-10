@@ -24,6 +24,10 @@ FILE[kind=Script[packageFqName=<root>]]
       FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=localFun2]
         VALUE_PARAMETER_LIST
     SCRIPT_INITIALIZER
-      CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=LocalClass3, superNames=[]]
-      FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=localFun3]
-        VALUE_PARAMETER_LIST
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=foo]
+        LAMBDA_ARGUMENT[isSpread=false]
+          CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=LocalClass3, superNames=[]]
+          FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=localFun3]
+            VALUE_PARAMETER_LIST
+            BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]

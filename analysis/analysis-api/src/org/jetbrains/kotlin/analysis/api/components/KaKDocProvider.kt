@@ -135,6 +135,7 @@ public interface KaKDocProvider : KaSessionComponent {
         "this.findKDoc()",
         "org.jetbrains.kotlin.analysis.api.kdoc.findKDoc",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaNonPublicApi
 @KtNonPublicApi
@@ -176,6 +177,7 @@ public fun KtDeclaration.findKDoc(): KDocCommentDescriptor? {
         "this.findKDoc()",
         "org.jetbrains.kotlin.analysis.api.kdoc.findKDoc",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaNonPublicApi
 @KtNonPublicApi

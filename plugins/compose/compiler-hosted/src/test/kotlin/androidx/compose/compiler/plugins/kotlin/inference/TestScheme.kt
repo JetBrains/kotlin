@@ -16,7 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.inference
 
-import org.junit.Assert.assertNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -30,19 +30,41 @@ class TestScheme {
     @Test
     fun canCreateASchemeWithOpenAppliers() {
         val scheme = Scheme(Open(0), listOf(Scheme(Open(0))))
-        assertEquals("[0, [0]]", scheme.toString())
+        assertEquals("[Open(0), [Open(0)]]", scheme.toString())
+    }
+
+    @Test
+    fun canCreateASchemeWithConstrainedOpenItems() {
+        val scheme =
+            Scheme(
+                Open(0, allowedTokens = setOf("W", "X")), listOf(Scheme(Open(0, allowedTokens = setOf("W", "X")))),
+                result =
+                    Scheme(Open(-1, allowedTokens = setOf("Y", "Z")), listOf(Scheme(Open(-1, allowedTokens = setOf("Y", "Z"))))),
+            )
+
+        assertEquals(
+            "[" +
+                    "Open(0, allowedTokens = {W, X}), " +
+                    "[Open(0, allowedTokens = {W, X})]: " +
+                    "[" +
+                    "Open(_, allowedTokens = {Y, Z}), " +
+                    "[Open(_, allowedTokens = {Y, Z})]" +
+                    "]" +
+                    "]",
+            scheme.toString()
+        )
     }
 
     @Test
     fun canCreateASchemeWithAnonymousOpens() {
         val scheme = Scheme(Open(-1), listOf(Scheme(Open(-1))))
-        assertEquals("[_, [_]]", scheme.toString())
+        assertEquals("[Open(_), [Open(_)]]", scheme.toString())
     }
 
     @Test
     fun canCreateASchemeWithAResultScheme() {
         val scheme = Scheme(Open(0), result = Scheme(Open(0)))
-        assertEquals("[0: [0]]", scheme.toString())
+        assertEquals("[Open(0): [Open(0)]]", scheme.toString())
     }
 
     @Test
@@ -132,21 +154,23 @@ class TestScheme {
             Scheme(uiToken, listOf(ui, ui, ui, ui, ui, ui)),
             Scheme(a, listOf(aScheme, aScheme, aScheme)),
             Scheme(one, listOf(oneScheme, aScheme, oneScheme, aScheme)),
-            Scheme(Open(Int.MAX_VALUE), listOf(Scheme(Open(Int.MAX_VALUE)))),
             Scheme(Open(Int.MIN_VALUE), listOf(Scheme(Open(Int.MIN_VALUE)))),
+            Scheme(Open(-1, allowedTokens = setOf("W", "X"))),
             Scheme(
-                target = z,
-                result = oneScheme
+                Open(-1, allowedTokens = setOf("W", "X")), listOf(Scheme(Open(-1, allowedTokens = setOf("Y", "Z")))),
+                result =
+                    Scheme(Open(-1, allowedTokens = setOf("W", "X")), listOf(Scheme(Open(-1, allowedTokens = setOf("Y", "Z"))))),
             ),
             Scheme(
-                target = z,
-                anyParameters = true
-            )
+                Open(0, allowedTokens = setOf("W", "X")), listOf(Scheme(Open(0, allowedTokens = setOf("W", "X")))),
+                result =
+                    Scheme(Open(1, allowedTokens = setOf("Y", "Z")), listOf(Scheme(Open(1, allowedTokens = setOf("Y", "Z"))))),
+            ),
         )
 
         for (scheme in schemes) {
             val serialized = scheme.serialize()
-            val processedScheme = deserializeScheme(serialized)
+            val processedScheme = deserializeScheme(serialized.scheme, serialized.positional, serialized.indexed)
             assertEquals(scheme, processedScheme)
         }
     }
@@ -154,19 +178,27 @@ class TestScheme {
     @Test
     fun invalidDeserializationCanBeCaught() {
         val invalids = listOf(
-            "",
-            "[ ]",
-            "[123123123123123123123123123123123123]",
-            "[\"",
-            "[a[a[a[a[a",
-            "[a[a[a[a[a[\"",
-            "[UI] ",
-            "[\"\\u0000\"]",
-            "[0*[0]]",
-            "[0[0]*]"
+            SerializedScheme(scheme = "", positional = "", indexed = ""),
+            SerializedScheme(scheme = "[ ]", positional = "", indexed = ""),
+            SerializedScheme(scheme = "[123123123123123123123123123123123123]", positional = "", indexed = ""),
+            SerializedScheme(scheme = "[\"", positional = "", indexed = ""),
+            SerializedScheme(scheme = "[a[a[a[a[a", positional = "", indexed = ""),
+            SerializedScheme(scheme = "[a[a[a[a[a[\"", positional = "", indexed = ""),
+            SerializedScheme(scheme = "[UI] ", positional = "", indexed = ""),
+            SerializedScheme(scheme = "[\"\\u0000\"]", positional = "", indexed = ""),
+            SerializedScheme(scheme = "[0*[0]]", positional = "", indexed = ""),
+            SerializedScheme(scheme = "[0[0]*]", positional = "", indexed = ""),
+            SerializedScheme(scheme = "[0[0]]", positional = "[]", indexed = ""),
+            SerializedScheme(scheme = "[0[0]]", positional = "[0", indexed = ""),
+            SerializedScheme(scheme = "[0[0]]", positional = "[{,", indexed = ""),
+            SerializedScheme(scheme = "[0[0]]", positional = "[{a,b}}", indexed = ""),
+            SerializedScheme(scheme = "[0[0]]", positional = "", indexed = "[]"),
+            SerializedScheme(scheme = "[0[0]]", positional = "", indexed = "[0"),
+            SerializedScheme(scheme = "[0[0]]", positional = "", indexed = "[{,"),
+            SerializedScheme(scheme = "[0[0]]", positional = "", indexed = "[{a,b},,"),
         )
         for (invalid in invalids) {
-            val result = deserializeScheme(invalid)
+            val result = deserializeScheme(invalid.scheme, invalid.positional, invalid.indexed)
             assertNull(result)
         }
     }

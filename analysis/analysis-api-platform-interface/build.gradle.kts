@@ -7,7 +7,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -22,7 +22,7 @@ dependencies {
     implementation(libs.opentelemetry.api)
     implementation(libs.caffeine)
 
-    testFixturesApi(kotlinTest("junit"))
+    testFixturesApi(kotlinTest("junit5"))
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))

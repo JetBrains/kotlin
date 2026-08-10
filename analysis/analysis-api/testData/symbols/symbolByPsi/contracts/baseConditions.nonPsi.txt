@@ -58,6 +58,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -188,6 +189,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: decode
   importableFqName: decode
 
 KaAnonymousFunctionSymbol:
@@ -250,6 +252,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -380,6 +383,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: decodeFake
   importableFqName: decodeFake
 
 KaAnonymousFunctionSymbol:
@@ -442,6 +446,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -577,6 +582,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: decodeIfString
   importableFqName: decodeIfString
 
 KaAnonymousFunctionSymbol:
@@ -639,6 +645,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -774,4 +781,5 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: decodeNotNumber
   importableFqName: decodeNotNumber

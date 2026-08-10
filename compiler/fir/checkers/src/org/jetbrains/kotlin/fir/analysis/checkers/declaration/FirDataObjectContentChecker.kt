@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.fir.declarations.utils.isMethodOfAny
+import org.jetbrains.kotlin.fir.declarations.isEquals
+import org.jetbrains.kotlin.fir.declarations.isHashCode
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirDataObjectContentChecker : FirNamedFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -29,7 +29,7 @@ object FirDataObjectContentChecker : FirNamedFunctionChecker(MppCheckerKind.Comm
         val containingClass = context.containingDeclarations.lastOrNull() as? FirClassSymbol<*> ?: return
         if (containingClass.classKind != ClassKind.OBJECT || !containingClass.hasModifier(KtTokens.DATA_KEYWORD)) return
 
-        if (declaration.symbol.isMethodOfAny && declaration.name != OperatorNameConventions.TO_STRING) {
+        if (declaration.isEquals(context.session) || declaration.isHashCode()) {
             reporter.reportOn(source, FirErrors.DATA_OBJECT_CUSTOM_EQUALS_OR_HASH_CODE)
         }
     }

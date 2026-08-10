@@ -22,6 +22,7 @@ StringLiteral.kt:
                 REFERENCE_EXPRESSION[referencedName=String]
     PROPERTY[fqName=CONSTANT, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=CONSTANT]
       MODIFIER_LIST[const]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
 
 
 WithStringConstant.kt:
@@ -45,7 +46,16 @@ WithStringConstant.kt:
               STRING_TEMPLATE
                 LITERAL_STRING_TEMPLATE_ENTRY[text= ]
                 LONG_STRING_TEMPLATE_ENTRY[hasMultipleExpressions=false, text=${2 + 1}]
+                  BINARY_EXPRESSION
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+                    OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
             VALUE_ARGUMENT[isSpread=false]
+              BINARY_EXPRESSION
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=str]
+                OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
 
 
 WithStringInterpolationPrefix.kt:
@@ -114,5 +124,26 @@ WithStringLiteralConcat.kt:
                 REFERENCE_EXPRESSION[referencedName=StringLiteral]
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
+              BINARY_EXPRESSION
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=some]
+                OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=1]
             VALUE_ARGUMENT[isSpread=false]
+              BINARY_EXPRESSION
+                BINARY_EXPRESSION
+                  STRING_TEMPLATE
+                  OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                  REFERENCE_EXPRESSION[referencedName=CONSTANT]
+                OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=2]
             VALUE_ARGUMENT[isSpread=false]
+              BINARY_EXPRESSION
+                STRING_TEMPLATE
+                  SHORT_STRING_TEMPLATE_ENTRY[text=$CONSTANT]
+                    REFERENCE_EXPRESSION[referencedName=CONSTANT]
+                OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=3]

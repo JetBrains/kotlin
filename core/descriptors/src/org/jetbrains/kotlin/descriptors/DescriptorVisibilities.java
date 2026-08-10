@@ -20,6 +20,7 @@ import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.SuperCallReceiverValue;
@@ -282,6 +283,7 @@ public class DescriptorVisibilities {
     private DescriptorVisibilities() {
     }
 
+    @ObsoleteDescriptorBasedAPI
     public static boolean isVisible(
             @Nullable ReceiverValue receiver,
             @NotNull DeclarationDescriptorWithVisibility what,
@@ -294,6 +296,7 @@ public class DescriptorVisibilities {
     /**
      * @see DescriptorVisibility.isVisible contract
      */
+    @ObsoleteDescriptorBasedAPI
     public static boolean isVisibleIgnoringReceiver(
             @NotNull DeclarationDescriptorWithVisibility what,
             @NotNull DeclarationDescriptor from,
@@ -306,6 +309,7 @@ public class DescriptorVisibilities {
      * @see DescriptorVisibility.isVisible contract
      * @see DescriptorVisibilities.RECEIVER_DOES_NOT_EXIST
      */
+    @ObsoleteDescriptorBasedAPI
     public static boolean isVisibleWithAnyReceiver(
             @NotNull DeclarationDescriptorWithVisibility what,
             @NotNull DeclarationDescriptor from,
@@ -324,6 +328,7 @@ public class DescriptorVisibilities {
         return false;
     }
 
+    @ObsoleteDescriptorBasedAPI
     @Nullable
     public static DeclarationDescriptorWithVisibility findInvisibleMember(
             @Nullable ReceiverValue receiver,

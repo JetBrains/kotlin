@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VirtualFileSystem
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.asPsiSearchScope
@@ -33,38 +30,31 @@ import org.jetbrains.kotlin.name.FqName
 fun createJavaDirectSourceJavaFacadeBuilder(
     configuration: CompilerConfiguration,
     projectEnvironment: VfsBasedProjectEnvironment,
-): (AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade {
-    val localFs = projectEnvironment.knownFileSystems.first { it.protocol == StandardFileSystems.FILE_PROTOCOL }
-
-    return { _, session, moduleData, scope ->
+): (AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade =
+    { _, session, moduleData, scope ->
         val finder = buildJavaDirectClassFinder(
             configuration = configuration,
-            localFs = localFs,
             session = session,
             binaryFinderProvider = {
-                @OptIn(K1Deprecation::class)
                 projectEnvironment.project.createJavaClassFinder(scope.asPsiSearchScope(), session.javaAnnotationProvider)
             },
         )
         FirJavaFacadeForSource(session, moduleData, finder)
     }
-}
 
 private fun buildJavaDirectClassFinder(
     configuration: CompilerConfiguration,
-    localFs: VirtualFileSystem,
     session: FirSession,
     binaryFinderProvider: () -> JavaClassFinder,
 ): JavaClassFinder {
     val sourceRootEntries: List<JavaSourceRootEntry> =
         configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS).asSequence()
             .filterIsInstance<JavaSourceRoot>()
-            .mapNotNull { javaRoot ->
-                val vFile = localFs.findFileByPath(javaRoot.file.path) ?: return@mapNotNull null
+            .map { javaRoot ->
                 val prefix =
                     if (javaRoot.packagePrefix.isNullOrEmpty()) FqName.ROOT
                     else FqName(javaRoot.packagePrefix!!)
-                JavaSourceRootEntry(vFile, prefix)
+                JavaSourceRootEntry(javaRoot.file, prefix)
             }
             .toList()
 

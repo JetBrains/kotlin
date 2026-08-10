@@ -77,7 +77,6 @@ internal fun <T> PhaseEngine<NativeBackendPhaseContext>.linkKlibs(
         psiToIrEngine.runSpecialBackendChecks(output.irModule, output.irBuiltIns, output.symbols)
         output to additionalOutput
     }
-    runAndMeasurePhase(CopyDefaultValuesToActualPhase, Pair(linkKlibsOutput.irModule, linkKlibsOutput.irBuiltIns))
     return linkKlibsOutput to additionalOutput
 }
 
@@ -412,9 +411,6 @@ internal fun PhaseEngine<NativeGenerationState>.runPostCodegen() {
         runAndMeasurePhase(CheckExternalCallsPhase)
     }
     newEngine(context as BitcodePostProcessingContext) { it.runBitcodePostProcessing() }
-    if (checkExternalCalls) {
-        runAndMeasurePhase(RewriteExternalCallsCheckerGlobals)
-    }
     if (context.config.produce.isFullCache) {
         runAndMeasurePhase(SaveAdditionalCacheInfoPhase)
     }

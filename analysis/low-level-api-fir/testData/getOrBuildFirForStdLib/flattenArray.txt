@@ -1,4 +1,6 @@
 KT element: KtNamedFunction
+KT element text:
+public fun <T> kotlin.Array<out kotlin.Array<out T>>.flatten(): kotlin.collections.List<T> { /* compiled code */ }
 FIR element: FirNamedFunctionImpl
 FIR source kind: KtRealSourceElementKind
 

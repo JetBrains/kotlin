@@ -9,6 +9,10 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class JavaParsingMembersTest : JavaParsingTestBase() {
@@ -24,14 +28,14 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         """.trimIndent()
         val javaClass = parseFirstClass(source)
 
-        assert(javaClass.fields.size == 1)
-        assert(javaClass.fields.first().name.asString() == "field")
+        assertEquals(1, javaClass.fields.size)
+        assertEquals("field", javaClass.fields.first().name.asString())
 
-        assert(javaClass.methods.size == 1)
-        assert(javaClass.methods.first().name.asString() == "method")
+        assertEquals(1, javaClass.methods.size)
+        assertEquals("method", javaClass.methods.first().name.asString())
 
-        assert(javaClass.constructors.size == 1)
-        assert(javaClass.constructors.first().name.asString() == "A")
+        assertEquals(1, javaClass.constructors.size)
+        assertEquals("A", javaClass.constructors.first().name.asString())
     }
 
     @Test
@@ -41,9 +45,9 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         """.trimIndent()
         val javaClass1 = parseFirstClass(sourceWithoutConstructor)
 
-        assert(javaClass1.constructors.isEmpty()) { "Expected no explicit constructors" }
-        assert(javaClass1.hasDefaultConstructor()) { "Expected hasDefaultConstructor() = true for class without explicit constructor" }
-        assert(!javaClass1.isInterface) { "A is not an interface" }
+        assertTrue(javaClass1.constructors.isEmpty(), "Expected no explicit constructors")
+        assertTrue(javaClass1.hasDefaultConstructor(), "Expected hasDefaultConstructor() = true for class without explicit constructor")
+        assertFalse(javaClass1.isInterface, "A is not an interface")
 
         val sourceWithConstructor = """
             public class B {
@@ -52,17 +56,17 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         """.trimIndent()
         val javaClass2 = parseFirstClass(sourceWithConstructor)
 
-        assert(javaClass2.constructors.size == 1) { "Expected 1 explicit constructor, got ${javaClass2.constructors.size}" }
-        assert(!javaClass2.hasDefaultConstructor()) { "Expected hasDefaultConstructor() = false for class with explicit constructor" }
+        assertEquals(1, javaClass2.constructors.size)
+        assertFalse(javaClass2.hasDefaultConstructor(), "Expected hasDefaultConstructor() = false for class with explicit constructor")
 
         val sourceInterface = """
             public interface I {}
         """.trimIndent()
         val javaClass3 = parseFirstClass(sourceInterface)
 
-        assert(javaClass3.constructors.isEmpty()) { "Expected no constructors for interface" }
-        assert(!javaClass3.hasDefaultConstructor()) { "Expected hasDefaultConstructor() = false for interface" }
-        assert(javaClass3.isInterface) { "I should be an interface" }
+        assertTrue(javaClass3.constructors.isEmpty(), "Expected no constructors for interface")
+        assertFalse(javaClass3.hasDefaultConstructor(), "Expected hasDefaultConstructor() = false for interface")
+        assertTrue(javaClass3.isInterface, "I should be an interface")
     }
 
     @Test
@@ -74,13 +78,13 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         """.trimIndent()
         val javaClass = parseFirstClass(source)
 
-        assert(javaClass.methods.size == 1) { "Expected 1 method, got ${javaClass.methods.size}" }
+        assertEquals(1, javaClass.methods.size)
         val method = javaClass.methods.first()
-        assert(method.name.asString() == "method")
+        assertEquals("method", method.name.asString())
 
         val returnType = method.returnType
-        assert(returnType is JavaPrimitiveType) { "Expected JavaPrimitiveType, got ${returnType::class.java}" }
-        assert((returnType as JavaPrimitiveType).type == null) { "Expected type=null for void, got ${returnType.type}" }
+        assertTrue(returnType is JavaPrimitiveType, "Expected JavaPrimitiveType, got ${returnType::class.java}")
+        assertNull((returnType as JavaPrimitiveType).type, "A void return type must be a JavaPrimitiveType with no primitive kind")
     }
 
     @Test
@@ -99,43 +103,43 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         val javaClass = parseFirstClass(source)
 
         val method1 = javaClass.methods.first { it.name.asString() == "method1" }
-        assert(method1.valueParameters.isEmpty()) { "method1 should have 0 parameters, got ${method1.valueParameters.size}" }
+        assertTrue(method1.valueParameters.isEmpty(), "method1 should have 0 parameters, got ${method1.valueParameters.size}")
 
         val method2 = javaClass.methods.first { it.name.asString() == "method2" }
-        assert(method2.valueParameters.size == 1) { "method2 should have 1 parameter, got ${method2.valueParameters.size}" }
+        assertEquals(1, method2.valueParameters.size)
         val param2 = method2.valueParameters.first()
-        assert(param2.name?.asString() == "a") { "Expected parameter name 'a', got ${param2.name}" }
-        assert(param2.type is JavaPrimitiveType) { "Expected int to be JavaPrimitiveType" }
+        assertEquals("a", param2.name?.asString())
+        assertTrue(param2.type is JavaPrimitiveType, "Expected int to be JavaPrimitiveType")
 
         val method3 = javaClass.methods.first { it.name.asString() == "method3" }
-        assert(method3.valueParameters.size == 3) { "method3 should have 3 parameters, got ${method3.valueParameters.size}" }
+        assertEquals(3, method3.valueParameters.size)
         val params3 = method3.valueParameters.toList()
-        assert(params3[0].name?.asString() == "a") { "Expected parameter name 'a', got ${params3[0].name}" }
-        assert(params3[1].name?.asString() == "b") { "Expected parameter name 'b', got ${params3[1].name}" }
-        assert(params3[2].name?.asString() == "c") { "Expected parameter name 'c', got ${params3[2].name}" }
+        assertEquals("a", params3[0].name?.asString())
+        assertEquals("b", params3[1].name?.asString())
+        assertEquals("c", params3[2].name?.asString())
 
         val paramAType = params3[0].type as JavaClassifierType
-        assert(paramAType.classifierQualifiedName == "String") { "Expected String, got ${paramAType.classifierQualifiedName}" }
+        assertEquals("String", paramAType.classifierQualifiedName)
 
         val paramBType = params3[1].type as JavaPrimitiveType
-        assert(paramBType.type == PrimitiveType.INT) { "Expected INT primitive type" }
+        assertEquals(PrimitiveType.INT, paramBType.type)
 
         val paramCType = params3[2].type as JavaClassifierType
-        assert(paramCType.classifierQualifiedName == "List") { "Expected List, got ${paramCType.classifierQualifiedName}" }
+        assertEquals("List", paramCType.classifierQualifiedName)
 
         val constructor0 = javaClass.constructors.first { it.valueParameters.isEmpty() }
-        assert(constructor0.valueParameters.isEmpty()) { "Constructor should have 0 parameters" }
+        assertTrue(constructor0.valueParameters.isEmpty(), "Constructor should have 0 parameters")
 
         val constructor1 = javaClass.constructors.first { it.valueParameters.size == 1 }
-        assert(constructor1.valueParameters.size == 1) { "Constructor should have 1 parameter, got ${constructor1.valueParameters.size}" }
+        assertEquals(1, constructor1.valueParameters.size)
         val constParam1 = constructor1.valueParameters.first()
-        assert(constParam1.name?.asString() == "x") { "Expected parameter name 'x', got ${constParam1.name}" }
+        assertEquals("x", constParam1.name?.asString())
 
         val constructor2 = javaClass.constructors.first { it.valueParameters.size == 2 }
-        assert(constructor2.valueParameters.size == 2) { "Constructor should have 2 parameters, got ${constructor2.valueParameters.size}" }
+        assertEquals(2, constructor2.valueParameters.size)
         val constParams2 = constructor2.valueParameters.toList()
-        assert(constParams2[0].name?.asString() == "s") { "Expected parameter name 's', got ${constParams2[0].name}" }
-        assert(constParams2[1].name?.asString() == "o") { "Expected parameter name 'o', got ${constParams2[1].name}" }
+        assertEquals("s", constParams2[0].name?.asString())
+        assertEquals("o", constParams2[1].name?.asString())
     }
 
     @Test
@@ -148,14 +152,14 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         val javaClass = parseFirstClass(source)
 
         val equalsMethod = javaClass.methods.first { it.name.asString() == "equals" }
-        assert(equalsMethod.valueParameters.size == 1) { "equals should have 1 parameter, got ${equalsMethod.valueParameters.size}" }
+        assertEquals(1, equalsMethod.valueParameters.size)
 
         val param = equalsMethod.valueParameters.first()
-        assert(param.name?.asString() == "o") { "Expected parameter name 'o', got ${param.name}" }
+        assertEquals("o", param.name?.asString())
 
         val paramType = param.type as JavaClassifierType
-        assert(paramType.classifierQualifiedName == "Object") { "Expected 'Object', got '${paramType.classifierQualifiedName}'" }
-        assert(paramType.classifier == null) { "Object should have null classifier without a wired symbol provider" }
+        assertEquals("Object", paramType.classifierQualifiedName)
+        assertNull(paramType.classifier, "Object should have null classifier without a wired symbol provider")
     }
 
     @Test
@@ -169,8 +173,8 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         val javaClass = parseFirstClass(source)
         val nativeMethod = javaClass.methods.first { it.name.asString() == "nativeMethod" }
         val normalMethod = javaClass.methods.first { it.name.asString() == "normalMethod" }
-        assert(nativeMethod.isNative) { "nativeMethod should have isNative=true" }
-        assert(!normalMethod.isNative) { "normalMethod should have isNative=false" }
+        assertTrue(nativeMethod.isNative, "nativeMethod should have isNative=true")
+        assertFalse(normalMethod.isNative, "normalMethod should have isNative=false")
     }
 
     @Test
@@ -178,9 +182,9 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         val source = "public class Foo { public Foo() {} }"
         val javaClass = parseFirstClass(source)
         val ctor = javaClass.constructors.single()
-        assert(ctor.isFinal) { "Constructor should be implicitly final" }
-        assert(!ctor.isAbstract) { "Constructor should not be abstract" }
-        assert(!ctor.isStatic) { "Constructor should not be static" }
+        assertTrue(ctor.isFinal, "Constructor should be implicitly final")
+        assertFalse(ctor.isAbstract, "Constructor should not be abstract")
+        assertFalse(ctor.isStatic, "Constructor should not be static")
     }
 
     @Test
@@ -200,16 +204,14 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
 
         // All fields in a multi-field declaration share the same modifiers
         for (field in listOf(errorField, eofField, eolField)) {
-            assert(field.isStatic) { "${field.name} should be static" }
-            assert(field.isFinal) { "${field.name} should be final" }
-            assert(field.visibility == org.jetbrains.kotlin.descriptors.Visibilities.Public) {
-                "${field.name} should be public, got ${field.visibility}"
-            }
+            assertTrue(field.isStatic, "${field.name} should be static")
+            assertTrue(field.isFinal, "${field.name} should be final")
+            assertEquals(org.jetbrains.kotlin.descriptors.Visibilities.Public, field.visibility, "${field.name} should be public")
         }
 
         // All fields share the same type (int)
-        assert(eofField.type is JavaPrimitiveType) { "EOF type should be primitive, got ${eofField.type::class.simpleName}" }
-        assert(eolField.type is JavaPrimitiveType) { "EOL type should be primitive, got ${eolField.type::class.simpleName}" }
+        assertTrue(eofField.type is JavaPrimitiveType, "EOF type should be primitive, got ${eofField.type::class.simpleName}")
+        assertTrue(eolField.type is JavaPrimitiveType, "EOL type should be primitive, got ${eolField.type::class.simpleName}")
     }
 
     @Test
@@ -239,30 +241,35 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         // against a full FIR session.
         val regular = javaClass.methods.first { it.name.asString() == "ofRegular" }
         val regularParam = regular.valueParameters.first()
-        assert(!regularParam.isVararg) { "Regular param should not be vararg" }
-        assert(regularParam.type is JavaClassifierType) {
+        assertFalse(regularParam.isVararg, "Regular param should not be vararg")
+        assertTrue(
+            regularParam.type is JavaClassifierType,
             "Regular param type should be JavaClassifierType, got ${regularParam.type::class.simpleName}"
-        }
-        assert(regularParam.annotations.any { it.classId?.asString()?.contains("NonNull") == true }) {
+        )
+        assertTrue(
+            regularParam.annotations.any { it.classId?.asString()?.contains("NonNull") == true },
             "Parser should capture @NonNull on the parameter, got: ${regularParam.annotations.map { it.classId }}"
-        }
+        )
 
         // Varargs parameter: type should be JavaArrayType (String[]) with a JavaClassifierType
         // component (String). Component-vs-array annotation placement is again covered by
         // `JavaUsingAst*` integration tests rather than this parsing-only test (see comment above).
         val vararg = javaClass.methods.first { it.name.asString() == "ofJspecify" }
         val varargParam = vararg.valueParameters.first()
-        assert(varargParam.isVararg) { "Vararg param should be vararg" }
-        assert(varargParam.type is JavaArrayType) {
+        assertTrue(varargParam.isVararg, "Vararg param should be vararg")
+        assertTrue(
+            varargParam.type is JavaArrayType,
             "Vararg param type should be JavaArrayType, got ${varargParam.type::class.simpleName}"
-        }
+        )
         val arrayType = varargParam.type as JavaArrayType
         val componentType = arrayType.componentType
-        assert(componentType is JavaClassifierType) {
+        assertTrue(
+            componentType is JavaClassifierType,
             "Vararg component type should be JavaClassifierType, got ${componentType::class.simpleName}"
-        }
-        assert(varargParam.annotations.any { it.classId?.asString()?.contains("NonNull") == true }) {
+        )
+        assertTrue(
+            varargParam.annotations.any { it.classId?.asString()?.contains("NonNull") == true },
             "Parser should capture @NonNull on the vararg parameter, got: ${varargParam.annotations.map { it.classId }}"
-        }
+        )
     }
 }

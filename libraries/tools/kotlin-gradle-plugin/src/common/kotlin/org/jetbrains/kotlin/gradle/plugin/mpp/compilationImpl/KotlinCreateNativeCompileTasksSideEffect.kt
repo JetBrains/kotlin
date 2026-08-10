@@ -46,11 +46,11 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
             compilation.crossCompilationOnCurrentHostSupported
         }
 
-        task.onlyIf("Cross compilation should be supported on host") {
+        task.onlyIf("Compilation of target '${compilationInfo.targetDisambiguationClassifier}' is supported on this host") {
             enabledOnCurrentHost.get()
         }
 
-        task.onlyIf("Cross compilation should be possible with project dependencies") {
+        task.onlyIf("Cross-compilation of target '${compilationInfo.targetDisambiguationClassifier}' with project dependencies is supported on this host") {
             crossCompilationSharedData.dataForAllDependencies.all { it.crossCompilationSupported }
         }
 

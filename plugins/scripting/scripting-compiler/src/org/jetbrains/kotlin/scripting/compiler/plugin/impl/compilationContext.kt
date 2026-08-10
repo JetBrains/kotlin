@@ -27,17 +27,6 @@ import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.container.StorageComponentContainer
-import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
-import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.psi.KtModifierListOwner
-import org.jetbrains.kotlin.resolve.sam.SamWithReceiverResolver
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
@@ -45,7 +34,6 @@ import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.*
@@ -61,7 +49,6 @@ class SharedScriptCompilationContext(
     val scriptConfigurationsProvider: ScriptConfigurationsProvider?
 )
 
-@OptIn(K1SpecificScriptingServiceAccessor::class)
 fun createIsolatedCompilationContext(
     baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
@@ -89,11 +76,10 @@ fun createIsolatedCompilationContext(
     return SharedScriptCompilationContext(
         parentDisposable, initialScriptCompilationConfiguration, environment, ignoredOptionsReportingState,
         kotlinCompilerConfiguration.getCompilerExtensions(ScriptConfigurationsProvider).firstOrNull()
-    ).applyConfigure()
+    )
 }
 
-@OptIn(K1SpecificScriptingServiceAccessor::class)
-internal fun createCompilationContextFromEnvironment(
+fun createCompilationContextFromEnvironment(
     baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     environment: KotlinCoreEnvironment,
     messageCollector: ScriptDiagnosticsMessageCollector
@@ -110,40 +96,7 @@ internal fun createCompilationContextFromEnvironment(
     return SharedScriptCompilationContext(
         null, initialScriptCompilationConfiguration, environment, ignoredOptionsReportingState,
         environment.configuration.getCompilerExtensions(ScriptConfigurationsProvider).firstOrNull()
-    ).applyConfigure()
-}
-
-// copied with minor modifications from the sam-with-receiver-cli
-// TODO: consider placing into a shared jar
-internal class ScriptingSamWithReceiverComponentContributor(val annotations: List<String>) : StorageComponentContainerContributor {
-
-    private class Extension(private val annotations: List<String>) : SamWithReceiverResolver, AnnotationBasedExtension {
-        override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?) = annotations
-
-        override fun shouldConvertFirstSamParameterToReceiver(function: FunctionDescriptor): Boolean =
-            (function.containingDeclaration as? ClassDescriptor)?.hasSpecialAnnotation(null) ?: false
-    }
-
-    override fun registerModuleComponents(
-        container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
-    ) {
-        if (platform.isJvm()) {
-            container.useInstance(Extension(annotations))
-        }
-    }
-}
-
-internal fun SharedScriptCompilationContext.applyConfigure(): SharedScriptCompilationContext = apply {
-    val samWithReceiverAnnotations = baseScriptCompilationConfiguration[ScriptCompilationConfiguration.annotationsForSamWithReceivers]
-    if (samWithReceiverAnnotations?.isEmpty() == false) {
-        val annotations = samWithReceiverAnnotations.map { it.typeName }
-        if (!environment.configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            StorageComponentContainerContributor.registerExtension(
-                environment.project,
-                ScriptingSamWithReceiverComponentContributor(annotations)
-            )
-        }
-    }
+    )
 }
 
 internal fun createInitialConfigurations(
@@ -199,7 +152,7 @@ internal fun CompilerConfiguration.updateWithCompilerOptions(
     }
 }
 
-internal fun CompilerConfiguration.updateWithCompilerOptions(
+fun CompilerConfiguration.updateWithCompilerOptions(
     compilerOptions: List<String>,
     validate: (K2JVMCompilerArguments) -> Boolean = {
         validateArguments(it.errors)?.let { throw Exception("Error parsing arguments: $it") } ?: true
@@ -330,7 +283,8 @@ private fun createInitialCompilerConfiguration(
                 pluginConfigurations,
                 pluginOrderConstraints,
                 this,
-                parentDisposable
+                parentDisposable,
+                pluginsLoader = null,
             )
         } else {
             loadPluginsFromClassloader(CompilerConfiguration::class.java.classLoader)

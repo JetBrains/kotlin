@@ -25,10 +25,6 @@ internal constructor(
     KotlinJsIrSubTarget(target, "wasmtime"),
     KotlinWasmtimeDsl {
 
-        init {
-            wasmtimeRunArgs.addAll(wasmtimeProposalArgs())
-        }
-
     private val wasmtime = WasmtimePlugin.applyWithEnvSpec(project)
 
     override val testTaskDescription: String

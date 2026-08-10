@@ -42,4 +42,5 @@ KaNamedFunctionSymbol:
   getContainingModule: KaLibraryModule "Library lib"
   deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
   returnValueStatus: Unspecified
+  javaMethodName: foo
   importableFqName: lib.foo

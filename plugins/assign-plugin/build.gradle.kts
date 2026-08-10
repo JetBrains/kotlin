@@ -7,7 +7,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -24,6 +24,7 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
     testFixturesImplementation(libs.junit.jupiter.api)
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesImplementation(kotlinTest("junit5"))
 
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(toolsJar())

@@ -6,7 +6,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 description = "Kotlin KLIB Library Commonizer"
@@ -62,7 +62,7 @@ dependencies {
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
-val runCommonizer by tasks.registering(JavaExec::class) {
+val runCommonizer = tasks.register("runCommonizer", JavaExec::class) {
     classpath(configurations.compileOnly, sourceSets.main.get().runtimeClasspath)
     mainClass = "org.jetbrains.kotlin.commonizer.cli.CommonizerCLI"
 }

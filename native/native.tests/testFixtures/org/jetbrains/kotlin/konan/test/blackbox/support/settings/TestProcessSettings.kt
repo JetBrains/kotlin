@@ -312,7 +312,10 @@ internal enum class CInterfaceMode(val compilerFlag: String) {
     NONE("-Xbinary=cInterfaceMode=none")
 }
 
-internal class XCTestRunner(val isEnabled: Boolean, private val nativeTargets: KotlinNativeTargets) {
+internal class XCTestRunner(
+    val isEnabled: Boolean,
+    private val nativeTargets: KotlinNativeTargets,
+    private val isMacabi: Boolean) {
     /**
      * Path to the developer frameworks directory.
      */
@@ -335,11 +338,14 @@ internal class XCTestRunner(val isEnabled: Boolean, private val nativeTargets: K
     }
 
     private fun targetPlatform(): String {
-        val xcodeTarget = when (val target = nativeTargets.testTarget) {
-            KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64 -> "macosx"
-            KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64 -> "iphonesimulator"
-            KonanTarget.IOS_ARM64 -> "iphoneos"
-            else -> error("Target $target is not supported buy the executor")
+        val xcodeTarget = when {
+            isMacabi -> "macosx"
+            else -> when (val target = nativeTargets.testTarget) {
+                KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64 -> "macosx"
+                KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64 -> "iphonesimulator"
+                KonanTarget.IOS_ARM64 -> "iphoneos"
+                else -> error("Target $target is not supported buy the executor")
+            }
         }
 
         val result = try {

@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("FunctionName")
-
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.testfixtures.ProjectBuilder
@@ -19,7 +17,7 @@ import kotlin.test.assertEquals
 class NpmDependencyTest {
 
     @Test
-    fun `directoryNpmDependency - expect version uses absolute real path`(
+    fun `directoryNpmDependency - expect version uses absolute+normalized path`(
         @TempDir
         tempDir: Path,
     ) {
@@ -34,7 +32,7 @@ class NpmDependencyTest {
             )
 
         assertEquals(
-            "file:" + tempDir.toRealPath().absolutePathString(),
+            "file:" + tempDir.toAbsolutePath().normalize().absolutePathString(),
             npmDep.version,
         )
     }

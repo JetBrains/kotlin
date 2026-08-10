@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
 @Tag("klibIrInliner")
 @Tag("serialization-native")
-@UseExtTestCaseGroupProvider()
+@UseExtTestCaseGroupProvider
 public class SerializationNativeWithInlinedFunInKlibTestGenerated extends AbstractNativeCodegenBoxTest {
   private void run(String fileName) {
     runTest("plugins/kotlinx-serialization/testData/boxIr/" + fileName);

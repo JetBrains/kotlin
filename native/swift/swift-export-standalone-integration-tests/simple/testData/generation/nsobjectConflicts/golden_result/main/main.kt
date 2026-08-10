@@ -1,7 +1,7 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ClassA::class, "4main6ClassAC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ClassB::class, "4main6ClassBC")
-@file:kotlin.native.internal.objc.BindClassToObjCName(Semaphore::class, "_Semaphore")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Semaphore::class, "_main_Semaphore")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*

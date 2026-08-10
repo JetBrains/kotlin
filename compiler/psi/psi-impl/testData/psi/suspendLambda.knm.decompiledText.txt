@@ -39,7 +39,8 @@ public interface P {
 public interface RS {
 }
 
-@kotlin.annotation.Target public final annotation class A public constructor() : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER])
+public final annotation class A public constructor() : kotlin.Annotation {
 }
 
 public final class Continuation<T> public constructor() {

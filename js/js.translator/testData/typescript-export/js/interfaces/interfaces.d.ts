@@ -467,5 +467,75 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => OverridingSuspendImpl;
             }
         }
+        interface NonClassNestedDeclarations {
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.NonClassNestedDeclarations": unique symbol;
+            };
+        }
+        namespace NonClassNestedDeclarations {
+            interface NestedI {
+                readonly value: string;
+                readonly __doNotUseOrImplementIt: {
+                    readonly "foo.NonClassNestedDeclarations.NestedI": unique symbol;
+                };
+            }
+            abstract class NestedObject extends KtSingleton<NestedObject.$metadata$.constructor>() {
+                private constructor();
+            }
+            namespace NestedObject {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    abstract class constructor {
+                        get value(): string;
+                        private constructor();
+                    }
+                }
+            }
+            abstract class NestedEnum {
+                private constructor();
+                static get A(): foo.NonClassNestedDeclarations.NestedEnum & {
+                    get name(): "A";
+                    get ordinal(): 0;
+                };
+                static values(): [typeof foo.NonClassNestedDeclarations.NestedEnum.A];
+                static valueOf(value: string): foo.NonClassNestedDeclarations.NestedEnum;
+                get name(): "A";
+                get ordinal(): 0;
+                get value(): string;
+            }
+            namespace NestedEnum {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => NestedEnum;
+                }
+            }
+            class NestedAnnotation /* implements kotlin.Annotation */ {
+                constructor(value: string);
+                get value(): string;
+                equals(other: Nullable<any>): boolean;
+                hashCode(): number;
+                toString(): string;
+            }
+            namespace NestedAnnotation {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => NestedAnnotation;
+                }
+            }
+        }
+        class KotlinImplementsNestedI implements foo.NonClassNestedDeclarations.NestedI {
+            constructor(value: string);
+            get value(): string;
+            readonly __doNotUseOrImplementIt: foo.NonClassNestedDeclarations.NestedI["__doNotUseOrImplementIt"];
+        }
+        namespace KotlinImplementsNestedI {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => KotlinImplementsNestedI;
+            }
+        }
+        function consumeNonClassNestedDeclarations(nestedI: foo.NonClassNestedDeclarations.NestedI, nestedObject: typeof foo.NonClassNestedDeclarations.NestedObject, nestedEnum: foo.NonClassNestedDeclarations.NestedEnum, nestedAnnotation: foo.NonClassNestedDeclarations.NestedAnnotation): string;
     }
 }
+
+

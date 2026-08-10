@@ -1,5 +1,0 @@
-> b 8
-Breakpoint 1: where = [..]kfun:#main(){} [..] at kt33364.kt:9:[..]
-> b 15
-Breakpoint 2: where = [..]kfun:#main(){} [..] at kt33364.kt:16:[..]
-> q

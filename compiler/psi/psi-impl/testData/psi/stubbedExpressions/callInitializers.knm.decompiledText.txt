@@ -1,0 +1,39 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+package test
+
+public val call: kotlin.Int /* compiled code */
+
+public val callWithArguments: kotlin.Int /* compiled code */
+
+public val callWithNamedArguments: kotlin.Int /* compiled code */
+
+public val nestedCall: kotlin.Int /* compiled code */
+
+public val qualifiedCall: kotlin.String /* compiled code */
+
+public val parenthesizedCall: kotlin.Int /* compiled code */
+
+public val doublyParenthesizedCall: kotlin.Int /* compiled code */
+
+public val callWithParenthesizedArguments: kotlin.Int /* compiled code */
+
+public val getterCall: kotlin.Int /* compiled code */
+    public final get() { /* compiled code */ }
+
+public fun compute(): kotlin.Int { /* compiled code */ }
+
+public fun sum(left: kotlin.Int, right: kotlin.Int): kotlin.Int { /* compiled code */ }
+
+public fun expressionBodyCall(): kotlin.Int { /* compiled code */ }
+
+public fun expressionBodyNestedCall(): kotlin.Int { /* compiled code */ }
+
+public fun expressionBodyParenthesizedCall(): kotlin.Int { /* compiled code */ }
+
+public fun withCallDefault(value: kotlin.Int = COMPILED_CODE): kotlin.Unit { /* compiled code */ }
+
+public final class WithConstructorCallDefault public constructor(value: kotlin.Int = COMPILED_CODE) {
+    public final val value: kotlin.Int /* compiled code */
+}

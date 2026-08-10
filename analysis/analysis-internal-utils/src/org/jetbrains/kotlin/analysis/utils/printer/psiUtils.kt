@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
         expression = "parentOfType<T>(withSelf = withSelf)",
         imports = ["com.intellij.psi.util.parentOfType"]
     ),
-    level = DeprecationLevel.ERROR
+    level = DeprecationLevel.HIDDEN
 )
 public inline fun <reified T : PsiElement> PsiElement.parentOfType(withSelf: Boolean = false): T? {
     return PsiTreeUtil.getParentOfType(this, T::class.java, !withSelf)
@@ -28,7 +28,7 @@ public inline fun <reified T : PsiElement> PsiElement.parentOfType(withSelf: Boo
         expression = "parentsOfType<T>(clazz, withSelf = withSelf)",
         imports = ["com.intellij.psi.util.parentsOfType"]
     ),
-    level = DeprecationLevel.ERROR
+    level = DeprecationLevel.HIDDEN
 )
 public fun <T : PsiElement> PsiElement.parentsOfType(clazz: Class<out T>, withSelf: Boolean = true): Sequence<T> {
     return (if (withSelf) parentsWithSelf else parents).filterIsInstance(clazz)
@@ -40,9 +40,9 @@ public fun <T : PsiElement> PsiElement.parentsOfType(clazz: Class<out T>, withSe
         expression = "parentsOfType<T>(withSelf = withSelf)",
         imports = ["com.intellij.psi.util.parentsOfType"]
     ),
-    level = DeprecationLevel.ERROR
+    level = DeprecationLevel.HIDDEN
 )
 public inline fun <reified T : PsiElement> PsiElement.parentsOfType(withSelf: Boolean = true): Sequence<T> {
-    @Suppress("DEPRECATION_ERROR")
-    return parentsOfType(T::class.java, withSelf)
+    // The `Class`-based overload is hidden from resolution, so its body is repeated here.
+    return (if (withSelf) parentsWithSelf else parents).filterIsInstance<T>()
 }

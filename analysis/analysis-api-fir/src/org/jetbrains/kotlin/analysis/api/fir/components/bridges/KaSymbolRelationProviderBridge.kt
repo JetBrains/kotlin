@@ -11,11 +11,9 @@ import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.internals.KaInternalsSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableImplementationState as KaEndpointCallableImplementationState
 import org.jetbrains.kotlin.analysis.api.symbols.allOverriddenSymbols as allOverriddenSymbolsEndpoint
 import org.jetbrains.kotlin.analysis.api.symbols.containingDeclaration as containingDeclarationEndpoint
@@ -40,9 +38,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.sealedClassInheritors as sealed
 internal class KaSymbolRelationProviderBridge(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseSessionComponent<KaFirSession>(), KaSymbolRelationProvider, KaFirSessionComponent {
-    private val proxy: KaInternalsSymbolRelationProvider
-        get() = analysisSession.symbolRelationProvider
-
     override val KaSymbol.containingSymbol: KaSymbol?
         get() = context(analysisSession) { containingSymbolEndpoint }
 
@@ -87,12 +82,6 @@ internal class KaSymbolRelationProviderBridge(
 
     override val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
         get() = context(analysisSession) { intersectionOverriddenSymbolsEndpoint }
-
-    @KaExperimentalApi
-    @Deprecated("Use 'implementationState()' instead", level = DeprecationLevel.HIDDEN)
-    override fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus? {
-        return proxy.getImplementationStatus(this, parentClassSymbol)
-    }
 
     @KaExperimentalApi
     override fun KaCallableSymbol.implementationState(implementerClassSymbol: KaClassSymbol): KaCallableImplementationState? =

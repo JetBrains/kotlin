@@ -13,11 +13,13 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
+import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.junit.jupiter.api.condition.OS
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.deserializeSwiftPMImportMetadata
+import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
@@ -26,7 +28,6 @@ import kotlin.test.assertFalse
     supportedOn = [OS.MAC],
     enabledOnCI = [OS.MAC],
 )
-@OptIn(EnvironmentalVariablesOverride::class)
 @SwiftPMImportGradlePluginTests
 class SwiftPMImportPublicationIT : KGPBaseTest() {
 
@@ -174,5 +175,81 @@ class SwiftPMImportPublicationIT : KGPBaseTest() {
         }.publish(publisherConfiguration = PublisherConfiguration(group = "dependency"))
 
         assertFalse(producer.rootComponent.swiftPmMetadata.exists(), "SwiftPM metadata file should be published")
+    }
+
+    @GradleTest
+    fun `transitive iOS-only SwiftPM dependency is constrained on a macOS consumer`(version: GradleVersion) {
+        val localPackageName = "iOSOnlyLib"
+        val producer = project("empty", version) {
+            val localSwiftPackageRelativePath = "../$localPackageName"
+            val localPackageDir = projectPath.resolve(localSwiftPackageRelativePath)
+            createLocalSwiftPackage(localPackageDir, packageName = localPackageName)
+            // UIKit only exists on iOS, so a macOS build of this package fails to compile.
+            localPackageDir.resolve("Sources/$localPackageName/$localPackageName.swift").writeText(
+                """
+                    import UIKit
+
+                    @objc public class LocalHelper: NSObject {
+                        @objc public static func greeting() -> String {
+                            return UIColor.red.description
+                        }
+                    }
+                """.trimIndent()
+            )
+
+            plugins { kotlin("multiplatform") }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosSimulatorArm64()
+
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+
+                    swiftPMDependencies {
+                        localSwiftPackage(
+                            directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
+                            products = listOf(localPackageName),
+                        )
+                    }
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(group = "dependency"))
+
+        project("emptyxcode", version) {
+            plugins { kotlin("multiplatform") }
+
+            addPublishedProjectToRepositories(producer)
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    listOf(
+                        iosArm64(),
+                        iosSimulatorArm64(),
+                        macosArm64(),
+                    ).forEach {
+                        // Only a dynamic framework's link task builds the synthetic SwiftPM package.
+                        it.binaries.framework {
+                            baseName = "Shared"
+                            isStatic = false
+                        }
+                    }
+
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    // Producer publishes only iOS variants, so keep the dependency in iosMain;
+                    // macosArm64Main can't resolve it. iOS compilations still feed the transitive
+                    // SwiftPM metadata used to generate the macOS synthetic package.
+                    sourceSets.iosMain {
+                        dependencies {
+                            implementation(producer.rootCoordinate)
+                        }
+                    }
+                }
+            }
+
+            // linkDebugFrameworkMacosArm64 builds the macOS synthetic package with xcodebuild.
+            // Without the fix iOSOnlyLib is pulled in on macOS too and fails on `import UIKit`;
+            // with it, macOS is excluded. The iOS link is a control that always passes.
+            build("linkDebugFrameworkIosArm64", "linkDebugFrameworkMacosArm64")
+        }
     }
 }

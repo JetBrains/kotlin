@@ -6,15 +6,20 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.LoadedNativeKlibs
+import org.jetbrains.kotlin.backend.common.diagnostics.SerializationErrors
 import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqueNames
-import org.jetbrains.kotlin.backend.common.loadFriendLibraries
+import org.jetbrains.kotlin.backend.common.selectLibrariesByPaths
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
+import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.testEnvironment
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.library.KlibNativeDistributionLibraryProvider
 import org.jetbrains.kotlin.konan.library.KlibNativeManifestTransformer
+import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -24,10 +29,12 @@ import org.jetbrains.kotlin.library.loader.KlibLoaderResult
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.OtherCheckMismatch
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblematicLibrary
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 import kotlin.io.path.pathString
+import kotlin.reflect.KProperty1
 
 /**
  * This is the entry point to load Kotlin/Native KLIBs.
@@ -43,12 +50,10 @@ fun loadNativeKlibs(
     val loadStdlib = !configuration.konanNoStdlib
     val loadPlatformLibs = !configuration.konanNoDefaultLibs
 
-    val distributionLibrariesProvider: KlibNativeDistributionLibraryProvider? = runIf(loadStdlib || loadPlatformLibs) {
-        val nativeHome = configuration.konanHome?.let(::File) ?: KotlinNativePaths.homePath
-        KlibNativeDistributionLibraryProvider(nativeHome.absoluteFile) {
-            runIf(loadStdlib) { withStdlib() }
-            runIf(loadPlatformLibs) { withPlatformLibs(nativeTarget) }
-        }
+    val nativeHome = configuration.konanHome?.let(::File) ?: KotlinNativePaths.homePath
+    val distributionLibrariesProvider = KlibNativeDistributionLibraryProvider(nativeHome) {
+        runIf(loadStdlib) { withStdlib() }
+        runIf(loadPlatformLibs) { withPlatformLibs(nativeTarget) }
     }
 
     val platformChecker = if (configuration.metadataKlib)
@@ -57,7 +62,7 @@ fun loadNativeKlibs(
         KlibPlatformChecker.Native(nativeTarget.name)
 
     val result = KlibLoader {
-        libraryProviders(listOfNotNull(distributionLibrariesProvider))
+        libraryProviders(distributionLibrariesProvider)
         libraryPaths(configuration.konanLibraries)
         platformChecker(platformChecker)
         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
@@ -65,7 +70,7 @@ fun loadNativeKlibs(
         manifestTransformer(KlibNativeManifestTransformer(nativeTarget))
     }.load()
         .checkForUnknownIrProviders()
-        .apply { reportLoadingProblemsIfAny(configuration, allAsErrors = configuration.testEnvironment) }
+        .apply { reportLoadingProblemsIfAny(configuration) }
         // TODO (KT-76785): Handling of duplicated names is a workaround that needs to be removed in the future.
         .eliminateLibrariesWithDuplicatedUniqueNames(configuration)
 
@@ -77,8 +82,12 @@ fun loadNativeKlibs(
 
     return LoadedNativeKlibs(
         all = result.librariesStdlibFirst,
-        friends = result.loadFriendLibraries(configuration.konanFriendLibraries),
-        included = result.loadFriendLibraries(configuration.konanIncludedLibraries),
+        friends = result.selectLibrariesByPaths(libraryPaths = configuration.konanFriendLibraries),
+        exported = result.selectLibrariesByPaths(libraryPaths = configuration.exportedLibraries)
+            .selectLibrariesEligibleToBeIncludedOrExported(configuration, K2NativeCompilerArguments::exportedLibraries),
+        included = result.selectLibrariesByPaths(libraryPaths = configuration.konanIncludedLibraries)
+            .selectLibrariesEligibleToBeIncludedOrExported(configuration, K2NativeCompilerArguments::includes),
+        toAddToCache = result.selectLibrariesByPaths(libraryPaths = listOfNotNull(configuration.konanLibraryToAddToCache)).firstOrNull(),
     )
 }
 
@@ -112,4 +121,36 @@ private fun KlibLoaderResult.checkForUnknownIrProviders(): KlibLoaderResult {
 private class UnknownIrProvider(val irProviderName: String) : OtherCheckMismatch() {
     override val caption get() = "Library with unsupported IR provider $irProviderName"
     override val details get() = "Only libraries without IR provider or with $KLIB_INTEROP_IR_PROVIDER_IDENTIFIER IR provider are supported."
+}
+
+/**
+ * Select only those libraries that are eligible to be "included" or "exported":
+ * - each library should not be a C-interop library
+ * - also there should not be libraries from the Kotlin/Native distribution
+ */
+private fun List<KotlinLibrary>.selectLibrariesEligibleToBeIncludedOrExported(
+    configuration: CompilerConfiguration,
+    cliParameter: KProperty1<out K2NativeCompilerArguments, *>,
+): List<KotlinLibrary> {
+    if (isEmpty()) return this
+
+    fun reportIssue(library: KotlinLibrary, libraryKind: String) = configuration.report(
+        factory = if (configuration.testEnvironment)
+            SerializationErrors.KLIB_LOADING_ERROR
+        else
+            SerializationErrors.KLIB_LOADING_WARNING,
+        message = "KLIB loader: $libraryKind cannot be used in ${cliParameter.cliArgument} CLI argument: ${library.path}"
+    )
+
+    return mapNotNull { library ->
+        if (library.isFromKotlinNativeDistribution) {
+            reportIssue(library, libraryKind = "Library from the Kotlin/Native distribution")
+            return@mapNotNull null
+        } else if (library.isCInteropLibrary()) {
+            reportIssue(library, libraryKind = "C-interop library")
+            return@mapNotNull null
+        }
+
+        library
+    }
 }

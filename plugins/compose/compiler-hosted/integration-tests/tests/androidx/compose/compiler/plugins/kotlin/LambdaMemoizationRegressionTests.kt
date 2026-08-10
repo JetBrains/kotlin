@@ -16,7 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 /**
  * This test merely ensures that code gen changes are evaluated against potentially
@@ -178,5 +178,19 @@ class LambdaMemoizationRegressionTests : AbstractIrTransformTest() {
                 }
             }
     """
+    )
+
+    @Test
+    fun memoizationOfDefaultGenericComposable() = verifyGoldenComposeIrTransform(
+        source = """
+        import androidx.compose.runtime.*
+
+        @Composable
+        fun <S> Test(vm: S, content: @Composable (S) -> Unit = { vm -> Effect(vm) }) {
+            content(vm)
+        }
+
+        @Composable fun <S> Effect(vm: S) {}
+        """
     )
 }

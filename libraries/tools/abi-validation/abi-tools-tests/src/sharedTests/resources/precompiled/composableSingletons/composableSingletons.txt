@@ -1,0 +1,14 @@
+public final class precompiled/compose/singletones/new/MyButtonKt {
+	public static final fun MyButton (Landroidx/compose/runtime/Composer;I)V
+}
+
+public final class precompiled/compose/singletones/old/ComposableSingletons$MyButtonKt {
+	public static final field INSTANCE Lprecompiled/compose/singletones/old/ComposableSingletons$MyButtonKt;
+	public fun <init> ()V
+	public final fun getLambda$1324562250$compose_test_shared ()Lkotlin/jvm/functions/Function3;
+}
+
+public final class precompiled/compose/singletones/old/MyButtonKt {
+	public static final fun MyButton (Landroidx/compose/runtime/Composer;I)V
+}
+

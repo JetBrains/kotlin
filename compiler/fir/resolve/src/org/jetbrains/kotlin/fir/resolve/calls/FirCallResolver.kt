@@ -60,7 +60,6 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.resolve.calls.tower.shouldStopResolve
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -920,9 +919,6 @@ class FirCallResolver(
         expectedCandidates: Collection<Candidate>? = null
     ): FirNamedReference {
         val source = reference.source
-        val operatorToken = runIf(callInfo.origin == FirFunctionCallOrigin.Operator) {
-            OperatorNameConventions.TOKENS_BY_OPERATOR_NAME[name]
-        }
 
         fun diagnosticOrNull() = when {
             candidates.isEmpty() -> {
@@ -939,8 +935,8 @@ class FirCallResolver(
                             classLikeBySuperRef?.isExpect == true -> ConeNoImplicitDefaultConstructorOnExpectClass
                             else -> ConeUnresolvedNameError(
                                 name = name,
-                                operatorToken = operatorToken,
-                                receiverType = explicitReceiver?.takeIf { it !is FirResolvedQualifier }?.resolvedType,
+                                operatorToken = callInfo.operatorToken(),
+                                receiverInfo = explicitReceiver?.takeIf { it !is FirResolvedQualifier }?.toReceiverInfo(),
                             )
                         }
                     }
@@ -1006,7 +1002,7 @@ class FirCallResolver(
                                         singleExpectedCandidate
                                     )
                                 }
-                                else -> ConeUnresolvedNameError(name, operatorToken)
+                                else -> ConeUnresolvedNameError(name, callInfo.operatorToken())
                             }
                         }
                     }

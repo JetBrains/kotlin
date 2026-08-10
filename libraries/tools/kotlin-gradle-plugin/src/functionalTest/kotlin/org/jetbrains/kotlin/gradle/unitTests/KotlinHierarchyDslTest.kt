@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("FunctionName", "JUnitTestCaseWithNoTests")
+@file:Suppress("JUnitTestCaseWithNoTests")
 @file:OptIn(ExperimentalWasmDsl::class)
 
 package org.jetbrains.kotlin.gradle.unitTests
@@ -41,12 +41,12 @@ class KotlinHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("androidNativeMain", "appleMain", "linuxMain", "mingwMain"),
+            stringSetOf("appleMain", "linuxMain", "mingwMain"),
             kotlin.dependingSourceSetNames("nativeMain")
         )
 
         assertEquals(
-            stringSetOf("androidNativeTest", "appleTest", "linuxTest", "mingwTest"),
+            stringSetOf("appleTest", "linuxTest", "mingwTest"),
             kotlin.dependingSourceSetNames("nativeTest")
         )
 
@@ -81,12 +81,12 @@ class KotlinHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("watchosArm32Main", "watchosArm64Main", "watchosDeviceArm64Main", "watchosSimulatorArm64Main"),
+            stringSetOf("watchosArm64Main", "watchosDeviceArm64Main", "watchosSimulatorArm64Main"),
             kotlin.dependingSourceSetNames("watchosMain")
         )
 
         assertEquals(
-            stringSetOf("watchosArm32Test", "watchosArm64Test", "watchosDeviceArm64Test", "watchosSimulatorArm64Test"),
+            stringSetOf("watchosArm64Test", "watchosDeviceArm64Test", "watchosSimulatorArm64Test"),
             kotlin.dependingSourceSetNames("watchosTest")
         )
 
@@ -121,16 +121,6 @@ class KotlinHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("androidNativeArm32Main", "androidNativeArm64Main", "androidNativeX64Main", "androidNativeX86Main"),
-            kotlin.dependingSourceSetNames("androidNativeMain")
-        )
-
-        assertEquals(
-            stringSetOf("androidNativeArm32Test", "androidNativeArm64Test", "androidNativeX64Test", "androidNativeX86Test"),
-            kotlin.dependingSourceSetNames("androidNativeTest")
-        )
-
-        assertEquals(
             stringSetOf("jsMain", "wasmJsMain"),
             kotlin.dependingSourceSetNames("webMain")
         )
@@ -154,11 +144,6 @@ class KotlinHierarchyDslTest {
             commonMain
                 ├── jvmMain
                 ├── nativeMain
-                │   ├── androidNativeMain
-                │   │   ├── androidNativeArm32Main
-                │   │   ├── androidNativeArm64Main
-                │   │   ├── androidNativeX64Main
-                │   │   └── androidNativeX86Main
                 │   ├── appleMain
                 │   │   ├── iosMain
                 │   │   │   ├── iosArm64Main
@@ -170,7 +155,6 @@ class KotlinHierarchyDslTest {
                 │   │   │   ├── tvosArm64Main
                 │   │   │   └── tvosSimulatorArm64Main
                 │   │   └── watchosMain
-                │   │       ├── watchosArm32Main
                 │   │       ├── watchosArm64Main
                 │   │       ├── watchosDeviceArm64Main
                 │   │       └── watchosSimulatorArm64Main
@@ -192,11 +176,6 @@ class KotlinHierarchyDslTest {
             commonTest
                 ├── jvmTest
                 ├── nativeTest
-                │   ├── androidNativeTest
-                │   │   ├── androidNativeArm32Test
-                │   │   ├── androidNativeArm64Test
-                │   │   ├── androidNativeX64Test
-                │   │   └── androidNativeX86Test
                 │   ├── appleTest
                 │   │   ├── iosTest
                 │   │   │   ├── iosArm64Test
@@ -208,7 +187,6 @@ class KotlinHierarchyDslTest {
                 │   │   │   ├── tvosArm64Test
                 │   │   │   └── tvosSimulatorArm64Test
                 │   │   └── watchosTest
-                │   │       ├── watchosArm32Test
                 │   │       ├── watchosArm64Test
                 │   │       ├── watchosDeviceArm64Test
                 │   │       └── watchosSimulatorArm64Test
@@ -304,7 +282,7 @@ class KotlinHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("androidUnitTest", "androidUnitTestDebug", "androidUnitTestRelease", "jvmTest"),
+            stringSetOf("androidUnitTest", "androidUnitTestDebug", "jvmTest"),
             kotlin.dependingSourceSetNames("jvmAndAndroidTest")
         )
 
@@ -572,11 +550,6 @@ class KotlinHierarchyDslTest {
                         commonMain,
                         jvmMain,
                         nativeMain,
-                        androidNativeMain,
-                        androidNativeArm32Main,
-                        androidNativeArm64Main,
-                        androidNativeX64Main,
-                        androidNativeX86Main,
                         appleMain,
                         iosMain,
                         iosArm64Main,
@@ -588,7 +561,6 @@ class KotlinHierarchyDslTest {
                         tvosArm64Main,
                         tvosSimulatorArm64Main,
                         watchosMain,
-                        watchosArm32Main,
                         watchosArm64Main,
                         watchosDeviceArm64Main,
                         watchosSimulatorArm64Main,
@@ -605,11 +577,6 @@ class KotlinHierarchyDslTest {
                         commonTest,
                         jvmTest,
                         nativeTest,
-                        androidNativeTest,
-                        androidNativeArm32Test,
-                        androidNativeArm64Test,
-                        androidNativeX64Test,
-                        androidNativeX86Test,
                         appleTest,
                         iosTest,
                         iosArm64Test,
@@ -621,7 +588,6 @@ class KotlinHierarchyDslTest {
                         tvosArm64Test,
                         tvosSimulatorArm64Test,
                         watchosTest,
-                        watchosArm32Test,
                         watchosArm64Test,
                         watchosDeviceArm64Test,
                         watchosSimulatorArm64Test,

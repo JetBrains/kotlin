@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.getImplementationStatus
+import org.jetbrains.kotlin.fir.analysis.checkers.isExpect
 import org.jetbrains.kotlin.fir.analysis.checkers.isSupertypeOf
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOverloadabilityHelper.ContextParameterShadowing.BothWays
@@ -484,26 +485,6 @@ internal class KaFirSymbolRelationProvider(
         }
     }
 
-    override fun getImplementationStatus(
-        symbol: KaCallableSymbol,
-        parentClassSymbol: KaClassSymbol,
-    ): ImplementationStatus? = symbol.withValidityAssertion {
-        if (symbol is KaReceiverParameterSymbol) return null
-
-        require(symbol is KaFirSymbol<*>)
-        require(parentClassSymbol is KaFirSymbol<*>)
-
-        // Inspecting implementation status requires resolving to status
-        val memberFir = symbol.firSymbol.fir as? FirCallableDeclaration ?: return null
-        val parentClassFir = parentClassSymbol.firSymbol.fir as? FirClass ?: return null
-        memberFir.lazyResolveToPhase(FirResolvePhase.STATUS)
-
-        val scopeSession = symbol.analysisSession.getScopeSessionFor(symbol.analysisSession.firSession)
-        return with(SessionHolderImpl(rootModuleSession, scopeSession)) {
-            memberFir.symbol.getImplementationStatus(parentClassFir.symbol)
-        }
-    }
-
     override fun implementationState(
         symbol: KaCallableSymbol,
         implementerClassSymbol: KaClassSymbol,
@@ -600,6 +581,11 @@ internal class KaFirSymbolRelationProvider(
 
         val actualModule = containingModule(symbol)
         if (actualModule is KaLibraryModule || actualModule is KaLibrarySourceModule) {
+            if (firSymbol.isExpect()) {
+                /** For libraries, we can safely rely on the [isExpect] flag. */
+                return emptyList()
+            }
+
             // Dependency tree for libraries isn't available (KT-61210) so there's no way other than checking the entire library scope.
             // Notably, the current library isn't filtered as the same library may contain binary roots for both common and platform parts.
             val expectLibraryScope = ProjectScope.getLibrariesScope(project)
@@ -697,7 +683,10 @@ internal class KaFirSymbolRelationProvider(
                     continue
                 }
 
-                add(declaration.resolveToFirSymbolOfType<FirClassLikeSymbol<*>>(resolutionFacade))
+                val expectSymbol = declaration.resolveToFirSymbolOfType<FirClassLikeSymbol<*>>(resolutionFacade)
+                if (expectSymbol != actualSymbol) {
+                    add(expectSymbol)
+                }
             }
         }
     }

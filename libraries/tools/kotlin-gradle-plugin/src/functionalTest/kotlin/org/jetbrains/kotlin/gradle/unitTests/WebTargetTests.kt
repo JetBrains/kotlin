@@ -15,7 +15,6 @@ import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-@Suppress("FunctionName")
 class WebTargetTests {
 
     @Test

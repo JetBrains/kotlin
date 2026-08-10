@@ -1,4 +1,4 @@
-@kotlin.Deprecated()
+@kotlin.Deprecated(message = "deprecated class", replaceWith = @kotlin.ReplaceWith(expression = "new class", imports = {}), level = kotlin.DeprecationLevel.ERROR)
 public final class DeprecatedClass /* foo.DeprecatedClass*/ {
   @org.jetbrains.annotations.NotNull()
   private @org.jetbrains.annotations.NotNull() java.lang.String deprecatedAccessors;
@@ -10,24 +10,24 @@ public final class DeprecatedClass /* foo.DeprecatedClass*/ {
 
   private int deprecatedErrorVariable;
 
-  @kotlin.Deprecated()
+  @kotlin.Deprecated(message = "deprecated function")
+  public final void deprecatedFunction(int);//  deprecatedFunction(int)
+
+  @kotlin.Deprecated(message = "deprecated getter")
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getDeprecatedAccessors();//  getDeprecatedAccessors()
 
-  @kotlin.Deprecated()
+  @kotlin.Deprecated(message = "deprecated setter")
+  public final void setDeprecatedAccessors(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setDeprecatedAccessors(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @kotlin.Deprecated(message = "error function", replaceWith = @kotlin.ReplaceWith(expression = "function", imports = {}), level = kotlin.DeprecationLevel.ERROR)
+  public final void deprecatedErrorFunction();//  deprecatedErrorFunction()
+
+  @kotlin.Deprecated(message = "error getter", replaceWith = @kotlin.ReplaceWith(expression = "new getter", imports = {}), level = kotlin.DeprecationLevel.ERROR)
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getDeprecatedErrorAccessors();//  getDeprecatedErrorAccessors()
 
-  @kotlin.Deprecated()
-  public final void deprecatedErrorFunction();//  deprecatedErrorFunction()
-
-  @kotlin.Deprecated()
-  public final void deprecatedFunction(int);//  deprecatedFunction(int)
-
-  @kotlin.Deprecated()
-  public final void setDeprecatedAccessors(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setDeprecatedAccessors(@org.jetbrains.annotations.NotNull() java.lang.String)
-
-  @kotlin.Deprecated()
+  @kotlin.Deprecated(message = "error setter", replaceWith = @kotlin.ReplaceWith(expression = "new setter", imports = {}), level = kotlin.DeprecationLevel.ERROR)
   public final void setDeprecatedErrorAccessors(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setDeprecatedErrorAccessors(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   public  DeprecatedClass();//  .ctor()

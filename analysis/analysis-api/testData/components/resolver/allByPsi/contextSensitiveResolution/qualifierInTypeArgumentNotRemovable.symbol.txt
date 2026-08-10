@@ -7,6 +7,7 @@ KtPackageDirective(70,82): 'package test'
 KtNameReferenceExpression(78,82): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test
@@ -72,6 +73,7 @@ KtUserType(139,146): 'Base<T>'
 KtNameReferenceExpression(139,143): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Base
@@ -98,6 +100,7 @@ KtUserType(144,145): 'T'
 KtNameReferenceExpression(144,145): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -130,6 +133,7 @@ KtUserType(165,174): 'Base<Foo>'
 KtNameReferenceExpression(165,169): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Base
@@ -156,6 +160,7 @@ KtUserType(170,173): 'Foo'
 KtNameReferenceExpression(170,173): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Foo
@@ -170,6 +175,7 @@ KtBinaryExpressionWithTypeRHS(182,202): 'b as Base.Child<Foo>'
 KtNameReferenceExpression(182,183): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
   KaSymbolResolutionSuccess:
     symbols = [
       b: test.Base<test.Foo>
@@ -178,6 +184,7 @@ KtNameReferenceExpression(182,183): 'b'
 KtOperationReferenceExpression(184,186): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   null
 
 KtTypeReference(187,202): 'Base.Child<Foo>'
@@ -201,6 +208,7 @@ KtUserType(187,191): 'Base'
 KtNameReferenceExpression(187,191): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Base
@@ -209,6 +217,7 @@ KtNameReferenceExpression(187,191): 'Base'
 KtNameReferenceExpression(192,197): 'Child'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: QualifierCanBeRemoved
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Base.Child
@@ -235,6 +244,7 @@ KtUserType(198,201): 'Foo'
 KtNameReferenceExpression(198,201): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/Foo

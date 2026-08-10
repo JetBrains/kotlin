@@ -1,10 +1,12 @@
+// CHECK_OPTIMIZED_JS
+
 // CHECK_CASES_COUNT: function=test1 count=0
 // CHECK_BREAKS_COUNT: function=test1 count=0
 // CHECK_IF_COUNT: function=test1 count=0
 
 // CHECK_CASES_COUNT: function=test2 count=0
-// CHECK_BREAKS_COUNT: function=test2 count=0
-// CHECK_IF_COUNT: function=test2 count=0
+// CHECK_BREAKS_COUNT: function=test2 count=1
+// CHECK_IF_COUNT: function=test2 count=1
 
 fun test1(v: Int) {
     when (v) {

@@ -435,10 +435,10 @@ class SirAsSwiftSourcesPrinterTests {
                     )
                     returnType = SirNominalType(SirSwiftModule.bool)
                     documentation = """
-                            /// Function foo description.
-                            /// - Parameters:
-                            ///   - p: first Integer to consume
-                            /// - Returns: Bool
+                            Function foo description.
+                            - Parameters:
+                              - p: first Integer to consume
+                            - Returns: Bool
                         """.trimIndent()
                 }
             )
@@ -461,10 +461,10 @@ class SirAsSwiftSourcesPrinterTests {
                     visibility = SirVisibility.PUBLIC
                     name = "Foo"
                     documentation = """
-                            /// Function foo description.
-                            /// - Parameters:
-                            ///   - p: first Integer to consume
-                            /// - Returns: Bool
+                            Function foo description.
+                            - Parameters:
+                              - p: first Integer to consume
+                            - Returns: Bool
                         """.trimIndent()
                 }
             )
@@ -489,10 +489,10 @@ class SirAsSwiftSourcesPrinterTests {
                         visibility = SirVisibility.PUBLIC
                         name = "Foo"
                         documentation = """
-                            /**
-                             *  demo comment for
-                             *  NAMESPACED_CLASS
-                             */
+                            
+                            demo comment for
+                            NAMESPACED_CLASS
+                            
                         """.trimIndent()
                     }
                 }
@@ -516,10 +516,10 @@ class SirAsSwiftSourcesPrinterTests {
                     type = SirNominalType(SirSwiftModule.bool)
                     getter = buildGetter {}
                     documentation = """
-                            /// Function foo description.
-                            /// - Parameters:
-                            ///   - p: first Integer to consume
-                            /// - Returns: Bool
+                            Function foo description.
+                            - Parameters:
+                              - p: first Integer to consume
+                            - Returns: Bool
                         """.trimIndent()
                 }
             )
@@ -1016,10 +1016,10 @@ class SirAsSwiftSourcesPrinterTests {
                     extendedType = SirNominalType(SirSwiftModule.int32)
                     visibility = SirVisibility.PUBLIC
                     documentation = """
-                        ///
-                        /// this is a documented extension
-                        /// (is it even possible? Printer don't actually care)
-                        ///
+                        
+                        this is a documented extension
+                        (is it even possible? Printer don't actually care)
+                        
                     """.trimIndent()
                 }
             )
@@ -1133,7 +1133,6 @@ class SirAsSwiftSourcesPrinterTests {
         val actualSwiftSrc = SirAsSwiftSourcesPrinter.print(
             module,
             stableDeclarationsOrder = false,
-            renderDocComments = true,
             renderDeclarationOrigins = false,
             emptyBodyStub = SirFunctionBody(listOf("stub()"))
         )
@@ -1201,7 +1200,7 @@ class SirAsSwiftSourcesPrinterTests {
                 visibility = SirVisibility.PUBLIC
                 name = "method"
                 returnType = SirNominalType(SirSwiftModule.bool)
-                documentation = "// Check that nested attributes handled properly"
+                documentation = "Check that nested attributes handled properly"
                 attributes += SirAttribute.Available(message = "Deprecated method", deprecated = true)
             }
         }.attachDeclarations()
@@ -1224,7 +1223,7 @@ class SirAsSwiftSourcesPrinterTests {
                     type = SirNominalType(SirSwiftModule.bool)
                     getter = buildGetter {}
                     documentation = """
-                            /// Example docstring
+                            Example docstring
                         """.trimIndent()
                     attributes += SirAttribute.Available(message = "Deprecated variable", deprecated = true)
                 }
@@ -1234,7 +1233,7 @@ class SirAsSwiftSourcesPrinterTests {
                     name = "myVariable"
                     type = SirNominalType(SirSwiftModule.bool)
                     documentation = """
-                            /// Example docstring
+                            Example docstring
                         """.trimIndent()
                     attributes += SirAttribute.Available(message = "Unavailable typealias", unavailable = true)
                 }
@@ -1277,7 +1276,7 @@ class SirAsSwiftSourcesPrinterTests {
             name = "Test"
         }.apply {
             for (identifier in identifiers) {
-                val doc = identifier.split('\n').joinToString(separator = "\n") { "// $it" }
+                val doc = identifier
                 val decl = buildStruct {
                     origin = SirOrigin.Unknown
                     name = identifier
@@ -1345,7 +1344,7 @@ class SirAsSwiftSourcesPrinterTests {
                         origin = SirOrigin.Unknown
                         name = "test"
                         attributes.add(SirAttribute.Available(deprecated = true, message = message))
-                        documentation = message.split('\n').joinToString(separator = "\n") { "// $it" }
+                        documentation = message
                     }
                 }
             }

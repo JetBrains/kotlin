@@ -10,7 +10,7 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 val wabtVersion = "1.0.19"
@@ -24,12 +24,12 @@ val wabtOS = when {
     else -> error("Unsupported OS: $gradleOs")
 }
 
-val wabt by configurations.creating {
+val wabt = configurations.create("wabt") {
     isCanBeResolved = true
     isCanBeConsumed = false
 }
 
-val testSuite by configurations.creating {
+val testSuite = configurations.create("testSuite") {
     isCanBeResolved = true
     isCanBeConsumed = false
 }

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// JAVAC_EXPECTED_FILE
 // FILE: A.java
 
 abstract public class A extends java.util.ArrayList<String> {

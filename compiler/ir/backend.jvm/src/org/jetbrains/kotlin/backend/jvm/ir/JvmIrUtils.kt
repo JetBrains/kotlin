@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.ValhallaSupportMode.*
+import org.jetbrains.kotlin.config.isKotlinValhallaValueClass
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -61,6 +64,9 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
 import java.lang.annotation.RetentionPolicy
+
+fun IrClass.isKotlinValhallaValueClass(languageVersionSettings: LanguageVersionSettings): Boolean =
+    valueClassRepresentation.isKotlinValhallaValueClass(languageVersionSettings)
 
 fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     // TODO lower @JvmName and @JvmExposeBoxed?
@@ -465,17 +471,6 @@ fun classFileContainsMethod(classId: ClassId, function: IrFunction, context: Jvm
     else originalDescriptor
     return classFileContainsMethod(classId, context.state, Method(originalSignature.name, descriptor))
 }
-
-val DeclarationDescriptorWithSource.psiElement: PsiElement?
-    get() = (source as? PsiSourceElement)?.psi
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-val IrDeclaration.psiElement: PsiElement?
-    get() = (descriptor as? DeclarationDescriptorWithSource)?.psiElement
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-val IrMemberAccessExpression<*>.psiElement: PsiElement?
-    get() = (symbol.descriptor.original as? DeclarationDescriptorWithSource)?.psiElement
 
 fun IrFunction.extensionReceiverName(config: JvmBackendConfig): String {
     if (!config.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {

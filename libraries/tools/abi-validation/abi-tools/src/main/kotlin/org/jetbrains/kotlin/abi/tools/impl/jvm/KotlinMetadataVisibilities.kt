@@ -131,6 +131,18 @@ internal fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassV
         is KotlinClassMetadata.MultiFileClassPart ->
             kmPackage.also { _facadeClassName = this.facadeClassName }
 
+        is KotlinClassMetadata.SyntheticClass -> {
+            /*
+             The synthetic class visibility was introduced in 2.4.20, but we can read only 2.4.0 or 2.5.0
+             So, we started to read it since 2.5.0.
+             see https://youtrack.jetbrains.com/issue/KT-84802
+             */
+            if (isKotlinAtLeast2dot5()) {
+                val visibilityIndex = (flags shr SYNTHETIC_CLASS_VISIBILITY_SHIFT) and SYNTHETIC_CLASS_VISIBILITY_MASK
+                visibility = visibilityByIndex(visibilityIndex)
+            }
+            null
+        }
         else -> null
     }
 
@@ -197,4 +209,16 @@ private fun Map<String, ClassVisibility>.updateCompanionInfo(it: ClassVisibility
     val containingClassName = it.name.substringBeforeLast('$')
     getValue(containingClassName).companionVisibilities = it
 }
+
+// should be moved to the metadata JVM
+private fun KotlinClassMetadata.isKotlinAtLeast2dot5(): Boolean {
+    return version.major >= 2 && version.minor >= 5
+}
+
+private fun visibilityByIndex(index: Int): Visibility? {
+    return Visibility.entries.getOrNull(index)
+}
+
+private const val SYNTHETIC_CLASS_VISIBILITY_SHIFT = 8
+private const val SYNTHETIC_CLASS_VISIBILITY_MASK = 0b111
 

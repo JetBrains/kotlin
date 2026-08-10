@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("FunctionName")
-
 package org.jetbrains.kotlin.gradle.regressionTests
 
 import org.gradle.api.artifacts.Configuration
@@ -536,8 +534,6 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         assertFalse(isTestDependencyPresent("debugUnitTestCompileClasspath"))
         assertFalse(isTestDependencyPresent("debugUnitTestRuntimeClasspath"))
         assertFalse(isTestDependencyPresent("releaseRuntimeClasspath"))
-        assertFalse(isTestDependencyPresent("releaseUnitTestCompileClasspath"))
-        assertFalse(isTestDependencyPresent("releaseUnitTestRuntimeClasspath"))
     }
 
     // See KT-55751

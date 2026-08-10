@@ -9,10 +9,13 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.gradle.uklibs.propertiesExtension
 import org.jetbrains.kotlin.gradle.uklibs.setupMavenPublication
 import org.jetbrains.kotlin.gradle.util.setupCInteropForTarget
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -22,6 +25,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.appendText
 import kotlin.io.path.exists
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
@@ -90,6 +94,118 @@ class MppCrossCompilationPublicationIT : KGPBaseTest() {
         assertEquals(expectedModules, actualModules, "Published modules don't match expected set when cross-compilation is disabled")
 
         // Verify module contents
+        verifyModuleContents(libraryRoot, expectedModules)
+    }
+
+    @DisplayName("KT-87394: cross compilation enabled in consumer but disabled in a project dependency, publish consumer")
+    @GradleTest
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_14],
+    )
+    @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
+    fun testCrossCompilationDisabledInProjectDependency(
+        gradleVersion: GradleVersion,
+    ) {
+        val consumer = project(
+            "empty",
+            gradleVersion,
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "multiplatformLibrary"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm()
+                    iosArm64()
+                    macosArm64()
+                    mingwX64()
+                    linuxX64()
+                    sourceSets.commonMain.get().apply {
+                        compileStubSourceWithSourceSetName()
+                        dependencies {
+                            implementation(project(":producer"))
+                        }
+                    }
+                }
+
+                project.setupMavenPublication(
+                    "CrossTest",
+                    PublisherConfiguration(
+                        "com.jetbrains.library",
+                        "1.0",
+                        "build/repo"
+                    )
+                )
+            }
+
+            // Disable cross-compilation for the dependency only: on a non-macOS host it then produces
+            // no iosArm64/macosArm64 klibs, so the consumer can't compile those targets against it.
+            val producer = project(
+                "empty",
+                gradleVersion,
+            ) {
+                plugins {
+                    kotlin("multiplatform")
+                }
+                gradleProperties.appendText(
+                    """
+                    ${PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION}=false
+                    """.trimIndent()
+                )
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        jvm()
+                        iosArm64()
+                        macosArm64()
+                        mingwX64()
+                        linuxX64()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    }
+
+                    // The producer is published too, mirroring a real dependency: otherwise, since Gradle
+                    // 9, publishing the consumer fails because it depends on an unpublished project.
+                    project.setupMavenPublication(
+                        "CrossTest",
+                        PublisherConfiguration(
+                            "com.jetbrains.library",
+                            "1.0",
+                            "build/repo"
+                        )
+                    )
+                }
+            }
+            include(producer, "producer")
+        }
+
+        consumer.build("publishAllPublicationsToCrossTestRepository") {
+            // Skipped by the "Cross-compilation of target '$targetName' with project dependencies is supported on this host" onlyIf:
+            // the consumer supports cross-compilation but its dependency doesn't.
+            assertTasksSkipped(
+                ":compileKotlinIosArm64",
+                ":compileKotlinMacosArm64",
+            )
+        }
+
+        val libraryRoot = consumer.projectPath.resolve("build/repo").resolve("com/jetbrains/library")
+
+        // iosArm64/macosArm64 aren't published, matching the skipped compilations.
+        val expectedModules = setOf(
+            "multiplatformLibrary",
+            "multiplatformLibrary-jvm",
+            "multiplatformLibrary-linuxx64",
+            "multiplatformLibrary-mingwx64"
+        )
+
+        val actualModules = getActualModules(libraryRoot)
+        assertEquals(
+            expectedModules,
+            actualModules,
+            "Published modules don't match expected set when a project dependency disables cross-compilation"
+        )
+
         verifyModuleContents(libraryRoot, expectedModules)
     }
 

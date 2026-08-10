@@ -233,12 +233,6 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
-    @TestMetadata("scriptInCommonFragment.args")
-    public void testScriptInCommonFragment() {
-      run("scriptInCommonFragment.args");
-    }
-
-    @Test
     @TestMetadata("sourceNotInAnyFragment.args")
     public void testSourceNotInAnyFragment() {
       run("sourceNotInAnyFragment.args");
@@ -254,12 +248,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("successfulCompilation2.args")
     public void testSuccessfulCompilation2() {
       run("successfulCompilation2.args");
-    }
-
-    @Test
-    @TestMetadata("successfulCompilationWithScript.args")
-    public void testSuccessfulCompilationWithScript() {
-      run("successfulCompilationWithScript.args");
     }
   }
 
@@ -292,18 +280,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("apiVersionGreaterThanLanguage.args")
     public void testApiVersionGreaterThanLanguage() {
       run("apiVersionGreaterThanLanguage.args");
-    }
-
-    @Test
-    @TestMetadata("apiVersionGreaterThanLanguageSuppress.args")
-    public void testApiVersionGreaterThanLanguageSuppress() {
-      run("apiVersionGreaterThanLanguageSuppress.args");
-    }
-
-    @Test
-    @TestMetadata("apiVersionGreaterThanLanguageSuppressUseless.args")
-    public void testApiVersionGreaterThanLanguageSuppressUseless() {
-      run("apiVersionGreaterThanLanguageSuppressUseless.args");
     }
 
     @Test
@@ -1057,18 +1033,6 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
-    @TestMetadata("dirWithKotlinScript.args")
-    public void testDirWithKotlinScript() {
-      run("dirWithKotlinScript.args");
-    }
-
-    @Test
-    @TestMetadata("dirWithKotlinScriptPsi.args")
-    public void testDirWithKotlinScriptPsi() {
-      run("dirWithKotlinScriptPsi.args");
-    }
-
-    @Test
     @TestMetadata("dirWithOnlyNonKotlinFile.args")
     public void testDirWithOnlyNonKotlinFile() {
       run("dirWithOnlyNonKotlinFile.args");
@@ -1126,12 +1090,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("nonexistentPathInModule.args")
     public void testNonexistentPathInModule() {
       run("nonexistentPathInModule.args");
-    }
-
-    @Test
-    @TestMetadata("nonexistentScript.args")
-    public void testNonexistentScript() {
-      run("nonexistentScript.args");
     }
 
     @Test
@@ -1568,18 +1526,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("firMultiplatformCompilationWithoutErrors.args")
     public void testFirMultiplatformCompilationWithoutErrors() {
       run("firMultiplatformCompilationWithoutErrors.args");
-    }
-
-    @Test
-    @TestMetadata("multiplatformCompilationWithCommonScript.args")
-    public void testMultiplatformCompilationWithCommonScript() {
-      run("multiplatformCompilationWithCommonScript.args");
-    }
-
-    @Test
-    @TestMetadata("multiplatformCompilationWithScript.args")
-    public void testMultiplatformCompilationWithScript() {
-      run("multiplatformCompilationWithScript.args");
     }
   }
 
@@ -2137,6 +2083,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("reportPerfJson_detailedPerf.args")
+    public void testReportPerfJson_detailedPerf() {
+      run("reportPerfJson_detailedPerf.args");
+    }
+
+    @Test
     @TestMetadata("reportPerfPsi.args")
     public void testReportPerfPsi() {
       run("reportPerfPsi.args");
@@ -2164,12 +2116,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("reportPerfWithInitError.args")
     public void testReportPerfWithInitError() {
       run("reportPerfWithInitError.args");
-    }
-
-    @Test
-    @TestMetadata("scriptAsRegularSourceFile.args")
-    public void testScriptAsRegularSourceFile() {
-      run("scriptAsRegularSourceFile.args");
     }
 
     @Test
@@ -2622,6 +2568,12 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("reportPerfJson.args")
     public void testReportPerfJson() {
       run("reportPerfJson.args");
+    }
+
+    @Test
+    @TestMetadata("reportPerfJson_detailedPerf.args")
+    public void testReportPerfJson_detailedPerf() {
+      run("reportPerfJson_detailedPerf.args");
     }
 
     @Test

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -50,8 +51,8 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
         return ::JvmIrTypeSystemContext
     }
 
-    override fun createSpecialAnnotationsProvider(): IrSpecialAnnotationsProvider {
-        return JvmIrSpecialAnnotationSymbolProvider()
+    override fun createSpecialAnnotationsProvider(): (IrModuleFragment) -> IrSpecialAnnotationsProvider {
+        return ::JvmIrSpecialAnnotationSymbolProvider
     }
 
     override fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor> {

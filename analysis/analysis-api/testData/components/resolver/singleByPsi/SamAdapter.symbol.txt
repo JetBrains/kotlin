@@ -1,6 +1,7 @@
 KtNameReferenceExpression(35,46): 'invokeLater'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       javax/swing/SwingUtilities.invokeLater(doRun: java.lang.Runnable!): kotlin.Unit

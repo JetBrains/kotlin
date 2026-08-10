@@ -44,7 +44,7 @@ void RUNTIME_NORETURN ThrowCharacterCodingException();
 void RUNTIME_NORETURN ThrowIllegalArgumentException();
 void RUNTIME_NORETURN ThrowIllegalStateException();
 void RUNTIME_NORETURN ThrowIllegalStateExceptionWithMessage(KConstRef message);
-void RUNTIME_NORETURN ThrowFileFailedToInitializeException(KRef reason);
+void RUNTIME_NORETURN StaticInitializationFailure(KRef reason, const TypeInfo* typeInfo);
 void RUNTIME_NORETURN ThrowRuntimeException(KConstRef message);
 // Prints out message of Throwable.
 void PrintThrowable(KRef);

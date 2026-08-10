@@ -313,7 +313,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
           VALUE_PARAMETER_LIST
       PROPERTY[fqName=kotlin.ranges.CharRange.endExclusive, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=endExclusive]
         MODIFIER_LIST[public open MustUseReturnValue]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=Deprecated]
             valueArguments: [ message -> "Can throw an exception when it's impossible to represent the value with Char type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw." ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -321,7 +321,13 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Deprecated]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=message]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=Can throw an exception when it's impossible to represent the value with Char type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
             valueArguments: [ version -> "1.9" ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -329,7 +335,13 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=SinceKotlin]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=WasExperimental]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=version]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=1.9]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=WasExperimental]
             valueArguments: [ markerClass -> [NormalClass(value=kotlin/ExperimentalStdlibApi)] ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -337,6 +349,15 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=WasExperimental]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=markerClass]
+                COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                  CLASS_LITERAL_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
@@ -752,7 +773,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
           VALUE_PARAMETER_LIST
       PROPERTY[fqName=kotlin.ranges.IntRange.endExclusive, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=endExclusive]
         MODIFIER_LIST[public open MustUseReturnValue]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=Deprecated]
             valueArguments: [ message -> "Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw." ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -760,7 +781,13 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Deprecated]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=message]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
             valueArguments: [ version -> "1.9" ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -768,7 +795,13 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=SinceKotlin]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=WasExperimental]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=version]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=1.9]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=WasExperimental]
             valueArguments: [ markerClass -> [NormalClass(value=kotlin/ExperimentalStdlibApi)] ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -776,6 +809,15 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=WasExperimental]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=markerClass]
+                COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                  CLASS_LITERAL_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
@@ -1146,7 +1188,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
           VALUE_PARAMETER_LIST
       PROPERTY[fqName=kotlin.ranges.LongRange.endExclusive, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=endExclusive]
         MODIFIER_LIST[public open MustUseReturnValue]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=Deprecated]
             valueArguments: [ message -> "Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw." ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1154,7 +1196,13 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Deprecated]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=message]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
             valueArguments: [ version -> "1.9" ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1162,7 +1210,13 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=SinceKotlin]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=WasExperimental]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=version]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=1.9]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=WasExperimental]
             valueArguments: [ markerClass -> [NormalClass(value=kotlin/ExperimentalStdlibApi)] ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1170,6 +1224,15 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=WasExperimental]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=markerClass]
+                COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                  CLASS_LITERAL_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
@@ -1233,7 +1296,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
             REFERENCE_EXPRESSION[referencedName=String]
   CLASS[classId=kotlin/ranges/OpenEndRange, fqName=kotlin.ranges.OpenEndRange, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=OpenEndRange, superNames=[]]
     MODIFIER_LIST[public]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
         valueArguments: [ version -> "1.9" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -1241,7 +1304,13 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=WasExperimental]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=version]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=1.9]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=WasExperimental]
         valueArguments: [ markerClass -> [NormalClass(value=kotlin/ExperimentalStdlibApi)] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -1249,6 +1318,15 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=WasExperimental]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=markerClass]
+            COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+              CLASS_LITERAL_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=ExperimentalStdlibApi]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
         TYPE_REFERENCE

@@ -1,0 +1,5 @@
+package test
+
+public open class ConstructorWithSeveralParams {
+    /*primary*/ public constructor ConstructorWithSeveralParams(/*0*/ kotlin.Int, /*1*/ kotlin.Int, /*2*/ java.util.ArrayList<kotlin.String>)
+}

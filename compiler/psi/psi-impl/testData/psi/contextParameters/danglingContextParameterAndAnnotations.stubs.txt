@@ -58,6 +58,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextParameterAndA
                         REFERENCE_EXPRESSION[referencedName=Anno]
                   VALUE_ARGUMENT_LIST
                     VALUE_ARGUMENT[isSpread=false]
+                      BINARY_EXPRESSION
+                        STRING_TEMPLATE
+                          LITERAL_STRING_TEMPLATE_ENTRY[text=1]
+                        OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                        STRING_TEMPLATE
+                          LITERAL_STRING_TEMPLATE_ENTRY[text=2]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unresolved]
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=parameter2]
@@ -114,6 +120,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextParameterAndA
                           REFERENCE_EXPRESSION[referencedName=Anno]
                     VALUE_ARGUMENT_LIST
                       VALUE_ARGUMENT[isSpread=false]
+                        BINARY_EXPRESSION
+                          STRING_TEMPLATE
+                            LITERAL_STRING_TEMPLATE_ENTRY[text=1]
+                          OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                          STRING_TEMPLATE
+                            LITERAL_STRING_TEMPLATE_ENTRY[text=2]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Unresolved]
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=parameter2]
@@ -166,6 +178,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextParameterAndA
                     REFERENCE_EXPRESSION[referencedName=Anno]
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
+                  BINARY_EXPRESSION
+                    STRING_TEMPLATE
+                      LITERAL_STRING_TEMPLATE_ENTRY[text=1]
+                    OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                    STRING_TEMPLATE
+                      LITERAL_STRING_TEMPLATE_ENTRY[text=2]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Unresolved]
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=parameter2]

@@ -47,6 +47,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: noGeneric
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -98,6 +99,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: noGenericWithExplicitType
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -184,6 +186,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: withOuterGeneric
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -270,6 +273,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: withOuterGenericWithExplicitType
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -380,6 +384,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: withOwnGeneric
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -490,6 +495,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: withOwnGenericWithExplicitType
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -634,6 +640,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: withOuterAndOwnGeneric
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -778,6 +785,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: withOuterAndOwnGenericWithExplicitType
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -864,6 +872,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: equals
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -911,6 +920,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: hashCode
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -958,6 +968,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecation: null
   returnValueStatus: MustUse
+  javaMethodName: toString
   importableFqName: null
 
 KaConstructorSymbol:
@@ -991,4 +1002,5 @@ KaConstructorSymbol:
   getContainingJvmClassName: test.ClassWithGenericBase
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  javaMethodName: null
   importableFqName: test.ClassWithGenericBase

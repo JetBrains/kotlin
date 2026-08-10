@@ -43,6 +43,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: function
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -90,6 +91,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: defaultFunction
   importableFqName: null
 
 KaNamedFunctionSymbol:
@@ -137,6 +139,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: privateDefaultFunction
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -218,6 +221,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getVariable
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -359,6 +363,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setVariable
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -370,8 +375,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: SealedInterface
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getVariable
-  javaSetterName: setVariable
   isInline: false
   importableFqName: null
 
@@ -450,6 +453,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getDefaultVariable
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -587,6 +591,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setDefaultVariable
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -598,8 +603,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: SealedInterface
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getDefaultVariable
-  javaSetterName: setDefaultVariable
   isInline: false
   importableFqName: null
 
@@ -678,6 +681,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: getPrivateDefaultVariable
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -815,6 +819,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
     deprecation: null
+    javaMethodName: setPrivateDefaultVariable
     importableFqName: null
   typeParameters: []
   visibility: PRIVATE
@@ -826,8 +831,6 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: SealedInterface
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  javaGetterName: getPrivateDefaultVariable
-  javaSetterName: setPrivateDefaultVariable
   isInline: false
   importableFqName: null
 

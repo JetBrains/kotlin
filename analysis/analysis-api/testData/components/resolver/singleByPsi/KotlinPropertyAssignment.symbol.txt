@@ -2,6 +2,7 @@
   KtNameReferenceExpression(71,80): 'something'
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
+    lookupLocally: false
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
@@ -11,6 +12,7 @@
   KtNameReferenceExpression(88,97): 'something'
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
+    lookupLocally: false
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
@@ -20,6 +22,7 @@
   KtNameReferenceExpression(108,117): 'something'
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
+    lookupLocally: false
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
@@ -29,6 +32,7 @@
   KtNameReferenceExpression(129,138): 'something'
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
+    lookupLocally: false
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
@@ -38,6 +42,7 @@
   KtNameReferenceExpression(149,158): 'something'
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
+    lookupLocally: false
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
@@ -47,6 +52,7 @@
   KtNameReferenceExpression(164,173): 'something'
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
+    lookupLocally: false
     KaSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int

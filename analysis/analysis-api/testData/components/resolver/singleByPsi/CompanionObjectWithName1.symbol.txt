@@ -1,6 +1,7 @@
 KtNameReferenceExpression(65,70): 'Inner'
   isImplicitReferenceToCompanion: true
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       my/sample/Inner.Inner

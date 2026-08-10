@@ -12,6 +12,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import java.io.File
 import java.util.concurrent.CountDownLatch
 
@@ -103,14 +104,14 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
     fun sharedXcodeDumpDir(
         xcodebuildExecutionHash: String,
         xcodebuildSdk: String,
-    ) = sharedDumpDir(sharedDumpBucketRoot(xcodebuildExecutionHash), xcodebuildSdk)
+    ) = sharedDumpDir(sharedXcodeDumpBucketRoot(xcodebuildExecutionHash), xcodebuildSdk)
 
     fun sharedXcodeDerivedDataDir(
         xcodebuildExecutionHash: String,
         xcodebuildSdk: String,
-    ) = sharedDerivedDataDir(sharedDumpBucketRoot(xcodebuildExecutionHash), xcodebuildSdk)
+    ) = sharedDerivedDataDir(sharedXcodeDumpBucketRoot(xcodebuildExecutionHash), xcodebuildSdk)
 
-    private fun sharedDumpBucketRoot(bucketId: String): File =
+    internal fun sharedXcodeDumpBucketRoot(bucketId: String): File =
         parameters.sharedXcodeDumpRoot.get().asFile.resolve(bucketId)
 
     private fun sharedDumpDir(bucketRoot: File, xcodebuildSdk: String): File =
@@ -124,6 +125,15 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
 
     internal fun sharedCheckoutDir(packageHash: String): File =
         parameters.sharedCheckoutDirectoryRoot.get().asFile.resolve(packageHash)
+
+    internal fun sharedPackageGenerationOutputsExist(packageHash: String): Boolean =
+        sharedPackageGenerationRoot(packageHash).resolve("Package.swift").isFile
+
+    internal fun sharedSwiftResolveOutputsExist(packageHash: String): Boolean {
+        val packageRoot = sharedPackageGenerationRoot(packageHash)
+        val checkoutDir = sharedCheckoutDir(packageHash)
+        return sharedPackageResolved(packageRoot).isFile && sharedCheckoutWorkspaceStateJsonFile(checkoutDir).isFile
+    }
 
     private fun sharedCheckoutWorkspaceStateJsonFile(checkoutDir: File): File =
         checkoutDir.resolve("workspace-state.json")
@@ -262,8 +272,6 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
     }
 
     companion object {
-        private const val SERVICE_NAME = "SwiftImportFingerprintedCoordinationService"
-
         /**
          * Registers the shared service once per build.
          */
@@ -273,9 +281,8 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
             checkoutDir: Provider<Directory>,
             generatePackageDir: Provider<Directory>,
         ): Provider<SwiftImportFingerprintedCoordinationService> =
-            project.gradle.sharedServices.registerIfAbsent(
-                SERVICE_NAME,
-                SwiftImportFingerprintedCoordinationService::class.java
+            project.gradle.registerClassLoaderScopedBuildService(
+                SwiftImportFingerprintedCoordinationService::class
             ) { buildServiceSpec ->
                 buildServiceSpec.parameters.sharedXcodeDumpRoot.set(
                     xcodeDumpsDir

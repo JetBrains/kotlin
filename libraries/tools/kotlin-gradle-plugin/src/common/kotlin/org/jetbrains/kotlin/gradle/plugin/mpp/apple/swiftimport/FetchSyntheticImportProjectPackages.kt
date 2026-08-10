@@ -9,16 +9,16 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.file.RegularFile
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.IgnoreEmptyDirectories
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -27,8 +27,8 @@ import java.io.File
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
-import org.gradle.api.tasks.Optional
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.gradle.utils.contentEqualsIgnoringLineEndings
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
 internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
@@ -72,7 +72,7 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
     }
 
     @get:Input
-    val gitIgnoreCheckoutDir : Property<Boolean> = project.objects.property(Boolean::class.java).convention(false)
+    val gitIgnoreCheckoutDir: Property<Boolean> = project.objects.property(Boolean::class.java).convention(false)
 
     /**
      * When `true` (project is being imported by the IDE) a failure of `swift package resolve` is
@@ -93,6 +93,13 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
         // task must not be up-to-date so the next build retries the resolve.
         testExecutionHooks.convention(SwiftImportExecutionHooks.NONE)
         outputs.upToDateWhen { !ideImportError.get().asFile.exists() }
+        // Shared resolve outputs are @Internal to avoid overlapping outputs across coordinated tasks. The local copies can
+        // survive deletion of the root build directory, so also use the shared marker files for the up-to-date decision.
+        outputs.upToDateWhen {
+            syntheticPackageFingerprint.readFingerprintOrNull()?.incrementalFingerprint?.let { fingerprint ->
+                coordinationService.get().sharedSwiftResolveOutputsExist(fingerprint)
+            } ?: true
+        }
     }
 
     /**
@@ -104,10 +111,8 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
     @get:Internal
     abstract val additionalSwiftPackageResolveArgs: ListProperty<String>
 
-    @get:Optional
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.NONE)
-    abstract val syntheticPackageFingerprint: RegularFileProperty
+    @get:Nested
+    abstract val syntheticPackageFingerprint: SwiftImportFingerprintInput
 
     @get:Internal
     abstract val coordinationService: Property<SwiftImportFingerprintedCoordinationService>
@@ -124,12 +129,15 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
     @get:Inject
     protected abstract val workerExecutor: WorkerExecutor
 
+    @get:Internal
+    abstract val persistedPackageResolved: RegularFileProperty
+
     @TaskAction
     fun fetchPackages() {
         val errorFile = ideImportError.get().asFile
         errorFile.delete()
 
-        if (!syntheticPackageFingerprint.isPresent) {
+        if (!syntheticPackageFingerprint.fingerprintFile.isPresent) {
             submitSwiftResolveWorkAction(
                 ownerSyntheticImportProjectRoot = syntheticImportProjectRoot.get().asFile,
                 ownerSwiftPMDependenciesCheckout = swiftPMDependenciesCheckout.get().asFile,
@@ -138,10 +146,10 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
             return
         }
 
-        val ownerHash = syntheticPackageFingerprint.asFile.get().readText().trim().split("\n")[1]
         testExecutionHooks.get().beforeSwiftResolveClaim()
+
         val claim = coordinationService.get().claimOrJoinSwiftResolve(
-            packageHash = ownerHash,
+            packageHash = syntheticPackageFingerprint.readFingerprint().incrementalFingerprint,
         )
         when (claim) {
             is CoordinationClaim.Existing -> {
@@ -198,12 +206,13 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
             params.ideaSyncEnabled.set(ideaSyncEnabled)
             params.errorFile.set(ideImportError)
             params.testExecutionService.set(testExecutionService)
+            params.persistedPackageResolved.set(persistedPackageResolved)
+            params.syntheticLockFile.set(syntheticLockFile)
+            params.workspaceStateJson.set(workspaceStateJson)
 
             if (isCoordinationEnabled) {
                 params.coordinationService.set(coordinationService)
                 params.syntheticPackageHash.set(syntheticPackageHash!!)
-                params.syntheticLockFile.set(syntheticLockFile)
-                params.workspaceStateJson.set(workspaceStateJson)
             }
         }
     }

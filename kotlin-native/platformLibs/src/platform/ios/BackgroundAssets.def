@@ -3,5 +3,6 @@ language = Objective-C
 package = platform.BackgroundAssets
 
 modules = BackgroundAssets
+apiNotesSwiftName = true
 compilerOpts = -framework BackgroundAssets
 linkerOpts = -framework BackgroundAssets

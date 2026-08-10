@@ -63,6 +63,10 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     KOTLIN_INCREMENTAL_NATIVE_ENABLED(OR, SAFE),
     KOTLIN_INCREMENTAL_FIR_RUNNER_ENABLED(OR, SAFE),
     KOTLIN_SEPARATE_KMP_COMPILATION_ENABLED(OR, SAFE),
+    // kotlin.internal.jvm.enableKmpClasspathMetadataForIncrementalCompilation, reported per KMP JVM compilation
+    KMP_JVM_CLASSPATH_METADATA_ENABLED(OR, SAFE),
+    // kotlin.internal.jvm.enableUnsafeOptimizationsForMultiplatform, reported per KMP JVM compilation
+    KMP_JVM_UNSAFE_OPTIMIZATIONS_ENABLED(OR, SAFE),
     KMP_TOP_LEVEL_DEPENDENCIES_BLOCK(OR, SAFE),
     KOTLIN_NATIVE_CACHE_DISABLED(OR, SAFE),
     KMP_SWIFT_PM_IMPORT_HAS_DIRECT_DEPENDENCIES(OR, SAFE),
@@ -142,6 +146,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     ;
 
     companion object {
-        const val VERSION = 29
+        const val VERSION = 30
     }
 }

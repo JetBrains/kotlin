@@ -9,7 +9,7 @@ plugins {
     kotlin("jvm")
     id("d8-configuration")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 repositories {
@@ -26,7 +26,7 @@ fun DependencyHandler.testImplementationArtifactOnly(dependency: String) {
 
 description = "Contains the Kotlin compiler plugin for Compose used in Android Studio and IDEA"
 
-val testJsRuntime: Configuration by configurations.creating {
+val testJsRuntime: Configuration = configurations.create("testJsRuntime") {
     attributes {
         attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
@@ -77,12 +77,16 @@ dependencies {
 
     // compose runtime for tests
     testImplementation(composeRuntime()) { isTransitive = false }
+    testImplementation(composeRuntimeDesktop()) { isTransitive = false }
     testImplementation(composeRuntimeAnnotations()) { isTransitive = false }
+    testImplementation(composeRuntimeAnnotationsJvm()) { isTransitive = false }
     testImplementation(libs.androidx.collections)
 
     // js runtimes for tests
     testJsRuntime(composeRuntime()) { isTransitive = false }
     testJsRuntime(composeRuntimeAnnotations()) { isTransitive = false }
+    testJsRuntime(composeRuntimeAnnotationsJs()) { isTransitive = false }
+    testJsRuntime(composeRuntimeJs()) { isTransitive = false }
     testJsRuntime(libs.androidx.collections) {
         // Avoid kotlin stdlib dependency since we are compiling against the newest one
         exclude(group = "org.jetbrains.kotlin")

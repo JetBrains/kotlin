@@ -75,7 +75,7 @@ Warning: this flag is not intended for production use. If you want to configure 
     @Argument(
         value = "-XXexplicit-return-types",
         valueDescription = "{strict|warning|disable}",
-        description = """Force the compiler to report errors on all public API declarations without an explicit return type.
+        description = """Force the compiler to report errors on all public API declarations and non-local functions without an explicit return type.
 Use the 'warning' level to issue warnings instead of errors.
 This flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether""",
     )
@@ -345,7 +345,9 @@ Multiple constraints can be specified by repeating this option. Cycles in constr
         value = "-Xdetailed-perf",
         description = """Enable more detailed performance statistics (Experimental).
 For Native, the performance report includes execution time and lines processed per second for every individual lowering.
-For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.""",
+For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
+Additionally enables measurements for User and CPU time for all targets. Note that this could cause performance degradation on Linux
+  machines, so use this mode with caution.""",
     )
     var detailedPerf: Boolean = false
         set(value) {
@@ -573,20 +575,6 @@ The argument should be used only if the new compilation scheme is enabled with -
         delimiter = Argument.Delimiters.none,
     )
     var fragmentFriendDependencies: Array<String> = emptyArray()
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xfragment-incremental-classpath",
-        valueDescription = "<fragment name>:<path>",
-        description = """Declare common klib incremental dependencies (results from the previous compilation) for the specific fragment.    
-This argument can be specified for any HMPP module except the platform leaf module: it takes incremental
-  dependencies from the platform specific incremental service.""",
-        delimiter = Argument.Delimiters.none,
-    )
-    var fragmentIncrementalClasspath: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -942,9 +930,11 @@ with bodies.""",
             field = value
         }
 
+    @all:Deprecated("REPL is deprecated.")
     @Argument(
         value = "-Xrepl",
-        description = "Run Kotlin REPL (deprecated)",
+        description = "Run Kotlin REPL.",
+        deprecatedVersion = "2.2.0",
     )
     var repl: Boolean = false
         set(value) {
@@ -1034,17 +1024,6 @@ with bodies.""",
         }
 
     @Argument(
-        value = "-Xsuppress-api-version-greater-than-language-version-error",
-        description = """Suppress error about API version greater than language version.
-Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.""",
-    )
-    var suppressApiVersionGreaterThanLanguageVersionError: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xsuppress-version-warnings",
         description = "Suppress warnings about outdated, inconsistent, or experimental language or API versions.",
     )
@@ -1054,10 +1033,12 @@ Warning: This is temporary solution (see KT-63712) intended to be used only for 
             field = value
         }
 
+    @all:Deprecated("Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings).")
     @Argument(
         value = "-Xsuppress-warning",
         valueDescription = "<WARNING_NAME>",
-        description = "Suppress specified warning module-wide. This option is deprecated in favor of \"-Xwarning-level\" flag",
+        description = "Suppress specified warning module-wide.",
+        deprecatedVersion = "2.2.0",
     )
     var suppressedDiagnostics: Array<String> = emptyArray()
         set(value) {
@@ -1088,10 +1069,11 @@ Warning: This is temporary solution (see KT-63712) intended to be used only for 
             field = value
         }
 
+    @all:Deprecated("")
     @Argument(
         value = "-Xuse-fir-ic",
-        description = """Compile using frontend IR internal incremental compilation.
-Warning: This feature is not yet production-ready.""",
+        description = "Compile using frontend IR internal incremental compilation.",
+        deprecatedVersion = "2.5.0",
     )
     var useFirIC: Boolean = false
         set(value) {

@@ -1,1 +1,1 @@
-classifier.java:5:5:compiler.err.annotation.type.not.applicable
+classifier.java:6:5:compiler.err.annotation.type.not.applicable

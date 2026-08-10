@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -78,15 +78,18 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     var packageFqName: FqName
         get() = greenStub?.getPackageFqName() ?: packageDirective?.fqName ?: FqName.ROOT
         @Deprecated(
-            "Use setPackageFqName(value) instead",
-            ReplaceWith("this.setPackageFqName(value)", "org.jetbrains.kotlin.idea.base.psi.setPackageFqName"),
+            message = "Use setPackageFqName(value) instead",
+            replaceWith = ReplaceWith("this.setPackageFqName(value)", "org.jetbrains.kotlin.idea.base.psi.setPackageFqName"),
         )
         @OptIn(KtNonPublicApi::class)
         set(value) {
             KtPsiMutationService.getInstance().setPackageFqName(this, value)
         }
 
-    @Deprecated("Use 'packageFqName' property instead", ReplaceWith("packageFqName"))
+    @Deprecated(
+        message = "Use 'packageFqName' property instead",
+        replaceWith = ReplaceWith("packageFqName"),
+    )
     val packageFqNameByTree: FqName
         get() = packageFqName
 
@@ -112,7 +115,10 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
             }
         }
 
-    @Deprecated("Use 'isScript()' instead", ReplaceWith("isScript()"))
+    @Deprecated(
+        message = "Use 'isScript()' instead",
+        replaceWith = ReplaceWith("isScript()"),
+    )
     val isScriptByTree: Boolean
         get() = isScript()
 
@@ -160,8 +166,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         val stub = greenStub
         if (stub != null) {
             for (stubElement in stub.childrenStubs) {
-                @Suppress("DEPRECATION") // KT-78356
-                val stubType = stubElement.stubType
+                val stubType = stubElement.elementType
                 when (stubType) {
                     // Required element found
                     elementType -> {

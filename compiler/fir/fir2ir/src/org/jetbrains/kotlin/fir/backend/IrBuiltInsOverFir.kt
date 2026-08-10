@@ -13,13 +13,10 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
@@ -28,7 +25,6 @@ import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance
 
@@ -57,52 +53,7 @@ class IrBuiltInsOverFir(
 
     override val irFactory: IrFactory = IrFactoryImpl
 
-    private val fir2irBuiltins = c.builtins
-
-    override val kotlinInternalPackageFragment: IrExternalPackageFragment = createPackage(StandardClassIds.BASE_INTERNAL_PACKAGE)
     override val operatorsPackageFragment: IrExternalPackageFragment = createPackage(StandardClassIds.BASE_INTERNAL_IR_PACKAGE)
-
-    // ------------------------------------- intrinsic const evaluation -------------------------------------
-
-    private val intrinsicConstAnnotation: IrAnnotation by lazy {
-        /*
-         * Old versions of stdlib may not contain @IntrinsicConstEvaluation (AV < 1.7), so in this case we should create annotation class manually
-         *
-         * Ideally, we should try to load it from FIR at first, but the thing is that this annotation is used for some generated builtin functions
-         *   (see init section below), so if Fir2IrLazyClass for this annotation is created, it will call for `components.fakeOverrideGenerator`,
-         *   which is not initialized by this moment
-         * As a possible way to fix it we can move `init` section of builtins into the separate function for late initialization and call
-         *   for it after Fir2IrComponentsStorage is fully initialized
-         */
-        val firClassSymbol = session.getRegularClassSymbolByClassId(StandardClassIds.Annotations.IntrinsicConstEvaluation)
-
-        val classSymbol = if (firClassSymbol == null) {
-            val irClass = createIntrinsicConstEvaluationClass()
-            irClass.symbol
-        } else {
-            fir2irBuiltins.loadClass(StandardClassIds.Annotations.IntrinsicConstEvaluation)
-        }
-
-        @OptIn(UnsafeDuringIrConstructionAPI::class)
-        val constructor = classSymbol.owner.constructors.single()
-        val constructorSymbol = constructor.symbol
-
-        val annotationCall = IrAnnotationImpl(
-            startOffset = UNDEFINED_OFFSET,
-            endOffset = UNDEFINED_OFFSET,
-            type = IrSimpleTypeImpl(
-                classifier = classSymbol,
-                nullability = SimpleTypeNullability.DEFINITELY_NOT_NULL,
-                arguments = emptyList(),
-                annotations = emptyList()
-            ),
-            constructorSymbol,
-            typeArgumentsCount = 0,
-            constructorTypeArgumentsCount = 0,
-        )
-
-        annotationCall
-    }
 
     // ------------------------------------- synthetics -------------------------------------
 
@@ -115,7 +66,6 @@ class IrBuiltInsOverFir(
                 symbol = syntheticSymbolsContainer.ieee754equalsFunByOperandType.getValue(primitiveType),
                 returnType = booleanType,
                 valueParameterTypes = arrayOf("arg0" to fpType.makeNullable(), "arg1" to fpType.makeNullable()),
-                isIntrinsicConst = true
             )
             primitiveClass to operator
         }
@@ -125,7 +75,6 @@ class IrBuiltInsOverFir(
         symbol = syntheticSymbolsContainer.eqeqeqSymbol,
         returnType = booleanType,
         valueParameterTypes = arrayOf("" to anyNType, "" to anyNType),
-        isIntrinsicConst = false
     )
 
     override val eqeqSymbol: IrSimpleFunctionSymbol = createFunction(
@@ -133,7 +82,6 @@ class IrBuiltInsOverFir(
         symbol = syntheticSymbolsContainer.eqeqSymbol,
         returnType = booleanType,
         valueParameterTypes = arrayOf("" to anyNType, "" to anyNType),
-        isIntrinsicConst = true
     )
 
     override val throwCceSymbol: IrSimpleFunctionSymbol = createFunction(
@@ -141,7 +89,6 @@ class IrBuiltInsOverFir(
         symbol = null,
         returnType = nothingType,
         valueParameterTypes = arrayOf<Pair<String, IrType>>(),
-        isIntrinsicConst = false
     )
 
     override val throwIseSymbol: IrSimpleFunctionSymbol = createFunction(
@@ -149,7 +96,6 @@ class IrBuiltInsOverFir(
         symbol = null,
         returnType = nothingType,
         valueParameterTypes = arrayOf<Pair<String, IrType>>(),
-        isIntrinsicConst = false
     )
 
     override val andandSymbol: IrSimpleFunctionSymbol = createFunction(
@@ -157,7 +103,6 @@ class IrBuiltInsOverFir(
         symbol = null,
         returnType = booleanType,
         valueParameterTypes = arrayOf("" to booleanType, "" to booleanType),
-        isIntrinsicConst = true
     )
 
     override val ororSymbol: IrSimpleFunctionSymbol = createFunction(
@@ -165,7 +110,6 @@ class IrBuiltInsOverFir(
         symbol = null,
         returnType = booleanType,
         valueParameterTypes = arrayOf("" to booleanType, "" to booleanType),
-        isIntrinsicConst = true
     )
 
     override val noWhenBranchMatchedExceptionSymbol: IrSimpleFunctionSymbol = createFunction(
@@ -173,7 +117,6 @@ class IrBuiltInsOverFir(
         symbol = syntheticSymbolsContainer.noWhenBranchMatchedExceptionSymbol,
         returnType = nothingType,
         valueParameterTypes = arrayOf<Pair<String, IrType>>(),
-        isIntrinsicConst = false
     )
 
     override val illegalArgumentExceptionSymbol: IrSimpleFunctionSymbol = createFunction(
@@ -181,7 +124,6 @@ class IrBuiltInsOverFir(
         symbol = null,
         returnType = nothingType,
         valueParameterTypes = arrayOf("" to stringType),
-        isIntrinsicConst = false
     )
 
     override val dataClassArrayMemberHashCodeSymbol: IrSimpleFunctionSymbol = createFunction(
@@ -189,7 +131,6 @@ class IrBuiltInsOverFir(
         symbol = null,
         returnType = intType,
         valueParameterTypes = arrayOf("" to anyType),
-        isIntrinsicConst = false
     )
 
 
@@ -198,7 +139,6 @@ class IrBuiltInsOverFir(
         symbol = null,
         returnType = stringType,
         valueParameterTypes = arrayOf("" to anyNType),
-        isIntrinsicConst = false
     )
 
     override val checkNotNullSymbol: IrSimpleFunctionSymbol = run {
@@ -222,7 +162,6 @@ class IrBuiltInsOverFir(
             valueParameterTypes = arrayOf("" to IrSimpleTypeImpl(typeParameter.symbol, hasQuestionMark = true, emptyList(), emptyList())),
             typeParameters = listOf(typeParameter),
             origin = BUILTIN_OPERATOR,
-            isIntrinsicConst = false,
         )
     }
 
@@ -231,7 +170,6 @@ class IrBuiltInsOverFir(
         symbol = null,
         returnType = nothingType,
         valueParameterTypes = arrayOf("" to anyNType),
-        isIntrinsicConst = false
     )
 
     override val lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
@@ -269,7 +207,6 @@ class IrBuiltInsOverFir(
         valueParameterTypes: Array<out Pair<String, IrType>>,
         typeParameters: List<IrTypeParameter> = emptyList(),
         origin: IrDeclarationOrigin = BUILTIN_OPERATOR,
-        isIntrinsicConst: Boolean,
     ): IrSimpleFunctionSymbol {
         return irFactory.createSimpleFunction(
             startOffset = UNDEFINED_OFFSET,
@@ -295,9 +232,6 @@ class IrBuiltInsOverFir(
             }
             fn.typeParameters = typeParameters
             typeParameters.forEach { it.parent = fn }
-            if (isIntrinsicConst) {
-                fn.annotations += intrinsicConstAnnotation
-            }
             fn.parent = operatorsPackageFragment
             // `operatorsPackageFragment` definitely is not a lazy class
             @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -316,7 +250,6 @@ class IrBuiltInsOverFir(
                 symbol = symbols.getValue(primitiveType),
                 returnType = booleanType,
                 valueParameterTypes = arrayOf("" to irType, "" to irType),
-                isIntrinsicConst = true
             )
         }
     }

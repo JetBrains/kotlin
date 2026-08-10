@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
+import java.io.File
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
@@ -27,14 +28,32 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
         options[key] = value
     }
 
-    fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger? = null): R {
+    fun execute(
+        projectId: ProjectId,
+        executionPolicy: ExecutionPolicy,
+        logger: KotlinLogger? = null,
+        sessionIsAliveFlagFile: Lazy<File>
+    ): R {
         check(executionStarted.compareAndSet(expectedValue = false, newValue = true)) {
             "Build operation $this already started execution."
         }
-        return executeImpl(projectId, executionPolicy, logger)
+        return executeImpl(projectId, executionPolicy, logger, sessionIsAliveFlagFile)
     }
 
-    abstract fun executeImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger? = null): R
+    abstract fun executeImpl(
+        projectId: ProjectId,
+        executionPolicy: ExecutionPolicy,
+        logger: KotlinLogger? = null,
+        sessionIsAliveFlagFile: Lazy<File>
+    ): R
+
+    /**
+     * `true` if this operation uses [org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment], so the [org.jetbrains.kotlin.buildtools.api.KotlinToolchains.BuildSession] can reuse it across operations.
+     *
+     * The value is checked only for in-process executions. The daemon uses `keepalive` mechanism of the compiler to cache it for the entire
+     * lifetime of the daemon.
+     */
+    abstract val usesApplicationEnvironment: Boolean
 
     operator fun <V> get(key: Option<V>): V = options[key]
 

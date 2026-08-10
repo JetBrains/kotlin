@@ -5,11 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.wasm
 
-internal fun wasmtimeProposalArgs() = listOf(
-    "-W",
-    "function-references,gc,exceptions"
-)
-
 internal fun wasmtimeInvokeArgs(functionName: String) = listOf(
     "--invoke",
     functionName

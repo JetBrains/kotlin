@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.AffectedByBuildToolsApi
 import org.jetbrains.kotlin.testFederation.AffectedByCompiler
 import org.junit.jupiter.api.DisplayName
 
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.DisplayName
  */
 
 @AffectedByCompiler
+@AffectedByBuildToolsApi
 abstract class CommonCodeWithPlatformSymbolsITBase(
     val platformType: KotlinPlatformType,
     val taskToExecute: String,
@@ -31,12 +33,17 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
         get() = super.defaultBuildOptions.copy(
             logLevel = LogLevel.DEBUG,
             languageVersion = "2.0",
-            enableUnsafeIncrementalCompilationForMultiplatform = false,
             isolatedProjects = when (platformType) {
                 KotlinPlatformType.js -> BuildOptions.IsolatedProjectsMode.DISABLED
                 else -> super.defaultBuildOptions.isolatedProjects
             }
-        )
+        ).withUnsafeOptimizationsForMultiplatform(false)
+
+    private fun BuildOptions.withUnsafeOptimizationsForMultiplatform(enabled: Boolean): BuildOptions = when (platformType) {
+        KotlinPlatformType.js -> copy(enableJsUnsafeIncrementalCompilationForMultiplatform = enabled)
+        KotlinPlatformType.wasm -> copy(enableWasmUnsafeIncrementalCompilationForMultiplatform = enabled)
+        else -> copy(enableJvmUnsafeIncrementalCompilationForMultiplatform = enabled)
+    }
 
     private val platformSourceSet = "${platformType.name}Main"
 
@@ -47,7 +54,7 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
         project(
             "kt-62686-mpp-source-set-boundary",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(enableUnsafeIncrementalCompilationForMultiplatform = true)
+            buildOptions = defaultBuildOptions.withUnsafeOptimizationsForMultiplatform(true)
         ) {
             buildScriptInjection(setupBuildScript)
 

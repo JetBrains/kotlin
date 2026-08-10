@@ -1,6 +1,7 @@
 KtOperationReferenceExpression(114,115): '<'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.compareTo(<dispatch receiver>: MyClass, value: MyClass): kotlin.Int

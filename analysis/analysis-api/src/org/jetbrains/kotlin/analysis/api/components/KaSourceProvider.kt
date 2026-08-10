@@ -34,6 +34,7 @@ public interface KaSourceProvider : KaSessionComponent {
         "this.klibSourceFileName",
         "org.jetbrains.kotlin.analysis.api.symbols.klibSourceFileName",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @KaContextParameterApi
 context(session: KaSession)

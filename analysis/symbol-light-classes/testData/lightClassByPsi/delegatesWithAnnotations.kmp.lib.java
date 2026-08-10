@@ -1,37 +1,31 @@
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Ann /* Ann*/ {
-  @org.jetbrains.annotations.NotNull()
   public abstract @org.jetbrains.annotations.NotNull() SimpleAnn @org.jetbrains.annotations.NotNull() [] t();//  t()
 
-  @org.jetbrains.annotations.NotNull()
   public abstract @org.jetbrains.annotations.NotNull() java.lang.Class<?> @org.jetbrains.annotations.NotNull() [] e();//  e()
 
-  @org.jetbrains.annotations.NotNull()
   public abstract @org.jetbrains.annotations.NotNull() java.lang.Class<?> z();//  z()
 
-  @org.jetbrains.annotations.NotNull()
   public abstract @org.jetbrains.annotations.NotNull() java.lang.String y();//  y()
 
-  @org.jetbrains.annotations.NotNull()
   public abstract @org.jetbrains.annotations.NotNull() kotlin.DeprecationLevel depr();//  depr()
 
   public abstract int x();//  x()
 }
 
 public abstract interface Base /* Base*/ {
-  @Ann(t = {})
-  public abstract void foo(@Ann(t = {}) @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  foo(@org.jetbrains.annotations.NotNull() java.lang.String)
+  @Ann(x = 1, y = "134", z = java.lang.String.class, e = {int.class, double.class}, depr = kotlin.DeprecationLevel.WARNING, t = {@SimpleAnn(value = "243"), @SimpleAnn(value = "4324")})
+  public abstract void foo(@Ann(x = 2, y = "324", z = Ann.class, e = {byte.class, Base.class}, depr = kotlin.DeprecationLevel.WARNING, t = {@SimpleAnn(value = "687"), @SimpleAnn(value = "78")}) @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  foo(@org.jetbrains.annotations.NotNull() java.lang.String)
 }
 
 public final class Derived /* Derived*/ implements Base {
-  @Ann(t = {})
-  public void foo(@Ann(t = {}) @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  foo(@org.jetbrains.annotations.NotNull() java.lang.String)
+  @Ann(x = 1, y = "134", z = java.lang.String.class, e = {int.class, double.class}, depr = kotlin.DeprecationLevel.WARNING, t = {@SimpleAnn(value = "243"), @SimpleAnn(value = "4324")})
+  public void foo(@Ann(x = 2, y = "324", z = Ann.class, e = {byte.class, Base.class}, depr = kotlin.DeprecationLevel.WARNING, t = {@SimpleAnn(value = "687"), @SimpleAnn(value = "78")}) @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  foo(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   public  Derived(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Base);//  .ctor(@org.jetbrains.annotations.NotNull() Base)
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface SimpleAnn /* SimpleAnn*/ {
-  @org.jetbrains.annotations.NotNull()
   public abstract @org.jetbrains.annotations.NotNull() java.lang.String value();//  value()
 }

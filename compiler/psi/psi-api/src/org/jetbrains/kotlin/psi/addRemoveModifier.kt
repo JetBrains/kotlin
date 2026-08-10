@@ -12,31 +12,31 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 
 @Deprecated(
-    "Use setModifierList(newModifierList) instead",
-    ReplaceWith("this.setModifierList(newModifierList)", "org.jetbrains.kotlin.idea.base.psi.setModifierList"),
+    message = "Use setModifierList(newModifierList) instead",
+    replaceWith = ReplaceWith("this.setModifierList(newModifierList)", "org.jetbrains.kotlin.idea.base.psi.setModifierList"),
 )
 fun KtModifierListOwner.setModifierList(newModifierList: KtModifierList) {
     KtPsiMutationService.getInstance().setModifierList(this, newModifierList)
 }
 
 @Deprecated(
-    "Use owner.addModifierKeyword(modifier) instead",
-    ReplaceWith("owner.addModifierKeyword(modifier)", "org.jetbrains.kotlin.idea.base.psi.addModifierKeyword"),
+    message = "Use owner.addModifierKeyword(modifier) instead",
+    replaceWith = ReplaceWith("owner.addModifierKeyword(modifier)", "org.jetbrains.kotlin.idea.base.psi.addModifierKeyword"),
 )
 fun addModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken) {
     KtPsiMutationService.getInstance().addModifierKeyword(owner, modifier)
 }
 
 @Deprecated(
-    "Use owner.addAnnotation(annotationEntry) instead",
-    ReplaceWith("owner.addAnnotation(annotationEntry)", "org.jetbrains.kotlin.idea.base.psi.addAnnotation"),
+    message = "Use owner.addAnnotation(annotationEntry) instead",
+    replaceWith = ReplaceWith("owner.addAnnotation(annotationEntry)", "org.jetbrains.kotlin.idea.base.psi.addAnnotation"),
 )
 fun addAnnotationEntry(owner: KtModifierListOwner, annotationEntry: KtAnnotationEntry): KtAnnotationEntry =
     KtPsiMutationService.getInstance().addAnnotation(owner, annotationEntry)
 
 @Deprecated(
-    "Use owner.removeModifierKeyword(modifier) instead",
-    ReplaceWith("owner.removeModifierKeyword(modifier)", "org.jetbrains.kotlin.idea.base.psi.removeModifierKeyword"),
+    message = "Use owner.removeModifierKeyword(modifier) instead",
+    replaceWith = ReplaceWith("owner.removeModifierKeyword(modifier)", "org.jetbrains.kotlin.idea.base.psi.removeModifierKeyword"),
 )
 fun removeModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken) {
     KtPsiMutationService.getInstance().removeModifierKeyword(owner, modifier)
@@ -50,7 +50,7 @@ fun sortModifiers(modifiers: List<KtModifierKeywordToken>): List<KtModifierKeywo
 }
 
 @Deprecated(
-    "Use `KtTokens.MODIFIER_KEYWORDS_ARRAY` directly",
-    ReplaceWith("KtTokens.MODIFIER_KEYWORDS_ARRAY", "org.jetbrains.kotlin.lexer.KtTokens"),
+    message = "Use `KtTokens.MODIFIER_KEYWORDS_ARRAY` directly",
+    replaceWith = ReplaceWith("KtTokens.MODIFIER_KEYWORDS_ARRAY", "org.jetbrains.kotlin.lexer.KtTokens"),
 )
 val MODIFIERS_ORDER: List<KtModifierKeywordToken> get() = MODIFIER_KEYWORDS_ARRAY.asList()

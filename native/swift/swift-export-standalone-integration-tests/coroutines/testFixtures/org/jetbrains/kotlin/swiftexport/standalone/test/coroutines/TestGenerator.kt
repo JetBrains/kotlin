@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.swiftexport.standalone.test.coroutines
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.tests.provider
+import org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_ARM64
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.swiftexport.standalone.test.AbstractSwiftExportExecutionTest
 import org.jetbrains.kotlin.swiftexport.standalone.test.AbstractSwiftExportWithBinaryCompilationTest
 import org.jetbrains.kotlin.swiftexport.standalone.test.AbstractSwiftExportWithResultValidationTest
+import org.jetbrains.kotlin.swiftexport.standalone.test.EnabledOnNativeTargets
 import org.jetbrains.kotlin.swiftexport.standalone.test.SwiftExportWithCoroutinesTestSupport
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -21,13 +23,17 @@ fun main(args: Array<String>) {
 
 fun generateCoroutinesSuite(args: Array<String>, classNamePrefix: String = "") {
     val testsRoot = args[0]
+    // Coroutines/atomicfu test klibs are prebuilt for macos_arm64 only on the CI agents.
+    val targetRestrictionAnnotation = annotation(EnabledOnNativeTargets::class.java, "targets" to arrayOf(MACOS_ARM64.name))
+
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "native/swift/swift-export-standalone-integration-tests/coroutines/testData/generation") {
             testClass<AbstractSwiftExportWithResultValidationTest>(
                 suiteTestClassName = "${classNamePrefix}SwiftExportCoroutinesWithResultValidationTest",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
-                    annotation(ExtendWith::class.java, SwiftExportWithCoroutinesTestSupport::class.java)
+                    annotation(ExtendWith::class.java, SwiftExportWithCoroutinesTestSupport::class.java),
+                    targetRestrictionAnnotation,
                 ),
             ) {
                 model("", extension = null, recursive = false)
@@ -38,7 +44,8 @@ fun generateCoroutinesSuite(args: Array<String>, classNamePrefix: String = "") {
                 suiteTestClassName = "${classNamePrefix}SwiftExportCoroutinesWithBinaryCompilationTest",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
-                    annotation(ExtendWith::class.java, SwiftExportWithCoroutinesTestSupport::class.java)
+                    annotation(ExtendWith::class.java, SwiftExportWithCoroutinesTestSupport::class.java),
+                    targetRestrictionAnnotation,
                 ),
             ) {
                 model("", extension = null, recursive = false)
@@ -49,7 +56,8 @@ fun generateCoroutinesSuite(args: Array<String>, classNamePrefix: String = "") {
                 suiteTestClassName = "${classNamePrefix}SwiftExportCoroutinesExecutionTestGenerated",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
-                    annotation(ExtendWith::class.java, SwiftExportWithCoroutinesTestSupport::class.java)
+                    annotation(ExtendWith::class.java, SwiftExportWithCoroutinesTestSupport::class.java),
+                    targetRestrictionAnnotation,
                 ),
             ) {
                 model(pattern = "^([^_](.+))$", recursive = false)

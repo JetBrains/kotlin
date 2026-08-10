@@ -43,7 +43,7 @@ public final class JsRegExp extends JsLiteral.JsValueLiteral {
     @NotNull
     @Override
     public JsRegExp deepCopy() {
-        JsRegExp copy = new JsRegExp().withMetadataFrom(this);
+        JsRegExp copy = AbstractNodeKt.withMetadataFrom(new JsRegExp(), this);
         copy.setFlags(flags);
         copy.setPattern(pattern);
         return copy;

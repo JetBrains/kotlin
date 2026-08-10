@@ -3,5 +3,6 @@ language = Objective-C
 package = platform.Matter
 
 modules = Matter
+apiNotesSwiftName = true
 compilerOpts = -framework Matter
 linkerOpts = -framework Matter

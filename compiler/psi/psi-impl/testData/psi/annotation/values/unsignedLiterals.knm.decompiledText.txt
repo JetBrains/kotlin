@@ -1,0 +1,30 @@
+0_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final annotation class Unsigned public constructor(
+      public final val ub: kotlin.UByte,
+
+      public final val us: kotlin.UShort,
+
+      public final val ui: kotlin.UInt,
+
+      public final val ul: kotlin.ULong,
+  ) : kotlin.Annotation {
+  }
+
+1_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Unsigned(ub = 255u, us = 65535u, ui = 4294967295u, ul = 18446744073709551615uL)
+  public final class WithMaxValues public constructor() {
+  }
+
+2_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @Unsigned(ub = 1u, us = 2u, ui = 3u, ul = 4uL)
+  public final class WithSmallValues public constructor() {
+  }

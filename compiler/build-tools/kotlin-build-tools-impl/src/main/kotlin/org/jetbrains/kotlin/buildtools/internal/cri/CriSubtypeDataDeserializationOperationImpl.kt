@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.cri.SubtypeEntry
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.buildtools.internal.initializeOptions
+import java.io.File
 
 internal class CriSubtypeDataDeserializationOperationImpl(
     private val deserializer: CriDataDeserializerImpl,
@@ -24,10 +25,14 @@ internal class CriSubtypeDataDeserializationOperationImpl(
         initializeOptions(this::class, options)
     }
 
+    override val usesApplicationEnvironment: Boolean
+        get() = false
+
     override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
+        sessionIsAliveFlagFile: Lazy<File>,
     ): Iterable<SubtypeEntry> {
         return deserializer.deserializeSubtypeData(data)
     }

@@ -66,21 +66,24 @@ public interface CommonJsAndWasmCompilerLinkingArguments : CommonJsAndWasmArgume
 
   public companion object {
     /**
-     * Generate a JS file using the IR backend.
+     * Path to the cache directory.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_IR_PRODUCE_JS: CommonJsAndWasmCompilerLinkingArgument<Boolean> =
-        CommonJsAndWasmCompilerLinkingArgument("X_IR_PRODUCE_JS", KotlinReleaseVersion(1, 3, 70))
+    public val X_CACHE_DIRECTORY: CommonJsAndWasmCompilerLinkingArgument<Path?> =
+        CommonJsAndWasmCompilerLinkingArgument("X_CACHE_DIRECTORY", KotlinReleaseVersion(1, 8, 20))
 
     /**
-     * Generate a source map.
+     * Generate a TypeScript declaration .d.ts file alongside the JS file.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
     @JvmField
-    public val SOURCE_MAP: CommonJsAndWasmCompilerLinkingArgument<Boolean> =
-        CommonJsAndWasmCompilerLinkingArgument("SOURCE_MAP", KotlinReleaseVersion(1, 0, 0))
+    @ExperimentalCompilerArgument
+    public val X_GENERATE_DTS: CommonJsAndWasmCompilerLinkingArgument<Boolean> =
+        CommonJsAndWasmCompilerLinkingArgument("X_GENERATE_DTS", KotlinReleaseVersion(1, 3, 70))
 
     /**
      * Path to an intermediate library that should be processed in the same manner as source files.
@@ -93,14 +96,45 @@ public interface CommonJsAndWasmCompilerLinkingArguments : CommonJsAndWasmArgume
         CommonJsAndWasmCompilerLinkingArgument("X_INCLUDE", KotlinReleaseVersion(1, 4, 0))
 
     /**
-     * Path to the cache directory.
+     * Perform experimental dead code elimination.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_CACHE_DIRECTORY: CommonJsAndWasmCompilerLinkingArgument<Path?> =
-        CommonJsAndWasmCompilerLinkingArgument("X_CACHE_DIRECTORY", KotlinReleaseVersion(1, 8, 20))
+    public val X_IR_DCE: CommonJsAndWasmCompilerLinkingArgument<Boolean> =
+        CommonJsAndWasmCompilerLinkingArgument("X_IR_DCE", KotlinReleaseVersion(1, 3, 70))
+
+    /**
+     * Print reachability information about declarations to 'stdout' while performing DCE.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_IR_DCE_PRINT_REACHABILITY_INFO: CommonJsAndWasmCompilerLinkingArgument<Boolean> =
+        CommonJsAndWasmCompilerLinkingArgument("X_IR_DCE_PRINT_REACHABILITY_INFO", KotlinReleaseVersion(1, 4, 0))
+
+    /**
+     * Enable runtime diagnostics instead of removing declarations when performing DCE.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_IR_DCE_RUNTIME_DIAGNOSTIC:
+        CommonJsAndWasmCompilerLinkingArgument<JsIrDiagnosticMode?> =
+        CommonJsAndWasmCompilerLinkingArgument("X_IR_DCE_RUNTIME_DIAGNOSTIC", KotlinReleaseVersion(1, 5, 0))
+
+    /**
+     * Generate a JS file using the IR backend.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_IR_PRODUCE_JS: CommonJsAndWasmCompilerLinkingArgument<Boolean> =
+        CommonJsAndWasmCompilerLinkingArgument("X_IR_PRODUCE_JS", KotlinReleaseVersion(1, 3, 70))
 
     /**
      * Perform lazy initialization for properties.
@@ -113,14 +147,14 @@ public interface CommonJsAndWasmCompilerLinkingArguments : CommonJsAndWasmArgume
         CommonJsAndWasmCompilerLinkingArgument("X_IR_PROPERTY_LAZY_INITIALIZATION", KotlinReleaseVersion(1, 4, 30))
 
     /**
-     * Perform experimental dead code elimination.
+     * Generate strict types for implicitly exported entities inside d.ts files.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_IR_DCE: CommonJsAndWasmCompilerLinkingArgument<Boolean> =
-        CommonJsAndWasmCompilerLinkingArgument("X_IR_DCE", KotlinReleaseVersion(1, 3, 70))
+    public val X_STRICT_IMPLICIT_EXPORT_TYPES: CommonJsAndWasmCompilerLinkingArgument<Boolean> =
+        CommonJsAndWasmCompilerLinkingArgument("X_STRICT_IMPLICIT_EXPORT_TYPES", KotlinReleaseVersion(1, 8, 0))
 
     /**
      * Specify whether the 'main' function should be called upon execution.
@@ -130,11 +164,11 @@ public interface CommonJsAndWasmCompilerLinkingArguments : CommonJsAndWasmArgume
         CommonJsAndWasmCompilerLinkingArgument("MAIN", KotlinReleaseVersion(1, 0, 0))
 
     /**
-     * Add the specified prefix to the paths in the source map.
+     * Generate a source map.
      */
     @JvmField
-    public val SOURCE_MAP_PREFIX: CommonJsAndWasmCompilerLinkingArgument<String?> =
-        CommonJsAndWasmCompilerLinkingArgument("SOURCE_MAP_PREFIX", KotlinReleaseVersion(1, 1, 4))
+    public val SOURCE_MAP: CommonJsAndWasmCompilerLinkingArgument<Boolean> =
+        CommonJsAndWasmCompilerLinkingArgument("SOURCE_MAP", KotlinReleaseVersion(1, 0, 0))
 
     /**
      * Base directories for calculating relative paths to source files in the source map.
@@ -160,44 +194,10 @@ public interface CommonJsAndWasmCompilerLinkingArguments : CommonJsAndWasmArgume
         CommonJsAndWasmCompilerLinkingArgument("SOURCE_MAP_NAMES_POLICY", KotlinReleaseVersion(1, 8, 20))
 
     /**
-     * Print reachability information about declarations to 'stdout' while performing DCE.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     * Add the specified prefix to the paths in the source map.
      */
     @JvmField
-    @ExperimentalCompilerArgument
-    public val X_IR_DCE_PRINT_REACHABILITY_INFO: CommonJsAndWasmCompilerLinkingArgument<Boolean> =
-        CommonJsAndWasmCompilerLinkingArgument("X_IR_DCE_PRINT_REACHABILITY_INFO", KotlinReleaseVersion(1, 4, 0))
-
-    /**
-     * Enable runtime diagnostics instead of removing declarations when performing DCE.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_IR_DCE_RUNTIME_DIAGNOSTIC:
-        CommonJsAndWasmCompilerLinkingArgument<JsIrDiagnosticMode?> =
-        CommonJsAndWasmCompilerLinkingArgument("X_IR_DCE_RUNTIME_DIAGNOSTIC", KotlinReleaseVersion(1, 5, 0))
-
-    /**
-     * Generate a TypeScript declaration .d.ts file alongside the JS file.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_GENERATE_DTS: CommonJsAndWasmCompilerLinkingArgument<Boolean> =
-        CommonJsAndWasmCompilerLinkingArgument("X_GENERATE_DTS", KotlinReleaseVersion(1, 3, 70))
-
-    /**
-     * Generate strict types for implicitly exported entities inside d.ts files.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_STRICT_IMPLICIT_EXPORT_TYPES: CommonJsAndWasmCompilerLinkingArgument<Boolean> =
-        CommonJsAndWasmCompilerLinkingArgument("X_STRICT_IMPLICIT_EXPORT_TYPES", KotlinReleaseVersion(1, 8, 0))
+    public val SOURCE_MAP_PREFIX: CommonJsAndWasmCompilerLinkingArgument<String?> =
+        CommonJsAndWasmCompilerLinkingArgument("SOURCE_MAP_PREFIX", KotlinReleaseVersion(1, 1, 4))
   }
 }

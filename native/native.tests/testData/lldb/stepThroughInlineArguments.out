@@ -1,0 +1,85 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) settings set stop-disassembly-display never
+(lldb) command script import <path to lldb script>
+(lldb) b bar
+Breakpoint 1: where = lldb_stepThroughInlineArguments.kexe`kfun:#bar(kotlin.Int){}kotlin.Int + <breakpoint offset> at main.kt:9:1, address = <memory address>
+(lldb) r
+Process <process id> launched: <path to executable>
+Process <process id> stopped
+* thread #<thread id>, stop reason = breakpoint 1.1
+    frame #0: <frame pc> lldb_stepThroughInlineArguments.kexe`kfun:#bar(x=42){}kotlin.Int at main.kt:9:1
+   6
+   7
+   8
+-> 9   	fun bar(x: Int): Int {
+    	^
+   10  	    val res = foo(
+   11  	        x * 2,
+   12  	        x + 2
+(lldb) s
+Process <process id> stopped
+* thread #<thread id>, stop reason = step in
+    frame #0: <frame pc> lldb_stepThroughInlineArguments.kexe`kfun:#bar(x=42){}kotlin.Int at main.kt:11:9
+   8
+   9   	fun bar(x: Int): Int {
+   10  	    val res = foo(
+-> 11  	        x * 2,
+    	        ^
+   12  	        x + 2
+   13  	    )
+   14  	    return res
+(lldb) bt
+* thread #<thread id>, stop reason = step in
+  * frame #0: <frame pc> lldb_stepThroughInlineArguments.kexe`kfun:#bar(x=42){}kotlin.Int at main.kt:11:9
+    frame #1: <frame pc> lldb_stepThroughInlineArguments.kexe`kfun:#main(){} at main.kt:18:13
+(lldb) s
+Process <process id> stopped
+* thread #<thread id>, stop reason = step in
+    frame #0: <frame pc> lldb_stepThroughInlineArguments.kexe`kfun:#bar(x=42){}kotlin.Int at main.kt:12:9
+   9   	fun bar(x: Int): Int {
+   10  	    val res = foo(
+   11  	        x * 2,
+-> 12  	        x + 2
+    	        ^
+   13  	    )
+   14  	    return res
+   15  	}
+(lldb) bt
+* thread #<thread id>, stop reason = step in
+  * frame #0: <frame pc> lldb_stepThroughInlineArguments.kexe`kfun:#bar(x=42){}kotlin.Int at main.kt:12:9
+    frame #1: <frame pc> lldb_stepThroughInlineArguments.kexe`kfun:#main(){} at main.kt:18:13
+(lldb) s
+Process <process id> stopped
+* thread #<thread id>, stop reason = step in
+    frame #0: <frame pc> lldb_stepThroughInlineArguments.kexe`kfun:#bar(x=42){}kotlin.Int at main.kt:10:15
+   7
+   8
+   9   	fun bar(x: Int): Int {
+-> 10  	    val res = foo(
+    	              ^
+   11  	        x * 2,
+   12  	        x + 2
+   13  	    )
+(lldb) bt
+* thread #<thread id>, stop reason = step in
+  * frame #0: <frame pc> lldb_stepThroughInlineArguments.kexe`kfun:#bar(x=42){}kotlin.Int at main.kt:10:15
+    frame #1: <frame pc> lldb_stepThroughInlineArguments.kexe`kfun:#main(){} at main.kt:18:13
+(lldb) s
+Process <process id> stopped
+* thread #<thread id>, stop reason = step in
+    frame #0: <frame pc> lldb_stepThroughInlineArguments.kexe`kfun:#foo(kotlin.Int;kotlin.Int){}kotlin.Int at lib.kt:26:12
+   23
+   24
+   25  	inline fun foo(x: Int, y: Int): Int {
+-> 26  	    return x +
+    	           ^
+   27  	            y
+   28  	}
+(lldb) bt
+* thread #<thread id>, stop reason = step in
+  * frame #0: <frame pc> lldb_stepThroughInlineArguments.kexe`kfun:#foo(kotlin.Int;kotlin.Int){}kotlin.Int at lib.kt:26:12
+    frame #1: <frame pc> lldb_stepThroughInlineArguments.kexe`kfun:#bar(x=42){}kotlin.Int at main.kt:10:15
+    frame #2: <frame pc> lldb_stepThroughInlineArguments.kexe`kfun:#main(){} at main.kt:18:13
+(lldb) q
+

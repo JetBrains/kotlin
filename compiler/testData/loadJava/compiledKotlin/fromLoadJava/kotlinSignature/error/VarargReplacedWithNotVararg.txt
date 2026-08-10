@@ -1,6 +1,0 @@
-package test
-
-public open class VarargReplacedWithNotVararg {
-    /*primary*/ public constructor VarargReplacedWithNotVararg()
-    public open fun foo(/*0*/ vararg p0: kotlin.String? /*kotlin.Array<out kotlin.String?>*/): kotlin.Unit
-}

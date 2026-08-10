@@ -142,7 +142,7 @@ private val rawMultitargetDump = """
 
     // Library unique name: <stdlib>
     // Platform: NATIVE
-    // Native targets: android_arm32, android_arm64, android_x64, android_x86, ios_arm64, ios_simulator_arm64, ios_x64, linux_arm32_hfp, linux_arm64, linux_x64, macos_arm64, macos_x64, mingw_x64, tvos_arm64, tvos_simulator_arm64, tvos_x64, watchos_arm32, watchos_arm64, watchos_device_arm64, watchos_simulator_arm64, watchos_x64
+    // Native targets: android_arm32, android_arm64, android_x64, android_x86, ios_arm64, ios_simulator_arm64, ios_x64, linux_arm32_hfp, linux_arm64, linux_x64, macos_arm64, macos_x64, mingw_x64, tvos_arm64, tvos_simulator_arm64, tvos_x64, watchos_arm64, watchos_device_arm64, watchos_simulator_arm64, watchos_x64
     // Compiler version: 2.0.255-SNAPSHOT
     // ABI version: 1.8.0
     abstract interface kotlin/Annotation // kotlin/Annotation|null[0]
@@ -150,7 +150,7 @@ private val rawMultitargetDump = """
 
 private val mergedMultitargetDump = """
     // Klib ABI Dump
-    // Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, linuxArm32Hfp, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
+    // Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, linuxArm32Hfp, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
     // Rendering settings:
     // - Signature version: 2
     // - Show manifest properties: true
@@ -291,22 +291,22 @@ class KlibDumpTest {
     @Test
     fun loadMultitargetDump() {
         val dump = AbiToolsImpl.loadKlibDump(rawMultitargetDump)
-        assertEquals(21, dump.targets.size)
+        assertEquals(20, dump.targets.size)
         assertEquals(mergedMultitargetDump, buildString { dump.print(this) })
 
         val mergedDump = AbiToolsImpl.loadKlibDump(mergedMultitargetDump)
-        assertEquals(21, mergedDump.targets.size)
+        assertEquals(20, mergedDump.targets.size)
         assertEquals(mergedMultitargetDump, buildString { mergedDump.print(this) })
     }
 
     @Test
     fun mergeMultitargetDump() {
         val dump = AbiToolsImpl.createKlibDump().also { it.merge(rawMultitargetDump) }
-        assertEquals(21, dump.targets.size)
+        assertEquals(20, dump.targets.size)
         assertEquals(mergedMultitargetDump, buildString { dump.print(this) })
 
         val mergedDump = AbiToolsImpl.createKlibDump().also { it.merge(mergedMultitargetDump) }
-        assertEquals(21, mergedDump.targets.size)
+        assertEquals(20, mergedDump.targets.size)
         assertEquals(mergedMultitargetDump, buildString { mergedDump.print(this) })
     }
 

@@ -58,6 +58,7 @@ internal val DEFAULT_GROOVY_SETTINGS_FILE =
                 id("com.android.instantapp") version android_tools_version
                 id("com.android.feature") version android_tools_version
                 id("com.android.kotlin.multiplatform.library") version android_tools_version
+                id("com.android.legacy-kapt") version android_tools_version
             }
         }
     }
@@ -230,6 +231,7 @@ internal val DEFAULT_KOTLIN_SETTINGS_FILE =
                 id("com.android.instantapp") version android_tools_version
                 id("com.android.feature") version android_tools_version
                 id("com.android.kotlin.multiplatform.library") version android_tools_version
+                id("com.android.legacy-kapt") version android_tools_version
             }
         }
     }

@@ -12,21 +12,35 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DeclarationAfterIncompleteEl
               REFERENCE_EXPRESSION[referencedName=Any]
     FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
       VALUE_PARAMETER_LIST
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
     FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=String]
       VALUE_PARAMETER_LIST
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
   CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     CLASS_BODY
       PROPERTY[fqName=A.z, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=z]
+        BINARY_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=ELVIS, referencedName=?:]
       PROPERTY[fqName=A.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
       PROPERTY[fqName=A.y, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=y]
+        BINARY_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=ELVIS, referencedName=?:]
       FUN[fqName=A.baz, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=baz]
         VALUE_PARAMETER_LIST
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
       PROPERTY[fqName=A.q, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=q]
-        FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=String]
-          VALUE_PARAMETER_LIST
+        BINARY_EXPRESSION
+          NULL[kind=NULL, value=null]
+          OPERATION_REFERENCE[operationToken=ELVIS, referencedName=?:]
+          FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=String]
+            VALUE_PARAMETER_LIST
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=6]

@@ -53,8 +53,7 @@ class LanguageVersionSettingsBuilder {
 
     fun configureUsingDirectives(
         directives: RegisteredDirectives,
-        environmentConfigurators: List<AbstractEnvironmentConfigurator>,
-        useK2: Boolean
+        environmentConfigurators: List<AbstractEnvironmentConfigurator>
     ) {
         val apiVersion = if (ALLOW_MULTIPLE_API_VERSIONS_SETTING in directives) {
             directives[LanguageSettingsDirectives.API_VERSION].lastOrNull()
@@ -96,10 +95,6 @@ class LanguageVersionSettingsBuilder {
                     API version: '$apiVersion'.
                 """.trimIndent()
             }
-        }
-        when {
-            useK2 && this.languageVersion < LanguageVersion.KOTLIN_2_0 -> this.languageVersion = LanguageVersion.LATEST_STABLE
-            !useK2 && this.languageVersion > LanguageVersion.KOTLIN_1_9 -> this.languageVersion = LanguageVersion.KOTLIN_1_9
         }
 
         val analysisFlags = listOfNotNull(

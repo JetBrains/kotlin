@@ -83,6 +83,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.SimpleClass
     getContainingModule: KaLibraryModule "Library lib"
     deprecation: null
+    javaMethodName: getConstructorPropertyWithAnnotations
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -122,7 +123,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: one.SimpleClass
   getContainingModule: KaLibraryModule "Library lib"
   deprecation: null
-  javaGetterName: getConstructorPropertyWithAnnotations
-  javaSetterName: null
   isInline: false
   importableFqName: null

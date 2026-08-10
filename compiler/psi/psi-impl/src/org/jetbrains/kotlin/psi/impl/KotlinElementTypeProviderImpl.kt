@@ -230,12 +230,29 @@ object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val callExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtCallExpression>, KtCallExpression>
         get() = KtStubElementTypes.CALL_EXPRESSION
 
+    override val operationReferenceType: KtStubElementType<out KotlinOperationReferenceExpressionStub, KtOperationReferenceExpression>
+        get() = KtStubElementTypes.OPERATION_REFERENCE
+
+    override val prefixExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtPrefixExpression>, KtPrefixExpression>
+        get() = KtStubElementTypes.PREFIX_EXPRESSION
+
+    override val postfixExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtPostfixExpression>, KtPostfixExpression>
+        get() = KtStubElementTypes.POSTFIX_EXPRESSION
+
+    override val binaryExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtBinaryExpression>, KtBinaryExpression>
+        get() = KtStubElementTypes.BINARY_EXPRESSION
+
+    override val parenthesizedExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtParenthesizedExpression>, KtParenthesizedExpression>
+        get() = KtStubElementTypes.PARENTHESIZED
+
     override val classLiteralExpressionType: KtStubElementType<out KotlinClassLiteralExpressionStub, KtClassLiteralExpression>
         get() = KtStubElementTypes.CLASS_LITERAL_EXPRESSION
 
     override val collectionLiteralExpressionType: KtStubElementType<out KotlinCollectionLiteralExpressionStub, KtCollectionLiteralExpression>
         get() = KtStubElementTypes.COLLECTION_LITERAL_EXPRESSION
 
+    override val objectLiteralType: KtStubElementType<out KotlinPlaceHolderStub<KtObjectLiteralExpression>, KtObjectLiteralExpression>
+        get() = KtStubElementTypes.OBJECT_LITERAL
 
     // Arguments
     override val typeArgumentListType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeArgumentList>, KtTypeArgumentList>

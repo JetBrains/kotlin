@@ -1,0 +1,13 @@
+@kotlin.jvm.JvmInline
+inline class Some(value: kotlin.String) {
+  val value: kotlin.String
+}
+
+class RegularClass {
+  context(a@Some)
+  fun kotlin.Boolean.funWithValueClassContextParameter(param: kotlin.Long)
+
+  context(a@Some)
+  val kotlin.Boolean.propertyWithValueClassContextParameter: kotlin.Int
+    get()
+}

@@ -21,7 +21,7 @@ object FirDefinitelyNotNullableChecker : FirIntersectionTypeRefChecker(MppChecke
             reporter.reportOn(typeRef.source, FirErrors.NULLABLE_ON_DEFINITELY_NOT_NULLABLE)
         }
 
-        if (!typeRef.isLeftValidForDefinitelyNotNullable(context.session)) {
+        if (!typeRef.isLeftValidForDefinitelyNotNullable) {
             reporter.reportOn(typeRef.leftType.source, FirErrors.INCORRECT_LEFT_COMPONENT_OF_INTERSECTION)
         }
 

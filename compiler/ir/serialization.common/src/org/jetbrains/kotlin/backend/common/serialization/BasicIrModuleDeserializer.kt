@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.IrDeserializationSettings.DeserializeFunctionBodies
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -22,7 +20,6 @@ import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
-
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
 /**
@@ -35,13 +32,13 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFi
  */
 abstract class BasicIrModuleDeserializer(
     val linker: KotlinIrLinker,
-    moduleDescriptor: ModuleDescriptor,
+    moduleFragment: IrModuleFragment,
     override val klib: KotlinLibrary,
     override val strategyResolver: (String) -> DeserializationStrategy,
     libraryAbiVersion: KotlinAbiVersion,
     private val allowErrorNodes: Boolean = false,
     private val deserializeTypeAliases: Boolean = false,
-) : IrModuleDeserializer(moduleDescriptor, libraryAbiVersion) {
+) : IrModuleDeserializer(moduleFragment, libraryAbiVersion) {
 
     private val fileToDeserializerMap = mutableMapOf<IrFile, IrFileDeserializer>()
 
@@ -59,8 +56,6 @@ abstract class BasicIrModuleDeserializer(
     override fun fileDeserializers(): Collection<IrFileDeserializer> {
         return fileToDeserializerMap.values.filterNot { strategyResolver(it.file.fileEntry.name).onDemand }
     }
-
-    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
 
     init {
         val fileCount = ir.irFileCount
@@ -90,11 +85,11 @@ abstract class BasicIrModuleDeserializer(
 
     override fun referenceSimpleFunctionByLocalSignature(file: IrFile, idSignature: IdSignature): IrSimpleFunctionSymbol =
         fileToDeserializerMap[file]?.symbolDeserializer?.referenceSimpleFunctionByLocalSignature(idSignature)
-            ?: error("No deserializer for file $file in module ${moduleDescriptor.name}")
+            ?: error("No deserializer for file $file in module ${moduleFragment.name}")
 
     override fun referencePropertyByLocalSignature(file: IrFile, idSignature: IdSignature): IrPropertySymbol =
         fileToDeserializerMap[file]?.symbolDeserializer?.referencePropertyByLocalSignature(idSignature)
-            ?: error("No deserializer for file $file in module ${moduleDescriptor.name}")
+            ?: error("No deserializer for file $file in module ${moduleFragment.name}")
 
     // TODO: fix to topLevel checker
     override fun contains(idSig: IdSignature): Boolean = idSig.topLevelSignature() in moduleReversedFileIndex
@@ -110,7 +105,7 @@ abstract class BasicIrModuleDeserializer(
     }
 
     override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing {
-        error("No file for ${idSig.topLevelSignature()} (@ $idSig) in module $moduleDescriptor")
+        error("No file for ${idSig.topLevelSignature()} (@ $idSig) in module ${moduleFragment.name}")
     }
 
     private fun deserializeIrFile(
@@ -168,15 +163,6 @@ abstract class BasicIrModuleDeserializer(
     override fun deserializeReachableDeclarations() {
         moduleDeserializationState.deserializeReachableDeclarations()
     }
-
-    override fun signatureDeserializerForFile(fileName: String): IdSignatureDeserializer {
-        val fileDeserializer = fileToDeserializerMap.entries.find { it.key.fileEntry.name == fileName }?.value
-            ?: error("No file deserializer for $fileName")
-
-        return fileDeserializer.symbolDeserializer.signatureDeserializer
-    }
-
-    override val kind get() = IrModuleDeserializerKind.DESERIALIZED
 
     private inner class ModuleDeserializationState {
         /**

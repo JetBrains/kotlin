@@ -2,6 +2,7 @@ depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics Cor
 language = Objective-C
 package = platform.CoreLocation
 modules = CoreLocation
+apiNotesSwiftName = true
 
 compilerOpts = -framework CoreLocation
 linkerOpts = -framework CoreLocation

@@ -1,6 +1,9 @@
 KT element: KtClass
 KT element text:
-@kotlin.js.JsModule @kotlin.js.JsNonModule @kotlin.js.JsName public abstract external class JQuery public constructor() {
+@kotlin.js.JsModule(import = "jquery")
+@kotlin.js.JsNonModule
+@kotlin.js.JsName(name = "\$")
+public abstract external class JQuery public constructor() {
 }
 FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind

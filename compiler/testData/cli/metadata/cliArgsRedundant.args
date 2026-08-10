@@ -9,5 +9,5 @@ $STDLIB_COMMON_PATH$
 -Xwhen-guards
 -Xannotation-default-target=first-only-warn
 -Xrender-internal-diagnostic-names
--Xuse-fir-ic=false
+-progressive=false
 -Xexplicit-api=disable

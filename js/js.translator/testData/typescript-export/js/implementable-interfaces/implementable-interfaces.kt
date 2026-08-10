@@ -70,7 +70,6 @@ interface IFoo<T : Comparable<T>> : ExportedParent {
         set(value) {}
 }
 
-
 @JsExport
 fun makeFunInterfaceWithSam(): FunIFace = FunIFace { x -> "SAM ${x}" }
 
@@ -297,3 +296,89 @@ interface ShouldBeNotImplementableWithIgnoredSuspend {
     @JsExport.Ignore
     suspend fun ignoredSuspend(): String
 }
+
+@JsExport
+interface SuperOfSealed1 {
+    fun sos1()
+}
+
+@JsExport
+interface SuperOfSealed2 {
+    fun sos2()
+}
+
+@JsExport
+sealed interface Sealed : SuperOfSealed1, SuperOfSealed2 {
+    val value: String
+
+    data class A(override val value: String): Sealed {
+        override fun sos1() {}
+        override fun sos2() {}
+    }
+
+    interface B: Sealed, FunIFace
+}
+
+@JsExport
+interface InterfaceInheritingFromSealed : Sealed.B {
+    val value2: String
+}
+
+@JsExport
+class ClassInheritingFromSealed : Sealed.B {
+    override val value: String
+        get() = "ClassInheritingFromSealed"
+
+    override fun sos1() {}
+    override fun sos2() {}
+
+    override fun apply(x: String): String = x
+}
+
+@JsExport
+sealed interface SealedNonExportedImplementor {
+    val value: String
+}
+
+@JsExport
+data class SealedNonExportedImplementorA(override val value: String): SealedNonExportedImplementor
+
+@JsExport.Ignore
+interface SealedNonExportedImplementorB: SealedNonExportedImplementor
+
+@JsExport
+@JsNoRuntime
+sealed interface SealedNoRuntime {
+    val value: String
+}
+
+@JsExport
+data class SealedNoRuntimeA(override val value: String): SealedNoRuntime
+
+@JsExport
+interface SealedNoRuntimeB: SealedNoRuntime
+
+@JsExport
+interface InterfaceInheritingFromSealedNoRuntime : SealedNoRuntimeB {
+    val value2: String
+}
+
+@JsExport
+class ClassInheritingFromSealedNoRuntime : SealedNoRuntimeB {
+    override val value: String
+        get() = "ClassInheritingFromSealedNoRuntime"
+}
+
+@JsExport
+@JsNoRuntime
+sealed interface SealedNoRuntimeWithNonExportedImplementor {
+    val value: String
+}
+
+@JsExport
+data class SealedNoRuntimeWithNonExportedImplementorA(override val value: String): SealedNoRuntimeWithNonExportedImplementor
+
+@JsExport.Ignore
+interface SealedNoRuntimeWithNonExportedImplementorB: SealedNoRuntimeWithNonExportedImplementor
+
+

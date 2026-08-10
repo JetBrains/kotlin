@@ -46,7 +46,7 @@ fun main(args: Array<String>) {
             this.run {
                 fun TestGroup.TestClass.scriptDiagnosticsInit() {
                     model(
-                        "diagnostics/testScripts",
+                        "diagnostics/scriptsWithCustomDefinitions",
                         pattern = TestGeneratorUtil.KTS,
                         excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                     )
@@ -91,7 +91,7 @@ fun main(args: Array<String>) {
             this.run {
                 fun TestGroup.TestClass.scriptCustomDefBackBoxInit() {
                     model(
-                        "codegen/testScripts",
+                        "codegen/scriptsWithCustomDefinitions",
                         excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                         pattern = KT_OR_KTS,
                     )
@@ -107,6 +107,42 @@ fun main(args: Array<String>) {
                     annotations = listOf(provider<AffectedByCompilerPlugins>())
                 ) {
                     scriptCustomDefBackBoxInit()
+                }
+            }
+
+            this.run {
+                fun TestGroup.TestClass.scriptBlackBoxInit() {
+                    model("codegen/scripting", pattern = TestGeneratorUtil.KTS)
+                }
+
+                testClass<AbstractLLScriptBlackBoxTest> {
+                    scriptBlackBoxInit()
+                }
+
+                testClass<AbstractLLReversedScriptBlackBoxTest> {
+                    scriptBlackBoxInit()
+                }
+            }
+
+            this.run {
+                fun TestGroup.TestClass.diagnosticsGeneralInit() {
+                    model(
+                        "diagnostics/general",
+                        excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                        pattern = KT_OR_KTS.canFreezeIDE,
+                    )
+                }
+
+                testClass<AbstractLLDiagnosticsTest>("LLDiagnosticsForScriptsTestGenerated") {
+                    diagnosticsGeneralInit()
+                }
+
+                testClass<AbstractLLReversedDiagnosticsTest>("LLReversedDiagnosticsForScriptsTestGenerated") {
+                    diagnosticsGeneralInit()
+                }
+
+                testClass<AbstractLLPartialDiagnosticsTest>("LLPartialDiagnosticsForScriptsTestGenerated") {
+                    diagnosticsGeneralInit()
                 }
             }
         }
@@ -209,20 +245,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractLLReversedBlackBoxTest>(suiteTestClassName = "LLReversedBlackBoxModernJdkTestGenerated") {
                 model("codegen/boxModernJdk")
-            }
-
-            this.run {
-                fun TestGroup.TestClass.scriptBlackBoxInit() {
-                    model("codegen/script", pattern = TestGeneratorUtil.KTS)
-                }
-
-                testClass<AbstractLLScriptBlackBoxTest> {
-                    scriptBlackBoxInit()
-                }
-
-                testClass<AbstractLLReversedScriptBlackBoxTest> {
-                    scriptBlackBoxInit()
-                }
             }
 
             testClass<AbstractLLMetadataDiagnosticsTest> {

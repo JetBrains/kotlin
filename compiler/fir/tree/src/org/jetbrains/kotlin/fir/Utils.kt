@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -263,10 +262,20 @@ val FirSession.exceptionHandler: FirExceptionHandler by FirSession.sessionCompon
 
 object FirCliExceptionHandler : FirExceptionHandler() {
     override fun handleExceptionOnElementAnalysis(element: FirElement, throwable: Throwable): Nothing {
+        /*
+         * If exception was caused by lack of static memory (e.g. `StackOverflowError`), the memory
+         * would be not sufficient to load the `AnalysisExceptionsKt.class` containing the
+         * `wrapIntoSourceCodeAnalysisExceptionIfNeeded` utility, which would lead to overriding
+         * the original exception with `NoClassDefFoundError`.
+         * So, considering that `wrapIntoSourceCodeAnalysisExceptionIfNeeded` skips VM errors anyway,
+         * is's ok to check for it earlier.
+         */
+        if (throwable is VirtualMachineError) throw throwable
         throw throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element.source)
     }
 
     override fun handleExceptionOnFileAnalysis(file: FirFile, throwable: Throwable): Nothing {
+        if (throwable is VirtualMachineError) throw throwable
         throw throwable.wrapIntoFileAnalysisExceptionIfNeeded(
             file.sourceFile?.path,
             file.source,
@@ -398,10 +407,6 @@ val FirExpression.isStatementLikeExpression: Boolean
 
 private val FirExpression.isIndexedAssignment: Boolean
     get() = this is FirBlock && statements.lastOrNull()?.source?.kind == KtFakeSourceElementKind.ImplicitUnit.IndexedAssignmentCoercion
-
-fun shouldSuppressInlineContextAt(element: FirElement?, container: FirBasedSymbol<*>?): Boolean {
-    return element != null && container.let { it is FirValueParameterSymbol && it.isNoinline && it.fir.defaultValue == element }
-}
 
 fun FirBasedSymbol<*>.packageFqName(): FqName {
     return when (this) {

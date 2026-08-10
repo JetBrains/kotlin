@@ -4,7 +4,7 @@ Qualified.class:
     IMPORT_LIST
     CLASS[classId=/Qualified, fqName=Qualified, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Qualified, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Deprecated]
           valueArguments: [
             message -> "Deprecated"
             replaceWith -> Value(classId=kotlin/ReplaceWith, argumentsMapping={expression="NewClass", imports=["foo.bar.baz.NewClass"]})
@@ -16,6 +16,39 @@ Qualified.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Deprecated]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=message]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=Deprecated]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=replaceWith]
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=ReplaceWith]
+                  VALUE_ARGUMENT_LIST
+                    VALUE_ARGUMENT[isSpread=false]
+                      VALUE_ARGUMENT_NAME
+                        REFERENCE_EXPRESSION[referencedName=expression]
+                      STRING_TEMPLATE
+                        LITERAL_STRING_TEMPLATE_ENTRY[text=NewClass]
+                    VALUE_ARGUMENT[isSpread=false]
+                      VALUE_ARGUMENT_NAME
+                        REFERENCE_EXPRESSION[referencedName=imports]
+                      COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                        STRING_TEMPLATE
+                          LITERAL_STRING_TEMPLATE_ENTRY[text=foo.bar.baz.NewClass]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=level]
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=DeprecationLevel]
+                REFERENCE_EXPRESSION[referencedName=HIDDEN]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Qualified]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -28,7 +61,7 @@ Simple.class:
     IMPORT_LIST
     CLASS[classId=/Simple, fqName=Simple, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Simple, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Deprecated]
           valueArguments: [
             message -> "Deprecated"
             replaceWith -> Value(classId=kotlin/ReplaceWith, argumentsMapping={expression="NewClass", imports=["foo.bar.baz.NewClass"]})
@@ -40,6 +73,39 @@ Simple.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Deprecated]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=message]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=Deprecated]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=replaceWith]
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=ReplaceWith]
+                  VALUE_ARGUMENT_LIST
+                    VALUE_ARGUMENT[isSpread=false]
+                      VALUE_ARGUMENT_NAME
+                        REFERENCE_EXPRESSION[referencedName=expression]
+                      STRING_TEMPLATE
+                        LITERAL_STRING_TEMPLATE_ENTRY[text=NewClass]
+                    VALUE_ARGUMENT[isSpread=false]
+                      VALUE_ARGUMENT_NAME
+                        REFERENCE_EXPRESSION[referencedName=imports]
+                      COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                        STRING_TEMPLATE
+                          LITERAL_STRING_TEMPLATE_ENTRY[text=foo.bar.baz.NewClass]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=level]
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=DeprecationLevel]
+                REFERENCE_EXPRESSION[referencedName=HIDDEN]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Simple]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST

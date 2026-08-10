@@ -1,5 +1,5 @@
 FILE: builder_kotlin.kt
-    @R|lombok/Builder|(toBuilder = Boolean(true) [evaluated = Boolean(true)]) public final class User : R|kotlin/Any| {
+    @R|lombok/Builder|(toBuilder = Boolean(true) [evaluated = Boolean(true)], access = Q|lombok/AccessLevel|.R|lombok/AccessLevel.PROTECTED| [evaluated = Q|lombok/AccessLevel|.R|lombok/AccessLevel.PROTECTED|]) public final class User : R|kotlin/Any| {
         public constructor(name: R|kotlin/String|, age: R|kotlin/Int|, info: R|kotlin/String?|): R|User| {
             super<R|kotlin/Any|>()
         }
@@ -13,10 +13,10 @@ FILE: builder_kotlin.kt
         public final val info: R|kotlin/String?| = R|<local>/info|
             public get(): R|kotlin/String?|
 
-        public open fun toBuilder(): R|User.UserBuilder|
+        protected/*protected and package*/ open fun toBuilder(): R|User.UserBuilder|
 
         public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() public final fun builder(): R|User.UserBuilder|
+            @R|kotlin/jvm/JvmStatic|() protected/*protected and package*/ final fun builder(): R|User.UserBuilder|
 
             private constructor(): R|User.Companion| {
                 super<R|kotlin/Any|>()
@@ -24,7 +24,7 @@ FILE: builder_kotlin.kt
 
         }
 
-        public open class UserBuilder : R|kotlin/Any| {
+        protected/*protected and package*/ open class UserBuilder : R|kotlin/Any| {
             public open fun build(): R|User|
 
             public open fun name(name: R|kotlin/String|): R|User.UserBuilder|
@@ -46,6 +46,39 @@ FILE: builder_kotlin.kt
                 private set(value: R|kotlin/String?|): R|kotlin/Unit|
 
             private constructor(): R|User.UserBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/Builder|(access = Q|lombok/AccessLevel|.R|lombok/AccessLevel.PRIVATE| [evaluated = Q|lombok/AccessLevel|.R|lombok/AccessLevel.PRIVATE|]) public final class AccessLevelPrivate : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|AccessLevelPrivate| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final fun builder(): R|AccessLevelPrivate.AccessLevelPrivateBuilder|
+
+            private constructor(): R|AccessLevelPrivate.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        private open class AccessLevelPrivateBuilder : R|kotlin/Any| {
+            private open fun build(): R|AccessLevelPrivate|
+
+            private open fun x(x: R|kotlin/Int|): R|AccessLevelPrivate.AccessLevelPrivateBuilder|
+
+            private final var x: R|kotlin/Int|
+                private get(): R|kotlin/Int|
+                private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+            private constructor(): R|AccessLevelPrivate.AccessLevelPrivateBuilder| {
                 super<R|kotlin/Any|>()
             }
 

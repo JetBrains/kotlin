@@ -2,41 +2,45 @@ Simple.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  public final annotation class Simple public constructor(i: kotlin.Int, l: kotlin.Long, b: kotlin.Byte, d: kotlin.Double, f: kotlin.Float, c: kotlin.Char, b1: kotlin.Boolean, b2: kotlin.Boolean) : kotlin.Annotation {
-      public final val i: kotlin.Int /* compiled code */
+  public final annotation class Simple public constructor(
+      public final val i: kotlin.Int,
 
-      public final val l: kotlin.Long /* compiled code */
+      public final val l: kotlin.Long,
 
-      public final val b: kotlin.Byte /* compiled code */
+      public final val b: kotlin.Byte,
 
-      public final val d: kotlin.Double /* compiled code */
+      public final val d: kotlin.Double,
 
-      public final val f: kotlin.Float /* compiled code */
+      public final val f: kotlin.Float,
 
-      public final val c: kotlin.Char /* compiled code */
+      public final val c: kotlin.Char,
 
-      public final val b1: kotlin.Boolean /* compiled code */
+      public final val b1: kotlin.Boolean,
 
-      public final val b2: kotlin.Boolean /* compiled code */
+      public final val b2: kotlin.Boolean,
+  ) : kotlin.Annotation {
   }
 
 WithNamedSimple.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Simple public final class WithNamedSimple public constructor() {
+  @Simple(i = 12, l = 12L, b = 12, d = 3.3, f = 3.3F, c = 'a', b1 = true, b2 = false)
+  public final class WithNamedSimple public constructor() {
   }
 
 WithSimple.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Simple public final class WithSimple public constructor() {
+  @Simple(i = 12, l = 12L, b = 12, d = 3.3, f = 3.3F, c = 'a', b1 = true, b2 = false)
+  public final class WithSimple public constructor() {
   }
 
 WithSimpleOperations.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  @Simple public final class WithSimpleOperations public constructor() {
+  @Simple(i = 2, l = 2L, b = 12, d = 0.2999999999999998, f = 6.6F, c = 'a', b1 = false, b2 = true)
+  public final class WithSimpleOperations public constructor() {
   }

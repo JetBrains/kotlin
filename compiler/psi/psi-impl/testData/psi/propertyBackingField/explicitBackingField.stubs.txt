@@ -8,12 +8,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ExplicitBackingFieldKt]]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Number]
     BACKING_FIELD[hasInitializer=true]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
   PROPERTY[fqName=numberWithPrivateField, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=numberWithPrivateField]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Number]
     BACKING_FIELD[hasInitializer=true]
       MODIFIER_LIST[private]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
   PROPERTY[fqName=numberWithLateinitField, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=numberWithLateinitField]
     TYPE_REFERENCE
       USER_TYPE
@@ -37,8 +39,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ExplicitBackingFieldKt]]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Number]
     BACKING_FIELD[hasInitializer=true]
+      STRING_TEMPLATE
+        LITERAL_STRING_TEMPLATE_ENTRY[text=test]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=field]
+        REFERENCE_EXPRESSION[referencedName=length]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -50,6 +57,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ExplicitBackingFieldKt]]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
   PROPERTY[fqName=numberWithBlockInitializer, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=numberWithBlockInitializer]
     TYPE_REFERENCE
       USER_TYPE

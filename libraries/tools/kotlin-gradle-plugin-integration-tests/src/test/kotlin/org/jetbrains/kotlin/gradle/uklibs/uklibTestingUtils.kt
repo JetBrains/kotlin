@@ -78,6 +78,11 @@ data class PublishedProject(
             repository.resolve(group).resolve("${name}-jvm").resolve(version),
             "${name}-jvm-${version}",
         )
+    val androidMultiplatformComponent: Component
+        get() = Component(
+            repository.resolve(group).resolve("${name}-android").resolve(version),
+            "${name}-android-${version}",
+        )
 }
 
 fun Project.setupMavenPublication(

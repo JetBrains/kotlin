@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupported
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.Builder
 import org.jetbrains.kotlin.lombok.LombokNames
@@ -37,7 +35,13 @@ import org.jetbrains.kotlin.name.Name
 class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(session) {
     companion object {
         private val PREDICATE = DeclarationPredicate.create {
-            annotated(listOf(LombokNames.BUILDER))
+            annotated(
+                listOf(
+                    LombokNames.BUILDER,
+                    LombokNames.SINGULAR,
+                    LombokNames.BUILDER_DEFAULT_ID.asSingleFqName()
+                )
+            )
         }
     }
 
@@ -67,7 +71,7 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
         builderDeclaration: FirDeclaration,
         existingFunctionNames: Set<Name>,
     ) {
-        if (builder.visibility == null) return
+        val visibility = builder.builderFunctionsVisibility ?: return
 
         addIfNonClashing(Name.identifier(builder.buildMethodName), existingFunctionNames) { name ->
             val builderTypeArguments = builderSymbol.typeParameterSymbols.map { typeParameter -> typeParameter.toConeType() }.toTypedArray()
@@ -92,25 +96,18 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
                     it
                 }
             }
-            if (builderSymbol.hasJavaOrigin) {
-                builderSymbol.createJavaMethod(
-                    name,
-                    valueParameters = emptyList(),
-                    returnTypeRef = returnTypeRef,
-                    visibility = builder.visibility,
-                    modality = Modality.OPEN
-                ).symbol
-            } else {
-                createMemberFunction(
-                    owner = builderSymbol,
-                    key = BuilderGeneratorKey(BuilderDeclarationType.Build),
-                    name = name,
-                    returnType = returnTypeRef.coneType,
-                ) {
-                    visibility = builder.visibility
-                    modality = Modality.OPEN
-                }.symbol
-            }
+
+            createJavaOrKotlinMemberFunction(
+                owner = builderSymbol,
+                name = name,
+                valueParameters = emptyList(),
+                returnTypeRef = returnTypeRef,
+                visibility = visibility,
+                modality = Modality.OPEN,
+                createKey = {
+                    BuilderGeneratorKey(BuilderDeclarationType.Function.Build)
+                }
+            )
         }
     }
 

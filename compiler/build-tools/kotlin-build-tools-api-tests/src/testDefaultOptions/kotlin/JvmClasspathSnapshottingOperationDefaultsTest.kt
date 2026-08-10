@@ -24,5 +24,6 @@ class JvmClasspathSnapshottingOperationDefaultsTest {
         assertEquals(DEFAULT_METRICS_COLLECTOR, operation[BuildOperation.METRICS_COLLECTOR])
         assertEquals(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, operation[JvmClasspathSnapshottingOperation.GRANULARITY])
         assertEquals(true, operation[JvmClasspathSnapshottingOperation.PARSE_INLINED_LOCAL_CLASSES])
+        assertEquals(false, operation[JvmClasspathSnapshottingOperation.EXPAND_TYPE_ALIASES])
     }
 }

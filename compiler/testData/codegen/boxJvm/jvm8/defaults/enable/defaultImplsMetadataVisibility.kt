@@ -6,11 +6,16 @@
 private const val SYNTHETIC_CLASS_VISIBILITY_SHIFT = 8
 private const val SYNTHETIC_CLASS_VISIBILITY_MASK = 0b111
 private const val PUBLIC_VISIBILITY = 3
+private const val PUBLIC_ABI_FLAG = 1 shl 7
 
-private fun syntheticClassVisibility(className: String): Int {
-    val extraInt = Class.forName(className).getAnnotation(Metadata::class.java).extraInt
-    return (extraInt shr SYNTHETIC_CLASS_VISIBILITY_SHIFT) and SYNTHETIC_CLASS_VISIBILITY_MASK
-}
+private fun metadataExtraInt(className: String): Int =
+    Class.forName(className).getAnnotation(Metadata::class.java).extraInt
+
+private fun syntheticClassVisibility(className: String): Int =
+    (metadataExtraInt(className) shr SYNTHETIC_CLASS_VISIBILITY_SHIFT) and SYNTHETIC_CLASS_VISIBILITY_MASK
+
+private fun isPublicAbi(className: String): Boolean =
+    metadataExtraInt(className) and PUBLIC_ABI_FLAG != 0
 
 internal interface IInternal {
     fun test(): String = "OK"
@@ -32,25 +37,22 @@ open class Outer {
 }
 
 fun box(): String {
-    var visibility = syntheticClassVisibility("${IInternal::class.java.name}\$DefaultImpls")
-    if (visibility != PUBLIC_VISIBILITY) {
-        return "Fail: expected PUBLIC visibility (3), got $visibility"
-    }
+    val classes = listOf(
+        "${IInternal::class.java.name}\$DefaultImpls",
+        "${IPrivate::class.java.name}\$DefaultImpls",
+        "${Outer.getIProtectedClass().name}\$DefaultImpls",
+        "${IPublic::class.java.name}\$DefaultImpls",
+    )
 
-    visibility = syntheticClassVisibility("${IPrivate::class.java.name}\$DefaultImpls")
-    if (visibility != PUBLIC_VISIBILITY) {
-        return "Fail: expected PUBLIC visibility (3), got $visibility"
-    }
-
-    val protectedClass = Outer.getIProtectedClass()
-    visibility = syntheticClassVisibility("${protectedClass.name}\$DefaultImpls")
-    if (visibility != PUBLIC_VISIBILITY) {
-        return "Fail: expected PUBLIC visibility (3), got $visibility"
-    }
-
-    visibility = syntheticClassVisibility("${IPublic::class.java.name}\$DefaultImpls")
-    if (visibility != PUBLIC_VISIBILITY) {
-        return "Fail: expected PUBLIC visibility (3), got $visibility"
+    for (className in classes) {
+        val visibility = syntheticClassVisibility(className)
+        if (visibility != PUBLIC_VISIBILITY) {
+            return "Fail [$className]: expected PUBLIC visibility (3), got $visibility"
+        }
+        // DefaultImpls are public via their visibility, not via the isPublicAbi inline-escape mechanism
+        if (isPublicAbi(className)) {
+            return "Fail [$className]: expected DefaultImpls to not have isPublicAbi flag set"
+        }
     }
     return "OK"
 }

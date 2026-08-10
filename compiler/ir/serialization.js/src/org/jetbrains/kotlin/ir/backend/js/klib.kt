@@ -106,16 +106,13 @@ fun loadIr(
 ): IrModuleInfo {
     val configuration = modulesStructure.compilerConfiguration
 
-    val signaturer = IdSignatureDescriptor(JsManglerDesc)
-    val symbolTable = SymbolTable(signaturer, irFactory)
+    val symbolTable = SymbolTable(signaturer = null, irFactory)
 
     val mainModuleLib = modulesStructure.klibs.included
         ?: error("No module with ${modulesStructure.mainModulePath} found")
-    val moduleDescriptor = modulesStructure.getModuleDescriptor(mainModuleLib)
     val friendModules = mapOf(mainModuleLib.uniqueName to modulesStructure.klibs.friends.map { it.uniqueName })
 
     return getIrModuleInfoForKlib(
-        moduleDescriptor = moduleDescriptor,
         klibs = modulesStructure.klibs,
         friendModules = friendModules,
         configuration = configuration,
@@ -129,8 +126,7 @@ fun loadIrForSingleModule(
 ): IrModuleInfo {
     val configuration = modulesStructure.compilerConfiguration
 
-    val signaturer = IdSignatureDescriptor(JsManglerDesc)
-    val symbolTable = SymbolTable(signaturer, irFactory)
+    val symbolTable = SymbolTable(signaturer = null, irFactory)
 
     val mainModuleLib = modulesStructure.klibs.included
         ?: error("No module with ${modulesStructure.mainModulePath} found")
@@ -170,8 +166,6 @@ fun loadIrForSingleModule(
 
     check(mainFragment != null)
     check(stdlibFragment != null)
-
-    irLinker.init(null)
 
     @OptIn(InternalSymbolFinderAPI::class)
     val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings)
@@ -216,7 +210,6 @@ fun loadIrForSingleModule(
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun getIrModuleInfoForKlib(
-    moduleDescriptor: ModuleDescriptor,
     klibs: LoadedKlibs,
     friendModules: Map<String, List<String>>,
     configuration: CompilerConfiguration,
@@ -243,8 +236,6 @@ private fun getIrModuleInfoForKlib(
         filesToLoad = configuration[JSConfigurationKeys.IC_FILES_TO_LOAD],
         mapping = mapping
     )
-
-    irLinker.init(null)
 
     @OptIn(InternalSymbolFinderAPI::class)
     val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings)

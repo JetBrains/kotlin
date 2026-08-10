@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
-import org.jetbrains.kotlin.konan.test.blackbox.support.KLIB_IR_INLINER
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
 import org.junit.jupiter.api.Tag
@@ -29,15 +28,6 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "FirNativeCodegenLocalTestGenerated",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
-                )
-            ) {
-                model()
-            }
-            testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "FirNativeCodegenLocalTestWithInlinedFunInKlibGenerated",
-                annotations = listOf(
-                    klibIrInliner(),
-                    provider<UseExtTestCaseGroupProvider>()
                 )
             ) {
                 model()
@@ -94,6 +84,7 @@ fun main(args: Array<String>) {
                 model("builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("cCallMode/cCallMode", pattern = "^([^_](.+))$", recursive = false)
                 model("swiftName/swiftNameDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("swiftNameOverride/swiftNameOverrideDefs", pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractNativeCInteropNoFModulesTest>(
                 suiteTestClassName = "CInteropNoFModulesTestGenerated",
@@ -104,6 +95,7 @@ fun main(args: Array<String>) {
                 model("builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("cCallMode/cCallMode", pattern = "^([^_](.+))$", recursive = false)
                 model("swiftName/swiftNameDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("swiftNameOverride/swiftNameOverrideDefs", pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractNativeCInteropHeaderModeTest>(
                 suiteTestClassName = "CInteropHeaderModeTestGenerated",
@@ -186,22 +178,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(testsRoot, "compiler/testData/debug/stepping") {
-            testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "NativeSteppingWithInlinedFunInKlibGenerated",
-                annotations = listOf(
-                    debugger(),
-                    stepping(),
-                    provider<UseExtTestCaseGroupProvider>(),
-                    forceDebugMode(),
-                    forceHostTarget(),
-                    klibIrInliner(),
-                )
-            ) {
-                model()
-            }
-        }
-
         testGroup(testsRoot, "compiler/testData/klib/dump-abi/cinterop") {
             testClass<AbstractNativeCInteropLibraryAbiReaderTest>(
                 suiteTestClassName = "FirNativeCInteropLibraryAbiReaderTest",
@@ -217,16 +193,6 @@ fun main(args: Array<String>) {
                 annotations = listOf(
                     *standaloneNoTR(),
                     provider<UseExtTestCaseGroupProvider>(),
-                )
-            ) {
-                model()
-            }
-            testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "FirNativeStandaloneTestWithInlinedFunInKlibGenerated",
-                annotations = listOf(
-                    *standaloneNoTR(),
-                    provider<UseExtTestCaseGroupProvider>(),
-                    klibIrInliner(),
                 )
             ) {
                 model()
@@ -339,5 +305,3 @@ private fun cinterfaceMode(mode: String = "V1") = annotation(
 private fun gc() = arrayOf(
     annotation(Tag::class.java, "gc"),
 )
-
-fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)

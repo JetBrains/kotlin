@@ -14,6 +14,8 @@ import lombok.extern.log4j.Log4j2
 import lombok.extern.slf4j.XSlf4j
 import lombok.ToString
 import lombok.EqualsAndHashCode
+import lombok.Builder
+import lombok.experimental.SuperBuilder
 
 // Error despite the `lombok.log.javaUtilLogging.flagUsage=warning` because `lombok.log.flagUsage=error` has greater severity
 <!FLAG_USAGE_ERROR!>@Slf4j<!>
@@ -53,6 +55,14 @@ class ToStringExampleError(val x: Int)
 <!FLAG_USAGE_ERROR!>@EqualsAndHashCode<!>
 class EqualsAndHashCodeExampleError(val x: Int)
 
+<!FLAG_USAGE_ERROR!>@Builder<!>
+class BuilderExampleError(val x: Int)
+
+// `@SuperBuilder` isn't supported on Kotlin-origin classes yet (ANNOTATION_IS_NOT_SUPPORTED),
+// but `lombok.superBuilder.flagUsage` is still wired up and fires independently.
+<!ANNOTATION_IS_NOT_SUPPORTED, FLAG_USAGE_ERROR!>@SuperBuilder<!>
+class SuperBuilderExampleError
+
 class NotAnnotated
 
 // FILE: lombok.config
@@ -68,3 +78,5 @@ lombok.log.log4j2.flagUsage=warning
 lombok.log.xslf4j.flagUsage=warning
 lombok.toString.flagUsage=error
 lombok.equalsAndHashCode.flagUsage=error
+lombok.builder.flagUsage=error
+lombok.superBuilder.flagUsage=error

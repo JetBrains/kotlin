@@ -17,6 +17,7 @@ main.kt:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+          STRING_TEMPLATE
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=lambda]
           TYPE_REFERENCE
             FUNCTION_TYPE
@@ -28,6 +29,9 @@ main.kt:
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Unit]
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=Test]
+        VALUE_ARGUMENT_LIST
     FUN[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test]
       VALUE_PARAMETER_LIST
     FUN[fqName=contract, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contract]

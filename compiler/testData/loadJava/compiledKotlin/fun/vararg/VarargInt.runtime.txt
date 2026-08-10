@@ -1,0 +1,6 @@
+package test
+
+public open class VarargInt {
+    /*primary*/ public constructor VarargInt()
+    public open fun vararg(/*0*/ vararg kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
+}

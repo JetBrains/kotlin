@@ -31,7 +31,6 @@ enum class StringListMetrics(
                 "ios_arm64",
                 "ios_simulator_arm64",
                 "ios_x64",
-                "watchos_arm32",
                 "watchos_arm64",
                 "watchos_x64",
                 "watchos_simulator_arm64",
@@ -55,6 +54,23 @@ enum class StringListMetrics(
     JS_TARGET_MODE(CONCAT, AllowedListAnonymizer(listOf("both", "browser", "nodejs", "none"))),
     JS_BINARY_TYPE(CONCAT, AllowedListAnonymizer(listOf("both", "library", "executable", "none"))),
 
+    // browser types configured in the Kotlin/JS browser test DSL
+    JS_TEST_BROWSER_TYPE(CONCAT, AllowedListAnonymizer(listOf("chromium", "firefox", "webkit"))),
+
+    // options of the Kotlin/JS browser test DSL which values differ from the default ones
+    JS_TEST_BROWSER_CHANGED_OPTION(
+        CONCAT,
+        AllowedListAnonymizer(
+            listOf(
+                "testsLocation",
+                "headless",
+                "launchArgs",
+                "launchEnvironmentVariables",
+                "customBrowserExecutable"
+            )
+        )
+    ),
+
     WASM_COMPILER_MODE(
         CONCAT,
         AllowedListAnonymizer(
@@ -76,6 +92,6 @@ enum class StringListMetrics(
 
 
     companion object {
-        const val VERSION = 2
+        const val VERSION = 4
     }
 }

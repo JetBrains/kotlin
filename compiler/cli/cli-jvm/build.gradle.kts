@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -32,8 +32,8 @@ dependencies {
     implementation(project(":compiler:fir:fir2ir:jvm-backend"))
     implementation(project(":kotlin-util-io"))
     implementation(project(":kotlin-build-common"))
-    implementation(project(":compiler:javac-wrapper"))
     implementation(project(":kotlin-util-klib-metadata"))
+    implementation(project(":compiler:fir:fir-serialization"))
     implementation(project(":compiler:java-direct"))
 
     compileOnly(toolsJarApi())

@@ -9,7 +9,7 @@ plugins {
     id("kotlin-git.gradle-build-conventions.foreign-class-usage-checker")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -62,7 +62,7 @@ projectTests {
     testCodebaseTask()
 }
 
-val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {
+val checkForeignClassUsage = tasks.register("checkForeignClassUsage", CheckForeignClassUsageTask::class) {
     outputFile = file("api/psi-api.foreign")
     nonPublicMarkers.addAll(stableNonPublicMarkers)
 }

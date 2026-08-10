@@ -14,10 +14,6 @@ import org.junit.jupiter.api.fail
  * Classes, which contain methods annotated with `@org.junit.Test` will be reported as failure,
  * ensuring that no junit4 tests are present.
  */
-@EnabledIfEnvironmentVariable(
-    named = "Junit5RequirementTest", matches = "true",
-    disabledReason = "Requires all commits associated with 'https://youtrack.jetbrains.com/issue/KTI-3471' to be merged"
-)
 class Junit5RequirementTest {
 
     private val junit4TestAnnotationDesc = "Lorg/junit/Test;"

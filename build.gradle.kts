@@ -83,15 +83,17 @@ findProperty("deployVersion")?.let {
     assert(findProperty("build.number") != null) { "`build.number` parameter is expected to be explicitly set with the `deployVersion`" }
 }
 
-val kotlinApiVersionForModulesUsedInIDE: String by extra
+val kotlinApiVersionForModulesUsedInIDE: String get() = extra["kotlinApiVersionForModulesUsedInIDE"] as String
 
 extra["kotlin_root"] = rootDir
 
-val jpsBootstrap by configurations.creating
+val jpsBootstrap = configurations.create("jpsBootstrap")
 
 val commonBuildDir = File(rootDir, "build")
-val distDir by extra("$rootDir/dist")
-val distKotlinHomeDir by extra("$distDir/kotlinc")
+val distDir = "$rootDir/dist"
+extra["distDir"] = distDir
+val distKotlinHomeDir = "$distDir/kotlinc"
+extra["distKotlinHomeDir"] = distKotlinHomeDir
 val distLibDir = "$distKotlinHomeDir/lib"
 val commonLocalDataDir = "$rootDir/local"
 val ideaSandboxDir = "$commonLocalDataDir/ideaSandbox"
@@ -114,22 +116,20 @@ pluginManager.apply("nodejs-configuration")
 
 IdeVersionConfigurator.setCurrentIde(project)
 
-val coreLibProjects by extra {
-    listOfNotNull(
-        ":kotlin-stdlib",
-        ":kotlin-stdlib-jdk7",
-        ":kotlin-stdlib-jdk8",
-        ":kotlin-test",
-        ":kotlin-reflect",
-        ":kotlin-metadata-jvm",
-    )
-}
-val mppProjects by extra {
-    listOf(
-        ":kotlin-stdlib",
-        ":kotlin-test",
-    )
-}
+val coreLibProjects = listOfNotNull(
+    ":kotlin-stdlib",
+    ":kotlin-stdlib-jdk7",
+    ":kotlin-stdlib-jdk8",
+    ":kotlin-test",
+    ":kotlin-reflect",
+    ":kotlin-metadata-jvm",
+)
+extra["coreLibProjects"] = coreLibProjects
+val mppProjects = listOf(
+    ":kotlin-stdlib",
+    ":kotlin-test",
+)
+extra["mppProjects"] = mppProjects
 
 val gradlePluginProjects = listOf(
     ":kotlin-gradle-plugin",
@@ -191,7 +191,7 @@ val publishedMarkElements: NamedDomainObjectProvider<ResolvableConfiguration> = 
 }
 val localPublishedMark: NamedDomainObjectProvider<DependencyScopeConfiguration> = configurations.dependencyScope("localPublishedMark")
 val localPublishedMarkElements: NamedDomainObjectProvider<ResolvableConfiguration> = configurations.resolvable("localPublishedMarkClasspath").apply {
-    configure { extendsFrom(publishedMark) }
+    configure { extendsFrom(localPublishedMark) }
 }
 dependencies {
     allprojects.forEach { p ->
@@ -256,7 +256,8 @@ tasks {
         dependsOnAll("publish", coreLibsPublishable)
     }
 
-    testLifecycleTask("coreLibsTest") {
+    // === Build: BootstrapTest ===
+    val coreLibsTest = testLifecycleTask("coreLibsTest") {
         dependsOnAll(
             task = "check",
             projects = coreLibsBuildable + listOf(
@@ -268,17 +269,20 @@ tasks {
         )
     }
 
-    testLifecycleTask("gradlePluginTest") {
+    // === Build: GradlePluginTests ===
+    val gradlePluginTest = testLifecycleTask("gradlePluginTest") {
         gradlePluginProjects.forEach {
             dependsOn("$it:check")
         }
     }
 
+    // === Build: CheckBuildTest (used only in `configurationCacheSmokeTests`) ===
     testLifecycleTask("gradlePluginIntegrationTest") {
         dependsOn(":kotlin-gradle-plugin-integration-tests:check")
     }
 
-    testLifecycleTask("jvmCompilerTest") {
+    // === Build: JVMCompilerTests ===
+    val jvmCompilerTest = testLifecycleTask("jvmCompilerTest") {
         dependsOn(
             ":compiler:tests-common-new:test",
             ":compiler:container:test",
@@ -287,30 +291,32 @@ tasks {
         )
     }
 
+    // === could be dropped ===
     testLifecycleTask("testsForBootstrapBuildTest") {
         dependsOn(":compiler:tests-common-new:test")
     }
 
-    testLifecycleTask("jvmCompilerIntegrationTest") {
+    // === intermediate task ===
+    val jvmCompilerIntegrationTest = testLifecycleTask("jvmCompilerIntegrationTest") {
         dependsOn(
             ":kotlin-compiler-embeddable:test",
             ":kotlin-compiler-client-embeddable:test"
         )
     }
 
+    // === Used by Native Image builds (in a separate TC project) ===
     testLifecycleTask("nativeImageCompilerTest") {
         dependsOn(":kotlin-compiler-native-image:nativeImageBoxTest")
         dependsOn(":kotlin-compiler-native-image:nativeImageSmokeTest")
     }
 
+    // === Build: JSCompilerTestsES5 ===
     testLifecycleTask("jsCompilerTest") {
         dependsOn(":js:js.tests:jsTest")
+        dependsOn(":compiler:ir.serialization.js:test")
     }
 
-    testLifecycleTask("wasmCompilerTest") {
-        // KTI-2670: TODO: don't invoke this obsolete task in KTI
-    }
-
+    // === Build: WasmCompilerSmokeTestsK2_LINUX ===
     testLifecycleTask("wasmFirCompilerTest") {
         dependsOn(":wasm:wasm.tests:test")
         // Windows WABT release requires Visual C++ Redistributable
@@ -324,7 +330,9 @@ tasks {
     // - different cache policies
     // - different GCs
     // ...
+    // === Build: NativeCompilerTest ===
     testLifecycleTask("nativeCompilerTest") {
+        dependsOn(":compiler:ir.serialization.native:test")
         dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
         dependsOn(":plugins:plugin-sandbox:nativeTest")
         dependsOn(":libraries:tools:analysis-api-based-klib-reader:check")
@@ -339,6 +347,7 @@ tasks {
 
     // Similar to nativeCompilerTest, but should be executed only on macOS host as these tests
     // technically or semantically depend on Xcode SDK.
+    // === Build: NativeCompilerTest ===
     testLifecycleTask("nativeAppleSpecificTests") {
         dependsOn(":native:objcexport-header-generator:check")
         dependsOn(":native:swift:swift-export-embeddable:check")
@@ -348,6 +357,7 @@ tasks {
     }
 
     // These are unit tests of Native compiler
+    // === Build: NativeCompilerUnitTest ===
     testLifecycleTask("nativeCompilerUnitTest") {
         dependsOn(":native:kotlin-native-utils:check")
         dependsOn(":native:unsafe-mem:check")
@@ -364,11 +374,13 @@ tasks {
         }
     }
 
+    // === Build: KlibIrInlinerTest ===
     testLifecycleTask("klibIrTest") {
         dependsOn(":tools:binary-compatibility-validator:check")
         dependsOn(":native:native.tests:klib-ir-inliner:check")
     }
 
+    // === Build: FirCompilerTests ===
     testLifecycleTask("firCompilerTest") {
         dependsOn(":compiler:fir:raw-fir:psi2fir:test")
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
@@ -377,12 +389,14 @@ tasks {
         dependsOn(":compiler:fir:fir2ir:aggregateTests")
     }
 
+    // === Build: FirCompilerNightlyTests ===
     testLifecycleTask("nightlyFirCompilerTest") {
         dependsOn(":compiler:fir:fir2ir:nightlyTests")
         dependsOn(":compiler:fastJarFSLongTests")
     }
 
-    testLifecycleTask("scriptingJvmTest") {
+    // === Build: CheckBuildTest (used only in `configurationCacheSmokeTests`) ===
+    val scriptingTest = testLifecycleTask("scriptingJvmTest") {
         dependsOn(":kotlin-scripting-compiler:test")
         dependsOn(":kotlin-scripting-common:test")
         dependsOn(":kotlin-scripting-jvm:test")
@@ -397,60 +411,14 @@ tasks {
         dependsOn(":kotlin-scripting-jsr223-test:test")
     }
 
-    testLifecycleTask("scriptingTest") {
-        dependsOn("scriptingJvmTest")
-    }
-
-    testLifecycleTask("compilerTest") {
-        dependsOn("jvmCompilerTest")
-        dependsOn("miscCompilerTest")
-    }
-
-    testLifecycleTask("miscCompilerTest") {
-        dependsOn(":compiler:test")
-        dependsOn(":compiler:tests-integration:test")
-        dependsOn(":compiler:java-direct:test")
-        dependsOn(":kotlin-compiler-embeddable:test")
-        dependsOn("incrementalCompilationTest")
-        dependsOn("scriptingTest")
-        dependsOn("jvmCompilerIntegrationTest")
-        dependsOn("compilerPluginTest")
-        dependsOn(":kotlin-daemon-tests:test")
-        dependsOn(":compiler:arguments:check")
-        dependsOn(":compiler:multiplatform-parsing:jvmTest")
-        dependsOn(":compiler:fir:modularized-tests:test")
-        dependsOn(":compiler:util:test")
-        dependsOn(":core:names:check")
-        dependsOn(":core:language.model:check")
-        dependsOn(":core:language.targets:check")
-        dependsOn(":core:language.targets.jvm:check")
-        dependsOn(":core:language.version-settings:check")
-        dependsOn(":core:language.version-settings:test")
-    }
-
-    testLifecycleTask("miscTest") {
-        dependsOn("coreLibsTest")
-        dependsOn("toolsTest")
-        dependsOn("examplesTest")
-        dependsOn(":kotlin-build-common:test")
-        dependsOn(":core:descriptors.runtime:test")
-        dependsOn(":kotlin-util-io:test")
-        dependsOn(":kotlin-util-klib:test")
-        dependsOn(":kotlin-util-klib-abi:test")
-        dependsOn(":kotlinx-metadata-klib:test")
-        dependsOn(":compiler:ir.validation:test")
-        dependsOn(":compiler:ir.serialization.js:test")
-        dependsOn(":compiler:ir.serialization.native:test")
-        dependsOn(":generators:test")
-        dependsOn(":kotlin-gradle-plugin-dsl-codegen:test")
-    }
-
-    testLifecycleTask("incrementalCompilationTest") {
+    // === intermediate task ===
+    val incrementalCompilationTest = testLifecycleTask("incrementalCompilationTest") {
         dependsOn(":compiler:incremental-compilation-impl:test")
         dependsOn(":compiler:incremental-compilation-impl:testJvmICWithJdk11")
     }
 
-    testLifecycleTask("compilerPluginTest") {
+    // === intermediate task ===
+    val compilerPluginTest = testLifecycleTask("compilerPluginTest") {
         dependsOn(":kotlin-allopen-compiler-plugin:test")
         dependsOn(":kotlin-assignment-compiler-plugin:test")
         dependsOn(":kotlin-atomicfu-compiler-plugin:test")
@@ -465,17 +433,45 @@ tasks {
         dependsOn(":kotlin-power-assert-compiler-plugin:test")
         dependsOn(":plugins:plugins-interactions-testing:test")
         dependsOn(":kotlin-dataframe-compiler-plugin:test")
+        dependsOn(scriptingTest)
     }
 
-    testLifecycleTask("toolsTest") {
+    // === Build: CheckBuildTest (used only in `configurationCacheSmokeTests`) ===
+    // === Build: MiscCompilerTests ===
+    val miscCompilerTest = testLifecycleTask("miscCompilerTest") {
+        dependsOn(":compiler:test")
+        dependsOn(":compiler:tests-integration:test")
+        dependsOn(":compiler:java-direct:test")
+        dependsOn(":kotlin-compiler-embeddable:test")
+        dependsOn(incrementalCompilationTest)
+        dependsOn(jvmCompilerIntegrationTest)
+        dependsOn(compilerPluginTest)
+        dependsOn(":kotlin-daemon-tests:test")
+        dependsOn(":compiler:arguments:check")
+        dependsOn(":compiler:multiplatform-parsing:jvmTest")
+        dependsOn(":compiler:fir:modularized-tests:test")
+        dependsOn(":compiler:util:test")
+        dependsOn(":core:names:check")
+        dependsOn(":core:language.model:check")
+        dependsOn(":core:language.targets:check")
+        dependsOn(":core:language.targets.jvm:check")
+        dependsOn(":core:language.version-settings:check")
+        dependsOn(":core:language.version-settings:test")
+    }
+
+    // === intermediate task ===
+    val compilerTest = testLifecycleTask("compilerTest") {
+        dependsOn(jvmCompilerTest)
+        dependsOn(miscCompilerTest)
+    }
+
+    // === intermediate task ===
+    val toolsTest = testLifecycleTask("toolsTest") {
         dependsOn(":tools:kotlinp-jvm:test")
         dependsOn(":native:kotlin-klib-commonizer:test")
         dependsOn(":native:kotlin-klib-commonizer-api:test")
         dependsOn(":kotlin-tooling-core:check")
         dependsOn(":kotlin-tooling-metadata:check")
-        dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
-        dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
-        dependsOn(":compiler:build-tools:kotlin-build-tools-api-forward-tests:check")
         dependsOn(":tools:ide-plugin-dependencies-validator:test")
         dependsOn(":tools:stats-analyser:test")
         dependsOn(":libraries:tools:abi-validation:abi-tools:check")
@@ -484,39 +480,71 @@ tasks {
         dependsOn(":libraries:tools:abi-validation:abi-tools-tests:check")
     }
 
-    testLifecycleTask("examplesTest") {
-        dependsOn("dist")
+    // === intermediate task ===
+    val examplesTest = testLifecycleTask("examplesTest") {
+        dependsOn(dist)
         project(":examples").subprojects.forEach { p ->
             dependsOn("${p.path}:check")
         }
     }
 
-    testLifecycleTask("distTest") {
-        dependsOn("compilerTest")
-        dependsOn("frontendApiTests")
-        dependsOn("toolsTest")
-        dependsOn("gradlePluginTest")
-        dependsOn("examplesTest")
+    // === Build: MiscTests ===
+    testLifecycleTask("miscTest") {
+        dependsOn(coreLibsTest)
+        dependsOn(toolsTest)
+        dependsOn(examplesTest)
+        dependsOn(":kotlin-build-common:test")
+        dependsOn(":core:descriptors.runtime:test")
+        dependsOn(":kotlin-util-io:test")
+        dependsOn(":kotlin-util-klib:test")
+        dependsOn(":kotlin-util-klib-abi:test")
+        dependsOn(":kotlinx-metadata-klib:test")
+        dependsOn(":compiler:ir.validation:test")
+        dependsOn(":generators:test")
+        dependsOn(":kotlin-gradle-plugin-dsl-codegen:test")
     }
 
+    // === Build: BuildToolsApiTests ===
+    val buildToolsApiTest = testLifecycleTask("buildToolsApiTest") {
+        dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
+        dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
+        dependsOn(":compiler:build-tools:kotlin-build-tools-api-forward-tests:check")
+    }
+
+    // === Build: AnalysisApiTests ===
+    val frontendApiTests = testLifecycleTask("frontendApiTests") {
+        dependsOn(":analysis:analysisAllTests")
+    }
+
+    // === unused ===
+    testLifecycleTask("distTest") {
+        dependsOn(compilerTest)
+        dependsOn(frontendApiTests)
+        dependsOn(toolsTest)
+        dependsOn(gradlePluginTest)
+        dependsOn(examplesTest)
+        dependsOn(buildToolsApiTest)
+    }
+
+    // === could be dropped ===
     testLifecycleTask("specTest") {
-        dependsOn("dist")
+        dependsOn(dist)
         dependsOn(":compiler:tests-spec:test")
     }
 
+    // === could be dropped ===
     testLifecycleTask("androidCodegenTest") {
         dependsOn(":compiler:android-tests:test")
     }
 
+    // === Build: CheckBuildTest (used only in `configurationCacheSmokeTests`) ===
+    // === Build: JpsTests ===
     testLifecycleTask("jps-tests") {
-        dependsOn("dist")
+        dependsOn(dist)
         dependsOn(":jps:jps-plugin:test")
     }
 
-    testLifecycleTask("frontendApiTests") {
-        dependsOn(":analysis:analysisAllTests")
-    }
-
+    // === Build: KaptCompilerTests ===
     testLifecycleTask("kaptTests") {
         dependsOn(":kotlin-annotation-processing:test")
         dependsOn(":kotlin-annotation-processing:testJdk11")
@@ -524,27 +552,30 @@ tasks {
         dependsOn(":kotlin-annotation-processing-cli:test")
     }
 
+    // === Build: ParcelizeTests ===
     testLifecycleTask("parcelizeTests") {
         dependsOn(":plugins:parcelize:parcelize-compiler:test")
     }
 
+    // === Build: CodebaseTests ===
     testLifecycleTask("codebaseTests") {
         dependsOn(":repo:auto-code-review:test")
         dependsOn(":repo:codebase-tests:test")
     }
 
+    // === Build: StatisticsPluginTests ===
     testLifecycleTask("statisticsTests") {
         dependsOn(":kotlin-gradle-statistics:test")
     }
 
-    register("test") {
+    val test = register("test") {
         doLast {
             throw GradleException("Don't use directly, use aggregate '*Test' tasks instead")
         }
     }
 
     named("check") {
-        dependsOn("test")
+        dependsOn(test)
     }
 
     named("checkBuild") {
@@ -643,7 +674,7 @@ tasks {
     }
 }
 
-val zipCompiler by tasks.registering(Zip::class) {
+val zipCompiler = tasks.register("zipCompiler", Zip::class) {
     dependsOn(dist)
     destinationDirectory.set(file(distDir))
     archiveFileName.set("kotlin-compiler-${project.version}.zip")
@@ -656,7 +687,7 @@ val zipCompiler by tasks.registering(Zip::class) {
     }
 }
 
-fun Project.secureZipTask(zipTask: TaskProvider<Zip>): RegisteringDomainObjectDelegateProviderWithAction<out TaskContainer, Task> {
+fun Project.secureZipTask(name: String, zipTask: TaskProvider<Zip>): TaskProvider<Task> {
     val checkSumTask: TaskProvider<Checksum> = tasks.register("${zipTask.name}Checksum", Checksum::class) {
         dependsOn(zipTask)
         inputFiles.setFrom(zipTask.map { it.outputs.files.singleFile })
@@ -685,7 +716,7 @@ fun Project.secureZipTask(zipTask: TaskProvider<Zip>): RegisteringDomainObjectDe
         sign(zipTask.get())
     }
 
-    return tasks.registering {
+    return tasks.register(name) {
         dependsOn(copyChecksumTask)
         dependsOn(signTask)
     }
@@ -695,7 +726,7 @@ signing {
     useGpgCmd()
 }
 
-val zipCompilerWithSignature by secureZipTask(zipCompiler)
+val zipCompilerWithSignature = secureZipTask("zipCompilerWithSignature", zipCompiler)
 
 configure<IdeaModel> {
     module {

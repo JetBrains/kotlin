@@ -52,6 +52,7 @@ Impl.kt:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+          STRING_TEMPLATE
     CLASS[classId=/Impl2, fqName=Impl2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Impl2, superNames=[Base2]]
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
@@ -65,12 +66,14 @@ Impl.kt:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+          STRING_TEMPLATE
         FUN[fqName=Impl2.ignorable, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
           MODIFIER_LIST[override]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+          STRING_TEMPLATE
     CLASS[classId=/Impl3, fqName=Impl3, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Impl3, superNames=[Base2]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValues]
@@ -90,6 +93,7 @@ Impl.kt:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+          STRING_TEMPLATE
         FUN[fqName=Impl3.ignorable, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
           MODIFIER_LIST[override]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
@@ -101,3 +105,4 @@ Impl.kt:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+          STRING_TEMPLATE

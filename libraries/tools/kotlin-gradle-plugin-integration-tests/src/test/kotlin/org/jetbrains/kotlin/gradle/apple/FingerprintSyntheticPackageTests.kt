@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.junit.jupiter.api.condition.OS
 import kotlin.String
-import kotlin.io.path.readText
+import kotlin.io.path.toPath
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
@@ -105,11 +105,12 @@ class FingerprintSyntheticPackageTests : KGPBaseTest() {
             }
 
             val outputPath = buildScriptReturn {
-                project.tasks.withType(FingerprintSyntheticPackage::class.java).single().syntheticPackageFingerprint.get().asFile
+                project.tasks.withType(FingerprintSyntheticPackage::class.java).single().syntheticPackageFingerprintFile.get().asFile
             }.buildAndReturn("tasks", "-P${product1Parameter}=a", "-P${product2Parameter}=b")
+            val fingerprintFile = outputPath.toPath()
 
             build("fingerprint", "-P${product1Parameter}=a", "-P${product2Parameter}=b")
-            val initialHash = outputPath.readText()
+            val initialFingerprint = parseSwiftPMFingerprint(fingerprintFile)
 
             // If ordering didn't change, then the task should be UTD
             build("fingerprint", "-P${product1Parameter}=a", "-P${product2Parameter}=b") {
@@ -121,15 +122,15 @@ class FingerprintSyntheticPackageTests : KGPBaseTest() {
                 assertTasksExecuted(":fingerprint")
             }
             // but the fingerprint normalization should produce the same fingerprint
-            val secondHash = outputPath.readText()
-            assertEquals(initialHash, secondHash)
+            val secondFingerprint = parseSwiftPMFingerprint(fingerprintFile)
+            assertEquals(initialFingerprint, secondFingerprint)
 
             // And if we change values, then task and the fingerprint change
             build("fingerprint", "-P${product1Parameter}=b", "-P${product2Parameter}=c") {
                 assertTasksExecuted(":fingerprint")
             }
-            val thirdHash = outputPath.readText()
-            assertNotEquals(initialHash, thirdHash)
+            val thirdFingerprint = parseSwiftPMFingerprint(fingerprintFile)
+            assertNotEquals(initialFingerprint, thirdFingerprint)
         }
     }
 
@@ -190,22 +191,14 @@ class FingerprintSyntheticPackageTests : KGPBaseTest() {
                     )
 
                     assertEquals(
-                        rightProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
-                            .readText()
-                            .trim(),
-                        projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
-                            .readText()
-                            .trim(),
+                        parseSwiftPMFingerprint(rightProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)),
+                        parseSwiftPMFingerprint(projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)),
                         "Projects with same flattened dependency graphs and same build settings should have same fingerprint"
                     )
 
                     assertEquals(
-                        rightProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
-                            .readText()
-                            .trim(),
-                        leftProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
-                            .readText()
-                            .trim(),
+                        parseSwiftPMFingerprint(rightProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)),
+                        parseSwiftPMFingerprint(leftProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)),
                         "Projects with same flattened dependency products and same build settings should have same fingerprint"
                     )
                 }
@@ -263,12 +256,8 @@ class FingerprintSyntheticPackageTests : KGPBaseTest() {
                     )
 
                     assertNotEquals(
-                        subProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
-                            .readText()
-                            .trim(),
-                        projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
-                            .readText()
-                            .trim(),
+                        parseSwiftPMFingerprint(subProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)),
+                        parseSwiftPMFingerprint(projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)),
                         "Projects with different flattened dependency graphs should have different fingerprint"
                     )
                 }
@@ -306,9 +295,7 @@ class FingerprintSyntheticPackageTests : KGPBaseTest() {
                         ":${FingerprintSyntheticPackage.TASK_NAME}",
                     )
 
-                    val firstFingerprint = projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
-                        .readText()
-                        .trim()
+                    val firstFingerprint = parseSwiftPMFingerprint(projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH))
 
                     // Rebuild with different deployment target
                     build(
@@ -319,9 +306,7 @@ class FingerprintSyntheticPackageTests : KGPBaseTest() {
                             ":${FingerprintSyntheticPackage.TASK_NAME}",
                         )
 
-                        val secondFingerprint = projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
-                            .readText()
-                            .trim()
+                        val secondFingerprint = parseSwiftPMFingerprint(projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH))
 
                         assertNotEquals(
                             firstFingerprint,

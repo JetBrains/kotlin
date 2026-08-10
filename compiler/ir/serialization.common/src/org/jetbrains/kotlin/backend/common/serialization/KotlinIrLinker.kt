@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -158,12 +159,16 @@ abstract class KotlinIrLinker(
     }
 
     protected abstract fun createModuleDeserializer(
-        moduleDescriptor: ModuleDescriptor,
+        moduleFragment: IrModuleFragment,
         klib: KotlinLibrary?,
         strategyResolver: (String) -> DeserializationStrategy,
     ): IrModuleDeserializer
 
     protected abstract fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean
+
+    fun getBuiltInsModule(): IrModuleFragment =
+        deserializersForModules.values.firstOrNull { it is IrModuleDeserializerWithBuiltIns }?.moduleFragment
+            ?: error("The module with the built-ins has not been deserialized yet")
 
     /**
      * Run deserialization of top-level declarations previously scheduled for deserialization in the current [KotlinIrLinker].
@@ -209,10 +214,6 @@ abstract class KotlinIrLinker(
             }
         }
 
-        // TODO: we do have serializations for those, but let's just create a stub for now.
-        if (!symbol.isBound && (symbol.descriptor.isExpectMember || symbol.descriptor.containingDeclaration?.isExpectMember == true))
-            return null
-
         if (!symbol.isBound) return null
 
         //assert(symbol.isBound) {
@@ -236,16 +237,6 @@ abstract class KotlinIrLinker(
         val moduleDeserializer = resolveModuleDeserializer(signature) ?: return null
         return moduleDeserializer.tryDeserializeIrSymbol(signature, topLevelKindToSymbolKind(kind)).also {
             if (finished) deserializeAllReachableTopLevels()
-        }
-    }
-
-    protected open fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment): IrModuleDeserializer =
-        CurrentModuleDeserializer(moduleFragment)
-
-    override fun init(moduleFragment: IrModuleFragment?) {
-        if (moduleFragment != null) {
-            val currentModuleDeserializer = createCurrentModuleDeserializer(moduleFragment)
-            registerModuleDeserializer(moduleFragment.name.asString(), moduleFragment.descriptor, currentModuleDeserializer)
         }
     }
 
@@ -298,9 +289,8 @@ abstract class KotlinIrLinker(
 
         val deserializer = deserializersForModules[moduleName] ?: registerModuleDeserializer(
             moduleName = moduleName,
-            moduleDescriptor = moduleDescriptor,
             moduleDeserializer = createModuleDeserializer(
-                moduleDescriptor = moduleDescriptor,
+                moduleFragment = IrModuleFragmentImpl(moduleDescriptor),
                 klib = kotlinLibrary,
                 strategyResolver = deserializationStrategy
             )
@@ -325,10 +315,9 @@ abstract class KotlinIrLinker(
 
     private fun registerModuleDeserializer(
         moduleName: String,
-        moduleDescriptor: ModuleDescriptor,
         moduleDeserializer: IrModuleDeserializer
     ): IrModuleDeserializer {
-        val deserializer = maybeWrapWithBuiltIn(moduleDescriptor, moduleDeserializer)
+        val deserializer = maybeWrapWithBuiltIn(moduleDeserializer)
         deserializersForModules[moduleName] = deserializer
 
         val definedPackageNames = deserializer.getDefinedPackageNames()
@@ -344,11 +333,11 @@ abstract class KotlinIrLinker(
     }
 
     private fun maybeWrapWithBuiltIn(
-        moduleDescriptor: ModuleDescriptor,
         moduleDeserializer: IrModuleDeserializer,
     ): IrModuleDeserializer =
-        if (isBuiltInModule(moduleDescriptor)) {
+        if (isBuiltInModule(moduleDeserializer.moduleFragment.descriptor)) {
             IrModuleDeserializerWithBuiltIns(
+                moduleDeserializer.moduleFragment,
                 symbolTable,
                 irMangler,
                 { clazz, signature -> fakeOverrideBuilder.enqueueClass(clazz, signature, moduleDeserializer.compatibilityMode) },

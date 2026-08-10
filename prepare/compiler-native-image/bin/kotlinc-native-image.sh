@@ -12,7 +12,7 @@ findKotlinHome() {
     local source="${BASH_SOURCE[0]}"
     while [ -h "$source" ] ; do
         local linked="$(readlink "$source")"
-        local dir="$(cd -P $(dirname "$source") && cd -P $(dirname "$linked") && pwd)"
+        local dir="$(cd -P "$(dirname "$source")" && cd -P "$(dirname "$linked")" && pwd)"
         source="$dir/$(basename "$linked")"
     done
     (cd -P "$(dirname "$source")/.." && pwd)
@@ -29,4 +29,5 @@ fi
 exec "${KOTLINC_BINARY_DIR}/${KOTLINC_BINARY_NAME}" \
   -Djava.home="${JAVA_HOME}" \
   -Dkotlin.home="${KOTLINC_HOME_DIR}" \
+  -Xdisable-default-scripting-plugin \
   "$@"

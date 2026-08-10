@@ -5,10 +5,10 @@
 
 #include "AllocatorImpl.hpp"
 
-#include "Allocator.hpp"
+#include "alloc/Allocator.hpp"
 #include "GCApi.hpp"
 #include "Heap.hpp"
-#include "ThreadData.hpp"
+#include "mm/ThreadData.hpp"
 
 using namespace kotlin;
 

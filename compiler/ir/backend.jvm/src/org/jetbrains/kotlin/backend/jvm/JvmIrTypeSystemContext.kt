@@ -21,7 +21,7 @@ class JvmIrTypeSystemContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystem
     override val treatFullValueClassesWithOneFieldAsBasic: Boolean get() = false
 
     private val specialAnnotations: JvmIrSpecialAnnotationSymbolProvider =
-        JvmIrSpecialAnnotationSymbolProvider()
+        JvmIrSpecialAnnotationSymbolProvider(irBuiltIns.moduleFragment)
 
     override fun KotlinTypeMarker.asFlexibleType(): FlexibleTypeMarker? =
         (this as IrType).asJvmFlexibleType(irBuiltIns, specialAnnotations)

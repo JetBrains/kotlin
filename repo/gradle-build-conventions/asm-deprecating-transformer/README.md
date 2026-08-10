@@ -10,7 +10,7 @@ This plugin allows you to deprecate symbols bundled into a fat JAR based on spec
 
 ## Usage
 
-Here is an example of how to apply this transformer to the `shadowJar` task in a project:
+Here is an example of how to transform a configuration before using it as an input of the `shadowJar` task:
 
 ```kotlin
 plugins {
@@ -19,14 +19,19 @@ plugins {
 
 // ...
 
+val embedded by configurations.creating
+
+asmDeprecation {
+    deprecateClassesByPattern(
+        inputConfigurations = listOf(embedded),
+        pattern = "org.example.**",
+        deprecationMessage = "Deprecated by asm-deprecating-transformer",
+        exclusions = listOf("org.example.api.**"),
+    )
+}
+
 tasks.named<ShadowJar>("shadowJar") {
-    asmDeprecation {
-        deprecateClassesByPattern(
-            pattern = "org.example.**",
-            deprecationMessage = "Deprecated by asm-deprecating-transformer",
-            exclusions = listOf("org.example.api.**"),
-        )
-    }
+    from(embedded.map { zipTree(it) })
 }
 ```
 

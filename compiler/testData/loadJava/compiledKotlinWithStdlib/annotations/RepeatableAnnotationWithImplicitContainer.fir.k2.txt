@@ -1,0 +1,16 @@
+@R|test/Anno|(code = Int(3)) @R|test/Anno|(code = Int(4)) public final fun f(): R|kotlin/Unit|
+
+@R|kotlin/annotation/Repeatable|() @R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.TYPEALIAS)) public final annotation class Anno : R|kotlin/Annotation| {
+    public final val code: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+    public constructor(code: R|kotlin/Int|): R|test/Anno|
+
+}
+
+@R|test/Anno|(code = Int(5)) @R|test/Anno|(code = Int(6)) public final typealias S = R|kotlin/String|
+
+@R|test/Anno|(code = Int(1)) @R|test/Anno|(code = Int(2)) public final class Z : R|kotlin/Any| {
+    public constructor(): R|test/Z|
+
+}

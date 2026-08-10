@@ -6,65 +6,210 @@
 package org.jetbrains.kotlin.konan.library
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.library.KlibMockDSL.Companion.generateRandomName
+import org.jetbrains.kotlin.library.KlibMockDSL.Companion.mockKlib
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.KotlinLibraryVersioning
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
+import org.jetbrains.kotlin.library.manifest
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import java.io.File
+import java.nio.file.Path
+import java.util.Properties
+import kotlin.io.path.createDirectories
+import kotlin.io.path.pathString
+import kotlin.io.path.writeText
 
 class KlibNativeDistributionLibraryProviderTest {
     @TempDir
-    private lateinit var tempDir: File
+    private lateinit var tempDir: Path
 
     @Test
-    fun `Loading platform libs without occasional system files in the Native distro`() = loadPlatformLibs(useSystemFiles = false)
+    fun `Loading stdlib or platform libs`() {
+        val nativeHome = emulateNativeDistribution(numberOfPlatformLibs = 20)
 
-    @Test
-    fun `Loading platform libs with occasional system files in the Native distro`() = loadPlatformLibs(useSystemFiles = true)
-
-    private fun loadPlatformLibs(useSystemFiles: Boolean) {
-        val result = KlibLoader {
-            libraryProviders(
-                KlibNativeDistributionLibraryProvider(emulateNativeDistribution(useSystemFiles = useSystemFiles)) {
-                    withPlatformLibs(KonanTarget.MACOS_ARM64)
-                }
-            )
-        }.load()
-        result.reportLoadingProblemsIfAny { _, message -> fail(message) }
-        assertEquals(3, result.librariesStdlibFirst.size)
+        assertEquals(0, loadLibs(nativeHome).size)
+        assertEquals(1, loadLibs(nativeHome, loadStdlib = true).size)
+        assertEquals(20, loadLibs(nativeHome, loadPlatformLibs = true).size)
+        assertEquals(21, loadLibs(nativeHome, loadStdlib = true, loadPlatformLibs = true).size)
     }
 
-    private fun emulateNativeDistribution(useSystemFiles: Boolean = false): File {
-        val distDir = tempDir.resolve("kotlin-native-dist")
+    @Test
+    fun `Loading platform libs without occasional system files in the Native distro`() {
+        testLoadingPlatformLibsWithUnexpectedSystemFiles(addOccasionalSystemFiles = false)
+    }
 
-        with(distDir.resolve("klib/platform/macos_arm64")) {
-            mkdirs()
-            for (shortName in listOf("posix", "foo", "bar")) {
-                val fullName = "org.jetbrains.kotlin.native.platform.$shortName"
-                with(resolve("$fullName/default")) {
-                    mkdirs()
-                    resolve("manifest").writeText(
-                        """
-                            abi_version=${KotlinAbiVersion.CURRENT}
-                            builtins_platform=NATIVE
-                            native_targets=macos_arm64
-                            package=platform.$shortName
-                            unique_name=$fullName
-                        """.trimIndent()
-                    )
+    @Test
+    fun `Loading platform libs with occasional system files in the Native distro`() {
+        testLoadingPlatformLibsWithUnexpectedSystemFiles(addOccasionalSystemFiles = true)
+    }
+
+    private fun testLoadingPlatformLibsWithUnexpectedSystemFiles(addOccasionalSystemFiles: Boolean) {
+        val libraries = loadLibs(
+            nativeHome = emulateNativeDistribution(numberOfPlatformLibs = 3, addOccasionalSystemFiles = addOccasionalSystemFiles),
+            loadPlatformLibs = true,
+        )
+        assertEquals(3, libraries.size)
+    }
+
+    @Test
+    fun `isFromKotlinNativeDistribution and isImplicitlyLoadedFromKotlinNativeDistribution flags`() {
+        val nativeHome = emulateNativeDistribution(numberOfPlatformLibs = 3)
+
+        val customKlib = tempDir.createMockKlib(generateRandomName(10))
+
+        // Load:
+        // - stdlib (implicitly)
+        // - platform libs (implicitly)
+        // - custom lib (explicitly via CLI arg)
+        val libraries1 = loadLibs(
+            nativeHome = nativeHome,
+            loadStdlib = true,
+            loadPlatformLibs = true,
+            customLibraryPaths = listOf(customKlib)
+        )
+        assertEquals(5, libraries1.size)
+        for (library in libraries1) {
+            when (library.path) {
+                customKlib -> {
+                    assertFalse(library.isFromKotlinNativeDistribution)
+                    assertFalse(library.isImplicitlyLoadedFromKotlinNativeDistribution)
+                }
+                else -> {
+                    assertTrue(library.isFromKotlinNativeDistribution)
+                    assertTrue(library.isImplicitlyLoadedFromKotlinNativeDistribution)
                 }
             }
-            if (useSystemFiles) {
+        }
+
+        val stdlib = libraries1.first().path
+        val somePlatformLib = libraries1.last().path
+
+        // Load:
+        // - stdlib (explicitly via CLI arg, yet implicit loading is enabled by `loadStdlib = true`)
+        // - platform libs (all implicitly, but 1 lib is loaded explicitly via CLI arg)
+        // - custom lib (explicitly via CLI arg)
+        val libraries2 = loadLibs(
+            nativeHome = nativeHome,
+            loadStdlib = true,
+            loadPlatformLibs = true,
+            customLibraryPaths = listOf(customKlib, stdlib, somePlatformLib)
+        )
+        assertEquals(5, libraries2.size)
+        for (library in libraries2) {
+            when (library.path) {
+                customKlib -> {
+                    assertFalse(library.isFromKotlinNativeDistribution)
+                    assertFalse(library.isImplicitlyLoadedFromKotlinNativeDistribution)
+                }
+                stdlib, somePlatformLib -> {
+                    assertTrue(library.isFromKotlinNativeDistribution)
+                    assertFalse(library.isImplicitlyLoadedFromKotlinNativeDistribution)
+                }
+                else -> {
+                    assertTrue(library.isFromKotlinNativeDistribution)
+                    assertTrue(library.isImplicitlyLoadedFromKotlinNativeDistribution)
+                }
+            }
+        }
+
+        // Load:
+        // - stdlib (explicitly via CLI arg, implicit loading is disabled by `loadStdlib = false`)
+        // - 1 platform libs (explicitly via CLI arg, implicit loading is disabled by `loadPlatformLibs = false`)
+        // - custom lib (explicitly via CLI arg)
+        val libraries3 = loadLibs(
+            nativeHome = nativeHome,
+            loadStdlib = false,
+            loadPlatformLibs = false,
+            customLibraryPaths = listOf(customKlib, stdlib, somePlatformLib)
+        )
+        assertEquals(3, libraries3.size)
+        for (library in libraries3) {
+            when (library.path) {
+                customKlib -> {
+                    assertFalse(library.isFromKotlinNativeDistribution)
+                    assertFalse(library.isImplicitlyLoadedFromKotlinNativeDistribution)
+                }
+                stdlib, somePlatformLib -> {
+                    assertTrue(library.isFromKotlinNativeDistribution)
+                    assertFalse(library.isImplicitlyLoadedFromKotlinNativeDistribution)
+                }
+                else -> {
+                    fail("Unexpected library: ${library.path}")
+                }
+            }
+        }
+    }
+
+    private fun loadLibs(
+        nativeHome: Path,
+        loadStdlib: Boolean = false,
+        loadPlatformLibs: Boolean = false,
+        customLibraryPaths: List<Path> = emptyList(),
+    ): List<KotlinLibrary> {
+        val result = KlibLoader {
+            libraryProviders(
+                KlibNativeDistributionLibraryProvider(nativeHome) {
+                    if (loadStdlib) withStdlib()
+                    if (loadPlatformLibs) withPlatformLibs(TEST_TARGET)
+                }
+            )
+            libraryPaths(customLibraryPaths.map { it.pathString })
+        }.load()
+        result.reportLoadingProblemsIfAny { _, message -> fail(message) }
+        return result.librariesStdlibFirst
+    }
+
+    private fun emulateNativeDistribution(
+        numberOfPlatformLibs: Int,
+        addOccasionalSystemFiles: Boolean = false,
+    ): Path {
+        require(numberOfPlatformLibs >= 0)
+
+        val distDir = tempDir.resolve("kotlin-native-dist")
+
+        distDir.resolve("klib/common").createMockKlib("stdlib")
+
+        with(distDir.resolve("klib/platform/${TEST_TARGET.name}")) {
+            createDirectories()
+            generateSequence('a') { it + 1 }.take(numberOfPlatformLibs).forEach { shortName ->
+                createMockKlib("org.jetbrains.kotlin.native.platform.$shortName")
+            }
+
+            if (addOccasionalSystemFiles) {
                 for (fileName in listOf(".DS_Store", "Desktop.ini")) {
-                    resolve("$fileName.dir").mkdirs()
+                    resolve("$fileName.dir").createDirectories()
                     resolve("$fileName.file").writeText("")
                 }
             }
         }
 
         return distDir
+    }
+
+    private fun Path.createMockKlib(name: String, customManifestProperties: Properties.() -> Unit = {}): Path =
+        mockKlib(resolve(name)) {
+            manifest(
+                uniqueName = name,
+                builtInsPlatform = BuiltInsPlatform.NATIVE,
+                versioning = KotlinLibraryVersioning(
+                    compilerVersion = null,
+                    abiVersion = KotlinAbiVersion.CURRENT,
+                    metadataVersion = MetadataVersion.INSTANCE,
+                ),
+                other = customManifestProperties
+            )
+        }
+
+    companion object {
+        private val TEST_TARGET = KonanTarget.MACOS_ARM64
     }
 }

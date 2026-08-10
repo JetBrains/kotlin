@@ -101,7 +101,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
             return constructor.transformDelegatedConstructor(this, data)
         }
 
-        override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: ScopeSession) =
+        override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: ScopeSession): FirStatement =
             transformConstructor(errorPrimaryConstructor, data)
 
         override fun transformDelegatedConstructorCall(

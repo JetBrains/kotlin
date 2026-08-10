@@ -147,6 +147,7 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
         }
 
         override val path: Path get() = Paths.get(".")
+        override val canonicalPath: Path get() = error("Not supported")
         override val attributes: KlibAttributes get() = error("Not supported")
 
         override val versions: KotlinLibraryVersioning get() = error("Not supported")

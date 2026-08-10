@@ -98,17 +98,6 @@ The default value is 1.""",
         }
 
     @Argument(
-        value = "-Xbundle-id",
-        valueDescription = "<id>",
-        description = "Bundle ID to be set in the Info.plist file of the produced framework. This option is deprecated. Please use '-Xbinary=bundleId=<id>'.",
-    )
-    var bundleId: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xcache-directory",
         valueDescription = "<path>",
         description = "Path to the directory containing caches.",
@@ -186,17 +175,6 @@ The default value is 1.""",
         }
 
     @Argument(
-        value = "-Xdestroy-runtime-mode",
-        valueDescription = "<mode>",
-        description = "When to destroy the runtime – 'legacy' and 'on-shutdown' are currently supported. Note that 'legacy' mode is deprecated and will be removed.",
-    )
-    var destroyRuntimeMode: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xdump-built-caches-to",
         valueDescription = "<path>",
         description = "Path to a file where the list of all cache archives produced by this build should be written.",
@@ -262,16 +240,6 @@ This library must be one of the ones passed with '-library'.""",
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
-        value = "-Xfake-override-validator",
-        description = "Enable the IR fake override validator.",
-    )
-    var fakeOverrideValidator: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
         }
 
     @Argument(
@@ -640,19 +608,6 @@ This library must be one of the ones passed with '-library'.""",
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @all:Deprecated("")
-    @Argument(
-        value = "-Xworker-exception-handling",
-        valueDescription = "<mode>",
-        description = "Unhandled exception processing in 'Worker.executeAfter'. Possible values: 'legacy' and 'use-hook'. The default value is 'legacy' and for '-memory-model experimental', the default value is 'use-hook'.",
-        deprecatedVersion = "2.4.20",
-    )
-    var workerExceptionHandling: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
     @Argument(
         value = "-Xwrite-dependencies-of-produced-klib-to",
         valueDescription = "<path>",
@@ -742,10 +697,12 @@ This library must be one of the ones passed with '-library'.""",
             field = value
         }
 
+    @all:Deprecated("Use '-generate-test-runner' ('-tr')")
     @Argument(
         value = "-generate-worker-test-runner",
         shortName = "-trw",
         description = "Produce a worker runner for unit tests.",
+        deprecatedVersion = "2.5.0",
     )
     var generateWorkerTestRunner: Boolean = false
         set(value) {

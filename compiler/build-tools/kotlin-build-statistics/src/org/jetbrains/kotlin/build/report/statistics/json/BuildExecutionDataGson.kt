@@ -22,6 +22,14 @@ import org.jetbrains.kotlin.build.report.metrics.getAllMetrics
 import java.io.File
 import java.lang.reflect.Type
 
+private fun BuildPerformanceMetric.matches(metricName: String, parentMetricName: String?): Boolean {
+    return if (this is CustomBuildTimeMetric) {
+        this.name == metricName && this.parent?.name == parentMetricName
+    } else {
+        this.name == metricName
+    }
+}
+
 val buildExecutionDataGson = GsonBuilder()
     .enableComplexMapKeySerialization()
     .registerTypeAdapter(File::class.java, object : JsonSerializer<File> {
@@ -42,15 +50,16 @@ val buildExecutionDataGson = GsonBuilder()
             context: JsonDeserializationContext?,
         ): BuildPerformanceMetric? {
             val metricName = json?.asJsonObject["name"]?.let { context?.deserialize<String>(it, String::class.java) } ?: return null
-            val metric = getAllMetrics().firstOrNull { it.name == metricName }
+            val parentMetricName =
+                json.asJsonObject["parent"]?.asJsonObject["name"]?.let { context?.deserialize<String>(it, String::class.java) }
+
+            val metric = getAllMetrics().firstOrNull { it.matches(metricName, parentMetricName) }
             if (metric != null) return metric
 
             if (metricName.startsWith(KlibSizeMetric.ROOT_METRIC_NAME)) {
                 return KlibSizeMetric.createIfDoesNotExistAndReturn(metricName)
             }
 
-            val parentMetricName =
-                json.asJsonObject["parent"]?.asJsonObject["name"]?.let { context?.deserialize<String>(it, String::class.java) }
             val parentMetric = allBuildTimeMetrics.firstOrNull { it.name == parentMetricName }
 
             return CustomBuildTimeMetric.createIfDoesNotExistAndReturn(name = metricName, parentMetric)
@@ -63,11 +72,11 @@ val buildExecutionDataGson = GsonBuilder()
             context: JsonDeserializationContext?,
         ): BuildTimeMetric? {
             val metricName = json?.asJsonObject["name"]?.let { context?.deserialize<String>(it, String::class.java) } ?: return null
-            val metric = allBuildTimeMetrics.firstOrNull { it.name == metricName }
-            if (metric != null) return metric
-
             val parentMetricName =
                 json.asJsonObject["parent"]?.asJsonObject["name"]?.let { context?.deserialize<String>(it, String::class.java) }
+            val metric = allBuildTimeMetrics.firstOrNull { it.matches(metricName, parentMetricName) }
+            if (metric != null) return metric
+
             val parentMetric = allBuildTimeMetrics.firstOrNull { it.name == parentMetricName }
 
             return CustomBuildTimeMetric.createIfDoesNotExistAndReturn(name = metricName, parentMetric)

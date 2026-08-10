@@ -56,6 +56,32 @@ abstract class JavaTypeOverAst(
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
 }
 
+/**
+ * Extracts identifier segments from a JAVA_CODE_REFERENCE node via the AST,
+ * so type-argument lists cannot be confused with package/class separators. Handles:
+ * - Simple: "Object" → ["Object"]
+ * - Qualified: "java.util.List" → ["java", "util", "List"]
+ * - Annotated: "@NotNull Object" → ["Object"]
+ * - Generic: "List<String>" → ["List"]
+ * - Nested generic: "Outer<T>.Inner<U>" → ["Outer", "Inner"]
+ */
+private fun JavaLightTree.extractReferenceNameParts(node: JavaLightNode): List<String> {
+    val parts = mutableListOf<String>()
+
+    fun collectIdentifiers(current: JavaLightNode) {
+        for (child in getChildren(current)) {
+            when (getType(child)) {
+                JavaSyntaxTokenType.IDENTIFIER -> parts.add(getText(child).toString())
+                JavaSyntaxElementType.JAVA_CODE_REFERENCE -> collectIdentifiers(child)
+                // Skip: ANNOTATION, REFERENCE_PARAMETER_LIST, WHITE_SPACE, DOT, etc.
+            }
+        }
+    }
+
+    collectIdentifiers(node)
+    return parts
+}
+
 class JavaClassifierTypeOverAst(
     node: JavaLightNode,
     tree: JavaLightTree,
@@ -64,39 +90,15 @@ class JavaClassifierTypeOverAst(
     memberAnnotations: Collection<JavaAnnotation> = emptyList(),
 ) : JavaTypeOverAst(node, tree, resolutionContext, extraAnnotations, memberAnnotations), JavaClassifierType {
 
-    private val rawTypeNameParts: List<String>
-        get() = extractTypeNameParts(node)
+    private val rawTypeNameParts: List<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        tree.extractReferenceNameParts(node)
+    }
 
     private val rawTypeName: String
         get() {
             val parts = rawTypeNameParts
             return if (parts.size == 1) parts[0] else parts.joinToString(".")
         }
-
-    /**
-     * Extracts type name parts from a JAVA_CODE_REFERENCE node, ignoring annotations and type arguments.
-     * Handles:
-     * - Simple: "Object" → ["Object"]
-     * - Qualified: "java.util.List" → ["java", "util", "List"]
-     * - Annotated: "@NotNull Object" → ["Object"]
-     * - Generic: "List<String>" → ["List"]
-     * - Nested generic: "Outer<T>.Inner<U>" → ["Outer", "Inner"]
-     */
-    private fun extractTypeNameParts(node: JavaLightNode): List<String> {
-        val parts = mutableListOf<String>()
-        collectIdentifiers(node, parts)
-        return parts
-    }
-
-    private fun collectIdentifiers(node: JavaLightNode, parts: MutableList<String>) {
-        for (child in tree.getChildren(node)) {
-            when (tree.getType(child)) {
-                JavaSyntaxTokenType.IDENTIFIER -> parts.add(tree.getText(child).toString())
-                JavaSyntaxElementType.JAVA_CODE_REFERENCE -> collectIdentifiers(child, parts)
-                // Skip: ANNOTATION, REFERENCE_PARAMETER_LIST, WHITE_SPACE, DOT, etc.
-            }
-        }
-    }
 
     override val classifier: JavaClassifier? by lazy(LazyThreadSafetyMode.PUBLICATION) { computeClassifier() }
 
@@ -201,8 +203,9 @@ class JavaClassifierTypeOverAst(
         return false
     }
 
-    override val typeArguments: List<JavaType>
-        get() = computeTypeArguments()
+    override val typeArguments: List<JavaType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        computeTypeArguments()
+    }
 
     private fun computeTypeArguments(): List<JavaType> {
         // Collect all REFERENCE_PARAMETER_LISTs from this node and nested JAVA_CODE_REFERENCEs.

@@ -5,10 +5,12 @@ FILE[kind=File[packageFqName=<root>]]
     MODIFIER_LIST[public]
     CLASS_BODY
       PROPERTY[fqName=Objects.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=c]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
       FUN[fqName=Objects.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         VALUE_PARAMETER_LIST
       FUN[fqName=Objects.g, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=g]
         VALUE_PARAMETER_LIST
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       OBJECT_DECLARATION[classId=/Objects.InnerObject, fqName=Objects.InnerObject, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=InnerObject, superNames=[A]]
         MODIFIER_LIST[private]
         SUPER_TYPE_LIST
@@ -18,6 +20,7 @@ FILE[kind=File[packageFqName=<root>]]
                 REFERENCE_EXPRESSION[referencedName=A]
         CLASS_BODY
           PROPERTY[fqName=Objects.InnerObject.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=c]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
           FUN[fqName=Objects.InnerObject.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
             VALUE_PARAMETER_LIST
       OBJECT_DECLARATION[classId=/Objects.OtherObject, fqName=Objects.OtherObject, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=OtherObject, superNames=[NestedClass]]
@@ -31,6 +34,7 @@ FILE[kind=File[packageFqName=<root>]]
             VALUE_ARGUMENT_LIST
         CLASS_BODY
           PROPERTY[fqName=Objects.OtherObject.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=c]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
           FUN[fqName=Objects.OtherObject.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
             VALUE_PARAMETER_LIST
       CLASS[classId=/Objects.NestedClass, fqName=Objects.NestedClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=NestedClass, superNames=[]]

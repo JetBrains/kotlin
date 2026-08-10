@@ -1,0 +1,11 @@
+package test
+
+public open class AnnotatedMethod {
+    public constructor AnnotatedMethod()
+    @test.AnnotatedMethod.Anno(value = 42) public open fun f(): kotlin.Unit
+
+    @kotlin.annotation.Retention(value = ...) public final annotation class Anno : kotlin.Annotation {
+        public final val value: kotlin.Int
+            public final fun `<get-value>`(): kotlin.Int
+    }
+}

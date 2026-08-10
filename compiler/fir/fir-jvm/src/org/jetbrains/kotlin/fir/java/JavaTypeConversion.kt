@@ -29,7 +29,7 @@ private fun ClassId.toConeFlexibleType(
     typeArguments: Array<out ConeTypeProjection>,
     typeArgumentsForUpper: Array<out ConeTypeProjection>,
     attributes: ConeAttributes
-) = toLookupTag().run {
+): ConeFlexibleType = toLookupTag().run {
     ConeFlexibleType(
         constructClassType(typeArguments, isMarkedNullable = false, attributes),
         constructClassType(typeArgumentsForUpper, isMarkedNullable = true, attributes),

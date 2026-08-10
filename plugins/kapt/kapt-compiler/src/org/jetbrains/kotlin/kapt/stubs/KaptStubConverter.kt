@@ -1665,7 +1665,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         if (type is ConeErrorType) {
             val diagnostic = type.diagnostic as? ConeUnresolvedError
             val simpleName = diagnostic?.qualifier ?: return null
-            val outerType = (diagnostic as? ConeUnresolvedNameError)?.receiverType
+            val outerType = (diagnostic as? ConeUnresolvedNameError)?.receiverInfo?.type
             return if (outerType == null) {
                 treeMaker.SimpleName(simpleName) to simpleName
             } else {
@@ -1750,6 +1750,22 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             is Double -> {
                 sb.append(specialFpValueNumerator(value)).append(" / 0.0")
                 treeMaker.Binary(Tag.DIV, treeMaker.Literal(specialFpValueNumerator(value)), treeMaker.Literal(0.0))
+            }
+            is UByte -> {
+                sb.append("(byte)").append(value.toInt())
+                treeMaker.TypeCast(treeMaker.TypeIdent(TypeTag.BYTE), treeMaker.Literal(TypeTag.INT, value.toInt()))
+            }
+            is UShort -> {
+                sb.append("(short)").append(value.toInt())
+                treeMaker.TypeCast(treeMaker.TypeIdent(TypeTag.SHORT), treeMaker.Literal(TypeTag.INT, value.toInt()))
+            }
+            is UInt -> {
+                sb.append(value.toInt())
+                treeMaker.Literal(value.toInt())
+            }
+            is ULong -> {
+                sb.append(value.toLong()).append("L")
+                treeMaker.Literal(value.toLong())
             }
 
             else -> null
@@ -1967,6 +1983,6 @@ private class LegacyFunctionTypeKindProjector(private val session: FirSession) :
 }
 
 private fun Any?.isOfPrimitiveType(): Boolean = when (this) {
-    is Boolean, is Byte, is Int, is Long, is Short, is Char, is Float, is Double -> true
+    is Boolean, is Byte, is Int, is Long, is Short, is Char, is Float, is Double, is UByte, is UShort, is UInt, is ULong -> true
     else -> false
 }

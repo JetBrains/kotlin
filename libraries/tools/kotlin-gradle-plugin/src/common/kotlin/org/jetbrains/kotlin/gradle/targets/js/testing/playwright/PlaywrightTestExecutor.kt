@@ -45,15 +45,6 @@ import kotlin.time.Duration
 private val log = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.tasks.testing.PlaywrightTestExecutor")
 
 /**
- * Kind of Playwright-supported browser engine.
- */
-internal enum class PwBrowserKind {
-    CHROMIUM,
-    FIREFOX,
-    WEBKIT,
-}
-
-/**
  * A single Playwright browser run.
  */
 internal class PwRunnerSpec(

@@ -75,8 +75,8 @@ public class SirTypeProviderImpl(
             when (kaType) {
                 is KaUsualClassType -> {
                     when {
-                        kaType.isNothingType -> SirNominalType(SirSwiftModule.never)
-                        kaType.isAnyType -> ctx.anyRepresentativeType()
+                        kaType.classId == KaStandardTypeClassIds.NOTHING -> SirNominalType(SirSwiftModule.never)
+                        kaType.classId == KaStandardTypeClassIds.ANY -> ctx.anyRepresentativeType()
 
                         else -> {
                             if (sirSession.isClassIdSupported(kaType.classId)) {
@@ -91,7 +91,9 @@ public class SirTypeProviderImpl(
                                 if (elementArg is KaTypeArgumentWithVariance) {
                                     val elementType = elementArg.type
                                     val translatedElement = when {
-                                        elementType.isUnitType -> ctx.anyRepresentativeType().optionalIfNeeded(elementType)
+                                        elementType.classId == KaStandardTypeClassIds.UNIT ->
+                                            ctx.anyRepresentativeType().optionalIfNeeded(elementType)
+
                                         else -> elementType.translateType(ctx)
                                     }
                                     if (translatedElement !is SirErrorType && translatedElement !is SirUnsupportedType) {
@@ -240,6 +242,9 @@ public class SirTypeProviderImpl(
             }
             is SirTupleType -> {
                 types.forEach { [_, type] -> type.handleImports(processTypeImports) }
+            }
+            is SirType.Metatype -> {
+                type.handleImports(processTypeImports)
             }
             is SirErrorType -> {}
             SirUnsupportedType -> {}

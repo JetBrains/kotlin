@@ -65,7 +65,6 @@ open class CommonCompilerArgumentsConfigurator {
                 )
             putAnalysisFlag(AnalysisFlags.firAggressivePruning, firAggressivePruning ?: headerMode)
             putAnalysisFlag(AnalysisFlags.hierarchicalMultiplatformCompilation, separateKmpCompilationScheme && multiPlatform)
-            putAnalysisFlag(AnalysisFlags.kmpJvmIncrementalCompilationEnabled, fragmentIncrementalClasspath.isNotEmpty() && multiPlatform)
             fillWarningLevelMap(arguments, reporter)
             ReturnValueCheckerMode.fromString(returnValueChecker)?.also { putAnalysisFlag(AnalysisFlags.returnValueCheckerMode, it) }
                 ?: reporter.reportError(
@@ -212,16 +211,10 @@ open class CommonCompilerArgumentsConfigurator {
 
     private fun HashMap<AnalysisFlag<*>, Any>.fillWarningLevelMap(arguments: CommonCompilerArguments, reporter: Reporter) {
         val result = buildMap {
-            val suppressedDiagnostics = arguments.suppressedDiagnostics.orEmpty()
+            @Suppress("DEPRECATION")
+            val suppressedDiagnostics = arguments.suppressedDiagnostics
             suppressedDiagnostics.associateWithTo(this) { WarningLevel.Disabled }
-            if (suppressedDiagnostics.isNotEmpty()) {
-                val replacement = "-Xwarning-level=${suppressedDiagnostics.first()}:disabled"
-                val suffix = if (suppressedDiagnostics.size > 1) " (and the same for other warnings)" else ""
-                reporter.reportWarning(
-                    """Argument "-Xsuppress-warning" is deprecated. Use "$replacement" instead$suffix"""
-                )
-            }
-            for (rawArgument in arguments.warningLevels.orEmpty()) {
+            for (rawArgument in arguments.warningLevels) {
                 val split = rawArgument.split(":", limit = 2)
                 if (split.size < 2) {
                     reporter.reportError(
@@ -289,20 +282,14 @@ fun CommonCompilerArguments.checkApiAndLanguageVersion(
     checkProgressiveMode(language, reporter)
 }
 
-private fun CommonCompilerArguments.checkApiVersionIsNotGreaterThenLanguageVersion(
+private fun checkApiVersionIsNotGreaterThenLanguageVersion(
     languageVersion: LanguageVersion,
     apiVersion: ApiVersion,
     reporter: CommonCompilerArgumentsConfigurator.Reporter,
 ) {
     if (apiVersion > ApiVersion.createByLanguageVersion(languageVersion)) {
-        if (!suppressApiVersionGreaterThanLanguageVersionError) {
-            reporter.reportError(
-                "-api-version (${apiVersion.versionString}) cannot be greater than -language-version (${languageVersion.versionString})."
-            )
-        }
-    } else if (suppressApiVersionGreaterThanLanguageVersionError) {
-        reporter.reportWarning(
-            "-Xsuppress-api-version-greater-than-language-version-error was passed, but the API version (${apiVersion.versionString}) is not greater than the language version (${languageVersion.versionString})."
+        reporter.reportError(
+            "-api-version (${apiVersion.versionString}) cannot be greater than -language-version (${languageVersion.versionString})."
         )
     }
 }

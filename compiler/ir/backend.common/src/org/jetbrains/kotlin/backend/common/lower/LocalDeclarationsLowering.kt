@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 interface VisibilityPolicy {
-    fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility = DescriptorVisibilities.PRIVATE
+    fun forClass(declaration: IrClass, inPublicInlineScope: Boolean): DescriptorVisibility = DescriptorVisibilities.PRIVATE
     fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): DescriptorVisibility = DescriptorVisibilities.PRIVATE
     fun forCapturedField(value: IrValueSymbol): DescriptorVisibility = DescriptorVisibilities.PRIVATE
     fun forSimpleFunction(declaration: IrSimpleFunction): DescriptorVisibility = DescriptorVisibilities.PRIVATE
@@ -230,7 +230,7 @@ open class LocalDeclarationsLowering(
 
     private inner class LocalClassContext(
         val declaration: IrClass,
-        val inInlineFunctionScope: Boolean,
+        val inPublicInlineScope: Boolean,
         val constructorContext: LocalContext?,
         override val sourceFileWhenInlined: IrFileEntry?,
     ) : LocalContext() {
@@ -746,7 +746,7 @@ open class LocalDeclarationsLowering(
 
             localClasses.values.forEach {
                 it.declaration.isOriginallyLocalDeclaration = true
-                it.declaration.visibility = visibilityPolicy.forClass(it.declaration, it.inInlineFunctionScope)
+                it.declaration.visibility = visibilityPolicy.forClass(it.declaration, it.inPublicInlineScope)
                 it.closure.capturedValues.associateTo(it.capturedValueToField) { capturedValue ->
                     capturedValue.owner to PotentiallyUnusedField()
                 }
@@ -1096,6 +1096,7 @@ open class LocalDeclarationsLowering(
         private fun collectLocalDeclarations() {
             class Data(
                 val isInInlineFunction: Boolean,
+                val isInPublicInlineScope: Boolean,
                 val sourceFileWhenInlined: IrFileEntry? = null,
             )
 
@@ -1110,6 +1111,7 @@ open class LocalDeclarationsLowering(
                         inlinedBlock,
                         Data(
                             isInInlineFunction = inlinedBlock.isFunctionInlining(),
+                            isInPublicInlineScope = inlinedBlock.inlinedFunctionSymbol?.owner?.isInPublicInlineScope ?: false,
                             sourceFileWhenInlined = inlinedBlock.inlinedFunctionFileEntry
                         )
                     )
@@ -1144,7 +1146,7 @@ open class LocalDeclarationsLowering(
                         localFunctions[declaration] = LocalFunctionContext(declaration, data.sourceFileWhenInlined)
                     }
 
-                    val newData = Data(declaration.isInline, data.sourceFileWhenInlined)
+                    val newData = Data(declaration.isInline, declaration.isInPublicInlineScope, data.sourceFileWhenInlined)
                     super.visitSimpleFunction(declaration, newData)
                 }
 
@@ -1176,13 +1178,16 @@ open class LocalDeclarationsLowering(
                         .singleOrNull()
 
                     localClasses[declaration] =
-                        LocalClassContext(declaration, data.inInlineFunctionScope, constructorContext, data.sourceFileWhenInlined)
+                        LocalClassContext(declaration, data.inPublicInlineScope, constructorContext, data.sourceFileWhenInlined)
                 }
 
                 private val Data.inInlineFunctionScope: Boolean
                     get() = isInInlineFunction ||
                             generateSequence(container) { it.parent as? IrDeclaration }.any { it is IrFunction && it.isInline }
-            }, Data( false, null))
+
+                private val Data.inPublicInlineScope: Boolean
+                    get() = isInPublicInlineScope || container.isInPublicInlineScope
+            }, Data(false, false, null))
         }
     }
 

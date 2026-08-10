@@ -6,18 +6,11 @@ plugins {
     application
 }
 
-val runtimeOnly by configurations
-val compileOnly by configurations
-runtimeOnly.extendsFrom(compileOnly)
-
 dependencies {
     implementation(project(":generators"))
     implementation(project(":compiler:config"))
     implementation(project(":compiler:arguments"))
 
-    compileOnly(intellijCore())
-
-    runtimeOnly(intellijJDom())
     runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
 }
 

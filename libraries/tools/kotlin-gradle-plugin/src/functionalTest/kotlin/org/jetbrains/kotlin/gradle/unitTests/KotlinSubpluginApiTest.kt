@@ -20,7 +20,6 @@ import java.io.File
 import kotlin.test.Test
 import kotlin.test.fail
 
-@Suppress("FunctionName")
 class KotlinSubpluginApiTest {
     @Test
     fun `parcelize - is applicable to android only - old target`() {

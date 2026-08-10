@@ -439,6 +439,9 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
     /**
      * @deprecated This method is obsolete because {@link KtSelfType} is obsolete.
      */
+    @kotlin.Deprecated(
+            message = "This method is obsolete because 'KtSelfType' is obsolete."
+    )
     @Deprecated
     public R visitSelfType(@NotNull KtSelfType type, D data) {
         return visitTypeElement(type, data);

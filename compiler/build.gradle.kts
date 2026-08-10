@@ -6,7 +6,7 @@ plugins {
     id("d8-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 val otherCompilerModules = CompilerModules.compilerModules.filter { it != path }
@@ -15,7 +15,7 @@ dependencies {
     testImplementation(kotlinStdlib())
 
     testImplementation(kotlinTest())
-    testCompileOnly(kotlinTest("junit"))
+    testCompileOnly(kotlinTest("junit5"))
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
@@ -66,14 +66,8 @@ projectTests {
         include("**/FastJarFSLongTest*")
     }
 
-    testGenerator("org.jetbrains.kotlin.generators.tests.TestGeneratorForCompilerTestsKt")
-
     testData(isolated, "testData/checkLocalVariablesTable")
     testData(isolated, "testData/codegen")
-    testData(isolated, "testData/compileJavaAgainstKotlin")
-    testData(isolated, "testData/kotlinClassFinder")
-    testData(isolated, "testData/moduleProtoBuf")
-    testData(isolated, "testData/modules.xml")
     testData(isolated, "testData/serialization")
     testData(isolated, "testData/versionRequirement")
     testData(isolated, "testData/writeFlags")

@@ -353,6 +353,12 @@ public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymb
   }
 
   @Test
+  @TestMetadata("resultInSignature.kt")
+  public void testResultInSignature() {
+    run("resultInSignature.kt");
+  }
+
+  @Test
   @TestMetadata("simpleFunctions.kt")
   public void testSimpleFunctions() {
     run("simpleFunctions.kt");
@@ -416,6 +422,12 @@ public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymb
   @TestMetadata("unsafePropertyInitializers.kt")
   public void testUnsafePropertyInitializers() {
     run("unsafePropertyInitializers.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassAsUpperBound.kt")
+  public void testValueClassAsUpperBound() {
+    run("valueClassAsUpperBound.kt");
   }
 
   @Test
@@ -1614,6 +1626,12 @@ public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymb
     }
 
     @Test
+    @TestMetadata("result.kt")
+    public void testResult() {
+      run("result.kt");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
       run("simple.kt");
@@ -1822,6 +1840,12 @@ public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymb
       @TestMetadata("private.kt")
       public void testPrivate() {
         run("private.kt");
+      }
+
+      @Test
+      @TestMetadata("result.kt")
+      public void testResult() {
+        run("result.kt");
       }
 
       @Test

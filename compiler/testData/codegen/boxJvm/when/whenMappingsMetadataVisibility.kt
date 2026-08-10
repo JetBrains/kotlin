@@ -25,6 +25,7 @@ import util.*
 private const val SYNTHETIC_CLASS_VISIBILITY_SHIFT = 8
 private const val SYNTHETIC_CLASS_VISIBILITY_MASK = 0b111
 private const val LOCAL_VISIBILITY = 5
+private const val PUBLIC_ABI_FLAG = 1 shl 7
 
 fun test() = fooInline()
 
@@ -33,10 +34,14 @@ fun fooLocal(): Int = when (globalE) {
     E.B -> 2
 }
 
-private fun syntheticClassVisibility(javaClass: Class<*>): Int {
-    val extraInt = javaClass.getAnnotation(Metadata::class.java).extraInt
-    return (extraInt shr SYNTHETIC_CLASS_VISIBILITY_SHIFT) and SYNTHETIC_CLASS_VISIBILITY_MASK
-}
+private fun metadataExtraInt(javaClass: Class<*>): Int =
+    javaClass.getAnnotation(Metadata::class.java).extraInt
+
+private fun syntheticClassVisibility(javaClass: Class<*>): Int =
+    (metadataExtraInt(javaClass) shr SYNTHETIC_CLASS_VISIBILITY_SHIFT) and SYNTHETIC_CLASS_VISIBILITY_MASK
+
+private fun isPublicAbi(javaClass: Class<*>): Boolean =
+    metadataExtraInt(javaClass) and PUBLIC_ABI_FLAG != 0
 
 fun box(): String {
     test()
@@ -46,12 +51,18 @@ fun box(): String {
 
     var visibility = syntheticClassVisibility(whenMappingsLocal)
     if (visibility != LOCAL_VISIBILITY) {
-        return "Fail: expected LOCAL visibility (5), got $visibility"
+        return "Fail: expected LOCAL visibility (5) for local WhenMappings, got $visibility"
+    }
+    if (isPublicAbi(whenMappingsLocal)) {
+        return "Fail: expected WhenMappings to not be public ABI"
     }
 
     visibility = syntheticClassVisibility(whenMappingsEscaped)
     if (visibility != LOCAL_VISIBILITY) {
-        return "Fail: expected LOCAL visibility (5), got $visibility"
+        return "Fail: expected LOCAL visibility (5) for escaped WhenMappings, got $visibility"
+    }
+    if (!isPublicAbi(whenMappingsEscaped)) {
+        return "Fail: expected WhenMappings from public inline function to be public ABI"
     }
 
     return "OK"

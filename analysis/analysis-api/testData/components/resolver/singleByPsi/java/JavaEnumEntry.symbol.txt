@@ -1,6 +1,7 @@
 KtNameReferenceExpression(69,76): 'RUNTIME'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       java/lang/annotation/RetentionPolicy.RUNTIME

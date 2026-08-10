@@ -24,6 +24,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesKt]]
         REFERENCE_EXPRESSION[referencedName=Int]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
   PROPERTY[fqName=annotated, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=annotated]
     MODIFIER_LIST[]
       CONTEXT_PARAMETER_LIST
@@ -37,6 +38,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesKt]]
                       REFERENCE_EXPRESSION[referencedName=Anno]
                 VALUE_ARGUMENT_LIST
                   VALUE_ARGUMENT[isSpread=false]
+                    BINARY_EXPRESSION
+                      STRING_TEMPLATE
+                        LITERAL_STRING_TEMPLATE_ENTRY[text=1]
+                      OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+                      STRING_TEMPLATE
+                        LITERAL_STRING_TEMPLATE_ENTRY[text=2]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=parameter2]
@@ -63,3 +70,5 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesKt]]
         REFERENCE_EXPRESSION[referencedName=String]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      STRING_TEMPLATE
+        LITERAL_STRING_TEMPLATE_ENTRY[text=str]

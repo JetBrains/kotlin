@@ -4,7 +4,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
     id("java-test-fixtures")
 }
 
@@ -53,7 +53,7 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJklibTestsKt", generateTestsInBuildDirectory = true)
 }
 
-val stdlibJvmIr by configurations.creating {
+val stdlibJvmIr = configurations.create("stdlibJvmIr") {
     isCanBeConsumed = false
     isCanBeResolved = true
 }

@@ -23,10 +23,9 @@ import androidx.compose.runtime.mock.Text
 import androidx.compose.runtime.mock.compositionTest
 import androidx.compose.runtime.mock.validate
 import org.jetbrains.kotlin.testFederation.SmokeTest
-import org.junit.experimental.categories.Category
 import kotlin.test.Test
 
-@Category(SmokeTest::class)
+@SmokeTest
 class DefaultParamAbstractTests {
     @Test
     fun defaultParamInterfaceImpl() = compositionTest {

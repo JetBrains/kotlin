@@ -23,6 +23,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ExportedKdocKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=String]
+        STRING_TEMPLATE
       OBJECT_DECLARATION[classId=/Foo.Companion, fqName=Foo.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
@@ -49,3 +50,4 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ExportedKdocKt]]
         REFERENCE_EXPRESSION[referencedName=Int]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]

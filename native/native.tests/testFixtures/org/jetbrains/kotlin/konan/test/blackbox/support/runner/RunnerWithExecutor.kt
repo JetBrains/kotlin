@@ -33,6 +33,9 @@ open class RunnerWithExecutor(
         testRun.runParameters.forEach { it.applyTo(this) }
     }
 
+    override val maxRetries: Int
+        get() = testRun.runParameters.firstIsInstanceOrNull<TestRunParameter.WithRetriesOnFailure>()?.maxRetries ?: 0
+
     private fun inputStreamFromTestParameter(): InputStream? =
         testRun.runParameters.firstIsInstanceOrNull<TestRunParameter.WithInputData>()
             ?.let {

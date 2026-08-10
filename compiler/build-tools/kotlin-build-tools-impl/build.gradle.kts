@@ -6,7 +6,7 @@ plugins {
     id("test-federation-convention")
     kotlin("jvm")
     id("generated-sources")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -23,6 +23,7 @@ dependencies {
     compileOnly(project(":kotlin-compiler-runner-unshaded"))
     implementation(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
     compileOnly(intellijCore())
+    compileOnly(project(":js:typescript-export-standalone"))
     compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     implementation(project(":kotlin-tooling-core"))
@@ -46,7 +47,7 @@ dependencies {
     testCompileOnly(intellijPlatformUtil())
     testImplementation(project(":compiler:incremental-compilation-impl"))
     testImplementation(project(":native:kotlin-native-utils"))
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit5"))
 }
 
 publish()

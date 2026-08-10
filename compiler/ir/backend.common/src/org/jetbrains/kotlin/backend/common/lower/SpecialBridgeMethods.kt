@@ -55,15 +55,15 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
 
     @Suppress("UNUSED_PARAMETER")
     private fun constFalse(bridge: IrSimpleFunction) =
-        IrConstImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.booleanType, IrConstKind.Boolean, false)
+        IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.booleanType, false)
 
     @Suppress("UNUSED_PARAMETER")
     private fun constNull(bridge: IrSimpleFunction) =
-        IrConstImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.anyNType, IrConstKind.Null, null)
+        IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.anyNType)
 
     @Suppress("UNUSED_PARAMETER")
     private fun constMinusOne(bridge: IrSimpleFunction) =
-        IrConstImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, IrConstKind.Int, -1)
+        IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, -1)
 
     private fun getSecondArg(bridge: IrSimpleFunction) =
         IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, bridge.parameters[2].symbol)

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.konan.config.bundleId
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -167,17 +166,7 @@ internal class InfoPListBuilder(
         mainPackageGuesser: MainPackageGuesser,
         moduleDescriptor: ModuleDescriptor,
     ): String {
-        val deprecatedBundleIdOption = configuration.bundleId
-        val bundleIdOption = configuration[BinaryOptions.bundleId]
-        if (deprecatedBundleIdOption != null && bundleIdOption != null && deprecatedBundleIdOption != bundleIdOption) {
-            configuration.report(
-                    CliDiagnostics.KONAN_ARGUMENT_ERROR,
-                    "Both the deprecated -Xbundle-id=<id> and the new -Xbinary=bundleId=<id> options supplied with different values: " +
-                            "'$deprecatedBundleIdOption' and '$bundleIdOption'. " +
-                            "Please use only one of the options or make sure they have the same value."
-            )
-        }
-        deprecatedBundleIdOption?.let { return it } ?: bundleIdOption?.let { return it }
+        configuration[BinaryOptions.bundleId]?.let { return it }
 
         val mainPackage = mainPackageGuesser.guess(
                 moduleDescriptor,

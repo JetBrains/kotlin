@@ -1,0 +1,24 @@
+class ValueDummy(val value: Int)
+
+interface FaceDummy {
+    fun faceFun() = ValueDummy(596)
+}
+
+interface FaceContractDummy {
+    fun contract(): ValueDummy
+    val property: ValueDummy
+}
+
+interface SecondFaceContractDummy {
+    fun contract(): ValueDummy
+}
+
+fun interface FunInterface {
+    fun contract(): ValueDummy
+}
+
+abstract class ClassGetMoreInterface : FaceDummy, FaceContractDummy
+
+abstract class FakeOverrideIntersection : FaceDummy, FaceContractDummy, SecondFaceContractDummy
+
+abstract class ClassGetFunInterface : FaceDummy, FunInterface

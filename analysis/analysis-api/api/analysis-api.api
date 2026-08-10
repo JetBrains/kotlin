@@ -221,10 +221,10 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaC
 	public abstract fun argument (Lorg/jetbrains/kotlin/analysis/api/types/KaTypeProjection;)V
 	public static synthetic fun argument$default (Lorg/jetbrains/kotlin/analysis/api/components/KaClassTypeBuilder;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/types/Variance;ILjava/lang/Object;)V
 	public abstract fun getArguments ()Ljava/util/List;
-	public abstract fun getNullability ()Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
+	public abstract synthetic fun getNullability ()Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
 	public abstract fun isMarkedNullable ()Z
 	public abstract fun setMarkedNullable (Z)V
-	public abstract fun setNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;)V
+	public abstract synthetic fun setNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaDataFlowProvider : org/jetbrains/kotlin/analysis/api/components/KaSessionComponent {
@@ -451,38 +451,38 @@ public final class org/jetbrains/kotlin/analysis/api/components/KaTypeCreatorKt 
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaTypeInformationProvider : org/jetbrains/kotlin/analysis/api/components/KaSessionComponent {
 	public fun getCanBeNull (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun getExpandedSymbol (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;
+	public abstract fun getExpandedSymbol (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;
 	public abstract fun getFullyExpandedType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getHasFlexibleNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isAnyType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isAnyType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public abstract fun isArrayOrPrimitiveArray (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isBooleanType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isByteType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isCharSequenceType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isCharType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isClassType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/name/ClassId;)Z
+	public abstract fun isBooleanType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isByteType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isCharSequenceType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isCharType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isClassType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/name/ClassId;)Z
 	public abstract fun isDenotable (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isDoubleType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isFloatType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isFunctionType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isDoubleType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isFloatType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isFunctionType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public abstract fun isFunctionalInterface (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isIntType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isKFunctionType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isKSuspendFunctionType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isLongType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isIntType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isKFunctionType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isKSuspendFunctionType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isLongType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public abstract fun isMarkedNullable (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public abstract fun isNestedArray (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isNothingType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isNothingType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public abstract fun isNullable (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isPrimitive (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isShortType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isStringType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isSuspendFunctionType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isUByteType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isUIntType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isULongType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isUShortType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public fun isUnitType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isPrimitive (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isShortType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isStringType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isSuspendFunctionType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isUByteType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isUIntType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isULongType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isUShortType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public abstract fun isUnitType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 }
 
 public final class org/jetbrains/kotlin/analysis/api/components/KaTypeInformationProviderKt {
@@ -490,10 +490,10 @@ public final class org/jetbrains/kotlin/analysis/api/components/KaTypeInformatio
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaTypeParameterTypeBuilder : org/jetbrains/kotlin/analysis/api/components/KaTypeBuilder {
-	public abstract fun getNullability ()Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
+	public abstract synthetic fun getNullability ()Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
 	public abstract fun isMarkedNullable ()Z
 	public abstract fun setMarkedNullable (Z)V
-	public abstract fun setNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;)V
+	public abstract synthetic fun setNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaTypeProvider : org/jetbrains/kotlin/analysis/api/components/KaSessionComponent {
@@ -506,7 +506,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaT
 	public abstract fun getCommonSupertype (Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public fun getCommonSupertype ([Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getDefaultType (Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassifierSymbol;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public synthetic fun getDefaultType (Lorg/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymbol;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public fun getDirectSupertypes (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lkotlin/sequences/Sequence;
 	public abstract fun getDispatchReceiverType (Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getReceiverType (Lorg/jetbrains/kotlin/psi/KtDoubleColonExpression;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
@@ -514,7 +513,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaT
 	public abstract fun hasCommonSubtypeWith (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public fun lowerBoundIfFlexible (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public fun upperBoundIfFlexible (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public fun withNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public synthetic fun withNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun withNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Z)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 }
 
@@ -924,7 +923,12 @@ public final class org/jetbrains/kotlin/analysis/api/symbols/AdditionalKDocResol
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/KaAdditionalKDocResolutionProvider {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/symbols/KaAdditionalKDocResolutionProvider$Companion;
 	public abstract fun resolveKdocFqName (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/psi/KtElement;)Ljava/util/Collection;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/symbols/KaAdditionalKDocResolutionProvider$Companion {
+	public final fun getEP_NAME ()Lcom/intellij/openapi/extensions/ExtensionPointName;
 }
 
 public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaAnonymousFunctionSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaFunctionSymbol {
@@ -1490,8 +1494,8 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbo
 }
 
 public final class org/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointerKt {
-	public static final fun symbolPointer (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
-	public static final fun symbolPointerDelegator (Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;Lkotlin/jvm/functions/Function2;)Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
+	public static final synthetic fun symbolPointer (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
+	public static final synthetic fun symbolPointerDelegator (Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;Lkotlin/jvm/functions/Function2;)Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 }
 
 public final class org/jetbrains/kotlin/analysis/api/symbols/pointers/SymbolPointersKt {
@@ -1542,7 +1546,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaClassT
 
 public abstract class org/jetbrains/kotlin/analysis/api/types/KaDefinitelyNotNullType : org/jetbrains/kotlin/analysis/api/types/KaType {
 	public fun <init> ()V
-	public final fun getNullability ()Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
+	public final synthetic fun getNullability ()Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
 	public abstract fun getOriginal ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 }
 
@@ -1611,7 +1615,7 @@ public final class org/jetbrains/kotlin/analysis/api/types/KaSubtypingErrorTypeP
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaType : org/jetbrains/kotlin/analysis/api/annotations/KaAnnotated, org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
 	public abstract fun getAbbreviation ()Lorg/jetbrains/kotlin/analysis/api/types/KaUsualClassType;
-	public abstract fun getNullability ()Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
+	public abstract synthetic fun getNullability ()Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaTypeArgumentWithVariance : org/jetbrains/kotlin/analysis/api/types/KaTypeProjection {
@@ -1647,7 +1651,7 @@ public final class org/jetbrains/kotlin/analysis/api/types/KaTypeNullability : j
 }
 
 public final class org/jetbrains/kotlin/analysis/api/types/KaTypeNullability$Companion {
-	public final fun create (Z)Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
+	public final synthetic fun create (Z)Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
 }
 
 public abstract class org/jetbrains/kotlin/analysis/api/types/KaTypeParameterType : org/jetbrains/kotlin/analysis/api/types/KaType {
@@ -1668,6 +1672,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/types/KaUsualClassType :
 }
 
 public final class org/jetbrains/kotlin/analysis/api/types/TypeInformationKt {
+	public static final fun getClassId (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/name/ClassId;
 	public static final fun getExpandedSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;
 	public static final fun getFullyExpandedType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public static final fun getHasFlexibleNullability (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
@@ -1680,8 +1685,11 @@ public final class org/jetbrains/kotlin/analysis/api/types/TypeInformationKt {
 	public static final fun isDenotable (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public static final fun isDoubleType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public static final fun isFloatType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isFunctionType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public static final fun isFunctionalInterface (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public static final fun isIntType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isKFunctionType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isKSuspendFunctionType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public static final fun isLongType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public static final fun isMarkedNullable (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public static final fun isNestedArray (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
@@ -1690,6 +1698,7 @@ public final class org/jetbrains/kotlin/analysis/api/types/TypeInformationKt {
 	public static final fun isPrimitive (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public static final fun isShortType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public static final fun isStringType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isSuspendFunctionType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public static final fun isUByteType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public static final fun isUIntType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 	public static final fun isULongType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z

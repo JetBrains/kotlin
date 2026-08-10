@@ -14,7 +14,6 @@ where advanced options include:
                              0 means use one thread per processor core.
                              The default value is 1.
   -Xbinary=<option=value>    Specify a binary option.
-  -Xbundle-id=<id>           Bundle ID to be set in the Info.plist file of the produced framework. This option is deprecated. Please use '-Xbinary=bundleId=<id>'.
   -Xcache-directory=<path>   Path to the directory containing caches.
   -Xcached-library=<library path>,<cache path>
                              Paths to a library and its cache, separated by a comma.
@@ -25,7 +24,6 @@ where advanced options include:
   -Xdebug-info-version       Generate debug info of the given version (1, 2).
   -Xdebug-prefix-map=<old1=new1,old2=new2,...>
                              Remap file source directory paths in debug info.
-  -Xdestroy-runtime-mode=<mode> When to destroy the runtime – 'legacy' and 'on-shutdown' are currently supported. Note that 'legacy' mode is deprecated and will be removed.
   -Xdump-built-caches-to=<path> Path to a file where the list of all cache archives produced by this build should be written.
   -Xdump-tests-to=<path>     Path to a file for dumping the list of all available tests.
   -Xemit-lazy-objc-header
@@ -33,7 +31,6 @@ where advanced options include:
   -Xexport-library=<path>    A library to be included in the produced framework API.
                              This library must be one of the ones passed with '-library'.
   -Xexternal-dependencies=<path> Path to the file containing external dependencies.
-  -Xfake-override-validator  Enable the IR fake override validator.
   -Xfile-to-cache=<path>     Path to the file to cache.
   -Xframework-import-header=<header>
                              Add an additional header import to the framework header.
@@ -77,9 +74,6 @@ where advanced options include:
   -Xtemporary-files-dir=<path> Save temporary files to the given directory.
   -Xverify-bitcode           Verify LLVM bitcode after each method.
   -Xverify-compiler          Verify the compiler.
-  -Xworker-exception-handling=<mode>
-                             Unhandled exception processing in 'Worker.executeAfter'. Possible values: 'legacy' and 'use-hook'. The default value is 'legacy' and for '-memory-model experimental', the default value is 'use-hook'.
-                             The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases.
   -Xwrite-dependencies-of-produced-klib-to=<path>
                              Write file containing the paths of dependencies used during klib compilation to the provided path
   -Xwrite-dependencies-to    Path for writing backend dependencies.
@@ -98,8 +92,6 @@ where advanced options include:
                              - `disabled` mode completely disables the IR inliner
                              - `default` mode lets the IR inliner run in `intra-module`, `full` or `disabled` mode based on the current language version
 
-  -Xklib-normalize-absolute-path Normalize absolute paths in klibs.
-                             The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases.
   -Xklib-relative-path-base  Relativize all the paths stored in a klib using the given path prefixes.
                              The supplied prefixes should be absolute paths to the directories containing the source code files.
                              Note: The prefixes are applied in the same order as they are passed in this CLI argument.
@@ -154,6 +146,8 @@ where advanced options include:
   -Xdetailed-perf            Enable more detailed performance statistics (Experimental).
                              For Native, the performance report includes execution time and lines processed per second for every individual lowering.
                              For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
+                             Additionally enables measurements for User and CPU time for all targets. Note that this could cause performance degradation on Linux
+                               machines, so use this mode with caution.
   -Xdirect-java-actualization Enable experimental direct Java actualization support.
   -Xdisable-default-scripting-plugin
                              Don't enable the scripting plugin by default.
@@ -193,10 +187,6 @@ where advanced options include:
                              Declare common klib friend dependencies for the specific fragment.
                              This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
                              The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-  -Xfragment-incremental-classpath=<fragment name>:<path>
-                             Declare common klib incremental dependencies (results from the previous compilation) for the specific fragment.
-                             This argument can be specified for any HMPP module except the platform leaf module: it takes incremental
-                               dependencies from the platform specific incremental service.
   -Xfragment-refines=<fromModuleName>:<onModuleName>
                              Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.
   -Xfragment-sources=<fragment name>:<path>
@@ -245,7 +235,8 @@ where advanced options include:
   -Xprofile-phases           Profile backend phases.
   -Xrender-internal-diagnostic-names
                              Render the internal names of warnings and errors.
-  -Xrepl                     Run Kotlin REPL (deprecated)
+  -Xrepl                     Run Kotlin REPL.
+                             The option is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. REPL is deprecated.
   -Xreport-all-warnings      Report all warnings even if errors are found.
   -Xreport-output-files      Report the source-to-output file mapping.
   -Xreport-perf              Report detailed performance statistics.
@@ -255,19 +246,17 @@ where advanced options include:
   -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
   -Xskip-prerelease-check    Allow loading pre-release classes.
   -Xstdlib-compilation       Enables special features which are relevant only for stdlib compilation.
-  -Xsuppress-api-version-greater-than-language-version-error
-                             Suppress error about API version greater than language version.
-                             Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.
   -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
   -Xsuppress-warning=<WARNING_NAME>
-                             Suppress specified warning module-wide. This option is deprecated in favor of "-Xwarning-level" flag
+                             Suppress specified warning module-wide.
+                             The option is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings).
   -Xunrestricted-builder-inference
                              Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
   -Xuse-fir-experimental-checkers
                              Enable experimental frontend IR checkers that are not yet ready for production.
                              The option is deprecated since Kotlin 2.2.20. It will be removed in one of the future releases.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
-                             Warning: This feature is not yet production-ready.
+                             The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases.
   -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
                              The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases. The light tree mode is enabled by default, and it will become the only available mode in one of the future releases.
   -Xverbose-phases           Be verbose while performing the given backend phases.

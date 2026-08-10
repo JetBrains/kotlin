@@ -71,6 +71,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: bar
   importableFqName: JavaClass.bar
 
 KaJavaFieldSymbol:
@@ -146,6 +147,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: superBar
   importableFqName: SuperClass.superBar
 
 KaNamedClassSymbol:

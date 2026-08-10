@@ -12,7 +12,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
+import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersionInternal
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironmentTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
@@ -47,7 +47,7 @@ internal constructor() :
     internal abstract val versionsHash: Property<String>
 
     @get:Nested
-    internal abstract val tools: ListProperty<NpmPackageVersion>
+    internal abstract val tools: ListProperty<NpmPackageVersionInternal>
 
     @get:OutputDirectory
     abstract val destination: DirectoryProperty
@@ -77,7 +77,7 @@ internal constructor() :
                 ).apply {
                     private = true
                     dependencies.putAll(
-                        tools.get().map { it.name to it.version }
+                        tools.get().map { it.name.get() to it.requestedVersion.get() }
                     )
                 }
 

@@ -101,3 +101,5 @@ main.kt:
           REFERENCE_EXPRESSION[referencedName=String]
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
+        STRING_TEMPLATE
+          LITERAL_STRING_TEMPLATE_ENTRY[text=str]

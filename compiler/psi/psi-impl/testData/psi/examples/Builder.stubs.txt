@@ -4,36 +4,50 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BuilderKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=foo]
-    OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[AntBuilder]]
-      SUPER_TYPE_LIST
-        SUPER_TYPE_CALL_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=AntBuilder]
-          VALUE_ARGUMENT_LIST
-      CLASS_BODY
-        PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=groovy]
-          MODIFIER_LIST[]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=lazy]
+    DOT_QUALIFIED_EXPRESSION
+      OBJECT_LITERAL
+        OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[AntBuilder]]
+          SUPER_TYPE_LIST
+            SUPER_TYPE_CALL_ENTRY
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=lazy]
-        PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=gant]
-          MODIFIER_LIST[]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=lazy]
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=lazy]
-        PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=JPS]
-          MODIFIER_LIST[]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=lazy]
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=lazy]
+                    REFERENCE_EXPRESSION[referencedName=AntBuilder]
+              VALUE_ARGUMENT_LIST
+          CLASS_BODY
+            PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=groovy]
+              MODIFIER_LIST[]
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=lazy]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=lazy]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=library]
+                LAMBDA_ARGUMENT[isSpread=false]
+            PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=gant]
+              MODIFIER_LIST[]
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=lazy]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=lazy]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=library]
+                LAMBDA_ARGUMENT[isSpread=false]
+            PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=JPS]
+              MODIFIER_LIST[]
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=lazy]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=lazy]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=module]
+                LAMBDA_ARGUMENT[isSpread=false]
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=build]
+        VALUE_ARGUMENT_LIST
   CLASS[classId=/AntBuilder, fqName=AntBuilder, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AntBuilder, superNames=[]]
     CLASS_BODY
       CLASS[classId=/AntBuilder.ClassPathEntry, fqName=AntBuilder.ClassPathEntry, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassPathEntry, superNames=[]]

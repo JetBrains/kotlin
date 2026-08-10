@@ -29,9 +29,9 @@ dependencies {
     implicitDependencies("google:emulator-darwin_aarch64:$emulatorVersion@zip")
 }
 
-val androidSdk by configurations.creating
-val androidJar by configurations.creating
-val androidEmulator by configurations.creating
+val androidSdk = configurations.create("androidSdk")
+val androidJar = configurations.create("androidJar")
+val androidEmulator = configurations.create("androidEmulator")
 
 val sdkDestDirName = "androidSdk"
 

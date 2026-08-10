@@ -18,25 +18,21 @@ package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
 import org.jetbrains.kotlin.config.*
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedClass
+import org.junit.jupiter.params.provider.ValueSource
 
-@RunWith(Parameterized::class)
+@ParameterizedClass(name = "lv = {0}")
+@ValueSource(strings = ["2.0", "2.1", "2.2", "LATEST_STABLE"])
 class ComposableDeclarationCheckerTests(
-    private val languageVersion: LanguageVersion
+    languageVersion: String,
 ) : AbstractComposeDiagnosticsTest() {
-
-    companion object {
-        @JvmStatic
-        @Parameterized.Parameters(name = "lv = {0}")
-        fun parameters() = arrayOf(
-            LanguageVersion.KOTLIN_2_0,
-            LanguageVersion.KOTLIN_2_1,
-            LanguageVersion.KOTLIN_2_2,
+    private val languageVersion =
+        if (languageVersion == "LATEST_STABLE") {
             LanguageVersion.LATEST_STABLE
-        )
-    }
+        } else {
+            LanguageVersion.fromVersionString(languageVersion) ?: error("Unknown language version: $languageVersion")
+        }
 
     override fun CompilerConfiguration.updateConfiguration() {
         this.languageVersionSettings = LanguageVersionSettingsImpl(languageVersion, ApiVersion.LATEST_STABLE)

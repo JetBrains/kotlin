@@ -8,14 +8,14 @@ public protocol Driver: KotlinRuntime.KotlinBase, main._Driver {
         listener: any main._Driver_Listener
     ) -> Swift.Void
 }
-@objc(_Driver)
+@objc(_main_Driver)
 public protocol _Driver {
 }
 public protocol _Driver_Listener: KotlinRuntime.KotlinBase, main.__Driver_Listener {
 }
 public protocol __Driver: KotlinRuntimeSupport._KotlinBridgeable {
 }
-@objc(__Driver_Listener)
+@objc(_main__Driver_Listener)
 public protocol __Driver_Listener {
 }
 public protocol ___Driver_Listener: KotlinRuntimeSupport._KotlinBridgeable {
@@ -60,6 +60,7 @@ open class BaseDriver: KotlinRuntime.KotlinBase {
         }
     }
 }
+@_documentation(visibility: internal)
 extension main.Driver where Self : main.__Driver {
     public func addListener(
         queryKeys: Swift.String...,
@@ -71,16 +72,21 @@ extension main.Driver where Self : main.__Driver {
 extension main.Driver {
     typealias Listener = main._Driver_Listener
 }
+@_documentation(visibility: internal)
 extension main._Driver_Listener where Self : main.___Driver_Listener {
 }
 extension main._Driver_Listener {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.Driver, main.__Driver where Wrapped : main._Driver {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main._Driver_Listener, main.___Driver_Listener where Wrapped : main.__Driver_Listener {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Driver {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main.__Driver_Listener {
 }
 @_cdecl("BaseDriver_addInts__TypesOfArguments__Swift_Array_Swift_Int32__Vararg_____reverse_swift")
@@ -106,7 +112,7 @@ package func BaseDriver_addOptionalInts__TypesOfArguments__Swift_Array_Swift_Opt
 
 @_cdecl("Driver_addListener__TypesOfArguments__Swift_Array_Swift_String__Vararg__anyU20main__Driver_Listener____reverse_swift")
 package func Driver_addListener__TypesOfArguments__Swift_Array_Swift_String__Vararg__anyU20main__Driver_Listener____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ queryKeys: Any, _ listener: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Driver
-    let _result: Swift.Void = unsafeBitCast(_self.addListener, to: ((Swift.Array<Swift.String>, any main._Driver_Listener) -> Swift.Void).self)(queryKeys as! Swift.Array<Swift.String>, KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: listener) as! any main._Driver_Listener)
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: main.Driver.Type.self) as! any main.Driver
+    let _result: Swift.Void = unsafeBitCast(_self.addListener, to: ((Swift.Array<Swift.String>, any main._Driver_Listener) -> Swift.Void).self)(queryKeys as! Swift.Array<Swift.String>, KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: listener, conformsTo: main._Driver_Listener.Type.self) as! any main._Driver_Listener)
     return { _result; return true }()
 }

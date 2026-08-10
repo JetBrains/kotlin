@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.objcinterop.isKotlinObjCClass
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.getConstArgument
@@ -163,7 +165,7 @@ internal fun IrSimpleFunction.computeSymbolName(
     else {
         internalSymbolNameBuilder() ?: run {
             val containerName = parentClassOrNull?.fqNameForIrSerialization?.asString()
-                    ?: context.externalDeclarationFileNameProvider.getExternalDeclarationFileName(this@computeSymbolName)
+                ?: this@computeSymbolName.file.path
             computePrivateSymbolName(containerName)
         }
     }

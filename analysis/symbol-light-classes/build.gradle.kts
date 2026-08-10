@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
     id("common-configuration")
@@ -8,7 +10,7 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-data-manager")
-    id("test-inputs-check-v2")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -47,7 +49,9 @@ sourceSets {
 projectTests {
     testTask(
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
-    )
+    ) {
+        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
+    }
 
     testGenerator("org.jetbrains.kotlin.light.classes.symbol.TestGeneratorKt")
 

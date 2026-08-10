@@ -7,19 +7,22 @@ StringLiteral.class:
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=StringLiteral]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s1]
+          VALUE_PARAMETER[fqName=StringLiteral.s1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s1]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s2]
+          VALUE_PARAMETER[fqName=StringLiteral.s2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s2]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s3]
+          VALUE_PARAMETER[fqName=StringLiteral.s3, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s3]
+            MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -33,27 +36,6 @@ StringLiteral.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
-        PROPERTY[fqName=StringLiteral.s1, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s1]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=String]
-        PROPERTY[fqName=StringLiteral.s2, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s2]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=String]
-        PROPERTY[fqName=StringLiteral.s3, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s3]
-          MODIFIER_LIST[public final]
-          TYPE_REFERENCE
-            USER_TYPE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=kotlin]
-              REFERENCE_EXPRESSION[referencedName=String]
 
 
 StringLiteralKt.class:
@@ -71,7 +53,7 @@ StringLiteralKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
 
 
 WithStringConstant.class:
@@ -80,7 +62,7 @@ WithStringConstant.class:
     IMPORT_LIST
     CLASS[classId=/WithStringConstant, fqName=WithStringConstant, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringConstant, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=StringLiteral]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=StringLiteral]
           valueArguments: [
             s1 -> "some 1"
             s2 -> " 3"
@@ -90,6 +72,22 @@ WithStringConstant.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=StringLiteral]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=s1]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=some 1]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=s2]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text= 3]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=s3]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=str3]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithStringConstant]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -102,7 +100,7 @@ WithStringInterpolationPrefix.class:
     IMPORT_LIST
     CLASS[classId=/WithStringInterpolationPrefix, fqName=WithStringInterpolationPrefix, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringInterpolationPrefix, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=StringLiteral]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=StringLiteral]
           valueArguments: [
             s1 -> "0"
             s2 -> "0"
@@ -112,6 +110,22 @@ WithStringInterpolationPrefix.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=StringLiteral]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=s1]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=0]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=s2]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=0]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=s3]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=0]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithStringInterpolationPrefix]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -124,7 +138,7 @@ WithStringLiteral.class:
     IMPORT_LIST
     CLASS[classId=/WithStringLiteral, fqName=WithStringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringLiteral, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=StringLiteral]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=StringLiteral]
           valueArguments: [
             s1 -> "some"
             s2 -> ""
@@ -134,6 +148,21 @@ WithStringLiteral.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=StringLiteral]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=s1]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=some]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=s2]
+              STRING_TEMPLATE
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=s3]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=H0]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithStringLiteral]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -146,7 +175,7 @@ WithStringLiteralConcat.class:
     IMPORT_LIST
     CLASS[classId=/WithStringLiteralConcat, fqName=WithStringLiteralConcat, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringLiteralConcat, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=StringLiteral]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=StringLiteral]
           valueArguments: [
             s1 -> "some1"
             s2 -> "02"
@@ -156,6 +185,22 @@ WithStringLiteralConcat.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=StringLiteral]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=s1]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=some1]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=s2]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=02]
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=s3]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=03]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithStringLiteralConcat]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST

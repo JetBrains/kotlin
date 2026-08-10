@@ -318,21 +318,24 @@ private fun validateLifetime(argument: KotlinCompilerArgument) {
         var maxVersion = introducedVersion
 
         stabilizedVersion?.let {
-            require(it >= introducedVersion) { "stabilized version must be >= introduced version for '${argument.name}'" }
+            require(it >= introducedVersion) { "Stabilized version must be >= introduced version for '${argument.name}'" }
             maxVersion = it
         }
 
-        // It also might be a `KotlinVersion(maxVersion.major, maxVersion.minor, maxVersion.patch) <= KotlinVersion.CURRENT` check
-        // But it makes more sense to check it in runtime, see KT-87096 (TODO)
-
         deprecatedVersion?.let {
             // Actually, it should be strictly `>`, but we have some arguments that became deprecated right after becoming introduced/stabilized
-            require(it >= maxVersion) { "deprecated version must be >= introduced and stabilized versions for '${argument.name}'" }
+            require(it >= maxVersion) { "Deprecated version must be >= introduced and stabilized versions for '${argument.name}'" }
             maxVersion = it
         }
 
         removedVersion?.let {
-            require(it > maxVersion) { "removed version must be > introduced, stabilized, and deprecated versions for '${argument.name}'" }
+            require(it > maxVersion) { "Removed version must be > introduced, stabilized, and deprecated versions for '${argument.name}'" }
+            maxVersion = it
+        }
+
+        require(maxVersion.toKotlinVersion() <= kotlin.KotlinVersion.CURRENT) {
+            "Max version '{$maxVersion}' (introduced/stabilized/deprecated/removed) for '${argument.name}' cannot be in the future (must be <= current version). " +
+                    "Use the current version '${kotlin.KotlinVersion.CURRENT}' or postpone the change (create an issue and add a TODO comment that references that issue)."
         }
     }
 }

@@ -3,10 +3,10 @@ package samples.collections
 import samples.*
 import kotlin.test.*
 
-@RunWith(Enclosed::class)
 class Sequences {
 
-    class Building {
+    @Nested
+    inner class Building {
 
         @Sample
         fun generateSequence() {
@@ -177,7 +177,8 @@ class Sequences {
 
     }
 
-    class Usage {
+    @Nested
+    inner class Usage {
 
         @Sample
         fun sequenceOrEmpty() {
@@ -202,7 +203,8 @@ class Sequences {
         }
     }
 
-    class Transformations {
+    @Nested
+    inner class Transformations {
 
         @Sample
         fun takeWindows() {
@@ -290,7 +292,8 @@ class Sequences {
         }
     }
 
-    class Sorting {
+    @Nested
+    inner class Sorting {
         @Sample
         fun sortedBy() {
             class Dish(val name: String, val calories: Int, val tasteRate: Float) {

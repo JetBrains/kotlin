@@ -7,6 +7,7 @@ KtPackageDirective(51,63): 'package test'
 KtNameReferenceExpression(59,63): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test
@@ -36,6 +37,7 @@ KtUserType(89,90): 'C'
 KtNameReferenceExpression(89,90): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -62,6 +64,7 @@ KtUserType(106,107): 'C'
 KtNameReferenceExpression(106,107): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -94,6 +97,7 @@ KtUserType(131,132): 'C'
 KtNameReferenceExpression(131,132): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -114,6 +118,7 @@ KtUserType(139,142): 'Int'
 KtNameReferenceExpression(139,142): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -146,6 +151,7 @@ KtDotQualifiedExpression(172,180): 'TA.foo()'
 KtNameReferenceExpression(172,174): 'TA'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/TA
@@ -160,6 +166,7 @@ KtCallExpression(175,180): 'foo()'
 KtNameReferenceExpression(175,178): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/foo(<extension receiver>: test.C): kotlin.Unit
@@ -177,6 +184,7 @@ KtDotQualifiedExpression(185,192): 'TA.prop'
 KtNameReferenceExpression(185,187): 'TA'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/TA
@@ -185,6 +193,7 @@ KtNameReferenceExpression(185,187): 'TA'
 KtNameReferenceExpression(188,192): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.Int
@@ -199,6 +208,7 @@ KtCallableReferenceExpression(198,205): 'TA::foo'
 KtNameReferenceExpression(198,200): 'TA'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/TA
@@ -207,6 +217,7 @@ KtNameReferenceExpression(198,200): 'TA'
 KtNameReferenceExpression(202,205): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/foo(<extension receiver>: test.C): kotlin.Unit

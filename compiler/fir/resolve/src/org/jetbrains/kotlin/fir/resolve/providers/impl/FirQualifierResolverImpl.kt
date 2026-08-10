@@ -63,5 +63,5 @@ class FirQualifierResolverImpl(override val session: FirSession) : FirQualifierR
         return null
     }
 
-    private fun List<FirQualifierPart>.toFqName() = fold(FqName.ROOT) { a, b -> a.child(b.name) }
+    private fun List<FirQualifierPart>.toFqName(): FqName = fold(FqName.ROOT) { a, b -> a.child(b.name) }
 }

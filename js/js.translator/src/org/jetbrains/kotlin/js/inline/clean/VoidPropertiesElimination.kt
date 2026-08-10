@@ -18,23 +18,21 @@ package org.jetbrains.kotlin.js.inline.clean
 
 import org.jetbrains.kotlin.js.backend.ast.*
 
-// Replaces { a: 2, b: VOID, c: VOID } with { a: 2 }
-class VoidPropertiesElimination(private val root: JsBlock, private val voidName: JsName) {
-    private var changed = false
-
-    fun apply(): Boolean {
+/**
+ * Replaces `{ a: 2, b: VOID, c: VOID }` with `{ a: 2 }`
+ */
+internal class VoidPropertiesElimination(private val root: JsBlock, private val voidName: JsName) : FunctionPostProcessorStep() {
+    override fun apply() {
         val visitor = object : JsVisitorWithContextImpl() {
             override fun endVisit(x: JsPropertyInitializer.KeyValue, ctx: JsContext<JsNode>) {
                 super.endVisit(x, ctx)
                 if ((x.valueExpr as? JsNameRef)?.name === voidName) {
                     ctx.removeMe()
-                    changed = true
+                    hasChanges = true
                 }
             }
         }
 
         visitor.accept(root)
-
-        return changed
     }
 }

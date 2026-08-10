@@ -1,8 +1,8 @@
 KaKotlinPropertySymbol:
-  anchorPsi: KtProperty
+  anchorPsi: KtParameter
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -42,7 +42,7 @@ KaKotlinPropertySymbol:
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    anchorPsi: KtProperty
+    anchorPsi: KtParameter
     annotations: []
     callableId: null
     contextParameters: []
@@ -77,6 +77,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Anno
     getContainingModule: KaLibraryModule "Library library"
     deprecation: null
+    javaMethodName: value
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -97,9 +98,46 @@ KaKotlinPropertySymbol:
   modality: FINAL
   name: value
   origin: LIBRARY
-  primaryConstructorParameter: null
-  psi: KtProperty
-  realPsi: KtProperty
+  primaryConstructorParameter: KaValueParameterSymbol:
+    anchorPsi: KtParameter
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasDeclaredDefaultValue: false
+    hasDefaultValue: false
+    isActual: false
+    isCompanion: false
+    isCrossinline: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isImplicitLambdaParameter: false
+    isNoinline: false
+    isVal: true
+    isVararg: true
+    location: LOCAL
+    modality: FINAL
+    name: value
+    origin: LIBRARY
+    primaryConstructorProperty: KaKotlinPropertySymbol(one/Anno.value)
+    psi: KtParameter
+    realPsi: KtParameter
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    typeParameters: []
+    visibility: PUBLIC
+    getContainingFileSymbol: null
+    getContainingJvmClassName: one.Anno
+    getContainingModule: KaLibraryModule "Library library"
+    deprecation: null
+    importableFqName: null
+  psi: KtParameter
+  realPsi: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -116,7 +154,5 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: one.Anno
   getContainingModule: KaLibraryModule "Library library"
   deprecation: null
-  javaGetterName: getValue
-  javaSetterName: null
   isInline: false
   importableFqName: null

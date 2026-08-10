@@ -16,6 +16,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousObjectsKt]]
       CLASS_BODY
         PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=clickCount]
           MODIFIER_LIST[private]
+          INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
         FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mouseClicked]
           MODIFIER_LIST[override]
           VALUE_PARAMETER_LIST

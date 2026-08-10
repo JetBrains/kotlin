@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.konan.test.abi.AbstractNativeLibraryAbiReaderTest
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
-import org.jetbrains.kotlin.konan.test.blackbox.support.KLIB_IR_INLINER
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseDummyTestCaseGroupProvider
@@ -26,9 +25,7 @@ import org.jetbrains.kotlin.konan.test.headerklib.AbstractNativeHeaderKlibCompil
 import org.jetbrains.kotlin.konan.test.irText.AbstractLightTreeNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.irText.AbstractPsiNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.klib.AbstractKlibCrossCompilationIdentityTest
-import org.jetbrains.kotlin.konan.test.klib.AbstractKlibCrossCompilationIdentityWithPreSerializationLoweringTest
 import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializationTest
-import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializationWithInlinedFunInKlibTest
 import org.jetbrains.kotlin.konan.test.syntheticAccessors.AbstractNativeKlibSyntheticAccessorTest
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeLoadCompiledKotlinTest
 import org.jetbrains.kotlin.konan.test.headerMode.AbstractNativeCodegenBoxCoreHeaderModeTest
@@ -65,16 +62,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractLightTreeNativeDiagnosticsWithBackendTestBase>(
                 suiteTestClassName = "LightTreeNativeKlibDiagnosticsTestGenerated",
-                annotations = listOf(klib())
-            ) {
-                model("klibSerializationTests", excludedPattern = excludedCustomTestdataPattern)
-                // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
-                model("nativeTests", excludedPattern = excludedCustomTestdataPattern)
-                model("testsWithAnyBackend", excludedPattern = excludedCustomTestdataPattern)
-            }
-
-            testClass<AbstractNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase>(
-                suiteTestClassName = "NativeKlibDiagnosticsWithInlinedFunInKlibTestGenerated",
                 annotations = listOf(klib())
             ) {
                 model("klibSerializationTests", excludedPattern = excludedCustomTestdataPattern)
@@ -132,21 +119,7 @@ fun main(args: Array<String>) {
         }
 
         testGroup(testsRoot, "compiler/testData/codegen") {
-            testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "NativeCodegenBoxWithInlinedFunInKlibTestGenerated",
-                annotations = listOf(
-                    klibIrInliner(),
-                    provider<UseExtTestCaseGroupProvider>()
-                )
-            ) {
-                model("box", excludeDirs = k1BoxTestDir)
-                model("boxInline")
-            }
             testClass<AbstractNativeIrDeserializationTest> {
-                model("box", excludeDirs = k1BoxTestDir)
-                model("boxInline")
-            }
-            testClass<AbstractNativeIrDeserializationWithInlinedFunInKlibTest> {
                 model("box", excludeDirs = k1BoxTestDir)
                 model("boxInline")
             }
@@ -188,7 +161,6 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "NativeKlibSyntheticAccessorsBoxTestGenerated",
                 annotations = listOf(
-                    klibIrInliner(),
                     provider<UseExtTestCaseGroupProvider>(),
                 )
             ) {
@@ -201,7 +173,6 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeKlibSyntheticAccessorTest>(
                 annotations = listOf(
                     *klibSyntheticAccessors(),
-                    klibIrInliner(),
                 )
             ) {
                 model()
@@ -211,9 +182,6 @@ fun main(args: Array<String>) {
         // KLIB cross-compilation tests.
         testGroup(testsRoot, "native/native.tests/testData/klib/cross-compilation/identity") {
             testClass<AbstractKlibCrossCompilationIdentityTest> {
-                model()
-            }
-            testClass<AbstractKlibCrossCompilationIdentityWithPreSerializationLoweringTest> {
                 model()
             }
         }
@@ -234,7 +202,6 @@ fun main(args: Array<String>) {
 }
 
 private fun klib() = annotation(Tag::class.java, "klib")
-fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)
 
 fun klibSyntheticAccessors() = arrayOf(
     annotation(

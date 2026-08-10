@@ -16,20 +16,22 @@ import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_K2_RE
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
+import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.cli.plugins.extractPluginClasspathAndOptions
 import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
 import org.jetbrains.kotlin.cli.reportInfo
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.components.ClassLoadersCache
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.classloadersCache
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.ir.validation.IrValidationDiagnostics
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.graalvm.isGraalNativeImageRuntime
 import java.io.File
 
 /**
@@ -72,40 +74,32 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
     protected open fun provideCustomScriptingPluginOptions(arguments: A): List<String> = emptyList()
 
     private fun CompilerConfiguration.setupCommonConfiguration(input: ArgumentsPipelineArtifact<A>) {
-        (val arguments, val _ = services, val _ = rootDisposable, val _ = messageCollector, val performanceManager) = input
+        (val arguments, val services, val _ = rootDisposable, val _ = messageCollector, val performanceManager) = input
         perfManager = performanceManager
         printVersion = arguments.version
         // TODO(KT-73711): move script-related configuration to JVM CLI
         scriptMode = arguments.script
+        @Suppress("DEPRECATION")
         replMode = arguments.repl
         setupCommonArguments(arguments, ::createMetadataVersion)
         val paths = computeKotlinPaths(this, arguments)?.also {
             kotlinPaths = it
         }
-        loadCompilerPlugins(paths, input, this)
+        classloadersCache = services[ClassLoadersCache::class.java]
+        loadCompilerPlugins(paths, input, this, services[PluginsLoader::class.java])
     }
 
     private fun loadCompilerPlugins(
         paths: KotlinPaths?,
         input: ArgumentsPipelineArtifact<A>,
         configuration: CompilerConfiguration,
+        pluginsLoader: PluginsLoader?,
     ) {
         val arguments = input.arguments
         val pluginClasspaths = arguments.pluginClasspaths.toMutableList()
         val pluginOptions = arguments.pluginOptions.toMutableList()
         val pluginConfigurations = arguments.pluginConfigurations.asList()
         val pluginOrderConstraints = arguments.pluginOrderConstraints.asList()
-
-        if (isGraalNativeImageRuntime) {
-            PluginCliParser.loadBundledCompilerPlugins(
-                pluginConfigurations = pluginConfigurations,
-                pluginOptions = pluginOptions,
-                pluginClasspaths = pluginClasspaths,
-                pluginOrderConstraints = pluginOrderConstraints,
-                configuration = configuration,
-            )
-            return
-        }
 
         if (!checkPluginsArguments(configuration, useK2 = true, pluginClasspaths, pluginOptions, pluginConfigurations)) {
             return
@@ -148,7 +142,8 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
             pluginConfigurations,
             pluginOrderConstraints,
             configuration,
-            input.rootDisposable
+            input.rootDisposable,
+            pluginsLoader,
         )
     }
 

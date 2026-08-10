@@ -8,14 +8,14 @@ plugins {
     id("project-tests-convention")
 }
 
-val testCompilerClasspath by configurations.creating {
+val testCompilerClasspath = configurations.create("testCompilerClasspath") {
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
         attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
     }
 }
 
-val testCompilationClasspath by configurations.creating
+val testCompilationClasspath = configurations.create("testCompilationClasspath")
 
 dependencies {
     embedded(project(":compiler:cli-base")) { isTransitive = false }

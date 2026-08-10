@@ -82,6 +82,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: functionFromCompanion
   importableFqName: MyClass.Companion.functionFromCompanion
 
 KaNamedFunctionSymbol:
@@ -132,6 +133,7 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
   returnValueStatus: Unspecified
+  javaMethodName: staticFunctionFromCompanion
   importableFqName: MyClass.Companion.staticFunctionFromCompanion
 
 KaNamedClassSymbol:

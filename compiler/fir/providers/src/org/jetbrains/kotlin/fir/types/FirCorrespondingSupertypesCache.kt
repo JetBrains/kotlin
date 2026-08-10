@@ -18,6 +18,39 @@ import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
+/**
+ * A per-session cache of the *corresponding supertypes* of a class.
+ *
+ * For a given class, a corresponding supertype is a concrete instantiation of any supertype reachable through the class's inheritance
+ * hierarchy. The supertype is instantiated from the class's default type arguments, to be substituted in a separate step.
+ *
+ * For each class, the cache maps from each superclass's lookup tag to the corresponding supertype(s).
+ *
+ * Computing a corresponding supertype requires walking the supertype graph and substituting type arguments through the whole inheritance
+ * chain (e.g. `ArrayList<String>` has `Collection<String>` as its corresponding `Collection` supertype). This is expensive and happens very
+ * frequently during subtyping checks, so the graph walk is cached once per class (keyed by [ConeClassLikeLookupTag], computed on the
+ * class's default type). [getCorrespondingSupertypes] then only substitutes the queried type's actual arguments onto the cached result.
+ *
+ * #### Example
+ *
+ * Take the following classes:
+ *
+ * ```kotlin
+ * class B<S>
+ * class D<T>
+ * class C<U> : D<U>
+ * class A<X> : B<X>, C<List<X>>
+ * ```
+ *
+ * The cache maps `A`'s lookup tag to the corresponding supertypes computed from `A`'s default type `A<X>`:
+ *
+ * - `B` -> `B<X>`
+ * - `C` -> `C<List<X>>`
+ * - `D` -> `D<List<X>>`
+ *
+ * A query for the corresponding `D` supertype of `A<String>` then reuses the cached `D<List<X>>` and substitutes `X = String` to yield
+ * `D<List<String>>`.
+ */
 @ThreadSafeMutableState
 class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSessionComponent {
     private val cache =
@@ -80,7 +113,7 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
         }
 
         return resultingMap.also {
-            it.remove(subtypeLookupTag) // Just optimization: do not preserve mapping from MyClass to MyClas itself
+            it.remove(subtypeLookupTag) // Just optimization: do not preserve mapping from MyClass to MyClass itself
         }
     }
 

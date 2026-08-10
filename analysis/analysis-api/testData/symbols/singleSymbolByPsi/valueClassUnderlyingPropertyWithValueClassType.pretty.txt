@@ -1,0 +1,3 @@
+inner: Inner
+
+val inner: Inner

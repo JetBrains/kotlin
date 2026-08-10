@@ -185,27 +185,25 @@ fun refineScriptCompilationConfiguration(
         script,
         collectedData,
         knownVirtualFileSources,
-        ktFileSource,
         definition
     )
 }
 
 fun refineScriptCompilationConfiguration(
     compilationConfiguration: ScriptCompilationConfiguration,
-    script: SourceCode,
+    sourceCode: SourceCode,
     collectedData: ScriptCollectedData,
     knownVirtualFileSources: MutableMap<String, VirtualFileScriptSource>?,
-    ktFileSource: KtFileScriptSource,
     definition: ScriptDefinition,
 ): ResultWithDiagnostics<ScriptCompilationConfigurationWrapper> =
-    compilationConfiguration.refineOnAnnotations(script, collectedData)
+    compilationConfiguration.refineOnAnnotations(sourceCode, collectedData)
         .onSuccess {
-            it.refineBeforeCompiling(script, collectedData)
+            it.refineBeforeCompiling(sourceCode, collectedData)
         }.onSuccess {
             it.resolveImportsToVirtualFiles(knownVirtualFileSources)
         }.onSuccess {
             ScriptCompilationConfigurationWrapper(
-                ktFileSource,
+                sourceCode,
                 it.adjustByDefinition(definition)
             ).asSuccess()
         }

@@ -17,7 +17,9 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] lambda.kt
         public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int| = this@R|/Tuple|.R|/Tuple.x|, [ResolvedTo(BODY_RESOLVE)] y: R|kotlin/Int| = this@R|/Tuple|.R|/Tuple.y|): R|Tuple|
 
     }
-    public final inline [ResolvedTo(CONTRACTS)] fun use([ResolvedTo(CONTRACTS)] f: R|(Tuple) -> kotlin/Int|): <implicit> { LAZY_BLOCK }
+    public final inline [ResolvedTo(BODY_RESOLVE)] fun use([ResolvedTo(BODY_RESOLVE)] f: R|(Tuple) -> kotlin/Int|): R|kotlin/Int| {
+        ^use R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(R|/Tuple.Tuple|(Int(1), Int(2)))
+    }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Int| { LAZY_BLOCK }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun bar(): R|kotlin/Int| { LAZY_BLOCK }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] list: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| { LAZY_BLOCK }

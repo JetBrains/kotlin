@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
-import org.jetbrains.kotlin.backend.konan.serialization.ExternalDeclarationFileNameProvider
 import org.jetbrains.kotlin.backend.konan.serialization.ModuleDeserializerProvider
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionDeserializer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
@@ -85,10 +84,6 @@ internal class NativeBackendContext(
 
     val moduleDeserializerProvider by lazy {
         ModuleDeserializerProvider(config.libraryToCache, config.cachedLibraries, irLinker)
-    }
-
-    val externalDeclarationFileNameProvider by lazy {
-        ExternalDeclarationFileNameProvider(moduleDeserializerProvider)
     }
 
     private val inlineFunctionDeserializers = ConcurrentHashMap<KonanPartialModuleDeserializer, InlineFunctionDeserializer>()

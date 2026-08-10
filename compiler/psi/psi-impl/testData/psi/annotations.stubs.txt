@@ -59,6 +59,7 @@ FILE[kind=File[packageFqName=<root>]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=a]
             VALUE_ARGUMENT_LIST
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
       FUN[fqName=Annotations.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[protected]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
@@ -113,6 +114,7 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       FUN[fqName=Annotations.g, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=g]
         MODIFIER_LIST[public]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
@@ -145,6 +147,7 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
         PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
@@ -179,6 +182,7 @@ FILE[kind=File[packageFqName=<root>]]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=f]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
       CLASS[classId=/Annotations.Nested, fqName=Annotations.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
           MODIFIER_LIST[private]
@@ -311,6 +315,7 @@ FILE[kind=File[packageFqName=<root>]]
               REFERENCE_EXPRESSION[referencedName=String]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
+          NULL[kind=NULL, value=null]
       PROPERTY[fqName=Annotations.getterField, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=getterField]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
@@ -323,6 +328,7 @@ FILE[kind=File[packageFqName=<root>]]
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=Annotations.setterField, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=setterField]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
@@ -335,6 +341,7 @@ FILE[kind=File[packageFqName=<root>]]
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=Annotations.ownField, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ownField]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
@@ -347,6 +354,7 @@ FILE[kind=File[packageFqName=<root>]]
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=Annotations.setParam, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=setParam]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
@@ -359,6 +367,7 @@ FILE[kind=File[packageFqName=<root>]]
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+        NULL[kind=NULL, value=null]
       PROPERTY[fqName=Annotations.deleage, hasBackingField=null, hasDelegate=true, hasDelegateExpression=true, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=deleage]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]

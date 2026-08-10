@@ -281,13 +281,6 @@ interface KotlinHierarchyBuilder {
     fun withIosSimulatorArm64()
 
     /**
-     * Only includes Kotlin's Apple/watchosArm32 target in this [group].
-     *
-     * For more information, see [Native targets overview](https://kotlinlang.org/docs/native-target-support.html).
-     */
-    fun withWatchosArm32()
-
-    /**
      * Only includes Kotlin's Apple/watchosArm64 target in this [group].
      *
      * For more information, see [Native targets overview](https://kotlinlang.org/docs/native-target-support.html).

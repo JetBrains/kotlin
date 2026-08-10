@@ -16,31 +16,51 @@
 
 package org.jetbrains.kotlin.cli
 
-import com.intellij.openapi.util.SystemInfo
-import com.intellij.openapi.util.text.StringUtil
-import kotlinx.metadata.klib.KlibMetadataVersion
-import kotlinx.metadata.klib.KlibModuleMetadata
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.library.components.metadata
-import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertExists
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
-import org.junit.jupiter.api.Assertions.*
+import com.intellij.openapi.util.SystemInfo
+import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertNotNull
 import java.io.File
-import java.util.concurrent.TimeUnit
-import kotlin.metadata.isExpect
+import java.nio.file.Files
 
 class LauncherScriptTest : TestCaseWithTmpdir() {
+    private fun runProcess(
+        executableName: String,
+        vararg args: String,
+        checkStdout: (String) -> Unit,
+        checkStderr: (String) -> Unit,
+        expectedExitCode: Int,
+        workDirectory: File? = null,
+        environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
+        launcherFile: File? = null,
+    ) {
+        CliProcessUtils.runProcess(
+            executableName,
+            *args,
+            checkStdout = checkStdout,
+            checkStderr = checkStderr,
+            expectedExitCode = expectedExitCode,
+            workDirectory = workDirectory,
+            environment = environment,
+            testDataDirectory = testDataDirectory,
+            tmpdir = tmpdir,
+            launcherFile = launcherFile,
+        )
+    }
+
     private fun runProcess(
         executableName: String,
         vararg args: String,
@@ -49,56 +69,20 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         expectedExitCode: Int = 0,
         workDirectory: File? = null,
         environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
+        launcherFile: File? = null,
     ) {
-        val executableFileName = if (SystemInfo.isWindows) "$executableName.bat" else executableName
-        val launcherFile = File(PathUtil.kotlinPathsForDistDirectory.homePath, "bin/$executableFileName")
-        assertTrue(launcherFile.exists()) { "Launcher script not found, run dist task: ${launcherFile.absolutePath}" }
-
-        // For some reason, IntelliJ's ExecUtil screws quotes up on windows.
-        // So, use ProcessBuilder instead.
-        val pb = ProcessBuilder(
-            launcherFile.absolutePath,
-            // In cmd, `=` is delimiter, so we need to surround parameter with quotes.
-            *quoteIfNeeded(args)
+        CliProcessUtils.runProcess(
+            executableName,
+            *args,
+            expectedStdout = expectedStdout,
+            expectedStderr = expectedStderr,
+            expectedExitCode = expectedExitCode,
+            workDirectory = workDirectory,
+            environment = environment,
+            testDataDirectory = testDataDirectory,
+            tmpdir = tmpdir,
+            launcherFile = launcherFile,
         )
-        pb.environment().putAll(environment)
-        pb.directory(workDirectory)
-        val process = pb.start()
-        val stdout =
-            AbstractCliTest.getNormalizedCompilerOutput(
-                StringUtil.convertLineSeparators(process.inputStream.bufferedReader().use { it.readText() }),
-                null, testDataDirectory, tmpdir.absolutePath
-            )
-        val stderr =
-            AbstractCliTest.getNormalizedCompilerOutput(
-                StringUtil.convertLineSeparators(process.errorStream.bufferedReader().use { it.readText() }),
-                null, testDataDirectory, tmpdir.absolutePath
-            ).replace("Picked up [_A-Z]+:.*\n".toRegex(), "")
-                .replace("The system cannot find the file specified", "No such file or directory") // win -> unix
-        process.waitFor(10, TimeUnit.SECONDS)
-        val exitCode = process.exitValue()
-        try {
-            assertEquals(expectedStdout.trim(), stdout.trim())
-            assertEquals(expectedStderr.trim(), stderr.trim())
-            assertEquals(expectedExitCode, exitCode)
-        } catch (e: Throwable) {
-            System.err.println("exit code $exitCode")
-            System.err.println("=== STDOUT ===")
-            System.err.println(stdout)
-            System.err.println("=== STDERR ===")
-            System.err.println(stderr)
-            throw e
-        } finally {
-            process.destroy()
-        }
-    }
-
-    private fun quoteIfNeeded(args: Array<out String>): Array<String> {
-        @Suppress("UNCHECKED_CAST")
-        return if (SystemInfo.isWindows) args.map {
-            if (it.contains('=') || it.contains(" ") || it.contains(";") || it.contains(",")) "\"$it\"" else it
-        }.toTypedArray()
-        else args as Array<String>
     }
 
     private val testDataDirectory: String
@@ -124,16 +108,6 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             "kotlinc-jvm",
             "$testDataDirectory/helloWorld.kt",
             K2JVMCompilerArguments::destination.cliArgument, tmpdir.path
-        )
-    }
-
-    @Test
-    fun testKotlincJvmScriptWithClassPathFromSysProp() {
-        runProcess(
-            "kotlinc-jvm",
-            "-script",
-            "$testDataDirectory/classPathPropTest.kts",
-            expectedStdout = "kotlin-compiler.jar\n"
         )
     }
 
@@ -217,67 +191,6 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     }
 
     @Test
-    fun testRunnerExpression() {
-        runProcess(
-            "kotlinr",
-            "-e",
-            "val x = 2; (args + listOf(2,1).map { (it * x).toString() }).joinToString()",
-            "--",
-            "a",
-            "b",
-            expectedStdout = "a, b, 4, 2\n"
-        )
-    }
-
-    @Test
-    fun testRunnerExpressionK2() {
-        runProcess(
-            "kotlinr",
-            CommonCompilerArguments::languageVersion.cliArgument, LanguageVersion.FIRST_NON_DEPRECATED.versionString, "-e",
-            "println(args.joinToString())",
-            "-a",
-            "b",
-            expectedStdout = "-a, b\n",
-        )
-    }
-
-    @Test
-    fun testCommandlineProcessing() {
-        runProcess(
-            "kotlinr",
-            "-e",
-            "println(args.joinToString())",
-            "-a",
-            "b",
-            expectedStdout = "-a, b\n"
-        )
-        runProcess(
-            "kotlinr",
-            "-e",
-            "println(args.joinToString())",
-            "--",
-            "-e",
-            "b",
-            expectedStdout = "-e, b\n"
-        )
-        runProcess(
-            "kotlinr",
-            "$testDataDirectory/printargs.kts",
-            "-a",
-            "b",
-            expectedStdout = "-a, b\n"
-        )
-        runProcess(
-            "kotlinr",
-            "$testDataDirectory/printargs.kts",
-            "--",
-            "-a",
-            "b",
-            expectedStdout = "-a, b\n"
-        )
-    }
-
-    @Test
     fun testLegacyAssert() {
         kotlincInProcess(
             "$testDataDirectory/legacyAssertDisabled.kt",
@@ -299,96 +212,12 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     }
 
     @Test
-    fun testScriptWithXArguments() {
-        runProcess(
-            "kotlinr", K2JVMCompilerArguments::noInline.cliArgument, "$testDataDirectory/noInline.kts",
-            expectedExitCode = 3,
-            expectedStderr = """java.lang.IllegalAccessError: tried to access method kotlin.io.ConsoleKt.println(Ljava/lang/Object;)V from class NoInline
-	at NoInline.<init>(noInline.kts:1)
-"""
-        )
-        runProcess("kotlinr", "$testDataDirectory/noInline.kts", expectedStdout = "OK\n")
-    }
-
-    @Test
-    fun testNoStdLib() {
-        runProcess("kotlinr", "-e", "println(42)", expectedStdout = "42\n")
-        runProcess(
-            "kotlinr", "-no-stdlib", "-e", "println(42)",
-            expectedExitCode = 1,
-            expectedStderr = """
-                script.kts:1:1: error: unresolved reference 'println'.
-                println(42)
-                ^
-                """.trimIndent()
-        )
-    }
-
-    @Test
     fun testProperty() {
         kotlincInProcess("$testDataDirectory/property.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path)
 
         runProcess(
             "kotlinr", "PropertyKt", "-Dresult=OK",
             workDirectory = tmpdir, expectedStdout = "OK\n"
-        )
-    }
-
-    @Test
-    fun testHowToRunExpression() {
-        runProcess(
-            "kotlinr", "-howtorun", "jar", "-e", "println(args.joinToString())", "-a", "b",
-            expectedExitCode = 1, expectedStderr = "error: expression evaluation is not compatible with -howtorun argument jar\n"
-        )
-        runProcess(
-            "kotlinr", "-howtorun", "script", "-e", "println(args.joinToString())", "-a", "b",
-            expectedStdout = "-a, b\n"
-        )
-    }
-
-    @Test
-    fun testHowToRunScript() {
-        runProcess(
-            "kotlinr", "-howtorun", "classfile", "$testDataDirectory/printargs.kts", "--", "-a", "b",
-            expectedExitCode = 1, expectedStderr = "error: could not find or load main class \$TESTDATA_DIR\$/printargs.kts\n"
-        )
-        runProcess(
-            "kotlinr", "-howtorun", "script", "$testDataDirectory/printargs.kts", "--", "-a", "b",
-            expectedStdout = "-a, b\n"
-        )
-    }
-
-    @Test
-    fun testHowToRunCustomScript() {
-        runProcess(
-            "kotlinr", "$testDataDirectory/noInline.myscript",
-            expectedExitCode = 1, expectedStderr = "error: could not find or load main class \$TESTDATA_DIR\$/noInline.myscript\n"
-        )
-        runProcess(
-            "kotlinr", "-howtorun", "script", "$testDataDirectory/noInline.myscript",
-            expectedExitCode = 1,
-            expectedStderr = "error: unrecognized script type: noInline.myscript; Specify path to the script file as the first argument\n"
-        )
-        runProcess(
-            "kotlinr",
-            K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
-            "-howtorun",
-            ".kts",
-            "$testDataDirectory/noInline.myscript",
-            expectedExitCode = 1,
-            expectedStderr = """compiler/tests-integration/testData/launcher/noInline.myscript:1:7: error: unresolved reference 'CompilerOptions'.
-@file:CompilerOptions("-Xno-inline")
-      ^
-"""
-        )
-        runProcess(
-            "kotlinr", "-howtorun", ".main.kts",
-            "-P", "plugin:kotlin.scripting:disable-script-compilation-cache=true",
-            "$testDataDirectory/noInline.myscript",
-            expectedExitCode = 3,
-            expectedStderr = """java.lang.IllegalAccessError: tried to access method kotlin.io.ConsoleKt.println(Ljava/lang/Object;)V from class NoInline
-	at NoInline.<init>(noInline.myscript:3)
-"""
         )
     }
 
@@ -729,155 +558,67 @@ Caused by: java.lang.AssertionError: assert
     }
 
     @Test
-    fun testCommonFragmentsMetadataDestination() {
-        val metadataDir = compileSimpleCommonPlatformProject()
-
-        val library = KlibLoader { libraryPaths(metadataDir.resolve("common").absolutePath) }.load().librariesStdlibFirst.single()
-        val klibMetadata = library.metadata
-        val module = KlibModuleMetadata.readStrict(object : KlibModuleMetadata.MetadataLibraryProvider {
-            override val moduleHeaderData: ByteArray = klibMetadata.moduleHeaderData
-            override val metadataVersion: KlibMetadataVersion =
-                KlibMetadataVersion(library.versions.metadataVersion!!.toArray())
-
-            override fun packageMetadataParts(fqName: String): Set<String> =
-                klibMetadata.getPackageFragmentNames(fqName)
-
-            override fun packageMetadata(fqName: String, partName: String): ByteArray =
-                klibMetadata.getPackageFragment(fqName, partName)
-        })
-
-        val someClass = module.fragments.flatMap { it.classes }.singleOrNull { it.name == "Some" }
-        assertNotNull(someClass) { "Class 'Some' must be present in the common-fragments metadata" }
-        requireNotNull(someClass)
-        assertTrue(someClass.isExpect) { "Class 'Some' must be marked as expect" }
-        assertTrue(someClass.functions.any { it.name == "foo" })
-        assertFalse(someClass.functions.any { it.name == "bar" })
-    }
-
-    /*
-     * Ideally, the JVM KMP IC should be tested using IC test infrastructure, but
-     * until the BTA part is implemented, this test is the best effort of testing
-     * the compiler behavior
-     */
-    @Test
-    fun testDummyFragmentIncrementalClasspathTest() {
-        val metadataDir = compileSimpleCommonPlatformProject()
-        val newCommonKt = tmpdir.resolve("new-common.kt").apply {
-            writeText(
-                """
-                    fun test(x: Some) {
-                        x.foo() // should be visible
-                        x.bar() // should not be visible
-                        baz() // should be visible
-                    }
-                """.trimIndent()
-            )
+    fun testStackOverflowWithBigLimit() {
+        val code = buildString {
+            appendLine("class Foo() {")
+            append("    val i = ")
+            val pluses = (1..700).joinToString(separator = " + ") { "1" }
+            appendLine(pluses)
+            appendLine("}")
         }
-        val newClassesDir = tmpdir.resolve("new-classes")
+        val file = tmpdir.resolve("test.kt").also { it.writeText(code) }
         runProcess(
-            "kotlinc-jvm",
-            newCommonKt.absolutePath,
-            K2JVMCompilerArguments::destination.cliArgument, newClassesDir.absolutePath,
-            K2JVMCompilerArguments::multiPlatform.cliArgument,
-            K2JVMCompilerArguments::expectActualClasses.cliArgument,
-            K2JVMCompilerArguments::incrementalCompilation.cliArgument,
-            K2JVMCompilerArguments::useIcClasspathMetadata.cliArgument,
-            K2JVMCompilerArguments::fragments.cliArgument("common,platform"),
-            K2JVMCompilerArguments::fragmentSources.cliArgument("common:${newCommonKt.absolutePath}"),
-            K2JVMCompilerArguments::fragmentRefines.cliArgument("platform:common"),
-            K2JVMCompilerArguments::fragmentIncrementalClasspath.cliArgument("common:${metadataDir.resolve("common").absolutePath}"),
-
-            expectedExitCode = 1,
-            expectedStderr = $$"""
-                $TMP_DIR$/new-common.kt:3:7: error: unresolved reference 'bar' on receiver of type 'Some'.
-                    x.bar() // should not be visible
-                      ^^^
-            """.trimIndent()
-        )
-    }
-
-    /*
-     * Positive counterpart of [testDummyFragmentIncrementalClasspathTest]: with -Xuse-ic-classpath-metadata
-     * the new classpath-metadata IC symbol-provider path is used. Here the leaf `platform` fragment is recompiled
-     * incrementally against the previously produced common metadata (which supplies the `expect class Some`). Since
-     * the `common` fragment is provided as metadata on the incremental classpath rather than recompiled, the expect
-     * declaration resolves correctly and the `actual` platform code compiles successfully.
-     */
-    @Test
-    fun testFragmentIncrementalClasspathWithClasspathMetadata() {
-        val metadataDir = compileSimpleCommonPlatformProject()
-        val newPlatformKt = tmpdir.resolve("new-platform.kt").apply {
-            writeText(
-                """
-                    actual class Some {
-                        actual fun foo() {} // actualizes the expect `Some.foo` supplied by common metadata
-
-                        fun bar() {}
-                    }
-                """.trimIndent()
-            )
-        }
-        val newClassesDir = tmpdir.resolve("new-classes")
-        runProcess(
-            "kotlinc-jvm",
-            newPlatformKt.absolutePath,
-            K2JVMCompilerArguments::destination.cliArgument, newClassesDir.absolutePath,
-            K2JVMCompilerArguments::multiPlatform.cliArgument,
-            K2JVMCompilerArguments::expectActualClasses.cliArgument,
-            K2JVMCompilerArguments::incrementalCompilation.cliArgument,
-            K2JVMCompilerArguments::useIcClasspathMetadata.cliArgument,
-            K2JVMCompilerArguments::fragments.cliArgument("common,platform"),
-            K2JVMCompilerArguments::fragmentSources.cliArgument("platform:${newPlatformKt.absolutePath}"),
-            K2JVMCompilerArguments::fragmentRefines.cliArgument("platform:common"),
-            K2JVMCompilerArguments::fragmentIncrementalClasspath.cliArgument("common:${metadataDir.resolve("common").absolutePath}"),
-
-            expectedExitCode = 0,
-            expectedStdout = "",
-            expectedStderr = "",
+            "kotlinc", file.absolutePath,
+            expectedExitCode = 2,
+            checkStdout = { stdOut -> assertTrue(stdOut.isBlank()) },
+            checkStderr = { stdErr ->
+                assertFalse(stdErr.contains("java.lang.NoClassDefFoundError"))
+                assertTrue(stdErr.contains("java.lang.StackOverflowError"))
+            },
         )
     }
 
     /**
-     * @return metadata output directory
+     * A classpath entry containing a space must reach the compiler as a plain path, not percent-encoded.
+     *
+     * The runner keeps the classpath as a list of [java.net.URL]s, so a space becomes `%20`; if that encoding is not undone
+     * before the classpath is passed to the compiler, every affected entry is reported as a non-existent location.
      */
-    private fun compileSimpleCommonPlatformProject(): File {
-        val commonKt = tmpdir.resolve("common.kt").apply {
-            writeText(
-                """
-                    expect class Some {
-                        fun foo()
-                    }
-                    
-                    internal fun baz() {}
-                """.trimIndent()
-            )
-        }
-        val platformKt = tmpdir.resolve("platform.kt").apply {
-            writeText(
-                """
-                    actual class Some {
-                        actual fun foo() {}
-                        fun bar() {}
-                    }
-                """.trimIndent()
-            )
-        }
+    @Test
+    fun testClasspathEntryWithSpaces() {
+        val dirWithSpaces = tmpdir.resolve("dir with spaces")
+        kotlincInProcess(
+            "$testDataDirectory/helloWorld.kt",
+            K2JVMCompilerArguments::destination.cliArgument, dirWithSpaces.path
+        )
 
-        val classesDir = tmpdir.resolve("classes")
-        val metadataDir = tmpdir.resolve("common-metadata")
+        // `-e` goes through the compiler, unlike running a main class, which loads the classpath URLs directly.
+        runProcess(
+            "kotlinr",
+            K2JVMCompilerArguments::classpath.cliArgument, dirWithSpaces.path,
+            "-e", "test.main()",
+            expectedStdout = "Hello!\n",
+        )
+    }
+
+    /**
+     * `findKotlinHome` in the launcher script resolves symlinks by hand, and must not break if the path of the symlink
+     * itself contains a space.
+     */
+    @Test
+    fun testLauncherSymlinkedIntoDirectoryWithSpaces() {
+        assumeFalse(SystemInfo.isWindows, "The launcher is a bash script")
+
+        val symlink = tmpdir.resolve("dir with spaces").apply { mkdirs() }.resolve("kotlinc")
+        Files.createSymbolicLink(
+            symlink.toPath(),
+            File(PathUtil.kotlinPathsForDistDirectory.homePath, "bin/kotlinc").absoluteFile.toPath()
+        )
 
         runProcess(
-            "kotlinc-jvm",
-            commonKt.absolutePath,
-            platformKt.absolutePath,
-            K2JVMCompilerArguments::destination.cliArgument, classesDir.absolutePath,
-            K2JVMCompilerArguments::multiPlatform.cliArgument,
-            K2JVMCompilerArguments::expectActualClasses.cliArgument,
-            K2JVMCompilerArguments::fragments.cliArgument("common,platform"),
-            K2JVMCompilerArguments::fragmentSources.cliArgument("common:${commonKt.absolutePath},platform:${platformKt.absolutePath}"),
-            K2JVMCompilerArguments::fragmentRefines.cliArgument("platform:common"),
-            K2JVMCompilerArguments::commonFragmentsMetadataDestination.cliArgument(metadataDir.absolutePath),
+            "kotlinc", "$testDataDirectory/helloWorld.kt",
+            K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
+            launcherFile = symlink,
         )
-        return metadataDir
     }
 }
