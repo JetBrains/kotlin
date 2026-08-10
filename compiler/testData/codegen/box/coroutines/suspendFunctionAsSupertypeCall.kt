@@ -1,4 +1,8 @@
 // WITH_STDLIB
+// JS_STANDALONE
+// ^^^ a class whose supertype is a suspend function type loses its `invoke` override to K/JS DCE once it is
+// compiled into a library of a grouped batch rather than into the main module, which makes the minimized-names
+// run fail with "snu is not a function"
 
 import kotlin.coroutines.*
 

@@ -3,6 +3,7 @@
 // Disable test grouping as a workaround:
 // NATIVE_STANDALONE
 // WASM_STANDALONE
+// JS_STANDALONE
 
 // WITH_STDLIB
 

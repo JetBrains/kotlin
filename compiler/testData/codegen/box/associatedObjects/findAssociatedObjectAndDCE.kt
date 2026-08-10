@@ -1,5 +1,8 @@
 // DONT_TARGET_EXACT_BACKEND: JVM_IR
 // ^ @AssociatedObjectKey is not available in Kotlin/JVM
+// JS_STANDALONE
+// ^^^ @AssociatedObjectKey resolution reads the associated object off the module being generated,
+// which crashes the JS codegen when the annotated class comes from a library of a grouped batch
 
 // WITH_STDLIB
 

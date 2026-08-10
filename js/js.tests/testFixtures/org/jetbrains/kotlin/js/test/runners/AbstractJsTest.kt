@@ -24,6 +24,11 @@ import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.setupIrTextDumpHandlers
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilderBase
+import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.builders.configureJsArtifactsHandlersStep
+import org.jetbrains.kotlin.test.builders.configureLoweredIrHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE_DIFFERENCE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_SPLITTING
@@ -35,7 +40,6 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
-import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgConsistencyHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
@@ -101,77 +105,8 @@ abstract class AbstractLightTreeJsBoxTest : AbstractJsTest(
     parser = FirParser.LightTree,
 )
 
-abstract class AbstractJsCodegenBoxTestBase(
-    pathToTestDir: String = "compiler/testData/codegen/box/",
-    testGroupOutputDirPrefix: String,
-) : AbstractJsTest(pathToTestDir, testGroupOutputDirPrefix) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureFirHandlersStep {
-            commonFirHandlersForCodegenTest()
-        }
-
-        builder.useFailureSuppressors(
-            ::FirMetaInfoDiffSuppressor
-        )
-
-        builder.configureIrHandlersStep {
-            commonIrHandlersForCodegenTest()
-        }
-
-        // TODO KT-87965: Move it to setupCommonHandlersForJsTest() to fully turn or IR Inliner checks in all testrunners, inlcluding TS export
-        builder.configureKlibArtifactsHandlersStep {
-            useHandlers(::KlibAbiDumpAfterInliningVerifyingHandler)
-        }
-    }
-}
-
-abstract class AbstractJsCodegenBoxTest : AbstractJsCodegenBoxTestBase(
-    pathToTestDir = "compiler/testData/codegen/",
-    testGroupOutputDirPrefix = "codegen/box/"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureLoweredIrDumpHandlers()
-    }
-}
-
-abstract class AbstractJsKlibSyntheticAccessorsBoxTest : AbstractJsCodegenBoxTestBase(
-    pathToTestDir = "compiler/testData/klib/syntheticAccessors/",
-    testGroupOutputDirPrefix = "klib/syntheticAccessors/"
-)
-
-
-abstract class AbstractJsCodegenSplittingTest(
-    pathToTestDir: String = "compiler/testData/codegen/",
-    testGroupOutputDirPrefix: String = "codegen/boxInlineSplitted/",
-) : AbstractJsCodegenBoxTestBase(pathToTestDir, testGroupOutputDirPrefix) {
-    override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
-        get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        @OptIn(TestInfrastructureInternals::class)
-        builder.useModuleStructureTransformers(
-            ::SplittingModuleTransformerForBoxTests
-        )
-        builder.useMetaTestConfigurators(::SplittingTestConfigurator)
-        builder.configureIrHandlersStep {
-            useHandlers(
-                { testServices, artifactKind ->
-                    IrTextDumpHandler(
-                        testServices = testServices,
-                        artifactKind = artifactKind,
-                        customExtension = "splitted.ir",
-                        directive = DUMP_IR_AFTER_SPLITTING,
-                        directiveForIrDifference = DUMP_IR_AFTER_SPLITTING_DIFFERENCE,
-                        showOffsets = true,
-                    )
-                },
-            )
-        }
-    }
-}
+// The JS codegen box tests (`AbstractJsCodegenBoxTestBase` and its subclasses) live in `AbstractJsCodegenBoxTest.kt`:
+// they are executed by the two-stage grouping test engine and therefore do not extend `AbstractJsTest`.
 
 abstract class AbstractJsLineNumberTest(
     testGroupOutputDirPrefix: String = "lineNumbers/"
@@ -256,7 +191,12 @@ abstract class AbstractJsCodegenWasmJsInteropTest(
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 )
 
-fun TestConfigurationBuilder.setUpDefaultDirectivesForJsBoxTest(parser: FirParser) {
+/**
+ * On a base builder, so that the two-stage grouping configuration of [AbstractJsCodegenBoxTestBase] can apply these
+ * directives to both of its builders: the grouping stage compiles and runs the batch under the very same settings the
+ * non-grouping stage compiled its tests with.
+ */
+fun TestConfigurationBuilderBase<*, *>.setUpDefaultDirectivesForJsBoxTest(parser: FirParser) {
     defaultDirectives {
         val runIc = getBoolean("kotlin.js.ir.icMode")
         if (runIc) +JsEnvironmentConfigurationDirectives.RUN_IC
