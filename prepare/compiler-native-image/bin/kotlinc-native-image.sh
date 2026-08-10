@@ -29,4 +29,5 @@ fi
 exec "${KOTLINC_BINARY_DIR}/${KOTLINC_BINARY_NAME}" \
   -Djava.home="${JAVA_HOME}" \
   -Dkotlin.home="${KOTLINC_HOME_DIR}" \
+  -Xdisable-default-scripting-plugin \
   "$@"

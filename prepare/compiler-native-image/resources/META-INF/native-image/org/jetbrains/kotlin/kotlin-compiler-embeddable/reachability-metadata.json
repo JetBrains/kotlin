@@ -528,6 +528,37 @@
       "type": "org.jetbrains.kotlin.com.intellij.util.QueryExecutor"
     },
     {
+      "type": "org.jetbrains.kotlin.com.intellij.util.containers.ConcurrentLongObjectHashMap",
+      "fields": [
+        {
+          "name": "baseCount"
+        },
+        {
+          "name": "cellsBusy"
+        },
+        {
+          "name": "sizeCtl"
+        },
+        {
+          "name": "transferIndex"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.com.intellij.util.containers.LockFreeCopyOnWriteArrayList",
+      "fields": [
+        {
+          "name": "array"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension[]"
+    },
+    {
       "type": "org.jetbrains.kotlin.extensions.CompilerConfigurationExtension"
     },
     {
@@ -544,6 +575,12 @@
     },
     {
       "type": "org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension[]"
     },
     {
       "type": "org.jetbrains.kotlin.extensions.StorageComponentContainerContributor"
@@ -868,6 +905,18 @@
     },
     {
       "type": "org.jetbrains.kotlin.psi.KtObjectDeclaration[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtObjectLiteralExpression"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtObjectLiteralExpression[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtOperationReferenceExpression"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtOperationReferenceExpression[]"
     },
     {
       "type": "org.jetbrains.kotlin.psi.KtPackageDirective"
@@ -1337,6 +1386,12 @@
     },
     {
       "type": "org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension[]"
     },
     {
       "type": "org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension"
