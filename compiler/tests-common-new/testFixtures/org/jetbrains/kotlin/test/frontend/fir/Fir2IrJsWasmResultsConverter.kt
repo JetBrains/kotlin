@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.js.config.incrementalDataProvider
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
-import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JsIrAfterFrontendBackendInput
 import org.jetbrains.kotlin.test.backend.ir.WasmAfterFrontendBackendInput
@@ -55,9 +53,6 @@ internal abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices)
     override fun createSpecialAnnotationsProvider(): ((IrModuleFragment) -> IrSpecialAnnotationsProvider)? = null
     override fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor> =
         { emptyList() }
-
-    override val klibFactories: KlibMetadataFactories
-        get() = JsFactories
 
     override fun createFir2IrConfiguration(
         compilerConfiguration: CompilerConfiguration,
