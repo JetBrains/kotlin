@@ -43,7 +43,7 @@ internal abstract class CompilerDiagnosticsProblemsReporterG86 @Inject construct
     }
 
     class Factory : CompilerDiagnosticsProblemsReporter.Factory {
-        override fun getInstance(objects: ObjectFactory): CompilerDiagnosticsProblemsReporter {
+        override fun getInstance(objects: ObjectFactory, taskPath: String): CompilerDiagnosticsProblemsReporter {
             return objects.newInstance<CompilerDiagnosticsProblemsReporterG86>()
         }
     }

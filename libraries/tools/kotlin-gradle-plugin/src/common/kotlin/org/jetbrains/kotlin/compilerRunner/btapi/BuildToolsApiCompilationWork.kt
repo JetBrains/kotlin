@@ -75,7 +75,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         get() = workArguments.taskPath
 
     private val compilerDiagnosticsProblemsReporter: CompilerDiagnosticsProblemsReporter
-        get() = parameters.compilerDiagnosticsProblemsReporterFactory.get().getInstance(objects)
+        get() = parameters.compilerDiagnosticsProblemsReporterFactory.get().getInstance(objects, taskPath)
 
     private val metrics = if (workArguments.reportingSettings.buildReportOutputs.isNotEmpty()) {
         BuildMetricsReporterImpl()

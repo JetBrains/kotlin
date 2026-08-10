@@ -21,7 +21,7 @@ internal abstract class CompilerDiagnosticsProblemsReporterG85 : CompilerDiagnos
     }
 
     class Factory : CompilerDiagnosticsProblemsReporter.Factory {
-        override fun getInstance(objects: ObjectFactory): CompilerDiagnosticsProblemsReporter {
+        override fun getInstance(objects: ObjectFactory, taskPath: String): CompilerDiagnosticsProblemsReporter {
             return objects.newInstance<CompilerDiagnosticsProblemsReporterG85>()
         }
     }

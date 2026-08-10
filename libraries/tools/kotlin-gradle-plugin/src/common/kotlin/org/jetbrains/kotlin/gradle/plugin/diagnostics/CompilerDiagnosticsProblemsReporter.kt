@@ -26,7 +26,11 @@ internal interface CompilerDiagnosticsProblemsReporter {
     )
 
     interface Factory : VariantImplementationFactories.VariantImplementationFactory {
-        fun getInstance(objects: ObjectFactory): CompilerDiagnosticsProblemsReporter
+        /**
+         * @param taskPath path of the task being reported for; used by variants that have to keep otherwise identical
+         * diagnostics apart, see `CompilerDiagnosticTaskData` in the `gradle813` variant.
+         */
+        fun getInstance(objects: ObjectFactory, taskPath: String): CompilerDiagnosticsProblemsReporter
     }
 }
 
@@ -51,6 +55,9 @@ internal abstract class DefaultCompilerDiagnosticsProblemsReporter @Inject const
         fun ProblemSpec.populateSpec() = contextualLabel(severity.toDisplayName())
             .details(message)
             .applySourceLocation(location)
+            // Attaching any typed additional data also defeats Gradle's content-hash deduplication of problems:
+            // `DefaultTypedAdditionalData` hashes a `SerializedPayload`, which has no `hashCode`. That is why identical
+            // diagnostics from different tasks survive here without the `CompilerDiagnosticTaskData` trick of `gradle813`.
             .additionalData(KotlinCompilerDiagnosticAdditionalData::class.java) { data ->
                 data.severity.value(severity).finalizeValue()
             }
@@ -74,7 +81,7 @@ internal abstract class DefaultCompilerDiagnosticsProblemsReporter @Inject const
     }
 
     class Factory : CompilerDiagnosticsProblemsReporter.Factory {
-        override fun getInstance(objects: ObjectFactory): CompilerDiagnosticsProblemsReporter {
+        override fun getInstance(objects: ObjectFactory, taskPath: String): CompilerDiagnosticsProblemsReporter {
             return objects.newInstance<DefaultCompilerDiagnosticsProblemsReporter>()
         }
     }
@@ -90,7 +97,7 @@ internal abstract class NoOpCompilerDiagnosticsProblemsReporter : CompilerDiagno
     }
 
     class Factory : CompilerDiagnosticsProblemsReporter.Factory {
-        override fun getInstance(objects: ObjectFactory): CompilerDiagnosticsProblemsReporter {
+        override fun getInstance(objects: ObjectFactory, taskPath: String): CompilerDiagnosticsProblemsReporter {
             return objects.newInstance<NoOpCompilerDiagnosticsProblemsReporter>()
         }
     }

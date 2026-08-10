@@ -49,7 +49,7 @@ internal abstract class CompilerDiagnosticsProblemsReporterG88 @Inject construct
     private fun problemGroup(group: DiagnosticGroup): ProblemGroup = KgpProblemGroup(group)
 
     class Factory : CompilerDiagnosticsProblemsReporter.Factory {
-        override fun getInstance(objects: ObjectFactory): CompilerDiagnosticsProblemsReporter {
+        override fun getInstance(objects: ObjectFactory, taskPath: String): CompilerDiagnosticsProblemsReporter {
             return objects.newInstance<CompilerDiagnosticsProblemsReporterG88>()
         }
     }
