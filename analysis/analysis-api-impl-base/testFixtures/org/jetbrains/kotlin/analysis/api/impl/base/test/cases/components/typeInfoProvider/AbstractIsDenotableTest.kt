@@ -57,20 +57,7 @@ abstract class AbstractIsDenotableTest : AbstractAnalysisApiBasedTest() {
                             return
                         }
 
-                        val parent = expression.parentOfType<KtQualifiedExpression>()
-                        // Try locating the containing PSI that is a receiver of a qualified expression because the smart cast information
-                        // is only available at that level for FE1.0. For example, consider
-                        // ```
-                        // if (a is String) {
-                        //   (@Denotable("...") a).length
-                        // }
-                        // ```
-                        // smart cast is available for `(@Denotable("...") a)` and not for `a` or `@Denotable("...") a`.
-                        val ktType = if (parent != null && deparenthesize(parent.receiverExpression) == deparenthesize(base)) {
-                            parent.receiverExpression.expressionType
-                        } else {
-                            expression.expressionType
-                        }
+                        val ktType = expression.expressionType
                         val actualHasDenotableType = ktType?.isDenotable ?: error("${base.text} does not have a type.")
                         when (actualHasDenotableType) {
                             true -> append("@Denotable")

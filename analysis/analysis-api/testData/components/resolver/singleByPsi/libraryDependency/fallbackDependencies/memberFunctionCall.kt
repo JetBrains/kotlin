@@ -1,5 +1,3 @@
-// FE10 expects tests to have at least one source module.
-
 // MODULE: library
 // MODULE_KIND: LibraryBinary
 // FILE: Bar.kt

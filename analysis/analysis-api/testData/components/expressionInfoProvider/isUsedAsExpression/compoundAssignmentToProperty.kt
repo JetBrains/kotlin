@@ -15,6 +15,3 @@ fun main() {
     <expr>c.property -= 20</expr>
     println(C().property)
 }
-
-// FE1.0 `isUsedAsExpression` considers built-in postfix inc/dec and
-// compound assignments as used, always.
