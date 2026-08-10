@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCheckers
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
@@ -38,8 +37,10 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isJsStdlib
 import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name.special
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFir2IrPipelineArtifact>(
@@ -83,10 +84,18 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFi
 
             val moduleName = special("<${resolvedLibrary.uniqueName}>")
             val moduleOrigin = DeserializedKlibModuleOrigin(resolvedLibrary)
-            val moduleDescriptor = if (builtInsModule != null)
-                JsFactories.DefaultDescriptorFactory.createDescriptor(moduleName, storageManager, builtInsModule, moduleOrigin)
-            else
-                JsFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(moduleName, storageManager, moduleOrigin)
+            val builtInsToUse = builtInsModule ?: object : KotlinBuiltIns(storageManager) {}
+            val moduleDescriptor = ModuleDescriptorImpl(
+                moduleName,
+                storageManager,
+                builtInsToUse,
+                capabilities = mapOf(KlibModuleOrigin.CAPABILITY to moduleOrigin),
+                platform = JsPlatforms.defaultJsPlatform
+            )
+
+            if (builtInsModule == null) {
+                builtInsToUse.builtInsModule = moduleDescriptor
+            }
 
             dependencies += moduleDescriptor
             moduleDescriptor.setDependencies(ArrayList(dependencies))

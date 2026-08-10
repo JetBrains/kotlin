@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 
 interface KlibMetadataModuleDescriptorFactory {
 
-    val descriptorFactory: KlibModuleDescriptorFactory
+    val createBuiltIns: (StorageManager) -> KotlinBuiltIns
 
     @OptIn(K1Deprecation::class)
     val flexibleTypeDeserializer: FlexibleTypeDeserializer

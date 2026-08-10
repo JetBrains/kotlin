@@ -21,21 +21,24 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.library.metadata.*
-import org.jetbrains.kotlin.library.metadata.KlibMetadataCachedPackageFragment
+import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class KlibMetadataModuleDescriptorFactoryImpl(
-    override val descriptorFactory: KlibModuleDescriptorFactory,
+    override val createBuiltIns: (StorageManager) -> KotlinBuiltIns,
     @OptIn(K1Deprecation::class)
     override val flexibleTypeDeserializer: FlexibleTypeDeserializer,
     val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
@@ -52,11 +55,23 @@ class KlibMetadataModuleDescriptorFactoryImpl(
 
         val moduleName = Name.special("<${library.uniqueName}>")
         val moduleOrigin = DeserializedKlibModuleOrigin(library)
+        val builtInsToUse = builtIns ?: createBuiltIns(storageManager)
 
-        val moduleDescriptor = if (builtIns != null)
-            descriptorFactory.createDescriptor(moduleName, storageManager, builtIns, moduleOrigin)
-        else
-            descriptorFactory.createDescriptorAndNewBuiltIns(moduleName, storageManager, moduleOrigin)
+        val moduleDescriptor = ModuleDescriptorImpl(
+            moduleName,
+            storageManager,
+            builtInsToUse,
+            capabilities = mapOf(
+                KlibModuleOrigin.CAPABILITY to moduleOrigin,
+                @OptIn(K1Deprecation::class)
+                ImplicitIntegerCoercion.MODULE_CAPABILITY to moduleOrigin.isCInteropLibrary()
+            ),
+            platform = NativePlatforms.unspecifiedNativePlatform
+        )
+
+        if (builtIns == null) {
+            builtInsToUse.builtInsModule = moduleDescriptor
+        }
 
         val provider = createPackageFragmentProvider(
             library = library,

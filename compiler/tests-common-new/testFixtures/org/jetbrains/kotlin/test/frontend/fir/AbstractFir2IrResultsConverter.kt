@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
 import org.jetbrains.kotlin.backend.common.actualizer.IrExtraActualDeclarationExtractor
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -30,8 +31,12 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
+import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name.special
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -95,6 +100,7 @@ abstract class AbstractFir2IrResultsConverter(
         val libraries: List<KotlinLibrary> = resolveLibraries(module, compilerConfiguration)
         val [dependencies: List<ModuleDescriptor>, builtIns: KotlinBuiltIns?] = loadModuleDescriptors(
             libraries,
+            testServices.targetPlatformProvider.getTargetPlatform(module),
             testServices
         )
 
@@ -146,6 +152,7 @@ abstract class AbstractFir2IrResultsConverter(
 
     private fun loadModuleDescriptors(
         libraries: List<KotlinLibrary>,
+        targetPlatform: TargetPlatform,
         testServices: TestServices
     ): Pair<List<ModuleDescriptor>, KotlinBuiltIns?> {
         val stdlib: KotlinLibrary? = libraries.firstOrNull { it.isAnyPlatformStdlib }
@@ -160,10 +167,23 @@ abstract class AbstractFir2IrResultsConverter(
 
                 val moduleName = special("<${library.uniqueName}>")
                 val moduleOrigin = DeserializedKlibModuleOrigin(library)
-                val moduleDescriptor = if (builtIns != null)
-                    klibFactories.DefaultDescriptorFactory.createDescriptor(moduleName, storageManager, builtIns!!, moduleOrigin)
-                else
-                    klibFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(moduleName, storageManager, moduleOrigin)
+                val builtInsToUse = builtIns ?: object : KotlinBuiltIns(storageManager) {}
+                val moduleDescriptor = ModuleDescriptorImpl(
+                    moduleName,
+                    storageManager,
+                    builtInsToUse,
+                    capabilities = mapOf(
+                        KlibModuleOrigin.CAPABILITY to moduleOrigin,
+                        @OptIn(K1Deprecation::class)
+                        ImplicitIntegerCoercion.MODULE_CAPABILITY to moduleOrigin.isCInteropLibrary()
+                    ),
+                    platform = targetPlatform
+                )
+
+                if (builtIns == null) {
+                    builtInsToUse.builtInsModule = moduleDescriptor
+                }
+
                 dependencies += moduleDescriptor
                 moduleDescriptor.setDependencies(dependencies.toList())
 

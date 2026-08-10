@@ -18,12 +18,16 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
@@ -160,10 +164,27 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         moduleOrigin: KlibModuleOrigin
-    ): ModuleDescriptorImpl = if (builtIns != null)
-        moduleDescriptorFactory.descriptorFactory.createDescriptor(name, storageManager, builtIns, moduleOrigin)
-    else
-        moduleDescriptorFactory.descriptorFactory.createDescriptorAndNewBuiltIns(name, storageManager, moduleOrigin)
+    ): ModuleDescriptorImpl {
+        val builtInsToUse = builtIns ?: moduleDescriptorFactory.createBuiltIns(storageManager)
+        val moduleDescriptor = ModuleDescriptorImpl(
+            name,
+            storageManager,
+            builtInsToUse,
+            capabilities = mapOf(
+                KlibModuleOrigin.CAPABILITY to moduleOrigin,
+                @OptIn(K1Deprecation::class)
+                ImplicitIntegerCoercion.MODULE_CAPABILITY to moduleOrigin.isCInteropLibrary()
+            ),
+            // TODO: don't use hardcoded platform; it should be supplied as a parameter
+            platform = NativePlatforms.unspecifiedNativePlatform
+        )
+
+        if (builtIns == null) {
+            builtInsToUse.builtInsModule = moduleDescriptor
+        }
+
+        return moduleDescriptor
+    }
 
     private fun createDescriptorOptionalBuiltsIns(
         library: KotlinLibrary,

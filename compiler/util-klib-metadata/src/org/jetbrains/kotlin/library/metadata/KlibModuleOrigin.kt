@@ -24,7 +24,7 @@ object CurrentKlibModuleOrigin : CompiledKlibModuleOrigin()
 
 object SyntheticModulesOrigin : KlibModuleOrigin()
 
-internal fun KlibModuleOrigin.isCInteropLibrary(): Boolean = when (this) {
+fun KlibModuleOrigin.isCInteropLibrary(): Boolean = when (this) {
     is DeserializedKlibModuleOrigin -> this.library.isCInteropLibrary()
     CurrentKlibModuleOrigin, SyntheticModulesOrigin -> false
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendContext
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
@@ -16,15 +17,14 @@ import org.jetbrains.kotlin.context.MutableModuleContextImpl
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
-import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
+import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 
 @OptIn(K1Deprecation::class)
@@ -38,8 +38,19 @@ internal object TopDownAnalyzerFacadeForKonan {
 
         val projectContext = ProjectContext(config.project, "TopDownAnalyzer for Konan")
 
-        val module = nativeFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(
-                moduleName, projectContext.storageManager, origin = CurrentKlibModuleOrigin)
+        val builtIns = KonanBuiltIns(projectContext.storageManager)
+        val module = ModuleDescriptorImpl(
+                moduleName,
+                projectContext.storageManager,
+                builtIns,
+                capabilities = mapOf(
+                        KlibModuleOrigin.CAPABILITY to CurrentKlibModuleOrigin,
+                        @OptIn(K1Deprecation::class)
+                        ImplicitIntegerCoercion.MODULE_CAPABILITY to CurrentKlibModuleOrigin.isCInteropLibrary()
+                ),
+                platform = NativePlatforms.unspecifiedNativePlatform
+        )
+        builtIns.builtInsModule = module
         val moduleContext = MutableModuleContextImpl(module, projectContext)
 
         val resolvedModuleDescriptors = nativeFactories.DefaultResolvedDescriptorsFactory.createResolved2(
