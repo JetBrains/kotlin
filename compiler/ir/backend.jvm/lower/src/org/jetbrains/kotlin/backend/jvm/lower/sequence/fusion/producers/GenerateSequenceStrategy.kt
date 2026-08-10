@@ -12,10 +12,8 @@ import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceData
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceReplacement
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceSource
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.callPredicate
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irBreak
-import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irIfThen
 import org.jetbrains.kotlin.ir.builders.irNotEquals
@@ -28,18 +26,8 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
-
-internal fun IrBuilderWithScope.irAsNotNull(expression: IrExpression): IrExpression {
-    val type = expression.type.makeNotNull()
-    return irCall(context.irBuiltIns.checkNotNullSymbol, type).apply {
-        typeArguments[0] = type
-        arguments.assignFrom(listOf(expression))
-    }
-}
 
 internal class GenerateSequenceStrategy(
     val source: SequenceSource.GenerateSequence
