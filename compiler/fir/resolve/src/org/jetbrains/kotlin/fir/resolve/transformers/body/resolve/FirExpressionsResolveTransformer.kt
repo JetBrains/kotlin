@@ -444,8 +444,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         qualifiedErrorAccessExpression: FirQualifiedErrorAccessExpression,
         data: ResolutionMode,
     ): FirStatement {
-        qualifiedErrorAccessExpression.transformAnnotations(this, data)
-        qualifiedErrorAccessExpression.transformSelector(this, data)
+        qualifiedErrorAccessExpression.transformAnnotations(this, ContextIndependent)
+        qualifiedErrorAccessExpression.transformSelector(this, ContextIndependent)
         qualifiedErrorAccessExpression.replaceReceiver(
             qualifiedErrorAccessExpression.receiver.transformAsExplicitReceiver(
                 ResolutionMode.ReceiverResolution,

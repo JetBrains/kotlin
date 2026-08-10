@@ -4,7 +4,7 @@
 fun test(x: Any, cond: Boolean) {
     run {
         if (cond) return@run
-        x. { "" }
+        x. <!ILLEGAL_SELECTOR!>{ "" }<!>
     }
 }
 
