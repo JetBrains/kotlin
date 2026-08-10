@@ -42,10 +42,8 @@ typealias TA = String
 
 val logOnAnonymousObject = <!ANNOTATION_HAS_NO_EFFECT!>@Log<!> object {} // Companion objects are disallowed inside anonymous objects, `Annotations are not allowed here` in Java
 
-// TODO KT-88407: 'ANNOTATION_HAS_NO_EFFECT' should be reported here as well. Nothing is, because the
-//  annotation stays on the expression and the plugin's checker only visits declarations.
-val logOnLiteral = @Log 1
-val logOnCall = @Log func()
+val logOnLiteral = <!ANNOTATION_HAS_NO_EFFECT!>@Log<!> 1
+val logOnCall = <!ANNOTATION_HAS_NO_EFFECT!>@Log<!> func()
 
 fun check() {
     <!ANNOTATION_HAS_NO_EFFECT!>@Log<!> // Companion objects are disallowed inside local classes
