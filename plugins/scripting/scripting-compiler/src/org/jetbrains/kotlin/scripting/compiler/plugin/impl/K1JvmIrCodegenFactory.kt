@@ -271,7 +271,7 @@ private class DescriptorMetadataSerializer(
         }
     }
 
-    override fun serialize(metadata: MetadataSource, containingFile: MetadataSource.File?): Pair<MessageLite, JvmStringTable>? {
+    override fun serialize(metadata: MetadataSource): Pair<MessageLite, JvmStringTable>? {
         val localDelegatedProperties = irClass.localDelegatedProperties
         if (localDelegatedProperties != null && localDelegatedProperties.isNotEmpty()) {
             serializerExtension.localDelegatedProperties.put(
