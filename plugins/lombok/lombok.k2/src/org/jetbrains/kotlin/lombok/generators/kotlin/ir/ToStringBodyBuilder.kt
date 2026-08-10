@@ -62,27 +62,31 @@ object ToStringBodyBuilder : IrBodyBuilder<ToStringGeneratorKey>() {
                 addArgument(superToStringCall)
             }
 
-            for ([index, propInfo] in key.propertyInfos.withIndex()) {
-                @OptIn(UnsafeDuringIrConstructionAPI::class)
-                val propertyDeclaration = irClass.findDeclaration<IrProperty> { it.name == propInfo.propertyName }
+            // Not the loop index: a property may be skipped below, and then it owes no separator to the next one.
+            var isFirstRendered = superToStringCall == null
 
-                if (propertyDeclaration == null || (propertyDeclaration.backingField == null && propInfo.ignoreWithoutBackingField)) {
+            for ([propertyName, displayName, ignoreWithoutBackingField] in key.propertyInfos) {
+                @OptIn(UnsafeDuringIrConstructionAPI::class)
+                val propertyDeclaration = irClass.findDeclaration<IrProperty> { it.name == propertyName }
+
+                if (propertyDeclaration == null || (propertyDeclaration.backingField == null && ignoreWithoutBackingField)) {
                     continue
                 }
 
                 addArgument(
                     irString(
                         buildString {
-                            if (index > 0 || superToStringCall != null) {
+                            if (!isFirstRendered) {
                                 append(", ")
                             }
 
-                            if (propInfo.displayName != null) {
-                                append("${propInfo.displayName}=")
+                            if (displayName != null) {
+                                append("$displayName=")
                             }
                         }
                     )
                 )
+                isFirstRendered = false
 
                 val getter = propertyDeclaration.getter!!
                 val value = irCall(getter.symbol).apply {

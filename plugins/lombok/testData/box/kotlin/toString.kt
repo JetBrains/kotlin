@@ -30,6 +30,26 @@ class WithComputedProperties {
     val computedProp: String get() = "computed"
 }
 
+// KT-88410: a skipped property must not leave a separator behind
+@ToString
+class WithComputedPropertyFirst {
+    val computedProp: Int get() = 1
+    val b = 2
+}
+
+@ToString
+class WithComputedPropertyInTheMiddle {
+    val a = 1
+    val computedProp: Int get() = 2
+    val c = 3
+}
+
+@ToString(callSuper = true)
+class CallSuperWithComputedPropertyFirst : CallSuperBase(10) {
+    val computedProp: Int get() = 1
+    val ownProp = 2
+}
+
 @ToString
 class WithImplicitReturnTypeProperty {
     val implicitReturnTypeProp = "implicit return type"
@@ -116,6 +136,12 @@ fun box(): String {
     assertEquals("custom", WithExistingToString(5).toString())
     assertEquals("WithExistingNonConflictingToString(x=5)", WithExistingNonConflictingToString(5).toString())
     assertEquals("WithComputedProperties()", WithComputedProperties().toString())
+    assertEquals("WithComputedPropertyFirst(b=2)", WithComputedPropertyFirst().toString())
+    assertEquals("WithComputedPropertyInTheMiddle(a=1, c=3)", WithComputedPropertyInTheMiddle().toString())
+    assertEquals(
+        "CallSuperWithComputedPropertyFirst(super=CallSuperBase(baseProp=10), ownProp=2)",
+        CallSuperWithComputedPropertyFirst().toString()
+    )
     assertEquals("WithImplicitReturnTypeProperty(implicitReturnTypeProp=implicit return type)", WithImplicitReturnTypeProperty().toString())
     assertEquals("WithBackingFieldAndGetter(x=42)", WithBackingFieldAndGetter().toString())
     assertEquals("WithNonConflictingExtensionFunction(a=6)", WithNonConflictingExtensionFunction(6).toString())
