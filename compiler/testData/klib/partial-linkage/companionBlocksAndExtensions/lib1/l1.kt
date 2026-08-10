@@ -16,12 +16,19 @@ class A {
 
     companion {
         fun blockToObject() = "blockToObject"
+        fun blockToCompanionExtension() = "blockToCompanionExtension"
+        fun blockToRegularExtension() = "blockToRegularExtension"
     }
 
     companion object {
         fun objectToBlock() = "objectToBlock"
     }
 }
+
+companion fun A.companionExtensionToBlock() = "companionExtensionToBlock"
+companion fun A.companionToRegularExtension() = "companionToRegularExtension"
+fun A.regularToCompanionExtension() = "regularToCompanionExtension"
+fun A.regularExtensionToBlock() = "regularExtensionToBlock"
 
 class RemovedBlock {
     companion {

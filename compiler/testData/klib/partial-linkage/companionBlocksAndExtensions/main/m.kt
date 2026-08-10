@@ -30,6 +30,12 @@ fun box() = abiTest {
 
     expectFailure(linkage("Function 'blockToObject' can not be called: No function found for symbol '/A.blockToObject'")) { blockToObjectCall() }
     expectFailure(linkage("Function 'objectToBlock' can not be called: No function found for symbol '/A.Companion.objectToBlock'")) { objectToBlockCall() }
+    expectFailure(linkage("Function 'blockToCompanionExtension' can not be called: No function found for symbol '/A.blockToCompanionExtension'")) { blockToCompanionExtensionCall() }
+    expectFailure(linkage("Function 'companionExtensionToBlock' can not be called: No function found for symbol '/companionExtensionToBlock'")) { companionExtensionToBlockCall() }
+    expectFailure(linkage("Function 'companionToRegularExtension' can not be called: No function found for symbol '/companionToRegularExtension'")) { companionToRegularExtensionCall() }
+    expectFailure(linkage("Function 'regularToCompanionExtension' can not be called: No function found for symbol '/regularToCompanionExtension'")) { regularToCompanionExtensionCall() }
+    expectFailure(linkage("Function 'blockToRegularExtension' can not be called: No function found for symbol '/A.blockToRegularExtension'")) { blockToRegularExtensionCall() }
+    expectFailure(linkage("Function 'regularExtensionToBlock' can not be called: No function found for symbol '/regularExtensionToBlock'")) { regularExtensionToBlockCall() }
 
     expectFailure(linkage("Function 'sameFun' can not be called: No function found for symbol '/RemovedBlock.sameFun'")) { noBlockSameFunCall() }
     expectSuccess("object") { newBlockSameFunCall() }

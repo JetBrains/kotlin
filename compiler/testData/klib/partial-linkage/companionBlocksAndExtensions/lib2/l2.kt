@@ -31,6 +31,12 @@ fun removedCompanionFunCall() = B.removedCompanionFun()
 
 fun blockToObjectCall() = A.blockToObject()
 fun objectToBlockCall() = A.objectToBlock()
+fun blockToCompanionExtensionCall() = A.blockToCompanionExtension()
+fun companionExtensionToBlockCall() = A.companionExtensionToBlock()
+fun companionToRegularExtensionCall() = A.companionToRegularExtension()
+fun regularToCompanionExtensionCall() = A().regularToCompanionExtension()
+fun blockToRegularExtensionCall() = A.blockToRegularExtension()
+fun regularExtensionToBlockCall() = A().regularExtensionToBlock()
 
 fun noBlockSameFunCall() = RemovedBlock.sameFun()
 fun newBlockSameFunCall() = NewBlock.sameFun()

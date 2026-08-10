@@ -20,8 +20,15 @@ class A {
 
     companion {
         fun objectToBlock() = "objectToBlock"
+        fun companionExtensionToBlock() = "companionExtensionToBlock"
+        fun regularExtensionToBlock() = "regularExtensionToBlock"
     }
 }
+
+companion fun A.blockToCompanionExtension() = "blockToCompanionExtension"
+fun A.blockToRegularExtension() = "blockToRegularExtension"
+fun A.companionToRegularExtension() = "companionToRegularExtension"
+companion fun A.regularToCompanionExtension() = "regularToCompanionExtension"
 
 class RemovedBlock {
     //companion {
