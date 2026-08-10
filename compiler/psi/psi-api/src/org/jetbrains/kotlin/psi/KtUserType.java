@@ -104,7 +104,11 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
      * instead.
      */
     @kotlin.Deprecated(
-            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeQualifier(this)' instead."
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeQualifier(this)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.removeQualifier()",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.removeQualifier"
+            )
     )
     @Deprecated
     public void deleteQualifier() {

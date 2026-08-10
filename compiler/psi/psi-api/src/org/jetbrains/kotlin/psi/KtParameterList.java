@@ -65,7 +65,11 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
      */
     @NotNull
     @kotlin.Deprecated(
-            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.appendParameter(this, parameter)' instead."
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.appendParameter(this, parameter)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.appendParameter(parameter)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.appendParameter"
+            )
     )
     @Deprecated
     public KtParameter addParameter(@NotNull KtParameter parameter) {
@@ -78,7 +82,11 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
      */
     @NotNull
     @kotlin.Deprecated(
-            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.insertParameterBefore(this, parameter, anchor)' instead."
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.insertParameterBefore(this, parameter, anchor)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.insertParameterBefore(parameter, anchor)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.insertParameterBefore"
+            )
     )
     @Deprecated
     public KtParameter addParameterBefore(@NotNull KtParameter parameter, @Nullable KtParameter anchor) {
@@ -91,7 +99,11 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
      */
     @NotNull
     @kotlin.Deprecated(
-            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.insertParameterAfter(this, parameter, anchor)' instead."
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.insertParameterAfter(this, parameter, anchor)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.insertParameterAfter(parameter, anchor)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.insertParameterAfter"
+            )
     )
     @Deprecated
     public KtParameter addParameterAfter(@NotNull KtParameter parameter, @Nullable KtParameter anchor) {
@@ -103,7 +115,11 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
      * instead.
      */
     @kotlin.Deprecated(
-            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.deleteParameter(this, parameter)' instead."
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.deleteParameter(this, parameter)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.deleteParameter(parameter)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.deleteParameter"
+            )
     )
     @Deprecated
     public void removeParameter(@NotNull KtParameter parameter) {
@@ -115,7 +131,11 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
      * instead.
      */
     @kotlin.Deprecated(
-            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.deleteParameter(this, index)' instead."
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.deleteParameter(this, index)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.deleteParameter(index)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.deleteParameter"
+            )
     )
     @Deprecated
     public void removeParameter(int index) {

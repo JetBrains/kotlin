@@ -34,6 +34,7 @@ abstract class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<
 
     @Deprecated(
         message = "Deprecated stub API",
+        replaceWith = ReplaceWith("elementType"),
     )
     @Suppress("DEPRECATION") // KT-78356
     override fun getStubType(): IStubElementType<out StubElement<*>, *> =

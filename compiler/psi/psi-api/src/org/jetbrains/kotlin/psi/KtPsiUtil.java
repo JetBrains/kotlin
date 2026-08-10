@@ -778,7 +778,11 @@ public class KtPsiUtil {
     @Nullable
     @Contract("_, !null -> !null")
     @kotlin.Deprecated(
-            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.replaceModifierList(owner, modifierList)' instead."
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.replaceModifierList(owner, modifierList)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "owner.replaceModifierList(modifierList)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.replaceModifierList"
+            )
     )
     @Deprecated
     public static KtModifierList replaceModifierList(@NotNull KtModifierListOwner owner, @Nullable KtModifierList modifierList) {

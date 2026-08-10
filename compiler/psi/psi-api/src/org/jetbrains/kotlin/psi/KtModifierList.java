@@ -65,7 +65,11 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
      * @deprecated Use {@link #getContextParameterList()} instead. This method is obsolete and exists for compatibility reasons only.
      */
     @kotlin.Deprecated(
-            message = "Use 'getContextParameterList()' instead. This method is obsolete and exists for compatibility reasons only."
+            message = "Use 'getContextParameterList()' instead. This method is obsolete and exists for compatibility reasons only.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "contextParameterList",
+                    imports = {}
+            )
     )
     @Deprecated
     @Nullable
@@ -92,7 +96,11 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
      */
     @NotNull
     @kotlin.Deprecated(
-            message = "Use 'getContextParameterLists()' instead. This method is obsolete and exists for compatibility reasons only."
+            message = "Use 'getContextParameterLists()' instead. This method is obsolete and exists for compatibility reasons only.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "contextParameterLists",
+                    imports = {}
+            )
     )
     @Deprecated
     @SuppressWarnings("unchecked")

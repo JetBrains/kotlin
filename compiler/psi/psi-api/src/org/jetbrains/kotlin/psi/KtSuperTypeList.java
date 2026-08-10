@@ -47,7 +47,11 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
      */
     @NotNull
     @kotlin.Deprecated(
-            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addSuperType(this, entry)' instead."
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addSuperType(this, entry)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.addSuperType(entry)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.addSuperType"
+            )
     )
     @Deprecated
     public KtSuperTypeListEntry addEntry(@NotNull KtSuperTypeListEntry entry) {
@@ -59,7 +63,11 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
      * instead.
      */
     @kotlin.Deprecated(
-            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeSuperType(this, entry)' instead."
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeSuperType(this, entry)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.removeSuperType(entry)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.removeSuperType"
+            )
     )
     @Deprecated
     public void removeEntry(@NotNull KtSuperTypeListEntry entry) {

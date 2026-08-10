@@ -100,7 +100,11 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
      * @deprecated Use {@link #getContextParameterList()} instead. This method is obsolete and exists for compatibility reasons only.
      */
     @kotlin.Deprecated(
-            message = "Use 'getContextParameterList()' instead. This method is obsolete and exists for compatibility reasons only."
+            message = "Use 'getContextParameterList()' instead. This method is obsolete and exists for compatibility reasons only.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "contextParameterList",
+                    imports = {}
+            )
     )
     @Deprecated
     @Nullable

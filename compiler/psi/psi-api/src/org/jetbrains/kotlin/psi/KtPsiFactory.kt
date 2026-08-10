@@ -80,6 +80,7 @@ class KtPsiFactory private constructor(
     @JvmOverloads
     @Deprecated(
         message = "Use 'KtPsiFactory(project, markGenerated)' or 'KtPsiFactory.contextual(context, markGenerated)' instead",
+        replaceWith = ReplaceWith("KtPsiFactory(element.project, markGenerated)", "org.jetbrains.kotlin.psi.KtPsiFactory"),
     )
     constructor(element: KtElement, markGenerated: Boolean = true) : this(element.project, markGenerated, context = null, eventSystemEnabled = false)
 
