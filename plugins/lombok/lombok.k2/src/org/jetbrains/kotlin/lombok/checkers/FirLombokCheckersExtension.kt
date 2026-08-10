@@ -9,12 +9,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 
 class FirLombokCheckersExtension(session: FirSession) : FirAdditionalCheckersExtension(session) {
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
         override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = setOf(
-            FirLombokAnnotationChecker
+            FirLombokDeclarationAnnotationChecker
         )
 
         override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(
@@ -24,6 +26,12 @@ class FirLombokCheckersExtension(session: FirSession) : FirAdditionalCheckersExt
             FirLombokConstructorsChecker,
             FirLombokEqualsAndHashCodeChecker,
             FirLombokBuilderChecker,
+        )
+    }
+
+    override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
+        override val basicExpressionCheckers: Set<FirBasicExpressionChecker> = setOf(
+            FirLombokExpressionAnnotationChecker
         )
     }
 }
