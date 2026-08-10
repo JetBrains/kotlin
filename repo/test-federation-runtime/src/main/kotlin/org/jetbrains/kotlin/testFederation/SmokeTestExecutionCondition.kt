@@ -21,8 +21,11 @@ class SmokeTestExecutionCondition : ExecutionCondition {
 
         if (isAutoSmokeTest(context)) return enabled("Auto smoke test selected")
         if (isSmokeTest(context)) return enabled("@${SmokeTest::class.java.simpleName}")
-        val affected = testFederationAffectedDomains ?: return disabled("Missing '$TEST_FEDERATION_AFFECTED_DOMAINS_KEY'")
-        val contracts = affected.filter { domain -> isContract(domain, context) }
+
+        /* Check contract */
+        val changedDomains = testFederationChangedDomains
+            ?: return disabled("Missing '${TEST_FEDERATION_CHANGED_DOMAINS_KEY}'")
+        val contracts = changedDomains.filter { domain -> isContract(domain, context) }
         if (contracts.isNotEmpty()) return enabled("Contracts: ${contracts.joinToString(", ")}")
         return disabled("Not a smoke test / Not a contract test")
     }
@@ -33,7 +36,7 @@ class SmokeTestExecutionCondition : ExecutionCondition {
  */
 private fun isAutoSmokeTest(context: ExtensionContext): Boolean {
     if (autoSmokeTestPercentage <= 0) return false
-    if(autoSmokeTestPercentage >= 100) return true
+    if (autoSmokeTestPercentage >= 100) return true
     var hashCode = context.testClass.getOrNull()?.name.hashCode()
     hashCode = hashCode * 31 + context.testMethod.getOrNull()?.name.hashCode()
     hashCode = hashCode * 31 + context.uniqueId.hashCode()

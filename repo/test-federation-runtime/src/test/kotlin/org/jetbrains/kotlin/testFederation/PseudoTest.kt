@@ -31,24 +31,24 @@ class PseudoTest {
     @Test
     fun `js contract test`() {
         if (testFederationMode == TestFederationMode.Full) return
-        val affected = testFederationAffectedDomains ?: error("Missing 'testFederationAffectedDomains'")
-        if (Domain.Js !in affected && autoSmokeTestPercentage == 0) error("Expected 'Js' in affected domains, but was: $affected")
+        val changed = testFederationChangedDomains ?: error("Missing 'testFederationAffectedDomains'")
+        if (Domain.Js !in changed && autoSmokeTestPercentage == 0) error("Expected 'Js' in affected domains, but was: $changed")
     }
 
     @AffectedByWasm
     @Test
     fun `wasm contract test`() {
         if (testFederationMode == TestFederationMode.Full) return
-        val affected = testFederationAffectedDomains ?: error("Missing 'testFederationAffectedDomains'")
-        if (Domain.Wasm !in affected && autoSmokeTestPercentage == 0) error("Expected 'Wasm' in affected domains, but was: $affected")
+        val changed = testFederationChangedDomains ?: error("Missing 'testFederationAffectedDomains'")
+        if (Domain.Wasm !in changed && autoSmokeTestPercentage == 0) error("Expected 'Wasm' in affected domains, but was: $changed")
     }
 
     @AffectedByGradle
     @Test
     fun `gradle contract test`() {
         if (testFederationMode == TestFederationMode.Full) return
-        val affected = testFederationAffectedDomains ?: error("Missing 'testFederationAffectedDomains'")
-        if (Domain.Gradle !in affected && autoSmokeTestPercentage == 0) error("Expected 'Gradle' in affected domains, but was: $affected")
+        val changed = testFederationChangedDomains ?: error("Missing 'testFederationAffectedDomains'")
+        if (Domain.Gradle !in changed && autoSmokeTestPercentage == 0) error("Expected 'Gradle' in affected domains, but was: $changed")
     }
 
     @NightlyTest
