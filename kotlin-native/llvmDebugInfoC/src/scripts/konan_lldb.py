@@ -33,6 +33,7 @@ import lldb
 _NULL = "null"
 _RUNTIME_TYPE_INVALID = 0
 _RUNTIME_TYPE_OBJECT = 1
+_BENCH_LOGGING = False
 
 
 class CollectionKind(Enum):
@@ -58,7 +59,8 @@ _EXPRESSION_OPTIONS = initialize_expression_options()
 
 
 def _bench(start, msg):
-    return
+    if _BENCH_LOGGING:
+        print(f"{msg()}: {time.monotonic() - start}")
 
 
 def _evaluate(expr):
