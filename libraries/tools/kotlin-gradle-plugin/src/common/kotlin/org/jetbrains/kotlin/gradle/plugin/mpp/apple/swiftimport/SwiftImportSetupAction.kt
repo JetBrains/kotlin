@@ -9,6 +9,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -197,6 +198,17 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         when (val packageIdentifier = identifierSynchronizationOrNull()) {
             is PackageResolvedSynchronization.Identifier -> {
                 val packageResolvedSynchronizationIdentifier = packageIdentifier.identifier
+                val cleanSwiftImportFingerprintArtifacts = locateOrRegisterCleanSwiftImportFingerprintArtifactsTask()
+                cleanSwiftImportFingerprintArtifacts.configure { cleanTaskProvider ->
+                    cleanTaskProvider.syntheticPackageFingerprint.set(
+                        fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprintFile.get() }
+                    )
+                    cleanTaskProvider.coordinationService.set(fingerprintCoordinationService)
+                }
+                tasks.named(LifecycleBasePlugin.CLEAN_TASK_NAME).configure {
+                    it.dependsOn(cleanSwiftImportFingerprintArtifacts)
+                }
+
                 enableFingerprintCoordination(
                     fingerprintCoordinationService = fingerprintCoordinationService,
                     generateSyntheticPackageTask = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
@@ -344,6 +356,13 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                             fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprintFile.get() }
                         )
                         it.xcodebuildFingerprint.fingerprintFile.set(fingerprintXcode.map { it.xcodebuildFingerprintFile.get() })
+                    }
+
+                    val cleanSwiftImportFingerprintArtifacts = locateOrRegisterCleanSwiftImportFingerprintArtifactsTask()
+                    cleanSwiftImportFingerprintArtifacts.configure {
+                        it.xcodebuildFingerprints.from(
+                            fingerprintXcode.map { it.xcodebuildFingerprintFile.get() }
+                        )
                     }
 
                     defFilesAndLdDumpGenerationTask.configure { defFileTask ->
@@ -597,6 +616,12 @@ private fun enableFingerprintCoordination(
         )
         it.coordinationService.set(fingerprintCoordinationService)
     }
+}
+
+private fun Project.locateOrRegisterCleanSwiftImportFingerprintArtifactsTask(): TaskProvider<CleanSwiftImportFingerprintArtifacts> {
+    return locateOrRegisterTask<CleanSwiftImportFingerprintArtifacts>(
+        CleanSwiftImportFingerprintArtifacts.TASK_NAME,
+    )
 }
 
 private fun Project.locateOrRegisterUmbrellaFetchTask(

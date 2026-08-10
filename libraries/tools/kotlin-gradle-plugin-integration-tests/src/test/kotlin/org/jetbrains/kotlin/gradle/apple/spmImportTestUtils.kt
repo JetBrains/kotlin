@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportExecu
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportTestExecutionKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportTestExecutionService
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.fingerprintJson
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.XCTestHelpers
 import org.jetbrains.kotlin.gradle.testbase.assertDirectoryExists
@@ -1100,6 +1101,17 @@ private object JsonHolder {
         ignoreUnknownKeys = true
 
     }
+}
+
+internal fun Path.writeFingerprint(incrementalFingerprint: String) {
+    writeText(
+        JsonHolder.fingerprintJson.encodeToString(
+            SwiftImportFingerprint(
+                taskInvalidationFingerprint = "versioned-$incrementalFingerprint",
+                incrementalFingerprint = incrementalFingerprint,
+            )
+        )
+    )
 }
 
 private inline fun <reified T> runAppleToolCommand(
