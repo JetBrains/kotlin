@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.DisplayName
 import org.jetbrains.kotlin.gradle.testbase.assertProblemsReportContainsDiagnostic
-import kotlin.io.path.writeText
 
 @DisplayName("Compiler Diagnostics Problems API tests")
 @GradleTestVersions(
@@ -119,6 +119,109 @@ class CompilerDiagnosticsProblemsApiIT : KGPBaseTest() {
                     "UNRESOLVED_REFERENCE",
                     "nresolved reference",
                     gradleVersion,
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_8_11,
+        additionalVersions = [
+            TestVersions.Gradle.G_8_13,
+            TestVersions.Gradle.G_9_3,
+            TestVersions.Gradle.G_9_5,
+        ],
+    )
+    @DisplayName("KT-88430: an identical compiler error is reported for every failed compilation task")
+    fun testIdenticalCompilerErrorReportedForEveryFailedCompilation(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion, buildOptions = defaultBuildOptions.disableIsolatedProjects()) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm()
+                    js { nodejs() }
+
+                    sourceSets.commonMain.get().compileSource(
+                        """
+                        fun broken(): String = nonExistentFunction()
+                        """.trimIndent()
+                    )
+                }
+            }
+
+            gradleProperties.append("\norg.gradle.warning.mode=all\n")
+
+            buildAndFail(
+                "compileCommonMainKotlinMetadata",
+                "compileKotlinJvm",
+                "compileKotlinJs",
+                "--continue",
+            ) {
+                assertTasksFailed(
+                    ":compileCommonMainKotlinMetadata",
+                    ":compileKotlinJvm",
+                    ":compileKotlinJs",
+                )
+
+                // Each of the three failed compilations must contribute its own diagnostic
+                assertProblemsReportContainsDiagnosticTimes(
+                    "UNRESOLVED_REFERENCE",
+                    "nonExistentFunction",
+                    gradleVersion,
+                    expectedCount = 3,
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_8_11,
+        additionalVersions = [
+            TestVersions.Gradle.G_8_13,
+            TestVersions.Gradle.G_9_3,
+            TestVersions.Gradle.G_9_5,
+        ],
+    )
+    @DisplayName("KT-88430: an identical compiler warning is reported for every compilation task")
+    fun testIdenticalCompilerWarningReportedForEveryCompilation(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion, buildOptions = defaultBuildOptions.disableIsolatedProjects()) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm()
+                    js { nodejs() }
+
+                    sourceSets.commonMain.get().compileSource(
+                        """
+                        @Deprecated("Use newFunction instead")
+                        fun oldFunction(): String = "old"
+        
+                        fun callerOfOldFunction(): String = oldFunction()
+                        """.trimIndent()
+                    )
+                }
+            }
+
+            gradleProperties.append("\norg.gradle.warning.mode=all\n")
+
+            build(
+                "compileCommonMainKotlinMetadata",
+                "compileKotlinJvm",
+                "compileKotlinJs",
+            ) {
+                assertProblemsReportContainsDiagnosticTimes(
+                    "DEPRECATION",
+                    "Use newFunction instead",
+                    gradleVersion,
+                    expectedCount = 3,
                 )
             }
         }
