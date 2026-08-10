@@ -60,8 +60,8 @@ internal fun Project.addSigningValidationHelpers() {
     project.pluginManager.withPlugin("signing") {
         val bcConfiguration = maybeCreateBcConfiguration()
         val signingTask = project.tasks.register("checkSigningConfiguration", CheckSigningTask::class.java) {
-            group = "validation"
-            description = "Checks that a signing configuration is set up correctly."
+            it.group = "validation"
+            it.description = "Checks that a signing configuration is set up correctly."
             it.gradleHomePath.set(project.gradle.gradleUserHomeDir.absolutePath)
             it.bouncyCastleClasspath.from(bcConfiguration)
             it.offlineMode.set(gradle.startParameter.isOffline)
@@ -118,7 +118,7 @@ internal fun Project.addPomValidationHelpers() {
                 val generatePomTask = tasks.withType<GenerateMavenPom>().named(generatePomTaskName)
                 project.tasks.register("checkPomFileFor${publication.name.capitalizeAsciiOnly()}Publication", CheckPomTask::class.java) {
                     it.dependsOn(generatePomTask)
-                    group = "validation"
+                    it.group = "validation"
                     it.pom.set(generatePomTask.map { it.destination })
                 }
             }
