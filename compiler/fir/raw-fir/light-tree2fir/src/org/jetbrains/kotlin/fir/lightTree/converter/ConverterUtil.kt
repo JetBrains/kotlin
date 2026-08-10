@@ -44,10 +44,10 @@ inline fun isClassLocal(classNode: LighterASTNode, getParent: LighterASTNode.() 
         val parentTokenType = parent?.tokenType
         if (tokenType == PROPERTY || tokenType == FUN) {
             val grandParent = parent?.getParent()
-            when {
-                parentTokenType == KT_FILE -> return true
-                parentTokenType == CLASS_BODY && !(grandParent?.tokenType == OBJECT_DECLARATION && grandParent.getParent()?.tokenType == OBJECT_LITERAL) -> return true
-                parentTokenType == BLOCK && grandParent?.tokenType == SCRIPT -> return true
+            when (parentTokenType) {
+                KT_FILE -> return true
+                CLASS_BODY if (grandParent?.let { it.tokenType == OBJECT_DECLARATION && it.getParent()?.tokenType == OBJECT_LITERAL } != true) -> return true
+                BLOCK if grandParent?.tokenType == SCRIPT -> return true
             }
         }
         // NB: enum entry nested classes are considered local by FIR design (see discussion in KT-45115)
@@ -63,8 +63,8 @@ inline fun isClassLocal(classNode: LighterASTNode, getParent: LighterASTNode.() 
 }
 
 fun isCallableLocal(callableNode: LighterASTNode, getParent: LighterASTNode.() -> LighterASTNode?): Boolean {
-    val parentNode = callableNode.getParent()
-    return when (parentNode?.tokenType) {
+    val parentNode = callableNode.getParent() ?: return true
+    return when (parentNode.tokenType) {
         KT_FILE, CLASS_BODY -> false
         BLOCK -> when (parentNode.getParent()?.tokenType) {
             SCRIPT -> false

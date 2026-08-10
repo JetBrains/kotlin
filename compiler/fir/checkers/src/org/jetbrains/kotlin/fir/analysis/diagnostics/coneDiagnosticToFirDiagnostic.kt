@@ -733,8 +733,8 @@ private fun inapplicableNullableReceiver(
     val candidateFunctionName = candidateFunctionSymbol?.name
     val receiverExpression = candidate.callInfo.explicitReceiver
     val singleArgument = candidate.callInfo.argumentList.arguments.singleOrNull()
-    if (receiverExpression != null && singleArgument != null &&
-        (source?.elementType == KtNodeTypes.OPERATION_REFERENCE || source?.elementType == KtNodeTypes.BINARY_EXPRESSION) &&
+    if (receiverExpression != null && singleArgument != null && source != null &&
+        (source.elementType == KtNodeTypes.OPERATION_REFERENCE || source.elementType == KtNodeTypes.BINARY_EXPRESSION) &&
         (candidateFunctionSymbol?.isOperator == true || candidateFunctionSymbol?.isInfix == true)
     ) {
         // For augmented assignment operations (e.g., `a += b`), the source is the entire binary expression (BINARY_EXPRESSION).

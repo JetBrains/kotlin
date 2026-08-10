@@ -853,7 +853,7 @@ object LightTreePositioningStrategies {
                 }
                 node.tokenType == KtNodeTypes.CONSTRUCTOR_CALLEE && node.textLength == 0 -> {
                     val ggParent = tree.getParent(node)?.let { tree.getParent(it) }?.let { tree.getParent(it) }
-                    if (ggParent?.tokenType == KtNodeTypes.ENUM_ENTRY) {
+                    if (ggParent != null && ggParent.tokenType == KtNodeTypes.ENUM_ENTRY) {
                         return mark(ggParent, ggParent.startOffset, ggParent.endOffset, tree)
                     }
                 }
@@ -862,7 +862,7 @@ object LightTreePositioningStrategies {
 
                     if (constructorCallee != null && constructorCallee.textLength == 0) {
                         val grandParent = tree.getParent(node)?.let { tree.getParent(it) }
-                        if (grandParent?.tokenType == KtNodeTypes.ENUM_ENTRY) {
+                        if (grandParent != null && grandParent.tokenType == KtNodeTypes.ENUM_ENTRY) {
                             return mark(grandParent, grandParent.startOffset, grandParent.endOffset, tree)
                         }
                     }

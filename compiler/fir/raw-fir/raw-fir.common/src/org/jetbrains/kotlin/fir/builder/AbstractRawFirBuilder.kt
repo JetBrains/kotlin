@@ -731,7 +731,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         // This should be fine since the label is meaningless and unusable for a ++/-- argument or assignment LHS.
         var unwrapped = this
         while (true) {
-            unwrapped = when (unwrapped?.elementType) {
+            unwrapped = when (unwrapped?.elementType ?: return null) {
                 PARENTHESIZED -> unwrapped.getExpressionInParentheses()
                 LABELED_EXPRESSION -> unwrapped.getLabeledExpression()
                 ANNOTATED_EXPRESSION -> unwrapped.getAnnotatedExpression()
@@ -1027,7 +1027,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         }
         require(operation == FirOperation.ASSIGN)
 
-        if (this?.elementType == SAFE_ACCESS_EXPRESSION) {
+        if (this != null && this.elementType == SAFE_ACCESS_EXPRESSION) {
             val safeCallNonAssignment = convert() as? FirSafeCallExpression
             if (safeCallNonAssignment != null) {
                 return putAssignmentToSafeCall(safeCallNonAssignment, baseSource, rhsExpression, annotations)
