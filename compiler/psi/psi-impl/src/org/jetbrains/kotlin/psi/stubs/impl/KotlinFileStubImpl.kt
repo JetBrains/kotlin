@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,8 +34,7 @@ class KotlinFileStubImpl @KtImplementationDetail internal constructor(
     override fun toString(): String = "${STUB_TO_STRING_PREFIX}FILE[kind=$kind]"
 
     override fun findImportsByAlias(alias: String): List<KotlinImportDirectiveStub> {
-        @Suppress("DEPRECATION") // KT-78356
-        val importList = childrenStubs.firstOrNull { it.stubType == IMPORT_LIST } ?: return emptyList()
+        val importList = childrenStubs.firstOrNull { it.elementType == IMPORT_LIST } ?: return emptyList()
         return importList.childrenStubs.filterIsInstance<KotlinImportDirectiveStub>().filter {
             it.childrenStubs.firstIsInstanceOrNull<KotlinImportAliasStub>()?.name == alias
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getImportedSimpleNameByImportAlias
 import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -159,7 +159,7 @@ internal class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclaratio
         is KotlinTypeAliasStubImpl -> indexTypeAlias(stub.psi)
         is KotlinFunctionStubImpl -> indexNamedFunction(stub.psi)
         is KotlinPropertyStubImpl -> indexProperty(stub.psi)
-        is KotlinPlaceHolderStubImpl if (@Suppress("DEPRECATION") stub.stubType == KtStubElementTypes.CLASS_BODY) -> {
+        is KotlinPlaceHolderStubImpl if (stub.elementType == KtNodeTypes.CLASS_BODY) -> {
             stub.childrenStubs
                 .filter { it is KotlinClassOrObjectStub<*> || it is KotlinTypeAliasStub }
                 .forEach(::indexStubRecursively)

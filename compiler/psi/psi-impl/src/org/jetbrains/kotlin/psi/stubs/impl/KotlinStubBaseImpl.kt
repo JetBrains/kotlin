@@ -41,12 +41,11 @@ abstract class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<
         val stubInterface = this::class.java.interfaces.single { it.name.contains("Stub") }
         val propertiesValues = renderPropertyValues(stubInterface)
         if (propertiesValues.isEmpty()) {
-            @Suppress("DEPRECATION") // KT-78356
-            return "$STUB_TO_STRING_PREFIX$stubType"
+            return "$STUB_TO_STRING_PREFIX$elementType"
         }
+
         val properties = propertiesValues.joinToString(separator = ", ", prefix = "[", postfix = "]")
-        @Suppress("DEPRECATION") // KT-78356
-        return "$STUB_TO_STRING_PREFIX$stubType$properties"
+        return "$STUB_TO_STRING_PREFIX$elementType$properties"
     }
 
     private fun renderPropertyValues(stubInterface: Class<out Any?>): List<String> {

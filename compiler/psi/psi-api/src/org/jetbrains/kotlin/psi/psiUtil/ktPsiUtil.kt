@@ -233,9 +233,7 @@ fun KtAnnotationsContainer.collectAnnotationEntriesFromStubOrPsi(): List<KtAnnot
 
 private fun StubElement<*>.collectAnnotationEntriesFromStubElement(): List<KtAnnotationEntry> {
     return childrenStubs.flatMap { child ->
-        @Suppress("DEPRECATION") // KT-78356
-        val stubType = child.stubType
-        when (stubType) {
+        when (child.elementType) {
             KtNodeTypes.ANNOTATION_ENTRY -> listOf(child.psi as KtAnnotationEntry)
             KtNodeTypes.ANNOTATION -> (child.psi as KtAnnotation).entries
             else -> emptyList()

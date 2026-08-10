@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -160,8 +160,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         val stub = greenStub
         if (stub != null) {
             for (stubElement in stub.childrenStubs) {
-                @Suppress("DEPRECATION") // KT-78356
-                val stubType = stubElement.stubType
+                val stubType = stubElement.elementType
                 when (stubType) {
                     // Required element found
                     elementType -> {
