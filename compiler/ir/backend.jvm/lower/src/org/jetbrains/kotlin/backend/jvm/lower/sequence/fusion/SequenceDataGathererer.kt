@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 private const val KOTLIN_SEQUENCES_PREFIX = "kotlin.sequences.SequencesKt."
 private const val SEQUENCE_OF = KOTLIN_SEQUENCES_PREFIX + "sequenceOf"
-private const val GENERATE_SEQUENCE = "generateSequence"
+private const val GENERATE_SEQUENCE = KOTLIN_SEQUENCES_PREFIX + "generateSequence"
 internal const val MAP = KOTLIN_SEQUENCES_PREFIX + "map"
 internal const val MAP_INDEXED = KOTLIN_SEQUENCES_PREFIX + "mapIndexed"
 internal const val MAP_NOT_NULL = KOTLIN_SEQUENCES_PREFIX + "mapNotNull"
@@ -164,7 +164,9 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
             expressionSequenceData.sequenceSource.initialValue is GenerateSequenceInitialValue.NoInitialValue &&
             (declaration.usageCounter ?: 0) > 1
         ) {
-            null
+            SequenceData(
+                SequenceSource.Variable(declaration.symbol),
+            )
         } else {
             expressionSequenceData
         }
@@ -177,7 +179,9 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         if (!isSequenceType(context, expression)) return
         val variableDeclaration = expression.symbol.owner
         variableDeclaration.accept(this, null)
-        expression.sequenceDataOfExpression = variableDeclaration.sequenceDataOfVariable
+        expression.sequenceDataOfExpression = variableDeclaration.sequenceDataOfVariable ?: SequenceData(
+            SequenceSource.Variable(expression.symbol),
+        )
     }
 
     private fun matchWithMap(
