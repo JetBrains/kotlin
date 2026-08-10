@@ -209,15 +209,22 @@ object CompilerModules {
     )
 
     /**
+     * The array of modules shipped in the 'kotlin-analysis-api-platform-interface' artifact.
+     */
+    val analysisApiPlatformInterfaceModules = arrayOf(
+        ":analysis:analysis-api-platform-interface",
+    )
+
+    /**
      * The array of Analysis API modules that aren't part of [commonCompilerModules] (e.g., `:compiler:psi:psi-api`).
      * It only covers production modules and is used only as a part of [projectsDependingOnStableStdlib].
      */
     val analysisApiModules = arrayOf(
         *analysisApiSurfaceModules,
+        *analysisApiPlatformInterfaceModules,
         ":analysis:analysis-api-fir",
         ":analysis:analysis-api-fir-diagnostics",
         ":analysis:analysis-api-impl-base",
-        ":analysis:analysis-api-platform-interface",
         ":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",
         ":analysis:analysis-api-standalone:analysis-api-standalone-base",
         ":analysis:analysis-internal-utils",
