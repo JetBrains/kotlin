@@ -23,4 +23,3 @@ import org.jetbrains.kotlin.test.services.KotlinTestInfo
  */
 fun computeProxyLauncherClassName(testInfo: KotlinTestInfo): String =
     "ProxyLauncher_${computePackage(testInfo).hashCode().toUInt().toString(36)}"
-

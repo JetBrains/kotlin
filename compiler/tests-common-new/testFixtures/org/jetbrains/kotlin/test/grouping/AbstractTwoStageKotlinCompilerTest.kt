@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.runners.UnspecifiedTargetBackend
 import org.jetbrains.kotlin.test.runners.toKotlinTestInfo
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.testFederation.AffectedByJs
 import org.jetbrains.kotlin.testFederation.AffectedByNative
 import org.jetbrains.kotlin.testFederation.AffectedByWasm
 import org.junit.jupiter.api.BeforeEach
@@ -96,6 +97,10 @@ abstract class AbstractTwoStageKotlinCompilerTest @UnspecifiedTargetBackend cons
         nonGroupingRunner.prepareModuleStructure(filePath)
     }
 }
+
+@OptIn(UnspecifiedTargetBackend::class)
+@AffectedByJs
+abstract class AbstractTwoStageKotlinCompilerJsTest : AbstractTwoStageKotlinCompilerTest()
 
 @OptIn(UnspecifiedTargetBackend::class)
 @AffectedByWasm
