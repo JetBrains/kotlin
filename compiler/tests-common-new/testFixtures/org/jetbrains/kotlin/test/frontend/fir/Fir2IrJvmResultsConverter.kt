@@ -27,13 +27,11 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendInput
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import org.jetbrains.kotlin.test.testInfraError
 
 @InternalFir2IrConverterAPI
 internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractFir2IrResultsConverter(testServices) {
@@ -67,9 +65,6 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
         compilerConfigurationProvider.getProject(module)
         return emptyList()
     }
-
-    override val klibFactories: KlibMetadataFactories
-        get() = testInfraError("Should not be called")
 
     override fun createFir2IrConfiguration(
         compilerConfiguration: CompilerConfiguration,
