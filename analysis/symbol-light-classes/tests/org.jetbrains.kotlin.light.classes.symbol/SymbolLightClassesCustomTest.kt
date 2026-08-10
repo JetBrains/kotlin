@@ -120,7 +120,10 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
 
             val psiFooMethodSupers = PsiSuperMethodImplUtil.findSuperMethods(psiFooMethod)
 
-            assertEquals(0, psiFooMethodSupers.size)
+            assertEquals(1, psiFooMethodSupers.size)
+
+            val psiJavaBaseClass = psiFooMethodSupers[0].parent as PsiClass
+            assertEquals("lib.JavaBase", psiJavaBaseClass.qualifiedName)
         }
     }
 }
