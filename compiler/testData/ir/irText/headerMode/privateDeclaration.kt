@@ -88,7 +88,7 @@ class TestClass {
         InlineChain().used()
     }
     private inline fun privateInlineChainStart() {
-        <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>privateInlineChainMiddle()<!>
+        privateInlineChainMiddle()
     }
 
     private class BrokenChainEnd {
