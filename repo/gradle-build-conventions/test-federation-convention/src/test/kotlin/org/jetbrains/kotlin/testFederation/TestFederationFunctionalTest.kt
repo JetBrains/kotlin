@@ -81,17 +81,7 @@ class TestFederationFunctionalTest {
     @Test
     fun `test - mode full`() {
         val result = runTestBuild(TestFederationMode.Full)
-        assertEquals(
-            setOf(
-                TestResult("PseudoTest", "domain test"),
-                TestResult("PseudoTest", "smoke test"),
-                TestResult("PseudoTest", "js contract test"),
-                TestResult("PseudoTest", "wasm contract test"),
-                TestResult("PseudoTest", "gradle contract test"),
-                TestResult("PseudoTest", "nightly test"),
-            ),
-            result.executedTests
-        )
+        assertEquals(allTests, result.executedTests)
     }
 
     @Test
@@ -111,17 +101,8 @@ class TestFederationFunctionalTest {
 
     @Test
     fun `test - mode full - nightly enabled`() {
-        val result = runTestBuild(TestFederationMode.Full, nightly = false)
-        assertEquals(
-            setOf(
-                TestResult("PseudoTest", "domain test"),
-                TestResult("PseudoTest", "smoke test"),
-                TestResult("PseudoTest", "js contract test"),
-                TestResult("PseudoTest", "wasm contract test"),
-                TestResult("PseudoTest", "gradle contract test"),
-            ),
-            result.executedTests
-        )
+        val result = runTestBuild(TestFederationMode.Full, nightly = true)
+        assertEquals(allTests, result.executedTests)
     }
 
 
@@ -131,17 +112,7 @@ class TestFederationFunctionalTest {
     @Test
     fun `test - smokeTestConfig RunAllTests`() {
         val result = runTestBuild(TestFederationMode.Smoke, smokeTestConfig = "RunAllTests")
-        assertEquals(
-            setOf(
-                TestResult("PseudoTest", "domain test"),
-                TestResult("PseudoTest", "smoke test"),
-                TestResult("PseudoTest", "js contract test"),
-                TestResult("PseudoTest", "wasm contract test"),
-                TestResult("PseudoTest", "gradle contract test"),
-                TestResult("PseudoTest", "nightly test"),
-            ),
-            result.executedTests
-        )
+        assertEquals(allTests, result.executedTests)
     }
 
     /**
@@ -249,7 +220,9 @@ class TestFederationFunctionalTest {
     }
 
     @Test
-    fun `test - build with test federation disabled - build with test federation enabled (full) and smoke+runAllTests - reuses build caches`(@TempDir cache: Path) {
+    fun `test - build with test federation disabled - build with test federation enabled (full) and smoke+runAllTests - reuses build caches`(
+        @TempDir cache: Path,
+    ) {
         val buildCacheArgs = buildCacheArgs(cache)
 
         cleanTest()
@@ -346,6 +319,15 @@ class TestFederationFunctionalTest {
         }
     }
 }
+
+private val allTests = setOf(
+    TestResult("PseudoTest", "domain test"),
+    TestResult("PseudoTest", "smoke test"),
+    TestResult("PseudoTest", "js contract test"),
+    TestResult("PseudoTest", "wasm contract test"),
+    TestResult("PseudoTest", "gradle contract test"),
+    TestResult("PseudoTest", "nightly test")
+)
 
 private data class TestBuildResult(
     val buildResult: BuildResult,
