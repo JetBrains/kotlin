@@ -26,6 +26,9 @@ import kotlin.time.Duration.Companion.milliseconds
 @JsBrowserGradlePluginTests
 class JsBrowserTestsIT : KGPBaseTest() {
 
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
+        .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+
     @GradleTest
     fun `verify custom custom KotlinJsTest environment variables are used to launch tests`(gradleVersion: GradleVersion) {
         project(
@@ -103,7 +106,7 @@ class JsBrowserTestsIT : KGPBaseTest() {
         project(
             "empty",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+            buildOptions = defaultBuildOptions
         ) {
             plugins {
                 kotlin("multiplatform")
@@ -289,7 +292,6 @@ class JsBrowserTestsIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions
                 .copy(logLevel = LogLevel.DEBUG)
-                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             plugins {
                 kotlin("multiplatform") apply false
