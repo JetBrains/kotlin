@@ -3,7 +3,7 @@ Current executable set to <path to executable>.
 (lldb) settings set stop-disassembly-display never
 (lldb) command script import <path to lldb script>
 (lldb) b main.kt:13
-Breakpoint 1: where = lldb_kt82065.kexe`<+32> [inlined] kfun:#foo(kotlin.Int){}kotlin.Int at main.kt:13:5, address = <memory address>
+Breakpoint 1: where = lldb_kt82065.kexe`<breakpoint offset> [inlined] kfun:#foo(kotlin.Int){}kotlin.Int at main.kt:13:5, address = <memory address>
 (lldb) r
 Process <process id> launched: <path to executable>
 Process <process id> stopped
