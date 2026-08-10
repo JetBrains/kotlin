@@ -872,7 +872,7 @@ internal object DevirtualizationAnalysis {
                     }
                     node.reversedCastEdges
                             ?.forEach {
-                                if(it.node.priority < node.priority) { // Doesn't contradict topological order.
+                                if (it.node.priority < node.priority) { // Doesn't contradict topological order.
                                     node.types.orWithFilterHasChanged(it.node.types, it.suitableTypes)
                                 }
                             }
