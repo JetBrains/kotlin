@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.isSharedSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.retrieveExternalDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.cinteropCommonizerDependencies
-import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizerTarget
 import org.jetbrains.kotlin.gradle.targets.native.internal.retrievePlatformDependenciesWithNativeDistribution
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformCompilationTask
@@ -147,9 +146,7 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
                             add(it.retrievePlatformDependenciesWithNativeDistribution(project))
                         }
 
-                        commonizeCInteropTask()?.let {
-                            add(cinteropCommonizerDependencies(sourceSet, it))
-                        }
+                        add(cinteropCommonizerDependencies(sourceSet))
                     }
                     // We do not need transitive dependencies defined on higher levels of the hierarchy here
                     add(sourceSet.retrieveExternalDependencies(transitive = false))
