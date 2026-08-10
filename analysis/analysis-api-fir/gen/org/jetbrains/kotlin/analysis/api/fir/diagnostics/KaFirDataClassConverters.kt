@@ -3207,6 +3207,12 @@ private fun KaDiagnosticConverterBuilder.addConversions71() {
             token,
         )
     }
+    add(FirErrors.SMARTCAST_TO_TYPE_VARIABLE) { firDiagnostic ->
+        SmartcastToTypeVariableImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INAPPLICABLE_FILE_TARGET) { firDiagnostic ->
         InapplicableFileTargetImpl(
             firDiagnostic as KtPsiDiagnostic,

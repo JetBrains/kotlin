@@ -706,6 +706,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface SmartcastToTypeVariable : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<SmartcastToTypeVariable>
+            get() = SmartcastToTypeVariable::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface CreatingAnInstanceOfAbstractClass : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass: KClass<CreatingAnInstanceOfAbstractClass>
             get() = CreatingAnInstanceOfAbstractClass::class

@@ -90,15 +90,15 @@ digraph expectedSomeTypesCrash_TypeVariableInDfa_kt {
                             39 [label="Exit when branch result"];
                             40 [label="Exit when"];
                         }
-                        41 [label=< <TABLE BORDER="0"><TR><TD>Equality operator ==</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>#0</B> = '==(R|&lt;local&gt;/bar|, when () {<BR/>    Boolean(true) -&gt;  {<BR/>        Int(10)<BR/>    }<BR/>    else -&gt;  {<BR/>        String(20)<BR/>    }<BR/>}<BR/>)'<BR/> == True =&gt; &lt;local&gt;/bar: TypeVariable(K)<BR/><BR/><B>&lt;local&gt;/bar</B><BR/></TD></TR></TABLE> > style="filled" fillcolor=yellow];
-                        42 [label=< <TABLE BORDER="0"><TR><TD>Exit block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>#0</B> = '==(R|&lt;local&gt;/bar|, when () {<BR/>    Boolean(true) -&gt;  {<BR/>        Int(10)<BR/>    }<BR/>    else -&gt;  {<BR/>        String(20)<BR/>    }<BR/>}<BR/>)'<BR/> == True =&gt; &lt;local&gt;/bar: TypeVariable(K)<BR/><BR/><B>&lt;local&gt;/bar</B><BR/></TD></TR></TABLE> >];
+                        41 [label="Equality operator ==" style="filled" fillcolor=yellow];
+                        42 [label="Exit block"];
                     }
-                    43 [label=< <TABLE BORDER="0"><TR><TD>Exit function &lt;anonymous&gt;</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>#0</B> = '==(R|&lt;local&gt;/bar|, when () {<BR/>    Boolean(true) -&gt;  {<BR/>        Int(10)<BR/>    }<BR/>    else -&gt;  {<BR/>        String(20)<BR/>    }<BR/>}<BR/>)'<BR/> == True =&gt; &lt;local&gt;/bar: TypeVariable(K)<BR/><BR/><B>&lt;local&gt;/bar</B><BR/></TD></TR></TABLE> > style="filled" fillcolor=red];
+                    43 [label="Exit function <anonymous>" style="filled" fillcolor=red];
                 }
                 44 [label="Function call arguments exit"];
             }
             45 [label="Function call enter: R|kotlin/collections/buildList<CS errors: kotlin/collections/buildList>#|<R|kotlin/Int|>(...)"];
-            46 [label=< <TABLE BORDER="0"><TR><TD>Postponed exit from lambda</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>#0</B> = '==(R|&lt;local&gt;/bar|, when () {<BR/>    Boolean(true) -&gt;  {<BR/>        Int(10)<BR/>    }<BR/>    else -&gt;  {<BR/>        String(20)<BR/>    }<BR/>}<BR/>)'<BR/> == True =&gt; &lt;local&gt;/bar: TypeVariable(K)<BR/><BR/><B>&lt;local&gt;/bar</B><BR/></TD></TR></TABLE> >];
+            46 [label="Postponed exit from lambda"];
             47 [label="Function call exit: R|kotlin/collections/buildList<CS errors: kotlin/collections/buildList>#|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
             48 [label="Jump: ^foo R|kotlin/collections/buildList<CS errors: kotlin/collections/buildList>#|<R|kotlin/Int|>(<L> = buildList@fun R|kotlin/collections/MutableList<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
     this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(Int(30))

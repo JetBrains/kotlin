@@ -849,6 +849,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_ON_LHS_OF_DOT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SMARTCAST_TO_TYPE_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_VARIANCE_CONFLICT_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNCHECKED_CAST
@@ -1174,6 +1175,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "'$ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE' cannot be used in source code. It's an implementation detail of IntelliJ IDEA's Kotlin language support. In most cases it can be removed without changing behavior. " +
                     "If you notice IntelliJ IDEA adding '$ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE' to source code, please report an issue to https://kotl.in/plugin-issue."
         )
+        map.put(SMARTCAST_TO_TYPE_VARIABLE, "Unfixed type variable applied via smart cast. If this is the only error, please report an issue to https://kotl.in/issue.")
 
         // Super
         map.put(SUPER_IS_NOT_AN_EXPRESSION, "'super' cannot be a callee.")
