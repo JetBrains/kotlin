@@ -127,6 +127,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     /**
      * Enables new experimental "IncrementalFirJvmCompilerRunner" for incremental compilation.
+     *
+     * The property is deprecated and reported as a warning by [org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.GradleDeprecatedPropertyChecker].
+     * It will be removed in Kotlin 2.6.0 together with the FIR-based incremental compilation runner.
      */
     val incrementalJvmFir: Provider<Boolean>
         get() = booleanProvider(KOTLIN_INCREMENTAL_FIR).orElse(false)

@@ -1,0 +1,4 @@
+[DeprecatedWarningGradleProperties | WARNING] Deprecated Gradle Property 'kotlin.incremental.jvm.fir' Used
+The `kotlin.incremental.jvm.fir` deprecated property is used in your build.
+It is unsupported, please stop using it.
+The FIR-based incremental compilation runner is deprecated and will be removed in Kotlin 2.6.0.

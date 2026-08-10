@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.unitTests.checkers
 
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_DEPRECATED_TEST_PROPERTY
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INCREMENTAL_FIR
 import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -74,5 +75,22 @@ class GradleDeprecatedPropertyChecker {
             kotlin { jvm() }
         }.evaluate()
         project.checkDiagnostics("NonBtaCompilationModeDeprecated")
+    }
+
+    @Test
+    fun `FIR incremental compilation property set to true reports deprecation warning`() {
+        assertFirIncrementalCompilationDeprecationReported(propertyValue = true)
+    }
+
+    @Test
+    fun `FIR incremental compilation property set to false reports deprecation warning`() {
+        assertFirIncrementalCompilationDeprecationReported(propertyValue = false)
+    }
+
+    private fun assertFirIncrementalCompilationDeprecationReported(propertyValue: Boolean) {
+        val project = buildProjectWithJvm(
+            preApplyCode = { propertiesExtension.set(KOTLIN_INCREMENTAL_FIR, propertyValue.toString()) },
+        ).evaluate()
+        project.checkDiagnostics("FirIncrementalCompilationDeprecated")
     }
 }
