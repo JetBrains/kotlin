@@ -20,10 +20,14 @@ import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
+import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name.special
 import org.jetbrains.kotlin.native.pipeline.*
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -110,10 +114,23 @@ class KlibSerializerNativeCliFacade(
         val storageManager = LockBasedStorageManager("ModulesStructure")
         val moduleName = special("<${library.uniqueName}>")
         val moduleOrigin = DeserializedKlibModuleOrigin(library)
-        val moduleDescriptor = if (builtIns != null)
-            klibFactories.DefaultDescriptorFactory.createDescriptor(moduleName, storageManager, builtIns, moduleOrigin)
-        else
-            klibFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(moduleName, storageManager, moduleOrigin)
+        @OptIn(K1Deprecation::class)
+        val builtInsToUse = builtIns ?: KonanBuiltIns(storageManager)
+        val moduleDescriptor = ModuleDescriptorImpl(
+            moduleName,
+            storageManager,
+            builtInsToUse,
+            capabilities = mapOf(
+                KlibModuleOrigin.CAPABILITY to moduleOrigin,
+                @OptIn(K1Deprecation::class)
+                ImplicitIntegerCoercion.MODULE_CAPABILITY to moduleOrigin.isCInteropLibrary()
+            ),
+            platform = NativePlatforms.unspecifiedNativePlatform
+        )
+
+        if (builtIns == null) {
+            builtInsToUse.builtInsModule = moduleDescriptor
+        }
 
         moduleDescriptor.setDependencies(dependencyModuleDescriptors + moduleDescriptor)
 

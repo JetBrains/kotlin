@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.FunctionTypeInterfacePackages
-import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -34,7 +34,9 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.name.Name.special
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
@@ -160,10 +162,18 @@ internal class JsIrLinkerLoader(
 
             val moduleName = special("<${current.uniqueName}>")
             val moduleOrigin = DeserializedKlibModuleOrigin(current)
-            val md = if (runtimeModule?.builtIns != null)
-                JsFactories.DefaultDescriptorFactory.createDescriptor(moduleName, LockBasedStorageManager.NO_LOCKS, runtimeModule!!.builtIns, moduleOrigin)
-            else
-                JsFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(moduleName, LockBasedStorageManager.NO_LOCKS, moduleOrigin)
+            val builtIns = runtimeModule?.builtIns ?: object : KotlinBuiltIns(LockBasedStorageManager.NO_LOCKS) {}
+            val md = ModuleDescriptorImpl(
+                moduleName,
+                LockBasedStorageManager.NO_LOCKS,
+                builtIns,
+                capabilities = mapOf(KlibModuleOrigin.CAPABILITY to moduleOrigin),
+                platform = JsPlatforms.defaultJsPlatform
+            )
+
+            if (runtimeModule?.builtIns == null) {
+                builtIns.builtInsModule = md
+            }
 
             if (isBuiltIns) runtimeModule = md
 

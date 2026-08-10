@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.LoadedKlibs
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -15,8 +16,10 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isJsStdlib
 import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name.special
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class ModulesStructure(
@@ -50,10 +53,18 @@ class ModulesStructure(
 
         val moduleName = special("<${current.uniqueName}>")
         val moduleOrigin = DeserializedKlibModuleOrigin(current)
-        val md = if (runtimeModule?.builtIns != null)
-            JsFactories.DefaultDescriptorFactory.createDescriptor(moduleName, storageManager, runtimeModule!!.builtIns, moduleOrigin)
-        else
-            JsFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(moduleName, storageManager, moduleOrigin)
+        val builtInsToUse = runtimeModule?.builtIns ?: object : KotlinBuiltIns(storageManager) {}
+        val md = ModuleDescriptorImpl(
+            moduleName,
+            storageManager,
+            builtInsToUse,
+            capabilities = mapOf(KlibModuleOrigin.CAPABILITY to moduleOrigin),
+            platform = JsPlatforms.defaultJsPlatform
+        )
+
+        if (runtimeModule?.builtIns == null) {
+            builtInsToUse.builtInsModule = md
+        }
 
         if (isBuiltIns) runtimeModule = md
         descriptors[current] = md
