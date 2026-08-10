@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
  *
  * Usually, [buildSubstitutor] should be preferred to build a new substitutor from scratch.
  *
+ * When [mappings] is empty, returns [KaSubstitutor.Empty].
+ * To build [KaSubstitutor.Empty] specifically, use [emptySubstitutor].
+ *
  * @see KaSubstitutor
  */
 @KaExperimentalApi
@@ -29,6 +32,9 @@ public fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSu
 
 /**
  * Builds a new [KaSubstitutor] from substitutions specified inside [build].
+ *
+ * When no mappings are provided in [build], returns [KaSubstitutor.Empty].
+ * To build [KaSubstitutor.Empty] specifically, use [emptySubstitutor].
  */
 @KaExperimentalApi
 context(session: KaSession)
@@ -36,6 +42,17 @@ public fun buildSubstitutor(build: KaSubstitutorBuilder.() -> Unit): KaSubstitut
     @OptIn(KaImplementationDetail::class)
     return internals.substitutorProvider.buildSubstitutor(build)
 }
+
+/**
+ * Creates [KaSubstitutor.Empty], i.e., a substitutor without any mappings.
+ */
+@KaExperimentalApi
+context(session: KaSession)
+public val emptySubstitutor: KaSubstitutor.Empty
+    get() {
+        @OptIn(KaImplementationDetail::class)
+        return internals.substitutorProvider.emptySubstitutor()
+    }
 
 /**
  * Creates a [KaSubstitutor] based on the inheritance relationship between [subClass] and [superClass]. [subClass] must inherit from

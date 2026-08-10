@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,28 +19,32 @@ import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 
 @KaImplementationDetail
 abstract class KaBaseSignatureSubstitutor<T : KaSession> : KaBaseSessionComponent<T>(), KaInternalsSignatureSubstitutor {
-    override fun <S : KaFunctionSymbol> substitute(symbol: S, substitutor: KaSubstitutor): KaFunctionSignature<S> =
-        symbol.withValidityAssertion {
-            if (substitutor is KaSubstitutor.Empty) return asSignature(symbol)
-            return asSignature(symbol).substitute(substitutor)
-        }
+    override fun <S : KaFunctionSymbol> substitute(
+        symbol: S,
+        substitutor: KaSubstitutor,
+    ): KaFunctionSignature<S> = symbol.withValidityAssertion {
+        asSignature(symbol).substitute(substitutor)
+    }
 
-    override fun <S : KaVariableSymbol> substitute(symbol: S, substitutor: KaSubstitutor): KaVariableSignature<S> =
-        symbol.withValidityAssertion {
-            if (substitutor is KaSubstitutor.Empty) return asSignature(symbol)
-            return asSignature(symbol).substitute(substitutor)
-        }
+    override fun <S : KaVariableSymbol> substitute(
+        symbol: S,
+        substitutor: KaSubstitutor,
+    ): KaVariableSignature<S> = symbol.withValidityAssertion {
+        asSignature(symbol).substitute(substitutor)
+    }
 
-    override fun <S : KaCallableSymbol> substitute(symbol: S, substitutor: KaSubstitutor): KaCallableSignature<S> =
-        symbol.withValidityAssertion {
-            when (symbol) {
-                is KaFunctionSymbol -> substitute(symbol, substitutor)
-                is KaVariableSymbol -> substitute(symbol, substitutor)
-            }
+    override fun <S : KaCallableSymbol> substitute(
+        symbol: S,
+        substitutor: KaSubstitutor,
+    ): KaCallableSignature<S> = symbol.withValidityAssertion {
+        when (symbol) {
+            is KaFunctionSymbol -> substitute(symbol, substitutor)
+            is KaVariableSymbol -> substitute(symbol, substitutor)
         }
+    }
 
     override fun <S : KaCallableSymbol> asSignature(symbol: S): KaCallableSignature<S> = symbol.withValidityAssertion {
-        return when (symbol) {
+        when (symbol) {
             is KaFunctionSymbol -> asSignature(symbol)
             is KaVariableSymbol -> asSignature(symbol)
         }

@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.analysis.api.types.KaUnificationSubstitutorPolicy
 public interface KaInternalsSubstitutorProvider {
     public fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSubstitutor
 
+    public fun emptySubstitutor(): KaSubstitutor.Empty
+
     public fun buildSubstitutor(build: KaSubstitutorBuilder.() -> Unit): KaSubstitutor
 
     public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass: KaClassSymbol): KaSubstitutor?

@@ -29,6 +29,11 @@ internal abstract class AbstractKaFirSubstitutor<T : ConeSubstitutor>(
     }
 }
 
+internal class KaFirEmptySubstitutor(override val token: KaLifetimeToken) : KaSubstitutor.Empty {
+    override fun substitute(type: KaType): KaType = withValidityAssertion { type }
+    override fun substituteOrNull(type: KaType): KaType? = withValidityAssertion { null }
+}
+
 internal class KaFirGenericSubstitutor(
     substitutor: ConeSubstitutor,
     builder: KaSymbolByFirBuilder,
