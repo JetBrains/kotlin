@@ -179,7 +179,7 @@ def _is_string_or_array(value):
     string_addr = _symbol_loaded_address("kclass:kotlin.String")
     expr = (
         f"(int)Konan_DebugIsInstance({value_str}, {_hex(string_addr)}) ? 1 "
-        f": ((int)Konan_DebugIsArray({value_str})) ? 2 : 0)"
+        f": ((int)Konan_DebugIsArray({value_str})) ? 2 : 0"
     )
     soa = _evaluate(expr).unsigned
     logging.debug("%s: %s", value_str, soa)
@@ -488,6 +488,7 @@ def _deallocate_inferior_memory(process, address):
     if not address or address == lldb.LLDB_INVALID_ADDRESS:
         return
     process.DeallocateMemory(address)
+
 
 _TYPE_CONVERSION = [
     lambda obj, value, address, name: value.CreateValueFromExpression(
@@ -898,13 +899,10 @@ def _run_batch_child_metadata_request(provider, include_names=True):
             types,
             addresses,
             type_names,
-            summaries,
         ) = _read_child_metadata(
             provider, result_addr, result_slot_count, count, include_names
         )
-        _cache_child_metadata(
-            provider, names, types, addresses, type_names, summaries
-        )
+        _cache_child_metadata(provider, names, types, addresses, type_names)
     finally:
         _free_batch_child_metadata_result(metadata_addrs)
         _deallocate_inferior_memory(provider._process, result_addr)
@@ -1073,7 +1071,6 @@ def _read_child_metadata(provider, result_addr, result_slot_count, count, includ
     addresses = list(
         struct.unpack(f"{prefix}{count}{pointer_format}", raw_field_addresses)
     )
-    summaries = [""] * count
     return (
         (
             field_names_addr,
@@ -1085,19 +1082,18 @@ def _read_child_metadata(provider, result_addr, result_slot_count, count, includ
         types,
         addresses,
         type_names,
-        summaries,
     )
 
 
-def _cache_child_metadata(provider, names, types, addresses, type_names, summaries):
+def _cache_child_metadata(provider, names, types, addresses, type_names):
     for index, name in enumerate(names):
         _set_cached_child_name(provider._valobj, index, name)
     for index, address in enumerate(addresses):
         _set_cached_child_address(provider._valobj, index, address)
     for index, child_type in enumerate(types):
         _set_cached_child_type(provider._valobj, index, child_type)
-    for field_address, child_type, type_name, summary in zip(
-        addresses, types, type_names, summaries
+    for field_address, child_type, type_name in zip(
+        addresses, types, type_names
     ):
         if child_type == _RUNTIME_TYPE_OBJECT and field_address:
             child_key = _read_pointer(
@@ -1105,8 +1101,6 @@ def _cache_child_metadata(provider, names, types, addresses, type_names, summari
             )
             if type_name:
                 _set_cached_type_name(provider._process, child_key, type_name)
-            if summary:
-                _set_cached_summary(provider._process, child_key, summary)
 
 
 def _free_batch_child_metadata_result(metadata_addrs):
