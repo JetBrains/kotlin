@@ -50,7 +50,6 @@ ant = "1.10.14"
 # It is recommended to skip at least one major release, e.g., use 2.0.21 when the default bootstrap version is 2.2.
 # This ensures additional verification that Gradle-related code does not get dependencies of higher LV
 kotlin-for-gradle-plugins-compilation = "2.2.21"
-gradle-api = "9.7.0"
 intellij-asm = "9.6.1"
 diff-utils = "4.12"
 opentelemetry-api = "1.41.0"
@@ -121,7 +120,6 @@ gradle-customUserData-gradlePlugin = { module = "com.gradle:common-custom-user-d
 develocity-gradlePlugin = { module = "com.gradle:develocity-gradle-plugin", version.ref = "develocity" }
 develocity-gradlePluginAdapter = { module = "com.gradle:develocity-gradle-plugin-adapters", version.ref = "develocity-plugin-adapter" }
 gradle-pluginPublish-gradlePlugin = { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradle-plugin-publish" }
-gradle-api = { module = "org.gradle.experimental:gradle-public-api", version.ref = "gradle-api" }
 gradle-toolchainsFoojayResolver-gradlePlugin = { module = "org.gradle.toolchains:foojay-resolver", version.ref = "gradle-toolchains-foojay-resolver" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "kotlinx-coroutines" }

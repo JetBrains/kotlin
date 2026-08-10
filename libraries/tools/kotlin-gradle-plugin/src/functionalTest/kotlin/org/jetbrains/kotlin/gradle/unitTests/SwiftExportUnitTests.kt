@@ -7,10 +7,9 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import com.android.build.api.variant.impl.capitalizeFirstChar
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.kotlin.dsl.project
-import org.gradle.kotlin.dsl.support.uppercaseFirstChar
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -653,7 +652,7 @@ class SwiftExportUnitTests {
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
         val name = swiftExportTask.mainModuleInput.moduleName.get()
-        assertEquals(invalidName.uppercaseFirstChar(), name)
+        assertEquals(invalidName.capitalizeFirstChar(), name)
 
         project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
     }

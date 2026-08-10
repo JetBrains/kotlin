@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.utils.processes
 
-import org.gradle.kotlin.dsl.support.serviceOf
+import org.gradle.internal.extensions.core.serviceOf
 import org.gradle.process.ExecOperations
 import org.gradle.process.ExecSpec
 import org.gradle.process.ProcessExecutionException

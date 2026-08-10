@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.compose.compiler.gradle
 
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.compose.compiler.gradle.testUtils.buildProjectWithJvm
 import org.jetbrains.kotlin.compose.compiler.gradle.testUtils.buildProjectWithMPP
 import org.jetbrains.kotlin.compose.compiler.gradle.testUtils.composeOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.utils.named
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -53,10 +52,10 @@ class ExtensionConfigurationTest {
     @Test
     fun testIncludeMetricsDestinationKmp() {
         val project = buildProjectWithMPP {
-            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            val composeExtension = extensions.getByType(ComposeCompilerGradlePluginExtension::class.java)
             composeExtension.metricsDestination.value(project.layout.buildDirectory.dir("composeMetrics"))
 
-            with(extensions.getByType<KotlinMultiplatformExtension>()) {
+            with(extensions.getByType(KotlinMultiplatformExtension::class.java)) {
                 jvm()
             }
         }
@@ -76,10 +75,10 @@ class ExtensionConfigurationTest {
     @Test
     fun testIncludeMetricsDestinationKmpCustomTargetName() {
         val project = buildProjectWithMPP {
-            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            val composeExtension = extensions.getByType(ComposeCompilerGradlePluginExtension::class.java)
             composeExtension.metricsDestination.value(project.layout.buildDirectory.dir("composeMetrics"))
 
-            with(extensions.getByType<KotlinMultiplatformExtension>()) {
+            with(extensions.getByType(KotlinMultiplatformExtension::class.java)) {
                 jvm("desktop")
             }
         }
@@ -99,10 +98,10 @@ class ExtensionConfigurationTest {
     @Test
     fun testIncludeMetricsDestinationKmpCustomCompilation() {
         val project = buildProjectWithMPP {
-            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            val composeExtension = extensions.getByType(ComposeCompilerGradlePluginExtension::class.java)
             composeExtension.metricsDestination.value(project.layout.buildDirectory.dir("composeMetrics"))
 
-            with(extensions.getByType<KotlinMultiplatformExtension>()) {
+            with(extensions.getByType(KotlinMultiplatformExtension::class.java)) {
                 jvm {
                     compilations.register("jdk9")
                 }
@@ -286,7 +285,7 @@ class ExtensionConfigurationTest {
     fun combineDeprecatedPropertiesWithFeatureFlags() {
         @Suppress("DEPRECATION_ERROR")
         val project = buildProjectWithJvm {
-            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            val composeExtension = extensions.getByType(ComposeCompilerGradlePluginExtension::class.java)
             composeExtension.enableNonSkippingGroupOptimization.set(true)
             composeExtension.enableIntrinsicRemember.set(false)
             composeExtension.featureFlags.addAll(ComposeFeatureFlag.StrongSkipping)
@@ -310,7 +309,7 @@ class ExtensionConfigurationTest {
     fun contradictInConfiguredFlags() {
         @Suppress("DEPRECATION_ERROR")
         val project = buildProjectWithJvm {
-            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            val composeExtension = extensions.getByType(ComposeCompilerGradlePluginExtension::class.java)
             composeExtension.enableStrongSkippingMode.set(false)
             composeExtension.featureFlags.addAll(ComposeFeatureFlag.StrongSkipping)
         }
@@ -331,7 +330,7 @@ class ExtensionConfigurationTest {
     fun combineDeprecatedPropertiesWithFeatureFlags_StrongSkipping() {
         @Suppress("DEPRECATION_ERROR")
         val project = buildProjectWithJvm {
-            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            val composeExtension = extensions.getByType(ComposeCompilerGradlePluginExtension::class.java)
             composeExtension.enableStrongSkippingMode.set(false)
             composeExtension.featureFlags.addAll(ComposeFeatureFlag.IntrinsicRemember.disabled())
         }
@@ -360,7 +359,7 @@ class ExtensionConfigurationTest {
         assertions: (List<Pair<String, String>>, Project) -> Unit
     ) {
         val project = buildProjectWithJvm {
-            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            val composeExtension = extensions.getByType(ComposeCompilerGradlePluginExtension::class.java)
             configureExtension(composeExtension, this)
         }
 

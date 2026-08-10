@@ -1,3 +1,5 @@
+import gradle.addKgpGradleApiDependency
+
 plugins {
     id("common-configuration")
     id("test-federation-convention")
@@ -11,11 +13,7 @@ dependencies {
     compileOnly(project(":kotlin-gradle-plugin"))
     compileOnly(project(":kotlin-gradle-plugin-api"))
     compileOnly(project(":kotlin-gradle-plugin-idea"))
-    compileOnly(libs.gradle.api) {
-        capabilities {
-            requireCapability("org.gradle.experimental:gradle-public-api-internal")
-        }
-    }
+    addKgpGradleApiDependency("compileOnly")
     compileOnly(kotlin("stdlib"))
 }
 

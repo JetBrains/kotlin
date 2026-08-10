@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests
 
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonTest
@@ -38,17 +37,17 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
             defaultTargets()
             kotlin {
                 dependencies {
-                    api("test:api:1.0")
-                    implementation("test:implementation:1.0")
-                    compileOnly("test:compileOnly:1.0")
-                    runtimeOnly("test:runtimeOnly:1.0")
+                    api.add("test:api:1.0")
+                    implementation.add("test:implementation:1.0")
+                    compileOnly.add("test:compileOnly:1.0")
+                    runtimeOnly.add("test:runtimeOnly:1.0")
 
-                    testImplementation("test:test-implementation:1.0")
-                    testCompileOnly("test:test-compileOnly:1.0")
-                    testRuntimeOnly("test:test-runtimeOnly:1.0")
+                    testImplementation.add("test:test-implementation:1.0")
+                    testCompileOnly.add("test:test-compileOnly:1.0")
+                    testRuntimeOnly.add("test:test-runtimeOnly:1.0")
 
-                    implementation(kotlin("gradle-plugin", "2.0.0"))
-                    testImplementation(kotlin("test"))
+                    implementation.add(kotlin("gradle-plugin", "2.0.0"))
+                    testImplementation.add(kotlin("test"))
                 }
 
                 sourceSets.commonMain.dependencies {
@@ -124,14 +123,14 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
             project.defaultTargets()
             project.kotlin {
                 dependencies {
-                    api(mockedDependency("top-level-api", "1.0"))
-                    implementation(mockedDependency("top-level-implementation", "1.0"))
-                    compileOnly(mockedDependency("top-level-compileOnly", "1.0"))
-                    runtimeOnly(mockedDependency("top-level-runtimeOnly", "1.0"))
+                    api.add(mockedDependency("top-level-api", "1.0"))
+                    implementation.add(mockedDependency("top-level-implementation", "1.0"))
+                    compileOnly.add(mockedDependency("top-level-compileOnly", "1.0"))
+                    runtimeOnly.add(mockedDependency("top-level-runtimeOnly", "1.0"))
 
-                    testImplementation(mockedDependency("top-level-test-implementation", "1.0"))
-                    testCompileOnly(mockedDependency("top-level-test-compileOnly", "1.0"))
-                    testRuntimeOnly(mockedDependency("top-level-test-runtimeOnly", "1.0"))
+                    testImplementation.add(mockedDependency("top-level-test-implementation", "1.0"))
+                    testCompileOnly.add(mockedDependency("top-level-test-compileOnly", "1.0"))
+                    testRuntimeOnly.add(mockedDependency("top-level-test-runtimeOnly", "1.0"))
                 }
             }
         }
@@ -189,17 +188,19 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
             enableDefaultJsDomApiDependency(false)
         }) {
             project.defaultTargets()
-            project.repositories.maven(repo)
+            project.repositories.maven {
+                it.setUrl(repo)
+            }
             project.kotlin {
                 dependencies {
-                    api("test:top-level-api:1.0")
-                    implementation("test:top-level-implementation:1.0")
-                    compileOnly("test:top-level-compileOnly:1.0")
-                    runtimeOnly("test:top-level-runtimeOnly:1.0")
+                    api.add("test:top-level-api:1.0")
+                    implementation.add("test:top-level-implementation:1.0")
+                    compileOnly.add("test:top-level-compileOnly:1.0")
+                    runtimeOnly.add("test:top-level-runtimeOnly:1.0")
 
-                    testImplementation("test:top-level-test-implementation:1.0")
-                    testCompileOnly("test:top-level-test-compileOnly:1.0")
-                    testRuntimeOnly("test:top-level-test-runtimeOnly:1.0")
+                    testImplementation.add("test:top-level-test-implementation:1.0")
+                    testCompileOnly.add("test:top-level-test-compileOnly:1.0")
+                    testRuntimeOnly.add("test:top-level-test-runtimeOnly:1.0")
                 }
             }
         }.evaluate()

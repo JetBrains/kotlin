@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.targets.web.npm
 
 import org.gradle.api.DomainObjectCollection
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNpmTooling
+import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
@@ -261,7 +261,7 @@ sealed class NpmResolverPluginApplierTest(
         val project = setupProject {
             val wasmJsNpmToolingDir = project.projectDir.resolve("customWasmJsNpmToolingDir").apply { mkdirs() }
 
-            project.rootProject.plugins.withType<WasmNodeJsRootPlugin>().configureEach { _ ->
+            project.rootProject.plugins.withType(WasmNodeJsRootPlugin::class.java).configureEach { _ ->
                 project.rootProject.extensions.getByType(WasmNpmTooling::class.java).apply {
                     installationDir.fileValue(project.projectDir.resolve(wasmJsNpmToolingDir))
                 }

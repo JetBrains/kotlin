@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.android.externalAndroidTarget
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.util.setAndroidSdkDirProperty
+import org.jetbrains.kotlin.gradle.utils.getByType
 import org.jetbrains.kotlin.gradle.utils.named
 import kotlin.test.Test
 import kotlin.test.assertEquals

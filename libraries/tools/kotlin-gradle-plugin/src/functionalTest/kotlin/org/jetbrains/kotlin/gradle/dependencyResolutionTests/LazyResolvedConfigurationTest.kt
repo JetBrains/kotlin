@@ -13,7 +13,6 @@ import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.component.external.model.DefaultModuleComponentSelector
-import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.gradle.cache.kotlinGradleTaskExecutionCache
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
@@ -169,7 +168,9 @@ class LazyResolvedConfigurationTest {
         // add dependency from the resolvable configuration to the consumable configuration
         project.dependencies.add(
             resolvableConfiguration.name,
-            project.dependencies.project(":", configuration = consumableConfiguration.name)
+            project.dependencies.project(
+                mapOf("path" to ":", "configuration" to consumableConfiguration.name)
+            )
         )
 
         // add dependency from the consumable co to the resolvable configuration

@@ -4,9 +4,6 @@ package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.invoke
-import org.gradle.kotlin.dsl.project
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -54,16 +51,14 @@ class UklibInterprojectResolutionTests {
             }
         ) {
             plugins.apply("java-library")
-            dependencies {
-                "api"(project(":producer"))
-            }
+            dependencies.add("api", project(":producer"))
         }.evaluate()
 
         val transitiveUklibConsumer = projectWithUklibs(root, "transitiveUklibConsumer") {
             kotlin {
                 targets()
                 dependencies {
-                    implementation(project(":directJavaConsumer"))
+                    implementation.add(project(":directJavaConsumer"))
                 }
             }
         }.evaluate()
@@ -919,7 +914,7 @@ class UklibInterprojectResolutionTests {
             kotlin {
                 jvm()
                 dependencies {
-                    implementation(project(":producer"))
+                    implementation.add(project(":producer"))
                 }
             }
         }.evaluate()
@@ -946,7 +941,7 @@ class UklibInterprojectResolutionTests {
             kotlin {
                 jvm()
                 dependencies {
-                    implementation(project(":producer"))
+                    implementation.add(project(":producer"))
                 }
             }
         }.evaluate()
@@ -983,12 +978,12 @@ class UklibInterprojectResolutionTests {
         }
         a.kotlin {
             dependencies {
-                testImplementation(project(":b"))
+                testImplementation.add(project(":b"))
             }
         }
         b.kotlin {
             dependencies {
-                api(project(":a"))
+                api.add(project(":a"))
             }
         }
         a.evaluate()

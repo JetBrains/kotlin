@@ -1,3 +1,4 @@
+import gradle.addKgpGradleApiDependency
 import plugins.KotlinBuildPublishingPlugin.Companion.ADHOC_COMPONENT_NAME
 
 plugins {
@@ -22,36 +23,31 @@ kotlin {
 }
 
 dependencies {
-    compileOnly(kotlin("stdlib"))
+    // 'kotlin.coreLibrariesVersion' usage caused by KT-71443
+    compileOnly(kotlin("stdlib", kotlin.coreLibrariesVersion))
     api(project(":kotlin-tooling-core"))
     api(project(":kotlin-gradle-plugin-annotations"))
 
-    testImplementation(libs.gradle.api) {
-        capabilities {
-            requireCapability("org.gradle.experimental:gradle-public-api-internal")
-        }
-    }
+    addKgpGradleApiDependency("testCompileOnly")
+
     testImplementation(project(":kotlin-gradle-plugin"))
     testImplementation(project(":kotlin-gradle-plugin-idea-proto"))
     testImplementation(kotlin("stdlib"))
     testImplementation(kotlin("reflect"))
     testImplementation(kotlin("test-junit5"))
     testImplementation(libs.junit.jupiter.params)
-
     testImplementation("org.reflections:reflections:0.10.2") {
         because("Tests on the object graph are performed. This library will find implementations of interfaces at runtime")
     }
+    testRuntimeOnly(gradleApi())
 
-    testFixturesImplementation(libs.gradle.api) {
-        capabilities {
-            requireCapability("org.gradle.experimental:gradle-public-api-internal")
-        }
-    }
+    addKgpGradleApiDependency("testFixturesCompileOnly")
     testFixturesImplementation(project(":kotlin-tooling-core"))
     testFixturesImplementation(project(":kotlin-gradle-plugin-idea-proto"))
-    testFixturesImplementation(kotlin("stdlib"))
-    testFixturesImplementation(kotlin("reflect"))
-    testFixturesImplementation(kotlin("test")) // no test annotations, only assertions are needed
+    // 'kotlin.coreLibrariesVersion' usage caused by KT-71443
+    testFixturesImplementation(kotlin("stdlib", kotlin.coreLibrariesVersion))
+    testFixturesImplementation(kotlin("reflect", kotlin.coreLibrariesVersion))
+    testFixturesImplementation(kotlin("test", kotlin.coreLibrariesVersion)) // no test annotations, only assertions are needed
 }
 
 

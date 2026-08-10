@@ -1,7 +1,9 @@
 import GenerateKgpBuildConstantsTask.Companion.registerGenerateKgpBuildConstantsTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import gradle.GradlePluginVariant
+import gradle.addKgpGradleApiDependency
 import gradle.enableKotlinSerializationPlugin
+import gradle.removeGradleApiDependencyFromTestConfiguration
 import org.gradle.plugin.compatibility.compatibility
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -125,8 +127,6 @@ val unpublishedCompilerRuntimeDependencies = listOf(
     ":js:js.config", // for k/js task
     ":wasm:wasm.config", // for k/js task
 )
-
-val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
 
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
@@ -572,7 +572,7 @@ testing {
             useJUnitJupiter()
 
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test-junit5:${coreDepsVersion}")
+                implementation("org.jetbrains.kotlin:kotlin-test-junit5")
                 implementation(libs.junit.jupiter.api)
                 implementation(libs.junit.jupiter.params)
             }
@@ -588,8 +588,13 @@ testing {
             dependencies {
                 implementation(testFixtures(project(":kotlin-build-common")))
                 implementation(testFixtures(project(":compiler:test-infrastructure-utils")))
-
                 implementation(libs.slf4j.api)
+
+                compileOnly("org.jetbrains.kotlin:kotlin-stdlib")
+                compileOnly("org.jetbrains.kotlin:kotlin-reflect")
+                compileOnly.addKgpGradleApiDependency()
+
+                runtimeOnly(gradleApi())
             }
 
             targets.configureEach {
@@ -613,16 +618,7 @@ testing {
 
                 implementation(testFixtures(project(":kotlin-build-common")))
                 implementation(testFixtures(project(":compiler:test-infrastructure-utils")))
-
                 implementation(project(":kotlin-compiler-runner"))
-
-                compileOnly(libs.android.gradle.plugin.gradle)
-                compileOnly(libs.android.gradle.plugin.gradle.api)
-                runtimeOnly(libs.android.gradle.plugin.gradle.latest)
-                runtimeOnly(libs.android.gradle.plugin.gradle.api.latest)
-                compileOnly(libs.android.tools.common)
-
-                implementation(gradleKotlinDsl())
                 implementation(project(":kotlin-gradle-plugin-tcs-android"))
                 implementation(project(":kotlin-tooling-metadata"))
                 implementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
@@ -639,6 +635,14 @@ testing {
                 implementation(intellijPlatformUtil())
                 implementation(libs.junit.jupiter.engine)
 
+                compileOnly(libs.android.gradle.plugin.gradle)
+                compileOnly(libs.android.gradle.plugin.gradle.api)
+                compileOnly(libs.android.tools.common)
+                compileOnly.addKgpGradleApiDependency()
+
+                runtimeOnly(libs.android.gradle.plugin.gradle.latest)
+                runtimeOnly(libs.android.gradle.plugin.gradle.api.latest)
+                runtimeOnly(gradleApi())
                 runtimeOnly(libs.apache.commons.compress) // is required for `TarArchiveOutputStream` in `NativeVersionValueSourceTest`
             }
 
@@ -705,7 +709,7 @@ testing {
             dependencies {
                 implementation(project())
                 implementation(libs.lincheck)
-                compileOnly(gradleKotlinDsl())
+                runtimeOnly(gradleApi())
             }
 
             targets.configureEach {
@@ -728,11 +732,11 @@ tasks.check {
 }
 
 // Workaround for KT-75550
-tasks.named("gradle813Jar") {
+tasks.named("gradle96Jar") {
     enabled = false
 }
 
-val gradlePluginVariantForFunctionalTests = GradlePluginVariant.GRADLE_813
+val gradlePluginVariantForFunctionalTests = GradlePluginVariant.GRADLE_96
 
 sourceSets.testFixtures {
     /*
@@ -746,11 +750,13 @@ sourceSets.testFixtures {
      * Also, it prevents compilation problems due to dependencies from the test source set of too high LV (like compiler modules).
      */
     dependencies {
-        add(implementationConfigurationName, commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-        add(implementationConfigurationName, gradleApi())
+        add(implementationConfigurationName, kotlin("reflect"))
+        addKgpGradleApiDependency(compileOnlyConfigurationName)
         add(implementationConfigurationName, libs.junit.jupiter.api)
     }
 }
+
+removeGradleApiDependencyFromTestConfiguration()
 
 // Enforce lowest jvm version to make testFixtures compatible with KGP-IT injections
 val testFixturesCompilation = kotlin.target.compilations.getByName("testFixtures")
@@ -780,11 +786,19 @@ functionalTestCompilation.enableKotlinSerializationPlugin()
 functionalTestCompilation.associateWith(kotlin.target.compilations.getByName(gradlePluginVariantForFunctionalTests.sourceSetName))
 functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
 functionalTestCompilation.associateWith(testFixturesCompilation)
+configurations.named(functionalTestCompilation.compileDependencyConfigurationName) {
+    // Reject the main source set Gradle API dependency brought transitevely via test fixtures
+    exclude("dev.gradleplugins", "gradle-api")
+}
 
 val lincheckTestCompilation = kotlin.target.compilations.getByName("lincheckTest")
 lincheckTestCompilation.associateWith(kotlin.target.compilations.getByName(gradlePluginVariantForFunctionalTests.sourceSetName))
 lincheckTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
 lincheckTestCompilation.associateWith(testFixturesCompilation)
+configurations.named(lincheckTestCompilation.compileDependencyConfigurationName) {
+    // Reject the main source set Gradle API dependency brought transitevely via test fixtures
+    exclude("dev.gradleplugins", "gradle-api")
+}
 
 val acceptLicensesTask = with(androidSdkProvisioner) {
     registerAcceptLicensesTask()

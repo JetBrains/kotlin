@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
 import org.gradle.api.problems.ProblemSpec
-import org.gradle.api.problems.Severity
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.DiagnosticGroup
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.applySourceLocation
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.locationLength
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.problemId
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.toDiagnosticGroup
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.toDisplayName
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.toGradleSeverity
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
@@ -41,11 +39,6 @@ class CompilerDiagnosticsProblemsReporterHelpersTest {
         assertEquals("Kotlin compiler warning", CompilerMessageRenderer.Severity.WARNING.toDisplayName())
         assertEquals("Kotlin compiler info", CompilerMessageRenderer.Severity.INFO.toDisplayName())
         assertEquals("Kotlin compiler debug", CompilerMessageRenderer.Severity.DEBUG.toDisplayName())
-
-        assertEquals(Severity.ERROR, CompilerMessageRenderer.Severity.ERROR.toGradleSeverity())
-        assertEquals(Severity.WARNING, CompilerMessageRenderer.Severity.WARNING.toGradleSeverity())
-        assertNull(CompilerMessageRenderer.Severity.INFO.toGradleSeverity())
-        assertNull(CompilerMessageRenderer.Severity.DEBUG.toGradleSeverity())
     }
 
     @Test

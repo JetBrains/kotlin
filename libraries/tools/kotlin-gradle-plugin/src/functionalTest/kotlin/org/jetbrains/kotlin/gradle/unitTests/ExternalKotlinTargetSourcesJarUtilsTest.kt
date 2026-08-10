@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.file.copy.SingleParentCopySpec
 import org.gradle.jvm.tasks.Jar
-import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 import org.jetbrains.kotlin.gradle.plugin.configurationResult
@@ -31,7 +30,7 @@ class ExternalKotlinTargetSourcesJarUtilsTest {
             sourceSetTreeClassifierV2 = KotlinSourceSetTreeClassifier.Value(KotlinSourceSetTree.main)
         }
 
-        val jar = tasks.register<Jar>("forTest").get()
+        val jar = tasks.register("forTest", Jar::class.java).get()
         jar.includeSources(compilation)
         configurationResult.await()
 

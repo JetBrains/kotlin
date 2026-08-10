@@ -1,5 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import plugins.KotlinBuildPublishingPlugin
+import gradle.GradleApiKt
 
 plugins {
     id("common-configuration")
@@ -21,11 +22,7 @@ dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:$btaBootstrapVersion")
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$btaBootstrapVersion")
 
-    compileOnly(libs.gradle.api) {
-        capabilities {
-            requireCapability("org.gradle.experimental:gradle-public-api-internal")
-        }
-    }
+    GradleApiKt.addKgpGradleApiDependency(dependencies, "compileOnly")
 }
 
 plugins.withType(JavaGradlePluginPlugin).configureEach {
