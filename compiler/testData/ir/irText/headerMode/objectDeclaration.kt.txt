@@ -1,0 +1,26 @@
+object A {
+  private constructor() /* primary */
+
+  fun funA(): String {
+  }
+
+  inline fun funB(): String {
+    return "A.funB body"
+  }
+
+  fun funD(): Int {
+  }
+
+  inline fun funE(): String {
+    local fun funF(): String {
+      return "funF body"
+    }
+
+    return funF()
+  }
+
+  @OptIn(markerClass = [ExperimentalContracts::class])
+  fun isNotNull(value: Any?): Boolean {
+  }
+
+}

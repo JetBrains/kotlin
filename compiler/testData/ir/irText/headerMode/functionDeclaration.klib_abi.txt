@@ -1,0 +1,14 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /funA(): kotlin/String // /funA|funA(){}[0]
+final inline fun /funB(): kotlin/String // /funB|funB(){}[0]
+final fun /funD(): kotlin/Int // /funD|funD(){}[0]
+final inline fun /funE(): kotlin/String // /funE|funE(){}[0]
+final inline fun /funG(): kotlin/String // /funG|funG(){}[0]
+final fun /funI(): kotlin/Int // /funI|funI(){}[0]
+final fun /funJ(): kotlin/String // /funJ|funJ(){}[0]
+final fun /isNotNull(kotlin/Any?): kotlin/Boolean // /isNotNull|isNotNull(kotlin.Any?){}[0]
