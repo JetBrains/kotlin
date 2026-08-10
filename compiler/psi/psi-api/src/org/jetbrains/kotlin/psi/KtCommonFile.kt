@@ -78,15 +78,18 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     var packageFqName: FqName
         get() = greenStub?.getPackageFqName() ?: packageDirective?.fqName ?: FqName.ROOT
         @Deprecated(
-            "Use setPackageFqName(value) instead",
-            ReplaceWith("this.setPackageFqName(value)", "org.jetbrains.kotlin.idea.base.psi.setPackageFqName"),
+            message = "Use setPackageFqName(value) instead",
+            replaceWith = ReplaceWith("this.setPackageFqName(value)", "org.jetbrains.kotlin.idea.base.psi.setPackageFqName"),
         )
         @OptIn(KtNonPublicApi::class)
         set(value) {
             KtPsiMutationService.getInstance().setPackageFqName(this, value)
         }
 
-    @Deprecated("Use 'packageFqName' property instead", ReplaceWith("packageFqName"))
+    @Deprecated(
+        message = "Use 'packageFqName' property instead",
+        replaceWith = ReplaceWith("packageFqName"),
+    )
     val packageFqNameByTree: FqName
         get() = packageFqName
 
@@ -112,7 +115,10 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
             }
         }
 
-    @Deprecated("Use 'isScript()' instead", ReplaceWith("isScript()"))
+    @Deprecated(
+        message = "Use 'isScript()' instead",
+        replaceWith = ReplaceWith("isScript()"),
+    )
     val isScriptByTree: Boolean
         get() = isScript()
 

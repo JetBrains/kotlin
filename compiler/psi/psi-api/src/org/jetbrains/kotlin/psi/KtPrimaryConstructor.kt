@@ -31,8 +31,8 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
     override fun getContainingClassOrObject() = parent as KtClassOrObject
 
     @Deprecated(
-        "Use removeRedundantConstructorKeyword() instead",
-        ReplaceWith(
+        message = "Use removeRedundantConstructorKeyword() instead",
+        replaceWith = ReplaceWith(
             "this.removeRedundantConstructorKeyword()",
             "org.jetbrains.kotlin.idea.base.psi.removeRedundantConstructorKeyword",
         ),
@@ -42,24 +42,24 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
     }
 
     @Deprecated(
-        "Use addModifierKeyword(modifier) instead",
-        ReplaceWith("this.addModifierKeyword(modifier)", "org.jetbrains.kotlin.idea.base.psi.addModifierKeyword"),
+        message = "Use addModifierKeyword(modifier) instead",
+        replaceWith = ReplaceWith("this.addModifierKeyword(modifier)", "org.jetbrains.kotlin.idea.base.psi.addModifierKeyword"),
     )
     override fun addModifier(modifier: KtModifierKeywordToken) {
         KtPsiMutationService.getInstance().addModifierKeyword(this, modifier)
     }
 
     @Deprecated(
-        "Use removeModifierKeyword(modifier) instead",
-        ReplaceWith("this.removeModifierKeyword(modifier)", "org.jetbrains.kotlin.idea.base.psi.removeModifierKeyword"),
+        message = "Use removeModifierKeyword(modifier) instead",
+        replaceWith = ReplaceWith("this.removeModifierKeyword(modifier)", "org.jetbrains.kotlin.idea.base.psi.removeModifierKeyword"),
     )
     override fun removeModifier(modifier: KtModifierKeywordToken) {
         KtPsiMutationService.getInstance().removeModifierKeyword(this, modifier)
     }
 
     @Deprecated(
-        "Use addAnnotation(annotationEntry) instead",
-        ReplaceWith("this.addAnnotation(annotationEntry)", "org.jetbrains.kotlin.idea.base.psi.addAnnotation"),
+        message = "Use addAnnotation(annotationEntry) instead",
+        replaceWith = ReplaceWith("this.addAnnotation(annotationEntry)", "org.jetbrains.kotlin.idea.base.psi.addAnnotation"),
     )
     override fun addAnnotationEntry(annotationEntry: KtAnnotationEntry): KtAnnotationEntry =
         KtPsiMutationService.getInstance().addAnnotation(this, annotationEntry)

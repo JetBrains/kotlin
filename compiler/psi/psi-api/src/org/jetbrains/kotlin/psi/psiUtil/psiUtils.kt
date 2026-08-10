@@ -563,8 +563,8 @@ fun PsiElement.getElementTextWithContext(): String = org.jetbrains.kotlin.utils.
 fun PsiElement.getTextWithLocation(): String = "'${this.text}' at ${PsiDiagnosticUtils.atLocation(this)}"
 
 @Deprecated(
-    "Use file.replaceFileAnnotationList(annotationList) instead",
-    ReplaceWith(
+    message = "Use file.replaceFileAnnotationList(annotationList) instead",
+    replaceWith = ReplaceWith(
         "file.replaceFileAnnotationList(annotationList)",
         "org.jetbrains.kotlin.idea.base.psi.replaceFileAnnotationList",
     ),
@@ -579,8 +579,8 @@ fun replaceFileAnnotationList(file: KtFile, annotationList: KtFileAnnotationList
 operator fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUtil.isInScope(this, element)
 
 @Deprecated(
-    "Use only in 'kotlin' repo until the alternative method from 'com.intellij.psi' package becomes available from the IJ platform",
-    ReplaceWith("this.createSmartPointer()", "com.intellij.psi.createSmartPointer"),
+    message = "Use only in 'kotlin' repo until the alternative method from 'com.intellij.psi' package becomes available from the IJ platform",
+    replaceWith = ReplaceWith("this.createSmartPointer()", "com.intellij.psi.createSmartPointer"),
 )
 fun <E : PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
     SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this)

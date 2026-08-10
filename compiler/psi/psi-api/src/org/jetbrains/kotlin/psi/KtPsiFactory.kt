@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.utils.checkWithAttachment
 @JvmName("KtPsiFactory")
 @Suppress("unused")
 @Deprecated(
-    "Use 'KtPsiFactory' constructor instead",
+    message = "Use 'KtPsiFactory' constructor instead",
+    replaceWith = ReplaceWith("KtPsiFactory(project!!, markGenerated)", "org.jetbrains.kotlin.psi.KtPsiFactory"),
     level = DeprecationLevel.WARNING,
-    replaceWith = ReplaceWith("KtPsiFactory(project!!, markGenerated)", "org.jetbrains.kotlin.psi.KtPsiFactory")
 )
 fun KtPsiFactory(project: Project?, markGenerated: Boolean = true): KtPsiFactory = KtPsiFactory(project!!, markGenerated)
 
@@ -37,9 +37,9 @@ fun KtPsiFactory(project: Project?, markGenerated: Boolean = true): KtPsiFactory
 @JvmName("KtPsiFactory")
 @Suppress("unused")
 @Deprecated(
-    "Use 'KtPsiFactory' constructor instead",
+    message = "Use 'KtPsiFactory' constructor instead",
+    replaceWith = ReplaceWith("KtPsiFactory(elementForProject.project, markGenerated)", "org.jetbrains.kotlin.psi.KtPsiFactory"),
     level = DeprecationLevel.WARNING,
-    replaceWith = ReplaceWith("KtPsiFactory(elementForProject.project, markGenerated)", "org.jetbrains.kotlin.psi.KtPsiFactory")
 )
 fun KtPsiFactory(elementForProject: PsiElement, markGenerated: Boolean = true): KtPsiFactory =
     KtPsiFactory(elementForProject.project, markGenerated)
@@ -78,7 +78,9 @@ class KtPsiFactory private constructor(
 
 
     @JvmOverloads
-    @Deprecated("Use 'KtPsiFactory(project, markGenerated)' or 'KtPsiFactory.contextual(context, markGenerated)' instead")
+    @Deprecated(
+        message = "Use 'KtPsiFactory(project, markGenerated)' or 'KtPsiFactory.contextual(context, markGenerated)' instead",
+    )
     constructor(element: KtElement, markGenerated: Boolean = true) : this(element.project, markGenerated, context = null, eventSystemEnabled = false)
 
     fun createValKeyword(): PsiElement {
@@ -263,14 +265,18 @@ class KtPsiFactory private constructor(
         return file
     }
 
-    @Deprecated("Call 'createFile()' on a contextual 'KtPsiFactory' instead")
+    @Deprecated(
+        message = "Call 'createFile()' on a contextual 'KtPsiFactory' instead",
+    )
     fun createAnalyzableFile(@NonNls fileName: String, @NonNls text: String, contextToAnalyzeIn: PsiElement): KtFile {
         val file = doCreateFile(fileName, text)
         file.analysisContext = contextToAnalyzeIn
         return file
     }
 
-    @Deprecated("Call 'createPhysicalFile() on a contextual 'KtPsiFactory' instead")
+    @Deprecated(
+        message = "Call 'createPhysicalFile() on a contextual 'KtPsiFactory' instead",
+    )
     fun createFileWithLightClassSupport(@NonNls fileName: String, @NonNls text: String, contextToAnalyzeIn: PsiElement): KtFile {
         val file = createPhysicalFile(fileName, text)
         file.analysisContext = contextToAnalyzeIn
@@ -578,7 +584,9 @@ class KtPsiFactory private constructor(
         }
     }
 
-    @Deprecated("function is not used in the kotlin plugin/compiler and will be removed soon")
+    @Deprecated(
+        message = "function is not used in the kotlin plugin/compiler and will be removed soon",
+    )
     fun createImportDirectives(paths: Collection<ImportPath>): List<KtImportDirective> {
         val fileContent = buildString {
             for (path in paths) {

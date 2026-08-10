@@ -32,7 +32,9 @@ abstract class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<
     @KtImplementationDetail
     abstract override fun copyInto(newParent: StubElement<*>?): KotlinStubBaseImpl<T>
 
-    @Deprecated("Deprecated stub API")
+    @Deprecated(
+        message = "Deprecated stub API",
+    )
     @Suppress("DEPRECATION") // KT-78356
     override fun getStubType(): IStubElementType<out StubElement<*>, *> =
         super.getStubType() as IStubElementType<out StubElement<*>, *>
