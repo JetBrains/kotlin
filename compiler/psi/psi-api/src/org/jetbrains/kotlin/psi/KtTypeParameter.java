@@ -56,7 +56,11 @@ public class KtTypeParameter extends KtNamedDeclarationStub<KotlinTypeParameterS
      */
     @Nullable
     @kotlin.Deprecated(
-            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.setTypeParameterExtendsBound(this, typeReference)' instead."
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.setTypeParameterExtendsBound(this, typeReference)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.setTypeParameterExtendsBound(typeReference)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.setTypeParameterExtendsBound"
+            )
     )
     @Deprecated
     public KtTypeReference setExtendsBound(@Nullable KtTypeReference typeReference) {

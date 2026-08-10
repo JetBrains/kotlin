@@ -160,7 +160,11 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     @Override
     @Nullable
     @kotlin.Deprecated(
-            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.setPropertyTypeReference(this, typeRef)' instead."
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.setPropertyTypeReference(this, typeRef)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.setPropertyTypeReference(typeRef)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.setPropertyTypeReference"
+            )
     )
     @Deprecated
     public KtTypeReference setTypeReference(@Nullable KtTypeReference typeRef) {
@@ -291,7 +295,11 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
      */
     @Nullable
     @kotlin.Deprecated(
-            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.setPropertyInitializer(this, initializer)' instead."
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.setPropertyInitializer(this, initializer)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.setPropertyInitializer(initializer)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.setPropertyInitializer"
+            )
     )
     @Deprecated
     public KtExpression setInitializer(@Nullable KtExpression initializer) {

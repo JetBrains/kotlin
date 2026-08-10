@@ -32,7 +32,11 @@ public interface KtModifierListOwner extends PsiElement, KtAnnotated {
      * instead.
      */
     @kotlin.Deprecated(
-            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addModifierKeyword(this, modifier)' instead."
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addModifierKeyword(this, modifier)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.addModifierKeyword(modifier)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.addModifierKeyword"
+            )
     )
     @Deprecated
     void addModifier(@NotNull KtModifierKeywordToken modifier);
@@ -42,7 +46,11 @@ public interface KtModifierListOwner extends PsiElement, KtAnnotated {
      * instead.
      */
     @kotlin.Deprecated(
-            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeModifierKeyword(this, modifier)' instead."
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeModifierKeyword(this, modifier)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.removeModifierKeyword(modifier)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.removeModifierKeyword"
+            )
     )
     @Deprecated
     void removeModifier(@NotNull KtModifierKeywordToken modifier);
@@ -52,7 +60,11 @@ public interface KtModifierListOwner extends PsiElement, KtAnnotated {
      * instead.
      */
     @kotlin.Deprecated(
-            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addAnnotation(this, annotationEntry)' instead."
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addAnnotation(this, annotationEntry)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.addAnnotation(annotationEntry)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.addAnnotation"
+            )
     )
     @Deprecated
     @NotNull

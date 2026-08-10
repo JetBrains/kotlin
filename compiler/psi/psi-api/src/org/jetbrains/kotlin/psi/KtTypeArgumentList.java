@@ -50,7 +50,11 @@ public class KtTypeArgumentList extends KtElementImplStub<KotlinPlaceHolderStub<
      */
     @NotNull
     @kotlin.Deprecated(
-            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.appendTypeArgument(this, typeArgument)' instead."
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.appendTypeArgument(this, typeArgument)' instead.",
+            replaceWith = @kotlin.ReplaceWith(
+                    expression = "this.appendTypeArgument(typeArgument)",
+                    imports = "org.jetbrains.kotlin.idea.base.psi.appendTypeArgument"
+            )
     )
     @Deprecated
     public KtTypeProjection addArgument(@NotNull KtTypeProjection typeArgument) {
