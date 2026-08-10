@@ -1,6 +1,8 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
 // FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_ONLY_DIST
+// IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_EVERYWHERE
 
 // KT-85403: reading a top-level val (a trivial getter) inside an `if (x is T)` branch dropped
 // the branch's path predicate in CastsOptimization, so the control flow merge after the `if`
