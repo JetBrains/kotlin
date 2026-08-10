@@ -13,8 +13,6 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -193,9 +191,9 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         val project = buildProjectWithMPP {
             kotlin {
                 js()
-                targets.withType<KotlinJsIrTarget> {
+                targets.withType(KotlinJsIrTarget::class.java) {
                     @Suppress("DEPRECATION")
-                    compilations.getByName("main").dependencies {
+                    it.compilations.getByName("main").dependencies {
                         api("test:compilation-dependency")
                     }
                 }
@@ -516,9 +514,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             }
         }
 
-        project.dependencies {
-            add("compileOnly", "org:example:1.0")
-        }
+        project.dependencies.add("compileOnly", "org:example:1.0")
 
         project.evaluate()
 

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.unitTests.compilerArgumetns
 
 import org.gradle.api.JavaVersion
-import org.gradle.kotlin.dsl.repositories
 import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -38,7 +37,7 @@ class KotlinCompileArgumentsTest {
     fun `test - simple project - compare CompilerArgumentsAware with KotlinCompilerArgumentsAware implementations`() {
         val project = buildProjectWithJvm()
 
-        project.repositories {
+        with(project.repositories) {
             mavenCentralCacheRedirector()
         }
 

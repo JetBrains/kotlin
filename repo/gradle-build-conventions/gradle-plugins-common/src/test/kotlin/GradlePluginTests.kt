@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.repositories
@@ -239,6 +240,7 @@ class GradlePluginTests {
         }.build().also {
             it.tasks.register("mvnInstall")
             it.extraProperties.set("avoidSettingCompilerVersionForBTA", true)
+            it.extra.set("repo.tests.skipVersionCatalog", true)
         } as ProjectInternal
 
     private fun createFakeKotlinRoot(): Project {

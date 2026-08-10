@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.result.ResolvedComponentResult
-import org.gradle.kotlin.dsl.create
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
@@ -37,11 +37,11 @@ class KT77539UklibSkikoResolution {
                 iosArm64()
                 @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
-                val skiko = dependencies.create("org.jetbrains.skiko:skiko:0.9.4.2") {
-                    isTransitive = false
-                }
+                val skiko = dependencies.create("org.jetbrains.skiko:skiko:0.9.4.2")
                 dependencies {
-                    implementation.add(skiko)
+                    implementation.add(skiko) {
+                        (it as ModuleDependency).isTransitive = false
+                    }
                 }
             }
         }.evaluate()

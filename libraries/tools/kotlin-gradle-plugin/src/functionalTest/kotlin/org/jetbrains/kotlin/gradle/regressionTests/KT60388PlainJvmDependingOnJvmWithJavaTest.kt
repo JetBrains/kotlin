@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.gradle.regressionTests
 
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.project
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -41,9 +39,7 @@ class KT60388PlainJvmDependingOnJvmWithJavaTest {
         }
 
         consumer.kotlinJvmExtension.apply {
-            project.dependencies {
-                "api"(project(":producer"))
-            }
+            project.dependencies.add("api", project.dependencies.project(":producer"))
         }
 
         assertConsumerCanResolveProducer(producer, consumer)
@@ -68,9 +64,7 @@ class KT60388PlainJvmDependingOnJvmWithJavaTest {
         }
 
         consumer.kotlinJvmExtension.apply {
-            project.dependencies {
-                "api"(project(":producer"))
-            }
+            project.dependencies.add("api", project.dependencies.project(":producer"))
         }
 
         assertConsumerCanResolveProducer(producer, consumer)

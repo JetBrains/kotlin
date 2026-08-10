@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.InvalidUserCodeException
-import org.gradle.kotlin.dsl.provideDelegate
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.jvmMain

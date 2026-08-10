@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.provider.Provider
-import org.gradle.kotlin.dsl.extra
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
@@ -50,7 +49,7 @@ class DisabledNativeCacheTest {
         with(
             buildProjectWithMPP(
                 preApplyCode = {
-                    project.extra.set("kotlin.native.cacheKind", NativeCacheKind.NONE.name)
+                    project.extraProperties.set("kotlin.native.cacheKind", NativeCacheKind.NONE.name)
                 }
             )
         ) {
@@ -71,7 +70,7 @@ class DisabledNativeCacheTest {
         with(
             buildProjectWithMPP(
                 preApplyCode = {
-                    project.extra.set("kotlin.native.cacheKind.linuxX64", NativeCacheKind.NONE.name)
+                    project.extraProperties.set("kotlin.native.cacheKind.linuxX64", NativeCacheKind.NONE.name)
                 }
             )
         ) {

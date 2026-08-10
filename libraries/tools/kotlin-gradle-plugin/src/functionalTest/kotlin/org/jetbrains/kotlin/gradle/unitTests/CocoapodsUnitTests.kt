@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.CFLAGS_PROPERTY
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagn
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
+import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.Assumptions
 import kotlin.test.Test

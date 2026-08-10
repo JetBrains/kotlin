@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.wasm.nodejs
 
-import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.js.allDependenciesInternal
@@ -30,7 +29,7 @@ class WasmNodeJsRootExtensionTest {
 
         project.evaluate()
 
-        val wasmNodeJsRootExtension = project.extensions.getByType(WasmNodeJsRootExtension::class)
+        val wasmNodeJsRootExtension = project.extensions.getByType(WasmNodeJsRootExtension::class.java)
         val allDeps = wasmNodeJsRootExtension.versions.allDependenciesInternal(project.objects, project.providers)
 
         fun getWebpack() =

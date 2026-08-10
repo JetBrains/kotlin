@@ -15,7 +15,6 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
-import org.gradle.kotlin.dsl.apply
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -271,7 +270,7 @@ class MppPublicationTest {
     fun `test MavenPublish applied before KotlinMultiplatform KT-28520`() {
         val project = buildProject {
 
-            apply<MavenPublishPlugin>()
+            plugins.apply(MavenPublishPlugin::class.java)
 
             assertTrue(pluginManager.hasPlugin("maven-publish"), "Expected project has MavenPublish plugin")
             assertFalse(project.pluginManager.hasPlugin("kotlin-multiplatform"), "Expected project does not have KGP")
