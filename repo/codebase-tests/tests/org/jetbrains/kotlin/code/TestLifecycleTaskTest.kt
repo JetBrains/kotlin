@@ -58,7 +58,7 @@ class TestLifecycleTaskTest {
         val missingProjects = mutableListOf<String>()
         val testLifecycleTasks = mutableListOf<TestLifecycleTask>()
         val missingTestTasks = mutableSetOf<String>()
-        val testTaskIndex = mutableMapOf<String, TestLifecycleTasksModel>()
+        val testTaskIndex = mutableMapOf<String, TestLifecycleTasksModel.TestTask>()
 
         models.forEach { [projectPath, model] ->
             if (model == null) {
@@ -69,7 +69,7 @@ class TestLifecycleTaskTest {
             testLifecycleTasks += model.testLifecycleTasks
             missingTestTasks += model.testTasks.map { it.path }
             model.testTasks.forEach { testTask ->
-                testTaskIndex[testTask.path] = model
+                testTaskIndex[testTask.path] = testTask
             }
         }
 
@@ -92,8 +92,8 @@ class TestLifecycleTaskTest {
                 appendLine()
                 appendLine("${lifecycleTask.path}: [${allDomains.toArgumentString()}]")
                 lifecycleTask.allDependencies.sorted().forEach { dependency ->
-                    val model = testTaskIndex[dependency]
-                    appendLine("  - $dependency [${model?.domains}]")
+                    val testTask = testTaskIndex[dependency]
+                    appendLine("  - $dependency [${testTask?.domains}]")
                 }
             }
 
@@ -101,8 +101,8 @@ class TestLifecycleTaskTest {
             appendLine()
             appendLine("Not connected to any 'lifecycleTestTask':")
             missingTestTasks.sorted().forEach {
-                val model = testTaskIndex[it]
-                appendLine("  - $it [${model?.domains}]")
+                val testTask = testTaskIndex[it]
+                appendLine("  - $it [${testTask?.domains}]")
             }
         }.trim().lineSequence().joinToString("\n")
 

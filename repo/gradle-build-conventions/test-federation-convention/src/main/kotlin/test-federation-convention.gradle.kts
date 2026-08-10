@@ -1,3 +1,5 @@
+@file:OptIn(DelicateTestFederationApi::class)
+
 import com.gradle.develocity.agent.gradle.DevelocityConfiguration
 import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
 import org.jetbrains.kotlin.testFederation.*
@@ -13,7 +15,7 @@ val testFederationRuntime = configurations.detachedConfiguration(dependencies.pr
 }.incoming.files
 
 tasks.withType<Test>().configureEach {
-    val currentDomain = project.testFederationDomains
+    val currentDomain = testFederationDomains
     val affectedDomains = project.testFederationAffectedDomains
     val areNightlyTestsEnabled = project.areNightlyTestsEnabled
 
