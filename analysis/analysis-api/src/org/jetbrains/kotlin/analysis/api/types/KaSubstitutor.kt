@@ -46,10 +46,10 @@ public interface KaSubstitutor : KaLifetimeOwner {
 
     /**
      * A [KaSubstitutor] with an empty type mapping. It does not perform any substitution.
+     *
+     * Can be constructed using [emptySubstitutor].
      */
     @KaExperimentalApi
-    public class Empty(override val token: KaLifetimeToken) : KaSubstitutor {
-        override fun substitute(type: KaType): KaType = withValidityAssertion { type }
-        override fun substituteOrNull(type: KaType): KaType? = withValidityAssertion { null }
-    }
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface Empty : KaSubstitutor
 }

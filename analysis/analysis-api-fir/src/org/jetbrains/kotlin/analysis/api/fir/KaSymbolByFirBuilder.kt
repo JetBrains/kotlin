@@ -523,7 +523,7 @@ internal class KaSymbolByFirBuilder(
         }
 
         fun buildSubstitutor(substitutor: ConeSubstitutor): KaSubstitutor = when (substitutor) {
-            ConeSubstitutor.Empty -> KaSubstitutor.Empty(token)
+            ConeSubstitutor.Empty -> KaFirEmptySubstitutor(token)
             is ConeSubstitutorByMap -> KaFirMapBackedSubstitutor(substitutor, this@KaSymbolByFirBuilder)
             is ChainedSubstitutor -> KaFirChainedSubstitutor(substitutor, this@KaSymbolByFirBuilder)
             else -> KaFirGenericSubstitutor(substitutor, this@KaSymbolByFirBuilder)
