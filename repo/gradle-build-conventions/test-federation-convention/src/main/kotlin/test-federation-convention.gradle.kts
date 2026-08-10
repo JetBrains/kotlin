@@ -38,7 +38,7 @@ tasks.withType<Test>().configureEach {
     })
 
     val testFederationRuntime = testFederationRuntime
-    val projectPath = project.path
+    val projectPath = project.buildTreePath
     val scan = project.extensions.getByType(DevelocityConfiguration::class).buildScan
 
     doFirst {
