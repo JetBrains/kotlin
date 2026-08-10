@@ -145,8 +145,8 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
     }
 
     @Deprecated(
-        "Use setFunctionTypeReference(typeRef) instead",
-        ReplaceWith("this.setFunctionTypeReference(typeRef)", "org.jetbrains.kotlin.idea.base.psi.setFunctionTypeReference"),
+        message = "Use setFunctionTypeReference(typeRef) instead",
+        replaceWith = ReplaceWith("this.setFunctionTypeReference(typeRef)", "org.jetbrains.kotlin.idea.base.psi.setFunctionTypeReference"),
     )
     @OptIn(KtNonPublicApi::class)
     override fun setTypeReference(typeRef: KtTypeReference?): KtTypeReference? =

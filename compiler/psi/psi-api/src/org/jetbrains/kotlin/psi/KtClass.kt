@@ -61,8 +61,8 @@ open class KtClass : KtClassOrObject {
 }
 
 @Deprecated(
-    "Use getOrCreatePrimaryConstructor() instead",
-    ReplaceWith(
+    message = "Use getOrCreatePrimaryConstructor() instead",
+    replaceWith = ReplaceWith(
         "this.getOrCreatePrimaryConstructor()",
         "org.jetbrains.kotlin.idea.base.psi.getOrCreatePrimaryConstructor",
     ),
@@ -72,8 +72,8 @@ fun KtClass.createPrimaryConstructorIfAbsent(): KtPrimaryConstructor =
     KtPsiMutationService.getInstance().getOrCreatePrimaryConstructor(this)
 
 @Deprecated(
-    "Use getOrCreatePrimaryConstructorParameterList() instead",
-    ReplaceWith(
+    message = "Use getOrCreatePrimaryConstructorParameterList() instead",
+    replaceWith = ReplaceWith(
         "this.getOrCreatePrimaryConstructorParameterList()",
         "org.jetbrains.kotlin.idea.base.psi.getOrCreatePrimaryConstructorParameterList",
     ),

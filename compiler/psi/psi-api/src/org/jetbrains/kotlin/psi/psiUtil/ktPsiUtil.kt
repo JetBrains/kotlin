@@ -674,8 +674,8 @@ fun isDoubleColonReceiver(expression: KtExpression) =
     expression.getParentOfTypeAndBranch<KtDoubleColonExpression> { this.receiverExpression } != null
 
 @Deprecated(
-    "Use getOrCreateFunctionLiteralParameterList() instead",
-    ReplaceWith(
+    message = "Use getOrCreateFunctionLiteralParameterList() instead",
+    replaceWith = ReplaceWith(
         "this.getOrCreateFunctionLiteralParameterList()",
         "org.jetbrains.kotlin.idea.base.psi.getOrCreateFunctionLiteralParameterList",
     ),
@@ -711,8 +711,8 @@ fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
 }
 
 @Deprecated(
-    "Use getOrCreateCallValueArgumentList() instead",
-    ReplaceWith(
+    message = "Use getOrCreateCallValueArgumentList() instead",
+    replaceWith = ReplaceWith(
         "this.getOrCreateCallValueArgumentList()",
         "org.jetbrains.kotlin.idea.base.psi.getOrCreateCallValueArgumentList",
     ),
@@ -722,8 +722,8 @@ fun KtCallExpression.getOrCreateValueArgumentList(): KtValueArgumentList =
     KtPsiMutationService.getInstance().getOrCreateCallValueArgumentList(this)
 
 @Deprecated(
-    "Use appendTypeArgument(typeArgument) instead",
-    ReplaceWith(
+    message = "Use appendTypeArgument(typeArgument) instead",
+    replaceWith = ReplaceWith(
         "this.appendTypeArgument(typeArgument)",
         "org.jetbrains.kotlin.idea.base.psi.appendTypeArgument",
     ),
@@ -755,15 +755,17 @@ fun KtExpression.getLabeledParent(labelName: String): KtLabeledExpression? {
 }
 
 @Deprecated(
-    "Use astReplace(newElement) instead",
-    ReplaceWith("this.astReplace(newElement)", "org.jetbrains.kotlin.idea.base.psi.astReplace"),
+    message = "Use astReplace(newElement) instead",
+    replaceWith = ReplaceWith("this.astReplace(newElement)", "org.jetbrains.kotlin.idea.base.psi.astReplace"),
 )
 @OptIn(KtNonPublicApi::class)
 fun PsiElement.astReplace(newElement: PsiElement) {
     KtPsiMutationService.getInstance().astReplace(this, newElement)
 }
 
-@Deprecated("The API is deprecated and is preserved only for compatibility with K1")
+@Deprecated(
+    message = "The API is deprecated and is preserved only for compatibility with K1",
+)
 var KtElement.parentSubstitute: PsiElement? by UserDataProperty(Key.create("PARENT_SUBSTITUTE"))
 
 private val HARD_KEYWORDS: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {

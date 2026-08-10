@@ -31,8 +31,8 @@ fun getTypeReference(declaration: KtCallableDeclaration): KtTypeReference? {
 }
 
 @Deprecated(
-    "Use declaration.setCallableTypeReference(addAfter, typeRef) instead",
-    ReplaceWith(
+    message = "Use declaration.setCallableTypeReference(addAfter, typeRef) instead",
+    replaceWith = ReplaceWith(
         "declaration.setCallableTypeReference(addAfter, typeRef)",
         "org.jetbrains.kotlin.idea.base.psi.setCallableTypeReference",
     ),
@@ -42,8 +42,8 @@ fun setTypeReference(declaration: KtCallableDeclaration, addAfter: PsiElement?, 
 }
 
 @Deprecated(
-    "Use setCallableReceiverTypeReference(typeRef) instead",
-    ReplaceWith(
+    message = "Use setCallableReceiverTypeReference(typeRef) instead",
+    replaceWith = ReplaceWith(
         "this.setCallableReceiverTypeReference(typeRef)",
         "org.jetbrains.kotlin.idea.base.psi.setCallableReceiverTypeReference",
     ),
@@ -52,8 +52,8 @@ fun KtCallableDeclaration.setReceiverTypeReference(typeRef: KtTypeReference?) =
     KtPsiMutationService.getInstance().setCallableReceiverTypeReference(this, typeRef)
 
 @Deprecated(
-    "Use setFunctionTypeReceiverTypeReference(typeRef) instead",
-    ReplaceWith(
+    message = "Use setFunctionTypeReceiverTypeReference(typeRef) instead",
+    replaceWith = ReplaceWith(
         "this.setFunctionTypeReceiverTypeReference(typeRef)",
         "org.jetbrains.kotlin.idea.base.psi.setFunctionTypeReceiverTypeReference",
     ),

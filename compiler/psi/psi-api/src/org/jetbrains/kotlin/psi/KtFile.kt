@@ -32,7 +32,9 @@ open class KtFile(viewProvider: FileViewProvider, isCompiled: Boolean) : @Suppre
 
     override fun setPackageName(packageName: String) {}
 
-    @Deprecated("getPackageFqName should be used instead")
+    @Deprecated(
+        message = "getPackageFqName should be used instead",
+    )
     override fun getPackageName(): String {
         return packageFqName.asString()
     }

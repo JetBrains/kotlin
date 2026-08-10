@@ -57,16 +57,16 @@ class KtConstantExpressionElementType(@NonNls debugName: String) :
 
     companion object {
         @Deprecated(
-            "Use ConstantValueKind.toConstantExpressionElementType() instead",
-            ReplaceWith("kind.toConstantExpressionElementType()", "org.jetbrains.kotlin.psi.utils.toConstantExpressionElementType")
+            message = "Use ConstantValueKind.toConstantExpressionElementType() instead",
+            replaceWith = ReplaceWith("kind.toConstantExpressionElementType()", "org.jetbrains.kotlin.psi.utils.toConstantExpressionElementType"),
         )
         fun kindToConstantElementType(kind: ConstantValueKind): KtConstantExpressionElementType {
             return kind.toConstantExpressionElementType() as KtConstantExpressionElementType
         }
 
         @Deprecated(
-            "Use KtConstantExpressionElementType.toConstantValueKind() instead",
-            ReplaceWith("elementType.toConstantValueKind()", "org.jetbrains.kotlin.psi.utils.toConstantValueKind")
+            message = "Use KtConstantExpressionElementType.toConstantValueKind() instead",
+            replaceWith = ReplaceWith("elementType.toConstantValueKind()", "org.jetbrains.kotlin.psi.utils.toConstantValueKind"),
         )
         private fun constantElementTypeToKind(elementType: KtConstantExpressionElementType): ConstantValueKind {
             return elementType.toConstantValueKind()
