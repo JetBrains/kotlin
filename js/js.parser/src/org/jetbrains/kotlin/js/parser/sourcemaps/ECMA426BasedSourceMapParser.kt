@@ -1794,10 +1794,13 @@ object ECMA426BasedSourceMapParser {
     private fun accumulateIndex(accumulator: IndexAccumulatorRecord, increment: Int): Int {
         // 1. Set accumulator.[[Index]] to accumulator.[[Index]] + increment.
         val accumulatedIndex = accumulator.index.toLong() + increment
+        // 2. If accumulator.[[Index]] < 0, then
+        //       a. Optionally report an error.
+        //       b. Set accumulator.[[Index]] to 0.
         accumulator.index = accumulatedIndex
             .coerceIn(0L, Int.MAX_VALUE.toLong())
             .toInt()
-        // 2. Return accumulator.[[Index]].
+        // 3. Return accumulator.[[Index]].
         return accumulator.index
     }
 
@@ -1811,10 +1814,12 @@ object ECMA426BasedSourceMapParser {
     ): PositionRecord {
         // 1. Set accumulator.[[Line]] to accumulator.[[Line]] + lineIncrement.
         accumulator.line += lineIncrement
-        // 2. If lineIncrement is 0, set accumulator.[[Column]] to accumulator.[[Column]] + columnIncrement.
-        // 3. Else, set accumulator.[[Column]] to columnIncrement.
+        // 2. If lineIncrement = 0, then
+        //       a. Set accumulator.[[Column]] to accumulator.[[Column]] + columnIncrement.
+        // 3. Else,
+        //       a. Set accumulator.[[Column]] to columnIncrement.
         accumulator.column = if (lineIncrement == 0u) accumulator.column + columnIncrement else columnIncrement
-        // 4. Return a new Position Record with accumulator's line and column.
+        // 4. Return { [[Line]]: accumulator.[[Line]], [[Column]]: accumulator.[[Column]] }.
         return PositionRecord(accumulator.line, accumulator.column)
     }
 
@@ -1825,13 +1830,27 @@ object ECMA426BasedSourceMapParser {
         scopes: String?,
         names: List<String>,
     ): ParsingResult<ScopeInfoRecord> {
+        // 1. Let result be a new Scope Info Record { [[Scopes]]: « », [[Ranges]]: « » }.
+        // 2. If scopes is null, return result.
         if (scopes == null) return Success(ScopeInfoRecord([], []))
 
+        // 3. Let parsedScopes be the root Parse Node when parsing scopes using Scopes as the goal symbol.
         val stream = ParserStream(scopes)
+        // 4. If parsing failed, then
+        //       a. Optionally report an error.
+        //       b. Return result.
+        // (the failure should be reported directly from the parser)
         val parsedScopes = context(stream) {
             parseScopesField().ifFailure { return it }
         }
 
+        // 5. Let scopePosition be a new Position Accumulator Record { [[Line]]: 0, [[Column]]: 0 }.
+        // 6. Let scopeNameIndex be a new Index Accumulator Record { [[Index]]: 0 }.
+        // 7. Let scopeKindIndex be a new Index Accumulator Record { [[Index]]: 0 }.
+        // 8. Let scopeVariableIndex be a new Index Accumulator Record { [[Index]]: 0 }.
+        // 9. Let rangePosition be a new Position Accumulator Record { [[Line]]: 0, [[Column]]: 0 }.
+        // 10. Let rangeDefinitionIndex be a new Index Accumulator Record { [[Index]]: 0 }.
+        // 11. Let state be a new Decode Scope State Record { [[FlatOriginalScopes]]: « », [[ScopePosition]]: scopePosition, [[ScopeNameIndex]]: scopeNameIndex, [[ScopeKindIndex]]: scopeKindIndex, [[ScopeVariableIndex]]: scopeVariableIndex, [[RangePosition]]: rangePosition, [[RangeDefinitionIndex]]: rangeDefinitionIndex }.
         val state = DecodeScopeStateRecord(
             flatOriginalScopes = mutableListOf(),
             scopePosition = PositionAccumulatorRecord(0u, 0u),
@@ -1842,6 +1861,9 @@ object ECMA426BasedSourceMapParser {
             rangeDefinitionIndex = IndexAccumulatorRecord(0),
         )
 
+        // 12. Perform DecodeScopesInfoItem of parsedScopes with arguments result, state and names.
+        // 13. Return result.
+        // (the record is built and returned by DecodeScopesInfoItem instead of being mutated in place)
         return context(state, names) {
             decodeScopesInfoItem(parsedScopes)
         }
@@ -1854,11 +1876,18 @@ object ECMA426BasedSourceMapParser {
     private fun decodeScopesInfoItem(parsedScopes: Scopes): ParsingResult<ScopeInfoRecord> {
         val [originalScopes, topLevelItems] = parsedScopes
 
+        // Scopes : OriginalScopeTreeList
+        // Scopes : OriginalScopeTreeList `,` TopLevelItemList
+        // 1. Let originalScopes be the DecodedTopLevelOriginalScopeTrees of OriginalScopeTreeList with arguments state and names.
+        // 2. Set info.[[Scopes]] to originalScopes.
         var originalScopeRecords = emptyList<OriginalScopeRecord?>()
         if (originalScopes.isNotEmpty()) {
             originalScopeRecords = decodedTopLevelOriginalScopeTrees(originalScopes).ifFailure { return it }
         }
 
+        // Scopes : OriginalScopeTreeList `,` TopLevelItemList
+        // 3. Let generatedRanges be the DecodedGeneratedRangeTrees of TopLevelItemList with arguments state and names.
+        // 4. Set info.[[Ranges]] to generatedRanges.
         var generatedRangeRecords = emptyList<GeneratedRangeRecord>()
         if (topLevelItems.isNotEmpty()) {
             generatedRangeRecords = decodedGeneratedRangeTrees(topLevelItems).ifFailure { return it }
@@ -1874,15 +1903,22 @@ object ECMA426BasedSourceMapParser {
     private fun decodedTopLevelOriginalScopeTrees(
         originalScopes: List<OriginalScopeTreeItem>,
     ): ParsingResult<List<OriginalScopeRecord?>> {
+        // OriginalScopeTreeList : OriginalScopeTreeList `,` OriginalScopeTreeItem
         return originalScopes.map { originalScope ->
             when (originalScope) {
+                // OriginalScopeTreeItem : OriginalScopeTree
                 is OriginalScopeTree -> {
+                    // 1. Set state.[[ScopePosition]].[[Line]] to 0.
+                    // 2. Set state.[[ScopePosition]].[[Column]] to 0.
                     state.scopePosition.apply {
                         line = 0u
                         column = 0u
                     }
+                    // 3. Return the DecodedOriginalScopeTrees of OriginalScopeTree with arguments state and names.
                     decodedOriginalScopeTrees(originalScope).ifFailure { failure -> return failure }
                 }
+                // OriginalScopeTreeItem : EmptyItem
+                // 1. Return « null ».
                 EmptyItem -> null
             }
         }.let(::Success)
@@ -1893,20 +1929,26 @@ object ECMA426BasedSourceMapParser {
      */
     context(state: DecodeScopeStateRecord, names: List<String>)
     private fun decodedOriginalScopeTrees(originalScopeTree: OriginalScopeTree): ParsingResult<OriginalScopeRecord> {
+        // OriginalScopeTree : OriginalScopeStart OriginalScopeVariablesItem? OriginalScopeItemList? `,` OriginalScopeEnd
+        // 1. Let start be the DecodedPosition of OriginalScopeStart with argument state.[[ScopePosition]].
         val start = context(state.scopePosition) {
             decodedPosition(originalScopeTree.start.line, originalScopeTree.start.column)
         }.ifFailure { return it }
 
+        // 2. Let name be the OriginalScopeName of OriginalScopeStart with arguments state.[[ScopeNameIndex]] and names.
         val name = context(state.scopeNameIndex) {
             originalScopeName(originalScopeTree.start)
         }.ifFailure { return it }
 
+        // 3. Let kind be the OriginalScopeKind of OriginalScopeStart with arguments state.[[ScopeKindIndex]] and names.
         val kind = context(state.scopeKindIndex) {
             originalScopeKind(originalScopeTree.start)
         }.ifFailure { return it }
 
+        // 4. Let flags be the VLQUnsignedValue of OriginalScopeStart's ScopeFlags nonterminal.
         val flags = originalScopeTree.start.flags
 
+        // 5. Let originalScope be the Original Scope Record { [[Start]]: start, [[End]]: start, [[Name]]: name, [[Kind]]: kind, [[Variables]]: « », [[Children]]: « », [[IsStackFrame]]: false }.
         val originalScope = OriginalScopeRecord(
             start = start,
             end = start,
@@ -1917,18 +1959,25 @@ object ECMA426BasedSourceMapParser {
             isStackFrame = false,
         )
 
+        // 6. Append originalScope to state.[[FlatOriginalScopes]].
         state.flatOriginalScopes += originalScope
 
+        // 7. If flags & 0x4 = 0x4, set originalScope.[[IsStackFrame]] to true.
         if ((flags and 0x4u) == 0x4u)
             originalScope.isStackFrame = true
 
+        // 8. If OriginalScopeVariablesItem is present, then
         if (originalScopeTree.variables != null) {
+            // a. Set originalScope.[[Variables]] to the OriginalScopeVariables of OriginalScopeVariablesItem with arguments state.[[ScopeVariableIndex]] and names.
             originalScope.variables = context(state.scopeVariableIndex) {
                 originalScopeVariables(originalScopeTree.variables)
             }.ifFailure { return it }
         }
 
+        // 9. If OriginalScopeItemList is present, then
         if (originalScopeTree.items != null) {
+            // a. Set originalScope.[[Children]] to the DecodedOriginalScopeTrees of OriginalScopeItemList with arguments state and names.
+            // OriginalScopeItemList : OriginalScopeItemList `,` OriginalScopeItem
             originalScope.children = originalScopeTree.items
                 .filterIsInstance<OriginalScopeTree>()
                 .map { item ->
@@ -1936,10 +1985,12 @@ object ECMA426BasedSourceMapParser {
                 }
         }
 
+        // 10. Set originalScope.[[End]] to the DecodedPosition of OriginalScopeEnd with argument state.[[ScopePosition]].
         originalScope.end = context(state.scopePosition) {
             decodedPosition(originalScopeTree.end.line, originalScopeTree.end.column)
         }.ifFailure { return it }
 
+        // 11. Return « originalScope ».
         return Success(originalScope)
     }
 
@@ -1951,9 +2002,17 @@ object ECMA426BasedSourceMapParser {
         line: Vlq?,
         column: Vlq,
     ): ParsingResult<PositionRecord> {
+        // OriginalScopeStart : `B` ScopeFlags ScopeLine ScopeColumn ScopeNameOrKind? ScopeKind?
+        // OriginalScopeEnd : `C` ScopeLine ScopeColumn
+        // GeneratedRangeStart : `E` RangeFlags RangeLine? RangeColumn RangeDefinition?
+        // GeneratedRangeEnd : `F` RangeLine? RangeColumn
+        // (the scope and range productions are merged here; ScopeLine is always present, RangeLine is optional)
+        // 1. If RangeLine is present, let relativeLine be the VLQUnsignedValue of RangeLine, otherwise let relativeLine be 0.
         val relativeLine = line?.let { vlqUnsignedValue(it) }?.ifFailure { return it }
+        // 2. Let relativeColumn be the VLQUnsignedValue of RangeColumn.
         val relativeColumn = vlqUnsignedValue(column).ifFailure { return it }
 
+        // 3. Return AccumulatePosition(accumulator, relativeLine, relativeColumn).
         return Success(
             accumulatePosition(
                 accumulator,
@@ -1970,9 +2029,13 @@ object ECMA426BasedSourceMapParser {
     private fun originalScopeName(
         scopeStart: OriginalScopeStart,
     ): ParsingResult<String?> {
+        // 1. Let flags be the VLQUnsignedValue of ScopeFlags.
         val [flags] = scopeStart
+        // 2. If flags & 0x1 ≠ 0x1, return null.
         if ((flags and 0x1u) != 0x1u) return Success(null)
+        // 3. Assert: ScopeNameOrKind is present.
         require(scopeStart.nameOrKind != null) { "ScopeNameOrKind expected, got null" }
+        // 4. Return RelativeName(ScopeNameOrKind, accumulator, names).
         return relativeName(scopeStart.nameOrKind)
     }
 
@@ -1983,13 +2046,20 @@ object ECMA426BasedSourceMapParser {
     private fun originalScopeKind(
         scopeStart: OriginalScopeStart,
     ): ParsingResult<String?> {
+        // 1. Let flags be the VLQUnsignedValue of ScopeFlags.
         val [flags] = scopeStart
+        // 2. If flags & 0x2 ≠ 0x2, return null.
         if ((flags and 0x2u) != 0x2u) return Success(null)
+        // 3. Assert: ScopeNameOrKind is present.
         require(scopeStart.nameOrKind != null) { "ScopeNameOrKind expected, got null" }
+        // 4. If flags & 0x1 = 0x1, then
         if ((flags and 0x1u) == 0x1u) {
+            // a. Assert: ScopeKind is present.
             require(scopeStart.kind != null) { "ScopeKind expected, got null" }
+            // b. Return RelativeName(ScopeKind, accumulator, names).
             return relativeName(scopeStart.kind)
         }
+        // 5. Return RelativeName(ScopeNameOrKind, accumulator, names).
         return relativeName(scopeStart.nameOrKind)
     }
 
@@ -2000,8 +2070,13 @@ object ECMA426BasedSourceMapParser {
     private fun originalScopeVariables(
         scopeVariablesList: List<ScopeVariable>,
     ): ParsingResult<List<String>> {
+        // ScopeVariableList : ScopeVariableList ScopeVariable
         return scopeVariablesList.map { scopeVariable ->
+            // ScopeVariable : Vlq
+            // 1. Let variable be RelativeName(Vlq, accumulator, names).
             val variable = relativeName(scopeVariable).ifFailure { failure -> return failure }
+            // 2. If variable is null, return « "" ».
+            // 3. Return « variable ».
             variable ?: ""
         }.let(::Success)
     }
@@ -2011,9 +2086,15 @@ object ECMA426BasedSourceMapParser {
      */
     context(accumulator: IndexAccumulatorRecord, names: List<String>)
     private fun relativeName(vlqIndex: Vlq): ParsingResult<String?> {
+        // 1. Let relativeIndex be the VLQSignedValue of vlq.
         val relativeIndex = vlqSignedValue(vlqIndex).ifFailure { return it }
+        // 2. Let index be AccumulateIndex(accumulator, relativeIndex).
         val index = accumulateIndex(accumulator, relativeIndex)
+        // 3. If index >= the length of names, then
+        //       a. Optionally report an error.
+        //       b. Return null.
         if (index >= names.size) return Failure("Relative index of the name exceeds the size of names field")
+        // 4. Return names[index].
         return Success(names[index])
     }
 
@@ -2022,6 +2103,7 @@ object ECMA426BasedSourceMapParser {
      */
     context(state: DecodeScopeStateRecord, names: List<String>)
     private fun decodedGeneratedRangeTrees(topLevelItems: List<TopLevelItem>): ParsingResult<List<GeneratedRangeRecord>> {
+        // TopLevelItemList : TopLevelItemList `,` TopLevelItem
         return topLevelItems
             .filterIsInstance<GeneratedRangeTree>()
             .map { generatedRangeTree ->
@@ -2035,20 +2117,26 @@ object ECMA426BasedSourceMapParser {
      */
     context(state: DecodeScopeStateRecord, names: List<String>)
     private fun decodedGeneratedRangeTree(generatedRangeTree: GeneratedRangeTree): ParsingResult<GeneratedRangeRecord> {
+        // GeneratedRangeTree : GeneratedRangeStart GeneratedRangeBindingsItem? GeneratedRangeCallSiteItem? GeneratedRangeItemList? `,` GeneratedRangeEnd
         // 1. Let start be the DecodedPosition of GeneratedRangeStart with argument state.[[RangePosition]].
         val start = context(state.rangePosition) {
             decodedPosition(generatedRangeTree.start.line, generatedRangeTree.start.column)
         }.ifFailure { return it }
 
-        // 2. Let definition be the GeneratedRangeDefinition of GeneratedRangeStart with arguments
-        // state.[[RangeDefinitionIndex]] and state.[[FlatOriginalScopes]].
+        // 2. Let definition be the GeneratedRangeDefinition of GeneratedRangeStart with arguments state.[[RangeDefinitionIndex]] and state.[[FlatOriginalScopes]].
         val definition = context(state.rangeDefinitionIndex) {
             generatedRangeDefinition(generatedRangeTree.start, state.flatOriginalScopes)
         }.ifFailure { return it }
 
         // 3. Let flags be the VLQUnsignedValue of GeneratedRangeStart's RangeFlags nonterminal.
         val flags = generatedRangeTree.start.flags
-        // 4-6. Determine the stack frame type from flags.
+        // 4. If flags & 0xc = 0xc, then
+        //       a. Let stackFrameType be ~hidden~.
+        // 5. Else if flags & 0x4 = 0x4, then
+        //       a. Let stackFrameType be ~original~.
+        // 6. Else,
+        //       a. If flags & 0x8 = 0x8, optionally report an error.
+        //       b. Let stackFrameType be ~none~.
         val stackFrameType = when {
             (flags and 0xcu) == 0xcu -> StackFrameType.HIDDEN
             (flags and 0x4u) == 0x4u -> StackFrameType.ORIGINAL
@@ -2056,17 +2144,27 @@ object ECMA426BasedSourceMapParser {
             else -> StackFrameType.NONE
         }
 
-        // 7-8. Decode bindings, if present.
+        // 7. If GeneratedRangeBindingsItem is present, then
+        //       a. Let bindings be the GeneratedRangeBindings of GeneratedRangeBindingsItem with arguments start and names.
+        // 8. Else,
+        //       a. Let bindings be « ».
         val bindings = generatedRangeTree.bindings?.let { bindingsItem ->
             generatedRangeBindings(bindingsItem.bindings.list, start).ifFailure { failure -> return failure }
         } ?: mutableListOf()
 
-        // 9-10. Decode the call site, if present.
+        // 9. If GeneratedRangeCallSiteItem is present, then
+        //       a. Let callSite be the GeneratedRangeCallSite of GeneratedRangeCallSiteItem.
+        // 10. Else,
+        //       a. Let callSite be null.
         val callSite = generatedRangeTree.callSite?.let { callSiteItem ->
             generatedRangeCallSite(callSiteItem.callSite).ifFailure { failure -> return failure }
         }
 
-        // 11-12. Decode child generated ranges, ignoring non-range extension and invalid items.
+        // 11. If GeneratedRangeItemList is present, then
+        //       a. Let children be the DecodedGeneratedRangeTrees of GeneratedRangeItemList with arguments state and names.
+        // 12. Else,
+        //       a. Let children be « ».
+        // GeneratedRangeItemList : GeneratedRangeItemList `,` GeneratedRangeItem
         val children = generatedRangeTree.items
             ?.filterIsInstance<GeneratedRangeTree>()
             ?.map { child ->
@@ -2074,11 +2172,18 @@ object ECMA426BasedSourceMapParser {
             }
             ?: emptyList()
 
-        // 13. Merge sub-range bindings into the corresponding variable's bindings.
+        // 13. If GeneratedRangeItemList is present, then
         if (generatedRangeTree.items != null) {
+            // a. Let subRangeBindings be the GeneratedSubRangeBindings of GeneratedRangeItemList with arguments start and names.
             val subRangeBindings = generatedSubRangeBindings(generatedRangeTree.items, start).ifFailure { return it }
             val rangeBindings = bindings
+            // b. For each Sub-Range Binding Record subRangeBinding of subRangeBindings, do
             for ((variableIndex, bindings) in subRangeBindings) {
+                //       i. Let index be subRangeBinding.[[VariableIndex]].
+                //       ii. If index < the length of bindings, then
+                //             1. Set bindings[index] to the list-concatenation of bindings[index] and subRangeBinding.[[Bindings]].
+                //       iii. Else,
+                //             1. Optionally report an error.
                 if (variableIndex >= rangeBindings.size.toUInt()) {
                     return Failure("Sub-range binding variable index $variableIndex exceeds the number of generated range bindings")
                 }
@@ -2091,7 +2196,7 @@ object ECMA426BasedSourceMapParser {
             decodedPosition(generatedRangeTree.end.line, generatedRangeTree.end.column)
         }.ifFailure { return it }
 
-        // 15. Return the Generated Range Record.
+        // 15. Return « Generated Range Record { [[Start]]: start, [[End]]: end, [[Definition]]: definition, [[StackFrameType]]: stackFrameType, [[Bindings]]: bindings, [[CallSite]]: callSite, [[Children]]: children } ».
         return Success(
             GeneratedRangeRecord(
                 start = start,
@@ -2115,7 +2220,7 @@ object ECMA426BasedSourceMapParser {
     ): ParsingResult<OriginalScopeRecord?> {
         // 1. Let flags be the VLQUnsignedValue of RangeFlags.
         val flags = generatedRangeStart.flags
-        // 2. If flags & 0x2 != 0x2, return null.
+        // 2. If flags & 0x2 ≠ 0x2, return null.
         if ((flags and 0x2u) != 0x2u) return Success(null)
         // 3. Assert: RangeDefinition is present.
         val definition = requireNotNull(generatedRangeStart.definition) { "RangeDefinition expected, got null" }
@@ -2149,7 +2254,7 @@ object ECMA426BasedSourceMapParser {
         val line = vlqUnsignedValue(generatedRangeCallSite.line).ifFailure { return it }
         // 3. Let column be the VLQUnsignedValue of CallSiteColumn.
         val column = vlqUnsignedValue(generatedRangeCallSite.column).ifFailure { return it }
-        // 4. Return a new call-site position record.
+        // 4. Return a new Original Position Record { [[SourceIndex]]: sourceIndex, [[Line]]: line, [[Column]]: column }.
         return Success(GeneratedRangeCallSiteRecord(sourceIndex, line, column))
     }
 
@@ -2161,7 +2266,9 @@ object ECMA426BasedSourceMapParser {
         bindingExpressions: List<BindingExpression>,
         start: PositionRecord,
     ): ParsingResult<MutableList<MutableList<BindingRecord>>> {
+        // BindingExpressionList : BindingExpressionList BindingExpression
         return bindingExpressions.mapTo(mutableListOf()) { expression ->
+            // BindingExpression : Vlq
             // 1. Let binding be the BindingExpression of BindingExpression with argument names.
             val binding = bindingExpression(expression).ifFailure { return it }
             // 2. Return « « { [[From]]: start, [[Binding]]: binding } » ».
@@ -2180,7 +2287,9 @@ object ECMA426BasedSourceMapParser {
         if (unadjustedBindingIndex == 0u) return Success(null)
         // 3. Let bindingIndex be unadjustedBindingIndex - 1.
         val bindingIndex = unadjustedBindingIndex - 1u
-        // 4. If bindingIndex >= the length of names, optionally report an error and return null.
+        // 4. If bindingIndex >= the length of names, then
+        //       a. Optionally report an error.
+        //       b. Return null.
         if (bindingIndex >= names.size.toUInt()) return Success(null)
         // 5. Return names[bindingIndex].
         return Success(names[bindingIndex.toInt()])
@@ -2202,18 +2311,24 @@ object ECMA426BasedSourceMapParser {
         generatedRangeItems: List<GeneratedRangeItem>,
         start: PositionRecord,
     ): ParsingResult<List<SubRangeBindingRecord>> {
+        // GeneratedRangeItemList : GeneratedRangeItemList `,` GeneratedRangeItem
         return generatedRangeItems
+            // GeneratedRangeItem : GeneratedRangeTree
+            // GeneratedRangeItem : VendorExtensionItem
+            // GeneratedRangeItem : InvalidItem
+            // 1. Return « ».
             .filterIsInstance<GeneratedSubRangeBinding>()
             .map { generatedSubRangeBinding ->
+                // GeneratedSubRangeBinding : `H` VariableIndex BindingFromList
                 // 1. Let variableIndex be the VLQUnsignedValue of VariableIndex.
                 val variableIndex = vlqUnsignedValue(generatedSubRangeBinding.variableIndex).ifFailure { return it }
-                // 2. Let from be a new Position Accumulator Record initialized to start.
+                // 2. Let from be a new Position Accumulator Record { [[Line]]: start.[[Line]], [[Column]]: start.[[Column]] }.
                 val from = PositionAccumulatorRecord(start.line, start.column)
                 // 3. Let bindings be the SubRangeBinding of BindingFromList with arguments from and names.
                 val bindings = context(from) {
                     subRangeBinding(generatedSubRangeBinding.bindings).ifFailure { return it }
                 }
-                // 4. Return the Sub-Range Binding Record.
+                // 4. Return « { [[VariableIndex]]: variableIndex, [[Bindings]]: bindings } ».
                 SubRangeBindingRecord(variableIndex, bindings)
             }
             .let(::Success)
@@ -2224,7 +2339,9 @@ object ECMA426BasedSourceMapParser {
      */
     context(from: PositionAccumulatorRecord, names: List<String>)
     private fun subRangeBinding(bindingsFrom: List<BindingFrom>): ParsingResult<List<BindingRecord>> {
+        // BindingFromList : BindingFromList BindingFrom
         return bindingsFrom.map { bindingFrom ->
+            // BindingFrom : BindingLine BindingColumn BindingExpression
             // 1. Let relativeLine be the VLQUnsignedValue of BindingLine.
             val relativeLine = vlqUnsignedValue(bindingFrom.line).ifFailure { return it }
             // 2. Let relativeColumn be the VLQUnsignedValue of BindingColumn.
@@ -2233,7 +2350,7 @@ object ECMA426BasedSourceMapParser {
             val fromPosition = accumulatePosition(from, relativeLine, relativeColumn)
             // 4. Let binding be the BindingExpression of BindingExpression with argument names.
             val binding = bindingExpression(bindingFrom.expression).ifFailure { return it }
-            // 5. Return the Binding Record.
+            // 5. Return « { [[From]]: fromPosition, [[Binding]]: binding } ».
             BindingRecord(fromPosition, binding)
         }.let(::Success)
     }
