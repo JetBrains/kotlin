@@ -5,16 +5,16 @@
 class A
 
 fun foo(bar: A) =
-  if (bar !is A) {
-    buildList {
-      f() //no crash in K2 if bar.f
+  if (<!USELESS_IS_CHECK!>bar !is A<!>) {
+    <!CANNOT_INFER_PARAMETER_TYPE!>buildList<!> {
+      <!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>f<!>()<!> //no crash in K2 if bar.f
       when {
-        bar == when {
-          true -> bar
-          else -> bar
-        } -> 1
+        <!ARGUMENT_TYPE_MISMATCH, SMARTCAST_TO_TYPE_VARIABLE!>bar<!> == <!ARGUMENT_TYPE_MISMATCH!>when {
+          true -> <!ARGUMENT_TYPE_MISMATCH!>bar<!>
+          else -> <!ARGUMENT_TYPE_MISMATCH!>bar<!>
+        }<!> -> <!ARGUMENT_TYPE_MISMATCH!>1<!>
 
-        else -> bar
+        else -> <!ARGUMENT_TYPE_MISMATCH!>bar<!>
       }
     }
   }

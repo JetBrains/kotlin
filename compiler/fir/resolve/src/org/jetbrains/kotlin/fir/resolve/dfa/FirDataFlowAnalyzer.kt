@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBod
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundTypeOfParameter
+import org.jetbrains.kotlin.fir.diagnostics.ConeSmartcastToTypeVariable
+import org.jetbrains.kotlin.fir.resolve.transformers.appendNonFatalDiagnostics
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -822,12 +824,23 @@ abstract class FirDataFlowAnalyzer(
         // TODO: this check should not be here (KT-87406)
         if (leftOperand.resolvedType.isMarkedNullable && rightOperand.resolvedType.isMarkedNullable) return
 
-        if (leftOperandVariable is RealVariable && equalsContract == EqualsOverrideContract.SAFE_FOR_SMART_CAST) {
-            flow.addImplication((expressionVariable eq isEq) implies (leftOperandVariable typeEq rightOperand.resolvedType))
+        fun check(aOperand: FirExpression, aOperandVariable: DataFlowVariable?, bOperandType: ConeKotlinType) {
+            if (aOperandVariable !is RealVariable || equalsContract != EqualsOverrideContract.SAFE_FOR_SMART_CAST) return
+
+            if (!bOperandType.contains { it is ConeTypeVariableType }) {
+                flow.addImplication((expressionVariable eq isEq) implies (aOperandVariable typeEq bOperandType))
+                return
+            }
+
+            when (val correspondingQualifiedAccess = aOperand.unwrapSmartcastExpression()) {
+                is FirQualifiedAccessExpression -> correspondingQualifiedAccess.appendNonFatalDiagnostics(ConeSmartcastToTypeVariable)
+                is FirResolvedQualifier -> correspondingQualifiedAccess.appendNonFatalDiagnostics(ConeSmartcastToTypeVariable)
+                else -> error("Unexpected smartcast expression: ${correspondingQualifiedAccess::class.simpleName}")
+            }
         }
-        if (rightOperandVariable is RealVariable && equalsContract == EqualsOverrideContract.SAFE_FOR_SMART_CAST) {
-            flow.addImplication((expressionVariable eq isEq) implies (rightOperandVariable typeEq leftOperand.resolvedType))
-        }
+
+        check(leftOperand, leftOperandVariable, rightOperand.resolvedType)
+        check(rightOperand, rightOperandVariable, leftOperand.resolvedType)
     }
 
     /**

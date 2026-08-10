@@ -53,6 +53,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirLateinitIntrinsicApplicabilityChecker,
         FirLargeArityFunctionCallableReferenceChecker,
         FirAbstractClassInstantiationChecker,
+        FirTypeVariableSurvivesUntilDfaQualifiedAccessExpressionChecker,
         FirIncompatibleClassExpressionChecker,
         FirMissingDependencyClassChecker,
         FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker,
@@ -176,6 +177,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirCustomEnumEntriesMigrationQualifierChecker,
         FirQualifierWithTypeArgumentsChecker,
         FirRootIdePackageDeprecatedInCliQualifierChecker,
+        FirTypeVariableSurvivesUntilDfaResolvedQualifierChecker,
         FirParenthesizedPackageQualifierChecker,
     )
 
