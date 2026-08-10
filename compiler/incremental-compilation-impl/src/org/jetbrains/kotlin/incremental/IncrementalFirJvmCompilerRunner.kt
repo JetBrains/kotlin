@@ -77,7 +77,7 @@ open class IncrementalFirJvmCompilerRunner(
     ): Pair<ExitCode, Collection<File>> {
         messageCollector.report(
             CompilerMessageSeverity.WARNING,
-            "The FIR runner is deprecated and will be removed in Kotlin 2.5.0."
+            "The FIR runner is deprecated and will be removed in Kotlin 2.6.0."
         )
         ProgressIndicatorAndCompilationCanceledStatus.setCompilationCanceledStatus(compilationCanceledStatus)
         val rootDisposable = Disposer.newDisposable("Disposable for ${IncrementalFirJvmCompilerRunner::class.simpleName}.runCompiler")
