@@ -65,7 +65,7 @@ object LLFlightRecorder {
      *
      * @param target The declaration being analyzed.
      * @param containingDeclarations The list of declarations enclosing [target] starting from the [FirFile].
-     * @param phase The phase the declaration was analyzed to.
+     * @param requestedPhase The phase the declaration was analyzed to.
      */
     internal fun phase(
         target: FirElementWithResolveState,
@@ -131,7 +131,7 @@ object LLFlightRecorder {
      * declarations, e.g., from a [org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation].
      *
      * @param target The declaration being analyzed.
-     * @param phase The phase the declaration is already analyzed to.
+     * @param requestedPhase The phase the declaration is already analyzed to.
      */
     internal fun readyPhase(target: FirElementWithResolveState, requestedPhase: FirResolvePhase) {
         if (!readyPhaseEventType.isEnabled) {
@@ -154,7 +154,7 @@ object LLFlightRecorder {
      *
      * @param target The declaration being analyzed.
      * @param containingDeclarations The list of declarations enclosing [target] starting from the [FirFile].
-     * @param phase The phase the declaration is already analyzed to.
+     * @param requestedPhase The phase the declaration is already analyzed to.
      */
     internal fun readyPhase(
         target: FirElementWithResolveState,
@@ -180,9 +180,12 @@ object LLFlightRecorder {
      * or got an exception, such as [com.intellij.openapi.progress.ProcessCanceledException].
      *
      * @param declaration The analyzed declaration.
-     * @param phase The phase the [declaration] is being analyzed to.
+     * @param requestedPhase The phase the [declaration] is being analyzed to.
      */
-    internal fun phaseSuspension(declaration: FirElementWithResolveState, requestedPhase: FirResolvePhase): LLPhaseSuspensionEventCompleter? {
+    internal fun phaseSuspension(
+        declaration: FirElementWithResolveState,
+        requestedPhase: FirResolvePhase
+    ): LLPhaseSuspensionEventCompleter? {
         if (!phaseSuspensionEventType.isEnabled) {
             return null
         }

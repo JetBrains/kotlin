@@ -182,7 +182,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
      * by the compiler (due to the missing type argument), but the `firFile` built during [getAllCandidates] will contain an inapplicable
      * function call `generic<String, String, ERROR>` (with the missing type argument inferred as an error type). The *subsequent*
      * resolution by `bodyResolveComponents.callResolver.collectAllCandidates` feeds this call to
-     * [org.jetbrains.kotlin.fir.resolve.calls.CandidateFactory], which doesn't make any guarantees for inapplicable calls. Hence, the
+     * [org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateFactory], which doesn't make any guarantees for inapplicable calls. Hence, the
      * resulting candidate is *not* marked as inapplicable and needs to be post-processed.
      */
     private fun OverloadCandidate.preserveCalleeInapplicability() {
