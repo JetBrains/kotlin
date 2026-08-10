@@ -5,6 +5,12 @@ import lombok.ToString
 <!ANNOTATION_HAS_NO_EFFECT!>@ToString<!>
 interface Interface
 
+// TODO KT-88333: 'ANNOTATION_HAS_NO_EFFECT' is reported as it should be, but 'toString()' is still generated
+//  into the annotation class, so the platform additionally rejects it with 'ANNOTATION_CLASS_MEMBER'.
+//  Unlike an interface, an annotation class isn't skipped by the generator.
+<!ANNOTATION_HAS_NO_EFFECT!>@ToString<!>
+annotation class <!ANNOTATION_CLASS_MEMBER!>AnnotationClass<!>
+
 <!WRONG_ANNOTATION_TARGET!>@ToString<!>
 fun func() {}
 
