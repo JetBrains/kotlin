@@ -182,6 +182,7 @@ data class WasmModuleDependencyImport(val name: String, val fileName: String)
 
 internal const val wasmInitializeExportName = "_initialize"
 internal const val wasmStartExportName = "_start"
+internal const val wasmWasiPreview2StartExportName = "wasi:cli/run@0.2.12#run"
 internal const val jsBuiltinsModulePrefix = "wasm:"
 internal const val importedStringConstants = "'"
 

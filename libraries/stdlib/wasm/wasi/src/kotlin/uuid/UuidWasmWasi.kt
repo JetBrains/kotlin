@@ -5,24 +5,8 @@
 
 package kotlin.uuid
 
-import kotlin.random.wasiRawRandomGet
-import kotlin.wasm.WasiError
-import kotlin.wasm.WasiErrorCode
-import kotlin.wasm.ExperimentalWasmInterop
-import kotlin.wasm.unsafe.withScopedMemoryAllocator
-
 internal actual fun secureRandomBytes(destination: ByteArray): Unit {
-    withScopedMemoryAllocator { allocator ->
-        var memory = allocator.allocate(destination.size)
-        @OptIn(ExperimentalWasmInterop::class)
-        val ret = wasiRawRandomGet(memory.address.toInt(), destination.size)
-        return if (ret == 0) {
-            for (idx in destination.indices) {
-                destination[idx] = memory.loadByte()
-                memory += 1
-            }
-        } else {
-            throw RuntimeException(cause = WasiError(WasiErrorCode.entries[ret]))
-        }
-    }
+    val bytes = stdlib.wit.bindings.Random.getRandomBytes(destination.size.toULong())
+    for ([idx, elem] in bytes.withIndex())
+        destination[idx] = elem.toByte()
 }

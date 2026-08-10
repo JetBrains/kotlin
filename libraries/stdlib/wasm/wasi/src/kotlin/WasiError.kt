@@ -396,3 +396,7 @@ internal enum class WasiErrorCode {
 }
 
 internal class WasiError(val error: WasiErrorCode) : Throwable(message = "WASI call failed with $error")
+
+// TODO extend as needed
+// TODO this is just a placeholder and will probably replace the original WasiError
+internal class WasiP2Error(cause: Throwable) : Throwable(cause)

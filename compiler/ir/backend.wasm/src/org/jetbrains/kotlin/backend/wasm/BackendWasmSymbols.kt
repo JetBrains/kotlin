@@ -70,6 +70,10 @@ class BackendWasmSymbols(
 
     internal val wasmLongImmutableArray = ClassIds.WasmLongImmutableArray.classSymbol()
 
+    // TODO ============ reconsider this ============
+    val printStackTrace by CallableIds.printStackTrace.functionSymbol()
+    // TODO ============ end reconsider this ============
+
     val asserts: Iterable<IrSimpleFunctionSymbol> by CallableIds.assert.functionSymbols()
     override val throwNullPointerException by CallableIds.THROW_NPE.functionSymbol()
     override val throwISE by CallableIds.THROW_ISE.functionSymbol()
@@ -688,5 +692,6 @@ private object CallableIds {
     val runRootSuites = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("runRootSuites"))
     val checkStaticInitializationState = "checkStaticInitializationState".wasmCallableId
     val cabiRealloc = "cabi_realloc".wasmCallableId
+    val printStackTrace = CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("printStackTrace"))
 }
 
