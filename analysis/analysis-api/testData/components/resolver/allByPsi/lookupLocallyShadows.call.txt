@@ -1,0 +1,561 @@
+KtFile: 'lookupLocallyShadows.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(16,123): 'fun shadowing(x: Int) {'
+  null
+
+KtParameterList(29,37): '(x: Int)'
+  null
+
+KtParameter(30,36): 'x: Int'
+  null
+
+KtTypeReference(33,36): 'Int'
+  null
+
+KtUserType(33,36): 'Int'
+  null
+
+KtNameReferenceExpression(33,36): 'Int'
+  null
+
+KtBlockExpression(38,123): '{'
+  null
+
+KtNamedFunction(44,82): 'fun g(x: Int) {'
+  null
+
+KtParameterList(49,57): '(x: Int)'
+  null
+
+KtParameter(50,56): 'x: Int'
+  null
+
+KtTypeReference(53,56): 'Int'
+  null
+
+KtUserType(53,56): 'Int'
+  null
+
+KtNameReferenceExpression(53,56): 'Int'
+  null
+
+KtBlockExpression(58,82): '{'
+  null
+
+KtReturnExpression(68,76): 'return x'
+  null
+
+KtNameReferenceExpression(75,76): 'x'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = x: kotlin.Int
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtLambdaExpression(87,100): '{x: Int -> x}'
+  null
+
+KtFunctionLiteral(87,100): '{x: Int -> x}'
+  null
+
+KtParameterList(88,94): 'x: Int'
+  null
+
+KtParameter(88,94): 'x: Int'
+  null
+
+KtTypeReference(91,94): 'Int'
+  null
+
+KtUserType(91,94): 'Int'
+  null
+
+KtNameReferenceExpression(91,94): 'Int'
+  null
+
+KtBlockExpression(98,99): 'x'
+  null
+
+KtNameReferenceExpression(98,99): 'x'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = x: kotlin.Int
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtBinaryExpression(105,110): 'x + 1'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = x
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Int.plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(105,106): 'x'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = x: kotlin.Int
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(107,108): '+'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = x
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Int.plus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtConstantExpression(109,110): '1'
+  null
+
+KtReturnExpression(115,121): 'return'
+  null
+
+KtNamedFunction(125,222): 'fun selfReferential(x: Int) {'
+  null
+
+KtParameterList(144,152): '(x: Int)'
+  null
+
+KtParameter(145,151): 'x: Int'
+  null
+
+KtTypeReference(148,151): 'Int'
+  null
+
+KtUserType(148,151): 'Int'
+  null
+
+KtNameReferenceExpression(148,151): 'Int'
+  null
+
+KtBlockExpression(153,222): '{'
+  null
+
+KtProperty(159,168): 'val x = x'
+  null
+
+KtNameReferenceExpression(167,168): 'x'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = x: kotlin.Int
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtDestructuringDeclaration(173,192): 'val (x, y) = x to 1'
+  null
+
+KtDestructuringDeclarationEntry(178,179): 'x'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = x
+        isSafeNavigation = false
+        type = kotlin.Pair<kotlin.Int, kotlin.Int>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Pair.component1(<dispatch receiver>: kotlin.Pair<A, B>): A
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Pair.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtDestructuringDeclarationEntry(181,182): 'y'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = y
+        isSafeNavigation = false
+        type = kotlin.Pair<kotlin.Int, kotlin.Int>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Pair.component2(<dispatch receiver>: kotlin.Pair<A, B>): B
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Pair.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtBinaryExpression(186,192): 'x to 1'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = x
+        isSafeNavigation = false
+        type = kotlin.Int
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Pair<kotlin.Int, kotlin.Int>
+        symbol = kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
+        valueParameters = [
+          KaVariableSignature:
+            name = that
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = that: B
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/to
+      typeArgumentsMapping = {
+        A -> (kotlin.Int),
+        B -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = that: B
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(186,187): 'x'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val x: kotlin.Int
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(188,190): 'to'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = x
+        isSafeNavigation = false
+        type = kotlin.Int
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Pair<kotlin.Int, kotlin.Int>
+        symbol = kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
+        valueParameters = [
+          KaVariableSignature:
+            name = that
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = that: B
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/to
+      typeArgumentsMapping = {
+        A -> (kotlin.Int),
+        B -> (kotlin.Int)
+      }
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = that: B
+          contextParameters = []
+          callableId = null)
+      }
+
+KtConstantExpression(191,192): '1'
+  null
+
+KtForExpression(197,220): 'for (x in x..y) {'
+  KaForLoopCallResolutionAttempt:
+    call = KaForLoopCall:
+      hasNextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = x..y
+          isSafeNavigation = false
+          type = kotlin.collections.IntIterator
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.hasNext
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      iteratorCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = x..y
+          isSafeNavigation = false
+          type = kotlin.ranges.IntRange
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.collections.IntIterator
+          symbol = kotlin/ranges/IntProgression.iterator(<dispatch receiver>: kotlin.ranges.IntProgression): kotlin.collections.IntIterator
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/ranges/IntProgression.iterator
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      nextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = x..y
+          isSafeNavigation = false
+          type = kotlin.collections.IntIterator
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/collections/IntIterator.next(<dispatch receiver>: kotlin.collections.IntIterator): kotlin.Int
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/IntIterator.next
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+
+KtParameter(202,203): 'x'
+  null
+
+KtContainerNode(207,211): 'x..y'
+  null
+
+KtBinaryExpression(207,211): 'x..y'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = x
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.ranges.IntRange
+        symbol = kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Int.rangeTo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        y -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(207,208): 'x'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val x: kotlin.Int
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(208,210): '..'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = x
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.ranges.IntRange
+        symbol = kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Int.rangeTo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        y -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(210,211): 'y'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = y
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val y: kotlin.Int
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtContainerNodeForControlStructureBody(213,220): '{'
+  null
+
+KtBlockExpression(213,220): '{'
+  null
