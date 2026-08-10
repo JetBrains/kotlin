@@ -324,21 +324,6 @@ def _get_cached_child_addresses_by_index(value):
     return None if cached_info is None else cached_info.child_addresses_by_index
 
 
-def _get_cached_children_count(value):
-    cached_info = _get_cached_sbvalue_info(value)
-    return None if cached_info is None else cached_info.children_count
-
-
-def _get_cached_child_names_by_index(value):
-    cached_info = _get_cached_sbvalue_info(value)
-    return None if cached_info is None else cached_info.child_names_by_index
-
-
-def _get_cached_child_types_by_index(value):
-    cached_info = _get_cached_sbvalue_info(value)
-    return None if cached_info is None else cached_info.child_types_by_index
-
-
 def _set_cached_child_address(value, index, address):
     cached_info = _get_or_create_cached_sbvalue_info(value)
     if cached_info is None:
@@ -348,10 +333,20 @@ def _set_cached_child_address(value, index, address):
     cached_info.child_addresses_by_index[index] = address
 
 
+def _get_cached_children_count(value):
+    cached_info = _get_cached_sbvalue_info(value)
+    return None if cached_info is None else cached_info.children_count
+
+
 def _set_cached_children_count(value, children_count):
     cached_info = _get_or_create_cached_sbvalue_info(value)
     if cached_info is not None:
         cached_info.children_count = children_count
+
+
+def _get_cached_child_names_by_index(value):
+    cached_info = _get_cached_sbvalue_info(value)
+    return None if cached_info is None else cached_info.child_names_by_index
 
 
 def _set_cached_child_name(value, index, name):
@@ -361,6 +356,11 @@ def _set_cached_child_name(value, index, name):
     if cached_info.child_names_by_index is None:
         cached_info.child_names_by_index = {}
     cached_info.child_names_by_index[index] = name
+
+
+def _get_cached_child_types_by_index(value):
+    cached_info = _get_cached_sbvalue_info(value)
+    return None if cached_info is None else cached_info.child_types_by_index
 
 
 def _set_cached_child_type(value, index, child_type):
@@ -397,6 +397,16 @@ def _set_cached_summary(process, key, summary):
     if cached_info is not None:
         cached_info.summary = summary
 
+
+def _get_cached_type_name(variable):
+    if variable is None or not variable.IsValid():
+        return None
+    if variable.GetTypeName() != "ObjHeader *":
+        return None
+    cached_info = _get_cached_sbvalue_info(variable)
+    return None if cached_info is None else cached_info.type_name
+
+
 def _set_cached_type_name(process, key, type_name):
     if type_name is None:
         return
@@ -423,7 +433,7 @@ def _read_pointer(process, target, address):
         return 0
     pointer_format = "Q" if pointer_size == 8 else "I"
     return struct.unpack(
-        f"{_struct_prefix_for_target(target)}{pointer_format}", raw
+        f"{_byte_order_prefix_for_target(target)}{pointer_format}", raw
     )[0]
 
 
@@ -434,22 +444,15 @@ def _fast_type_info(value):
     if not process.IsValid() or not target.IsValid() or object_address == 0:
         return None
 
-    pointer_size = target.GetAddressByteSize()
-    pointer_format = "Q" if pointer_size == 8 else "I"
-    prefix = _struct_prefix_for_target(target)
-
-    def read_pointer(address):
-        error = lldb.SBError()
-        raw = process.ReadMemory(address, pointer_size, error)
-        if not error.Success():
-            return 0
-        return struct.unpack(f"{prefix}{pointer_format}", raw)[0]
-
-    type_info = read_pointer(object_address) & ~0x3
-    return type_info if type_info and read_pointer(type_info) == type_info else None
+    type_info = _read_pointer(process, target, object_address) & ~0x3
+    return (
+        type_info
+        if type_info and _read_pointer(process, target, type_info) == type_info
+        else None
+    )
 
 
-def _struct_prefix_for_target(target):
+def _byte_order_prefix_for_target(target):
     return ">" if target.GetByteOrder() == lldb.eByteOrderBig else "<"
 
 
@@ -1016,7 +1019,7 @@ def _read_child_metadata(provider, result_addr, result_slot_count, count, includ
         pointer_size * result_slot_count,
         "Failed to read KonanObjectSyntheticProvider child metadata result",
     )
-    prefix = _struct_prefix_for_target(provider._target)
+    prefix = _byte_order_prefix_for_target(provider._target)
     (
         field_names_addr,
         field_names_size,
@@ -1588,16 +1591,6 @@ class KonanProxyTypeProvider:
 
     def __getattr__(self, item):
         return getattr(self._get_proxy(), item)
-
-
-def _get_cached_type_name(variable):
-    if variable is None or not variable.IsValid():
-        return None
-    if variable.GetTypeName() != "ObjHeader *":
-        return None
-    cached_info = _get_cached_sbvalue_info(variable)
-    return None if cached_info is None else cached_info.type_name
-
 
 def field_type_command(_, field_address, exe_ctx, result, internal_dict):
     """
