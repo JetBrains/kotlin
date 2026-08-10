@@ -26,6 +26,9 @@ public class KtToken extends IElementType {
 
     public final int tokenId;
 
+    @kotlin.Deprecated(
+            message = "Use the 'KtToken(String, int)' constructor instead"
+    )
     @Deprecated
     public KtToken(@NotNull @NonNls String debugName) {
         this(debugName, INVALID_ID);

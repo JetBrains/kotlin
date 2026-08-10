@@ -99,6 +99,9 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
      * @return the context receiver list, or {@code null} if this function type has no context receivers
      * @deprecated Use {@link #getContextParameterList()} instead. This method is obsolete and exists for compatibility reasons only.
      */
+    @kotlin.Deprecated(
+            message = "Use 'getContextParameterList()' instead. This method is obsolete and exists for compatibility reasons only."
+    )
     @Deprecated
     @Nullable
     public KtContextReceiverList getContextReceiverList() {

@@ -31,6 +31,9 @@ public interface KtModifierListOwner extends PsiElement, KtAnnotated {
      * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addModifierKeyword(this, modifier)}
      * instead.
      */
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addModifierKeyword(this, modifier)' instead."
+    )
     @Deprecated
     void addModifier(@NotNull KtModifierKeywordToken modifier);
 
@@ -38,6 +41,9 @@ public interface KtModifierListOwner extends PsiElement, KtAnnotated {
      * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeModifierKeyword(this, modifier)}
      * instead.
      */
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeModifierKeyword(this, modifier)' instead."
+    )
     @Deprecated
     void removeModifier(@NotNull KtModifierKeywordToken modifier);
 
@@ -45,6 +51,9 @@ public interface KtModifierListOwner extends PsiElement, KtAnnotated {
      * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addAnnotation(this, annotationEntry)}
      * instead.
      */
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addAnnotation(this, annotationEntry)' instead."
+    )
     @Deprecated
     @NotNull
     KtAnnotationEntry addAnnotationEntry(@NotNull KtAnnotationEntry annotationEntry);

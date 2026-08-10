@@ -30,6 +30,9 @@ import java.util.function.Function;
 public class KtNodeType extends IElementType {
     private final Function<ASTNode, KtElement> myPsiFactory;
 
+    @kotlin.Deprecated(
+            message = "Use the 'KtNodeType(String, Function)' constructor instead"
+    )
     @Deprecated  // Deprecated in the favor of second constructor, should not be used
     public KtNodeType(@NotNull @NonNls String debugName, Class<? extends KtElement> psiClass) {
         this(debugName, createFactory(psiClass));
@@ -71,6 +74,9 @@ public class KtNodeType extends IElementType {
 
     public static class KtLeftBoundNodeType extends KtNodeType {
         @SuppressWarnings("unused")
+        @kotlin.Deprecated(
+                message = "Use the 'KtLeftBoundNodeType(String, Function)' constructor instead"
+        )
         @Deprecated  // Deprecated in the favor of second constructor, should not be used
         public KtLeftBoundNodeType(@NotNull @NonNls String debugName, Class<? extends KtElement> psiClass) {
             super(debugName, psiClass);

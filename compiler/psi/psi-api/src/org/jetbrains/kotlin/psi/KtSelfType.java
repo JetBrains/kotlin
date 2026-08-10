@@ -14,6 +14,9 @@ import java.util.List;
 /**
  * @deprecated This class is obsolete. The parser logic for self-types was removed in 2015.
  */
+@kotlin.Deprecated(
+        message = "This class is obsolete. The parser logic for self-types was removed in 2015."
+)
 @Deprecated
 public class KtSelfType extends KtElementImpl implements KtTypeElement {
     public KtSelfType(@NotNull ASTNode node) {
