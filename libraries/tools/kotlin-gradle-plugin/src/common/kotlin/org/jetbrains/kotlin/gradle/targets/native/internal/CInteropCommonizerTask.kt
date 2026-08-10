@@ -101,7 +101,7 @@ internal abstract class CInteropCommonizerTask
 
     }
 
-    override val outputDirectory: File get() = projectLayout.buildDirectory.get().asFile.resolve("classes/kotlin/commonizer")
+    override val outputDirectory: File get() = projectLayout.buildDirectory.get().asFile.resolve(CINTEROP_COMMONIZER_OUTPUT_PATH)
 
     @get:Nested
     internal val kotlinNativeProvider: Property<KotlinNativeProvider> =

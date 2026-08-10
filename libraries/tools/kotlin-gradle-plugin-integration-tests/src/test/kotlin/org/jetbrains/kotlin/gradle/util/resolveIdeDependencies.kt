@@ -76,8 +76,9 @@ private class ResolveIdeDependenciesModelImpl(
 internal fun TestProject.resolveIdeDependenciesAsModel(
     sourceSets: Set<String>,
     buildOptions: BuildOptions = this.buildOptions,
+    tasks: List<String> = listOf("prepareKotlinIdeaImport"),
 ): IdeaKotlinDependenciesContainer {
-    val model = buildModel<ResolveIdeDependenciesModel>("prepareKotlinIdeaImport", buildOptions = buildOptions) { project ->
+    val model = buildModel<ResolveIdeDependenciesModel>(*tasks.toTypedArray(), buildOptions = buildOptions) { project ->
         val deps = sourceSets.associateWith {
             @OptIn(ExternalKotlinTargetApi::class)
             project.kotlinIdeMultiplatformImport.resolveDependenciesSerialized(it)

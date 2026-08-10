@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
-import org.jetbrains.kotlin.gradle.utils.kotlinMetadataDir
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
@@ -34,9 +33,7 @@ internal abstract class CopyCommonizeCInteropForIdeTask @Inject constructor(
         commonizeCInteropTask.map { it.allOutputDirectories }
 
     @get:OutputDirectory
-    override val outputDirectory: File = project.kotlinMetadataDir()
-        .resolve("commonizer")
-        .resolve(project.path.removePrefix(":").replace(":", "/"))
+    override val outputDirectory: File = project.copyCInteropCommonizerForIdeOutputRoot
 
     @get:Internal
     val metrics: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>> = project.objects
