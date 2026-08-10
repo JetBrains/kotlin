@@ -256,6 +256,7 @@ tasks.register<Test>("kgpAllParallelTests") {
     group = KGP_TEST_TASKS_GROUP
     description = "Runs all tests for Kotlin Gradle plugins except daemon ones"
     maxParallelForks = maxParallelTestForks
+    testFederationAllowAffectedBy = setOf(Domain.Compiler, Domain.BuildToolsApi, Domain.Native, Domain.Js, Domain.CompilerPlugins, Domain.SwiftExport)
 
     classpath = sourceSets["test"].runtimeClasspath
     testClassesDirs = sourceSets["test"].output.classesDirs
@@ -276,20 +277,20 @@ fun JunitTag.taskConfiguration(
     description: String,
     taskName: String,
     maxParallelForks: Int = maxParallelTestForks,
-    domains: Set<Domain> = emptySet(),
-) = TaskConfiguration(description, taskName, this, maxParallelForks, domains)
+    allowAffectedBy: Set<Domain> = emptySet(),
+) = TaskConfiguration(description, taskName, this, maxParallelForks, allowAffectedBy)
 
 val perTagJunitTasks = JunitTag.values().map { junitTag ->
     when (junitTag) {
         JunitTag.JvmKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/JVM part of Gradle plugin",
             "kgpJvmTests",
-            domains = setOf(Domain.Compiler, Domain.BuildToolsApi)
+            allowAffectedBy = setOf(Domain.Compiler, Domain.BuildToolsApi)
         )
         JunitTag.SwiftExportKGP -> junitTag.taskConfiguration(
             "Run Swift Export Kotlin Gradle plugin tests",
             "kgpSwiftExportTests",
-            domains = setOf(Domain.SwiftExport)
+            allowAffectedBy = setOf(Domain.SwiftExport)
         )
         JunitTag.SwiftPMImportKGP -> junitTag.taskConfiguration(
             "Run SwiftPM import Kotlin Gradle plugin tests",
@@ -298,39 +299,39 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
         JunitTag.JsKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/JS part of Gradle plugin",
             "kgpJsTests",
-            domains = setOf(Domain.Js, Domain.BuildToolsApi, Domain.Compiler)
+            allowAffectedBy = setOf(Domain.Js, Domain.BuildToolsApi, Domain.Compiler)
         )
 
         JunitTag.JsBrowserKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/JS part of Gradle plugin",
             "kgpJsBrowserTests",
-            domains = setOf(Domain.Js)
+            allowAffectedBy = setOf(Domain.Js)
         )
         JunitTag.NativeKGP -> junitTag.taskConfiguration(
             "Run tests for Kotlin/Native part of Gradle plugin",
             "kgpNativeTests",
-            domains = setOf(Domain.Native, Domain.BuildToolsApi, Domain.Compiler)
+            allowAffectedBy = setOf(Domain.Native, Domain.BuildToolsApi, Domain.Compiler)
         )
         JunitTag.MppKGP -> junitTag.taskConfiguration(
             "Run Multiplatform Kotlin Gradle plugin tests",
             "kgpMppTests",
-            domains = setOf(Domain.BuildToolsApi, Domain.Compiler)
+            allowAffectedBy = setOf(Domain.BuildToolsApi, Domain.Compiler)
         )
         JunitTag.AndroidKGP -> junitTag.taskConfiguration(
             "Run Android Kotlin Gradle plugin tests",
             "kgpAndroidTests",
-            domains = setOf(Domain.CompilerPlugins)
+            allowAffectedBy = setOf(Domain.CompilerPlugins)
         )
         JunitTag.OtherKGP -> junitTag.taskConfiguration(
             "Run tests for all support plugins, such as kapt, allopen, etc",
             "kgpOtherTests",
-            domains = setOf(Domain.CompilerPlugins, Domain.Compiler, Domain.BuildToolsApi)
+            allowAffectedBy = setOf(Domain.CompilerPlugins, Domain.Compiler, Domain.BuildToolsApi)
         )
         JunitTag.DaemonsKGP -> junitTag.taskConfiguration(
             "Run only Gradle and Kotlin daemon tests for Kotlin Gradle Plugin",
             "kgpDaemonTests",
             maxParallelForks = 1,
-            domains = setOf(Domain.BuildToolsApi)
+            allowAffectedBy = setOf(Domain.BuildToolsApi)
         )
     }
 }.map { junitTask ->

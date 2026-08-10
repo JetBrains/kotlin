@@ -18,7 +18,7 @@ class SmokeTestExecutionCondition : ExecutionCondition {
     override fun evaluateExecutionCondition(context: ExtensionContext): ConditionEvaluationResult {
         if (!context.testMethod.isPresent) return enabled("Test Class is always enabled")
         val allContracts = contracts(context)
-        if (!testFederationAllowAffectedBy.containsAll(allContracts)) {
+        if (!contractsAllowed(allContracts)) {
             throw ExtensionConfigurationException(
                 """
                 This test has contract for domains that are not declared at the Gradle level:
@@ -42,6 +42,8 @@ class SmokeTestExecutionCondition : ExecutionCondition {
         return disabled("Not a smoke test / Not a contract test")
     }
 }
+
+private fun contractsAllowed(allContracts: Set<Domain>): Boolean = testFederationAllowAffectedBy.containsAll(allContracts)
 
 /**
  * Tests tasks can be configured so that a given percentage of tests are automatically selected as smoke tests.
