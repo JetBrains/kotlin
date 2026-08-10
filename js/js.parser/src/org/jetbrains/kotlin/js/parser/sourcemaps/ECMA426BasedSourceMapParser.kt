@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.js.parser.sourcemaps.ECMA426BasedSourceMapParser.Par
 /**
  * Parses and validates source map files against the ECMA-426 specification.
  *
- * The used version is a draft on March 2, 2026
+ * Used spec versions:
+ * - Main ECMA-426 specification draft, as of March 2, 2026: https://tc39.es/ecma426/
+ * - The scopes proposal draft specification, as of July 20, 2026: https://tc39.es/ecma426/branch/proposal-scopes/
  *
  * **Note:** The compiler doesn't generate a source map containing "sections", so the validation doesn't include a case with the ["Section 10: Index source map"](https://tc39.es/ecma426/#sec-index-source-map)
  *
@@ -257,6 +259,7 @@ object ECMA426BasedSourceMapParser {
         val file: String?,
         val sources: List<DecodedSourceRecord>,
         val mappings: List<DecodedMappingRecord>,
+        val ranges: List<GeneratedRangeRecord>,
     )
 
     /**
@@ -266,6 +269,7 @@ object ECMA426BasedSourceMapParser {
         var url: String?,
         var content: String?,
         var ignored: Boolean,
+        var scope: OriginalScopeRecord?,
     )
 
     /**
@@ -329,16 +333,27 @@ object ECMA426BasedSourceMapParser {
         val sourcesContentField = getOptionalListOfOptionalStrings(json, "sourcesContent").ifFailure { return it }
         // 9. Let ignoreListField be GetOptionalListOfArrayIndexes(json, "ignoreList").
         val ignoreListField = getOptionalListOfArrayIndexes(json, "ignoreList").ifFailure { return it }
-        // 10. Let sources be DecodeSourceMapSources(baseURL, sourceRootField, sourcesField, sourcesContentField, ignoreListField).
-        val sources = decodeSourceMapSources(baseUrl, sourceRootField, sourcesField, sourcesContentField, ignoreListField).ifFailure { return it }
-        // 11. Let namesField be GetOptionalListOfStrings(json, "names").
+        // 10. Let namesField be GetOptionalListOfStrings(json, "names").
         val namesField = getOptionalListOfStrings(json, "names").ifFailure { return it }
-        // 12. Let mappings be DecodeMappings(mappingsField, namesField, sources).
+        // 11. Let scopesField be GetOptionalString(json, "scopes").
+        val scopesField = getOptionalString(json, "scopes").ifFailure { return it }
+        // 12. Let scopesAndRanges be DecodeScopesInfo(scopesField, namesField).
+        val [scopes, ranges] = decodeScopesInfo(scopesField, namesField).ifFailure { return it }
+        // 13. Let sources be DecodeSourceMapSources(baseURL, sourceRootField, sourcesField, sourcesContentField, ignoreListField, scopesAndRanges.[[Scopes]]).
+        val sources = decodeSourceMapSources(
+            baseUrl,
+            sourceRootField,
+            sourcesField,
+            sourcesContentField,
+            ignoreListField,
+            scopes
+        ).ifFailure { return it }
+        // 14. Let mappings be DecodeMappings(mappingsField, namesField, sources).
         val mappings = decodeMappings(mappingsField, namesField, sources).ifFailure { return it }
-        // 13. Sort mappings in ascending order, with a Decoded Mapping Record a being less than a Decoded Mapping Record b if ComparePositions(a.[[GeneratedPosition]], b.[[GeneratedPosition]]) is lesser.
+        // 15. Sort mappings in ascending order, with a Decoded Mapping Record a being less than a Decoded Mapping Record b if ComparePositions(a.[[GeneratedPosition]], b.[[GeneratedPosition]]) is lesser.
         mappings.sortedWith { record1, record2 -> comparePositions(record1.generatedPosition, record2.generatedPosition).value }
-        // 14. Return the Decoded Source Map Record { [[File]]: fileField, [[Sources]]: sources, [[Mappings]]: mappings }.
-        return Success(DecodedSourceMapRecord(fileField, sources, mappings))
+        // 16. Return the Decoded Source Map Record { [[File]]: fileField, [[Sources]]: sources, [[Mappings]]: mappings }.
+        return Success(DecodedSourceMapRecord(fileField, sources, mappings, ranges))
     }
 
     /**
@@ -784,10 +799,1450 @@ object ECMA426BasedSourceMapParser {
     }
 
     //
-    // 9.3 Resolving sources
+    // 9.3 Scopes grammar and decoding
+
+    //
+    // 9.3.1 Original scope record
 
     /**
-     * @see <a href="https://tc39.es/ecma426/#sec-DecodeSourceMapSources">Section 9.3.1: DecodeSourceMapSources(baseURL, sourceRoot, sources, sourcesContent, ignoreList)</a>
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-original-scope-record-type">Section 9.3.1: Original Scope Record</a>
+     */
+    data class OriginalScopeRecord(
+        var start: PositionRecord,
+        var end: PositionRecord,
+        var name: String?,
+        var kind: String?,
+        var variables: List<String>,
+        var children: List<OriginalScopeRecord>,
+        var isStackFrame: Boolean,
+    )
+
+    //
+    // 9.3.2 Generated range and binding records
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-generated-range-record-type">Section 9.3.2: Generated Range Record</a>
+     */
+    data class GeneratedRangeRecord(
+        val start: PositionRecord,
+        val end: PositionRecord,
+        val definition: OriginalScopeRecord?,
+        val stackFrameType: StackFrameType,
+        val bindings: List<List<BindingRecord>>,
+        val callSite: GeneratedRangeCallSiteRecord?,
+        val children: List<GeneratedRangeRecord>,
+    )
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-binding-record-type">Section 9.3.2.1: The Binding Record</a>
+     */
+    data class BindingRecord(
+        /**
+         * Use [binding] from this position until the next binding record's [from] position or [GeneratedRangeRecord.end] to retrieve the variable's value.
+         */
+        val from: PositionRecord,
+        /**
+         * The JavaScript expression used to retrieve the variable's value, or null when the variable is unavailable.
+         */
+        val binding: String?,
+    )
+
+    /** Identifies how a generated range contributes to stack-frame reconstruction. */
+    enum class StackFrameType {
+        /** The generated range is not a JavaScript/WASM function. */
+        NONE,
+
+        /** The generated range is an original JavaScript/Wasm function. */
+        ORIGINAL,
+
+        /** The generated range is a compiler/transpiler-inserted JavaScript/Wasm function even though [GeneratedRangeRecord.definition] is not null. */
+        HIDDEN
+    }
+
+    //
+    // 9.3.3 Scopes grammar
+
+    /**
+     * ```text
+     * Scopes :
+     *     OriginalScopeTreeList
+     *     TopLevelItemList
+     *     OriginalScopeTreeList , TopLevelItemList
+     * ```
+     */
+    private data class Scopes(
+        val originalScopes: List<OriginalScopeTreeItem>,
+        val topLevelItems: List<TopLevelItem>,
+    )
+
+    /**
+     * ```text
+     * OriginalScopeTreeItem :
+     *     OriginalScopeTree
+     *     EmptyItem
+     * ```
+     */
+    private sealed interface OriginalScopeTreeItem
+
+    /**
+     * ```text
+     * EmptyItem :
+     *     A
+     * ```
+     */
+    private data object EmptyItem : OriginalScopeTreeItem
+
+    /**
+     * ```text
+     * TopLevelItem :
+     *     GeneratedRangeTree
+     *     VendorExtensionItem
+     *     InvalidItem
+     * ```
+     */
+    private sealed interface TopLevelItem
+
+    /**
+     * ```text
+     * OriginalScopeTree :
+     *     OriginalScopeStart OriginalScopeVariablesItem? OriginalScopeItemList? , OriginalScopeEnd
+     * ```
+     */
+    private data class OriginalScopeTree(
+        val start: OriginalScopeStart,
+        val variables: List<ScopeVariable>?,
+        val items: List<OriginalScopeItem>?,
+        val end: OriginalScopeEnd,
+    ) : OriginalScopeItem, OriginalScopeTreeItem
+
+    /**
+     * ```text
+     * OriginalScopeItem :
+     *     OriginalScopeTree
+     *     VendorExtensionItem
+     *     InvalidItem
+     * ```
+     */
+    private sealed interface OriginalScopeItem
+
+    /**
+     * ```text
+     * OriginalScopeStart :
+     *     B ScopeFlags ScopeLine ScopeColumn ScopeNameOrKind? ScopeKind?
+     * ```
+     */
+    private data class OriginalScopeStart(
+        val flags: UInt,
+        val line: ScopeLine,
+        val column: ScopeColumn,
+        val nameOrKind: ScopeNameOrKind?,
+        val kind: ScopeKind?,
+    )
+
+    /**
+     * ```text
+     * OriginalScopeEnd :
+     *     C ScopeLine ScopeColumn
+     * ```
+     */
+    private data class OriginalScopeEnd(
+        val line: ScopeLine,
+        val column: ScopeColumn,
+    )
+
+    /**
+     * ```text
+     * ScopeFlags :
+     *     Vlq
+     * ```
+     */
+    private typealias ScopeFlags = Vlq
+
+    /**
+     * ```text
+     * ScopeLine :
+     *     Vlq
+     * ```
+     */
+    private typealias ScopeLine = Vlq
+
+    /**
+     * ```text
+     * ScopeColumn :
+     *     Vlq
+     * ```
+     */
+    private typealias ScopeColumn = Vlq
+
+    /**
+     * ```text
+     * ScopeNameOrKind :
+     *     Vlq
+     * ```
+     */
+    private typealias ScopeNameOrKind = Vlq
+
+    /**
+     * ```text
+     * ScopeKind :
+     *     Vlq
+     * ```
+     */
+    private typealias ScopeKind = Vlq
+
+    /**
+     * ```text
+     * ScopeVariable :
+     *     Vlq
+     * ```
+     */
+    private typealias ScopeVariable = Vlq
+
+    /**
+     * ```text
+     * GeneratedRangeTree :
+     *     GeneratedRangeStart GeneratedRangeBindingsItem? GeneratedRangeCallSiteItem? GeneratedRangeItemList? , GeneratedRangeEnd
+     * ```
+     */
+    private data class GeneratedRangeTree(
+        val start: GeneratedRangeStart,
+        val bindings: GeneratedRangeBindingsItem?,
+        val callSite: GeneratedRangeCallSiteItem?,
+        val items: List<GeneratedRangeItem>?,
+        val end: GeneratedRangeEnd,
+    ) : TopLevelItem, GeneratedRangeItem
+
+    /**
+     * ```text
+     * GeneratedRangeBindingsItem :
+     *     , GeneratedRangeBindings
+     * ```
+     */
+    private data class GeneratedRangeBindingsItem(val bindings: GeneratedRangeBindings)
+
+    /**
+     * ```text
+     * GeneratedRangeCallSiteItem :
+     *     , GeneratedRangeCallSite
+     * ```
+     */
+    private data class GeneratedRangeCallSiteItem(val callSite: GeneratedRangeCallSite)
+
+    /**
+     * ```text
+     * GeneratedRangeItem :
+     *     GeneratedSubRangeBinding
+     *     GeneratedRangeTree
+     *     VendorExtensionItem
+     *     InvalidItem
+     * ```
+     */
+    private sealed interface GeneratedRangeItem
+
+    /**
+     * ```text
+     * GeneratedRangeStart :
+     *     E RangeFlags RangeLine? RangeColumn RangeDefinition?
+     * ```
+     */
+    private data class GeneratedRangeStart(
+        val flags: UInt,
+        val line: RangeLine?,
+        val column: RangeColumn,
+        val definition: RangeDefinition?,
+    )
+
+    /**
+     * ```text
+     * GeneratedRangeEnd :
+     *     F RangeLine? RangeColumn
+     * ```
+     */
+    private data class GeneratedRangeEnd(
+        val line: RangeLine?,
+        val column: RangeColumn,
+    )
+
+    /**
+     * ```text
+     * GeneratedRangeBindings :
+     *     G BindingExpressionList
+     * ```
+     */
+    private data class GeneratedRangeBindings(val list: List<BindingExpression>)
+
+    /**
+     * ```text
+     * GeneratedSubRangeBinding :
+     *     H VariableIndex BindingFromList
+     * ```
+     */
+    private data class GeneratedSubRangeBinding(
+        val variableIndex: VariableIndex,
+        val bindings: List<BindingFrom>,
+    ) : GeneratedRangeItem
+
+    /**
+     * ```text
+     * BindingFrom :
+     *     BindingLine BindingColumn BindingExpression
+     * ```
+     */
+    private data class BindingFrom(
+        val line: BindingLine,
+        val column: BindingColumn,
+        val expression: BindingExpression,
+    )
+
+    /**
+     * ```text
+     * GeneratedRangeCallSite :
+     *     I CallSiteSourceIdx CallSiteLine CallSiteColumn
+     * ```
+     */
+    private data class GeneratedRangeCallSite(
+        val sourceIndex: CallSiteSourceIdx,
+        val line: CallSiteLine,
+        val column: CallSiteColumn,
+    )
+
+    /**
+     * ```text
+     * RangeFlags :
+     *     Vlq
+     * ```
+     */
+    private typealias RangeFlags = Vlq
+
+    /**
+     * ```text
+     * RangeLine :
+     *     Vlq
+     * ```
+     */
+    private typealias RangeLine = Vlq
+
+    /**
+     * ```text
+     * RangeColumn :
+     *     Vlq
+     * ```
+     */
+    private typealias RangeColumn = Vlq
+
+    /**
+     * ```text
+     * RangeDefinition :
+     *     Vlq
+     * ```
+     */
+    private typealias RangeDefinition = Vlq
+
+    /**
+     * ```text
+     * VariableIndex :
+     *     Vlq
+     * ```
+     */
+    private typealias VariableIndex = Vlq
+
+    /**
+     * ```text
+     * BindingLine :
+     *     Vlq
+     * ```
+     */
+    private typealias BindingLine = Vlq
+
+    /**
+     * ```text
+     * BindingColumn :
+     *     Vlq
+     * ```
+     */
+    private typealias BindingColumn = Vlq
+
+    /**
+     * ```text
+     * BindingExpression :
+     *     Vlq
+     * ```
+     */
+    private typealias BindingExpression = Vlq
+
+    /**
+     * ```text
+     * CallSiteSourceIdx :
+     *     Vlq
+     * ```
+     */
+    private typealias CallSiteSourceIdx = Vlq
+
+    /**
+     * ```text
+     * CallSiteLine :
+     *     Vlq
+     * ```
+     */
+    private typealias CallSiteLine = Vlq
+
+    /**
+     * ```text
+     * CallSiteColumn :
+     *     Vlq
+     * ```
+     */
+    private typealias CallSiteColumn = Vlq
+
+    /**
+     * ```text
+     * VendorExtensionItem :
+     *     / VendorExtensionName
+     *     / VendorExtensionName VlqList
+     * ```
+     */
+    private data class VendorExtensionItem(
+        val name: VendorExtensionName,
+        val data: List<Vlq>,
+    ) : TopLevelItem, OriginalScopeItem, GeneratedRangeItem
+
+    /**
+     * ```text
+     * VendorExtensionName :
+     *     Vlq
+     * ```
+     */
+    private typealias VendorExtensionName = Vlq
+
+    /**
+     * ```text
+     * InvalidItem :
+     *     Tag
+     *     Tag VlqList
+     * ```
+     */
+    private data class InvalidItem(
+        val tag: Vlq,
+        val data: List<Vlq>,
+    ) : TopLevelItem, OriginalScopeItem, GeneratedRangeItem
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-scopes-grammar">Section 9.3.3: Scopes grammar</a>
+     */
+    context(stream: ParserStream)
+    private fun parseScopesField(): ParsingResult<Scopes> {
+        val result = parseScopes()
+            .required("scopes item", stream)
+            .ifFailure { return it }
+
+        if (!stream.isEnded) {
+            return Failure(
+                "Unexpected '${stream.current}' at position ${stream.position}"
+            )
+        }
+
+        return Success(result)
+    }
+
+    /**
+     * ```text
+     * Scopes :
+     *     OriginalScopeTreeList
+     *     TopLevelItemList
+     *     OriginalScopeTreeList , TopLevelItemList
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseScopes(): ParsingResult<Scopes> {
+        val originalScopes = when (val originalList = parseOriginalScopeTreeList()) {
+            is Failure -> return Failure(originalList.message, originalList.cause)
+            is NoMatch -> {
+                val topLevelItems = parseTopLevelItemList().ifFailure { return it }
+                return Success(Scopes(emptyList(), topLevelItems))
+            }
+            is Success -> originalList.value
+        }
+
+        if (stream.parseChar(',') is NoMatch) {
+            return Success(Scopes(originalScopes, emptyList()))
+        }
+
+        val topLevelItems = parseTopLevelItemList()
+            .required("top-level item", stream)
+            .ifFailure { return it }
+        return Success(Scopes(originalScopes, topLevelItems))
+    }
+
+    /**
+     * ```text
+     * OriginalScopeTreeList :
+     *     OriginalScopeTreeItem
+     *     OriginalScopeTreeList , OriginalScopeTreeItem
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseOriginalScopeTreeList(): ParsingResult<List<OriginalScopeTreeItem>> {
+        return stream.parseManySeparated(',') { parseOriginalScopeTreeItem() }
+    }
+
+    /**
+     * ```text
+     * OriginalScopeTreeItem :
+     *     OriginalScopeTree
+     *     EmptyItem
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseOriginalScopeTreeItem(): ParsingResult<OriginalScopeTreeItem> {
+        return stream.parseOneOf(
+            { parseOriginalScopeTree() },
+            { parseEmptyItem() }
+        )
+    }
+
+    /**
+     * ```text
+     * EmptyItem :
+     *     A
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseEmptyItem(): ParsingResult<EmptyItem> {
+        return stream.parseChar(VlqKindTag.EMPTY_ITEM).map { EmptyItem }
+    }
+
+    /**
+     * ```text
+     * TopLevelItemList :
+     *     TopLevelItem
+     *     TopLevelItemList , TopLevelItem
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseTopLevelItemList(): ParsingResult<List<TopLevelItem>> {
+        return stream.parseManySeparated(',') { parseTopLevelItem() }
+    }
+
+    /**
+     * ```text
+     * TopLevelItem :
+     *     GeneratedRangeTree
+     *     VendorExtensionItem
+     *     InvalidItem
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseTopLevelItem(): ParsingResult<TopLevelItem> {
+        return stream.parseOneOf(
+            { parseGeneratedRangeTree() },
+            { parseVendorExtensionItem() },
+            { parseInvalidItem() }
+        )
+    }
+
+    /**
+     * ```text
+     * OriginalScopeTree :
+     *     OriginalScopeStart OriginalScopeVariablesItem? OriginalScopeItemList? , OriginalScopeEnd
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseOriginalScopeTree(): ParsingResult<OriginalScopeTree> {
+        val start = parseOriginalScopeStart().ifFailure { return it }
+
+        val variables = stream.parseOptional { parseOriginalScopeVariablesItem() }.ifFailure { return it }
+        val items = stream.parseOptional { parseOriginalScopeItemList() }.ifFailure { return it }
+
+        stream.expectChar(',').ifFailure { return it }
+        val end = parseOriginalScopeEnd()
+            .required("original scope end", stream)
+            .ifFailure { return it }
+
+        return Success(OriginalScopeTree(start, variables, items, end))
+    }
+
+    /**
+     * ```text
+     * OriginalScopeVariablesItem :
+     *     , OriginalScopeVariables
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseOriginalScopeVariablesItem(): ParsingResult<List<ScopeVariable>> {
+        stream.parseChar(',').ifFailure { return it }
+        return parseOriginalScopeVariables()
+    }
+
+    /**
+     * ```text
+     * OriginalScopeItemList :
+     *     , OriginalScopeItem
+     *     OriginalScopeItemList , OriginalScopeItem
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseOriginalScopeItemList(): ParsingResult<List<OriginalScopeItem>> {
+        stream.parseChar(',').ifFailure { return it }
+        return stream.parseManySeparated(',') { parseOriginalScopeItem() }
+    }
+
+    /**
+     * ```text
+     * OriginalScopeItem :
+     *     OriginalScopeTree
+     *     VendorExtensionItem
+     *     InvalidItem
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseOriginalScopeItem(): ParsingResult<OriginalScopeItem> {
+        return stream.parseOneOf(
+            { parseOriginalScopeTree() },
+            { parseVendorExtensionItem() },
+            { parseInvalidItem() }
+        )
+    }
+
+    /**
+     * ```text
+     * OriginalScopeStart :
+     *     B ScopeFlags ScopeLine ScopeColumn ScopeNameOrKind? ScopeKind?
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseOriginalScopeStart(): ParsingResult<OriginalScopeStart> {
+        stream.parseChar(VlqKindTag.ORIGINAL_SCOPE_START).ifFailure { return it }
+
+        val vlqScopeFlags: ScopeFlags = parseRequiredVlq("scope flags").ifFailure { return it }
+        val scopeFlags = vlqUnsignedValue(vlqScopeFlags).ifFailure { return it }
+        val scopeLine: ScopeLine = parseRequiredVlq("scope line").ifFailure { return it }
+        val scopeColumn: ScopeColumn = parseRequiredVlq("scope column").ifFailure { return it }
+
+        var scopeNameOrKind: ScopeNameOrKind? = null
+        var scopeKind: ScopeKind? = null
+
+        if ((scopeFlags and 0x1u) != 0u) {
+            scopeNameOrKind = parseRequiredVlq("scope name or kind").ifFailure { return it }
+            if ((scopeFlags and 0x2u) != 0u) {
+                scopeKind = parseRequiredVlq("scope kind").ifFailure { return it }
+            }
+        } else if ((scopeFlags and 0x2u) != 0u) {
+            scopeNameOrKind = parseRequiredVlq("scope name or kind").ifFailure { return it }
+        }
+
+        return Success(
+            OriginalScopeStart(
+                flags = scopeFlags,
+                line = scopeLine,
+                column = scopeColumn,
+                nameOrKind = scopeNameOrKind,
+                kind = scopeKind,
+            )
+        )
+    }
+
+    /**
+     * ```text
+     * OriginalScopeEnd :
+     *     C ScopeLine ScopeColumn
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseOriginalScopeEnd(): ParsingResult<OriginalScopeEnd> {
+        stream.parseChar(VlqKindTag.ORIGINAL_SCOPE_END).ifFailure { return it }
+
+        val scopeLine: ScopeLine = parseRequiredVlq("scope line").ifFailure { return it }
+        val scopeColumn: ScopeColumn = parseRequiredVlq("scope column").ifFailure { return it }
+
+        return Success(OriginalScopeEnd(scopeLine, scopeColumn))
+    }
+
+    /**
+     * ```text
+     * OriginalScopeVariables :
+     *     D ScopeVariableList
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseOriginalScopeVariables(): ParsingResult<List<ScopeVariable>> {
+        stream.parseChar(VlqKindTag.ORIGINAL_SCOPE_VARIABLES).ifFailure { return it }
+
+        val variables = parseScopeVariableList()
+            .required("scope variable", stream)
+            .ifFailure { return it }
+
+        return Success(variables)
+    }
+
+    /**
+     * ```text
+     * ScopeVariableList :
+     *     ScopeVariable
+     *     ScopeVariableList ScopeVariable
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseScopeVariableList(): ParsingResult<List<ScopeVariable>> {
+        return stream.parseMany { parseVlq() }
+    }
+
+    /**
+     * ```text
+     * GeneratedRangeTree :
+     *     GeneratedRangeStart GeneratedRangeBindingsItem? GeneratedRangeCallSiteItem? GeneratedRangeItemList? , GeneratedRangeEnd
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseGeneratedRangeTree(): ParsingResult<GeneratedRangeTree> {
+        val start = parseGeneratedRangeStart().ifFailure { return it }
+
+        val bindings = stream.parseOptional { parseGeneratedRangeBindingsItem() }.ifFailure { return it }
+        val callSite = stream.parseOptional { parseGeneratedRangeCallSiteItem() }.ifFailure { return it }
+        val items = stream.parseOptional { parseGeneratedRangeItemList() }.ifFailure { return it }
+
+        stream.expectChar(',').ifFailure { return it }
+        val end = parseGeneratedRangeEnd()
+            .required("generated range end", stream)
+            .ifFailure { return it }
+
+        return Success(GeneratedRangeTree(start, bindings, callSite, items, end))
+    }
+
+    /**
+     * ```text
+     * GeneratedRangeBindingsItem :
+     *     , GeneratedRangeBindings
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseGeneratedRangeBindingsItem(): ParsingResult<GeneratedRangeBindingsItem> {
+        stream.parseChar(',').ifFailure { return it }
+        return parseGeneratedRangeBindings().map(::GeneratedRangeBindingsItem)
+    }
+
+    /**
+     * ```text
+     * GeneratedRangeCallSiteItem :
+     *     , GeneratedRangeCallSite
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseGeneratedRangeCallSiteItem(): ParsingResult<GeneratedRangeCallSiteItem> {
+        stream.parseChar(',').ifFailure { return it }
+        return parseGeneratedRangeCallSite().map(::GeneratedRangeCallSiteItem)
+    }
+
+    /**
+     * ```text
+     * GeneratedRangeItemList :
+     *     , GeneratedRangeItem
+     *     GeneratedRangeItemList , GeneratedRangeItem
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseGeneratedRangeItemList(): ParsingResult<List<GeneratedRangeItem>> {
+        stream.parseChar(',').ifFailure { return it }
+        return stream.parseManySeparated(',') { parseGeneratedRangeItem() }
+    }
+
+    /**
+     * ```text
+     * GeneratedRangeItem :
+     *     GeneratedSubRangeBinding
+     *     GeneratedRangeTree
+     *     VendorExtensionItem
+     *     InvalidItem
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseGeneratedRangeItem(): ParsingResult<GeneratedRangeItem> {
+        return stream.parseOneOf(
+            { parseGeneratedSubRangeBinding() },
+            { parseGeneratedRangeTree() },
+            { parseVendorExtensionItem() },
+            { parseInvalidItem() }
+        )
+    }
+
+    /**
+     * ```text
+     * GeneratedRangeStart :
+     *     E RangeFlags RangeLine? RangeColumn RangeDefinition?
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseGeneratedRangeStart(): ParsingResult<GeneratedRangeStart> {
+        stream.parseChar(VlqKindTag.GENERATED_RANGE_START).ifFailure { return it }
+
+        val vlqFlags: RangeFlags = parseRequiredVlq("range flags").ifFailure { return it }
+        val flags = vlqUnsignedValue(vlqFlags).ifFailure { return it }
+        val line: RangeLine? =
+            if ((flags and 0x1u) != 0u) parseRequiredVlq("range line").ifFailure { return it } else null
+        val column: RangeColumn = parseRequiredVlq("range column").ifFailure { return it }
+        val definition: RangeDefinition? =
+            if ((flags and 0x2u) != 0u) parseRequiredVlq("range definition").ifFailure { return it } else null
+
+        return Success(GeneratedRangeStart(flags, line, column, definition))
+    }
+
+    /**
+     * ```text
+     * GeneratedRangeEnd :
+     *     F RangeLine? RangeColumn
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseGeneratedRangeEnd(): ParsingResult<GeneratedRangeEnd> {
+        stream.parseChar(VlqKindTag.GENERATED_RANGE_END).ifFailure { return it }
+
+        val values = stream.parseMany { parseVlq() }
+            .required("range column", stream)
+            .ifFailure { return it }
+        return when (values.size) {
+            1 -> Success(GeneratedRangeEnd(line = null, column = values.single()))
+            2 -> Success(GeneratedRangeEnd(line = values[0], column = values[1]))
+            else -> Failure("Generated range end expects an optional line and a column at position ${stream.position}")
+        }
+    }
+
+    /**
+     * ```text
+     * GeneratedRangeBindings :
+     *     G BindingExpressionList
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseGeneratedRangeBindings(): ParsingResult<GeneratedRangeBindings> {
+        stream.parseChar(VlqKindTag.GENERATED_RANGE_BINDINGS).ifFailure { return it }
+        return parseBindingExpressionList()
+            .required("binding expression", stream)
+            .map(::GeneratedRangeBindings)
+    }
+
+    /**
+     * ```text
+     * BindingExpressionList :
+     *     BindingExpression
+     *     BindingExpressionList BindingExpression
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseBindingExpressionList(): ParsingResult<List<BindingExpression>> {
+        return stream.parseMany { parseVlq() }
+    }
+
+    /**
+     * ```text
+     * GeneratedSubRangeBinding :
+     *     H VariableIndex BindingFromList
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseGeneratedSubRangeBinding(): ParsingResult<GeneratedSubRangeBinding> {
+        stream.parseChar(VlqKindTag.GENERATED_SUB_RANGE_BINDINGS).ifFailure { return it }
+
+        val variableIndex: VariableIndex = parseRequiredVlq("variable index").ifFailure { return it }
+        val bindings = parseBindingFromList()
+            .required("binding", stream)
+            .ifFailure { return it }
+
+        return Success(GeneratedSubRangeBinding(variableIndex, bindings))
+    }
+
+    /**
+     * ```text
+     * BindingFromList :
+     *     BindingFrom
+     *     BindingFromList BindingFrom
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseBindingFromList(): ParsingResult<List<BindingFrom>> {
+        return stream.parseMany { parseBindingFrom() }
+    }
+
+    /**
+     * ```text
+     * BindingFrom :
+     *     BindingLine BindingColumn BindingExpression
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseBindingFrom(): ParsingResult<BindingFrom> {
+        val line: BindingLine = parseVlq().ifFailure { return it }
+        val column: BindingColumn = parseRequiredVlq("binding column").ifFailure { return it }
+        val expression: BindingExpression = parseRequiredVlq("binding expression").ifFailure { return it }
+
+        return Success(BindingFrom(line, column, expression))
+    }
+
+    /**
+     * ```text
+     * GeneratedRangeCallSite :
+     *     I CallSiteSourceIdx CallSiteLine CallSiteColumn
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseGeneratedRangeCallSite(): ParsingResult<GeneratedRangeCallSite> {
+        stream.parseChar(VlqKindTag.GENERATED_RANGE_CALL_SITE).ifFailure { return it }
+
+        val sourceIndex: CallSiteSourceIdx = parseRequiredVlq("call site source index").ifFailure { return it }
+        val line: CallSiteLine = parseRequiredVlq("call site line").ifFailure { return it }
+        val column: CallSiteColumn = parseRequiredVlq("call site column").ifFailure { return it }
+
+        return Success(GeneratedRangeCallSite(sourceIndex, line, column))
+    }
+
+    /**
+     * ```text
+     * VendorExtensionItem :
+     *     / VendorExtensionName
+     *     / VendorExtensionName VlqList
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseVendorExtensionItem(): ParsingResult<VendorExtensionItem> {
+        stream.parseChar(VlqKindTag.VENDOR_EXTENSION).ifFailure { return it }
+
+        val name: VendorExtensionName = parseRequiredVlq("vendor extension name").ifFailure { return it }
+        val data: List<Vlq> = parseVlqList()
+            .defaultIfNoMatch(::emptyList)
+            .ifFailure { return it }
+
+        return Success(VendorExtensionItem(name, data))
+    }
+
+    /**
+     * ```text
+     * VlqList :
+     *     Vlq
+     *     VlqList Vlq
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseVlqList(): ParsingResult<List<Vlq>> {
+        return stream.parseMany { parseVlq() }
+    }
+
+    /**
+     * ```text
+     * InvalidItem :
+     *     Tag
+     *     Tag VlqList
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseInvalidItem(): ParsingResult<InvalidItem> {
+        val tag = parseInvalidTag().ifFailure { return it }
+        val data: List<Vlq> = parseVlqList()
+            .defaultIfNoMatch(::emptyList)
+            .ifFailure { return it }
+
+        return Success(InvalidItem(tag, data))
+    }
+
+    /**
+     * ```text
+     * Tag :
+     *     Vlq but not one of A B C D E F G H I /
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseInvalidTag(): ParsingResult<Vlq> {
+        if (stream.current in VlqKindTag.knownTags) return NoMatch()
+
+        return parseVlq()
+    }
+
+    //
+    // 9.3.4 Decoding the scopes field
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-scope-info-record-type">Section 9.3.4.1: Scope Info Record</a>
+     */
+    data class ScopeInfoRecord(
+        val scopes: List<OriginalScopeRecord?>,
+        val ranges: List<GeneratedRangeRecord>,
+    )
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-decode-scope-state-record-type">Table 13: Decode Scope State Record Fields</a>
+     */
+    data class DecodeScopeStateRecord(
+        val flatOriginalScopes: MutableList<OriginalScopeRecord>,
+        val scopePosition: PositionAccumulatorRecord,
+        val scopeNameIndex: IndexAccumulatorRecord,
+        val scopeKindIndex: IndexAccumulatorRecord,
+        val scopeVariableIndex: IndexAccumulatorRecord,
+        val rangePosition: PositionAccumulatorRecord,
+        val rangeDefinitionIndex: IndexAccumulatorRecord,
+    )
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#index-accumulator-record">Table 14: Index Accumulator Record Fields</a>
+     */
+    data class IndexAccumulatorRecord(var index: Int)
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#position-accumulator-record">Table 15: Position Accumulator Record Fields</a>
+     */
+    data class PositionAccumulatorRecord(override var line: UInt, override var column: UInt) : PositionWithLineAndColumn
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-AccumulateIndex">Section 9.3.4.2.1: AccumulateIndex(accumulator, increment)</a>
+     */
+    private fun accumulateIndex(accumulator: IndexAccumulatorRecord, increment: Int): Int {
+        // 1. Set accumulator.[[Index]] to accumulator.[[Index]] + increment.
+        val accumulatedIndex = accumulator.index.toLong() + increment
+        accumulator.index = accumulatedIndex
+            .coerceIn(0L, Int.MAX_VALUE.toLong())
+            .toInt()
+        // 2. Return accumulator.[[Index]].
+        return accumulator.index
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-AccumulatePosition">Section 9.3.4.2.2: AccumulatePosition(accumulator, lineIncrement, columnIncrement)</a>
+     */
+    private fun accumulatePosition(
+        accumulator: PositionAccumulatorRecord,
+        lineIncrement: UInt,
+        columnIncrement: UInt,
+    ): PositionRecord {
+        // 1. Set accumulator.[[Line]] to accumulator.[[Line]] + lineIncrement.
+        accumulator.line += lineIncrement
+        // 2. If lineIncrement is 0, set accumulator.[[Column]] to accumulator.[[Column]] + columnIncrement.
+        // 3. Else, set accumulator.[[Column]] to columnIncrement.
+        accumulator.column = if (lineIncrement == 0u) accumulator.column + columnIncrement else columnIncrement
+        // 4. Return a new Position Record with accumulator's line and column.
+        return PositionRecord(accumulator.line, accumulator.column)
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-DecodeScopesInfo">Section 9.3.4.3: DecodeScopesInfo(scopes, names)</a>
+     */
+    private fun decodeScopesInfo(
+        scopes: String?,
+        names: List<String>,
+    ): ParsingResult<ScopeInfoRecord> {
+        if (scopes == null) return Success(ScopeInfoRecord([], []))
+
+        val stream = ParserStream(scopes)
+        val parsedScopes = context(stream) {
+            parseScopesField().ifFailure { return it }
+        }
+
+        val state = DecodeScopeStateRecord(
+            flatOriginalScopes = mutableListOf(),
+            scopePosition = PositionAccumulatorRecord(0u, 0u),
+            scopeNameIndex = IndexAccumulatorRecord(0),
+            scopeKindIndex = IndexAccumulatorRecord(0),
+            scopeVariableIndex = IndexAccumulatorRecord(0),
+            rangePosition = PositionAccumulatorRecord(0u, 0u),
+            rangeDefinitionIndex = IndexAccumulatorRecord(0),
+        )
+
+        return context(state, names) {
+            decodeScopesInfoItem(parsedScopes)
+        }
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-DecodeScopesInfoItem">Section 9.3.4.3.1: DecodeScopesInfoItem</a>
+     */
+    context(state: DecodeScopeStateRecord, names: List<String>)
+    private fun decodeScopesInfoItem(parsedScopes: Scopes): ParsingResult<ScopeInfoRecord> {
+        val [originalScopes, topLevelItems] = parsedScopes
+
+        var originalScopeRecords = emptyList<OriginalScopeRecord?>()
+        if (originalScopes.isNotEmpty()) {
+            originalScopeRecords = decodedTopLevelOriginalScopeTrees(originalScopes).ifFailure { return it }
+        }
+
+        var generatedRangeRecords = emptyList<GeneratedRangeRecord>()
+        if (topLevelItems.isNotEmpty()) {
+            generatedRangeRecords = decodedGeneratedRangeTrees(topLevelItems).ifFailure { return it }
+        }
+
+        return Success(ScopeInfoRecord(originalScopeRecords, generatedRangeRecords))
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-DecodedTopLevelOriginalScopeTrees">Section 9.3.4.4: DecodedTopLevelOriginalScopeTrees</a>
+     */
+    context(state: DecodeScopeStateRecord, names: List<String>)
+    private fun decodedTopLevelOriginalScopeTrees(
+        originalScopes: List<OriginalScopeTreeItem>,
+    ): ParsingResult<List<OriginalScopeRecord?>> {
+        return originalScopes.map { originalScope ->
+            when (originalScope) {
+                is OriginalScopeTree -> {
+                    state.scopePosition.apply {
+                        line = 0u
+                        column = 0u
+                    }
+                    decodedOriginalScopeTrees(originalScope).ifFailure { failure -> return failure }
+                }
+                EmptyItem -> null
+            }
+        }.let(::Success)
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-DecodedOriginalScopeTrees">Section 9.3.4.4.1: DecodedOriginalScopeTrees</a>
+     */
+    context(state: DecodeScopeStateRecord, names: List<String>)
+    private fun decodedOriginalScopeTrees(originalScopeTree: OriginalScopeTree): ParsingResult<OriginalScopeRecord> {
+        val start = context(state.scopePosition) {
+            decodedPosition(originalScopeTree.start.line, originalScopeTree.start.column)
+        }.ifFailure { return it }
+
+        val name = context(state.scopeNameIndex) {
+            originalScopeName(originalScopeTree.start)
+        }.ifFailure { return it }
+
+        val kind = context(state.scopeKindIndex) {
+            originalScopeKind(originalScopeTree.start)
+        }.ifFailure { return it }
+
+        val flags = originalScopeTree.start.flags
+
+        val originalScope = OriginalScopeRecord(
+            start = start,
+            end = start,
+            name = name,
+            kind = kind,
+            variables = [],
+            children = [],
+            isStackFrame = false,
+        )
+
+        state.flatOriginalScopes += originalScope
+
+        if ((flags and 0x4u) == 0x4u)
+            originalScope.isStackFrame = true
+
+        if (originalScopeTree.variables != null) {
+            originalScope.variables = context(state.scopeVariableIndex) {
+                originalScopeVariables(originalScopeTree.variables)
+            }.ifFailure { return it }
+        }
+
+        if (originalScopeTree.items != null) {
+            originalScope.children = originalScopeTree.items
+                .filterIsInstance<OriginalScopeTree>()
+                .map { item ->
+                    decodedOriginalScopeTrees(item).ifFailure { return it }
+                }
+        }
+
+        originalScope.end = context(state.scopePosition) {
+            decodedPosition(originalScopeTree.end.line, originalScopeTree.end.column)
+        }.ifFailure { return it }
+
+        return Success(originalScope)
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-DecodedPosition">Section 9.3.4.4.2: DecodedPosition</a>
+     */
+    context(accumulator: PositionAccumulatorRecord)
+    private fun decodedPosition(
+        line: Vlq?,
+        column: Vlq,
+    ): ParsingResult<PositionRecord> {
+        val relativeLine = line?.let { vlqUnsignedValue(it) }?.ifFailure { return it }
+        val relativeColumn = vlqUnsignedValue(column).ifFailure { return it }
+
+        return Success(
+            accumulatePosition(
+                accumulator,
+                relativeLine ?: 0u,
+                relativeColumn
+            )
+        )
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-OriginalScopeName">Section 9.3.4.4.3: OriginalScopeName</a>
+     */
+    context(accumulator: IndexAccumulatorRecord, names: List<String>)
+    private fun originalScopeName(
+        scopeStart: OriginalScopeStart,
+    ): ParsingResult<String?> {
+        val [flags] = scopeStart
+        if ((flags and 0x1u) != 0x1u) return Success(null)
+        require(scopeStart.nameOrKind != null) { "ScopeNameOrKind expected, got null" }
+        return relativeName(scopeStart.nameOrKind)
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-OriginalScopeKind">Section 9.3.4.4.4: OriginalScopeKind</a>
+     */
+    context(accumulator: IndexAccumulatorRecord, names: List<String>)
+    private fun originalScopeKind(
+        scopeStart: OriginalScopeStart,
+    ): ParsingResult<String?> {
+        val [flags] = scopeStart
+        if ((flags and 0x2u) != 0x2u) return Success(null)
+        require(scopeStart.nameOrKind != null) { "ScopeNameOrKind expected, got null" }
+        if ((flags and 0x1u) == 0x1u) {
+            require(scopeStart.kind != null) { "ScopeKind expected, got null" }
+            return relativeName(scopeStart.kind)
+        }
+        return relativeName(scopeStart.nameOrKind)
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-OriginalScopeVariables">Section 9.3.4.4.5: OriginalScopeVariables</a>
+     */
+    context(accumulator: IndexAccumulatorRecord, names: List<String>)
+    private fun originalScopeVariables(
+        scopeVariablesList: List<ScopeVariable>,
+    ): ParsingResult<List<String>> {
+        return scopeVariablesList.map { scopeVariable ->
+            val variable = relativeName(scopeVariable).ifFailure { failure -> return failure }
+            variable ?: ""
+        }.let(::Success)
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-RelativeName">Section 9.3.4.4.6: RelativeName(vlq, accumulator, names)</a>
+     */
+    context(accumulator: IndexAccumulatorRecord, names: List<String>)
+    private fun relativeName(vlqIndex: Vlq): ParsingResult<String?> {
+        val relativeIndex = vlqSignedValue(vlqIndex).ifFailure { return it }
+        val index = accumulateIndex(accumulator, relativeIndex)
+        if (index >= names.size) return Failure("Relative index of the name exceeds the size of names field")
+        return Success(names[index])
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-DecodedGeneratedRangeTrees">Section 9.3.4.5: DecodedGeneratedRangeTrees</a>
+     */
+    context(state: DecodeScopeStateRecord, names: List<String>)
+    private fun decodedGeneratedRangeTrees(topLevelItems: List<TopLevelItem>): ParsingResult<List<GeneratedRangeRecord>> {
+        return topLevelItems
+            .filterIsInstance<GeneratedRangeTree>()
+            .map { generatedRangeTree ->
+                decodedGeneratedRangeTree(generatedRangeTree).ifFailure { return it }
+            }
+            .let(::Success)
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-DecodedGeneratedRangeTrees">Section 9.3.4.5: DecodedGeneratedRangeTrees</a>
+     */
+    context(state: DecodeScopeStateRecord, names: List<String>)
+    private fun decodedGeneratedRangeTree(generatedRangeTree: GeneratedRangeTree): ParsingResult<GeneratedRangeRecord> {
+        // 1. Let start be the DecodedPosition of GeneratedRangeStart with argument state.[[RangePosition]].
+        val start = context(state.rangePosition) {
+            decodedPosition(generatedRangeTree.start.line, generatedRangeTree.start.column)
+        }.ifFailure { return it }
+
+        // 2. Let definition be the GeneratedRangeDefinition of GeneratedRangeStart with arguments
+        // state.[[RangeDefinitionIndex]] and state.[[FlatOriginalScopes]].
+        val definition = context(state.rangeDefinitionIndex) {
+            generatedRangeDefinition(generatedRangeTree.start, state.flatOriginalScopes)
+        }.ifFailure { return it }
+
+        // 3. Let flags be the VLQUnsignedValue of GeneratedRangeStart's RangeFlags nonterminal.
+        val flags = generatedRangeTree.start.flags
+        // 4-6. Determine the stack frame type from flags.
+        val stackFrameType = when {
+            (flags and 0xcu) == 0xcu -> StackFrameType.HIDDEN
+            (flags and 0x4u) == 0x4u -> StackFrameType.ORIGINAL
+            (flags and 0x8u) == 0x8u -> return Failure("Generated range has the hidden flag without the stack frame flag")
+            else -> StackFrameType.NONE
+        }
+
+        // 7-8. Decode bindings, if present.
+        val bindings = generatedRangeTree.bindings?.let { bindingsItem ->
+            generatedRangeBindings(bindingsItem.bindings.list, start).ifFailure { failure -> return failure }
+        } ?: mutableListOf()
+
+        // 9-10. Decode the call site, if present.
+        val callSite = generatedRangeTree.callSite?.let { callSiteItem ->
+            generatedRangeCallSite(callSiteItem.callSite).ifFailure { failure -> return failure }
+        }
+
+        // 11-12. Decode child generated ranges, ignoring non-range extension and invalid items.
+        val children = generatedRangeTree.items
+            ?.filterIsInstance<GeneratedRangeTree>()
+            ?.map { child ->
+                decodedGeneratedRangeTree(child).ifFailure { return it }
+            }
+            ?: emptyList()
+
+        // 13. Merge sub-range bindings into the corresponding variable's bindings.
+        if (generatedRangeTree.items != null) {
+            val subRangeBindings = generatedSubRangeBindings(generatedRangeTree.items, start).ifFailure { return it }
+            val rangeBindings = bindings
+            for ((variableIndex, bindings) in subRangeBindings) {
+                if (variableIndex >= rangeBindings.size.toUInt()) {
+                    return Failure("Sub-range binding variable index $variableIndex exceeds the number of generated range bindings")
+                }
+                rangeBindings[variableIndex.toInt()].addAll(bindings)
+            }
+        }
+
+        // 14. Let end be the DecodedPosition of GeneratedRangeEnd with argument state.[[RangePosition]].
+        val end = context(state.rangePosition) {
+            decodedPosition(generatedRangeTree.end.line, generatedRangeTree.end.column)
+        }.ifFailure { return it }
+
+        // 15. Return the Generated Range Record.
+        return Success(
+            GeneratedRangeRecord(
+                start = start,
+                end = end,
+                definition = definition,
+                stackFrameType = stackFrameType,
+                bindings = bindings,
+                callSite = callSite,
+                children = children,
+            )
+        )
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-GeneratedRangeDefinition">Section 9.3.4.5.1: GeneratedRangeDefinition</a>
+     */
+    context(accumulator: IndexAccumulatorRecord)
+    private fun generatedRangeDefinition(
+        generatedRangeStart: GeneratedRangeStart,
+        scopes: List<OriginalScopeRecord>,
+    ): ParsingResult<OriginalScopeRecord?> {
+        // 1. Let flags be the VLQUnsignedValue of RangeFlags.
+        val flags = generatedRangeStart.flags
+        // 2. If flags & 0x2 != 0x2, return null.
+        if ((flags and 0x2u) != 0x2u) return Success(null)
+        // 3. Assert: RangeDefinition is present.
+        val definition = requireNotNull(generatedRangeStart.definition) { "RangeDefinition expected, got null" }
+        // 4. Let relativeDefinition be the VLQSignedValue of RangeDefinition.
+        val relativeDefinition = vlqSignedValue(definition).ifFailure { return it }
+        // 5. Let scopeIndex be AccumulateIndex(accumulator, relativeDefinition).
+        val scopeIndex = accumulateIndex(accumulator, relativeDefinition)
+        // 6. Return scopes[scopeIndex].
+        if (scopeIndex >= scopes.size) {
+            return Failure("Generated range definition index $scopeIndex exceeds the number of original scopes")
+        }
+        return Success(scopes[scopeIndex])
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-GeneratedRangeCallSite">Section 9.3.4.5.2: GeneratedRangeCallSite</a>
+     */
+    data class GeneratedRangeCallSiteRecord(
+        val sourceIndex: UInt,
+        override val line: UInt,
+        override val column: UInt,
+    ) : PositionWithLineAndColumn
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-GeneratedRangeCallSite">Section 9.3.4.5.2: GeneratedRangeCallSite</a>
+     */
+    private fun generatedRangeCallSite(generatedRangeCallSite: GeneratedRangeCallSite): ParsingResult<GeneratedRangeCallSiteRecord> {
+        // 1. Let sourceIndex be the VLQUnsignedValue of CallSiteSourceIdx.
+        val sourceIndex = vlqUnsignedValue(generatedRangeCallSite.sourceIndex).ifFailure { return it }
+        // 2. Let line be the VLQUnsignedValue of CallSiteLine.
+        val line = vlqUnsignedValue(generatedRangeCallSite.line).ifFailure { return it }
+        // 3. Let column be the VLQUnsignedValue of CallSiteColumn.
+        val column = vlqUnsignedValue(generatedRangeCallSite.column).ifFailure { return it }
+        // 4. Return a new call-site position record.
+        return Success(GeneratedRangeCallSiteRecord(sourceIndex, line, column))
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-GeneratedRangeBindings">Section 9.3.4.5.3: GeneratedRangeBindings</a>
+     */
+    context(names: List<String>)
+    private fun generatedRangeBindings(
+        bindingExpressions: List<BindingExpression>,
+        start: PositionRecord,
+    ): ParsingResult<MutableList<MutableList<BindingRecord>>> {
+        return bindingExpressions.mapTo(mutableListOf()) { expression ->
+            // 1. Let binding be the BindingExpression of BindingExpression with argument names.
+            val binding = bindingExpression(expression).ifFailure { return it }
+            // 2. Return « « { [[From]]: start, [[Binding]]: binding } » ».
+            mutableListOf(BindingRecord(start, binding))
+        }.let(::Success)
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-BindingExpression">Section 9.3.4.5.4: BindingExpression</a>
+     */
+    context(names: List<String>)
+    private fun bindingExpression(bindingExpression: BindingExpression): ParsingResult<String?> {
+        // 1. Let unadjustedBindingIndex be the VLQUnsignedValue of Vlq.
+        val unadjustedBindingIndex = vlqUnsignedValue(bindingExpression).ifFailure { return it }
+        // 2. If unadjustedBindingIndex = 0, return null.
+        if (unadjustedBindingIndex == 0u) return Success(null)
+        // 3. Let bindingIndex be unadjustedBindingIndex - 1.
+        val bindingIndex = unadjustedBindingIndex - 1u
+        // 4. If bindingIndex >= the length of names, optionally report an error and return null.
+        if (bindingIndex >= names.size.toUInt()) return Success(null)
+        // 5. Return names[bindingIndex].
+        return Success(names[bindingIndex.toInt()])
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sub-range-binding-records">Table 16: Sub-Range Binding Record Fields</a>
+     */
+    data class SubRangeBindingRecord(
+        val variableIndex: UInt,
+        val bindings: List<BindingRecord>,
+    )
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-GeneratedSubRangeBindings">Section 9.3.4.5.5: GeneratedSubRangeBindings</a>
+     */
+    context(names: List<String>)
+    private fun generatedSubRangeBindings(
+        generatedRangeItems: List<GeneratedRangeItem>,
+        start: PositionRecord,
+    ): ParsingResult<List<SubRangeBindingRecord>> {
+        return generatedRangeItems
+            .filterIsInstance<GeneratedSubRangeBinding>()
+            .map { generatedSubRangeBinding ->
+                // 1. Let variableIndex be the VLQUnsignedValue of VariableIndex.
+                val variableIndex = vlqUnsignedValue(generatedSubRangeBinding.variableIndex).ifFailure { return it }
+                // 2. Let from be a new Position Accumulator Record initialized to start.
+                val from = PositionAccumulatorRecord(start.line, start.column)
+                // 3. Let bindings be the SubRangeBinding of BindingFromList with arguments from and names.
+                val bindings = context(from) {
+                    subRangeBinding(generatedSubRangeBinding.bindings).ifFailure { return it }
+                }
+                // 4. Return the Sub-Range Binding Record.
+                SubRangeBindingRecord(variableIndex, bindings)
+            }
+            .let(::Success)
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-SubRangeBinding">Section 9.3.4.5.6: SubRangeBinding</a>
+     */
+    context(from: PositionAccumulatorRecord, names: List<String>)
+    private fun subRangeBinding(bindingsFrom: List<BindingFrom>): ParsingResult<List<BindingRecord>> {
+        return bindingsFrom.map { bindingFrom ->
+            // 1. Let relativeLine be the VLQUnsignedValue of BindingLine.
+            val relativeLine = vlqUnsignedValue(bindingFrom.line).ifFailure { return it }
+            // 2. Let relativeColumn be the VLQUnsignedValue of BindingColumn.
+            val relativeColumn = vlqUnsignedValue(bindingFrom.column).ifFailure { return it }
+            // 3. Let fromPosition be AccumulatePosition(from, relativeLine, relativeColumn).
+            val fromPosition = accumulatePosition(from, relativeLine, relativeColumn)
+            // 4. Let binding be the BindingExpression of BindingExpression with argument names.
+            val binding = bindingExpression(bindingFrom.expression).ifFailure { return it }
+            // 5. Return the Binding Record.
+            BindingRecord(fromPosition, binding)
+        }.let(::Success)
+    }
+
+    //
+    // 9.4 Resolving sources
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-DecodeSourceMapSources">Section 9.4.1: DecodeSourceMapSources(baseURL, sourceRoot, sources, sourcesContent, ignoreList, scopes)</a>
      */
     private fun decodeSourceMapSources(
         baseUrl: String, // URL,
@@ -795,6 +2250,7 @@ object ECMA426BasedSourceMapParser {
         sources: List<String?>,
         sourcesContent: List<String?>,
         ignoreList: List<UInt>,
+        scopes: List<OriginalScopeRecord?>,
     ): ParsingResult<List<DecodedSourceRecord>> {
         // 1. Let decodedSources be a new empty List.
         val decodedSources = mutableListOf<DecodedSourceRecord>()
@@ -818,8 +2274,8 @@ object ECMA426BasedSourceMapParser {
         for (index in 0 until sources.size) {
             // a. Let source be sources[index].
             var source = sources[index]
-            // b. Let decodedSource be the Decoded Source Record { [[URL]]: null, [[Content]]: null, [[Ignored]]: false }.
-            val decodedSource = DecodedSourceRecord(url = null, content = null, ignored = false)
+            // b. Let decodedSource be the Decoded Source Record { [[URL]]: null, [[Content]]: null, [[Ignored]]: false, [[Scope]]: null }.
+            val decodedSource = DecodedSourceRecord(url = null, content = null, ignored = false, scope = null)
             // c. If source ≠ null, then
             if (source != null) {
                 // i. Set source to the string-concatenation of sourceUrlPrefix and source.
@@ -839,7 +2295,10 @@ object ECMA426BasedSourceMapParser {
             if (sourcesContentCount > index) {
                 decodedSource.content = sourcesContent[index]
             }
-            // f. Append decodedSource to decodedSources.
+            // f. If index < scopes' length, set decodedSource.[[Scope]] to scopes.[index].
+            if (index < scopes.size)
+                decodedSource.scope = scopes[index]
+            // g. Append decodedSource to decodedSources.
             decodedSources.add(decodedSource)
         }
         // 7. Return decodedSources.
@@ -948,11 +2407,114 @@ object ECMA426BasedSourceMapParser {
         }
     }
 
+    /** Transforms the value of a successful parsing result. */
+    private inline fun <A, B> ParsingResult<A>.map(f: (A) -> B): ParsingResult<B> {
+        return when (this) {
+            is Success -> Success(f(value))
+            is Failure, is NoMatch -> {
+                @Suppress("UNCHECKED_CAST")
+                this as ParsingResult<B>
+            }
+        }
+    }
+
+    /** Replaces a missing grammar match with a default value. */
+    private inline fun <T> ParsingResult<T>.defaultIfNoMatch(factory: () -> T): ParsingResult<T> {
+        return when (this) {
+            is Failure, is Success -> this
+            is NoMatch -> Success(factory())
+        }
+    }
+
     /** Converts a missing grammar match into a parsing failure. */
     private fun <T> ParsingResult<T>.required(expected: String, stream: ParserStream): ParsingResult<T> {
         return when (this) {
             is Failure, is Success -> this
             is NoMatch -> Failure("$expected expected, got '${stream.current ?: "<EOF>"}' at position ${stream.position}")
+        }
+    }
+
+    /** Parses and consumes the expected character. */
+    private fun ParserStream.parseChar(value: Char): ParsingResult<Char> {
+        return when (current) {
+            value -> Success(value).also { advance() }
+            else -> NoMatch()
+        }
+    }
+
+    /** Parses a required character. */
+    private fun ParserStream.expectChar(value: Char): ParsingResult<Char> {
+        return parseChar(value).required("'$value' character", this)
+    }
+
+    /** Parses one or more values separated by the specified character. */
+    private inline fun <T> ParserStream.parseManySeparated(separator: Char, parser: () -> ParsingResult<T>): ParsingResult<List<T>> {
+        buildList {
+            val first = withRollback(parser).ifFailure { return it }
+            add(first)
+
+            while (true) {
+                val checkpoint = position
+                when (parseChar(separator)) {
+                    is Failure -> error("parseChar cannot fail")
+                    is NoMatch -> return Success(this)
+                    is Success -> {}
+                }
+
+                when (val result = parser()) {
+                    is Failure -> return Failure(result.message, result.cause)
+                    is NoMatch -> {
+                        position = checkpoint
+                        return Success(this)
+                    }
+                    is Success -> add(result.value)
+                }
+            }
+        }
+    }
+
+    /** Parses one or more consecutive values. */
+    private inline fun <T> ParserStream.parseMany(parser: () -> ParsingResult<T>): ParsingResult<List<T>> {
+        buildList {
+            val first = withRollback(parser).ifFailure { return it }
+            add(first)
+
+            while (true) {
+                when (val current = withRollback(parser)) {
+                    is Failure -> return Failure(current.message, current.cause)
+                    is NoMatch -> return Success(this)
+                    is Success -> add(current.value)
+                }
+            }
+        }
+    }
+
+    /** Parses the first matching grammar alternative. */
+    private fun <T> ParserStream.parseOneOf(vararg parser: () -> ParsingResult<T>): ParsingResult<T> {
+        for (candidate in parser) {
+            when (val result = withRollback(candidate)) {
+                is Success, is Failure -> return result
+                is NoMatch -> {}
+            }
+        }
+
+        return NoMatch()
+    }
+
+    /** Runs [parser] and restores the stream position when the grammar does not match. */
+    private inline fun <T> ParserStream.withRollback(parser: () -> ParsingResult<T>): ParsingResult<T> {
+        val checkpoint = position
+        return when (val result = parser()) {
+            is NoMatch -> result.also { position = checkpoint }
+            is Success, is Failure -> result
+        }
+    }
+
+    /** Parses an optional grammar production. */
+    private inline fun <T> ParserStream.parseOptional(parser: () -> ParsingResult<T>): ParsingResult<T?> {
+        return when (val result = withRollback(parser)) {
+            is Success, is Failure -> result
+            is NoMatch -> Success(null)
         }
     }
 
@@ -969,5 +2531,29 @@ object ECMA426BasedSourceMapParser {
             current?.also {
                 position++
             }
+    }
+
+    /** Tags used by the scopes grammar to identify item kinds. */
+    private object VlqKindTag {
+        const val EMPTY_ITEM = 'A'
+
+        const val ORIGINAL_SCOPE_START = 'B'
+        const val ORIGINAL_SCOPE_END = 'C'
+        const val ORIGINAL_SCOPE_VARIABLES = 'D'
+
+        const val GENERATED_RANGE_START = 'E'
+        const val GENERATED_RANGE_END = 'F'
+        const val GENERATED_RANGE_BINDINGS = 'G'
+        const val GENERATED_SUB_RANGE_BINDINGS = 'H'
+        const val GENERATED_RANGE_CALL_SITE = 'I'
+
+        const val VENDOR_EXTENSION = '/'
+
+        val knownTags = setOf(
+            EMPTY_ITEM,
+            ORIGINAL_SCOPE_START, ORIGINAL_SCOPE_END, ORIGINAL_SCOPE_VARIABLES,
+            GENERATED_RANGE_START, GENERATED_RANGE_END, GENERATED_RANGE_BINDINGS, GENERATED_SUB_RANGE_BINDINGS, GENERATED_RANGE_CALL_SITE,
+            VENDOR_EXTENSION
+        )
     }
 }
