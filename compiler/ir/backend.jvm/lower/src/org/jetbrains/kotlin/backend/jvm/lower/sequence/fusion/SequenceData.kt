@@ -10,11 +10,14 @@ import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.EmptySeq
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.GenerateSequenceStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.ProducerStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.SequenceOfStrategy
+import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.UnknownVariableStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.SequenceTransformer
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -28,6 +31,10 @@ internal class SequenceData(
     val containsVariableCopies: Boolean = sequenceSource.containsVariableCopies(),
     val isVariableCopy: Boolean = false,
 ) {
+    // whether reading a variable with this data copies anything to the place of the read
+    val isCopiedToReads: Boolean
+        get() = sequenceSource !is SequenceSource.Variable || transformers.isNotEmpty()
+
     fun asVariableCopy(): SequenceData =
         SequenceData(sequenceSource, transformers, isMovable, containsVariableCopies, isVariableCopy = true)
 }
@@ -35,6 +42,7 @@ internal class SequenceData(
 // sequenceSource is what the sequence was created from, to be substituted if the loop is to be fused
 internal sealed class SequenceSource {
     class SequenceOf(val elements: List<IrExpression>, val type: IrType) : SequenceSource()
+    class Variable(val variable: IrValueSymbol) : SequenceSource()
     class GenerateSequence(
         val initialValue: GenerateSequenceInitialValue,
         val generatingFunction: IrExpression,
@@ -50,7 +58,7 @@ internal sealed class SequenceSource {
             is GenerateSequenceInitialValue.SeedFunction -> initialValue.function.containsFusedVariableCopy()
             GenerateSequenceInitialValue.NextFunction -> false
         }
-        Empty -> false
+        is Variable, Empty -> false
     }
 
     internal fun createProducerStrategy(
@@ -60,6 +68,7 @@ internal sealed class SequenceSource {
         is GenerateSequence -> GenerateSequenceStrategy(this)
         is SequenceOf -> SequenceOfStrategy(this, context)
         is Empty -> EmptySequenceStrategy
+        is Variable -> UnknownVariableStrategy(builder.irGet(this.variable.owner), context)
     }
 }
 

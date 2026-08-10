@@ -47,10 +47,14 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.getAllSubstitutedSupertypes
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
+import org.jetbrains.kotlin.ir.util.substitute
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
@@ -62,7 +66,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
  *     for (x in seq2) println(x)
  * }
  * ```
- * becomes
+ * becomes (see `UnknownVariableStrategy`)
  * ```
  * fun myFun(seq: Sequence<Int>) {
  *     val seq2 = seq.map { it * 2 }.map { it + 1 }
@@ -129,6 +133,17 @@ internal fun IrBuilderWithScope.callRichFunctionReference(
     return irCall(freshRef.overriddenFunctionSymbol, returnType).apply {
         arguments.assignFrom(listOf(freshRef) + args)
     }
+}
+
+internal fun getGenericTypeFromExpression(sequence: IrExpression, context: JvmBackendContext): IrType? {
+    val type = sequence.type as? IrSimpleType ?: return null
+    val irClass = type.classOrNull?.owner ?: return null
+    val elementContainers = listOfNotNull(context.irBuiltIns.iterableClass, context.symbols.sequence)
+    val supertype = (getAllSubstitutedSupertypes(irClass) + irClass.defaultType)
+        .firstOrNull { it.classOrNull in elementContainers } ?: return null
+    val elementType = supertype.arguments.singleOrNull()?.typeOrNull ?: return null
+    val typeArguments = type.arguments.map { it.typeOrNull ?: return null }
+    return elementType.substitute(irClass.typeParameters, typeArguments)
 }
 
 internal fun IrBuilderWithScope.callPredicate(

@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceReplacemen
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irWhile
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBreakContinue
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
@@ -24,7 +26,14 @@ import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.typeOrNull
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.substitute
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -112,4 +121,24 @@ internal fun updateLoopVariableInBody(
         )
         body.patchDeclarationParents(parent)
     } to newLoop
+}
+
+internal fun IrBuilderWithParent.buildCallWithReceiver(
+    receiver: IrExpression,
+    receiverType: IrType,
+    functionName: String,
+): IrCall? {
+    val [builder, parent] = this
+    val receiverCopy = receiver.deepCopyWithSymbols(parent)
+    val receiverClass = receiverType.getClass() ?: return null
+    val function = receiverClass.functions.singleOrNull { function ->
+        function.name.asString() == functionName && function.parameters.size == 1
+    } ?: return null
+    val typeArguments = (receiverType as? IrSimpleType)?.arguments?.mapNotNull { it.typeOrNull }
+    val returnType = typeArguments?.takeIf { it.size == receiverClass.typeParameters.size }
+        ?.let { function.returnType.substitute(receiverClass.typeParameters, it) }
+        ?: function.returnType
+    return builder.irCall(function.symbol, returnType).apply {
+        arguments[0] = receiverCopy
+    }
 }

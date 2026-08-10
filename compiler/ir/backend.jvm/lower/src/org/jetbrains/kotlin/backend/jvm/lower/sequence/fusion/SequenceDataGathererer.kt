@@ -164,7 +164,9 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
             // we cut the chain at copying variables which already contain copies
             readCounter > 1 && expressionSequenceData?.containsVariableCopies == true
         ) {
-            null
+            SequenceData(
+                SequenceSource.Variable(declaration.symbol),
+            )
         } else {
             expressionSequenceData
         }
@@ -177,7 +179,17 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         if (!isSequenceType(context, expression)) return
         val variableDeclaration = expression.symbol.owner
         variableDeclaration.accept(this, null)
-        expression.sequenceDataOfExpression = variableDeclaration.sequenceDataOfVariable?.asVariableCopy()
+        // a `var` can be reassigned before the sequence is used, so the sequence cannot be moved to the place of use
+        if (variableDeclaration is IrVariable && variableDeclaration.isVar) {
+            expression.sequenceDataOfExpression = SequenceData(SequenceSource.Variable(expression.symbol), isMovable = false)
+            return
+        }
+        val variableData = variableDeclaration.sequenceDataOfVariable
+        expression.sequenceDataOfExpression = when {
+            variableData == null -> SequenceData(SequenceSource.Variable(expression.symbol))
+            variableData.isCopiedToReads -> variableData.asVariableCopy()
+            else -> variableData
+        }
     }
 
     private fun IrCall.receiverSequenceData(): SequenceData? =
