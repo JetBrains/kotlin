@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.testFederation
 
 import org.gradle.api.Project
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.testing.Test
+import org.gradle.api.tasks.testing.AbstractTestTask
 
 internal const val SMOKE_TEST_CONFIG_KEY = "org.jetbrains.kotlin.testFederation.smokeTestConfig"
 
@@ -27,10 +28,29 @@ val Project.testFederationEnabled: Boolean
 
 /**
  * Provides the [Domain]s to which this project belongs.
+ * Beware: While a project might belong to the provided list of domains, individual test tasks can override the list
+ * of domains.
+ * @see AbstractTestTask.testFederationDomains
  */
 @DelicateTestFederationApi
 val Project.testFederationDomains: Provider<List<Domain>> by extensionProperty {
     project.provider { repositoryPath(this.projectDir.toPath()).domains }
+}
+
+/**
+ * Provides the [Domain]s to which this Test task belongs to.
+ * This can be overridden.
+ *
+ * **example**: Make a test task belong to the 'Js' and 'Wasm' domains
+ * ```kotlin
+ * testTask {
+ *     testFederationDomains = listOf(Domain.Js, Domain.Wasm)
+ * }
+ * ```
+ */
+@DelicateTestFederationApi
+val AbstractTestTask.testFederationDomains: ListProperty<Domain> by extensionProperty {
+    project.objects.listProperty(Domain::class.java).value(project.testFederationDomains)
 }
 
 
@@ -44,31 +64,29 @@ val Project.testFederationDomains: Provider<List<Domain>> by extensionProperty {
  * non-CI development, so local test runs use the full mode unless test federation is explicitly enabled.
  */
 @DelicateTestFederationApi
-val Project.testFederationMode: Provider<TestFederationMode> by extensionProperty property@{
-    if (!project.testFederationEnabled) {
-        return@property provider { TestFederationMode.Full }
+val AbstractTestTask.testFederationMode: Provider<TestFederationMode> by extensionProperty property@{
+    project.provider {
+        /* Disabled Test Federation -> Always run in 'Full' Mode */
+        if (!project.testFederationEnabled) {
+            return@provider TestFederationMode.Full
+        }
+
+        /* Always run in 'Full' mode by configuration */
+        if (smokeTestConfig.get() == SmokeTestConfig.RunAllTests) {
+            return@provider TestFederationMode.Full
+        }
+
+        /* External override by gradle property or environment variable shall be respected */
+        project.providers.gradleProperty(TEST_FEDERATION_MODE_KEY)
+            .orElse(project.providers.environmentVariable(TEST_FEDERATION_MODE_ENV_KEY))
+            .map(TestFederationMode::valueOf)
+            .orNull?.let { return@provider it }
+
+        /* Actually check if the affected domains intersect with the domains this test task belongs to */
+        if (testFederationDomains.get().intersect(project.testFederationAffectedDomains.get()).isNotEmpty()) TestFederationMode.Full
+        else TestFederationMode.Smoke
     }
-
-    (providers.gradleProperty(TEST_FEDERATION_MODE_KEY)
-        .orElse(providers.environmentVariable(TEST_FEDERATION_MODE_ENV_KEY)))
-        .map(TestFederationMode::valueOf)
-        .orElse(project.testFederationAffectedDomains.zip(testFederationDomains) { affectedTestSystems, domain ->
-            if (domain.intersect(affectedTestSystems).isNotEmpty()) TestFederationMode.Full
-            else TestFederationMode.Smoke
-        })
 }
-
-/**
- * Provides the [TestFederationMode] assigned to this test
- *
- * It adapts Project.testFederationMode by taking into account SmokeTestConfig
-*/
-@DelicateTestFederationApi
-val Test.testFederationMode: Provider<TestFederationMode>  by extensionProperty property@{
-    smokeTestConfig.filter { it == SmokeTestConfig.RunAllTests }.map { TestFederationMode.Full }
-        .orElse(project.testFederationMode)
-}
-
 
 /**
  * Provides the set of [Domain]s currently marked as affected.
@@ -112,7 +130,7 @@ val Project.testFederationAffectedDomains: Provider<Set<Domain>> by extensionPro
  * smokeTestConfig = SmokeTestConfig.RunAllTests
  * ```
  */
-val Test.smokeTestConfig: Property<SmokeTestConfig> by extensionProperty {
+val AbstractTestTask.smokeTestConfig: Property<SmokeTestConfig> by extensionProperty {
     project.objects.property(SmokeTestConfig::class.java).convention(SmokeTestConfig.Default)
 }
 
@@ -121,7 +139,7 @@ val Test.smokeTestConfig: Property<SmokeTestConfig> by extensionProperty {
  *
  * See `repo/TEST-FEDERATION.md` for details.
  */
-val Project.isSmokeTestMode: Provider<Boolean> get() = testFederationMode.map { it == TestFederationMode.Smoke }
+val AbstractTestTask.isSmokeTestMode: Provider<Boolean> get() = testFederationMode.map { it == TestFederationMode.Smoke }
 
 
 /**
