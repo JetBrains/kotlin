@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.dump
@@ -112,6 +113,12 @@ internal fun IrBuilderWithScope.callRichFunctionReference(
         arguments.assignFrom(listOf(freshRef) + args)
     }
 }
+
+internal fun getGenericTypeFromExpression(sequence: IrExpression): IrType? =
+    (sequence.type as? IrSimpleType)?.arguments?.getOrNull(0)?.typeOrNull
+
+internal fun getBaseTypeFromSequenceScopeFunction(sequenceScope: IrExpression): IrType? =
+    ((sequenceScope.type as? IrSimpleType)?.arguments?.getOrNull(0) as? IrSimpleType)?.arguments?.getOrNull(0)?.typeOrNull
 
 internal fun IrBuilderWithScope.callPredicate(
     predicate: IrExpression,
