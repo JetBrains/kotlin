@@ -33,9 +33,6 @@ namespace {
 
 char debugBuffer[4096];
 
-const char* Konan_DebugGetTypeNameImpl(KRef obj);
-const char* Konan_DebugGetFieldNameImpl(KRef obj, int32_t index);
-
 constexpr int runtimeTypeSize[] = {
     -1,                  // INVALID
     sizeof(ObjHeader*),  // OBJECT
@@ -78,11 +75,6 @@ enum Konan_DebugOperation {
   DO_DebugGetFieldAddress = 10,
   DO_DebugGetFieldName = 11,
   DO_DebugGetTypeName = 12,
-  DO_DebugBatchGetFieldAddress = 13,
-  DO_DebugBatchGetFieldCount = 14,
-  DO_DebugBatchObjectToUtf8Array = 15,
-  DO_DebugBatchGetTypeName = 16,
-  DO_DebugBatchGetFieldName = 17,
 };
 
 template <typename F>
@@ -191,7 +183,7 @@ void* Konan_DebugGetFieldAddressImpl(KRef obj, int32_t index) {
     return nullptr;
 
    if (extendedTypeInfo->fieldsCount_ < 0) {
-     if (static_cast<uint32_t>(index) >= obj->array()->count_)
+     if (static_cast<uint32_t>(index) > obj->array()->count_)
         return nullptr;
 
       int32_t typeIndex = -extendedTypeInfo->fieldsCount_;
@@ -204,185 +196,6 @@ void* Konan_DebugGetFieldAddressImpl(KRef obj, int32_t index) {
      return nullptr;
 
    return reinterpret_cast<uint8_t*>(obj) + extendedTypeInfo->fieldOffsets_[index];
-}
-
-void Konan_DebugBatchGetFieldAddressImpl(KRef obj, const int32_t* indices, int32_t count, void** result) {
-  if (result == nullptr || count <= 0)
-    return;
-
-  if (indices == nullptr) {
-    for (int32_t i = 0; i < count; ++i) {
-      result[i] = nullptr;
-    }
-    return;
-  }
-
-  for (int32_t i = 0; i < count; ++i) {
-    result[i] = Konan_DebugGetFieldAddressImpl(obj, indices[i]);
-  }
-}
-
-void Konan_DebugBatchGetFieldCountImpl(KRef obj, const int32_t* indices, int32_t count, int32_t* result) {
-  if (result == nullptr || count <= 0)
-    return;
-
-  if (indices == nullptr) {
-    for (int32_t i = 0; i < count; ++i) {
-      result[i] = 0;
-    }
-    return;
-  }
-
-  for (int32_t i = 0; i < count; ++i) {
-    auto* fieldAddress = Konan_DebugGetFieldAddressImpl(obj, indices[i]);
-    if (fieldAddress == nullptr) {
-      result[i] = 0;
-      continue;
-    }
-
-    auto fieldType = Konan_DebugGetFieldTypeImpl(obj, indices[i]);
-    if (fieldType != Konan_RuntimeType::RT_OBJECT) {
-      result[i] = 0;
-      continue;
-    }
-
-    auto child = *reinterpret_cast<KRef*>(fieldAddress);
-    result[i] = Konan_DebugGetFieldCountImpl(child);
-  }
-}
-
-void Konan_DebugBatchObjectToUtf8ArrayImpl(
-    KRef obj,
-    const int32_t* indices,
-    int32_t count,
-    int32_t* offsets,
-    int32_t* lengths,
-    char* buffer,
-    int32_t bufferSize
-) {
-  if (offsets == nullptr || lengths == nullptr || count <= 0)
-    return;
-
-  for (int32_t i = 0; i < count; ++i) {
-    offsets[i] = -1;
-    lengths[i] = 0;
-  }
-
-  if (indices == nullptr || buffer == nullptr || bufferSize <= 0)
-    return;
-
-  int32_t used = 0;
-  for (int32_t i = 0; i < count; ++i) {
-    auto* fieldAddress = Konan_DebugGetFieldAddressImpl(obj, indices[i]);
-    if (fieldAddress == nullptr)
-      continue;
-
-    auto fieldType = Konan_DebugGetFieldTypeImpl(obj, indices[i]);
-    if (fieldType != Konan_RuntimeType::RT_OBJECT)
-      continue;
-
-    auto child = *reinterpret_cast<KRef*>(fieldAddress);
-    if (child == nullptr || used >= bufferSize)
-      continue;
-
-    int32_t written = Konan_DebugObjectToUtf8ArrayImpl(
-        child,
-        buffer + used,
-        bufferSize - used
-    );
-    if (written <= 0)
-      continue;
-
-    offsets[i] = used;
-    lengths[i] = written;
-    used += written;
-  }
-}
-
-void Konan_DebugBatchGetTypeNameImpl(
-    KRef obj,
-    const int32_t* indices,
-    int32_t count,
-    int32_t* offsets,
-    int32_t* lengths,
-    char* buffer,
-    int32_t bufferSize
-) {
-  if (offsets == nullptr || lengths == nullptr || count <= 0)
-    return;
-
-  for (int32_t i = 0; i < count; ++i) {
-    offsets[i] = -1;
-    lengths[i] = 0;
-  }
-
-  if (indices == nullptr || buffer == nullptr || bufferSize <= 0)
-    return;
-
-  int32_t used = 0;
-  for (int32_t i = 0; i < count; ++i) {
-    auto* fieldAddress = Konan_DebugGetFieldAddressImpl(obj, indices[i]);
-    if (fieldAddress == nullptr)
-      continue;
-
-    auto fieldType = Konan_DebugGetFieldTypeImpl(obj, indices[i]);
-    if (fieldType != Konan_RuntimeType::RT_OBJECT)
-      continue;
-
-    auto child = *reinterpret_cast<KRef*>(fieldAddress);
-    if (child == nullptr)
-      continue;
-
-    const char* typeName = Konan_DebugGetTypeNameImpl(child);
-    if (typeName == nullptr)
-      continue;
-
-    const int32_t written = static_cast<int32_t>(::strlen(typeName)) + 1;
-    if (written > bufferSize - used)
-      continue;
-
-    ::memcpy(buffer + used, typeName, written);
-    offsets[i] = used;
-    lengths[i] = written;
-    used += written;
-  }
-}
-
-void Konan_DebugBatchGetFieldNameImpl(
-    KRef obj,
-    const int32_t* indices,
-    int32_t count,
-    int32_t* offsets,
-    int32_t* lengths,
-    char* buffer,
-    int32_t bufferSize
-) {
-  if (offsets == nullptr || lengths == nullptr || count <= 0)
-    return;
-
-  for (int32_t i = 0; i < count; ++i) {
-    offsets[i] = -1;
-    lengths[i] = 0;
-  }
-
-  if (indices == nullptr || buffer == nullptr || bufferSize <= 0)
-    return;
-
-  int32_t used = 0;
-  for (int32_t i = 0; i < count; ++i) {
-    const char* fieldName = Konan_DebugGetFieldNameImpl(obj, indices[i]);
-    if (fieldName == nullptr)
-      continue;
-
-    const int32_t written = static_cast<int32_t>(::strlen(fieldName)) + 1;
-    if (written > bufferSize - used)
-      continue;
-
-    ::memcpy(buffer + used, fieldName, written);
-    offsets[i] = used;
-    lengths[i] = written;
-    used += written;
-  }
 }
 
 // Compute address of field or an array element at the index, or null, if incorrect.
@@ -448,35 +261,6 @@ RUNTIME_EXPORT RUNTIME_WEAK int32_t Konan_DebugObjectToUtf8Array(KRef obj, char*
   return impl(obj, buffer, bufferSize);
 }
 
-RUNTIME_EXPORT RUNTIME_WEAK void Konan_DebugBatchObjectToUtf8Array(
-    KRef obj,
-    const int32_t* indices,
-    int32_t count,
-    int32_t* offsets,
-    int32_t* lengths,
-    char* buffer,
-    int32_t bufferSize
-) {
-  auto* impl = getImpl<void (*)(
-      KRef,
-      const int32_t*,
-      int32_t,
-      int32_t*,
-      int32_t*,
-      char*,
-      int32_t
-  )>(obj, DO_DebugBatchObjectToUtf8Array);
-  if (impl == nullptr) {
-    if (offsets == nullptr || lengths == nullptr || count <= 0) return;
-    for (int32_t i = 0; i < count; ++i) {
-      offsets[i] = -1;
-      lengths[i] = 0;
-    }
-    return;
-  }
-  return impl(obj, indices, count, offsets, lengths, buffer, bufferSize);
-}
-
 RUNTIME_EXPORT RUNTIME_WEAK int32_t Konan_DebugPrint(KRef obj) {
   auto* impl = getImpl<int32_t (*)(KRef)>(obj, DO_DebugPrint);
   if (impl == nullptr) return 0;
@@ -511,98 +295,6 @@ RUNTIME_EXPORT RUNTIME_WEAK void* Konan_DebugGetFieldAddress(KRef obj, int32_t i
   return impl(obj, index);
 }
 
-RUNTIME_EXPORT RUNTIME_WEAK void Konan_DebugBatchGetFieldAddress(
-    KRef obj,
-    const int32_t* indices,
-    int32_t count,
-    void** result
-) {
-  auto* impl = getImpl<void (*)(KRef, const int32_t*, int32_t, void**)>(obj, DO_DebugBatchGetFieldAddress);
-  if (impl == nullptr) {
-    if (result == nullptr || count <= 0) return;
-    for (int32_t i = 0; i < count; ++i) {
-      result[i] = nullptr;
-    }
-    return;
-  }
-  return impl(obj, indices, count, result);
-}
-
-RUNTIME_EXPORT RUNTIME_WEAK void Konan_DebugBatchGetFieldCount(
-    KRef obj,
-    const int32_t* indices,
-    int32_t count,
-    int32_t* result
-) {
-  auto* impl = getImpl<void (*)(KRef, const int32_t*, int32_t, int32_t*)>(obj, DO_DebugBatchGetFieldCount);
-  if (impl == nullptr) {
-    if (result == nullptr || count <= 0) return;
-    for (int32_t i = 0; i < count; ++i) {
-      result[i] = 0;
-    }
-    return;
-  }
-  return impl(obj, indices, count, result);
-}
-
-RUNTIME_EXPORT RUNTIME_WEAK void Konan_DebugBatchGetTypeName(
-    KRef obj,
-    const int32_t* indices,
-    int32_t count,
-    int32_t* offsets,
-    int32_t* lengths,
-    char* buffer,
-    int32_t bufferSize
-) {
-  auto* impl = getImpl<void (*)(
-      KRef,
-      const int32_t*,
-      int32_t,
-      int32_t*,
-      int32_t*,
-      char*,
-      int32_t
-  )>(obj, DO_DebugBatchGetTypeName);
-  if (impl == nullptr) {
-    if (offsets == nullptr || lengths == nullptr || count <= 0) return;
-    for (int32_t i = 0; i < count; ++i) {
-      offsets[i] = -1;
-      lengths[i] = 0;
-    }
-    return;
-  }
-  impl(obj, indices, count, offsets, lengths, buffer, bufferSize);
-}
-
-RUNTIME_EXPORT RUNTIME_WEAK void Konan_DebugBatchGetFieldName(
-    KRef obj,
-    const int32_t* indices,
-    int32_t count,
-    int32_t* offsets,
-    int32_t* lengths,
-    char* buffer,
-    int32_t bufferSize
-) {
-  auto* impl = getImpl<void (*)(
-      KRef,
-      const int32_t*,
-      int32_t,
-      int32_t*,
-      int32_t*,
-      char*,
-      int32_t
-  )>(obj, DO_DebugBatchGetFieldName);
-  if (impl == nullptr) {
-    if (offsets == nullptr || lengths == nullptr || count <= 0) return;
-    for (int32_t i = 0; i < count; ++i) {
-      offsets[i] = -1;
-      lengths[i] = 0;
-    }
-    return;
-  }
-  impl(obj, indices, count, offsets, lengths, buffer, bufferSize);
-}
-
 // Compute address of field or an array element at the index, or null, if incorrect.
 RUNTIME_EXPORT RUNTIME_WEAK const char* Konan_DebugGetFieldName(KRef obj, int32_t index) {
   auto* impl = getImpl<const char* (*)(KRef, int32_t)>(obj, DO_DebugGetFieldName);
@@ -629,12 +321,7 @@ const void* Konan_debugOperationsList[] = {
   reinterpret_cast<const void*>(&Konan_DebugGetFieldTypeImpl),
   reinterpret_cast<const void*>(&Konan_DebugGetFieldAddressImpl),
   reinterpret_cast<const void*>(&Konan_DebugGetFieldNameImpl),
-  reinterpret_cast<const void*>(&Konan_DebugGetTypeNameImpl),
-  reinterpret_cast<const void*>(&Konan_DebugBatchGetFieldAddressImpl),
-  reinterpret_cast<const void*>(&Konan_DebugBatchGetFieldCountImpl),
-  reinterpret_cast<const void*>(&Konan_DebugBatchObjectToUtf8ArrayImpl),
-  reinterpret_cast<const void*>(&Konan_DebugBatchGetTypeNameImpl),
-  reinterpret_cast<const void*>(&Konan_DebugBatchGetFieldNameImpl)
+  reinterpret_cast<const void*>(&Konan_DebugGetTypeNameImpl)
 };
 
 }  // extern "C"
