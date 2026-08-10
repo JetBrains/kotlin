@@ -4,10 +4,6 @@
 
 /equalsAndHashCode.kt:10:1: warning: This annotation has no effect on target 'annotation class'. Relevant targets: class, object, enum class, local class.
 
-/equalsAndHashCode.kt:11:18: error: Members are prohibited in annotation classes.
-
-/equalsAndHashCode.kt:11:18: error: Members are prohibited in annotation classes.
-
 /equalsAndHashCode.kt:13:1: error: This annotation is not applicable to target 'top level function'. Applicable targets: class, file, expression
 
 /equalsAndHashCode.kt:16:1: error: This annotation is not applicable to target 'typealias'. Applicable targets: class, file, expression
