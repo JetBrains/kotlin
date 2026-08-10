@@ -13,6 +13,11 @@ typealias TA = String
 
 val toStringOnAnonymousObject = <!ANNOTATION_HAS_NO_EFFECT!>@ToString<!> object {}
 
+// TODO KT-88407: 'ANNOTATION_HAS_NO_EFFECT' should be reported here as well. Nothing is, because the
+//  annotation stays on the expression and the plugin's checker only visits declarations.
+val toStringOnLiteral = @ToString 1
+val toStringOnCall = @ToString func()
+
 <!TO_STRING_FUNCTION_ALREADY_EXISTS!>@ToString<!>
 class WithExistingToString(val x: Int) {
     override fun toString(): String = "custom"
