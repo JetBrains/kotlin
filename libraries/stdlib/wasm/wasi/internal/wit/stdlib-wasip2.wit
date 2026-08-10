@@ -1,0 +1,12 @@
+package kotlin-stdlib:wasip2@2.5.0;
+
+// These are required by the standard library to implement it's functionality. NOTE that there are no exports.
+world wasip2 {
+    include wasi:io/imports@0.2.12;
+    include wasi:random/imports@0.2.12;
+    include wasi:clocks/imports@0.2.12;
+    include wasi:cli/imports@0.2.12;
+}
+
+// NOTE: Duplicated imports between the standard library and user WIT are handled fine.
+

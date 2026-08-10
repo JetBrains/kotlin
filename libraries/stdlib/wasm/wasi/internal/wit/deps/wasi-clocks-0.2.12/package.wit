@@ -1,0 +1,162 @@
+package wasi:clocks@0.2.12;
+
+/// WASI Monotonic Clock is a clock API intended to let users measure elapsed
+/// time.
+///
+/// It is intended to be portable at least between Unix-family platforms and
+/// Windows.
+///
+/// A monotonic clock is a clock which has an unspecified initial value, and
+/// successive reads of the clock will produce non-decreasing values.
+@since(version = 0.2.0)
+interface monotonic-clock {
+  @since(version = 0.2.0)
+  use wasi:io/poll@0.2.12.{pollable};
+
+  /// An instant in time, in nanoseconds. An instant is relative to an
+  /// unspecified initial value, and can only be compared to instances from
+  /// the same monotonic-clock.
+  @since(version = 0.2.0)
+  type instant = u64;
+
+  /// A duration of time, in nanoseconds.
+  @since(version = 0.2.0)
+  type duration = u64;
+
+  /// Read the current value of the clock.
+  ///
+  /// The clock is monotonic, therefore calling this function repeatedly will
+  /// produce a sequence of non-decreasing values.
+  ///
+  /// For completeness, this function traps if it's not possible to represent
+  /// the value of the clock in an `instant`. Consequently, implementations
+  /// should ensure that the starting time is low enough to avoid the
+  /// possibility of overflow in practice.
+  @since(version = 0.2.0)
+  now: func() -> instant;
+
+  /// Query the resolution of the clock. Returns the duration of time
+  /// corresponding to a clock tick.
+  @since(version = 0.2.0)
+  resolution: func() -> duration;
+
+  /// Create a `pollable` which will resolve once the specified instant
+  /// has occurred.
+  @since(version = 0.2.0)
+  subscribe-instant: func(when: instant) -> pollable;
+
+  /// Create a `pollable` that will resolve after the specified duration has
+  /// elapsed from the time this function is invoked.
+  @since(version = 0.2.0)
+  subscribe-duration: func(when: duration) -> pollable;
+}
+
+/// WASI Wall Clock is a clock API intended to let users query the current
+/// time. The name "wall" makes an analogy to a "clock on the wall", which
+/// is not necessarily monotonic as it may be reset.
+///
+/// It is intended to be portable at least between Unix-family platforms and
+/// Windows.
+///
+/// A wall clock is a clock which measures the date and time according to
+/// some external reference.
+///
+/// External references may be reset, so this clock is not necessarily
+/// monotonic, making it unsuitable for measuring elapsed time.
+///
+/// It is intended for reporting the current date and time for humans.
+@since(version = 0.2.0)
+interface wall-clock {
+  /// A time and date in seconds plus nanoseconds.
+  @since(version = 0.2.0)
+  record datetime {
+    seconds: u64,
+    nanoseconds: u32,
+  }
+
+  /// Read the current value of the clock.
+  ///
+  /// This clock is not monotonic, therefore calling this function repeatedly
+  /// will not necessarily produce a sequence of non-decreasing values.
+  ///
+  /// The returned timestamps represent the number of seconds since
+  /// 1970-01-01T00:00:00Z, also known as [POSIX's Seconds Since the Epoch],
+  /// also known as [Unix Time].
+  ///
+  /// The nanoseconds field of the output is always less than 1000000000.
+  ///
+  /// [POSIX's Seconds Since the Epoch]: https://pubs.opengroup.org/onlinepubs/9699919799/xrat/V4_xbd_chap04.html#tag_21_04_16
+  /// [Unix Time]: https://en.wikipedia.org/wiki/Unix_time
+  @since(version = 0.2.0)
+  now: func() -> datetime;
+
+  /// Query the resolution of the clock.
+  ///
+  /// The nanoseconds field of the output is always less than 1000000000.
+  @since(version = 0.2.0)
+  resolution: func() -> datetime;
+}
+
+@unstable(feature = clocks-timezone)
+interface timezone {
+  @unstable(feature = clocks-timezone)
+  use wall-clock.{datetime};
+
+  /// Information useful for displaying the timezone of a specific `datetime`.
+  ///
+  /// This information may vary within a single `timezone` to reflect daylight
+  /// saving time adjustments.
+  @unstable(feature = clocks-timezone)
+  record timezone-display {
+    /// The number of seconds difference between UTC time and the local
+    /// time of the timezone.
+    ///
+    /// The returned value will always be less than 86400 which is the
+    /// number of seconds in a day (24*60*60).
+    ///
+    /// In implementations that do not expose an actual time zone, this
+    /// should return 0.
+    utc-offset: s32,
+    /// The abbreviated name of the timezone to display to a user. The name
+    /// `UTC` indicates Coordinated Universal Time. Otherwise, this should
+    /// reference local standards for the name of the time zone.
+    ///
+    /// In implementations that do not expose an actual time zone, this
+    /// should be the string `UTC`.
+    ///
+    /// In time zones that do not have an applicable name, a formatted
+    /// representation of the UTC offset may be returned, such as `-04:00`.
+    name: string,
+    /// Whether daylight saving time is active.
+    ///
+    /// In implementations that do not expose an actual time zone, this
+    /// should return false.
+    in-daylight-saving-time: bool,
+  }
+
+  /// Return information needed to display the given `datetime`. This includes
+  /// the UTC offset, the time zone name, and a flag indicating whether
+  /// daylight saving time is active.
+  ///
+  /// If the timezone cannot be determined for the given `datetime`, return a
+  /// `timezone-display` for `UTC` with a `utc-offset` of 0 and no daylight
+  /// saving time.
+  @unstable(feature = clocks-timezone)
+  display: func(when: datetime) -> timezone-display;
+
+  /// The same as `display`, but only return the UTC offset.
+  @unstable(feature = clocks-timezone)
+  utc-offset: func(when: datetime) -> s32;
+}
+
+@since(version = 0.2.0)
+world imports {
+  @since(version = 0.2.0)
+  import wasi:io/poll@0.2.12;
+  @since(version = 0.2.0)
+  import monotonic-clock;
+  @since(version = 0.2.0)
+  import wall-clock;
+  @unstable(feature = clocks-timezone)
+  import timezone;
+}
