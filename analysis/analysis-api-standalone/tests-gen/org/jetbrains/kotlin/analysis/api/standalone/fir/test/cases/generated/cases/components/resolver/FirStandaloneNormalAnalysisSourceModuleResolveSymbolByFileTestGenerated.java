@@ -237,6 +237,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveSymbolByFileTestGener
   }
 
   @Test
+  @TestMetadata("lookupLocallyShadows.kt")
+  public void testLookupLocallyShadows() {
+    run("lookupLocallyShadows.kt");
+  }
+
+  @Test
   @TestMetadata("multiEquals.kt")
   public void testMultiEquals() {
     run("multiEquals.kt");
