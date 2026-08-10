@@ -33,45 +33,6 @@ import lldb
 _NULL = "null"
 _RUNTIME_TYPE_INVALID = 0
 _RUNTIME_TYPE_OBJECT = 1
-_RUNTIME_TYPE_VECTOR128 = 10
-
-
-def _get_cpp_helpers_string():
-    return f"""
-auto failAndFree = [](int* fieldTypesData, void** fieldAddressesData, char* fieldNamesData, char* typeNamesData) -> int {{
-    (void)free(fieldNamesData);
-    (void)free(fieldTypesData);
-    (void)free(fieldAddressesData);
-    (void)free(typeNamesData);
-    return 0;
-}};
-auto appendCString = [](char** buffer, int* capacity, int* used, const char* text) -> int {{
-    if (text == 0) text = "";
-    if (*buffer == 0 || *capacity <= 0) return 0;
-    int length = 0;
-    while (text[length] != '\\0') ++length;
-    int required = *used + length + 1;
-    if (required > *capacity) {{
-        int newCapacity = *capacity;
-        while (required > newCapacity) newCapacity *= 2;
-        char* newBuffer = (char*)(void*)realloc(*buffer, newCapacity);
-        if (newBuffer == 0) return 0;
-        *buffer = newBuffer;
-        *capacity = newCapacity;
-    }}
-    for (int i = 0; i < length; ++i) (*buffer)[*used + i] = text[i];
-    (*buffer)[*used + length] = '\\0';
-    *used += length + 1;
-    return 1;
-}};
-auto getObjectTypeName = [](int fieldType, void* fieldAddress) -> const char* {{
-    if (fieldType != {_RUNTIME_TYPE_OBJECT} || fieldAddress == 0) return "";
-    void* child = *reinterpret_cast<void**>(fieldAddress);
-    if (child == 0) return "";
-    const char* typeName = (const char*)Konan_DebugGetTypeName(child);
-    return typeName != 0 ? typeName : "";
-}};
-"""
 
 
 class CollectionKind(Enum):
@@ -97,14 +58,6 @@ _EXPRESSION_OPTIONS = initialize_expression_options()
 
 
 def _bench(start, msg):
-    return
-
-
-def print_inspection_timing():
-    return
-
-
-def reset_inspection_timing():
     return
 
 
@@ -223,8 +176,8 @@ def _is_string_or_array(value):
     value_str = f"{_hex(value.unsigned)}"
     string_addr = _symbol_loaded_address("kclass:kotlin.String")
     expr = (
-        f"((int)Konan_DebugIsInstance({value_str}, {_hex(string_addr)}) ? 1 "
-        f": (((int)Konan_DebugIsArray({value_str})) ? 2 : 0))"
+        f"(int)Konan_DebugIsInstance({value_str}, {_hex(string_addr)}) ? 1 "
+        f": ((int)Konan_DebugIsArray({value_str})) ? 2 : 0)"
     )
     soa = _evaluate(expr).unsigned
     logging.debug("%s: %s", value_str, soa)
@@ -356,11 +309,7 @@ def _get_cached_sbvalue_info_for_key(process, key):
 def _get_or_create_cached_sbvalue_info_for_key(process, key):
     if key == 0:
         return None
-    global _SB_VALUE_CACHE_PROCESS_HASH
-    state = _get_process_state_hash(process)
-    if _SB_VALUE_CACHE_PROCESS_HASH != state:
-        _clear_sbvalue_query_cache()
-        _SB_VALUE_CACHE_PROCESS_HASH = state
+    _clear_stale_cache(process)
     cached_info = _SBVALUE_CACHE.get(key)
     if cached_info is None:
         cached_info = CachedSBValueInfo()
@@ -955,6 +904,44 @@ def _run_batch_child_metadata_request(provider, include_names=True):
         _free_batch_child_metadata_result(metadata_addrs)
         _deallocate_inferior_memory(provider._process, result_addr)
     return names
+
+
+def _get_cpp_helpers_string():
+    return f"""
+auto failAndFree = [](int* fieldTypesData, void** fieldAddressesData, char* fieldNamesData, char* typeNamesData) -> int {{
+    (void)free(fieldNamesData);
+    (void)free(fieldTypesData);
+    (void)free(fieldAddressesData);
+    (void)free(typeNamesData);
+    return 0;
+}};
+auto appendCString = [](char** buffer, int* capacity, int* used, const char* text) -> int {{
+    if (text == 0) text = "";
+    if (*buffer == 0 || *capacity <= 0) return 0;
+    int length = 0;
+    while (text[length] != '\\0') ++length;
+    int required = *used + length + 1;
+    if (required > *capacity) {{
+        int newCapacity = *capacity;
+        while (required > newCapacity) newCapacity *= 2;
+        char* newBuffer = (char*)(void*)realloc(*buffer, newCapacity);
+        if (newBuffer == 0) return 0;
+        *buffer = newBuffer;
+        *capacity = newCapacity;
+    }}
+    for (int i = 0; i < length; ++i) (*buffer)[*used + i] = text[i];
+    (*buffer)[*used + length] = '\\0';
+    *used += length + 1;
+    return 1;
+}};
+auto getObjectTypeName = [](int fieldType, void* fieldAddress) -> const char* {{
+    if (fieldType != {_RUNTIME_TYPE_OBJECT} || fieldAddress == 0) return "";
+    void* child = *reinterpret_cast<void**>(fieldAddress);
+    if (child == 0) return "";
+    const char* typeName = (const char*)Konan_DebugGetTypeName(child);
+    return typeName != 0 ? typeName : "";
+}};
+"""
 
 
 def _evaluate_batch_child_metadata_request(
