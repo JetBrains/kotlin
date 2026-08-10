@@ -1,0 +1,233 @@
+package wasi:cli@0.2.12;
+
+@since(version = 0.2.0)
+interface environment {
+  /// Get the POSIX-style environment variables.
+  ///
+  /// Each environment variable is provided as a pair of string variable names
+  /// and string value.
+  ///
+  /// Morally, these are a value import, but until value imports are available
+  /// in the component model, this import function should return the same
+  /// values each time it is called.
+  @since(version = 0.2.0)
+  get-environment: func() -> list<tuple<string, string>>;
+
+  /// Get the POSIX-style arguments to the program.
+  @since(version = 0.2.0)
+  get-arguments: func() -> list<string>;
+
+  /// Return a path that programs should use as their initial current working
+  /// directory, interpreting `.` as shorthand for this.
+  @since(version = 0.2.0)
+  initial-cwd: func() -> option<string>;
+}
+
+@since(version = 0.2.0)
+interface exit {
+  /// Exit the current instance and any linked instances.
+  @since(version = 0.2.0)
+  exit: func(status: result);
+
+  /// Exit the current instance and any linked instances, reporting the
+  /// specified status code to the host.
+  ///
+  /// The meaning of the code depends on the context, with 0 usually meaning
+  /// "success", and other values indicating various types of failure.
+  ///
+  /// This function does not return; the effect is analogous to a trap, but
+  /// without the connotation that something bad has happened.
+  @since(version = 0.2.12)
+  exit-with-code: func(status-code: u8);
+}
+
+@since(version = 0.2.0)
+interface run {
+  /// Run the program.
+  @since(version = 0.2.0)
+  run: func() -> result;
+}
+
+@since(version = 0.2.0)
+interface stdin {
+  @since(version = 0.2.0)
+  use wasi:io/streams@0.2.12.{input-stream};
+
+  @since(version = 0.2.0)
+  get-stdin: func() -> input-stream;
+}
+
+@since(version = 0.2.0)
+interface stdout {
+  @since(version = 0.2.0)
+  use wasi:io/streams@0.2.12.{output-stream};
+
+  @since(version = 0.2.0)
+  get-stdout: func() -> output-stream;
+}
+
+@since(version = 0.2.0)
+interface stderr {
+  @since(version = 0.2.0)
+  use wasi:io/streams@0.2.12.{output-stream};
+
+  @since(version = 0.2.0)
+  get-stderr: func() -> output-stream;
+}
+
+/// Terminal input.
+///
+/// In the future, this may include functions for disabling echoing,
+/// disabling input buffering so that keyboard events are sent through
+/// immediately, querying supported features, and so on.
+@since(version = 0.2.0)
+interface terminal-input {
+  /// The input side of a terminal.
+  @since(version = 0.2.0)
+  resource terminal-input;
+}
+
+/// Terminal output.
+///
+/// In the future, this may include functions for querying the terminal
+/// size, being notified of terminal size changes, querying supported
+/// features, and so on.
+@since(version = 0.2.0)
+interface terminal-output {
+  /// The output side of a terminal.
+  @since(version = 0.2.0)
+  resource terminal-output;
+}
+
+/// An interface providing an optional `terminal-input` for stdin as a
+/// link-time authority.
+@since(version = 0.2.0)
+interface terminal-stdin {
+  @since(version = 0.2.0)
+  use terminal-input.{terminal-input};
+
+  /// If stdin is connected to a terminal, return a `terminal-input` handle
+  /// allowing further interaction with it.
+  @since(version = 0.2.0)
+  get-terminal-stdin: func() -> option<terminal-input>;
+}
+
+/// An interface providing an optional `terminal-output` for stdout as a
+/// link-time authority.
+@since(version = 0.2.0)
+interface terminal-stdout {
+  @since(version = 0.2.0)
+  use terminal-output.{terminal-output};
+
+  /// If stdout is connected to a terminal, return a `terminal-output` handle
+  /// allowing further interaction with it.
+  @since(version = 0.2.0)
+  get-terminal-stdout: func() -> option<terminal-output>;
+}
+
+/// An interface providing an optional `terminal-output` for stderr as a
+/// link-time authority.
+@since(version = 0.2.0)
+interface terminal-stderr {
+  @since(version = 0.2.0)
+  use terminal-output.{terminal-output};
+
+  /// If stderr is connected to a terminal, return a `terminal-output` handle
+  /// allowing further interaction with it.
+  @since(version = 0.2.0)
+  get-terminal-stderr: func() -> option<terminal-output>;
+}
+
+@since(version = 0.2.0)
+world imports {
+  @since(version = 0.2.0)
+  import environment;
+  @since(version = 0.2.0)
+  import exit;
+  @since(version = 0.2.0)
+  import wasi:io/error@0.2.12;
+  @since(version = 0.2.0)
+  import wasi:io/poll@0.2.12;
+  @since(version = 0.2.0)
+  import wasi:io/streams@0.2.12;
+  @since(version = 0.2.0)
+  import stdin;
+  @since(version = 0.2.0)
+  import stdout;
+  @since(version = 0.2.0)
+  import stderr;
+  @since(version = 0.2.0)
+  import terminal-input;
+  @since(version = 0.2.0)
+  import terminal-output;
+  @since(version = 0.2.0)
+  import terminal-stdin;
+  @since(version = 0.2.0)
+  import terminal-stdout;
+  @since(version = 0.2.0)
+  import terminal-stderr;
+  import wasi:clocks/monotonic-clock@0.2.12;
+  import wasi:clocks/wall-clock@0.2.12;
+  @unstable(feature = clocks-timezone)
+  import wasi:clocks/timezone@0.2.12;
+  import wasi:filesystem/types@0.2.12;
+  import wasi:filesystem/preopens@0.2.12;
+  import wasi:sockets/network@0.2.12;
+  import wasi:sockets/instance-network@0.2.12;
+  import wasi:sockets/udp@0.2.12;
+  import wasi:sockets/udp-create-socket@0.2.12;
+  import wasi:sockets/tcp@0.2.12;
+  import wasi:sockets/tcp-create-socket@0.2.12;
+  import wasi:sockets/ip-name-lookup@0.2.12;
+  import wasi:random/random@0.2.12;
+  import wasi:random/insecure@0.2.12;
+  import wasi:random/insecure-seed@0.2.12;
+}
+@since(version = 0.2.0)
+world command {
+  @since(version = 0.2.0)
+  import environment;
+  @since(version = 0.2.0)
+  import exit;
+  @since(version = 0.2.0)
+  import wasi:io/error@0.2.12;
+  @since(version = 0.2.0)
+  import wasi:io/poll@0.2.12;
+  @since(version = 0.2.0)
+  import wasi:io/streams@0.2.12;
+  @since(version = 0.2.0)
+  import stdin;
+  @since(version = 0.2.0)
+  import stdout;
+  @since(version = 0.2.0)
+  import stderr;
+  @since(version = 0.2.0)
+  import terminal-input;
+  @since(version = 0.2.0)
+  import terminal-output;
+  @since(version = 0.2.0)
+  import terminal-stdin;
+  @since(version = 0.2.0)
+  import terminal-stdout;
+  @since(version = 0.2.0)
+  import terminal-stderr;
+  import wasi:clocks/monotonic-clock@0.2.12;
+  import wasi:clocks/wall-clock@0.2.12;
+  @unstable(feature = clocks-timezone)
+  import wasi:clocks/timezone@0.2.12;
+  import wasi:filesystem/types@0.2.12;
+  import wasi:filesystem/preopens@0.2.12;
+  import wasi:sockets/network@0.2.12;
+  import wasi:sockets/instance-network@0.2.12;
+  import wasi:sockets/udp@0.2.12;
+  import wasi:sockets/udp-create-socket@0.2.12;
+  import wasi:sockets/tcp@0.2.12;
+  import wasi:sockets/tcp-create-socket@0.2.12;
+  import wasi:sockets/ip-name-lookup@0.2.12;
+  import wasi:random/random@0.2.12;
+  import wasi:random/insecure@0.2.12;
+  import wasi:random/insecure-seed@0.2.12;
+
+  @since(version = 0.2.0)
+  export run;
+}
