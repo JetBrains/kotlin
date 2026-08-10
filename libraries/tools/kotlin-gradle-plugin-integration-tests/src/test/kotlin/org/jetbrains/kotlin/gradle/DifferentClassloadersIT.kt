@@ -111,6 +111,12 @@ class DifferentClassloadersIT : KGPBaseTest() {
                 "id \"org.jetbrains.kotlin.multiplatform\" version \"${TestVersions.Kotlin.CURRENT}\""
             )
         }
+        subProject("mpp-lib-two").buildGradle.modify {
+            it.checkedReplace(
+                "id \"org.jetbrains.kotlin.multiplatform\"",
+                "id \"org.jetbrains.kotlin.multiplatform\" version \"${TestVersions.Kotlin.CURRENT}\""
+            )
+        }
         subProject("jvm-app").buildGradle.modify {
             it.checkedReplace(
                 "id \"org.jetbrains.kotlin.jvm\"",
@@ -134,6 +140,9 @@ class DifferentClassloadersIT : KGPBaseTest() {
     }
 
     private fun BuildResult.assertHasPluginLoadedInMultipleProjectsErrorDiagnostics() {
-        assertHasDiagnostic(PluginLoadedInMultipleProjectsError, withSubstring = "':jvm-app', ':mpp-lib', ':mpp-lib-two'")
+        assertHasDiagnostic(
+            PluginLoadedInMultipleProjectsError,
+            withSubstring = "- ':jvm-app', ':mpp-lib', ':mpp-lib-two' (version ${TestVersions.Kotlin.CURRENT})\n"
+        )
     }
 }

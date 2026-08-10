@@ -11,6 +11,7 @@ import org.gradle.api.services.BuildServiceParameters
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.PluginLoadedInMultipleProjectsError
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
+import kotlin.collections.mutableListOf
 
 /**
  * Detects whether the plugin's classes were loaded into multiple isolated [ClassLoader] instances across subprojects.
@@ -45,14 +46,14 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBui
  * Call [detect] in the plugin's `apply` method.
  */
 internal abstract class KotlinPluginLoadedInMultipleProjectsDetectorService : BuildService<BuildServiceParameters.None> {
-    private val pluginLoadedInProjects = mutableListOf<String>()
+    private val pluginLoadedInProjectsByVersion = mutableMapOf<String, MutableList<String>>()
     private var detectedDifferentClassLoader = false
 
     fun reportErrorIfDifferentClassLoaderWasDetected(project: Project) {
         if (detectedDifferentClassLoader) {
             project.reportDiagnosticOncePerBuild(
                 PluginLoadedInMultipleProjectsError(
-                    loadedInProjects = pluginLoadedInProjects.sorted(),
+                    loadedInProjectsByVersion = pluginLoadedInProjectsByVersion,
                 )
             )
         }
@@ -75,7 +76,12 @@ internal abstract class KotlinPluginLoadedInMultipleProjectsDetectorService : Bu
                 .get()
 
             synchronized(service) {
-                service.field<MutableList<String>>("pluginLoadedInProjects").add(project.path)
+                service.field<MutableMap<String, MutableList<String>>>("pluginLoadedInProjectsByVersion")
+                    .getOrPut(
+                        project.getKotlinPluginVersion(),
+                        defaultValue = { mutableListOf() },
+                    )
+                    .add(project.path)
                 // service can be of a different type if the class of the originally registered BuildService was loaded by a different
                 // classloader than the one which loaded the current version of the KotlinPluginLoadedInMultipleProjectsDetectorService
                 // class.
