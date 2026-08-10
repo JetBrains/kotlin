@@ -24,8 +24,8 @@ Process <process id> stopped
 (lldb) source info
 Lines found in module `lldb_stdlibRelativePathsWithCache.kexe
 [<memory address>-<memory address>): kotlin-native/runtime/src/main/kotlin/kotlin/Throwable.kt:34:19
-(lldb) b [K][Suspend]Functions:1
-Breakpoint 2: 35 locations.
+(lldb) break_with_limited_output [K][Suspend]Functions:1
+breakpoint(s) set
 (lldb) c
 Process <process id> resuming
 Process <process id> stopped
