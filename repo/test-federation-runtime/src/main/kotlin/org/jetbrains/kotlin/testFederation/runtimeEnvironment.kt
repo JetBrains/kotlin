@@ -11,6 +11,8 @@ internal const val TEST_FEDERATION_MODE_KEY = "test.federation.mode"
 internal const val TEST_FEDERATION_MODE_ENV_KEY = "TEST_FEDERATION_MODE"
 internal const val TEST_FEDERATION_AFFECTED_DOMAINS_KEY = "test.federation.affected.domains"
 internal const val TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY = "TEST_FEDERATION_AFFECTED_DOMAINS"
+internal const val TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_KEY = "test.federation.affected.domains.directly"
+internal const val TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_ENV_KEY = "TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY"
 internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_KEY = "test.federation.auto.smoke.test.percentage"
 internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_ENV_KEY = "TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE"
 const val TEST_FEDERATION_NIGHTLY_KEY = "test.federation.nightly"
@@ -39,14 +41,20 @@ val testFederationAffectedDomains: Set<Domain>?
     get() {
         val raw = resolve(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY) ?: return null
         if (raw.isBlank()) return null
-        return raw.split(";").flatMap { value ->
-            when (value) {
-                "*" -> Domain.entries
-                "<none>" -> emptyList()
-                else -> listOf(Domain.valueOf(value))
-            }
-        }.sorted().toSet()
+        return domainsFromString(raw)
     }
+
+/**
+ * @return only domains that are directly affected by the current set of changes.
+ * Only relevant if the [testFederationEnabled] returns true
+ */
+val testFederationAffectedDomainsDirectly: Set<Domain>?
+    get() {
+        val raw = resolve(TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_KEY, TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_ENV_KEY) ?: return null
+        if (raw.isBlank()) return null
+        return domainsFromString(raw)
+    }
+
 
 /**
  * Tests marked with `@NightlyTest` are considered 'nightly tests'. Those tests shall not be executed
@@ -64,3 +72,13 @@ internal val autoSmokeTestPercentage: Int = run {
 
 private fun resolve(key: String, envKey: String): String? =
     System.getProperty(key) ?: System.getenv(envKey)
+
+private fun domainsFromString(value: String): Set<Domain> {
+    return value.split(";").flatMap { value ->
+        when (value) {
+            "*" -> Domain.entries
+            "<none>" -> emptyList()
+            else -> listOf(Domain.valueOf(value))
+        }
+    }.sorted().toSet()
+}

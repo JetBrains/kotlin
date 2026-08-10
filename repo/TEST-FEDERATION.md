@@ -53,7 +53,7 @@ Native:
 Entries under `include` and `exclude` can be directory paths or glob patterns. A directory path matches the directory and
 all its descendants, so the `Native` domain above includes everything under the `native` and `kotlin-native` directories.
 When `include` and `exclude` entries overlap, the most specific matching entry takes precedence.
-A domain is always marked as 'affected' if any file, belonging to the domain, is changed.
+A domain is always marked as 'directly affected' if any file belonging to the domain is changed.
 
 ## '^affects' commit command
 
@@ -109,19 +109,27 @@ committing it locally and then invoking this command:
 ./gradlew -Ptest.federation.enabled=true inferAffectedDomains
 ```
 
-If you want to check how some specific task would work when only specific domains were changed, you need to run 
+To check how a specific task behaves for a given set of changed domains, set the affected domains:
 
 ```shell
-./gradlew -Ptest.federation.enabled=true -Ptest.federation.mode=Smoke -Ptest.federation.affected.domains="XXX" :some:module:test
+./gradlew :some:module:test \
+  -Ptest.federation.enabled=true \
+  -Ptest.federation.mode=Smoke \
+  -Ptest.federation.affected.domains="Js;Wasm"
 ```
 
-Available values for affected domains (`XXX`):
-- some single domain (e.g. `-Ptest.federation.affected.domains=CompilerPlugins`)
-- several affected domains (e.g. `-Ptest.federation.affected.domains=Wasm;Js`)
-- all domains affected: `-Ptest.federation.affected.domains="*"`
-- none domains affected: `-Ptest.federation.affected.domains="<none>"`
+`test.federation.affected.domains` controls which domains run in full mode, while
+`test.federation.affected.domains.directly` controls which contracts run in smoke mode. The directly affected domains
+default to `test.federation.affected.domains`, so set the former explicitly only when the two sets need to differ. Both
+properties accept:
 
-For other properties and their values you can check [runtimeEnvironment.kt](./test-federation-runtime/src/main/kotlin/org/jetbrains/kotlin/testFederation/runtimeEnvironment.kt).
+- a single domain (for example, `CompilerPlugins`)
+- several domains separated by semicolons (for example, `Wasm;Js`)
+- all domains (`*`)
+- no domains (`<none>`)
+
+For other properties and their values, see
+[runtimeEnvironment.kt](./test-federation-runtime/src/main/kotlin/org/jetbrains/kotlin/testFederation/runtimeEnvironment.kt).
 
 ### Smoke Tests: Verifying commits on the federal level
 
@@ -227,7 +235,9 @@ class MyImportantJsTests {
 }
 ```
 
-Any commit to the `Js` domain will verify all contracts.
+Any commit that directly affects the `Js` domain will verify all contracts associated with `Js`. This includes domains
+listed explicitly using `^affects`. A domain affected only through `fullyAffectedBy` still runs its full test suites, but
+does not activate its contracts in smoke-mode test tasks.
 
 ##### Contracts require approval from the target team
 

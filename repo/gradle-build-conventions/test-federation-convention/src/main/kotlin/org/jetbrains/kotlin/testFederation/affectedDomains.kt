@@ -10,7 +10,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
-import org.jetbrains.kotlin.testFederation.withAffectedDependencies
 import org.jetbrains.kotlin.tooling.core.withLinearClosure
 import java.io.File
 import kotlin.io.path.Path
@@ -33,30 +32,42 @@ internal abstract class AffectedDomainsBuildService : BuildService<AffectedDomai
         val diffService: Property<FeatureBranchDiffBuildService>
     }
 
-    private var cachedValue: Set<Domain>? = null
+    private var affectedDirectlyDomainsValue: Set<Domain>? = null
+    private var affectedDomainsValue: Set<Domain>? = null
+
+    @get:Synchronized
+    val affectedDirectlyDomains: Set<Domain>
+        get() {
+            affectedDirectlyDomainsValue?.let { return it }
+            val root = parameters.repositoryRoot.get().toPath()
+            val changes = parameters.diffService.get().diff.map { rawPath -> RepositoryPath(root, Path(rawPath)) }
+            val commitMessages = parameters.diffService.get().messages
+            val directlyAffectedDomains = inferDirectlyAffectedDomains(changes, commitMessages)
+            affectedDirectlyDomainsValue = directlyAffectedDomains
+            return directlyAffectedDomains
+        }
+
 
     @get:Synchronized
     val affectedDomains: Set<Domain>
         get() {
-            cachedValue?.let { return it }
-            val root = parameters.repositoryRoot.get().toPath()
-            val changes = parameters.diffService.get().diff.map { rawPath -> RepositoryPath(root, Path(rawPath)) }
-            val commitMessages = parameters.diffService.get().messages
-            val affected = inferAffectedDomains(changes, commitMessages)
-            cachedValue = affected
+            affectedDomainsValue?.let { return it }
+            val affected = affectedDirectlyDomains.withAffectedDependencies()
+            affectedDomainsValue = affected
             return affected
         }
 
     @Synchronized
     override fun close() {
-        cachedValue = null
+        affectedDomainsValue = null
+        affectedDirectlyDomainsValue = null
     }
 }
 
-private fun inferAffectedDomains(changes: List<RepositoryPath>, commitMessages: List<String>): Set<Domain> {
+private fun inferDirectlyAffectedDomains(changes: List<RepositoryPath>, commitMessages: List<String>): Set<Domain> {
     return changes.flatMap { it.domains }
         .plus(resolveAffectedDomainsFromCommitMessages(commitMessages))
-        .withAffectedDependencies()
+        .toSortedSet()
 }
 
 /**
@@ -83,7 +94,7 @@ internal fun Iterable<Domain>.withAffectedDependencies(): Set<Domain> {
             add(domain)
             addAll(domainDependees[domain].orEmpty())
         }
-    }
+    }.toSortedSet()
 }
 
 internal fun resolveAffectedDomainsFromCommitMessages(commitMessages: List<String>): Set<Domain> {

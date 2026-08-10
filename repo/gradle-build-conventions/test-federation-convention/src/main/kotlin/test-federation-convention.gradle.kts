@@ -17,9 +17,11 @@ val testFederationRuntime = configurations.detachedConfiguration(dependencies.pr
 tasks.withType<Test>().configureEach {
     val currentDomain = testFederationDomains
     val affectedDomains = project.testFederationAffectedDomains
+    val affectedDomainsDirectly = project.testFederationAffectedDomainsDirectly
     val areNightlyTestsEnabled = project.areNightlyTestsEnabled
 
     val formattedAffectedDomains = affectedDomains.map { domains -> domains.toArgumentString() }
+    val formattedAffectedDomainsDirectly = affectedDomainsDirectly.map { domains -> domains.toArgumentString() }
     val smokeTestConfig = smokeTestConfig
 
     /* If the task itself is marked as 'isSmokeTest', then it always has to be fully executed */
@@ -34,6 +36,10 @@ tasks.withType<Test>().configureEach {
     This will allow for safely re-using build caches of any 'full mode' run.
      */
     inputs.property(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, testFederationMode.zip(affectedDomains) { mode, domains ->
+        if (mode == TestFederationMode.Smoke) domains.toArgumentString() else "*"
+    })
+
+    inputs.property(TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_KEY, testFederationMode.zip(affectedDomainsDirectly) { mode, domains ->
         if (mode == TestFederationMode.Smoke) domains.toArgumentString() else "*"
     })
 
@@ -102,6 +108,9 @@ tasks.withType<Test>().configureEach {
         if (testFederationMode.get() == TestFederationMode.Smoke) {
             systemProperty(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, formattedAffectedDomains.get())
             environment(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY, formattedAffectedDomains.get())
+
+            systemProperty(TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_KEY, formattedAffectedDomainsDirectly.get())
+            environment(TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_ENV_KEY, formattedAffectedDomainsDirectly.get())
         }
 
         if (smokeTestConfig is SmokeTestConfig.Enabled) {

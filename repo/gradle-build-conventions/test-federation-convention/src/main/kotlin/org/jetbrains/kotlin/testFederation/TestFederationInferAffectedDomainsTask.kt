@@ -20,7 +20,8 @@ import kotlin.io.path.writeText
  * This task infers the currently affected [Domain]s by using the [featureBranchDiffService] and [affectedDomainsService]
  * The diff and 'affected' subystems are written into files in the project directory.
  *
- * This task will also communicate with TeamCity by setting the [TEST_FEDERATION_AFFECTED_DOMAINS_KEY] parameter.
+ * This task will also communicate with TeamCity by setting the [TEST_FEDERATION_AFFECTED_DOMAINS_KEY] and
+ * [TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_KEY] parameters.
  * Once this task was executed, all builds on TeamCity in the same chain will be able to use the inferred subsystems.
  */
 @Suppress("unused") // declared as task in build.gradle.kts
@@ -31,6 +32,9 @@ open class TestFederationInferAffectedDomainsTask : DefaultTask() {
 
     @get:Input
     internal val affectedDomains = project.testFederationAffectedDomains
+
+    @get:Input
+    internal val affectedDomainsDirectly = project.testFederationAffectedDomainsDirectly
 
     init {
         usesService(diffService)
@@ -50,7 +54,6 @@ open class TestFederationInferAffectedDomainsTask : DefaultTask() {
     val defaultBranch: Property<Boolean> = project.objects.property(Boolean::class.java)
         .convention(project.providers.gradleProperty("isDefaultBranch").map { it.toBoolean() }.orElse(false))
 
-
     @TaskAction
     fun inferAffectedDomains() {
         val diffFile = diffFile.get().asFile.toPath()
@@ -63,8 +66,25 @@ open class TestFederationInferAffectedDomainsTask : DefaultTask() {
             Domain.entries.toSet()
         }
 
-        affectedDomainsFile.parent.createDirectories()
-        affectedDomainsFile.writeText(affectedDomains.joinToString(System.lineSeparator()))
+        val affectedDomainsDirectly = if (!defaultBranch.get())
+            this@TestFederationInferAffectedDomainsTask.affectedDomainsDirectly.get()
+        else {
+            logger.quiet("Default branch; All domains are marked as affected")
+            Domain.entries.toSet()
+        }
+
+        affectedDomainsFile.writeText(buildString {
+            appendLine("#### Directly Affected Domains #### ")
+            affectedDomainsDirectly.forEach { domain ->
+                appendLine("  - $domain")
+            }
+
+            appendLine()
+            appendLine("### Affected Domains (dependencies) #### ")
+            (affectedDomains.minus(affectedDomainsDirectly)).forEach { domain ->
+                appendLine("  - $domain")
+            }
+        })
 
         /*
         Communicate with TeamCity:
@@ -72,6 +92,7 @@ open class TestFederationInferAffectedDomainsTask : DefaultTask() {
         - Add a build tag for each affected domain
          */
         println("##teamcity[setParameter name='$TEST_FEDERATION_AFFECTED_DOMAINS_KEY' value='${affectedDomains.toArgumentString()}']")
+        println("##teamcity[setParameter name='$TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_KEY' value='${affectedDomainsDirectly.toArgumentString()}']")
         affectedDomains.forEach { domain ->
             println("##teamcity[addBuildTag 'Affected: $domain']")
         }

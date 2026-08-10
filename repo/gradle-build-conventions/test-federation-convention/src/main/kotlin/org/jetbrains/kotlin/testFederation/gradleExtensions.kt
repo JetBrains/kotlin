@@ -108,6 +108,20 @@ val Project.testFederationAffectedDomains: Provider<Set<Domain>> by extensionPro
         .orElse(project.affectedDomainsService.map { it.affectedDomains })
 }
 
+@DelicateTestFederationApi
+val Project.testFederationAffectedDomainsDirectly: Provider<Set<Domain>> by extensionProperty property@{
+    if (!project.testFederationEnabled) {
+        return@property provider { Domain.entries.toSet() }
+    }
+
+    (providers.gradleProperty(TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_KEY)
+        .orElse(providers.environmentVariable(TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_ENV_KEY))
+        .orElse(providers.gradleProperty(TEST_FEDERATION_AFFECTED_DOMAINS_KEY))
+        .orElse(providers.environmentVariable(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)))
+        .map { argumentString -> Domain.fromArgumentStringOrThrow(argumentString) }
+        .orElse(project.affectedDomainsService.map { it.affectedDirectlyDomains })
+}
+
 /**
  * Configures this test task's behavior in smoke mode.
  *
