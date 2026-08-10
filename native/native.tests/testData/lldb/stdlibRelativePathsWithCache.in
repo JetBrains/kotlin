@@ -2,7 +2,7 @@ b main.kt:11
 r
 s
 source info
-break_with_limited_output [K][Suspend]Functions:1
+limited_output_break [K][Suspend]Functions:1
 c
 source info
 q

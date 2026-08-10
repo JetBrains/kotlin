@@ -117,8 +117,8 @@ def step_through_current_frame(debugger, command, ctx, result, internal_dict):
         result.AppendMessage(step)
 
 
-@lldb.command()
-def break_with_limited_output(debugger, command, ctx, result, internal_dict):
+@lldb.command("limited_output_break")
+def limited_output_break(debugger, command, ctx, result, internal_dict):
     """Set a breakpoint and report only whether or not at least one breakpoint was created"""
     target = debugger.GetSelectedTarget()
     before_location_count = _count_breakpoint_locations(target)
