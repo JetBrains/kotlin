@@ -7,14 +7,14 @@ package org.jetbrains.kotlinx.atomicfu.runners
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createSimpleTestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CustomKlibs
-import org.jetbrains.kotlin.konan.test.diagnostics.AbstractNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase
+import org.jetbrains.kotlin.konan.test.diagnostics.AbstractLightTreeNativeDiagnosticsWithBackendTestBase
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.RegisterExtension
 
-open class AbstractAtomicfuNativeDiagnosticTest : AbstractNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase() {
+open class AbstractAtomicfuNativeDiagnosticTest : AbstractLightTreeNativeDiagnosticsWithBackendTestBase() {
     private lateinit var extensionContext: ExtensionContext
 
     @RegisterExtension
