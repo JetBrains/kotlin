@@ -34,6 +34,7 @@ import org.junit.jupiter.api.condition.OS
 import java.net.URI
 import javax.inject.Inject
 import kotlin.io.path.writeText
+import kotlin.test.Ignore
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
@@ -554,6 +555,7 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
         }
     }
 
+    @Ignore("KT-88448 test fails on TeamCity")
     @GradleTest
     fun `js smoke test when no browser is set`(gradleVersion: GradleVersion) {
         project(
