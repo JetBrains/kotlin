@@ -10,6 +10,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.AbstractTestTask
+import java.io.File
 
 internal const val SMOKE_TEST_CONFIG_KEY = "org.jetbrains.kotlin.testFederation.smokeTestConfig"
 
@@ -89,6 +90,18 @@ val AbstractTestTask.testFederationMode: Provider<TestFederationMode> by extensi
 }
 
 /**
+ * Provides a list of file-paths which are marked by the test federation to be changed.
+ *
+ * If the test federation is disabled, the returned list will always be empty
+ */
+@DelicateTestFederationApi
+val Project.testFederationChangedFiles: Provider<List<String>> by extensionProperty property@{
+    if (!testFederationEnabled) return@property provider { emptyList() }
+    providers.gradleProperty(TEST_FEDERATION_CHANGED_FILES_KEY).map { raw -> raw.split(File.pathSeparatorChar) }
+        .orElse(featureBranchDiffService.map { it.diff })
+}
+
+/**
  * Provides the set of [Domain]s currently marked as affected.
  *
  * For example, a change to the Kotlin Gradle Plugin might affect [Domain.Gradle]. Explicitly configured affected domains take precedence over
@@ -103,9 +116,25 @@ val Project.testFederationAffectedDomains: Provider<Set<Domain>> by extensionPro
     }
 
     (providers.gradleProperty(TEST_FEDERATION_AFFECTED_DOMAINS_KEY)
-        .orElse(providers.environmentVariable(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)))
+        .orElse(providers.environmentVariable(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY))
+        .orElse(providers.gradleProperty(TEST_FEDERATION_CHANGED_DOMAINS_KEY))
+        .orElse(providers.environmentVariable(TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY)))
         .map { argumentString -> Domain.fromArgumentStringOrThrow(argumentString) }
         .orElse(project.affectedDomainsService.map { it.affectedDomains })
+}
+
+@DelicateTestFederationApi
+val Project.testFederationChangedDomains: Provider<Set<Domain>> by extensionProperty property@{
+    if (!project.testFederationEnabled) {
+        return@property provider { Domain.entries.toSet() }
+    }
+
+    (providers.gradleProperty(TEST_FEDERATION_CHANGED_DOMAINS_KEY)
+        .orElse(providers.environmentVariable(TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY))
+        .orElse(providers.gradleProperty(TEST_FEDERATION_AFFECTED_DOMAINS_KEY))
+        .orElse(providers.environmentVariable(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)))
+        .map { argumentString -> Domain.fromArgumentStringOrThrow(argumentString) }
+        .orElse(project.affectedDomainsService.map { it.changedDomains })
 }
 
 /**
