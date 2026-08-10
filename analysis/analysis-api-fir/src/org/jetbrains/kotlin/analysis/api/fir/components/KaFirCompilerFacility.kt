@@ -444,7 +444,7 @@ internal class KaFirCompilerFacility(
      *
      * @param originalMainFile The unmodified [KtFile] for the main file.
      * @param originalMainFirFile The [FirFile] representing the [originalMainFile].
-     * @param target The compilation target.
+     * @param actualizer The provider of implementation counterparts for common modules.
      */
     private inner class CompilationChunkRegistrar(
         private val originalMainFile: KtFile,
