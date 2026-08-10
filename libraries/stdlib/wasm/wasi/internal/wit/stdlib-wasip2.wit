@@ -1,0 +1,37 @@
+package kotlin-stdlib:wasip2@2.5.0;
+
+/*
+world wasip2 {
+    //import wasi:io/streams@0.2.12;
+    //import wasi:random/random@0.2.12;
+    //import wasi:clocks/monotonic-clock@0.2.12;
+    //import wasi:clocks/wall-clock@0.2.12;
+
+    // TODO decide between these, then commit one of the generated source sets
+
+    include wasi:io/imports@0.2.12;
+    include wasi:random/imports@0.2.12;
+    include wasi:clocks/imports@0.2.12;
+    // TODO is this necessary?
+    include wasi:cli/imports@0.2.12;
+
+    // TODO need a solution to "sometimes" export wasi:cli/run, important factors:
+    // 1. we don't want to pass this export to wit-bindgen, because the compiler generates the implementation by itself
+    // 2. if it's a library, we don't want to export it
+    export wasi:cli/run@0.2.12;
+}
+
+SEE BELOW
+*/
+
+// NOTE: Duplicated imports between the standard library and user WIT are handled fine.
+//       This means that the only possible conflict between this WIT and the user WIT is the cli/run export.
+
+world wasip2 {
+    include wasi:io/imports@0.2.12;
+    include wasi:random/imports@0.2.12;
+    include wasi:clocks/imports@0.2.12;
+    include wasi:cli/imports@0.2.12;
+
+    export wasi:cli/run@0.2.12;
+}

@@ -1,0 +1,158 @@
+package wasi:filesystem@0.2.12;
+
+interface types {
+  use wasi:io/streams@0.2.12.{input-stream, output-stream, error};
+  use wasi:clocks/wall-clock@0.2.12.{datetime};
+
+  type filesize = u64;
+
+  enum descriptor-type {
+    unknown,
+    block-device,
+    character-device,
+    directory,
+    fifo,
+    symbolic-link,
+    regular-file,
+    socket,
+  }
+
+  flags descriptor-flags {
+    read,
+    write,
+    file-integrity-sync,
+    data-integrity-sync,
+    requested-write-sync,
+    mutate-directory,
+  }
+
+  flags path-flags {
+    symlink-follow,
+  }
+
+  flags open-flags {
+    create,
+    directory,
+    exclusive,
+    truncate,
+  }
+
+  type link-count = u64;
+
+  record descriptor-stat {
+    %type: descriptor-type,
+    link-count: link-count,
+    size: filesize,
+    data-access-timestamp: option<datetime>,
+    data-modification-timestamp: option<datetime>,
+    status-change-timestamp: option<datetime>,
+  }
+
+  variant new-timestamp {
+    no-change,
+    now,
+    timestamp(datetime),
+  }
+
+  record directory-entry {
+    %type: descriptor-type,
+    name: string,
+  }
+
+  enum error-code {
+    access,
+    would-block,
+    already,
+    bad-descriptor,
+    busy,
+    deadlock,
+    quota,
+    exist,
+    file-too-large,
+    illegal-byte-sequence,
+    in-progress,
+    interrupted,
+    invalid,
+    io,
+    is-directory,
+    loop,
+    too-many-links,
+    message-size,
+    name-too-long,
+    no-device,
+    no-entry,
+    no-lock,
+    insufficient-memory,
+    insufficient-space,
+    not-directory,
+    not-empty,
+    not-recoverable,
+    unsupported,
+    no-tty,
+    no-such-device,
+    overflow,
+    not-permitted,
+    pipe,
+    read-only,
+    invalid-seek,
+    text-file-busy,
+    cross-device,
+  }
+
+  enum advice {
+    normal,
+    sequential,
+    random,
+    will-need,
+    dont-need,
+    no-reuse,
+  }
+
+  record metadata-hash-value {
+    lower: u64,
+    upper: u64,
+  }
+
+  resource descriptor {
+    read-via-stream: func(offset: filesize) -> result<input-stream, error-code>;
+    write-via-stream: func(offset: filesize) -> result<output-stream, error-code>;
+    append-via-stream: func() -> result<output-stream, error-code>;
+    advise: func(offset: filesize, length: filesize, advice: advice) -> result<_, error-code>;
+    sync-data: func() -> result<_, error-code>;
+    get-flags: func() -> result<descriptor-flags, error-code>;
+    get-type: func() -> result<descriptor-type, error-code>;
+    set-size: func(size: filesize) -> result<_, error-code>;
+    set-times: func(data-access-timestamp: new-timestamp, data-modification-timestamp: new-timestamp) -> result<_, error-code>;
+    read: func(length: filesize, offset: filesize) -> result<tuple<list<u8>, bool>, error-code>;
+    write: func(buffer: list<u8>, offset: filesize) -> result<filesize, error-code>;
+    read-directory: func() -> result<directory-entry-stream, error-code>;
+    sync: func() -> result<_, error-code>;
+    create-directory-at: func(path: string) -> result<_, error-code>;
+    stat: func() -> result<descriptor-stat, error-code>;
+    stat-at: func(path-flags: path-flags, path: string) -> result<descriptor-stat, error-code>;
+    set-times-at: func(path-flags: path-flags, path: string, data-access-timestamp: new-timestamp, data-modification-timestamp: new-timestamp) -> result<_, error-code>;
+    link-at: func(old-path-flags: path-flags, old-path: string, new-descriptor: borrow<descriptor>, new-path: string) -> result<_, error-code>;
+    open-at: func(path-flags: path-flags, path: string, open-flags: open-flags, %flags: descriptor-flags) -> result<descriptor, error-code>;
+    readlink-at: func(path: string) -> result<string, error-code>;
+    remove-directory-at: func(path: string) -> result<_, error-code>;
+    rename-at: func(old-path: string, new-descriptor: borrow<descriptor>, new-path: string) -> result<_, error-code>;
+    symlink-at: func(old-path: string, new-path: string) -> result<_, error-code>;
+    unlink-file-at: func(path: string) -> result<_, error-code>;
+    is-same-object: func(other: borrow<descriptor>) -> bool;
+    metadata-hash: func() -> result<metadata-hash-value, error-code>;
+    metadata-hash-at: func(path-flags: path-flags, path: string) -> result<metadata-hash-value, error-code>;
+  }
+
+  resource directory-entry-stream {
+    read-directory-entry: func() -> result<option<directory-entry>, error-code>;
+  }
+
+  filesystem-error-code: func(err: borrow<error>) -> option<error-code>;
+}
+
+interface preopens {
+  use types.{descriptor};
+
+  get-directories: func() -> list<tuple<descriptor, string>>;
+}
+
