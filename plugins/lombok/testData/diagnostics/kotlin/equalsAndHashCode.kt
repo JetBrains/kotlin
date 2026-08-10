@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode
 interface Interface
 
 <!ANNOTATION_HAS_NO_EFFECT!>@EqualsAndHashCode<!>
-annotation class <!ANNOTATION_CLASS_MEMBER, ANNOTATION_CLASS_MEMBER!>AnnotationClass<!>
+annotation class AnnotationClass
 
 <!WRONG_ANNOTATION_TARGET!>@EqualsAndHashCode<!>
 fun func() {}
