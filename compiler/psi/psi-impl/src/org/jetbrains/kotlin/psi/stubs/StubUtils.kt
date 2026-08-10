@@ -47,7 +47,6 @@ object StubUtils {
     }
 
     @JvmStatic
-    @Suppress("DEPRECATION") // KT-78356
     fun createClassId(parentStub: StubElement<*>, currentDeclaration: KtClassLikeDeclaration): ClassId? {
         if (currentDeclaration is KtObjectDeclaration && currentDeclaration.isObjectLiteral()) {
             return null
@@ -56,7 +55,7 @@ object StubUtils {
         return when (parentStub) {
             is KotlinFileStub -> parentStub.createTopLevelClassId(currentDeclaration)
             is KotlinScriptStub -> parentStub.createClassId(currentDeclaration)
-            is KotlinPlaceHolderStub<*> if parentStub.stubType == KtStubElementTypes.CLASS_BODY -> {
+            is KotlinPlaceHolderStub<*> if parentStub.elementType == KtStubElementTypes.CLASS_BODY -> {
                 val containingClassStub = parentStub.parentStub as? KotlinClassifierStub
                 if (containingClassStub != null && currentDeclaration !is KtEnumEntry) {
                     containingClassStub.classId?.createNestedClassId(currentDeclaration.nameAsSafeName)
