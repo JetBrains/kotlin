@@ -28,6 +28,9 @@ import java.util.Map;
 /**
  * @deprecated This class is not used in the kotlin plugin/compiler and will be removed soon
  */
+@kotlin.Deprecated(
+        message = "This class is not used in the kotlin plugin/compiler and will be removed soon"
+)
 @Deprecated
 public class KtImportsFactory {
     @NotNull private final Project project;

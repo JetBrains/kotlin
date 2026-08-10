@@ -54,6 +54,9 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
      * instead.
      */
     @Override
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addModifierKeyword(this, modifier)' instead."
+    )
     @Deprecated
     public void addModifier(@NotNull KtModifierKeywordToken modifier) {
         KtPsiMutationService.getInstance().addModifierKeyword(this, modifier);
@@ -64,6 +67,9 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
      * instead.
      */
     @Override
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeModifierKeyword(this, modifier)' instead."
+    )
     @Deprecated
     public void removeModifier(@NotNull KtModifierKeywordToken modifier) {
         KtPsiMutationService.getInstance().removeModifierKeyword(this, modifier);
@@ -75,6 +81,9 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
      */
     @NotNull
     @Override
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addAnnotation(this, annotationEntry)' instead."
+    )
     @Deprecated
     public KtAnnotationEntry addAnnotationEntry(@NotNull KtAnnotationEntry annotationEntry) {
         return KtPsiMutationService.getInstance().addAnnotation(this, annotationEntry);

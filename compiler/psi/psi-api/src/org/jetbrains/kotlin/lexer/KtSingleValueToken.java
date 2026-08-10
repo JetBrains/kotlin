@@ -22,6 +22,9 @@ import org.jetbrains.annotations.NotNull;
 public class KtSingleValueToken extends KtToken {
     private final String myValue;
 
+    @kotlin.Deprecated(
+            message = "Use the 'KtSingleValueToken(String, String, int)' constructor instead"
+    )
     @Deprecated
     public KtSingleValueToken(@NotNull @NonNls String debugName, @NotNull @NonNls String value) {
         super(debugName);

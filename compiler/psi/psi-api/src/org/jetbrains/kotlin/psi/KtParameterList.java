@@ -64,6 +64,9 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
      * instead.
      */
     @NotNull
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.appendParameter(this, parameter)' instead."
+    )
     @Deprecated
     public KtParameter addParameter(@NotNull KtParameter parameter) {
         return KtPsiMutationService.getInstance().appendParameter(this, parameter);
@@ -74,6 +77,9 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
      * instead.
      */
     @NotNull
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.insertParameterBefore(this, parameter, anchor)' instead."
+    )
     @Deprecated
     public KtParameter addParameterBefore(@NotNull KtParameter parameter, @Nullable KtParameter anchor) {
         return KtPsiMutationService.getInstance().insertParameterBefore(this, parameter, anchor);
@@ -84,6 +90,9 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
      * instead.
      */
     @NotNull
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.insertParameterAfter(this, parameter, anchor)' instead."
+    )
     @Deprecated
     public KtParameter addParameterAfter(@NotNull KtParameter parameter, @Nullable KtParameter anchor) {
         return KtPsiMutationService.getInstance().insertParameterAfter(this, parameter, anchor);
@@ -93,6 +102,9 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
      * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.deleteParameter(this, parameter)}
      * instead.
      */
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.deleteParameter(this, parameter)' instead."
+    )
     @Deprecated
     public void removeParameter(@NotNull KtParameter parameter) {
         KtPsiMutationService.getInstance().deleteParameter(this, parameter);
@@ -102,6 +114,9 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
      * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.deleteParameter(this, index)}
      * instead.
      */
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.deleteParameter(this, index)' instead."
+    )
     @Deprecated
     public void removeParameter(int index) {
         KtPsiMutationService.getInstance().deleteParameter(this, index);

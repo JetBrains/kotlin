@@ -120,6 +120,9 @@ public class KtEnumEntry extends KtClass implements KtDeclarationWithReturnType 
      */
     @KtExperimentalApi
     @NotNull
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addEnumEntrySemicolon(this)' instead."
+    )
     @Deprecated
     public PsiElement addSemicolon() {
         return KtPsiMutationService.getInstance().addEnumEntrySemicolon(this);

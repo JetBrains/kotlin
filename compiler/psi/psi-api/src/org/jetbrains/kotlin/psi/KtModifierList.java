@@ -64,6 +64,9 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
      * @return the context receiver list, or {@code null} if this modifier list has no context receivers
      * @deprecated Use {@link #getContextParameterList()} instead. This method is obsolete and exists for compatibility reasons only.
      */
+    @kotlin.Deprecated(
+            message = "Use 'getContextParameterList()' instead. This method is obsolete and exists for compatibility reasons only."
+    )
     @Deprecated
     @Nullable
     public KtContextReceiverList getContextReceiverList() {
@@ -88,6 +91,9 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
      * @deprecated Use {@link #getContextParameterLists()} instead. This method is obsolete and exists for compatibility reasons only.
      */
     @NotNull
+    @kotlin.Deprecated(
+            message = "Use 'getContextParameterLists()' instead. This method is obsolete and exists for compatibility reasons only."
+    )
     @Deprecated
     @SuppressWarnings("unchecked")
     public List<KtContextReceiverList> getContextReceiverLists() {

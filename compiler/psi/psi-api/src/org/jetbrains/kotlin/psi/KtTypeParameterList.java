@@ -44,6 +44,9 @@ public class KtTypeParameterList extends KtElementImplStub<KotlinPlaceHolderStub
      * instead.
      */
     @NotNull
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.appendTypeParameter(this, typeParameter)' instead."
+    )
     @Deprecated
     public KtTypeParameter addParameter(@NotNull KtTypeParameter typeParameter) {
         return KtPsiMutationService.getInstance().appendTypeParameter(this, typeParameter);

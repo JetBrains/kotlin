@@ -59,6 +59,9 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
      * instead.
      */
     @NotNull
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.appendValueArgument(this, argument)' instead."
+    )
     @Deprecated
     public KtValueArgument addArgument(@NotNull KtValueArgument argument) {
         return KtPsiMutationService.getInstance().appendValueArgument(this, argument);
@@ -69,6 +72,9 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
      * instead.
      */
     @NotNull
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.insertValueArgumentAfter(this, argument, anchor)' instead."
+    )
     @Deprecated
     public KtValueArgument addArgumentAfter(@NotNull KtValueArgument argument, @Nullable KtValueArgument anchor) {
         return KtPsiMutationService.getInstance().insertValueArgumentAfter(this, argument, anchor);
@@ -79,6 +85,9 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
      * instead.
      */
     @NotNull
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.insertValueArgumentBefore(this, argument, anchor)' instead."
+    )
     @Deprecated
     public KtValueArgument addArgumentBefore(@NotNull KtValueArgument argument, @Nullable KtValueArgument anchor) {
         return KtPsiMutationService.getInstance().insertValueArgumentBefore(this, argument, anchor);
@@ -88,6 +97,9 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
      * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.deleteValueArgument(this, argument)}
      * instead.
      */
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.deleteValueArgument(this, argument)' instead."
+    )
     @Deprecated
     public void removeArgument(@NotNull KtValueArgument argument) {
         KtPsiMutationService.getInstance().deleteValueArgument(this, argument);
@@ -97,6 +109,9 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
      * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.deleteValueArgument(this, index)}
      * instead.
      */
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.deleteValueArgument(this, index)' instead."
+    )
     @Deprecated
     public void removeArgument(int index) {
         KtPsiMutationService.getInstance().deleteValueArgument(this, index);

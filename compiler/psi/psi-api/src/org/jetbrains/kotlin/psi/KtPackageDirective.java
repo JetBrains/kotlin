@@ -120,6 +120,9 @@ public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolde
      * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.setPackageFqName(this, fqName)}
      * instead.
      */
+    @kotlin.Deprecated(
+            message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.setPackageFqName(this, fqName)' instead."
+    )
     @Deprecated
     public void setFqName(@NotNull FqName fqName) {
         KtPsiMutationService.getInstance().setPackageFqName(this, fqName);
