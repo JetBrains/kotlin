@@ -616,11 +616,11 @@ def _get_map_entry_type(process):
     value = _evaluate(
         """
         struct ObjHeader;
-        struct _KonanMapEntry {
+        struct _KotlinMapEntry {
             ObjHeader *key;
             ObjHeader *value;
         };
-        _KonanMapEntry{(ObjHeader *)0, (ObjHeader *)0}
+        _KotlinMapEntry{(ObjHeader *)0, (ObjHeader *)0}
         """
     )
 
@@ -732,7 +732,7 @@ def _select_provider(lldb_val, internal_dict, tip=None):
         )
 
         ret = raw_provider
-        if isinstance(raw_provider, FastKonanObjectSyntheticProvider):
+        if isinstance(raw_provider, KonanObjectSyntheticProvider):
             collection_kind = _collection_kind(lldb_val)
             if collection_kind is CollectionKind.LIST:
                 collection_proxy = KonanListSyntheticProvider.fromObjectProxy(
@@ -917,76 +917,6 @@ class KonanStringSyntheticProvider(KonanHelperProvider):
         return self._size_in_bytes_child
 
 
-class KonanObjectSyntheticProvider(KonanHelperProvider):
-    def __init__(self, valobj, _, internal_dict):
-        self._log = logging.getLogger(self.__class__.__name__)
-        self._log.debug(_hex(valobj.unsigned))
-        self._children_count = 0
-        super(KonanObjectSyntheticProvider, self).__init__(
-            valobj, False, "ObjectProvider", internal_dict
-        )
-        self._cache_child_names()
-
-    def _field_name(self, index):
-        self._log.debug("%s, %s", _hex(self._valobj.unsigned), index)
-        error = lldb.SBError()
-        name = self._read_string(
-            (
-                f"(char *)Konan_DebugGetFieldName("
-                f"{_hex(self._valobj.unsigned)}, (int){index}"
-                f")"
-            ),
-            error,
-        )
-        if not error.Success():
-            raise DebuggerException()
-        logging.debug(
-            "KonanObjectSyntheticProvider (%s, %s) = %s",
-            _hex(self._valobj.unsigned),
-            index,
-            name,
-        )
-        return name
-
-    def num_children(self):
-        self._log.debug(
-            "%s = %s", _hex(self._valobj.unsigned), self._children_count
-        )
-        return self._children_count
-
-    def get_child_index(self, name):
-        value_str = _hex(self._valobj.unsigned)
-        self._log.debug("%s, %s", value_str, name)
-        cached_names = _get_cached_child_names_by_index(self._valobj)
-        if cached_names is None or len(cached_names) < self._children_count:
-            self._cache_child_names()
-            cached_names = _get_cached_child_names_by_index(self._valobj)
-        index = [
-            cached_names[i] for i in range(self._children_count)
-        ].index(name)
-        self._log.debug("%s index=%s", value_str, name)
-        return index
-
-    def get_child_at_index(self, index):
-        self._log.debug("%s, %s", _hex(self._valobj.unsigned), index)
-        return self._read_value(index)
-
-    def update(self):
-        super(KonanObjectSyntheticProvider, self).update()
-        self._cache_child_names()
-        return False
-
-    def _cache_child_names(self):
-        cached_names = []
-        for index in range(self._children_count):
-            name = self._field_name(index)
-            _set_cached_child_name(self._valobj, index, name)
-            cached_names.append(name)
-        self._log.debug(
-            "%s _children: %s", _hex(self._valobj.unsigned), cached_names
-        )
-
-
 def _run_batch_child_metadata_request(provider, include_names=True):
     count = _children_count(provider._valobj)
     if count <= 0:
@@ -1095,7 +1025,7 @@ def _read_child_metadata(provider, result_addr, result_slot_count, count, includ
         provider._process,
         result_addr,
         pointer_size * result_slot_count,
-        "Failed to read FastKonanObjectSyntheticProvider child metadata result",
+        "Failed to read KonanObjectSyntheticProvider child metadata result",
     )
     prefix = _struct_prefix_for_target(provider._target)
     (
@@ -1113,7 +1043,7 @@ def _read_child_metadata(provider, result_addr, result_slot_count, count, includ
         or type_names_addr == 0
     ):
         raise DebuggerException(
-            "FastKonanObjectSyntheticProvider child metadata was not fetched"
+            "KonanObjectSyntheticProvider child metadata was not fetched"
         )
 
     raw_field_names = b""
@@ -1122,25 +1052,25 @@ def _read_child_metadata(provider, result_addr, result_slot_count, count, includ
             provider._process,
             field_names_addr,
             field_names_size,
-            "Failed to read FastKonanObjectSyntheticProvider field names",
+            "Failed to read KonanObjectSyntheticProvider field names",
         )
     raw_field_types = _read_memory_or_raise(
         provider._process,
         field_types_addr,
         count * 4,
-        "Failed to read FastKonanObjectSyntheticProvider field types",
+        "Failed to read KonanObjectSyntheticProvider field types",
     )
     raw_field_addresses = _read_memory_or_raise(
         provider._process,
         field_addresses_addr,
         count * pointer_size,
-        "Failed to read FastKonanObjectSyntheticProvider field addresses",
+        "Failed to read KonanObjectSyntheticProvider field addresses",
     )
     raw_type_names = _read_memory_or_raise(
         provider._process,
         type_names_addr,
         type_names_size,
-        "Failed to read FastKonanObjectSyntheticProvider type names",
+        "Failed to read KonanObjectSyntheticProvider type names",
     )
     if include_names:
         names = _decode_c_string_array(raw_field_names, count)
@@ -1213,7 +1143,7 @@ def _free_batch_child_metadata_result(metadata_addrs):
         )
 
 
-class FastKonanObjectSyntheticProvider(lldb.SBSyntheticValueProvider):
+class KonanObjectSyntheticProvider(lldb.SBSyntheticValueProvider):
     def __init__(self, valobj, internal_dict):
         super().__init__(valobj)
         self._target = valobj.GetTarget()
@@ -1294,7 +1224,7 @@ class FastKonanObjectSyntheticProvider(lldb.SBSyntheticValueProvider):
         return False
 
 
-class FastKonanArraySyntheticProvider(lldb.SBSyntheticValueProvider):
+class KonanArraySyntheticProvider(lldb.SBSyntheticValueProvider):
     def __init__(self, valobj, _, internal_dict):
         super().__init__(valobj)
         self._target = valobj.GetTarget()
@@ -1444,7 +1374,7 @@ class KonanSetSyntheticProvider:
         if backing is None or not backing.IsValid() or backing.unsigned == 0:
             return None
 
-        backing_object_proxy = FastKonanObjectSyntheticProvider(backing, internal_dict)
+        backing_object_proxy = KonanObjectSyntheticProvider(backing, internal_dict)
 
         keys = _object_field_value(backing_object_proxy, "keysArray")
         if keys is None or not keys.IsValid() or keys.unsigned == 0:
@@ -1827,8 +1757,8 @@ def _init_logger():
 
 def __lldb_init_module(debugger, _):
     _init_logger()
-    _FACTORY["object"] = lambda x, y, z: FastKonanObjectSyntheticProvider(x, z)
-    _FACTORY["array"] = lambda x, y, z: FastKonanArraySyntheticProvider(x, y, z)
+    _FACTORY["object"] = lambda x, y, z: KonanObjectSyntheticProvider(x, z)
+    _FACTORY["array"] = lambda x, y, z: KonanArraySyntheticProvider(x, y, z)
     _FACTORY["string"] = lambda x, y, _: KonanStringSyntheticProvider(x)
     debugger.HandleCommand(
         (
@@ -1844,7 +1774,7 @@ def __lldb_init_module(debugger, _):
             "type summary add "
             "--no-value "
             "--python-function konan_lldb.kotlin_map_entry_type_summary "
-            '"_KonanMapEntry" '
+            '"_KotlinMapEntry" '
             "--category Kotlin"
         )
     )
