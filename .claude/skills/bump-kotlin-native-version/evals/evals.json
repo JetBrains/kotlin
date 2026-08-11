@@ -1,0 +1,26 @@
+{
+  "skill_name": "bump-kotlin-native-version",
+  "evals": [
+    {
+      "id": 0,
+      "name": "latest-bump-housekeeping",
+      "prompt": "the pinned kotlin/native version in the repo has drifted way behind, we're still on something from a month ago. bump it to whatever the newest one published from master is. no youtrack ticket for this one, it's just housekeeping. put it on a branch for me but don't push",
+      "expected_output": "gradle.properties kotlin.native.version.default set to the newest K/N version published from master by Kotlin_KotlinDev_KotlinNativePublishMaven, verified present in the dev Maven repo; committed on an rr/ branch with a [Build]-tagged message and no ^KT trailer; nothing else edited.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "explicit-version-with-kt-issue",
+      "prompt": "bump the kotlin native version that KGP is baked against to 2.5.0-dev-4055, we need it for KT-86251. branch + commit please, I'll push it myself",
+      "expected_output": "Verifies 2.5.0-dev-4055 is a successful master build and fully published, sets kotlin.native.version.default to it, commits on rr/<user>/KT-86251 with a ^KT-86251 trailer. Does not silently substitute a different version.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "stale-commit-reference",
+      "prompt": "I need to bump kotlin native again. we did it before in commit cd198db772530f4114f1d1329cef27bd622d89ac, just do the same thing to the latest version",
+      "expected_output": "Recognises that the extra[\"versions.kotlin-native\"] block in build.gradle.kts referenced by that commit no longer exists (moved in 76fe96a6ff19), edits kotlin.native.version.default in gradle.properties instead, and tells the user the location changed. Must NOT re-add the removed block to build.gradle.kts.",
+      "files": []
+    }
+  ]
+}
