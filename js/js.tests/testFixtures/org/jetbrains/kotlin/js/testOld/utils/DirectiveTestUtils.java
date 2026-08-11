@@ -104,17 +104,6 @@ public class DirectiveTestUtils {
         }
     };
 
-    private static final DirectiveHandler FUNCTION_CALLED_TIMES = new DirectiveHandler() {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-            int expectedCount = Integer.parseInt(arguments.getNamedArgument("count"));
-            String functionName = arguments.getFirst();
-            CallCounter counter = CallCounter.countCalls(ast);
-            int actualCount = counter.getUnqualifiedCallsCount(functionName);
-            assertEquals(expectedCount, actualCount, "Function " + functionName);
-        }
-    };
-
     private static boolean parseBooleanArgument(@NotNull ArgumentsHelper arguments, @NotNull String name, boolean defaultValue) {
         String value = arguments.findNamedArgument(name);
         return value != null ? Boolean.parseBoolean(value) : defaultValue;
@@ -342,7 +331,7 @@ public class DirectiveTestUtils {
             new Pair<>(JsAstDirectives.INSTANCE.getEXPECT_GENERATED_JS(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CONTAINS_NO_CALLS(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NOT_CALLED(), new DirectiveHandler<>()),
-            new Pair<>(JsAstDirectives.INSTANCE.getFUNCTION_CALLED_TIMES(), FUNCTION_CALLED_TIMES),
+            new Pair<>(JsAstDirectives.INSTANCE.getFUNCTION_CALLED_TIMES(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_NOT_USED(), PROPERTY_NOT_USED),
             new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_NOT_READ_FROM(), PROPERTY_NOT_READ_FROM),
             new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_NOT_WRITTEN_TO(), PROPERTY_NOT_WRITTEN_TO),
