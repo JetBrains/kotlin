@@ -75,8 +75,14 @@ open class ArgumentsHelper(private val entry: String) {
 
     override fun toString(): String = entry
 
+    protected fun positional(index: Int): ReadOnlyProperty<ArgumentsHelper, String> =
+        { arguments, _ -> arguments.getPositionalArgument(index) }
+
     protected fun list(argumentName: String? = null): ReadOnlyProperty<ArgumentsHelper, List<String>> =
         { arguments, prop -> arguments.findNamedListArgument(argumentName ?: prop.name) }
+
+    protected fun set(argumentName: String? = null): ReadOnlyProperty<ArgumentsHelper, Set<String>> =
+        { arguments, prop -> arguments.findNamedListArgument(argumentName ?: prop.name).toSet() }
 
     protected fun required(argumentName: String? = null): ReadOnlyProperty<ArgumentsHelper, String> =
         { arguments, prop ->
