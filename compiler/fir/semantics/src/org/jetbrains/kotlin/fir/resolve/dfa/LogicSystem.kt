@@ -66,6 +66,15 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         flow.oneWayAliasMap[underlyingVariable] = flow.oneWayAliasMap[underlyingVariable]?.adding(alias) ?: persistentSetOf(alias)
     }
 
+    fun copyImplicationsForOneWayAlias(flow: MutableFlow, alias: RealVariable, underlyingVariable: RealVariable) {
+        if (underlyingVariable == alias) return // x = x
+        val implications = flow.implications[underlyingVariable] ?: return
+
+        for ((condition, effect) in implications) {
+            addImplication(flow, Implication(OperationStatement(alias, condition.operation), effect))
+        }
+    }
+
     fun addTypeStatement(flow: MutableFlow, statement: TypeStatement): TypeStatement? {
         if (statement.isEmpty) return null
         val variable = statement.variable
