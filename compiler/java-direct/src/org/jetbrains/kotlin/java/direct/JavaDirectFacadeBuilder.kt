@@ -30,8 +30,7 @@ fun createJavaDirectJavaFacadeBuilder(
 ): (AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade {
     val moduleImportedPackages = JavaModuleImportedPackagesOverModuleGraph(javaModuleFinder)
 
-    // Indexed by scope identity: distinct binary scopes must get distinct finders, and the same scope
-    // object must reuse its finder.
+    // Indexed by search scope identity.
     val binaryFinders: MutableMap<AbstractProjectFileSearchScope, JavaClassFinder> = IdentityHashMap()
 
     return { _, session, moduleData, scope ->

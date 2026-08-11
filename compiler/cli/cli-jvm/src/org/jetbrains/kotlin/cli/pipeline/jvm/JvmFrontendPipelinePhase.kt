@@ -353,7 +353,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         return finderFactory.binaryClassFileIndex()
     }
 
-    /** The Java module graph of the current compilation, or a finder observing no modules at all. */
     private fun VfsBasedProjectEnvironment.javaModuleFinder(): JavaModuleFinder {
         val fileManager = project.getService(CoreJavaFileManager::class.java) as? KotlinCliJavaFileManagerImpl
         return fileManager?.javaModuleFinder ?: JavaModuleFinder { null }
@@ -498,8 +497,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     configuration,
                     context,
                     // `FirJavaElementFinder` exposes Kotlin classes to PSI-based Java resolution as PSI class
-                    // stubs. java-direct serves the Kotlin-to-Java direction from FIR instead, and never
-                    // queries `PsiElementFinder`.
+                    // stubs. java-direct serves the Kotlin-to-Java direction from FIR instead.
                     needRegisterJavaElementFinder = !configuration.useJavaDirect,
                     kmpModuleKind = kmpModuleKind,
                     createJavaFacade = javaDirectFacade,

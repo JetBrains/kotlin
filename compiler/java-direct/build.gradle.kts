@@ -18,7 +18,6 @@ dependencies {
     compileOnly(libs.intellij.asm)
     implementation(project(":compiler:frontend.common.jvm"))
     implementation(project(":compiler:plugin-api"))
-    // Deliberately not `:compiler:cli`: java-direct must stay free of PSI, VFS and the CLI environment.
     implementation(project(":compiler:fir:resolve"))
     implementation(project(":compiler:fir:fir-jvm"))
     implementation(project(":compiler:fir:entrypoint"))

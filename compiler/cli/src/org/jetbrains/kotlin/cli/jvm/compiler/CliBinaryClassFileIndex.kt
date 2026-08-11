@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
@@ -21,9 +20,6 @@ import org.jetbrains.kotlin.name.FqName
 
 /**
  * [BinaryClassFileIndex] over the CLI [JvmDependenciesIndex].
- *
- * The `ct.sym` `.sig` extension choice comes from [CliVirtualFileFinderFactory], so a `-Xjdk-release`
- * build keeps resolving JDK API stubs.
  */
 class CliBinaryClassFileIndex(
     private val index: JvmDependenciesIndex,
@@ -64,7 +60,6 @@ class CliBinaryClassFileIndex(
 fun CliVirtualFileFinderFactory.binaryClassFileIndex(): BinaryClassFileIndex =
     CliBinaryClassFileIndex(index, enableSearchInCtSym)
 
-@Suppress("UnstableApiUsage")
 fun binaryClassFileScope(scope: AbstractProjectFileSearchScope): BinaryClassFileScope {
     val psiScope = scope.asPsiSearchScope()
     return BinaryClassFileScope { classFile -> classFile.virtualFile in psiScope }

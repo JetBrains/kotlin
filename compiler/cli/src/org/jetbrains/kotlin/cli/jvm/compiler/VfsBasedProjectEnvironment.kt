@@ -204,9 +204,8 @@ open class VfsBasedProjectEnvironment(
         baseModuleData: FirModuleData,
         fileSearchScope: AbstractProjectFileSearchScope,
     ): FirJavaFacadeForModule {
-        // PSI-backed default. Custom Java facades (e.g. `java-direct`) are constructed by
-        // explicit lambdas passed into `FirJvmSessionFactory.create*Session(...)`
         val javaAnnotationProvider = firSession.javaAnnotationProvider
+        // the default, PSI-based java class finder.
         val javaClassFinder = project.createJavaClassFinder(fileSearchScope.asPsiSearchScope(), javaAnnotationProvider)
         return FirJavaFacadeForModule(firSession, baseModuleData, javaClassFinder)
     }

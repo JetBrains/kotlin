@@ -43,10 +43,6 @@ import java.nio.file.Paths
  * This symbol provider loads JVM classes, reading extra info from Kotlin [`@Metadata`][Metadata] annotations if present. Use it for library
  * and incremental compilation sessions. For source sessions use [JavaSymbolProvider][org.jetbrains.kotlin.fir.java.JavaSymbolProvider], as
  * Kotlin classes should be parsed first.
- *
- * [javaFacade] must therefore be the *binary* Java view of this session: it is asked only which class
- * files exist ([FirJavaFacade.hasTopLevelClassOf], [FirJavaFacade.knownClassNamesInPackage]) and for
- * the Java classes that back them, never for Java sources.
  */
 @ThreadSafeMutableState
 open class JvmClassFileBasedSymbolProvider(
@@ -56,7 +52,7 @@ open class JvmClassFileBasedSymbolProvider(
     private val packagePartProvider: PackagePartProvider,
     private val kotlinClassFinder: KotlinClassFinder,
     private val javaFacade: FirJavaFacade,
-    defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
+    defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
 ) : AbstractFirDeserializedSymbolProvider(
     session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, BuiltInSerializerProtocol
 ) {
@@ -140,8 +136,7 @@ open class JvmClassFileBasedSymbolProvider(
 
     override fun computePackageSetWithNonClassDeclarations(): Set<String>? = packagePartProvider.computePackageSetWithNonClassDeclarations()
 
-    override fun knownTopLevelClassesInPackage(packageFqName: FqName): Set<String>? =
-        javaFacade.knownClassNamesInPackage(packageFqName)
+    override fun knownTopLevelClassesInPackage(packageFqName: FqName): Set<String>? = javaFacade.knownClassNamesInPackage(packageFqName)
 
     private val KotlinJvmBinaryClass.incompatibility: IncompatibleVersionErrorData<MetadataVersion>?
         get() {
@@ -216,7 +211,7 @@ open class JvmClassFileBasedSymbolProvider(
 
     override fun hasPackage(fqName: FqName): Boolean {
         if (javaFacade.hasPackage(fqName)) return true
-        // Packages that exist solely via `@file:JvmPackageName` have no on-disk directory and are
+        // Packages that exist only via `@file:JvmPackageName` have no on-disk directory and are
         // therefore invisible to the Java class finder
         // (see compiler/testData/codegen/boxJvm/compileKotlinAgainstKotlin/jvmPackageName.kt).
         return packagePartProvider.findPackageParts(fqName.asString()).isNotEmpty()

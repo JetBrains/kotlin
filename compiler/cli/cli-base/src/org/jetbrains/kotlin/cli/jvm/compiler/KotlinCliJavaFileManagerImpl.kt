@@ -59,7 +59,6 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     private lateinit var singleJavaFileRootsIndex: SingleJavaFileRootsIndex
     private lateinit var packagePartProviders: List<PackagePartProvider>
 
-    /** The Java module graph of the current compilation; `null` until [initialize] has run. */
     var javaModuleFinder: JavaModuleFinder? = null
         private set
 
@@ -140,7 +139,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             // This is a true assumption by now since there are two search scopes in compiler: one for sources and another one for binary
             // When it become wrong because we introduce the modules into CLI, it's worth to consider
             // having different KotlinCliJavaFileManagerImpl's for different modules
-            // Cross-references from bytecode signatures resolve against `allScope`, not the request `searchScope`.
+            // Cross-references from bytecode signatures resolve against `allScope`.
             return readBinaryJavaClass(
                 classId = classId,
                 topLevelClassFile = virtualFile.asBinaryClassFileHandle(),
