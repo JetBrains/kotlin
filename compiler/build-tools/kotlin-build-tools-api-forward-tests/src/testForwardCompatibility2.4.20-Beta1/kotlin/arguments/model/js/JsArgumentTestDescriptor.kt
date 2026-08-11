@@ -13,6 +13,7 @@ internal class JsArgumentTestDescriptor<T>(
     override val argumentName: String,
     override val argument: Any,
     override val availableSinceVersion: KotlinReleaseVersion,
+    val operationKind: JsArgumentOperationKind,
     override val argumentValues: List<T>,
     override val argumentRawValues: List<String>,
     override val invalidArgumentValues: List<T> = emptyList(),

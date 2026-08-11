@@ -1,20 +1,21 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.tests.compilation
+package org.jetbrains.kotlin.buildtools.forward.tests
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_WARNING_LEVEL
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.WarningLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAndPlatformAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.MetadataProject
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectCreator
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.assertLogContainsPatterns
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.assertLogDoesNotContainPatterns
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.BtaV2StrategyAndPlatformAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.MetadataProject
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.ProjectCreator
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 
@@ -37,6 +38,10 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
     @BtaV2StrategyAndPlatformAgnosticCompilationTest
     fun warningIsLoggedAtErrorLevelWithWerror(project: ProjectCreator) {
         project {
+            // Metadata compilation always emits a strong "No target platform specified, using default" warning
+            // (COMPILER_ARGUMENTS_WARNING, reported by MetadataConfigurationPipelinePhase). With -Werror that warning is
+            // correctly promoted to an error and aborts compilation before the deprecation is analyzed, so this
+            // deprecation-vs-Werror scenario is not meaningful on metadata.
             assumeTrue(this !is MetadataProject) { "Metadata always warns about a missing target platform, which -Werror turns into an aborting error" }
             val module = module("deprecated-usage")
             module.compile(compilationConfigAction = {
@@ -53,6 +58,8 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
     @BtaV2StrategyAndPlatformAgnosticCompilationTest
     fun fixedWarningIsNotEscalatedToErrorWithWerror(project: ProjectCreator) {
         project {
+            // See warningIsLoggedAtErrorLevelWithWerror: on metadata the mandatory "No target platform specified" warning
+            // is promoted to an error by -Werror and aborts compilation before the deprecation is analyzed.
             assumeTrue(this !is MetadataProject) { "Metadata always warns about a missing target platform, which -Werror turns into an aborting error" }
             val module = module("deprecated-usage")
             module.compile(compilationConfigAction = {

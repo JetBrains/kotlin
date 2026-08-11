@@ -5,15 +5,20 @@
 
 package org.jetbrains.kotlin.buildtools.forward.tests.arguments
 
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.forward.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.forward.tests.arguments.model.js.AllJsCompilerArgumentsWithBtaVersionsTest
 import org.jetbrains.kotlin.buildtools.forward.tests.arguments.model.js.InvalidRawValueJsCompilerArgumentsBtaV2StrategyAgnosticTest
 import org.jetbrains.kotlin.buildtools.forward.tests.arguments.model.js.JsArgumentConfiguration
+import org.jetbrains.kotlin.buildtools.forward.tests.arguments.model.js.JsArgumentOperationKind.KLIB
+import org.jetbrains.kotlin.buildtools.forward.tests.arguments.model.js.JsArgumentOperationKind.LINKING
 import org.jetbrains.kotlin.buildtools.forward.tests.arguments.model.js.NullableJsCompilerArgumentsWithBtaVersionsTest
 import org.jetbrains.kotlin.buildtools.forward.tests.arguments.util.assumeArgumentAvailable
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.assertLogContainsPatterns
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.LinkableModule
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.Module
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.jsProject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
@@ -106,13 +111,11 @@ internal class JsCompilerArgumentConversionTest : BaseCompilationTest() {
 
         jsProject(strategyConfig) {
             val module = module("js-ic-basic-lib")
-            module.compile()
-            for (invalidValue in argumentConfig.invalidRawValues) {
-                module.link(compilationConfigAction = {
-                    it.compilerArguments.applyArgumentStrings(argumentConfig.expectedArgumentStringsFor(invalidValue))
-                }) {
-                    expectFail()
-                    assertLogContainsPatterns(LogLevel.ERROR, Regex(".*${Regex.escape(invalidValue)}.*"))
+            when (argumentConfig.operationKind) {
+                KLIB -> argumentConfig.testInvalidRawArgumentKlibCompilationFails(module)
+                LINKING -> {
+                    module.compile()
+                    argumentConfig.testInvalidRawArgumentLinkingFails(module)
                 }
             }
         }
@@ -135,5 +138,31 @@ internal class JsCompilerArgumentConversionTest : BaseCompilationTest() {
     private fun JsArgumentConfiguration<*>.assumeArgumentSupported() {
         assumeTrue(isPlatformSupported(), "Test requires selected platform BTA support")
         assumeArgumentAvailable()
+    }
+
+    private fun <B : BaseCompilationOperation.Builder> JsArgumentConfiguration<*>.testInvalidRawArgumentKlibCompilationFails(
+        module: Module<*, B, *>,
+    ) {
+        for (invalidValue in invalidRawValues) {
+            module.compile(compilationConfigAction = {
+                it.compilerArguments.applyArgumentStrings(expectedArgumentStringsFor(invalidValue))
+            }) {
+                expectFail()
+                assertLogContainsPatterns(LogLevel.ERROR, Regex(".*${Regex.escape(invalidValue)}.*"))
+            }
+        }
+    }
+
+    private fun <B : BaseCompilationOperation.Builder> JsArgumentConfiguration<*>.testInvalidRawArgumentLinkingFails(
+        module: LinkableModule<*, B>,
+    ) {
+        for (invalidValue in invalidRawValues) {
+            module.link(compilationConfigAction = {
+                it.compilerArguments.applyArgumentStrings(expectedArgumentStringsFor(invalidValue))
+            }) {
+                expectFail()
+                assertLogContainsPatterns(LogLevel.ERROR, Regex(".*${Regex.escape(invalidValue)}.*"))
+            }
+        }
     }
 }

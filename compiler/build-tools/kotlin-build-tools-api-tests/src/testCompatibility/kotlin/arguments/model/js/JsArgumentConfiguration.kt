@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.ArgumentConfiguration
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.js.JsArgumentOperationKind.KLIB
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.js.JsArgumentOperationKind.LINKING
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.supportsJs
 import java.nio.file.Paths
 
@@ -21,6 +23,7 @@ internal class JsArgumentConfiguration<T>(
     kotlinToolchain: KotlinToolchains,
     private val descriptor: JsArgumentTestDescriptor<T>,
 ) : ArgumentConfiguration<T>(kotlinToolchain, descriptor) {
+    val operationKind: JsArgumentOperationKind = descriptor.operationKind
     val availableSinceVersion: KotlinReleaseVersion = descriptor.availableSinceVersion
     val argumentValues: List<T> = descriptor.argumentValues
     val argumentRawValues: List<String> = descriptor.argumentRawValues
@@ -29,9 +32,14 @@ internal class JsArgumentConfiguration<T>(
     fun isPlatformSupported(): Boolean = kotlinToolchain.supportsJs()
 
     fun buildArguments(configure: CommonToolArguments.Builder.() -> Unit = {}): CommonToolArguments {
-        return kotlinToolchain.js.jsLinkingOperationBuilder(Paths.get("input.klib"), Paths.get(".")).apply {
-            compilerArguments.configure()
-        }.build().compilerArguments
+        return when (descriptor.operationKind) {
+            KLIB -> kotlinToolchain.js.jsKlibCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
+                compilerArguments.configure()
+            }.build().compilerArguments
+            LINKING -> kotlinToolchain.js.jsLinkingOperationBuilder(Paths.get("input.klib"), Paths.get(".")).apply {
+                compilerArguments.configure()
+            }.build().compilerArguments
+        }
     }
 
     fun setArgument(arguments: CommonToolArguments.Builder, value: T) {

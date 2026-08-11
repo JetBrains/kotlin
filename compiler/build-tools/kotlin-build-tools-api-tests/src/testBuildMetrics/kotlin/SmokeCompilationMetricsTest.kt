@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAndPlatformAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.MetadataProject
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectCreator
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -20,6 +23,28 @@ import kotlin.io.path.writeText
 
 @DisplayName("Test that verify that only all the expected metrics are reported without checking their values")
 class SmokeCompilationMetricsTest : BaseCompilationTest() {
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
+    @DisplayName("Key compilation metrics are reported on every platform")
+    @TestMetadata("basic-multimodule-project/module-1")
+    fun keyCompilationMetricsAreReportedOnAllPlatforms(project: ProjectCreator) {
+        project {
+            val module1 = module("basic-multimodule-project/module-1")
+
+            val expectedNames = if (this is MetadataProject) {
+                platformIndependentMetricNames
+            } else {
+                platformIndependentMetricNames + COMPILER_TRANSLATION_TO_IR_METRIC
+            }
+
+            module1.compileWithMetrics { metrics ->
+                val actualNames = metrics.all().map { it.name }.toSet()
+                assertTrue(actualNames.containsAll(expectedNames)) {
+                    "Missing expected metrics.\n\nMissing: ${expectedNames - actualNames}\nGot: $actualNames"
+                }
+            }
+        }
+    }
+
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Basic non-incremental compilation metrics test")
     @TestMetadata("basic-multimodule-project/module-1")
@@ -142,6 +167,22 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
     }
 
     companion object {
+        // Reported by every IR-producing platform (JVM/JS/Wasm) but not by the metadata compiler, which produces no IR.
+        private const val COMPILER_TRANSLATION_TO_IR_METRIC =
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler translation to IR"
+
+        // Compiler-phase metrics that are reported regardless of the target platform (JVM/JS/Wasm/Metadata).
+        // Excludes:
+        //  - GC metrics ("PS MarkSweep"/"PS Scavenge"), which depend on whether the GC actually ran;
+        //  - JVM-only classpath-snapshot metrics;
+        //  - "Compiler code generation", which is JVM-only (the klib platforms serialize IR instead).
+        private val platformIndependentMetricNames = setOf(
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler code analysis",
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler Klib writing",
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler initialization time",
+            "Total compiler iteration",
+        )
+
         private val baseMetricNames = setOf(
             "PS MarkSweep",
             "PS Scavenge",
