@@ -15,6 +15,7 @@ enum class CompilerVersionOfApiDeprecation {
     _2_2_0,
     _2_2_20,
     _2_4_20,
+    _2_5_0,
 }
 
 /**
