@@ -254,5 +254,31 @@ private class IrExpressionEvaluator(
             val property = owner.correspondingPropertySymbol?.owner ?: return false
             return this.dispatchReceiver is IrGetEnumValue && property.name.asString() == "name"
         }
+
+        private fun Any?.toIrConstOrNull(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET): IrConst? {
+            if (this == null) return IrConstImpl.constNull(startOffset, endOffset, irType)
+
+            val constType = irType.makeNotNull().removeAnnotations()
+            return when (irType.getPrimitiveType()) {
+                PrimitiveType.BOOLEAN -> IrConstImpl.boolean(startOffset, endOffset, constType, this as Boolean)
+                PrimitiveType.CHAR -> IrConstImpl.char(startOffset, endOffset, constType, convertTo(this))
+                PrimitiveType.BYTE -> IrConstImpl.byte(startOffset, endOffset, constType, convertTo(this))
+                PrimitiveType.SHORT -> IrConstImpl.short(startOffset, endOffset, constType, convertTo(this))
+                PrimitiveType.INT -> IrConstImpl.int(startOffset, endOffset, constType, convertTo(this))
+                PrimitiveType.FLOAT -> IrConstImpl.float(startOffset, endOffset, constType, convertTo(this))
+                PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, constType, convertTo(this))
+                PrimitiveType.DOUBLE -> IrConstImpl.double(startOffset, endOffset, constType, convertTo(this))
+                null -> when (constType.getUnsignedType()) {
+                    UnsignedType.UBYTE -> IrConstImpl.byte(startOffset, endOffset, constType, convertTo(this))
+                    UnsignedType.USHORT -> IrConstImpl.short(startOffset, endOffset, constType, convertTo(this))
+                    UnsignedType.UINT -> IrConstImpl.int(startOffset, endOffset, constType, convertTo(this))
+                    UnsignedType.ULONG -> IrConstImpl.long(startOffset, endOffset, constType, convertTo(this))
+                    null -> when {
+                        constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, this as String)
+                        else -> null
+                    }
+                }
+            }
+        }
     }
 }
