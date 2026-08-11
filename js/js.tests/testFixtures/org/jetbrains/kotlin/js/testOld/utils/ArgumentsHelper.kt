@@ -4,8 +4,6 @@
  */
 package org.jetbrains.kotlin.js.testOld.utils
 
-import java.io.File
-
 /**
  * Arguments format: `((namedArg|positionalArg)\s+)*`
  *
@@ -15,7 +13,7 @@ import java.io.File
  *
  * Neither key, nor value should contain spaces.
  */
-internal class ArgumentsHelper internal constructor(private val entry: String, @JvmField val sourceFile: File) {
+internal class ArgumentsHelper internal constructor(private val entry: String) {
     companion object {
         private val argumentsPattern = Regex($$"""[\w$_;.]+(=((".*?")|[\w$_;.]+))?""")
     }
