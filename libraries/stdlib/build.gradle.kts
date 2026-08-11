@@ -64,6 +64,7 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     freeCompilerArgs.add("-Xcontext-parameters")
     freeCompilerArgs.add("-Xname-based-destructuring=complete")
     freeCompilerArgs.add("-Xcollection-literals")
+    freeCompilerArgs.add("-Xcompanion-blocks")
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
 
     if (this is KotlinJvmCompilerOptions) {
@@ -644,9 +645,10 @@ kotlin {
                     commonTestOptIns.forEach { optIn(it) }
                 }
             }
-            compilerOptions.freeCompilerArgs.add("-Xname-based-destructuring=complete")
-            compilerOptions.freeCompilerArgs.add("-Xcollection-literals")
         }
+        compilerOptions.freeCompilerArgs.add("-Xname-based-destructuring=complete")
+        compilerOptions.freeCompilerArgs.add("-Xcollection-literals")
+        compilerOptions.freeCompilerArgs.add("-Xcompanion-blocks")
     }
 }
 

@@ -23,6 +23,8 @@ tasks.test.configure {
 tasks.compileTestKotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xcontext-parameters")
+        freeCompilerArgs.add("-Xcollection-literals")
+        freeCompilerArgs.add("-Xcompanion-blocks")
         optIn.addAll(
                 "kotlin.ExperimentalStdlibApi",
                 "kotlin.ExperimentalUnsignedTypes",

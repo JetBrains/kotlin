@@ -219,6 +219,7 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                 "-Xcontext-parameters",
                 "-Xreturn-value-checker=full",
+                "-Xcompanion-blocks",
             )
         )
     }
