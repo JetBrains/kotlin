@@ -8,6 +8,10 @@
 package org.jetbrains.kotlin.buildtools.forward.tests.arguments.model.js
 
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerKlibArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerKlibArguments.Companion.X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerKlibArguments.Companion.X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerKlibArguments.Companion.X_ENABLE_SUSPEND_FUNCTION_EXPORTING
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments.Companion.MODULE_KIND
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments.Companion.TARGET
@@ -16,6 +20,8 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsIrDiagnosticMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsModuleKind
 import org.jetbrains.kotlin.buildtools.forward.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.forward.tests.arguments.model.js.JsArgumentOperationKind.KLIB
+import org.jetbrains.kotlin.buildtools.forward.tests.arguments.model.js.JsArgumentOperationKind.LINKING
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
 import org.junit.jupiter.api.Named
@@ -46,7 +52,9 @@ internal class NullableJsCompilerArgumentsWithBtaVersionsArgumentProvider : Argu
 
 private fun namedInvalidRawValueBtaV2ArgumentConfigurations(): List<Named<Pair<JsArgumentConfiguration<*>, CompilerExecutionStrategyConfiguration>>> {
     val btaV2Strategies = BtaV2StrategyAgnosticCompilationTestArgumentProvider.namedStrategyArguments()
-    val compilerArguments = jsCompilerArguments.filter { it.runsInvalidRawValueTest }.map { named("[${it.argumentName}]", it) }
+    val compilerArguments = jsCompilerArguments.filter { it.runsInvalidRawValueTest }.map {
+        named("[${it.operationKind.displayName}][${it.argumentName}]", it)
+    }
 
     return btaV2Strategies.flatMap { namedStrategy ->
         compilerArguments.map { namedArgumentDescriptor ->
@@ -62,7 +70,9 @@ private fun namedArgumentConfiguration(
     argumentPredicate: (JsArgumentTestDescriptor<*>) -> Boolean = { true },
 ): List<Named<JsArgumentConfiguration<*>>> {
     val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedStrategyArguments()
-    val compilerArguments = jsCompilerArguments.filter { argumentPredicate(it) }.map { named("[${it.argumentName}]", it) }
+    val compilerArguments = jsCompilerArguments.filter { argumentPredicate(it) }.map {
+        named("[${it.operationKind.displayName}][${it.argumentName}]", it)
+    }
 
     return btaVersions.flatMap { namedKotlinToolchains ->
         compilerArguments.map { namedArgumentDescriptor ->
@@ -80,6 +90,7 @@ private val jsCompilerArguments: List<JsArgumentTestDescriptor<*>> = listOf(
         argumentName = "target",
         argument = TARGET,
         availableSinceVersion = TARGET.availableSinceVersion,
+        operationKind = LINKING,
         argumentValues = JsEcmaVersion.entries.toList(),
         argumentRawValues = JsEcmaVersion.entries.map { it.stringValue },
         invalidRawValues = listOf("es15"),
@@ -93,6 +104,7 @@ private val jsCompilerArguments: List<JsArgumentTestDescriptor<*>> = listOf(
         argumentName = "module-kind",
         argument = MODULE_KIND,
         availableSinceVersion = MODULE_KIND.availableSinceVersion,
+        operationKind = LINKING,
         argumentValues = JsModuleKind.entries.toList(),
         argumentRawValues = JsModuleKind.entries.map { it.stringValue },
         invalidRawValues = listOf("emd"),
@@ -106,6 +118,7 @@ private val jsCompilerArguments: List<JsArgumentTestDescriptor<*>> = listOf(
         argumentName = "Xir-safe-external-boolean-diagnostic",
         argument = X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC,
         availableSinceVersion = X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC.availableSinceVersion,
+        operationKind = LINKING,
         argumentValues = JsIrDiagnosticMode.entries.toList(),
         argumentRawValues = JsIrDiagnosticMode.entries.map { it.stringValue },
         invalidRawValues = listOf("error"),
@@ -114,5 +127,44 @@ private val jsCompilerArguments: List<JsArgumentTestDescriptor<*>> = listOf(
         expectedArgumentStringsFor = { value -> listOf("-Xir-safe-external-boolean-diagnostic=$value") },
         setArgumentValue = { value -> (this as JsCompilerLinkingArguments.Builder)[X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC] = value },
         getArgumentValue = { (this as JsCompilerLinkingArguments)[X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC] },
+    ),
+
+    JsArgumentTestDescriptor(
+        argumentName = "Xenable-extension-functions-in-externals",
+        argument = X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS,
+        availableSinceVersion = X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS.availableSinceVersion,
+        operationKind = KLIB,
+        argumentValues = listOf(true),
+        argumentRawValues = listOf("true"),
+        valueString = { value -> value?.toString() },
+        expectedArgumentStringsFor = { _ -> listOf("-Xenable-extension-functions-in-externals") },
+        setArgumentValue = { value -> (this as JsCompilerKlibArguments.Builder)[X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS] = value },
+        getArgumentValue = { (this as JsCompilerKlibArguments)[X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS] },
+    ),
+
+    JsArgumentTestDescriptor(
+        argumentName = "Xenable-implementing-interfaces-from-typescript",
+        argument = X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT,
+        availableSinceVersion = X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT.availableSinceVersion,
+        operationKind = KLIB,
+        argumentValues = listOf(true),
+        argumentRawValues = listOf("true"),
+        valueString = { value -> value?.toString() },
+        expectedArgumentStringsFor = { _ -> listOf("-Xenable-implementing-interfaces-from-typescript") },
+        setArgumentValue = { value -> (this as JsCompilerKlibArguments.Builder)[X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT] = value },
+        getArgumentValue = { (this as JsCompilerKlibArguments)[X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT] },
+    ),
+
+    JsArgumentTestDescriptor(
+        argumentName = "Xenable-suspend-function-exporting",
+        argument = X_ENABLE_SUSPEND_FUNCTION_EXPORTING,
+        availableSinceVersion = X_ENABLE_SUSPEND_FUNCTION_EXPORTING.availableSinceVersion,
+        operationKind = KLIB,
+        argumentValues = listOf(true),
+        argumentRawValues = listOf("true"),
+        valueString = { value -> value?.toString() },
+        expectedArgumentStringsFor = { _ -> listOf("-Xenable-suspend-function-exporting") },
+        setArgumentValue = { value -> (this as JsCompilerKlibArguments.Builder)[X_ENABLE_SUSPEND_FUNCTION_EXPORTING] = value },
+        getArgumentValue = { (this as JsCompilerKlibArguments)[X_ENABLE_SUSPEND_FUNCTION_EXPORTING] },
     ),
 )

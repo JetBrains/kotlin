@@ -51,10 +51,26 @@ class JsModule(
 
     var lastCompileProducedPackedKlib = false
 
+    /**
+     * The output name the last compilation actually used. It defines the file name of the produced klib, so the linking
+     * operation has to resolve the packed klib through it rather than through [moduleName], which a test may override.
+     */
+    var lastCompileIrOutputName: String = moduleName
+        private set
+
     private val dependencyFiles: List<Path>
         get() = dependencies.map { it.location }.plus(stdlibKlibLocation)
     override val expectedOutputFileName: String
         get() = "$moduleName.js"
+
+    /**
+     * The directory the linking operation writes the `.js` artifact into. It is intentionally separate from
+     * [outputDirectory] (which holds the input klib), mirroring the KGP, where the klib and the linked
+     * `.js` live in different directories. Keeping them separate also prevents the linking operation from deleting its
+     * own input klib (the JS output writer removes everything it did not write from its destination directory).
+     */
+    val linkOutputDirectory: Path
+        get() = buildDirectory.resolve("dist")
 
     override fun link(
         strategyConfig: ExecutionPolicy,
@@ -67,22 +83,25 @@ class JsModule(
         val compilationOperation = kotlinToolchain.js.jsLinkingOperation(
             // handle both cases of NOPACK set to true and false
             if (lastCompileProducedPackedKlib) {
-                outputDirectory.resolve("$moduleName.klib")
+                outputDirectory.resolve("$lastCompileIrOutputName.klib")
             } else {
                 outputDirectory
             },
-            outputDirectory,
+            // write the '.js' into a dedicated directory, separate from the input klib in outputDirectory
+            linkOutputDirectory,
         ) {
-            compilationConfigAction(this)
-            compilerArguments[LIBRARIES] = dependencyFiles
+            // both are set before the caller's action, so that a test is able to override them
             compilerArguments[IR_OUTPUT_NAME] = moduleName
+            compilerArguments[LIBRARIES] = dependencyFiles
+            compilationConfigAction(this)
         }
         val result = compilationOperation.let {
             compilationAction(it)
             buildSession.executeOperation(it, strategyConfig, kotlinLogger)
         }
 
-        processOutcome(kotlinLogger, result, assertions, forceOutput)
+        // the assertions resolve files against outputDirectory, so point them at the linking output directory
+        processOutcome(kotlinLogger, result, assertions, forceOutput, LinkOutputContext(this, linkOutputDirectory))
         return result
     }
 
@@ -101,12 +120,13 @@ class JsModule(
             outputDirectory,
         ) {
             compilerArguments[NOPACK] = true
+            compilerArguments[IR_OUTPUT_NAME] = moduleName
             moduleCompilationConfigAction(this)
             compilationConfigAction(this)
             compilerArguments[LIBRARIES] = dependencyFiles
-            compilerArguments[IR_OUTPUT_NAME] = moduleName
 
             lastCompileProducedPackedKlib = !compilerArguments[NOPACK]
+            lastCompileIrOutputName = compilerArguments[IR_OUTPUT_NAME] ?: moduleName
         }
 
         return compilationOperation.let {
@@ -159,3 +179,12 @@ class JsModule(
         throw UnsupportedOperationException("Execution of compiled JS modules is not supported directly")
     }
 }
+
+/**
+ * A [ModuleContext] view over [target] that only overrides [outputDirectory]. It is used to run the linking assertions
+ * against [JsModule.linkOutputDirectory] instead of the module's own [JsModule.outputDirectory].
+ */
+private class LinkOutputContext(
+    target: JsModule,
+    override val outputDirectory: Path,
+) : Module<JsKlibCompilationOperation, JsKlibCompilationOperation.Builder, JsHistoryBasedIncrementalCompilationConfiguration.Builder> by target
