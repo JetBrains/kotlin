@@ -31,6 +31,9 @@ private const val INFINITE_LONGBITS = 0x7FF0000000000000UL
 private const val MINIMUM_LONGBITS = 0x1UL
 private const val INV_LOG_OF_TEN_BASE_2 = 0.30102999566398114
 
+private const val RM_SIZE = 21
+private const val STemp_SIZE = 22
+
 private val TENS = doubleArrayOf(
     1.0, 1.0e1, 1.0e2, 1.0e3, 1.0e4, 1.0e5, 1.0e6, 1.0e7, 1.0e8, 1.0e9,
     1.0e10, 1.0e11, 1.0e12, 1.0e13, 1.0e14, 1.0e15, 1.0e16, 1.0e17, 1.0e18,
@@ -399,8 +402,6 @@ internal fun bigIntDigitGeneratorInstImpl(
     mantissaIsZero: Boolean,
     p: Int,
 ) {
-    val RM_SIZE = 21
-    val STemp_SIZE = 22
     val R = ULongArray(RM_SIZE)
     val S = ULongArray(STemp_SIZE)
     val mplus = ULongArray(RM_SIZE)
