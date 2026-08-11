@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.TS_COMPILATION_STRATEGY
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.USE_CONST_AND_LET_FOR_VARIABLES
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
@@ -85,6 +86,7 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
         register(SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC, JSConfigurationKeys.SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC)
         register(JS_DROP_REGION_COMMENTS, JSConfigurationKeys.GENERATE_REGION_COMMENTS, isInverted = true)
         register(EXPORT_WITH_UNKNOWN_TYPE_INSTEAD_ANY, JSConfigurationKeys.EXPORT_UNTYPED_AS_UNKNOWN)
+        register(USE_CONST_AND_LET_FOR_VARIABLES, JSConfigurationKeys.USE_ES6_CONST_LET)
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
@@ -137,10 +139,6 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
             configuration.compileSuspendAsJsGenerator = true
             configuration.compileLambdasAsEs6ArrowFunctions = DISABLE_ES6_ARROWS !in module.directives
             configuration.compileLongAsBigint = true
-
-            // Even though by default generation of const/let is disabled even in ES2015+ modes, we enable it in tests
-            // because it's a stricter mode.
-            configuration.useEs6ConstLet = true
         }
     }
 }
