@@ -407,7 +407,7 @@ private fun runTestBuild(
         add("-Dorg.gradle.daemon=false")
         add("-P$TEST_FEDERATION_ENABLED_KEY=$testFederationEnabled")
         if (nightly != null) add("-Pnightly=$nightly")
-        add("-Porg.gradle.daemon.idletimeout=${10.seconds.inWholeMilliseconds}")
+        add("-Dorg.gradle.daemon.idletimeout=${5.seconds.inWholeMilliseconds}")
         if (rerun) add("--rerun")
         addAll(additionalCliArgs)
     }
@@ -444,7 +444,7 @@ private fun cleanTest(): BuildResult {
     return try {
         createGradleRunner().withArguments(
             ":repo:test-federation-runtime:cleanTest",
-            "-Porg.gradle.daemon.idletimeout=${10.seconds.inWholeMilliseconds}",
+            "-Dorg.gradle.daemon.idletimeout=${10.seconds.inWholeMilliseconds}",
         ).build()
     } catch (failure: UnexpectedBuildFailure) {
         error(buildString {

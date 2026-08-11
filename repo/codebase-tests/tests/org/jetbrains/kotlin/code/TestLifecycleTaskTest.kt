@@ -70,10 +70,6 @@ class TestLifecycleTaskTest {
     }
 
     companion object {
-        val projectDir = Path("").also { path ->
-            assertTrue(path.resolve("settings.gradle.kts").isRegularFile())
-        }
-
         val expectFile: Path = projectDir.resolve("repo/testLifecycleTask.dump.txt")
 
         fun String.sanitize() = replace(Regex("""\R"""), "\n").trim()
@@ -81,22 +77,22 @@ class TestLifecycleTaskTest {
 }
 
 private fun generateTestLifecycleTasksDump(projectDir: Path): String {
-    val connection = GradleConnector.newConnector()
+    val connector = GradleConnector.newConnector()
         .forProjectDirectory(projectDir.toFile())
-        .connect()
-
-    val models = connection.use { connection ->
-        connection.action(FetchTestLifecycleTaskModelBuildAction())
-            .setStandardError(System.err)
-            .setStandardOutput(System.out)
-            .setJvmArguments("-Xmx3g", *issueNewDebugSessionJvmArguments("Build Action"))
-            .withArguments(
-                "-Pteamcity=true",
-                "-Pkotlin.native.enabled=true",
-                "-Dorg.gradle.daemon.idletimeout=${5.seconds.inWholeMilliseconds}",
-                "-Dkotlin.daemon.options=\"autoshutdownIdleSeconds=10\"",
-                "-Porg.gradle.daemon.idletimeout=1000",
-            ).run()
+    val models = try {
+        connector.connect().use { connection ->
+            connection.action(FetchTestLifecycleTaskModelBuildAction())
+                .setStandardError(System.err)
+                .setStandardOutput(System.out)
+                .setJvmArguments(*defaultGradleJvmArguments().toTypedArray(), *issueNewDebugSessionJvmArguments("Build Action"))
+                .withArguments(
+                    "-Pteamcity=true",
+                    "-Pkotlin.native.enabled=true",
+                    *defaultGradleArguments().toTypedArray()
+                ).run()
+        }
+    } finally {
+        connector.disconnect()
     }
 
     val missingProjects = mutableListOf<String>()
