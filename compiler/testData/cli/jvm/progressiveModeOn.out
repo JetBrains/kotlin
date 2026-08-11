@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/progressive/progressiveTest.kt:3:10: error: 'public' generic exposes its 'internal' parameter bound type 'Foo'.
-fun <T : Foo> foo(x: T?) = x
-         ^^^
+compiler/testData/cli/jvm/progressive/progressiveTest.kt:3:9: error: 'operator' modifier is not applicable to function: must override 'equals()' in Any.
+        operator fun equals(a: Int, b: Int): Boolean = true
+        ^^^^^^^^
 COMPILATION_ERROR

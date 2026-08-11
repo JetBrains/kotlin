@@ -1,5 +1,5 @@
 $TESTDATA_DIR$/errorSuppression.kt
 -language-version
-2.1
+2.5
 -d
 $TEMP_DIR$
