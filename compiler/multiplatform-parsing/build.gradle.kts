@@ -62,6 +62,7 @@ tasks.withType<Test> {
         project(":compiler:tests-spec").isolated.projectDirectory.dir("testData"),
         project(":compiler:fir:analysis-tests").isolated.projectDirectory.dir("testData"),
         project(":analysis:analysis-api").isolated.projectDirectory.dir("testData"),
+        project(":compiler:psi:psi-impl").isolated.projectDirectory.dir("testData"),
     ).joinToString(File.pathSeparator)
     systemProperty("test.data.dirs", testDataDirs)
 
