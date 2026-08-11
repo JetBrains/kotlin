@@ -34,6 +34,8 @@ import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 import java.util.zip.ZipFile
 import kotlin.io.path.*
 import kotlin.test.assertEquals
@@ -135,10 +137,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("Dependencies in tests should be correct with third-party library")
     fun testDependenciesInTests(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
-        publishThirdPartyLib(gradleVersion = gradleVersion, localRepoDir = tempDir) {
-            kotlinSourcesDir("jvmMain").copyRecursively(kotlinSourcesDir("linuxX64Main"))
-            buildGradleKts.appendText("\nkotlin.linuxX64()")
-        }
+        publishThirdPartyLib(gradleVersion = gradleVersion, localRepoDir = tempDir, thirdPartyLib = ThirdPartyLib.V1_WITH_LINUX_X64)
 
         nativeProject(
             projectName = "my-lib-foo".withPrefix,
@@ -377,21 +376,51 @@ open class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
+    private enum class ThirdPartyLib(
+        val cacheKey: String,
+        val beforePublishing: TestProject.() -> Unit,
+    ) {
+        V1("v1", { }),
+
+        V1_WITH_LINUX_X64("v1-linuxX64", {
+            kotlinSourcesDir("jvmMain").copyRecursively(kotlinSourcesDir("linuxX64Main"))
+            buildGradleKts.appendText("\nkotlin.linuxX64()")
+        }),
+
+        V2("v2", {
+            buildGradleKts.appendText("\nversion = \"2.0\"\n")
+        }),
+    }
+
     private fun publishThirdPartyLib(
-        projectName: String = "third-party-lib".withPrefix,
         gradleVersion: GradleVersion,
         localRepoDir: Path,
-        beforePublishing: TestProject.() -> Unit = { },
-    ): TestProject =
-        nativeProject(
-            projectName = projectName,
-            gradleVersion = gradleVersion,
-            localRepoDir = localRepoDir,
-            buildOptions = defaultBuildOptions.copy(jsOptions = BuildOptions.JsOptions())
-        ).apply {
-            beforePublishing()
-            build("publish")
+        thirdPartyLib: ThirdPartyLib = ThirdPartyLib.V1,
+    ) {
+        cachedThirdPartyLibRepository(gradleVersion, thirdPartyLib).copyRecursivelyOverwriting(localRepoDir)
+    }
+
+    private fun cachedThirdPartyLibRepository(
+        gradleVersion: GradleVersion,
+        thirdPartyLib: ThirdPartyLib,
+    ): Path {
+        val cacheKey = listOf(javaClass.name, gradleVersion.version, thirdPartyLib.cacheKey).joinToString("_")
+        return synchronized(thirdPartyLibRepositoryLocks.computeIfAbsent(cacheKey) { Any() }) {
+            thirdPartyLibRepositories.getOrPut(cacheKey) {
+                val repositoryPath = thirdPartyLibRepositoriesRoot.resolve(cacheKey)
+                nativeProject(
+                    projectName = "third-party-lib".withPrefix,
+                    gradleVersion = gradleVersion,
+                    localRepoDir = repositoryPath,
+                    buildOptions = defaultBuildOptions.copy(jsOptions = BuildOptions.JsOptions())
+                ) {
+                    thirdPartyLib.beforePublishing(this)
+                    build("publish")
+                }
+                repositoryPath
+            }
         }
+    }
 
     private fun BuildResult.checkMyLibFoo(subprojectPrefix: String? = null, localRepoDir: Path) {
         assertTasksExecuted(expectedTasks(subprojectPrefix))
@@ -1147,9 +1176,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
         publishThirdPartyLib(gradleVersion = gradleVersion, localRepoDir = tempDir)
 
         // publish version 2.0
-        publishThirdPartyLib(gradleVersion = gradleVersion, localRepoDir = tempDir) {
-            buildGradleKts.appendText("\nversion = \"2.0\"\n")
-        }
+        publishThirdPartyLib(gradleVersion = gradleVersion, localRepoDir = tempDir, thirdPartyLib = ThirdPartyLib.V2)
 
         nativeProject(
             "my-lib-foo".withPrefix,
@@ -1189,6 +1216,20 @@ open class HierarchicalMppIT : KGPBaseTest() {
             } else buildOptions
             build("build", "--dry-run", buildOptions = buildOptions) {}
         }
+    }
+
+    private companion object {
+        /**
+         * Cached 'third-party-lib' repositories of the current test JVM keyed by test class, Gradle version and flavour.
+         *
+         * A fresh root directory per JVM run guarantees that the cache never outlives the built plugin version.
+         */
+        private val thirdPartyLibRepositoriesRoot: Path = kgpTestInfraWorkingDirectory
+            .resolve("hierarchical-mpp-third-party-lib")
+            .resolve(UUID.randomUUID().toString())
+
+        private val thirdPartyLibRepositories: MutableMap<String, Path> = ConcurrentHashMap()
+        private val thirdPartyLibRepositoryLocks: ConcurrentHashMap<String, Any> = ConcurrentHashMap()
     }
 
     private data class SourcesVariantResolutionReport(
