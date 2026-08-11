@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.isLogger
-import org.jetbrains.kotlin.lombok.generators.kotlin.isRelevantForConflictsCheck
+import org.jetbrains.kotlin.lombok.generators.hasReceiverOrContextParameters
 import org.jetbrains.kotlin.name.Name
 
 object FirLombokLogChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
@@ -61,7 +61,7 @@ object FirLombokLogChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
                         }
                     }
                 } else {
-                    hasConflict = hasConflict || it.isRelevantForConflictsCheck
+                    hasConflict = hasConflict || !it.hasReceiverOrContextParameters
                 }
             }
             if (!hasConflict) continue
