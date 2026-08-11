@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.name.StandardClassIds
+import kotlin.time.Duration.Companion.seconds
 
 @ThreadSafeMutableState
 class FirSealedSiblingsCalculator(private val session: FirSession) : FirSessionComponent {
@@ -48,7 +49,7 @@ class FirSealedSiblingsCalculator(private val session: FirSession) : FirSessionC
     ): Unit = mapCachedSubclasses(visited, onSingle = action, onMultiple = { it.forEach(action) })
 
     private val allSubclassesCache: FirCache<FirClassSymbol<*>, CachedSubclasses, LinkedHashSet<FirClassSymbol<*>>?> =
-        session.firCachesFactory.createCacheWithSuggestedLimits { symbol, visited ->
+        session.firCachesFactory.createCacheWithSuggestedLimits(expirationAfterAccess = 30.seconds) { symbol, visited ->
             when {
                 symbol !is FirRegularClassSymbol -> singleValueCachedSubclass
                 symbol.fir.modality == Modality.SEALED -> buildSet {
@@ -147,7 +148,7 @@ class FirSealedSiblingsCalculator(private val session: FirSession) : FirSessionC
      * ```
      */
     private val relevantSealedUniverseCache: FirCache<FirRegularClassSymbol, CachedSealedUniverse, Nothing?> =
-        session.firCachesFactory.createCacheWithSuggestedLimits { symbol, _ ->
+        session.firCachesFactory.createCacheWithSuggestedLimits(expirationAfterAccess = 30.seconds) { symbol, _ ->
             var result: CachedSealedUniverse = emptyCachedSealedUniverse
 
             fun addIfNonSuper(other: FirClassSymbol<*>) = when {
