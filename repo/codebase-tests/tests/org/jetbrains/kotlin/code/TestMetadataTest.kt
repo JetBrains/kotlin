@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.code
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.testFederation.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.junit.jupiter.api.fail
@@ -45,7 +52,7 @@ class TestMetadataTest {
      */
     @Test
     fun `test-federation dependencies`() {
-        val violations = mutableListOf<String>()
+        val violations = Channel<String>(Channel.UNLIMITED)
         val checkedAnnotations = AtomicInt(0)
         val checkedClasses = AtomicInt(0)
 
@@ -55,63 +62,69 @@ class TestMetadataTest {
             println("Checked: $checkedAnnotations '@TestMetadata' annotations on $checkedClasses classes")
         }
 
-        forEachCompiledClass { file, classNode ->
-            checkedClasses.incrementAndFetch()
-            classNode.visibleAnnotations?.forEach { annotation ->
-                if (annotation.desc == testMetadataAnnotationDesc) {
-                    checkedAnnotations.incrementAndFetch()
-                    val now = Clock.System.now()
-                    if ((now - lastProgressPrinted).inWholeSeconds >= 5) {
-                        lastProgressPrinted = now
-                        printProgress()
-                    }
-                    val metadataPath = annotation.values.zipWithNext().toMap().getValue("value").toString()
-                    val metadataDomains = DomainInfo.resolveDomainInfosOf(RepositoryPath(absoluteRoot, Path(metadataPath)))
-                    val testDomains = DomainInfo.resolveDomainInfosOf(RepositoryPath(absoluteRoot, file))
-
-                    /* Check if the metadata is living in the same domains as the test */
-                    if (metadataDomains.intersect(testDomains.toSet()).isNotEmpty()) return@forEach
-
-                    /* Check if the metadata is living in any of the 'fullyAffectedBy' dependencies of the test */
-                    if (metadataDomains.intersect(testDomains.flatMap { it.fullyAffectedBy }.toSet()).isNotEmpty()) return@forEach
-
-                    /* Check if the test is marked as SmokeTest and therefore always runs */
-                    if (classNode.visibleAnnotations.any { it.desc == smokeTestAnnotationDesc }) return@forEach
-
-                    /* Check if the test is marked as '@AffectedBy' any of metadata domains*/
-                    if (classNode.visibleAnnotations.any { annotation ->
-                            metadataDomains.any { metadataDomain ->
-                                annotation.desc == affectedByAnnotationDesc[metadataDomain.domain]
-                            }
-                        }) return@forEach
-
-                    violations.add(buildString {
-                        appendLine("${classNode.name}: ${testDomains.joinToString(", ") { it.domain.name }}")
-                        appendLine("@TestMetadata(\"$metadataPath\"): ${metadataDomains.joinToString(", ") { it.domain.name }}")
-                        appendLine("""   The test class uses metadata from a different domain, without declaring a dependency on it.""")
-                        appendLine("""   Solutions:""")
-                        metadataDomains.forEach { metadataDomain ->
-                            appendLine("""       - Add @${affectedByAnnotationOf(metadataDomain.domain).simpleName} (recommended)""")
-                            appendLine("""       - Declare fullyAffectedBy: ${metadataDomain.domain.name} (if absolutely necessary)""")
+        runBlocking(Dispatchers.IO) {
+            forEachCompiledClass { file, classNode ->
+                checkedClasses.incrementAndFetch()
+                classNode.visibleAnnotations?.forEach { annotation ->
+                    if (annotation.desc == testMetadataAnnotationDesc) {
+                        checkedAnnotations.incrementAndFetch()
+                        val now = Clock.System.now()
+                        if ((now - lastProgressPrinted).inWholeSeconds >= 5) {
+                            lastProgressPrinted = now
+                            printProgress()
                         }
-                        appendLine("""       - Add @${SmokeTest::class.simpleName} (mark this test as SmokeTest)""")
-                    })
+                        val metadataPath = annotation.values.zipWithNext().toMap().getValue("value").toString()
+                        val metadataDomains = DomainInfo.resolveDomainInfosOf(RepositoryPath(absoluteRoot, Path(metadataPath)))
+                        val testDomains = DomainInfo.resolveDomainInfosOf(RepositoryPath(absoluteRoot, file))
+
+                        /* Check if the metadata is living in the same domains as the test */
+                        if (metadataDomains.intersect(testDomains.toSet()).isNotEmpty()) return@forEach
+
+                        /* Check if the metadata is living in any of the 'fullyAffectedBy' dependencies of the test */
+                        if (metadataDomains.intersect(testDomains.flatMap { it.fullyAffectedBy }.toSet()).isNotEmpty())
+                            return@forEach
+
+                        /* Check if the test is marked as SmokeTest and therefore always runs */
+                        if (classNode.visibleAnnotations.any { it.desc == smokeTestAnnotationDesc }) return@forEach
+
+                        /* Check if the test is marked as '@AffectedBy' any of metadata domains*/
+                        if (classNode.visibleAnnotations.any { annotation ->
+                                metadataDomains.any { metadataDomain ->
+                                    annotation.desc == affectedByAnnotationDesc[metadataDomain.domain]
+                                }
+                            }) return@forEach
+
+                        violations.send(buildString {
+                            appendLine("${classNode.name}: ${testDomains.joinToString(", ") { it.domain.name }}")
+                            appendLine("@TestMetadata(\"$metadataPath\"): ${metadataDomains.joinToString(", ") { it.domain.name }}")
+                            appendLine("""   The test class uses metadata from a different domain, without declaring a dependency on it.""")
+                            appendLine("""   Solutions:""")
+                            metadataDomains.forEach { metadataDomain ->
+                                appendLine("""       - Add @${affectedByAnnotationOf(metadataDomain.domain).simpleName} (recommended)""")
+                                appendLine("""       - Declare fullyAffectedBy: ${metadataDomain.domain.name} (if absolutely necessary)""")
+                            }
+                            appendLine("""       - Add @${SmokeTest::class.simpleName} (mark this test as SmokeTest)""")
+                        })
+                    }
                 }
+
             }
-        }
 
-        printProgress()
+            violations.close()
+            printProgress()
 
-        if (checkedAnnotations.load() == 0 || checkedClasses.load() == 0) {
-            error("No @TestMetadata annotations or classes processed")
-        }
+            if (checkedAnnotations.load() == 0 || checkedClasses.load() == 0) {
+                error("No @TestMetadata annotations or classes processed")
+            }
 
-        if (violations.isNotEmpty()) {
-            fail {
-                buildString {
-                    appendLine("${violations.size} @TestMetadata dependency violations found:")
-                    appendLine("")
-                    append(violations.joinToString("\n\n"))
+            val violations = violations.consumeAsFlow().toList().sorted()
+            if (violations.isNotEmpty()) {
+                fail {
+                    buildString {
+                        appendLine("${violations.size} @TestMetadata dependency violations found:")
+                        appendLine("")
+                        append(violations.joinToString("\n\n"))
+                    }
                 }
             }
         }

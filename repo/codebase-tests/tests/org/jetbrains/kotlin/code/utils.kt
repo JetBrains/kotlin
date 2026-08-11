@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.code
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.junit.jupiter.api.parallel.ResourceLock
@@ -22,19 +26,28 @@ private val root = Path("")
 
 private val rootAbsolute = root.absolute()
 
-internal fun forEachCompiledClass(
-    action: (file: Path, ClassNode) -> Unit,
+/**
+ * Performs the provided [action] on each class compiled by the kotlin project (found in build/classes).
+ * Actions will be launched in parallel
+ */
+internal suspend fun forEachCompiledClass(
+    action: suspend (file: Path, ClassNode) -> Unit,
 ) {
-    root.toFile().absoluteFile.walkTopDown()
-        .onEnter { it.name != ".git" }
-        .map { it.toPath().relativeTo(rootAbsolute) }
-        .filter { it.extension == "class" }
-        .filter { it.pathString.contains("build/classes") }
-        .filterNot { it.pathString.contains("/fakes/") }
-        .filterNot { it.pathString.contains("/.") }
-        .forEach { file ->
-            val classNode = ClassNode()
-            ClassReader(file.readBytes()).accept(classNode, ClassReader.SKIP_CODE and ClassReader.SKIP_DEBUG)
-            action(file, classNode)
-        }
+    coroutineScope {
+        root.toFile().absoluteFile.walkTopDown()
+            .onEnter { it.name != ".git" }
+            .map { it.toPath().relativeTo(rootAbsolute) }
+            .filter { it.extension == "class" }
+            .filter { it.pathString.contains("build/classes") }
+            .filterNot { it.pathString.contains("/fakes/") }
+            .filterNot { it.pathString.contains("/.") }
+            .forEach { file ->
+                launch {
+                    val classBytes = withContext(Dispatchers.IO) { file.readBytes() }
+                    val classNode = ClassNode()
+                    ClassReader(classBytes).accept(classNode, ClassReader.SKIP_CODE and ClassReader.SKIP_DEBUG)
+                    action(file, classNode)
+                }
+            }
+    }
 }
