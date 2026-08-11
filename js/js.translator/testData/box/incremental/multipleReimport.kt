@@ -8,8 +8,8 @@ fun bar() = "K"
 
 // MODULE: lib2(lib1)
 // FILE: lib2a.kt
-// PROPERTY_WRITE_COUNT: name=lib1 count=1
-// PROPERTY_WRITE_COUNT: name=$$importsForInline$$ count=1
+// PROPERTY_WRITE_COUNT: lib1 count=1
+// PROPERTY_WRITE_COUNT: $$importsForInline$$ count=1
 
 inline fun o() = foo()
 
