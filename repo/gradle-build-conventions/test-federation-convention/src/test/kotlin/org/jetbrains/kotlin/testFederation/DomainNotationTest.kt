@@ -32,4 +32,28 @@ class DomainNotationTest {
         assertEquals("Compiler;Gradle", setOf(Domain.Compiler, Domain.Gradle).toArgumentString())
         assertEquals(setOf(Domain.Compiler, Domain.Gradle), Domain.fromArgumentString("Compiler;Gradle"))
     }
+
+    @Test
+    fun `contract declarations are generated`() {
+        assertEquals(listOf(Domain.Compiler, Domain.CoreLibs), WasmDomainInfo.contract.map { it.domain })
+        assertEquals(listOf(Domain.Compiler), UnknownDomainInfo.contract.map { it.domain })
+    }
+
+    @Test
+    fun `contracts add declaring domains without transitive expansion`() {
+        assertEquals(
+            setOf(
+                Domain.Compiler,
+                Domain.Wasm,
+                Domain.Js,
+                Domain.Native,
+                Domain.AnalysisApi,
+                Domain.BuildToolsApi,
+                Domain.CompilerPlugins,
+                Domain.IntelliJ,
+                Domain.Unknown,
+            ),
+            setOf(Domain.Compiler).withContractedDomains(),
+        )
+    }
 }

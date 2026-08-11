@@ -23,8 +23,7 @@ class SmokeTestExecutionCondition : ExecutionCondition {
         if (isSmokeTest(context)) return enabled("@${SmokeTest::class.java.simpleName}")
 
         /* Check contract */
-        val affectedDirectly = testFederationAffectedDomainsDirectly
-            ?: return disabled("Missing '${TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_KEY}'")
+        val affectedDirectly = testFederationAffectedDomains ?: return disabled("Missing '${TEST_FEDERATION_AFFECTED_DOMAINS_KEY}'")
         val contracts = affectedDirectly.filter { domain -> isContract(domain, context) }
         if (contracts.isNotEmpty()) return enabled("Contracts: ${contracts.joinToString(", ")}")
         return disabled("Not a smoke test / Not a contract test")

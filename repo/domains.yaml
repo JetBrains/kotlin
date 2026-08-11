@@ -22,7 +22,7 @@ Compiler:
     - "compiler/ir/backend.native"
     - "compiler/ir/ir.objcinterop"
     - "compiler/ir/serialization.native"
-  fullyAffectedBy:
+  contract:
     - CoreLibs
 
 Wasm:
@@ -36,7 +36,7 @@ Wasm:
     - "libraries/tools/dukat"
     - "js/js.tests/testFixtures/org/jetbrains/kotlin"
     - "js/js.config/src/org/jetbrains/kotlin/js/config"
-  fullyAffectedBy:
+  contract:
     - Compiler
     - CoreLibs
 Js:
@@ -46,7 +46,7 @@ Js:
     - "compiler/ir/serialization.js"
     - "libraries/tools/analysis-api-based-klib-reader"
     - "libraries/tools/dukat"
-  fullyAffectedBy:
+  contract:
     - Compiler
     - CoreLibs
 
@@ -59,7 +59,7 @@ Native:
     - "kotlin-native"
   exclude:
     - "native/swift"
-  fullyAffectedBy:
+  contract:
     - Compiler
     - CoreLibs
 
@@ -85,7 +85,7 @@ AnalysisApi:
     - "plugins/scripting"
   exclude:
     - "compiler/psi/parser"
-  fullyAffectedBy:
+  contract:
     - Compiler
     - CoreLibs
 
@@ -97,14 +97,14 @@ BuildToolsApi:
     - "compiler/daemon"
     - "compiler/compiler-runner"
     - "compiler/compiler-runner-unshaded"
-  fullyAffectedBy:
+  contract:
     - Compiler
 
 SwiftExport:
   include:
     - "native/swift"
     - "libraries/tools/analysis-api-based-klib-reader"
-  fullyAffectedBy:
+  contract:
     - AnalysisApi # todo: Replace this dependency with a reviewed set of @AffectedByAnalysisApi tests
 
 CompilerPlugins:
@@ -114,7 +114,7 @@ CompilerPlugins:
     - "libraries/tools/kotlin-main-kts"
     - "libraries/tools/kotlin-main-kts-test"
     - "libraries/scripting"
-  fullyAffectedBy:
+  contract:
     - Compiler
 
 Gradle:
@@ -132,7 +132,7 @@ Maven:
 IntelliJ:
   include:
     - "prepare/ide-plugin-dependencies"
-  fullyAffectedBy:
+  contract:
     - Compiler
     - AnalysisApi
     - CoreLibs
@@ -153,5 +153,5 @@ BuildInfrastructure:
 Unknown:
   # Files not matching other domains will be sorted into 'Unknown' by default.
   include: [ ]
-  fullyAffectedBy:
+  contract:
     - Compiler

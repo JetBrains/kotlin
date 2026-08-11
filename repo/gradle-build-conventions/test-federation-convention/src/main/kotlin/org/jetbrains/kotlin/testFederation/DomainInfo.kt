@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.tooling.core.withLinearClosure
 import java.nio.file.FileSystem
 import java.nio.file.Path
-import kotlin.io.path.isDirectory
 
 sealed interface DomainInfo {
 
@@ -29,9 +28,9 @@ sealed interface DomainInfo {
     val exclude: List<String>
 
     /**
-     * @see DeclaredDomain.fullyAffectedBy
+     * @see DeclaredDomain.contract
      */
-    val fullyAffectedBy: List<DomainInfo>
+    val contract: List<DomainInfo>
 
     companion object
 }

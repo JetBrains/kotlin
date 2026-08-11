@@ -20,8 +20,7 @@ import kotlin.io.path.writeText
  * This task infers the currently affected [Domain]s by using the [featureBranchDiffService] and [affectedDomainsService]
  * The diff and 'affected' subystems are written into files in the project directory.
  *
- * This task will also communicate with TeamCity by setting the [TEST_FEDERATION_AFFECTED_DOMAINS_KEY] and
- * [TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_KEY] parameters.
+ * This task will also communicate with TeamCity by setting the [TEST_FEDERATION_AFFECTED_DOMAINS_KEY] parameter.
  * Once this task was executed, all builds on TeamCity in the same chain will be able to use the inferred subsystems.
  */
 @Suppress("unused") // declared as task in build.gradle.kts
@@ -34,7 +33,7 @@ open class TestFederationInferAffectedDomainsTask : DefaultTask() {
     internal val affectedDomains = project.testFederationAffectedDomains
 
     @get:Input
-    internal val affectedDomainsDirectly = project.testFederationAffectedDomainsDirectly
+    internal val testedDomains = affectedDomains.map { it.withContractedDomains() }
 
     init {
         usesService(diffService)
@@ -60,28 +59,23 @@ open class TestFederationInferAffectedDomainsTask : DefaultTask() {
         diffFile.parent.createDirectories()
         diffFile.writeText(diffService.get().diff.joinToString(System.lineSeparator()))
 
-        val affectedDomainsFile = this@TestFederationInferAffectedDomainsTask.affectedDomainsFile.get().asFile.toPath()
-        val affectedDomains = if (!defaultBranch.get()) this@TestFederationInferAffectedDomainsTask.affectedDomains.get() else {
+        val affectedDomainsFile = affectedDomainsFile.get().asFile.toPath()
+        val affectedDomains = if (!defaultBranch.get()) affectedDomains.get() else {
             logger.quiet("Default branch; All domains are marked as affected")
             Domain.entries.toSet()
         }
 
-        val affectedDomainsDirectly = if (!defaultBranch.get())
-            this@TestFederationInferAffectedDomainsTask.affectedDomainsDirectly.get()
-        else {
-            logger.quiet("Default branch; All domains are marked as affected")
-            Domain.entries.toSet()
-        }
+        val testedDomains = if (!defaultBranch.get()) this@TestFederationInferAffectedDomainsTask.testedDomains.get() else Domain.entries.toSet()
 
         affectedDomainsFile.writeText(buildString {
             appendLine("#### Directly Affected Domains #### ")
-            affectedDomainsDirectly.forEach { domain ->
+            affectedDomains.forEach { domain ->
                 appendLine("  - $domain")
             }
 
             appendLine()
-            appendLine("### Affected Domains (dependencies) #### ")
-            (affectedDomains.minus(affectedDomainsDirectly)).forEach { domain ->
+            appendLine("### Additional Contract Domains #### ")
+            (testedDomains.minus(affectedDomains)).forEach { domain ->
                 appendLine("  - $domain")
             }
         })
@@ -92,7 +86,6 @@ open class TestFederationInferAffectedDomainsTask : DefaultTask() {
         - Add a build tag for each affected domain
          */
         println("##teamcity[setParameter name='$TEST_FEDERATION_AFFECTED_DOMAINS_KEY' value='${affectedDomains.toArgumentString()}']")
-        println("##teamcity[setParameter name='$TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_KEY' value='${affectedDomainsDirectly.toArgumentString()}']")
         affectedDomains.forEach { domain ->
             println("##teamcity[addBuildTag 'Affected: $domain']")
         }

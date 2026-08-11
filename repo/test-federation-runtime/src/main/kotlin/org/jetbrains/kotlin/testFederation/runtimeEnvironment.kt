@@ -11,8 +11,6 @@ internal const val TEST_FEDERATION_MODE_KEY = "test.federation.mode"
 internal const val TEST_FEDERATION_MODE_ENV_KEY = "TEST_FEDERATION_MODE"
 internal const val TEST_FEDERATION_AFFECTED_DOMAINS_KEY = "test.federation.affected.domains"
 internal const val TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY = "TEST_FEDERATION_AFFECTED_DOMAINS"
-internal const val TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_KEY = "test.federation.affected.domains.directly"
-internal const val TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_ENV_KEY = "TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY"
 internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_KEY = "test.federation.auto.smoke.test.percentage"
 internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_ENV_KEY = "TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE"
 const val TEST_FEDERATION_NIGHTLY_KEY = "test.federation.nightly"
@@ -22,39 +20,38 @@ const val TEST_FEDERATION_NIGHTLY_ENV_KEY = "TEST_FEDERATION_NIGHTLY"
  * @return true: If the test federation is enabled (typically only on CI environments)
  * false: Locally: All tests will be executed.
  */
-val testFederationEnabled: Boolean
-    get() = resolve(TEST_FEDERATION_ENABLED_KEY, TEST_FEDERATION_ENABLED_ENV_KEY)?.toBoolean() ?: false
+val testFederationEnabled: Boolean =
+    resolve(TEST_FEDERATION_ENABLED_KEY, TEST_FEDERATION_ENABLED_ENV_KEY)?.toBoolean() ?: false
 
 /**
  * @return the current [TestFederationMode]. Only relevant if the [testFederationEnabled] returns true
  */
-val testFederationMode: TestFederationMode?
-    get() {
-        val raw = resolve(TEST_FEDERATION_MODE_KEY, TEST_FEDERATION_MODE_ENV_KEY) ?: return null
-        return TestFederationMode.valueOf(raw)
-    }
+val testFederationMode: TestFederationMode? = run {
+    val raw = resolve(TEST_FEDERATION_MODE_KEY, TEST_FEDERATION_MODE_ENV_KEY) ?: return@run null
+    TestFederationMode.valueOf(raw)
+}
 
 /**
  * @return All affected [Domain]s. Only relevant if the [testFederationEnabled] returns true
  */
-val testFederationAffectedDomains: Set<Domain>?
-    get() {
-        val raw = resolve(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY) ?: return null
-        if (raw.isBlank()) return null
-        return domainsFromString(raw)
-    }
+val testFederationAffectedDomains: Set<Domain>? = run {
+    val raw = resolve(TEST_FEDERATION_AFFECTED_DOMAINS_KEY, TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY) ?: return@run null
+    if (raw.isBlank()) return@run null
+    domainsFromString(raw)
+}
 
 /**
- * @return only domains that are directly affected by the current set of changes.
- * Only relevant if the [testFederationEnabled] returns true
+ * @return Affected domains and domains whose full-domain contracts they trigger.
  */
-val testFederationAffectedDomainsDirectly: Set<Domain>?
-    get() {
-        val raw = resolve(TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_KEY, TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_ENV_KEY) ?: return null
-        if (raw.isBlank()) return null
-        return domainsFromString(raw)
-    }
-
+val testFederationTestedDomains: Set<Domain>? = run {
+    val affected = testFederationAffectedDomains ?: return@run null
+    buildList {
+        affected.forEach { domain ->
+            add(domain)
+            addAll(contractedDomainsByTrigger.getValue(domain))
+        }
+    }.toSortedSet()
+}
 
 /**
  * Tests marked with `@NightlyTest` are considered 'nightly tests'. Those tests shall not be executed
@@ -62,7 +59,7 @@ val testFederationAffectedDomainsDirectly: Set<Domain>?
  * development flows.
  * @return 'true' if nightly tests are enabled, 'false' if nightly tests shall be skipped.
  */
-val testFederationNightly: Boolean by lazy {
+val testFederationNightly: Boolean = run {
     resolve(TEST_FEDERATION_NIGHTLY_KEY, TEST_FEDERATION_NIGHTLY_ENV_KEY)?.toBoolean() ?: false
 }
 

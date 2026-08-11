@@ -70,11 +70,47 @@ abstract class GenerateTestFederationRuntimeCodeTask : DefaultTask() {
                 this += "|"
                 this += "|}"
                 this += "|"
+
+                this += "|"
+                this += "|internal val contractsByDomain = buildMap<Domain, Set<Domain>> {"
+
+                for (info in allDomainInfos) {
+                    val name = info.domain.name
+                    if (info.contract.isEmpty()) continue
+                    this += "|    put(Domain.$name, buildSet {"
+                    info.contract.forEach { other ->
+                        this += "|        add(Domain.${other.domain.name})"
+                    }
+                    this += "|    })"
+                    this += "|"
+                }
+
+                this += "|}"
+
+
+                this += "|"
+                this += "|internal val contractedDomainsByTrigger = buildMap<Domain, Set<Domain>> {"
+
+                contractedDomainsByTrigger.forEach { (domain, domains) ->
+                    if (domains.isEmpty()) {
+                        this += "|    put(Domain.${domain.name}, emptySet())"
+                        this += "|"
+                        return@forEach
+                    }
+
+                    this += "|    put(Domain.${domain.name}, buildSet {"
+                    domains.forEach { other ->
+                        this += "|        add(Domain.${other.name})"
+                    }
+                    this += "|    })"
+                    this += "|"
+                }
+
+                this += "|}"
             }.trimMargin()
         )
     }
 }
-
 
 private operator fun StringBuilder.plusAssign(s: String) {
     this.appendLine(s)

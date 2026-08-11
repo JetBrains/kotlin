@@ -31,7 +31,7 @@ class PseudoTest {
     @Test
     fun `js contract test`() {
         if (testFederationMode == TestFederationMode.Full) return
-        val affected = testFederationAffectedDomains ?: error("Missing 'testFederationAffectedDomains'")
+        val affected = testFederationTestedDomains ?: error("Missing 'testFederationTestedDomains'")
         if (Domain.Js !in affected && autoSmokeTestPercentage == 0) error("Expected 'Js' in affected domains, but was: $affected")
     }
 
@@ -39,7 +39,7 @@ class PseudoTest {
     @Test
     fun `wasm contract test`() {
         if (testFederationMode == TestFederationMode.Full) return
-        val affected = testFederationAffectedDomains ?: error("Missing 'testFederationAffectedDomains'")
+        val affected = testFederationTestedDomains ?: error("Missing 'testFederationTestedDomains'")
         if (Domain.Wasm !in affected && autoSmokeTestPercentage == 0) error("Expected 'Wasm' in affected domains, but was: $affected")
     }
 
@@ -47,7 +47,7 @@ class PseudoTest {
     @Test
     fun `gradle contract test`() {
         if (testFederationMode == TestFederationMode.Full) return
-        val affected = testFederationAffectedDomains ?: error("Missing 'testFederationAffectedDomains'")
+        val affected = testFederationTestedDomains ?: error("Missing 'testFederationTestedDomains'")
         if (Domain.Gradle !in affected && autoSmokeTestPercentage == 0) error("Expected 'Gradle' in affected domains, but was: $affected")
     }
 

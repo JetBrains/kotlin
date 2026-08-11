@@ -80,23 +80,6 @@ class TestFederationFunctionalTest {
     }
 
     @Test
-    fun `test - smoke - executes contracts of directly affected domains only`() {
-        val result = runTestBuild(
-            TestFederationMode.Smoke,
-            directlyAffected = arrayOf(Domain.Js, Domain.Gradle),
-            allAffected = listOf(Domain.Js, Domain.Gradle, Domain.Wasm)
-        )
-        assertEquals(
-            setOf(
-                TestResult("PseudoTest", "smoke test"),
-                TestResult("PseudoTest", "js contract test"),
-                TestResult("PseudoTest", "gradle contract test"),
-            ),
-            result.executedTests
-        )
-    }
-
-    @Test
     fun `test - mode full`() {
         val result = runTestBuild(TestFederationMode.Full)
         assertEquals(allTests, result.executedTests)
@@ -152,7 +135,7 @@ class TestFederationFunctionalTest {
     fun `test - Test testFederationDomains`() {
         /* Js affected, test task belongs to no domain -> only contract is executed */
         run {
-            val result = runTestBuild(directlyAffected = arrayOf(Domain.Js), testTaskDomainsOverride = listOf())
+            val result = runTestBuild(affected = arrayOf(Domain.Js), testTaskDomainsOverride = listOf())
             assertEquals(
                 setOf(
                     TestResult("PseudoTest", "smoke test"),
@@ -164,7 +147,7 @@ class TestFederationFunctionalTest {
 
         /* Js affected, test task is configured to belong to Js and Wasm -> all tests are executed */
         run {
-            val result = runTestBuild(directlyAffected = arrayOf(Domain.Js), testTaskDomainsOverride = listOf(Domain.Js, Domain.Wasm))
+            val result = runTestBuild(affected = arrayOf(Domain.Js), testTaskDomainsOverride = listOf(Domain.Js, Domain.Wasm))
             assertEquals(allTests, result.executedTests)
         }
     }
@@ -205,7 +188,7 @@ class TestFederationFunctionalTest {
         cleanTest()
         runTestBuild(
             mode = TestFederationMode.Full,
-            directlyAffected = Domain.entries.toTypedArray(),
+            affected = Domain.entries.toTypedArray(),
             additionalCliArgs = buildCacheArgs,
             rerun = false
         ).apply {
@@ -218,7 +201,7 @@ class TestFederationFunctionalTest {
         cleanTest()
         runTestBuild(
             mode = TestFederationMode.Full,
-            directlyAffected = Domain.entries.toTypedArray(),
+            affected = Domain.entries.toTypedArray(),
             additionalCliArgs = buildCacheArgs,
             rerun = false,
             testFederationEnabled = false
@@ -238,7 +221,7 @@ class TestFederationFunctionalTest {
         cleanTest()
         runTestBuild(
             mode = TestFederationMode.Full,
-            directlyAffected = Domain.entries.toTypedArray(),
+            affected = Domain.entries.toTypedArray(),
             additionalCliArgs = buildCacheArgs,
             rerun = false,
             testFederationEnabled = false
@@ -252,7 +235,7 @@ class TestFederationFunctionalTest {
         cleanTest()
         runTestBuild(
             mode = TestFederationMode.Full,
-            directlyAffected = Domain.entries.toTypedArray(),
+            affected = Domain.entries.toTypedArray(),
             additionalCliArgs = buildCacheArgs,
             rerun = false,
             testFederationEnabled = true
@@ -271,7 +254,7 @@ class TestFederationFunctionalTest {
         runTestBuild(
             mode = TestFederationMode.Full,
             smokeTestConfig = "RunAllTests",
-            directlyAffected = Domain.entries.toTypedArray(),
+            affected = Domain.entries.toTypedArray(),
             additionalCliArgs = buildCacheArgs,
             rerun = false,
             testFederationEnabled = false
@@ -286,7 +269,7 @@ class TestFederationFunctionalTest {
         runTestBuild(
             mode = TestFederationMode.Smoke,
             smokeTestConfig = "RunAllTests",
-            directlyAffected = Domain.entries.toTypedArray(),
+            affected = Domain.entries.toTypedArray(),
             additionalCliArgs = buildCacheArgs,
             rerun = false,
             testFederationEnabled = true
@@ -302,7 +285,7 @@ class TestFederationFunctionalTest {
         cleanTest()
         runTestBuild(
             mode = TestFederationMode.Full,
-            directlyAffected = Domain.entries.toTypedArray(),
+            affected = Domain.entries.toTypedArray(),
             additionalCliArgs = buildCacheArgs,
             rerun = false,
             testFederationEnabled = false
@@ -331,7 +314,7 @@ class TestFederationFunctionalTest {
         cleanTest()
         runTestBuild(
             mode = TestFederationMode.Smoke,
-            directlyAffected = arrayOf(Domain.Js),
+            affected = arrayOf(Domain.Js),
             additionalCliArgs = buildCacheArgs,
             rerun = false,
         ).apply {
@@ -342,7 +325,7 @@ class TestFederationFunctionalTest {
         cleanTest()
         runTestBuild(
             mode = TestFederationMode.Smoke,
-            directlyAffected = arrayOf(Domain.Js),
+            affected = arrayOf(Domain.Js),
             additionalCliArgs = buildCacheArgs,
             rerun = false,
         ).apply {
@@ -352,7 +335,7 @@ class TestFederationFunctionalTest {
         cleanTest()
         runTestBuild(
             mode = TestFederationMode.Smoke,
-            directlyAffected = arrayOf(Domain.Wasm),
+            affected = arrayOf(Domain.Wasm),
             additionalCliArgs = buildCacheArgs,
             rerun = false,
         ).apply {
@@ -367,18 +350,12 @@ class TestFederationFunctionalTest {
             "inferAffectedDomains",
             "-P$TEST_FEDERATION_ENABLED_KEY=true",
             "-P$TEST_FEDERATION_AFFECTED_DOMAINS_KEY=Js;Wasm",
-            "-P$TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_KEY=Js",
             "-Porg.gradle.daemon.idletimeout=${10.seconds.inWholeMilliseconds}",
         ).build()
 
         assertContains(
             result.output,
             "##teamcity[setParameter name='$TEST_FEDERATION_AFFECTED_DOMAINS_KEY' value='Wasm;Js']"
-        )
-
-        assertContains(
-            result.output,
-            "##teamcity[setParameter name='$TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_KEY' value='Js']"
         )
     }
 }
@@ -404,13 +381,12 @@ private data class TestBuildResult(
 }
 
 /**
- * Executes all tests in ':repo:test-federation-runtime:test' with the given [mode] and [directlyAffected] domains.
+ * Executes all tests in ':repo:test-federation-runtime:test' with the given [mode] and [affected] domains.
  * All executed tests are parsed and returned in [TestBuildResult.executedTests].
  */
 private fun runTestBuild(
     mode: TestFederationMode? = null,
-    vararg directlyAffected: Domain,
-    allAffected: List<Domain> = directlyAffected.toList(),
+    vararg affected: Domain,
     smokeTestConfig: String? = null,
     testTaskDomainsOverride: List<Domain>? = null,
     testFederationEnabled: Boolean = true,
@@ -422,7 +398,6 @@ private fun runTestBuild(
         remove(TEST_FEDERATION_ENABLED_ENV_KEY)
         remove(TEST_FEDERATION_MODE_ENV_KEY)
         remove(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)
-        remove(TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_ENV_KEY)
 
         if (mode != null) {
             this[TEST_FEDERATION_MODE_ENV_KEY] = mode.name
@@ -436,14 +411,8 @@ private fun runTestBuild(
             this["_DOMAINS_OVERRIDE_"] = testTaskDomainsOverride.toArgumentString()
         }
 
-        this[TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_ENV_KEY] = if (directlyAffected.isNotEmpty()) {
-            directlyAffected.joinToString(";") { it.name }
-        } else {
-            "<none>"
-        }
-
-        this[TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY] = if (allAffected.isNotEmpty()) {
-            allAffected.joinToString(";") { it.name }
+        this[TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY] = if (affected.isNotEmpty()) {
+            affected.joinToString(";") { it.name }
         } else {
             "<none>"
         }
@@ -517,7 +486,6 @@ private fun defaultEnv(): Map<String, String> {
         remove(TEST_FEDERATION_ENABLED_ENV_KEY)
         remove(TEST_FEDERATION_MODE_ENV_KEY)
         remove(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)
-        remove(TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_ENV_KEY)
     }
 }
 

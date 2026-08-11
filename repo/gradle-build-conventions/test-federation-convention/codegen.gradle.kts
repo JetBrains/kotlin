@@ -71,7 +71,7 @@ private object DomainSourcesGenerator {
                     this += "|    override val domain = Domain.${domain.name}"
                     this += "|    override val include: List<String> = listOf(${domain.includes.joinToString { "\"$it\"" }})"
                     this += "|    override val exclude: List<String> = listOf(${domain.excludes.joinToString { "\"$it\"" }})"
-                    this += "|    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(${domain.fullyAffectedBy.joinToString { "${it}DomainInfo" }}) }"
+                    this += "|    override val contract: List<DomainInfo> by lazy { listOf(${domain.contract.joinToString { "${it}DomainInfo" }}) }"
                     this += "|}"
                     this += "|"
                 }
@@ -93,7 +93,7 @@ private object DomainSourcesGenerator {
             name = key,
             includes = get("include")?.valueStream()?.toList().orEmpty().map { it.asText() },
             excludes = get("exclude")?.valueStream()?.toList().orEmpty().map { it.asText() },
-            fullyAffectedBy = get("fullyAffectedBy")?.valueStream()?.toList().orEmpty().map { it.asText() },
+            contract = get("contract")?.valueStream()?.toList().orEmpty().map { it.asText() },
         )
     }
 
@@ -101,7 +101,7 @@ private object DomainSourcesGenerator {
         val name: String,
         val includes: List<String>,
         val excludes: List<String>,
-        val fullyAffectedBy: List<String>,
+        val contract: List<String>,
     )
 
     private operator fun StringBuilder.plusAssign(s: String) {

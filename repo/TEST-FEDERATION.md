@@ -10,7 +10,7 @@ All tests, however, will be executed on master builds.
 - [What is a Domain? (Quick intuition)](#what-is-a-domain-quick-intuition)
 - [Defining Domains](#defining-domains)
 - [`^affects` commit command](#affects-commit-command)
-  - [Domains fully affecting other Domains](#domains-fully-affecting-other-domains)
+  - [Full-domain contracts](#full-domain-contracts)
 - [Local testing](#local-testing)
   - [Verifying domains](#verifying-domains)
   - [Updating the dump](#updating-the-dump)
@@ -31,7 +31,7 @@ A Domain is a **CI ownership and impact unit**, not an architecture concept.
 Think of a Domain as a **change-radius boundary**:
 
 - Inside the boundary: changes make this Domain affected.
-- Outside the boundary: this Domain stays unaffected (unless connected via `fullyAffectedBy` or Contracts).
+- Outside the boundary: this Domain stays unaffected (unless connected by a contract).
 
 In other words, Domains model **test impact**, not **code structure purity**. A single subsystem can span multiple Domains,
 and one Domain can include files from multiple places if that gives better CI behavior.
@@ -46,7 +46,7 @@ Native:
   include:
     - "native"
     - "kotlin-native"
-  fullyAffectedBy:
+  contract:
     - Compiler
 ```
 
@@ -67,17 +67,16 @@ If a commit is known to affect another domain, the commit command `^affects:` ca
 ^affects: *
 ```
 
-### Domains fully affecting other Domains
+### Full-domain contracts
 
-Some domains might form a 'Domain/Subdomain' relationship, which can be expressed using 'fullyAffectedBy'.
-A domain 'fullyAffectedBy' another domain will be marked as 'affected' by a set of changes if any of it's direct dependencies are
-marked affected. In the example above:
+Some domains require their complete test suite to run when another domain changes. This relationship is declared as a
+full-domain `contract`. In the example above:
 
-A change which marks the 'larger Compiler domain' as affected will also mark the 'Native' domain as affected, while
-a change isolated within the 'Native' domain will not affect the 'Compiler' domain.
+A change that affects `Compiler` runs the `Native` domain in full mode, while a change isolated within `Native` does not
+affect `Compiler`. The authoritative affected-domain set itself is not expanded by contracts.
 
-Note: 'fullyAffectedBy' is **not** transitive. All dependencies have to be listed explicitly. 
-This allows for some modules acting as 'API' boundaries.
+Full-domain contracts are **not** transitive. All contracted domains have to be listed explicitly. This allows some
+modules to act as API boundaries.
 
 ### Local testing
 
@@ -118,10 +117,9 @@ To check how a specific task behaves for a given set of changed domains, set the
   -Ptest.federation.affected.domains="Js;Wasm"
 ```
 
-`test.federation.affected.domains` controls which domains run in full mode, while
-`test.federation.affected.domains.directly` controls which contracts run in smoke mode. The directly affected domains
-default to `test.federation.affected.domains`, so set the former explicitly only when the two sets need to differ. Both
-properties accept:
+`test.federation.affected.domains` controls which contracts run in smoke mode and which domains run in full mode. A
+full-domain contract can make additional domains run in full mode without adding them to the affected-domain set. The
+property accepts:
 
 - a single domain (for example, `CompilerPlugins`)
 - several domains separated by semicolons (for example, `Wasm;Js`)
@@ -224,9 +222,8 @@ Such requirements can be expressed as a 'Contract' between two Domains.
 Any test can be promoted to a 'Contract Test' using the relevant `@AffectedByXYZ` annotation.
 e.g., a test that defines a contract to the 'Js' compiler might be marked as `@AffectedByJs`.
 
-A set of well-maintained contracts is always preferable to marking a domain as 'fullyAffectedBy' another domain,
-as 'ContractTests' will enable actually building efficient pipelines for verifying commits, whereas 'fullyAffectedBy'
-will require a full build of the affected domains.
+A focused test contract is preferable to a full-domain contract because it enables efficient verification pipelines,
+whereas a full-domain contract requires a full build of the declaring domain.
 
 ```kotlin
 @AffectedByJs
@@ -235,9 +232,9 @@ class MyImportantJsTests {
 }
 ```
 
-Any commit that directly affects the `Js` domain will verify all contracts associated with `Js`. This includes domains
-listed explicitly using `^affects`. A domain affected only through `fullyAffectedBy` still runs its full test suites, but
-does not activate its contracts in smoke-mode test tasks.
+Any commit that affects the `Js` domain will verify all contracts associated with `Js`. This includes domains listed
+explicitly using `^affects`. A domain whose full-domain contract is triggered runs its full test suites, but is not added
+to the affected-domain set and therefore does not activate contracts associated with that domain in smoke-mode tasks.
 
 ##### Contracts require approval from the target team
 

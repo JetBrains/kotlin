@@ -83,7 +83,9 @@ val AbstractTestTask.testFederationMode: Provider<TestFederationMode> by extensi
             .orNull?.let { return@provider it }
 
         /* Actually check if the affected domains intersect with the domains this test task belongs to */
-        if (testFederationDomains.get().intersect(project.testFederationAffectedDomains.get()).isNotEmpty()) TestFederationMode.Full
+        val testDomains = testFederationDomains.get()
+        val testedDomains = project.testFederationAffectedDomains.get().withContractedDomains()
+        if (testDomains.intersect(testedDomains).isNotEmpty()) TestFederationMode.Full
         else TestFederationMode.Smoke
     }
 }
@@ -106,20 +108,6 @@ val Project.testFederationAffectedDomains: Provider<Set<Domain>> by extensionPro
         .orElse(providers.environmentVariable(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)))
         .map { argumentString -> Domain.fromArgumentStringOrThrow(argumentString) }
         .orElse(project.affectedDomainsService.map { it.affectedDomains })
-}
-
-@DelicateTestFederationApi
-val Project.testFederationAffectedDomainsDirectly: Provider<Set<Domain>> by extensionProperty property@{
-    if (!project.testFederationEnabled) {
-        return@property provider { Domain.entries.toSet() }
-    }
-
-    (providers.gradleProperty(TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_KEY)
-        .orElse(providers.environmentVariable(TEST_FEDERATION_AFFECTED_DOMAINS_DIRECTLY_ENV_KEY))
-        .orElse(providers.gradleProperty(TEST_FEDERATION_AFFECTED_DOMAINS_KEY))
-        .orElse(providers.environmentVariable(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)))
-        .map { argumentString -> Domain.fromArgumentStringOrThrow(argumentString) }
-        .orElse(project.affectedDomainsService.map { it.affectedDirectlyDomains })
 }
 
 /**

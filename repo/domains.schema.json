@@ -29,13 +29,7 @@
             "type": "string"
           }
         },
-        "depends": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "fullyAffectedBy": {
+        "contract": {
           "type": "array",
           "items": {
             "type": "string"

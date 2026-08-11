@@ -32,35 +32,23 @@ internal abstract class AffectedDomainsBuildService : BuildService<AffectedDomai
         val diffService: Property<FeatureBranchDiffBuildService>
     }
 
-    private var affectedDirectlyDomainsValue: Set<Domain>? = null
     private var affectedDomainsValue: Set<Domain>? = null
-
-    @get:Synchronized
-    val affectedDirectlyDomains: Set<Domain>
-        get() {
-            affectedDirectlyDomainsValue?.let { return it }
-            val root = parameters.repositoryRoot.get().toPath()
-            val changes = parameters.diffService.get().diff.map { rawPath -> RepositoryPath(root, Path(rawPath)) }
-            val commitMessages = parameters.diffService.get().messages
-            val directlyAffectedDomains = inferDirectlyAffectedDomains(changes, commitMessages)
-            affectedDirectlyDomainsValue = directlyAffectedDomains
-            return directlyAffectedDomains
-        }
-
 
     @get:Synchronized
     val affectedDomains: Set<Domain>
         get() {
             affectedDomainsValue?.let { return it }
-            val affected = affectedDirectlyDomains.withAffectedDependencies()
-            affectedDomainsValue = affected
-            return affected
+            val root = parameters.repositoryRoot.get().toPath()
+            val changes = parameters.diffService.get().diff.map { rawPath -> RepositoryPath(root, Path(rawPath)) }
+            val commitMessages = parameters.diffService.get().messages
+            val affectedDomains = inferDirectlyAffectedDomains(changes, commitMessages)
+            affectedDomainsValue = affectedDomains
+            return affectedDomains
         }
 
     @Synchronized
     override fun close() {
         affectedDomainsValue = null
-        affectedDirectlyDomainsValue = null
     }
 }
 
@@ -71,28 +59,26 @@ private fun inferDirectlyAffectedDomains(changes: List<RepositoryPath>, commitMe
 }
 
 /**
- * 'Inverse' dependencies of domains
- *
- * `key`: Domain
- * `value`: List of 'Domains' affected by the 'key' domain.
+ * `key`: A domain whose changes trigger contracts.
+ * `value`: Domains whose full-domain contracts are triggered by the key.
  */
-private val domainDependees: Map<Domain, List<Domain>> = buildMap<Domain, MutableList<Domain>> {
+internal val contractedDomainsByTrigger: Map<Domain, List<Domain>> = buildMap<Domain, MutableList<Domain>> {
     allDomainInfos.forEach { domainInfo ->
         put(domainInfo.domain, mutableListOf())
     }
 
     allDomainInfos.forEach { domainInfo ->
-        domainInfo.fullyAffectedBy.forEach { dependency ->
-            get(dependency.domain)?.add(domainInfo.domain)
+        domainInfo.contract.forEach { trigger ->
+            get(trigger.domain)?.add(domainInfo.domain)
         }
     }
 }
 
-internal fun Iterable<Domain>.withAffectedDependencies(): Set<Domain> {
+internal fun Iterable<Domain>.withContractedDomains(): Set<Domain> {
     return buildSet {
-        this@withAffectedDependencies.forEach { domain ->
+        this@withContractedDomains.forEach { domain ->
             add(domain)
-            addAll(domainDependees[domain].orEmpty())
+            addAll(contractedDomainsByTrigger[domain].orEmpty())
         }
     }.toSortedSet()
 }
