@@ -584,7 +584,7 @@ private fun simpleMultiplyHighPrecision64(arg1: ULongArray, length: Int, arg2: U
                 lowU32FromVar(arg2).toULong() * highU32FromPtr(arg1, pArg1).toULong()
             prod2 =
                 highU32FromVar(arg2).toULong() * lowU32FromPtr(arg1, pArg1).toULong()
-            intermediate = carry2 + (sum shr 32) + prod1 + prod2
+            intermediate = carry2 + highInU64(sum) + prod1 + prod2
             if ((intermediate < prod1) || (intermediate < prod2)) {
                 carry2 = 1UL
             } else {
@@ -594,7 +594,7 @@ private fun simpleMultiplyHighPrecision64(arg1: ULongArray, length: Int, arg2: U
             setLowU32Ptr(arg1, pArg1, lowU32FromVar(sum))
             buf32 = highU32FromPtr(arg1, pArg1)
             setHighU32Ptr(arg1, pArg1, lowU32FromVar(intermediate))
-            intermediate = carry1 + (intermediate shr 32) + highU32FromVar(arg2).toULong() * buf32.toULong()
+            intermediate = carry1 + highInU64(intermediate) + highU32FromVar(arg2).toULong() * buf32.toULong()
         }
         pArg1++
     } while (++index < length)
