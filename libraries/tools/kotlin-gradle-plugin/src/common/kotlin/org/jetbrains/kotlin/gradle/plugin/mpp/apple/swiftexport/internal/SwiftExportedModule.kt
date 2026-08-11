@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
@@ -58,11 +59,13 @@ internal fun createTransitiveSwiftExportedModule(
 
 internal fun Project.collectModules(
     swiftExportConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts>,
+    apiConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts>,
     exportedModulesProvider: Provider<Set<SwiftExportedDependency>>,
     hiddenModulesProvider: Provider<Set<SwiftExportedDependency>>,
-): Provider<List<SwiftExportedModule>> = exportedModulesProvider.zip(hiddenModulesProvider, ::Pair)
-    .zip(swiftExportConfigurationProvider) { (exportedModules, hiddenModules), configuration ->
-        configuration.swiftExportedModules(exportedModules, hiddenModules)
+): Provider<List<SwiftExportedModule>> = swiftExportConfigurationProvider
+    .zip(apiConfigurationProvider, ::Pair)
+    .zip(exportedModulesProvider.zip(hiddenModulesProvider, ::Pair)) { (exportConfig, apiConfig), (exportedModules, hiddenModules) ->
+        swiftExportedModules(exportConfig, apiConfig, exportedModules, hiddenModules)
     }
 
 private class ResolvedArtifactWithVersionIdentifier(
@@ -84,14 +87,22 @@ private class ResolvedArtifactWithVersionIdentifier(
     }
 }
 
-context(project: Project)
-private fun LazyResolvedConfigurationWithArtifacts.swiftExportedModules(
+private fun Project.swiftExportedModules(
+    swiftExportConfiguration: LazyResolvedConfigurationWithArtifacts,
+    apiConfiguration: LazyResolvedConfigurationWithArtifacts,
     exportedModules: Set<SwiftExportedDependency>,
     hiddenModules: Set<SwiftExportedDependency>,
-) = project.findAndCreateSwiftExportedModules(exportedModules, hiddenModules, filteredArtifacts())
+) = findAndCreateSwiftExportedModules(
+    exportedModules = exportedModules,
+    hiddenModules = hiddenModules,
+    allResolvedArtifacts = swiftExportConfiguration.filteredArtifacts(LazyResolvedConfigurationWithArtifacts::allResolvedDependencies),
+    resolvedDirectApiArtifacts = apiConfiguration.filteredArtifacts { root.dependencies.filterIsInstance<ResolvedDependencyResult>() },
+)
 
-private fun LazyResolvedConfigurationWithArtifacts.filteredArtifacts(): Set<ResolvedArtifactWithVersionIdentifier> {
-    return allResolvedDependencies.mapNotNullTo(mutableSetOf()) { dependency ->
+private fun LazyResolvedConfigurationWithArtifacts.filteredArtifacts(
+    dependenciesSelector: LazyResolvedConfigurationWithArtifacts.() -> Iterable<ResolvedDependencyResult>
+): Set<ResolvedArtifactWithVersionIdentifier> {
+    return dependenciesSelector().mapNotNullTo(mutableSetOf()) { dependency ->
         val artifacts = getArtifacts(dependency.selected).filterNot {
             it.file.isCinteropKlib || it.file.isJavaJar
         }
@@ -112,7 +123,8 @@ private val File.isJavaJar get() = extension == "jar"
 private fun Project.findAndCreateSwiftExportedModules(
     exportedModules: Set<SwiftExportedDependency>,
     hiddenModules: Set<SwiftExportedDependency>,
-    resolvedArtifacts: Set<ResolvedArtifactWithVersionIdentifier>,
+    allResolvedArtifacts: Set<ResolvedArtifactWithVersionIdentifier>,
+    resolvedDirectApiArtifacts: Set<ResolvedArtifactWithVersionIdentifier>,
 ): List<SwiftExportedModule> {
     val result = mutableListOf<SwiftExportedModule>()
     val processedComponents = mutableSetOf<ResolvedArtifactWithVersionIdentifier>()
@@ -121,7 +133,7 @@ private fun Project.findAndCreateSwiftExportedModules(
 
     // Process all explicitly exported modules
     for (explicitModule in exportedModules) {
-        val matchingArtifact = resolvedArtifacts.findMatchingArtifactFor(explicitModule)
+        val matchingArtifact = allResolvedArtifacts.findMatchingArtifactFor(explicitModule)
 
         if (matchingArtifact != null) {
             result.add(
@@ -142,7 +154,7 @@ private fun Project.findAndCreateSwiftExportedModules(
     }
 
     for (hiddenModule in hiddenModules) {
-        val matchingArtifact = resolvedArtifacts.findMatchingArtifactFor(hiddenModule)
+        val matchingArtifact = allResolvedArtifacts.findMatchingArtifactFor(hiddenModule)
 
         if (matchingArtifact != null) {
             hiddenComponents.add(matchingArtifact)
@@ -159,7 +171,7 @@ private fun Project.findAndCreateSwiftExportedModules(
     }
 
     // Then process remaining components as transitive
-    resolvedArtifacts
+    allResolvedArtifacts
         .filterNot { artifact -> artifact in processedComponents }
         .filterNot { artifact -> artifact in hiddenComponents }
         .forEach { artifact ->
