@@ -380,18 +380,12 @@ object KtTokens : SyntaxElementTypesWithIds() {
     val HARD_KEYWORDS_AND_MODIFIERS: SyntaxElementTypeSet = hardKeywordsAndModifiers.asSyntaxElementTypeSet()
     val MODIFIERS: SyntaxElementTypeSet = allModifiers.asSyntaxElementTypeSet()
 
-    private val HARD_KEYWORDS_AND_MODIFIERS_MAP: Map<String, SyntaxElementType> = HARD_KEYWORDS_AND_MODIFIERS.associateBy { it.toString() }
+    val HARD_KEYWORDS_AND_MODIFIERS_MAP: Map<String, SyntaxElementType> = HARD_KEYWORDS_AND_MODIFIERS.associateBy { it.toString() }
 
-    private val SOFT_KEYWORDS_AND_MODIFIERS_MAP: Map<String, SyntaxElementType> = SOFT_KEYWORDS_AND_MODIFIERS.associateBy { it.toString() }
+    val SOFT_KEYWORDS_AND_MODIFIERS_MAP: Map<String, SyntaxElementType> = SOFT_KEYWORDS_AND_MODIFIERS.associateBy { it.toString() }
 
     fun getHardKeywordOrModifier(elementText: String?): SyntaxElementType? {
         return elementText?.let { HARD_KEYWORDS_AND_MODIFIERS_MAP[it] }
-    }
-
-    fun isSoftKeywordOrModifier(elementText: String?): Boolean = getSoftKeywordOrModifier(elementText) != null
-
-    fun getSoftKeywordOrModifier(elementText: String?): SyntaxElementType? {
-        return elementText?.let { SOFT_KEYWORDS_AND_MODIFIERS_MAP[it] }
     }
 
     val TYPE_MODIFIER_KEYWORDS: SyntaxElementTypeSet = syntaxElementTypeSetOf(SUSPEND_MODIFIER)

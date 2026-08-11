@@ -141,7 +141,8 @@ internal abstract class AbstractKotlinParsing(
      */
     protected fun atWithRemap(expectation: SyntaxElementType): Boolean {
         if (atInternal(expectation)) return true
-        if (tt() === KtTokens.IDENTIFIER) {
+        val tokenType = tt()
+        if (tokenType === KtTokens.IDENTIFIER) {
             if (DEBUG_MODE && expectation !in KtTokens.SOFT_KEYWORDS_AND_MODIFIERS) {
                 error("Expectation is '${expectation}' but should be '${KtTokens.IDENTIFIER}' or soft keyword(modifier). Use '${::at.name}' call instead.")
             }
@@ -152,7 +153,7 @@ internal abstract class AbstractKotlinParsing(
             }
         }
         if (expectation === KtTokens.IDENTIFIER) {
-            if (KtTokens.isSoftKeywordOrModifier(builder.tokenText)) {
+            if (tokenType in KtTokens.SOFT_KEYWORDS_AND_MODIFIERS) {
                 builder.remapCurrentToken(KtTokens.IDENTIFIER)
                 return true
             }
@@ -185,15 +186,16 @@ internal abstract class AbstractKotlinParsing(
 
     protected fun atSetWithRemap(set: SyntaxElementTypeSet): Boolean {
         if (atSet(set)) return true
-        if (tt() === KtTokens.IDENTIFIER) {
-            val softKeywordToken = KtTokens.getSoftKeywordOrModifier(builder.tokenText)
+        val tokenType = tt()
+        if (tokenType === KtTokens.IDENTIFIER) {
+            val softKeywordToken = builder.tokenText?.let { KtTokens.SOFT_KEYWORDS_AND_MODIFIERS_MAP[it] }
             if (softKeywordToken?.let { set.contains(it) } == true) {
                 builder.remapCurrentToken(softKeywordToken)
                 return true
             }
         } else {
             // We know at this point that `set` does not contain `token`
-            if (set.contains(KtTokens.IDENTIFIER) && KtTokens.isSoftKeywordOrModifier(builder.tokenText)) {
+            if (set.contains(KtTokens.IDENTIFIER) && tokenType in KtTokens.SOFT_KEYWORDS_AND_MODIFIERS) {
                 builder.remapCurrentToken(KtTokens.IDENTIFIER)
                 return true
             }
