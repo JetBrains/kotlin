@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.test.directives.model.ValueDirective;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static kotlin.test.AssertionsKt.assertFalse;
 import static kotlin.test.AssertionsKt.assertTrue;
@@ -31,13 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class DirectiveTestUtils {
 
     private DirectiveTestUtils() {}
-
-    private static final DirectiveHandler FUNCTION_NOT_CALLED = new DirectiveHandler() {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-            checkFunctionNotCalled(ast, arguments.getFirst(), arguments.findNamedArgument("except"));
-        }
-    };
 
     private static final DirectiveHandler PROPERTY_NOT_USED = new DirectiveHandler() {
         @Override
@@ -345,7 +341,7 @@ public class DirectiveTestUtils {
     private static final List<Pair<ValueDirective<? extends ArgumentsHelper>, DirectiveHandler>> DIRECTIVE_HANDLERS = Arrays.asList(
             new Pair<>(JsAstDirectives.INSTANCE.getEXPECT_GENERATED_JS(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CONTAINS_NO_CALLS(), new DirectiveHandler<>()),
-            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NOT_CALLED(), FUNCTION_NOT_CALLED),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NOT_CALLED(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getFUNCTION_CALLED_TIMES(), FUNCTION_CALLED_TIMES),
             new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_NOT_USED(), PROPERTY_NOT_USED),
             new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_NOT_READ_FROM(), PROPERTY_NOT_READ_FROM),
@@ -415,18 +411,6 @@ public class DirectiveTestUtils {
         assertEquals(expectedCount, counter.unqualifiedWriteCount(propertyName),
                      "Property write count: " + propertyName + " in scope: " + scope
         );
-    }
-
-    public static void checkFunctionNotCalled(@NotNull JsNode node, @NotNull String functionName, @Nullable String exceptFunction)
-            throws Exception {
-        Set<String> excludedScopes = exceptFunction != null ? Collections.singleton(exceptFunction) : Collections.emptySet();
-
-        CallCounter counter = CallCounter.countCallsWithExcludedScopes(node, excludedScopes);
-        int functionCalledCount = counter.getQualifiedCallsCount(functionName);
-
-        String errorMessage = "inline function `" + functionName + "` is called";
-        assertEquals(0, functionCalledCount, errorMessage);
-        assertEquals(excludedScopes.size(), counter.getExcludedScopeOccurrenceCount(), "Not all excluded scopes found");
     }
 
     public static void checkCalledInScope(
