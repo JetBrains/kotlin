@@ -7,6 +7,8 @@
 
 package kotlin.io
 
+import stdlib.wit.bindings.Streams
+import stdlib.wit.bindings.runtime.ComponentException
 import kotlin.wasm.unsafe.MemoryAllocator
 import kotlin.wasm.unsafe.withScopedMemoryAllocator
 
@@ -45,6 +47,7 @@ private fun wasiPrintImpl(
         val allowedBytesToWrite = allowedToWrite.getOrThrow()
 
         // TODO should we really poll in this case?
+        //      answer: yes: https://github.com/WebAssembly/wasi-libc/blob/79c1a738e1b3df432545666a1a579c49a82b4514/libc-bottom-half/sources/file_utils.c#L487
         if (allowedBytesToWrite == 0uL)
             continue
 
@@ -53,7 +56,7 @@ private fun wasiPrintImpl(
         val listToWrite = ArrayList<UByte>(actualBytesToWriteRightNow.toInt())
         for (i in written until written + actualBytesToWriteRightNow) {
             if (data != null && i < data.size.toULong())
-            // TODO maybe optimize if possible so that hopefully some part of the compiler can vectorize this
+                // TODO could optimize this to not use the high-level wit-bindgen generated write, but instead directly use the __wasm_import_write function and do canonical ABI related stuff by hand. Would save one set of list copies.
                 listToWrite.add(data[i.toInt()].toUByte())
             else {
                 // TODO probably delete the assert?
@@ -64,7 +67,7 @@ private fun wasiPrintImpl(
 
         }
 
-        // TODO instead of flushing manually later, could perform an `ostream.blockingWriteAndFlush()` if this is the last one, and less than 4096 bytes
+        // TODO instead of flushing manually after the loop, could perform an `ostream.blockingWriteAndFlush()` if this is the last one, and less than 4096 bytes
         val res = ostream.write(listToWrite);
 
         if (res.isFailure)
@@ -133,8 +136,16 @@ private fun wasiReadLineImpl(): ByteArray? {
     while (true) {
         // TODO read more than one at a time? But can't really "put them back", so then would need to internally buffer them, which might not be desirable, could lead to strange semantics. And if the user accesses the stream through raw wasi calls, it will also be super strange. Blocking would also have to be reconsidered, couldn't blocking read more than a line.
         val ret = stdinStr.blockingRead(1u)
-        if (ret.isFailure)
+        if (ret.isFailure){
+            val componentExcn = ret.exceptionOrNull()!! as ComponentException
+            val streamError = componentExcn.value as Streams.StreamError
+
+            // this is the exact case that null represents here
+            if(streamError == Streams.StreamError.Closed)
+                return null
+
             throw WasiP2Error(ret.exceptionOrNull()!!) // TODO proper errors
+        }
 
         // TODO maybe optimize? use value directly?
         val returnedListOfBytes = ret.getOrThrow()
@@ -144,6 +155,7 @@ private fun wasiReadLineImpl(): ByteArray? {
         if (readSize == 0 && currentBufferIndex == 0 && arrayBuffers.isEmpty()) return null
 
         val finish = {
+            // don't read the ending newline TODO what, is this even right like that?
             if (currentBufferIndex > 0 && currentBuffer[currentBufferIndex - 1] == CR) {
                 currentBufferIndex--
             }
