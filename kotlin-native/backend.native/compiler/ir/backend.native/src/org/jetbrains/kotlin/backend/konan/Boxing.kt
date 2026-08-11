@@ -187,14 +187,13 @@ private fun initCache(cache: BoxCache, generationState: NativeGenerationState, c
 }
 
 internal fun IrConstantPrimitive.toBoxCacheValue(generationState: NativeGenerationState): ConstValue? {
-    val irBuiltIns = generationState.context.irBuiltIns
-    val cacheType = when (value.type) {
-        irBuiltIns.booleanType -> BoxCache.BOOLEAN
-        irBuiltIns.byteType -> BoxCache.BYTE
-        irBuiltIns.shortType -> BoxCache.SHORT
-        irBuiltIns.charType -> BoxCache.CHAR
-        irBuiltIns.intType -> BoxCache.INT
-        irBuiltIns.longType -> BoxCache.LONG
+    val cacheType = when (value.kind) {
+        IrConstKind.Boolean -> BoxCache.BOOLEAN
+        IrConstKind.Byte -> BoxCache.BYTE
+        IrConstKind.Short -> BoxCache.SHORT
+        IrConstKind.Char -> BoxCache.CHAR
+        IrConstKind.Int -> BoxCache.INT
+        IrConstKind.Long -> BoxCache.LONG
         else -> return null
     }
     val value = when (value.kind) {

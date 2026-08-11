@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Return the negated value if the expression is const, otherwise call unaryMinus(). */
 internal fun IrExpression.negate(): IrExpression {
-    return when (val value = (this as? IrConst)?.value as? Number) {
-        is Int -> IrConstImpl.int(startOffset, endOffset, type, -value)
-        is Long -> IrConstImpl.long(startOffset, endOffset, type, -value)
+    return when ((this as? IrConst)?.kind) {
+        IrConstKind.Int -> IrConstImpl.int(startOffset, endOffset, type, -(value as Int))
+        IrConstKind.Long -> IrConstImpl.long(startOffset, endOffset, type, -(value as Long))
         else -> {
             // This expression's type could be Nothing from an exception throw, in which case the unary minus function will not exist.
             if (type.isNothing()) return this
@@ -50,10 +50,10 @@ internal fun IrExpression.negate(): IrExpression {
 
 /** Return `this - 1` if the expression is const, otherwise call dec(). */
 internal fun IrExpression.decrement(): IrExpression {
-    return when (val thisValue = (this as? IrConst)?.value) {
-        is Int -> IrConstImpl.int(startOffset, endOffset, type, thisValue - 1)
-        is Long -> IrConstImpl.long(startOffset, endOffset, type, thisValue - 1)
-        is Char -> IrConstImpl.char(startOffset, endOffset, type, thisValue - 1)
+    return when ((this as? IrConst)?.kind) {
+        IrConstKind.Int -> IrConstImpl.int(startOffset, endOffset, type, value as Int - 1)
+        IrConstKind.Long -> IrConstImpl.long(startOffset, endOffset, type, value as Long - 1)
+        IrConstKind.Char -> IrConstImpl.char(startOffset, endOffset, type, value as Char - 1)
         else -> {
             val decFun = type.getClass()!!.functions.single {
                 it.name == OperatorNameConventions.DEC &&
@@ -88,10 +88,10 @@ internal val IrExpression.canHaveSideEffects: Boolean
 internal val IrExpression.constLongValue: Long?
     get() = when {
         this !is IrConst -> null
-        type.isUByte() -> (value as? Number)?.toLong()?.toUByte()?.toLong()
-        type.isUShort() -> (value as? Number)?.toLong()?.toUShort()?.toLong()
-        type.isUInt() -> (value as? Number)?.toLong()?.toUInt()?.toLong()
-        type.isChar() -> (value as? Char)?.code?.toLong()
+        this.kind == IrConstKind.Byte -> (value as Byte).toLong()
+        this.kind == IrConstKind.Short -> (value as Short).toLong()
+        this.kind == IrConstKind.Int -> (value as Int).toLong()
+        this.kind == IrConstKind.Char -> (value as Char).code.toLong()
         else -> (value as? Number)?.toLong()
     }
 
