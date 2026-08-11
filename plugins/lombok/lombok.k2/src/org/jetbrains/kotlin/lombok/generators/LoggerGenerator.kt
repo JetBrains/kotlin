@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
@@ -108,6 +109,11 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                     return@initializeCompanionObjectIfNeeded null
                 }
 
+                // Nothing would go into the companion object anyway, so don't leave an empty one behind
+                if (owner.declaresConflictingLogProperty()) {
+                    return@initializeCompanionObjectIfNeeded null
+                }
+
                 return@initializeCompanionObjectIfNeeded LoggerGeneratorKey(firstLog.annotation)
             }
         }
@@ -198,7 +204,27 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         }
         if (fieldOrPropertyAlreadyExists) return null
 
+        // A static logger goes into the companion object, so a property of the same name declared in the class the
+        // annotation is on doesn't collide with it - it shadows it. Generating the logger anyway would leave the
+        // use site resolving to that property, with nothing but an unresolved logging call to show for it.
+        if (targetClassSymbol.declaresConflictingLogProperty()) return null
+
         return generateLogFieldOrProperty(log, classSymbol, targetClassSymbol)
+    }
+
+    /**
+     * Whether the class declares a property that the generated logger would be shadowed by.
+     *
+     * [DirectDeclarationsAccess] is what is wanted here rather than a scope: only the properties written by the user
+     * can shadow the logger, and requesting a scope would run the other Lombok generators for this very class in the
+     * middle of generating the members of its companion object.
+     */
+    @OptIn(DirectDeclarationsAccess::class)
+    private fun FirClassSymbol<*>.declaresConflictingLogProperty(): Boolean {
+        val logFieldOrPropertyName = Name.identifier(session.lombokService.config.logFieldName)
+        return declarationSymbols.any {
+            it is FirVariableSymbol<*> && it.name == logFieldOrPropertyName && !it.hasReceiverOrContextParameters
+        }
     }
 
     private fun generateLogFieldOrProperty(
