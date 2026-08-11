@@ -30,6 +30,7 @@ public actual class Boolean private constructor(private val value: Boolean) : Co
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @WasmOp(WasmOp.I32_AND)
+    @kotlin.wasm.internal.AssociativeOp
     public actual infix fun and(other: Boolean): Boolean =
         implementedAsIntrinsic
 
@@ -39,12 +40,14 @@ public actual class Boolean private constructor(private val value: Boolean) : Co
      */
     @kotlin.internal.IntrinsicConstEvaluation
     @WasmOp(WasmOp.I32_OR)
+    @kotlin.wasm.internal.AssociativeOp
     public actual infix fun or(other: Boolean): Boolean =
         implementedAsIntrinsic
 
     /** Performs a logical `xor` operation between this Boolean and the [other] one. */
     @kotlin.internal.IntrinsicConstEvaluation
     @WasmOp(WasmOp.I32_XOR)
+    @kotlin.wasm.internal.AssociativeOp
     public actual infix fun xor(other: Boolean): Boolean =
         implementedAsIntrinsic
 

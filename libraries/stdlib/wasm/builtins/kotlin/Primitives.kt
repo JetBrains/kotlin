@@ -968,6 +968,7 @@ public actual class Int private constructor(private val value: Int) : Number(), 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @WasmOp(WasmOp.I32_ADD)
+    @kotlin.wasm.internal.AssociativeOp
     public actual operator fun plus(other: Int): Int =
         implementedAsIntrinsic
 
@@ -1030,6 +1031,7 @@ public actual class Int private constructor(private val value: Int) : Number(), 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @WasmOp(WasmOp.I32_MUL)
+    @kotlin.wasm.internal.AssociativeOp
     public actual operator fun times(other: Int): Int =
         implementedAsIntrinsic
 
@@ -1264,18 +1266,21 @@ public actual class Int private constructor(private val value: Int) : Number(), 
     /** Performs a bitwise AND operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
     @WasmOp(WasmOp.I32_AND)
+    @kotlin.wasm.internal.AssociativeOp
     public actual infix fun and(other: Int): Int =
         implementedAsIntrinsic
 
     /** Performs a bitwise OR operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
     @WasmOp(WasmOp.I32_OR)
+    @kotlin.wasm.internal.AssociativeOp
     public actual infix fun or(other: Int): Int =
         implementedAsIntrinsic
 
     /** Performs a bitwise XOR operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
     @WasmOp(WasmOp.I32_XOR)
+    @kotlin.wasm.internal.AssociativeOp
     public actual infix fun xor(other: Int): Int =
         implementedAsIntrinsic
 
@@ -1485,6 +1490,7 @@ public actual class Long private constructor(private val value: Long) : Number()
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @WasmOp(WasmOp.I64_ADD)
+    @kotlin.wasm.internal.AssociativeOp
     public actual operator fun plus(other: Long): Long =
         implementedAsIntrinsic
 
@@ -1547,6 +1553,7 @@ public actual class Long private constructor(private val value: Long) : Number()
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     @WasmOp(WasmOp.I64_MUL)
+    @kotlin.wasm.internal.AssociativeOp
     public actual operator fun times(other: Long): Long =
         implementedAsIntrinsic
 
@@ -1775,18 +1782,21 @@ public actual class Long private constructor(private val value: Long) : Number()
     /** Performs a bitwise AND operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
     @WasmOp(WasmOp.I64_AND)
+    @kotlin.wasm.internal.AssociativeOp
     public actual infix fun and(other: Long): Long =
         implementedAsIntrinsic
 
     /** Performs a bitwise OR operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
     @WasmOp(WasmOp.I64_OR)
+    @kotlin.wasm.internal.AssociativeOp
     public actual infix fun or(other: Long): Long =
         implementedAsIntrinsic
 
     /** Performs a bitwise XOR operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
     @WasmOp(WasmOp.I64_XOR)
+    @kotlin.wasm.internal.AssociativeOp
     public actual infix fun xor(other: Long): Long =
         implementedAsIntrinsic
 
