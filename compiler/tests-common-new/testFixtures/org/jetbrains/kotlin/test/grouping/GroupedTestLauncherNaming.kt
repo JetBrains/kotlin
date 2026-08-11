@@ -21,5 +21,5 @@ import org.jetbrains.kotlin.test.services.KotlinTestInfo
  * `ProxyLauncher_<hash>()` functions — so that a change to the scheme cannot desynchronize one target's generator from
  * its runner.
  */
-fun computeProxyLauncherName(testInfo: KotlinTestInfo): String =
+fun computeProxyLauncherClassName(testInfo: KotlinTestInfo): String =
     "ProxyLauncher_${computePackage(testInfo).hashCode().toUInt().toString(36)}"

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
-import org.jetbrains.kotlin.test.grouping.computeProxyLauncherName
+import org.jetbrains.kotlin.test.grouping.computeProxyLauncherClassName
 import org.jetbrains.kotlin.test.grouping.markGroupedTestsDriverGenerated
 import org.jetbrains.kotlin.test.isSingleTestBatch
 import org.jetbrains.kotlin.test.model.AbstractGroupingStageTestFacade
@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.services.BatchingPackageInserter
 import org.jetbrains.kotlin.test.services.CompilationStage
-import org.jetbrains.kotlin.test.services.KotlinTestInfo
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.artifactsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -358,12 +357,3 @@ abstract class AbstractWasmSecondStageGroupingFacade(
     override val outputKind: TestArtifactKind<BinaryArtifacts.Wasm>
         get() = ArtifactKinds.Wasm
 }
-
-/**
- * Computes the synthetic per-test `ProxyLauncher` class name used by the WASM grouped test infrastructure.
- * The test infrastructure tracks this name to persistently identify the test from the testInfo.
- *
- * Delegates to the target-independent [computeProxyLauncherName], which K/JS grouping uses as well, so that the
- * naming scheme cannot drift apart between the targets.
- */
-internal fun computeProxyLauncherClassName(testInfo: KotlinTestInfo): String = computeProxyLauncherName(testInfo)

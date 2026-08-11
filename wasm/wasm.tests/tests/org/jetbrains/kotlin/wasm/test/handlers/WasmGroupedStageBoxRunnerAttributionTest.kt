@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.GroupingStageInputsHolder
 import org.jetbrains.kotlin.test.NonGroupingStageOutput
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
+import org.jetbrains.kotlin.test.grouping.computeProxyLauncherClassName
 import org.jetbrains.kotlin.test.grouping.markGroupedTestsDriverGenerated
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestFile
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.KotlinTestInfo
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.wasm.test.blackbox.computeProxyLauncherClassName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull

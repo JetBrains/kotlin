@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.test.NonGroupingStageOutput
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.grouping.computeProxyLauncherName
+import org.jetbrains.kotlin.test.grouping.computeProxyLauncherClassName
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.isSingleTestBatch
 import org.jetbrains.kotlin.test.model.ArtifactKinds
@@ -120,7 +120,7 @@ class JsGroupingStageBoxRunner(testServices: TestServices) : GroupingStageHandle
         try {
             V8JsTestChecker.run(jsFiles) {
                 for (input in inputs) {
-                    val launcherName = computeProxyLauncherName(input.testServices.testInfo)
+                    val launcherName = computeProxyLauncherClassName(input.testServices.testInfo)
                     try {
                         val output = eval("$moduleReference.$launcherName()")
                         if (BATCH_TEST_PASSED_MARKER !in output) {

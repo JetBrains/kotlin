@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.test.GroupingStageInputArtifact
 import org.jetbrains.kotlin.test.NonGroupingStageOutput
 import org.jetbrains.kotlin.test.diagnostics.DiagnosticsCollectorStub
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
-import org.jetbrains.kotlin.test.grouping.computeProxyLauncherName
+import org.jetbrains.kotlin.test.grouping.computeProxyLauncherClassName
 import org.jetbrains.kotlin.test.model.AbstractGroupingStageTestFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -216,7 +216,7 @@ class JsGroupingSecondStageFacade(
                 val boxFqName = if (originalPackage != null) "$additionalPackage.$originalPackage.box" else "$additionalPackage.box"
 
                 appendLine("@JsExport")
-                appendLine("fun ${computeProxyLauncherName(services.testInfo)}(): String {")
+                appendLine("fun ${computeProxyLauncherClassName(services.testInfo)}(): String {")
                 appendLine("    val result = $boxFqName()")
                 appendLine(
                     "    if (result != \"OK\") throw AssertionError(" +

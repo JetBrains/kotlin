@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.test.NonGroupingStageOutput
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
+import org.jetbrains.kotlin.test.grouping.computeProxyLauncherClassName
 import org.jetbrains.kotlin.test.grouping.hasGroupedTestsDriver
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.ArtifactKinds
@@ -21,7 +22,6 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.test.testInfraError
-import org.jetbrains.kotlin.wasm.test.blackbox.computeProxyLauncherClassName
 
 /**
  * Shared base class for grouping stage handlers in WASM test infrastructure.
