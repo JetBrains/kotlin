@@ -648,20 +648,18 @@ def kotlin_map_entry_type_summary(lldb_val, _):
 
 def _collection_kind(valobj):
     if _is_kotlin_list(valobj):
-        result = CollectionKind.LIST
-    elif _is_kotlin_map(valobj):
-        result = CollectionKind.MAP
-    elif _is_kotlin_set(valobj):
-        result = CollectionKind.SET
-    else:
-        result = None
-    return result
+        return CollectionKind.LIST
+    if _is_kotlin_map(valobj):
+        return CollectionKind.MAP
+    if _is_kotlin_set(valobj):
+        return CollectionKind.SET
+    return None
 
 
-def _select_provider(lldb_val, internal_dict, tip=None):
+def _select_provider(lldb_val, internal_dict):
     start = time.monotonic()
     value_str = f"{_hex(lldb_val.unsigned)}"
-    tip = tip or (_fast_type_info(lldb_val) or _type_info(lldb_val))
+    tip = _fast_type_info(lldb_val) or _type_info(lldb_val)
     logging.debug(
         "%s name:%s tip:%s",
         value_str,
@@ -918,6 +916,7 @@ auto failAndFree = [](int* fieldTypesData, void** fieldAddressesData, char* fiel
     (void)free(typeNamesData);
     return 0;
 }};
+
 auto appendCString = [](char** buffer, int* capacity, int* used, const char* text) -> int {{
     if (text == 0) text = "";
     if (*buffer == 0 || *capacity <= 0) return 0;
@@ -937,6 +936,7 @@ auto appendCString = [](char** buffer, int* capacity, int* used, const char* tex
     *used += length + 1;
     return 1;
 }};
+
 auto getObjectTypeName = [](int fieldType, void* fieldAddress) -> const char* {{
     if (fieldType != {_RUNTIME_TYPE_OBJECT} || fieldAddress == 0) return "";
     void* child = *reinterpret_cast<void**>(fieldAddress);
