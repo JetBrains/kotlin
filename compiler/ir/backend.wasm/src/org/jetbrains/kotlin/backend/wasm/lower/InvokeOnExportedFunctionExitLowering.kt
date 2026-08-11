@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.statements
-import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -79,7 +79,7 @@ internal class InvokeOnExportedFunctionExitLowering(val context: WasmBackendCont
                 +irSet(
                     isNotFirstWasmExportCallSetter.owner.returnType,
                     null, isNotFirstWasmExportCallSetter,
-                    true.toIrConst(irBooleanType)
+                    IrConstImpl.boolean(type = irBooleanType, value = true)
                 )
 
                 +body.statements

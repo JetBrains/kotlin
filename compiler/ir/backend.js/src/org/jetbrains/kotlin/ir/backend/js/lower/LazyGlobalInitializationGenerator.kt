@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.irCastIfNeeded
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
-import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.name.Name
 
 abstract class LazyGlobalInitializationGenerator {
@@ -57,7 +57,7 @@ abstract class LazyGlobalInitializationGenerator {
         initializer = backendContext.irFactory.createExpressionBody(
             SYNTHETIC_OFFSET,
             SYNTHETIC_OFFSET,
-            InitializationState.UNINITIALIZED.toIrConst(backendContext.irBuiltIns.intType),
+            IrConstImpl.int(type = backendContext.irBuiltIns.intType, value = InitializationState.UNINITIALIZED),
         )
     }
 

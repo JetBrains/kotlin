@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -254,8 +255,8 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
             name,
             upperBounds,
             variance,
-            typeParameter.isReified.toIrConst(context.irBuiltIns.booleanType),
-            typeParameter.parent.kotlinFqName.asString().toIrConst(context.irBuiltIns.stringType),
+            IrConstImpl.boolean(type = context.irBuiltIns.booleanType, value = typeParameter.isReified),
+            IrConstImpl.string(type = context.irBuiltIns.stringType, value = typeParameter.parent.kotlinFqName.asString()),
         ).also {
             visitedTypeParams.remove(typeParameter)
         }

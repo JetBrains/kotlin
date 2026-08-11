@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.putClassTypeArgument
-import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -321,8 +321,8 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
 
             return builder.irCallConstructor(symbols.reflectionSymbols.wasmTypeInfoData.constructors.first(), emptyList()).also {
                 it.arguments[0] = typeId
-                it.arguments[1] = packageName.toIrConst(context.irBuiltIns.stringType)
-                it.arguments[2] = typeName.toIrConst(context.irBuiltIns.stringType)
+                it.arguments[1] = IrConstImpl.string(type = context.irBuiltIns.stringType, value = packageName)
+                it.arguments[2] = IrConstImpl.string(type = context.irBuiltIns.stringType, value = typeName)
             }
         }
     }

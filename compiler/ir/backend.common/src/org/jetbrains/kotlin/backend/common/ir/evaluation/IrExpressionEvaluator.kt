@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.evaluation.IrConstFieldInliner
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
@@ -71,7 +72,7 @@ private class IrExpressionEvaluator(
             if (!isFloatingPointOptimizationEnabled && const.isFloatOrDouble()) return null
             builder.append(const.getCastedValue() ?: return null)
         }
-        return builder.toString().toIrConstOrNull(expression.type, expression.startOffset, expression.endOffset)
+        return IrConstImpl.string(expression.startOffset, expression.endOffset, expression.type, builder.toString())
     }
 
     private fun evaluateBuiltinCall(expression: IrCall): IrExpression? {
@@ -119,8 +120,8 @@ private class IrExpressionEvaluator(
         val boundArgs = callableReference.boundValues.toList() // make a copy
         val owner = callableReference.reflectionTargetSymbol?.owner as? IrDeclarationWithName
 
-        val constName = owner?.name?.asString()?.toIrConst(irBuiltIns.stringType, expression.startOffset, expression.endOffset)
-            ?: return null
+        val name = owner?.name?.asString() ?: return null
+        val constName = IrConstImpl.string(expression.startOffset, expression.endOffset, irBuiltIns.stringType, name)
 
         val boundArgsWithSideEffects = boundArgs.filterNot { it is IrGetValue || it is IrConst }
         if (boundArgsWithSideEffects.isEmpty()) return constName
@@ -134,7 +135,7 @@ private class IrExpressionEvaluator(
     private fun inlineEnumName(expression: IrCall): IrConst? {
         val enumValue = expression.dispatchReceiver as? IrGetEnumValue ?: return null
         val enumEntry = enumValue.symbol.owner
-        return enumEntry.name.asString().toIrConst(irBuiltIns.stringType, expression.startOffset, expression.endOffset)
+        return IrConstImpl.string(expression.startOffset, expression.endOffset, irBuiltIns.stringType, enumEntry.name.asString())
     }
 
     companion object {
