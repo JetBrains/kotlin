@@ -13,6 +13,7 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule.ExportMode
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.jetbrains.kotlin.gradle.utils.getAllDependencies
 import java.io.File
@@ -24,13 +25,21 @@ import java.io.Serializable
  * @property moduleName The name of the module in Swift
  * @property flattenPackage Optional package flattening configuration
  * @property artifact The artifact file containing the module
- * @property shouldBeFullyExported Whether this module was explicitly requested for export through the swiftExport { export("foo:bar") } DSL
+ * @property exportMode mode in which this module will be exported
  */
 internal interface SwiftExportedModule : Serializable {
     val moduleName: String
     val flattenPackage: String?
     val artifact: File
-    val shouldBeFullyExported: Boolean
+    val exportMode: ExportMode
+
+    // The reason we're introducing our own enum is that we can't reference classes from swift-export-standalone in this file, as it's
+    // not on our runtime classpath.
+    enum class ExportMode {
+        Full,
+        Transitive,
+        Excluded,
+    }
 }
 
 internal fun createFullyExportedSwiftExportedModule(
@@ -39,10 +48,10 @@ internal fun createFullyExportedSwiftExportedModule(
     artifact: File,
 ): SwiftExportedModule {
     return SwiftExportedModuleImp(
-        moduleName,
-        flattenPackage,
-        artifact,
-        true
+        moduleName = moduleName,
+        flattenPackage = flattenPackage,
+        artifact = artifact,
+        exportMode = ExportMode.Full,
     )
 }
 
@@ -51,10 +60,22 @@ internal fun createTransitiveSwiftExportedModule(
     artifact: File,
 ): SwiftExportedModule {
     return SwiftExportedModuleImp(
-        moduleName,
-        null,
-        artifact,
-        false
+        moduleName = moduleName,
+        flattenPackage = null,
+        artifact = artifact,
+        exportMode = ExportMode.Transitive,
+    )
+}
+
+internal fun createExcludedSwiftExportedModule(
+    moduleName: String,
+    artifact: File,
+): SwiftExportedModule {
+    return SwiftExportedModuleImp(
+        moduleName = moduleName,
+        flattenPackage = null,
+        artifact = artifact,
+        exportMode = ExportMode.Excluded,
     )
 }
 
@@ -176,6 +197,14 @@ private fun Project.findAndCreateSwiftExportedModules(
         }
     }
     hiddenComponents.removeAll(fullyExportedComponents)
+    for (hiddenComponent in hiddenComponents) {
+        result.add(
+            createExcludedSwiftExportedModule(
+                hiddenComponent.moduleVersion.inheritedName.normalizedSwiftExportModuleName,
+                hiddenComponent.artifact.file
+            )
+        )
+    }
 
     if (missingModules.isNotEmpty()) {
         reportDiagnostic(
@@ -241,7 +270,7 @@ private data class SwiftExportedModuleImp(
     override val moduleName: String,
     override val flattenPackage: String?,
     override val artifact: File,
-    override val shouldBeFullyExported: Boolean,
+    override val exportMode: ExportMode,
 ) : SwiftExportedModule
 
 private fun Project.normalizedAndValidatedModuleName(moduleName: String) =

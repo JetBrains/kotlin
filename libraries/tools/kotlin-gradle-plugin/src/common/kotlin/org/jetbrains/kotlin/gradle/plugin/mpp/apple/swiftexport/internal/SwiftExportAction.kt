@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
+import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleExportMode
 import java.time.Instant
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -43,8 +44,12 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
             modules.map { module ->
                 module.toInputModule(
                     createModuleConfig(
-                        module.flattenPackage,
-                        module.shouldBeFullyExported,
+                        flattenPackage = module.flattenPackage,
+                        exportMode = when (module.exportMode) {
+                            SwiftExportedModule.ExportMode.Full -> SwiftModuleExportMode.Full
+                            SwiftExportedModule.ExportMode.Transitive -> SwiftModuleExportMode.Transitive
+                            SwiftExportedModule.ExportMode.Excluded -> SwiftModuleExportMode.Excluded
+                        },
                         settings
                     )
                 )
@@ -62,14 +67,14 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
 
     private fun createModuleConfig(
         flattenPackage: String?,
-        shouldBeFullyExported: Boolean,
+        exportMode: SwiftModuleExportMode,
         settings: Map<String, String>,
     ): SwiftModuleConfig {
         return SwiftModuleConfig(
             bridgeModuleName = parameters.bridgeModuleName.getOrElse(SwiftModuleConfig.DEFAULT_BRIDGE_MODULE_NAME),
             rootPackage = flattenPackage,
             experimentalFeatures = settings,
-            shouldBeFullyExported = shouldBeFullyExported,
+            exportMode = exportMode,
         )
     }
 
