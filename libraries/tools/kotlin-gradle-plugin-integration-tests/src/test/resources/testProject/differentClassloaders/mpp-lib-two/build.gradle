@@ -14,7 +14,7 @@ kotlin {
 publishing {
     publications {
         jvm {
-            artifactId = "mpp-lib-myjvm"
+            artifactId = "mpp-lib-myjvm-two"
         }
     }
 

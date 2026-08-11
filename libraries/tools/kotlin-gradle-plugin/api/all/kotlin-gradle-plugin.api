@@ -622,11 +622,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/KotlinOnlyTargetConfigu
 	public fun <init> (Z)V
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/KotlinPluginInMultipleProjectsHolderKt {
-	public static final field MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING Ljava/lang/String;
-	public static final field MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_INFO Ljava/lang/String;
-}
-
 public class org/jetbrains/kotlin/gradle/plugin/KotlinPluginWrapper : org/jetbrains/kotlin/gradle/plugin/AbstractKotlinPluginWrapper {
 	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
@@ -6496,6 +6491,10 @@ public final class org/jetbrains/kotlin/gradle/utils/PropertyDelegate {
 public final class org/jetbrains/kotlin/gradle/utils/ProviderApiUtilsKt$sam$i$java_util_concurrent_Callable$0 : java/util/concurrent/Callable {
 	public fun <init> (Lkotlin/jvm/functions/Function0;)V
 	public final synthetic fun call ()Ljava/lang/Object;
+}
+
+public final class org/jetbrains/kotlin/gradle/utils/ReflectionUtilsKt {
+	public static final field MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/gradle/utils/ResourceUtilsKt {

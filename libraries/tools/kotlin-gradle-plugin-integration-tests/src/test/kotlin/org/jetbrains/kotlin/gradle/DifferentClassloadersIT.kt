@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.DeprecatedWarningGradleProperties
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.PluginLoadedInMultipleProjectsError
@@ -37,14 +38,12 @@ class DifferentClassloadersIT : KGPBaseTest() {
         project(
             "differentClassloaders",
             gradleVersion,
-            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             setupDifferentClassloadersProject()
 
             // after enabling isolated projects support by default we should not fail the build
             buildAndFail("publish", "-PmppProjectDependency=true") {
-                assertHasDiagnostic(PluginLoadedInMultipleProjectsError)
+                assertHasPluginLoadedInMultipleProjectsErrorDiagnostics()
             }
         }
     }
@@ -62,10 +61,7 @@ class DifferentClassloadersIT : KGPBaseTest() {
 
             fun checkThatErrorIsThrown() {
                 build("-PmppProjectDependency=true") {
-                    assertHasDiagnostic(
-                        PluginLoadedInMultipleProjectsError,
-                        withSubstring = "':jvm-app', ':mpp-lib'"
-                    )
+                    assertHasPluginLoadedInMultipleProjectsErrorDiagnostics()
                 }
             }
 
@@ -81,23 +77,6 @@ class DifferentClassloadersIT : KGPBaseTest() {
                     DeprecatedWarningGradleProperties,
                     withSubstring = "kotlin.pluginLoadedInMultipleProjects.ignore",
                 )
-            }
-        }
-    }
-
-    @DisplayName("Different classloader detection is disabled when project isolation is enabled")
-    @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_5) // First version that supports project isolation.
-    fun detectionDisabledWithProjectIsolation(gradleVersion: GradleVersion) {
-        project(
-            "differentClassloaders",
-            gradleVersion,
-        ) {
-            setupDifferentClassloadersProject()
-
-            // after enabling isolated projects support by default we should not fail the build
-            buildAndFail("publish", "-PmppProjectDependency=true") {
-                assertNoDiagnostic(PluginLoadedInMultipleProjectsError)
             }
         }
     }
@@ -132,6 +111,12 @@ class DifferentClassloadersIT : KGPBaseTest() {
                 "id \"org.jetbrains.kotlin.multiplatform\" version \"${TestVersions.Kotlin.CURRENT}\""
             )
         }
+        subProject("mpp-lib-two").buildGradle.modify {
+            it.checkedReplace(
+                "id \"org.jetbrains.kotlin.multiplatform\"",
+                "id \"org.jetbrains.kotlin.multiplatform\" version \"${TestVersions.Kotlin.CURRENT}\""
+            )
+        }
         subProject("jvm-app").buildGradle.modify {
             it.checkedReplace(
                 "id \"org.jetbrains.kotlin.jvm\"",
@@ -151,6 +136,13 @@ class DifferentClassloadersIT : KGPBaseTest() {
         }
         buildGradle.appendText(
             "\ntasks.create(\"publish\").dependsOn(gradle.includedBuild(\"allopenPluginsDsl\").task(\":assemble\"))"
+        )
+    }
+
+    private fun BuildResult.assertHasPluginLoadedInMultipleProjectsErrorDiagnostics() {
+        assertHasDiagnostic(
+            PluginLoadedInMultipleProjectsError,
+            withSubstring = "- ':jvm-app', ':mpp-lib', ':mpp-lib-two' (version ${TestVersions.Kotlin.CURRENT})\n"
         )
     }
 }
