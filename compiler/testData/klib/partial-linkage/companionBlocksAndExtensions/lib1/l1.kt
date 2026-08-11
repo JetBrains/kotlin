@@ -55,3 +55,11 @@ class B {
         fun removedCompanionFun() = "removedCompanionFun"
     }
 }
+
+class PrivateClass
+companion fun PrivateClass.privateClassFun() = "privateClassFun"
+
+typealias TA = A
+companion fun TA.aliasFun() = "aliasFun"
+companion fun TA.aliasToClassFun() = "aliasToClassFun"
+companion fun B.classToAliasFun() = "classToAliasFun"
