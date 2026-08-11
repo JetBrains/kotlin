@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.ir.backend.js.jsOutputName
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.js.config.moduleKind
@@ -19,29 +20,33 @@ import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.metadata.KlibInputModule
 import org.jetbrains.kotlin.library.uniqueName
-import org.jetbrains.kotlin.test.backend.handlers.KlibArtifactHandler
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.TS_COMPILATION_STRATEGY
-import org.jetbrains.kotlin.test.model.ArtifactKinds
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import kotlin.io.path.Path
 
-// TODO(KT-87384): Convert this to a facade when the test infra supports forking
-class AnalysisApiBasedDtsGenerationHandler(testServices: TestServices) : KlibArtifactHandler(testServices) {
-    override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {}
+class AnalysisApiBasedDtsGeneratorFacade(
+    private val testServices: TestServices,
+) : AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>() {
+    override val inputKind: TestArtifactKind<BinaryArtifacts.KLib>
+        get() = ArtifactKinds.KLib
 
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val module = JsEnvironmentConfigurator.getMainModule(testServices)
+    override val outputKind: TestArtifactKind<BinaryArtifacts.Js>
+        get() = ArtifactKinds.Js
+
+    override fun shouldTransform(module: TestModule): Boolean =
+        JsEnvironmentConfigurator.isMainModule(module, testServices)
+
+    override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): BinaryArtifacts.Js {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
         val moduleKind = configuration.moduleKind ?: ModuleKind.PLAIN
 
         val tsCompilationStrategy = testServices.moduleStructure.allDirectives[TS_COMPILATION_STRATEGY].last()
         val translationModes = JsEnvironmentConfigurator.getTypeScriptExportTranslationModes(testServices, module)
 
-        for (mode in translationModes) {
+        val result = translationModes.associateWith { mode ->
             val config = TypeScriptExportConfig(
                 targetPlatform = testServices.targetPlatformProvider.getTargetPlatform(module),
                 artifactConfiguration = WebArtifactConfiguration(
@@ -78,6 +83,10 @@ class AnalysisApiBasedDtsGenerationHandler(testServices: TestServices) : KlibArt
 
             runTypeScriptExport(inputModules, config)
         }
+
+        // TODO: This result is not used down the pipeline, so it doesn't matter what we put here. We need to refactor this
+        //   so `JsTypeScriptArtifact` stores a list of files for each translation mode.
+        return JsTypeScriptArtifact(result[TranslationMode.FULL_DEV]?.first() ?: result.values.first().first())
     }
 
     private fun createInputModule(libraryPath: String): KlibInputModule<TypeScriptModuleConfig> {
