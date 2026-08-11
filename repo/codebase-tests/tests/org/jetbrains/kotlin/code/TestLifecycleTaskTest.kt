@@ -14,7 +14,6 @@ import org.gradle.tooling.model.gradle.GradleBuild
 import org.jetbrains.kotlin.code.TestLifecycleTaskTest.Companion.sanitize
 import org.jetbrains.kotlin.test.isTeamCityBuild
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.NightlyTest
 import org.jetbrains.kotlin.testFederation.fromArgumentStringOrThrow
 import org.jetbrains.kotlin.testFederation.toArgumentString
 import org.opentest4j.AssertionFailedError
@@ -30,7 +29,6 @@ import kotlin.time.Duration.Companion.seconds
  * Update it from IntelliJ's `Tools` run configurations with `Update testLifecycleTask.dump.txt`,
  * or use `Update all project dumps` to refresh every dump.
  */
-@NightlyTest
 @GradleLock
 class TestLifecycleTaskTest {
 
@@ -91,11 +89,13 @@ private fun generateTestLifecycleTasksDump(projectDir: Path): String {
         connection.action(FetchTestLifecycleTaskModelBuildAction())
             .setStandardError(System.err)
             .setStandardOutput(System.out)
-            .setJvmArguments("-Xmx2048m", *issueNewDebugSessionJvmArguments("Build Action"))
+            .setJvmArguments("-Xmx3g", *issueNewDebugSessionJvmArguments("Build Action"))
             .withArguments(
                 "-Pteamcity=true",
                 "-Pkotlin.native.enabled=true",
-                "-Dorg.gradle.daemon.idletimeout=${5.seconds.inWholeMilliseconds}"
+                "-Dorg.gradle.daemon.idletimeout=${5.seconds.inWholeMilliseconds}",
+                "-Dkotlin.daemon.options=\"autoshutdownIdleSeconds=10\"",
+                "-Porg.gradle.daemon.idletimeout=1000",
             ).run()
     }
 
