@@ -507,28 +507,10 @@ public class DirectiveTestUtils {
 
     private abstract static class DirectiveHandler {
 
-        private final static String TARGET_BACKENDS = "TARGET_BACKENDS";
-
-        private final static String IGNORED_BACKENDS = "IGNORED_BACKENDS";
-
         @NotNull private final String directive;
 
         DirectiveHandler(@NotNull String directive) {
             this.directive = "// " + directive + ": ";
-        }
-
-        private static boolean containsBackend(
-                @NotNull TargetBackend targetBackend,
-                @NotNull String backendsParameterName,
-                @NotNull ArgumentsHelper arguments,
-                boolean ifNotSpecified
-        ) {
-            String backendsArg = arguments.findNamedArgument(backendsParameterName);
-            if (backendsArg != null) {
-                List<String> backends = Arrays.asList(backendsArg.split(";"));
-                return backends.contains(targetBackend.name());
-            }
-            return ifNotSpecified;
         }
 
         /**
@@ -547,11 +529,9 @@ public class DirectiveTestUtils {
             List<String> directiveEntries = findLinesWithPrefixesRemoved(sourceCode, directive);
             for (String directiveEntry : directiveEntries) {
                 ArgumentsHelper arguments = new ArgumentsHelper(directiveEntry);
-                if (!containsBackend(targetBackend, TARGET_BACKENDS, arguments, true) ||
-                    containsBackend(targetBackend, IGNORED_BACKENDS, arguments, false)) {
-                    continue;
+                if (arguments.shouldRunWithBackend(targetBackend)) {
+                    processEntry(ast, arguments, sourceFile);
                 }
-                processEntry(ast, arguments, sourceFile);
             }
         }
 
