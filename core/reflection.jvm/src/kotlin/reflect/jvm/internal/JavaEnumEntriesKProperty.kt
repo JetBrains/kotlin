@@ -80,7 +80,7 @@ internal class JavaEnumEntriesKProperty(
     private inner class Getter : ReflectKCallableImpl<EnumEntries<*>>(KCallableOverriddenStorage.EMPTY), KProperty0.Getter<EnumEntries<*>> {
         override val property: ReflectKProperty<EnumEntries<*>> get() = this@JavaEnumEntriesKProperty
         override val container: KDeclarationContainerImpl get() = property.container
-        override val rawBoundReceiver: Any? get() = null
+        override val rawBoundReceiver: Any? get() = CallableReference.NO_RECEIVER
 
         override val name: String get() = "<get-${property.name}>"
 
