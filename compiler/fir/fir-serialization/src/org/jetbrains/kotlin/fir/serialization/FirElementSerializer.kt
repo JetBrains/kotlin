@@ -151,11 +151,7 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    fun classProto(klass: FirClass): ProtoBuf.Class.Builder {
-        return classProtoImpl(klass)
-    }
-
-    private fun classProtoImpl(klass: FirClass): ProtoBuf.Class.Builder = whileAnalysing(session, klass) {
+    fun classProto(klass: FirClass): ProtoBuf.Class.Builder = whileAnalysing(session, klass) {
         val builder = ProtoBuf.Class.newBuilder()
 
         val regularClass = klass as? FirRegularClass
@@ -407,7 +403,7 @@ class FirElementSerializer private constructor(
     @OptIn(UnexpandedTypeCheck::class)
     fun snippetProto(snippet: FirReplSnippet): ProtoBuf.Class.Builder = whileAnalysing(session, snippet) {
         if (versionRequirementTable == null) error("Version requirements must be serialized for snippets: ${snippet.render()}")
-        val builder = classProtoImpl(snippet.snippetClass)
+        val builder = classProto(snippet.snippetClass)
         extension.serializeSnippet(snippet, builder, versionRequirementTable, this)
         return builder
     }
