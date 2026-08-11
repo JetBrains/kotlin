@@ -250,6 +250,7 @@ _MAP_ENTRY_TYPE = None
 _MAP_ENTRY_TYPE_PROCESS_ID = None
 _TO_STRING_DEPTH = 2
 _ARRAY_TO_STRING_LIMIT = 10
+_CHILD_CACHE_LINE_SIZE = 200
 _TOTAL_MEMBERS_LIMIT = 50
 
 
@@ -319,9 +320,10 @@ def _get_or_create_cached_sbvalue_info_for_key(process, key):
     return cached_info
 
 
-def _get_cached_child_addresses_by_index(value):
+def _get_cached_child_address(value, index):
     cached_info = _get_cached_sbvalue_info(value)
-    return None if cached_info is None else cached_info.child_addresses_by_index
+    cached_addresses = None if cached_info is None else cached_info.child_addresses_by_index
+    return None if cached_addresses is None else cached_addresses.get(index)
 
 
 def _set_cached_child_address(value, index, address):
@@ -344,9 +346,10 @@ def _set_cached_children_count(value, children_count):
         cached_info.children_count = children_count
 
 
-def _get_cached_child_names_by_index(value):
+def _get_cached_child_name(value, index):
     cached_info = _get_cached_sbvalue_info(value)
-    return None if cached_info is None else cached_info.child_names_by_index
+    cached_names = None if cached_info is None else cached_info.child_names_by_index
+    return None if cached_names is None else cached_names.get(index)
 
 
 def _set_cached_child_name(value, index, name):
@@ -358,9 +361,10 @@ def _set_cached_child_name(value, index, name):
     cached_info.child_names_by_index[index] = name
 
 
-def _get_cached_child_types_by_index(value):
+def _get_cached_child_type(value, index):
     cached_info = _get_cached_sbvalue_info(value)
-    return None if cached_info is None else cached_info.child_types_by_index
+    cached_types = None if cached_info is None else cached_info.child_types_by_index
+    return None if cached_types is None else cached_types.get(index)
 
 
 def _set_cached_child_type(value, index, child_type):
@@ -431,10 +435,9 @@ def _read_pointer(process, target, address):
     raw = process.ReadMemory(address, pointer_size, error)
     if not error.Success():
         return 0
-    pointer_format = "Q" if pointer_size == 8 else "I"
-    return struct.unpack(
-        f"{_byte_order_prefix_for_target(target)}{pointer_format}", raw
-    )[0]
+    pointer_format = _pointer_format_for_target(target)
+    byte_order = _byte_order_prefix_for_target(target)
+    return struct.unpack(f"{byte_order}{pointer_format}", raw)[0]
 
 
 def _fast_type_info(value):
@@ -456,6 +459,10 @@ def _byte_order_prefix_for_target(target):
     return ">" if target.GetByteOrder() == lldb.eByteOrderBig else "<"
 
 
+def _pointer_format_for_target(target):
+    return "Q" if target.GetAddressByteSize() == 8 else "I"
+
+
 def _children_count(value):
     cached_children_count = _get_cached_children_count(value)
     if cached_children_count is not None:
@@ -470,7 +477,7 @@ def _children_count(value):
     return children_count
 
 
-def _allocate_inferior_memory(process, size, permissions, what):
+def _allocate_inferior_memory(process, size, permissions):
     error = lldb.SBError()
     address = process.AllocateMemory(size, permissions, error)
     if (
@@ -478,9 +485,7 @@ def _allocate_inferior_memory(process, size, permissions, what):
         or not address
         or address == lldb.LLDB_INVALID_ADDRESS
     ):
-        raise DebuggerException(
-            f"Failed to allocate inferior memory for {what}"
-        )
+        raise DebuggerException("Failed to allocate inferior memory")
     return address
 
 
@@ -684,6 +689,8 @@ def _select_provider(lldb_val, internal_dict):
             )
         )
 
+        # Optionally map the KonanObjectSyntheticProvider to an additional collection provider,
+        # which implement the user-friendly formatting for known collections.
         ret = raw_provider
         if isinstance(raw_provider, KonanObjectSyntheticProvider):
             collection_kind = _collection_kind(lldb_val)
@@ -782,9 +789,9 @@ class KonanHelperProvider(lldb.SBSyntheticValueProvider):
         ).unsigned
 
     def _child_name(self, index):
-        children = _get_cached_child_names_by_index(self._valobj)
-        if children is not None and index in children:
-            return children[index]
+        child_name = _get_cached_child_name(self._valobj, index)
+        if child_name is not None:
+            return child_name
 
         return self._field_name(index)
 
@@ -870,26 +877,30 @@ class KonanStringSyntheticProvider(KonanHelperProvider):
         return self._size_in_bytes_child
 
 
-def _run_batch_child_metadata_request(provider, include_names=True):
-    count = _children_count(provider._valobj)
-    if count <= 0:
-        return []
+def _run_batch_child_metadata_request(provider, start_index, include_names=True):
+    total_count = _children_count(provider._valobj)
+    if total_count <= 0 or start_index >= total_count:
+        return
+    count = min(_CHILD_CACHE_LINE_SIZE, total_count - start_index)
 
     pointer_size = provider._target.GetAddressByteSize()
-    pointer_format = "Q" if pointer_size == 8 else "I"
     result_slot_count = 6
     permissions = lldb.ePermissionsReadable | lldb.ePermissionsWritable
     result_addr = _allocate_inferior_memory(
         provider._process,
         pointer_size * result_slot_count,
         permissions,
-        "object child metadata request",
     )
 
     metadata_addrs = (0, 0, 0, 0)
     try:
         _evaluate_batch_child_metadata_request(
-            provider, result_addr, result_slot_count, count, include_names
+            provider,
+            result_addr,
+            result_slot_count,
+            start_index,
+            count,
+            include_names,
         )
         (
             metadata_addrs,
@@ -898,23 +909,33 @@ def _run_batch_child_metadata_request(provider, include_names=True):
             addresses,
             type_names,
         ) = _read_child_metadata(
-            provider, result_addr, result_slot_count, count, include_names
+            provider,
+            result_addr,
+            result_slot_count,
+            start_index,
+            count,
+            include_names,
         )
-        _cache_child_metadata(provider, names, types, addresses, type_names)
+        _cache_child_metadata(
+            provider,
+            start_index,
+            names,
+            types,
+            addresses,
+            type_names,
+            include_names,
+        )
     finally:
-        _free_batch_child_metadata_result(metadata_addrs)
-        _deallocate_inferior_memory(provider._process, result_addr)
-    return names
+        _free_child_prefetch_memory(provider._process, result_addr, metadata_addrs)
 
 
 def _get_cpp_helpers_string():
     return f"""
-auto failAndFree = [](int* fieldTypesData, void** fieldAddressesData, char* fieldNamesData, char* typeNamesData) -> int {{
+auto freeAll = [](int* fieldTypesData, void** fieldAddressesData, char* fieldNamesData, char* typeNamesData) {{
     (void)free(fieldNamesData);
     (void)free(fieldTypesData);
     (void)free(fieldAddressesData);
     (void)free(typeNamesData);
-    return 0;
 }};
 
 auto appendCString = [](char** buffer, int* capacity, int* used, const char* text) -> int {{
@@ -947,15 +968,14 @@ auto getObjectTypeName = [](int fieldType, void* fieldAddress) -> const char* {{
 """
 
 
-def _evaluate_batch_child_metadata_request(
-    provider, result_addr, result_slot_count, count, include_names
-):
+def _evaluate_batch_child_metadata_request(provider, result_addr, result_slot_count, start_index, count, include_names):
     _evaluate(
         f"""
         ([]() -> int {{
             void** result = (void **){_hex(result_addr)};
             for (int i = 0; i < {result_slot_count}; ++i) result[i] = 0;
             void* obj = (void *){_hex(provider._valobj.unsigned)};
+            int startIndex = {start_index};
             int count = {count};
             const bool includeFieldNames = {'true' if include_names else 'false'};
             {_get_cpp_helpers_string()}
@@ -968,7 +988,8 @@ def _evaluate_batch_child_metadata_request(
             char* fieldNamesData = includeFieldNames ? (char*)(void*)malloc(initialFieldNamesCapacity) : 0;
 
             if (fieldTypesData == 0 || fieldAddressesData == 0 || typeNamesData == 0 || (includeFieldNames && fieldNamesData == 0)) {{
-                return failAndFree(fieldTypesData, fieldAddressesData, fieldNamesData, typeNamesData);
+                freeAll(fieldTypesData, fieldAddressesData, fieldNamesData, typeNamesData);
+                return 0;
             }}
 
             int typeNamesCapacity = initialTypeNamesCapacity;
@@ -977,13 +998,14 @@ def _evaluate_batch_child_metadata_request(
             int fieldNamesUsed = 0;
 
             for (int i = 0; i < count; ++i) {{
-                fieldTypesData[i] = (int)Konan_DebugGetFieldType(obj, i);
-                void* fieldAddress = (void*)Konan_DebugGetFieldAddress(obj, i);
+                int fieldIndex = startIndex + i;
+                fieldTypesData[i] = (int)Konan_DebugGetFieldType(obj, fieldIndex);
+                void* fieldAddress = (void*)Konan_DebugGetFieldAddress(obj, fieldIndex);
                 fieldAddressesData[i] = fieldAddress;
                 const char* typeName = getObjectTypeName(fieldTypesData[i], fieldAddress);
                 appendCString(&typeNamesData, &typeNamesCapacity, &typeNamesUsed, typeName);
                 if (includeFieldNames) {{
-                    const char* fieldName = (const char*)Konan_DebugGetFieldName(obj, i);
+                    const char* fieldName = (const char*)Konan_DebugGetFieldName(obj, fieldIndex);
                     appendCString(&fieldNamesData, &fieldNamesCapacity, &fieldNamesUsed, fieldName);
                 }}
             }}
@@ -1000,24 +1022,26 @@ def _evaluate_batch_child_metadata_request(
     )
 
 
-def _read_memory_or_raise(process, address, size, message):
+def _read_memory(process, address, size):
     error = lldb.SBError()
     raw_value = process.ReadMemory(address, size, error)
     if not error.Success():
-        raise DebuggerException(message)
+        raise DebuggerException("Failed to read inferior memory")
     return raw_value
 
 
-def _read_child_metadata(provider, result_addr, result_slot_count, count, include_names):
+def _read_child_metadata(provider, result_addr, result_slot_count, start_index, count, include_names):
+
+    # Read the array of pointers from the inferior.
+    # These pointers point to arrays which contain the prefetched data.
     pointer_size = provider._target.GetAddressByteSize()
-    pointer_format = "Q" if pointer_size == 8 else "I"
-    raw_result = _read_memory_or_raise(
+    pointer_format = _pointer_format_for_target(provider._target)
+    prefix = _byte_order_prefix_for_target(provider._target)
+    raw_result = _read_memory(
         provider._process,
         result_addr,
         pointer_size * result_slot_count,
-        "Failed to read KonanObjectSyntheticProvider child metadata result",
     )
-    prefix = _byte_order_prefix_for_target(provider._target)
     (
         field_names_addr,
         field_names_size,
@@ -1026,51 +1050,43 @@ def _read_child_metadata(provider, result_addr, result_slot_count, count, includ
         type_names_addr,
         type_names_size,
     ) = struct.unpack(f"{prefix}{result_slot_count}{pointer_format}", raw_result)
-    if (
-        (include_names and field_names_addr == 0)
-        or field_types_addr == 0
-        or field_addresses_addr == 0
-        or type_names_addr == 0
-    ):
-        raise DebuggerException(
-            "KonanObjectSyntheticProvider child metadata was not fetched"
-        )
 
+    if ((include_names and field_names_addr == 0) or field_types_addr == 0 or field_addresses_addr == 0 or type_names_addr == 0):
+        raise DebuggerException("Could not read result of a child prefetch")
+
+    # Move the prefetched arrays to the debugger's memory
     raw_field_names = b""
     if include_names:
-        raw_field_names = _read_memory_or_raise(
+        raw_field_names = _read_memory(
             provider._process,
             field_names_addr,
             field_names_size,
-            "Failed to read KonanObjectSyntheticProvider field names",
         )
-    raw_field_types = _read_memory_or_raise(
+    raw_field_types = _read_memory(
         provider._process,
         field_types_addr,
         count * 4,
-        "Failed to read KonanObjectSyntheticProvider field types",
     )
-    raw_field_addresses = _read_memory_or_raise(
+    raw_field_addresses = _read_memory(
         provider._process,
         field_addresses_addr,
         count * pointer_size,
-        "Failed to read KonanObjectSyntheticProvider field addresses",
     )
-    raw_type_names = _read_memory_or_raise(
+    raw_type_names = _read_memory(
         provider._process,
         type_names_addr,
         type_names_size,
-        "Failed to read KonanObjectSyntheticProvider type names",
     )
+
+    # Decode the prefetched arrays to python data types
     if include_names:
         names = _decode_c_string_array(raw_field_names, count)
     else:
-        names = [str(index) for index in range(count)]
+        names = [str(start_index + index) for index in range(count)]
     type_names = _decode_c_string_array(raw_type_names, count)
     types = list(struct.unpack(f"{prefix}{count}i", raw_field_types))
-    addresses = list(
-        struct.unpack(f"{prefix}{count}{pointer_format}", raw_field_addresses)
-    )
+    addresses = list(struct.unpack(f"{prefix}{count}{pointer_format}", raw_field_addresses))
+
     return (
         (
             field_names_addr,
@@ -1085,25 +1101,24 @@ def _read_child_metadata(provider, result_addr, result_slot_count, count, includ
     )
 
 
-def _cache_child_metadata(provider, names, types, addresses, type_names):
-    for index, name in enumerate(names):
-        _set_cached_child_name(provider._valobj, index, name)
-    for index, address in enumerate(addresses):
+def _cache_child_metadata(provider, start_index, names, types, addresses, type_names, include_names):
+    if include_names:
+        for offset, name in enumerate(names):
+            index = start_index + offset
+            _set_cached_child_name(provider._valobj, index, name)
+    for offset, address in enumerate(addresses):
+        index = start_index + offset
         _set_cached_child_address(provider._valobj, index, address)
-    for index, child_type in enumerate(types):
+    for offset, child_type in enumerate(types):
+        index = start_index + offset
         _set_cached_child_type(provider._valobj, index, child_type)
-    for field_address, child_type, type_name in zip(
-        addresses, types, type_names
-    ):
-        if child_type == _RUNTIME_TYPE_OBJECT and field_address:
-            child_key = _read_pointer(
-                provider._process, provider._target, field_address
-            )
-            if type_name:
-                _set_cached_type_name(provider._process, child_key, type_name)
+    for field_address, child_type, type_name in zip(addresses, types, type_names):
+        if child_type == _RUNTIME_TYPE_OBJECT and field_address and type_name:
+            child_key = _read_pointer(provider._process, provider._target, field_address)
+            _set_cached_type_name(provider._process, child_key, type_name)
 
 
-def _free_batch_child_metadata_result(metadata_addrs):
+def _free_child_prefetch_memory(process, result_addr, metadata_addrs):
     (
         field_names_addr,
         field_types_addr,
@@ -1127,6 +1142,24 @@ def _free_batch_child_metadata_result(metadata_addrs):
                 "})()"
             )
         )
+    _deallocate_inferior_memory(process, result_addr)
+
+
+def _ensure_cached_child_metadata_line(provider, index, include_names):
+    """Prefetch the cache line containing index when required child metadata is missing."""
+    if index < 0:
+        return
+
+    if (
+        _get_cached_child_address(provider._valobj, index) is None
+        or _get_cached_child_type(provider._valobj, index) is None
+        or (include_names and _get_cached_child_name(provider._valobj, index) is None)
+    ):
+        _run_batch_child_metadata_request(
+            provider,
+            index - (index % _CHILD_CACHE_LINE_SIZE),
+            include_names=include_names,
+        )
 
 
 class KonanObjectSyntheticProvider(lldb.SBSyntheticValueProvider):
@@ -1141,9 +1174,9 @@ class KonanObjectSyntheticProvider(lldb.SBSyntheticValueProvider):
 
     def get_child_index(self, name):
         children_count = self.num_children()
-        cached_names = self._get_child_names_by_index()
         for index in range(children_count):
-            if cached_names.get(index) == name:
+            _ensure_cached_child_metadata_line(self, index, True)
+            if _get_cached_child_name(self._valobj, index) == name:
                 return index
         return -1
 
@@ -1171,40 +1204,17 @@ class KonanObjectSyntheticProvider(lldb.SBSyntheticValueProvider):
         return child if child is not None and child.IsValid() else None
 
     def _field_address(self, index):
-        cached_addresses = _get_cached_child_addresses_by_index(self._valobj)
-        if cached_addresses is None or index not in cached_addresses:
-            _run_batch_child_metadata_request(self)
-            cached_addresses = _get_cached_child_addresses_by_index(
-                self._valobj
-            )
-        if cached_addresses is not None and index in cached_addresses:
-            return cached_addresses[index]
-        return None
+        _ensure_cached_child_metadata_line(self, index, True)
+        return _get_cached_child_address(self._valobj, index)
 
     def _field_type(self, index):
-        cached_types = _get_cached_child_types_by_index(self._valobj)
-        if cached_types is None or index not in cached_types:
-            self._get_child_names_by_index()
-            cached_types = _get_cached_child_types_by_index(self._valobj)
-        if cached_types is not None and index in cached_types:
-            return cached_types[index]
-        return _RUNTIME_TYPE_INVALID
+        _ensure_cached_child_metadata_line(self, index, True)
+        child_type = _get_cached_child_type(self._valobj, index)
+        return _RUNTIME_TYPE_INVALID if child_type is None else child_type
 
     def _child_name(self, index):
-        cached_names = _get_cached_child_names_by_index(self._valobj)
-        if cached_names is None or index not in cached_names:
-            cached_names = self._get_child_names_by_index()
-        if cached_names is not None and index in cached_names:
-            return cached_names[index]
-        return None
-
-    def _get_child_names_by_index(self):
-        children_count = self.num_children()
-        cached_names = _get_cached_child_names_by_index(self._valobj)
-        if cached_names is None:
-            _run_batch_child_metadata_request(self)
-            cached_names = _get_cached_child_names_by_index(self._valobj)
-        return {} if cached_names is None else cached_names
+        _ensure_cached_child_metadata_line(self, index, True)
+        return _get_cached_child_name(self._valobj, index)
 
     def update(self):
         return False
@@ -1247,23 +1257,13 @@ class KonanArraySyntheticProvider(lldb.SBSyntheticValueProvider):
         return False
 
     def _field_address(self, index):
-        cached_addresses = _get_cached_child_addresses_by_index(self._valobj)
-        if cached_addresses is None:
-            _run_batch_child_metadata_request(self, include_names=False)
-            cached_addresses = _get_cached_child_addresses_by_index(self._valobj)
-        if cached_addresses is not None and index in cached_addresses:
-            return cached_addresses[index]
-        return None
+        _ensure_cached_child_metadata_line(self, index, False)
+        return _get_cached_child_address(self._valobj, index)
 
     def _field_type(self, index):
-        cached_types = _get_cached_child_types_by_index(self._valobj)
-        if cached_types is None:
-            _run_batch_child_metadata_request(self, include_names=False)
-            cached_types = _get_cached_child_types_by_index(self._valobj)
-        if cached_types is not None and index in cached_types:
-            return cached_types[index]
-
-        return _RUNTIME_TYPE_INVALID
+        _ensure_cached_child_metadata_line(self, index, False)
+        child_type = _get_cached_child_type(self._valobj, index)
+        return _RUNTIME_TYPE_INVALID if child_type is None else child_type
 
 
 def _object_field_value(object_proxy, field_name):
