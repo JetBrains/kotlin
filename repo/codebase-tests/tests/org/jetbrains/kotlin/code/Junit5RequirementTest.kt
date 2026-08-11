@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.code
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.junit.jupiter.api.fail
 
 /**
@@ -29,43 +33,43 @@ class Junit5RequirementTest {
 
     @Test
     fun `no junit4 annotations or junit3 TestCase is used`() {
-        val violations = mutableListOf<String>()
+        runBlocking(Dispatchers.Default) {
+            val violations = channelFlow {
+                forEachCompiledClass { _, node ->
+                    packageWhitelist.forEach { packageName ->
+                        if (node.name.startsWith(packageName)) return@forEachCompiledClass
+                    }
 
-        runBlocking {
-            forEachCompiledClass { _, node ->
-                packageWhitelist.forEach { packageName ->
-                    if (node.name.startsWith(packageName)) return@forEachCompiledClass
-                }
+                    /* Check for junit3 TestCase */
+                    if (node.superName == junit3TestCaseName) {
+                        send(buildString {
+                            appendLine("${node.name}: Inherits from junit3 'TestCase'")
+                        })
+                    }
 
-                /* Check for junit3 TestCase */
-                if (node.superName == junit3TestCaseName) {
-                    violations.add(buildString {
-                        appendLine("${node.name}: Inherits from junit3 'TestCase'")
-                    })
-                }
-
-                /* Check for junit4 test annotation */
-                node.methods.forEach { methodNode ->
-                    (methodNode.visibleAnnotations.orEmpty())
-                        .forEach { annotationNode ->
-                            if (annotationNode.desc == junit4TestAnnotationDesc) {
-                                violations.add(buildString {
-                                    appendLine("${node.name}.${methodNode.name} is using a junit4 'Test' annotation")
-                                    appendLine("  - junit4 is not supported anymore, please migrate to junit5")
-                                })
+                    /* Check for junit4 test annotation */
+                    node.methods.forEach { methodNode ->
+                        (methodNode.visibleAnnotations.orEmpty())
+                            .forEach { annotationNode ->
+                                if (annotationNode.desc == junit4TestAnnotationDesc) {
+                                    send(buildString {
+                                        appendLine("${node.name}.${methodNode.name} is using a junit4 'Test' annotation")
+                                        appendLine("  - junit4 is not supported anymore, please migrate to junit5")
+                                    })
+                                }
                             }
-                        }
+                    }
                 }
-            }
-        }
+            }.toList().sorted()
 
-        if (violations.isNotEmpty()) {
-            fail(buildString {
-                appendLine("Found ${violations.size} violation(s)")
-                violations.forEach { violation ->
-                    appendLine(violation.prependIndent("  "))
-                }
-            })
+            if (violations.isNotEmpty()) {
+                fail(buildString {
+                    appendLine("Found ${violations.size} violation(s)")
+                    violations.forEach { violation ->
+                        appendLine(violation.prependIndent("  "))
+                    }
+                })
+            }
         }
     }
 }
