@@ -32,7 +32,7 @@ public class DirectiveTestUtils {
 
     private DirectiveTestUtils() {}
 
-    private static final DirectiveHandler FUNCTION_CONTAINS_NO_CALLS = new DirectiveHandler("CHECK_CONTAINS_NO_CALLS") {
+    private static final DirectiveHandler FUNCTION_CONTAINS_NO_CALLS = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             Set<String> exceptNames = new HashSet<>();
@@ -47,35 +47,35 @@ public class DirectiveTestUtils {
         }
     };
 
-    private static final DirectiveHandler FUNCTION_NOT_CALLED = new DirectiveHandler("CHECK_NOT_CALLED") {
+    private static final DirectiveHandler FUNCTION_NOT_CALLED = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             checkFunctionNotCalled(ast, arguments.getFirst(), arguments.findNamedArgument("except"));
         }
     };
 
-    private static final DirectiveHandler PROPERTY_NOT_USED = new DirectiveHandler("PROPERTY_NOT_USED") {
+    private static final DirectiveHandler PROPERTY_NOT_USED = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             checkPropertyNotUsed(ast, arguments.getFirst(), arguments.findNamedArgument("scope"), false, false);
         }
     };
 
-    private static final DirectiveHandler PROPERTY_NOT_READ_FROM = new DirectiveHandler("PROPERTY_NOT_READ_FROM") {
+    private static final DirectiveHandler PROPERTY_NOT_READ_FROM = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             checkPropertyNotUsed(ast, arguments.getFirst(), arguments.findNamedArgument("scope"), false, true);
         }
     };
 
-    private static final DirectiveHandler PROPERTY_NOT_WRITTEN_TO = new DirectiveHandler("PROPERTY_NOT_WRITTEN_TO") {
+    private static final DirectiveHandler PROPERTY_NOT_WRITTEN_TO = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             checkPropertyNotUsed(ast, arguments.getFirst(), arguments.findNamedArgument("scope"), true, false);
         }
     };
 
-    private static final DirectiveHandler PROPERTY_WRITE_COUNT = new DirectiveHandler("PROPERTY_WRITE_COUNT") {
+    private static final DirectiveHandler PROPERTY_WRITE_COUNT = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             checkPropertyWriteCount(ast, arguments.getNamedArgument("name"), arguments.findNamedArgument("scope"),
@@ -83,7 +83,7 @@ public class DirectiveTestUtils {
         }
     };
 
-    private static final DirectiveHandler PROPERTY_READ_COUNT = new DirectiveHandler("PROPERTY_READ_COUNT") {
+    private static final DirectiveHandler PROPERTY_READ_COUNT = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             checkPropertyReadCount(ast, arguments.getNamedArgument("name"), arguments.findNamedArgument("scope"),
@@ -91,7 +91,7 @@ public class DirectiveTestUtils {
         }
     };
 
-    private static final DirectiveHandler EXPECT_GENERATED_JS = new DirectiveHandler("EXPECT_GENERATED_JS") {
+    private static final DirectiveHandler EXPECT_GENERATED_JS = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) {
             List<String> functionNames = arguments.findNamedListArgument("function");
@@ -112,21 +112,21 @@ public class DirectiveTestUtils {
         }
     };
 
-    private static final DirectiveHandler CLASS_EXISTS = new DirectiveHandler("CHECK_CLASS_EXISTS") {
+    private static final DirectiveHandler CLASS_EXISTS = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) {
             AstSearchUtil.getClass(ast, arguments.getFirst());
         }
     };
 
-    private static final DirectiveHandler FUNCTION_EXISTS = new DirectiveHandler("CHECK_FUNCTION_EXISTS") {
+    private static final DirectiveHandler FUNCTION_EXISTS = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             AstSearchUtil.getFunction(ast, arguments.getFirst());
         }
     };
 
-    private static final DirectiveHandler FUNCTION_CALLED_IN_SCOPE = new DirectiveHandler("CHECK_CALLED_IN_SCOPE") {
+    private static final DirectiveHandler FUNCTION_CALLED_IN_SCOPE = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             // Be more restrictive, check qualified match by default
@@ -135,7 +135,7 @@ public class DirectiveTestUtils {
         }
     };
 
-    private static final DirectiveHandler FUNCTION_NOT_CALLED_IN_SCOPE = new DirectiveHandler("CHECK_NOT_CALLED_IN_SCOPE") {
+    private static final DirectiveHandler FUNCTION_NOT_CALLED_IN_SCOPE = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             // Be more restrictive, check unqualified match by default
@@ -144,7 +144,7 @@ public class DirectiveTestUtils {
         }
     };
 
-    private static final DirectiveHandler FUNCTION_CALLED_TIMES = new DirectiveHandler("FUNCTION_CALLED_TIMES") {
+    private static final DirectiveHandler FUNCTION_CALLED_TIMES = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             int expectedCount = Integer.parseInt(arguments.getNamedArgument("count"));
@@ -165,7 +165,7 @@ public class DirectiveTestUtils {
         private boolean shouldCheckForExistence;
 
         NodeExistenceDirective(@NotNull String directive, boolean shouldCheckForExistence) {
-            super(directive);
+            super();
             this.shouldCheckForExistence = shouldCheckForExistence;
         }
 
@@ -204,8 +204,8 @@ public class DirectiveTestUtils {
         @NotNull
         private final Class<T> klass;
 
-        CountNodesDirective(@NotNull String directive, @NotNull Class<T> klass) {
-            super(directive);
+        CountNodesDirective(@NotNull Class<T> klass) {
+            super();
             this.klass = klass;
         }
 
@@ -249,7 +249,7 @@ public class DirectiveTestUtils {
         }
     }
 
-    private static final DirectiveHandler COUNT_LABELS = new CountNodesDirective<JsLabel>("CHECK_LABELS_COUNT", JsLabel.class) {
+    private static final DirectiveHandler COUNT_LABELS = new CountNodesDirective<JsLabel>(JsLabel.class) {
         @Override
         protected int getActualCountFor(@NotNull JsLabel node, @NotNull ArgumentsHelper arguments) {
             String labelName = arguments.findNamedArgument("name");
@@ -260,23 +260,23 @@ public class DirectiveTestUtils {
         }
     };
 
-    private static final DirectiveHandler COUNT_VARS = new CountNodesDirective<>("CHECK_VARS_COUNT", JsVars.JsVar.class);
+    private static final DirectiveHandler COUNT_VARS = new CountNodesDirective<>(JsVars.JsVar.class);
 
-    private static final DirectiveHandler COUNT_BREAKS = new CountNodesDirective<>("CHECK_BREAKS_COUNT", JsBreak.class);
+    private static final DirectiveHandler COUNT_BREAKS = new CountNodesDirective<>(JsBreak.class);
 
-    private static final DirectiveHandler COUNT_NULLS = new CountNodesDirective<>("CHECK_NULLS_COUNT", JsNullLiteral.class);
+    private static final DirectiveHandler COUNT_NULLS = new CountNodesDirective<>(JsNullLiteral.class);
 
-    private static final DirectiveHandler COUNT_NEW = new CountNodesDirective<>("CHECK_NEW_COUNT", JsNew.class);
+    private static final DirectiveHandler COUNT_NEW = new CountNodesDirective<>(JsNew.class);
 
-    private static final DirectiveHandler COUNT_CASES = new CountNodesDirective<>("CHECK_CASES_COUNT", JsCase.class);
+    private static final DirectiveHandler COUNT_CASES = new CountNodesDirective<>(JsCase.class);
 
-    private static final DirectiveHandler COUNT_IF = new CountNodesDirective<>("CHECK_IF_COUNT", JsIf.class);
+    private static final DirectiveHandler COUNT_IF = new CountNodesDirective<>(JsIf.class);
 
-    private static final DirectiveHandler COUNT_SUPER = new CountNodesDirective<>("CHECK_SUPER_COUNT", JsSuperRef.class);
+    private static final DirectiveHandler COUNT_SUPER = new CountNodesDirective<>(JsSuperRef.class);
 
-    private static final DirectiveHandler COUNT_STRING_LITERALS = new CountNodesDirective<>("CHECK_STRING_LITERAL_COUNT", JsStringLiteral.class);
+    private static final DirectiveHandler COUNT_STRING_LITERALS = new CountNodesDirective<>(JsStringLiteral.class);
 
-    private static final DirectiveHandler NOT_REFERENCED = new DirectiveHandler("CHECK_NOT_REFERENCED") {
+    private static final DirectiveHandler NOT_REFERENCED = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             String reference = arguments.getPositionalArgument(0);
@@ -356,7 +356,7 @@ public class DirectiveTestUtils {
 
     };
 
-    private static final DirectiveHandler HAS_NO_CAPTURED_VARS = new DirectiveHandler("HAS_NO_CAPTURED_VARS") {
+    private static final DirectiveHandler HAS_NO_CAPTURED_VARS = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             String functionName = arguments.getNamedArgument("function");
@@ -513,12 +513,6 @@ public class DirectiveTestUtils {
 
     private abstract static class DirectiveHandler {
 
-        @NotNull private final String directive;
-
-        DirectiveHandler(@NotNull String directive) {
-            this.directive = "// " + directive + ": ";
-        }
-
         /**
          * Processes directive entries.
          *
@@ -540,15 +534,5 @@ public class DirectiveTestUtils {
         }
 
         abstract void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception;
-
-        @Override
-        public String toString() {
-            return getName();
-        }
-
-        @NotNull
-        String getName() {
-            return directive;
-        }
     }
 }
