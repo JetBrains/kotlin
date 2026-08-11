@@ -120,7 +120,8 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
             irExprBody(irBlock {
                 +delegateReference.getterFunction.inline(
                     getter,
-                    createAccessorArgumentsList(getter, delegateReference.getterFunction, isGetter = true, receiverProvider)
+                    createAccessorArgumentsList(getter, delegateReference.getterFunction, isGetter = true, receiverProvider),
+                    moveBody = false,
                 )
             })
         }
@@ -135,7 +136,8 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
         return irExprBody(irBlock {
             +delegateSetter.inline(
                 setter,
-                createAccessorArgumentsList(setter, delegateSetter, isGetter = false, receiverProvider)
+                createAccessorArgumentsList(setter, delegateSetter, isGetter = false, receiverProvider),
+                moveBody = false,
             )
         })
     }
