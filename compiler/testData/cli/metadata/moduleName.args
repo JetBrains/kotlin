@@ -5,5 +5,5 @@ $TEMP_DIR$
 -module-name
 foo
 -language-version
-2.1
+2.5
 -Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native
