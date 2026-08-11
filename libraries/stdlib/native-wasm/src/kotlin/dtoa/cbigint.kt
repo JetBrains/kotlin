@@ -104,9 +104,6 @@ internal fun addHighPrecision(arg1: ULongArray, length1: Int, arg2: ULongArray, 
     var length2 = length2
     // addition is limited by length of arg1 as it this function is
     // storing the result in arg1
-    var temp1: ULong
-    var temp2: ULong
-    var temp3: ULong /* temporary variables to help the SH-4, and gcc */
     var carry: ULong
 
     if (length1 == 0 || length2 == 0) {
@@ -118,9 +115,9 @@ internal fun addHighPrecision(arg1: ULongArray, length1: Int, arg2: ULongArray, 
     carry = 0UL
     var index = 0
     do {
-        temp1 = arg1[index]
-        temp2 = arg2[index]
-        temp3 = temp1 + temp2
+        val temp1 = arg1[index]
+        val temp2 = arg2[index]
+        val temp3 = temp1 + temp2
         arg1[index] = temp3 + carry
         if (arg2[index] < arg1[index])
             carry = 0UL
