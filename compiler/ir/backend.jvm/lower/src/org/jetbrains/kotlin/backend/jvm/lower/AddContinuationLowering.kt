@@ -306,7 +306,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                     if (viewForOriginal != null) view.originalFunctionForDefaultImpl = viewForOriginal
                 }
 
-                val continuationParameter = view.continuationParameter()
+                val continuationParameter = view.setupSuspendFunctionViewParameters(function, context)
                 val parameterMap = function.parameters.zip(view.parameters.filter { it != continuationParameter }).toMap()
                 view.body = function.moveBodyTo(view, parameterMap)
 
@@ -426,26 +426,39 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContex
 
         function.copyAttributes(this)
         function.copyTypeParametersFrom(this)
-
-        val substitutionMap = makeTypeParameterSubstitutionMap(this, function)
-        function.copyParametersFrom(this, substitutionMap)
-
-        val continuationParameter = buildValueParameter(function) {
-            kind = IrParameterKind.Regular
-            name = Name.identifier(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME)
-            type = continuationType(context).substitute(substitutionMap)
-            origin = JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
-        }
-        // The continuation parameter goes before the default argument mask(s) and handler for default argument stubs.
-        // TODO: It would be nice if AddContinuationLowering could insert the continuation argument before default stub generation.
-        val index = parameters.firstOrNull { it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION }?.indexInParameters
-            ?: parameters.size
-        function.parameters = function.parameters.take(index) +
-                continuationParameter +
-                function.parameters.drop(index)
+        function.setupSuspendFunctionViewParameters(this, context)
 
         function.overriddenSymbols += overriddenSymbols.map { it.owner.suspendFunctionViewOrStub(context).symbol }
     }
+}
+
+/**
+ * Configures the parameters of a suspend function view to include a continuation parameter
+ * in addition to the original parameters.
+ *
+ * @return the continuation parameter added to the function's parameters.
+ */
+private fun IrSimpleFunction.setupSuspendFunctionViewParameters(original: IrSimpleFunction, context: JvmBackendContext): IrValueParameter {
+    require(body == null)
+    require(isSuspend)
+
+    parameters = emptyList()
+    val substitutionMap = makeTypeParameterSubstitutionMap(original, this)
+    copyParametersFrom(original, substitutionMap)
+
+    val continuationParameter = buildValueParameter(this) {
+        kind = IrParameterKind.Regular
+        name = Name.identifier(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME)
+        type = original.continuationType(context).substitute(substitutionMap)
+        origin = JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
+    }
+
+    // The continuation parameter goes before the default argument mask(s) and handler for default argument stubs.
+    // TODO: It would be nice if AddContinuationLowering could insert the continuation argument before default stub generation.
+    val index = parameters.firstOrNull { it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION }?.indexInParameters
+        ?: parameters.size
+    parameters = parameters.take(index) + continuationParameter + parameters.drop(index)
+    return continuationParameter
 }
 
 private fun IrFunction.continuationType(context: JvmBackendContext): IrType {
