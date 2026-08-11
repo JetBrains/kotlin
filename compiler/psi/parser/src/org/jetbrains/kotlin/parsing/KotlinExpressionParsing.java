@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lang.BinaryOperationPrecedence;
+import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.parsing.KotlinParsing.NameParsingMode;
@@ -60,7 +61,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private static final TokenSet TYPE_ARGUMENT_LIST_STOPPERS = TokenSet.create(
             INTEGER_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, INTERPOLATION_PREFIX, OPEN_QUOTE,
             PACKAGE_KEYWORD, AS_KEYWORD, TYPE_ALIAS_KEYWORD, INTERFACE_KEYWORD, CLASS_KEYWORD, THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
-            FUN_KEYWORD, FOR_KEYWORD, NULL_KEYWORD,
+            FUN_KEYWORD, FOR_KEYWORD, FOREACH_KEYWORD, NULL_KEYWORD,
             TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
             CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD, TRY_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD,
             WHEN_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS, EXCLEXCL,
@@ -568,7 +569,10 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 parseTry();
                 break;
             case FOR_KEYWORD_Id:
-                parseFor();
+                parseFor(FOR_KEYWORD, FOR);
+                break;
+            case FOREACH_KEYWORD_Id:
+                parseFor(FOREACH_KEYWORD, FOR_EACH);
                 break;
             case WHILE_KEYWORD_Id:
                 parseWhile();
@@ -1406,14 +1410,14 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     }
 
     /*
-     * for
-     *   : "for" "(" annotations ("val" | "var")? (multipleVariableDeclarations | variableDeclarationEntry) "in" expression ")" expression
+     * for | miau
+     *   : ("for" | "miau") "(" annotations ("val" | "var")? (multipleVariableDeclarations | variableDeclarationEntry) "in" expression ")" expression
      *   ;
      *
      *   TODO: empty loop body (at the end of the block)?
      */
-    private void parseFor() {
-        assert _at(FOR_KEYWORD);
+    private void parseFor(KtKeywordToken forLoopKeyword, IElementType forLoopType) {
+        assert _at(forLoopKeyword);
 
         PsiBuilder.Marker loop = mark();
 
@@ -1466,7 +1470,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
         parseLoopBody();
 
-        loop.done(FOR);
+        loop.done(forLoopType);
     }
 
     private void parseControlStructureBody() {

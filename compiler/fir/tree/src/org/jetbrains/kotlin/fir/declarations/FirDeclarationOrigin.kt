@@ -42,6 +42,7 @@ sealed class FirDeclarationOrigin(
         object ScriptTopLevelDestructuringDeclarationContainer : Synthetic()
         object FakeHiddenInPreparationForNewJdk : Synthetic()
         object ImplicitWhenSubject : Synthetic()
+        object GeneratedForEachTemporaryVariable : Synthetic()
 
         // REPL synthetic constructs.
         object ReplContainerClass : Synthetic()

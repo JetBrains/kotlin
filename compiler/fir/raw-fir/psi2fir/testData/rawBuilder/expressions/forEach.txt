@@ -1,0 +1,380 @@
+FILE: forEach.kt
+    public? final? fun simpleForEach(): R|kotlin/Unit| {
+         {
+            IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).forEachWhile#(<L> = fun <anonymous>(i: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
+                println#(i#)
+                ^ Boolean(true)
+            }
+            )
+        }
+
+         {
+            IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).forEachWhile#(<L> = label@fun <anonymous>(i: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
+                when () {
+                    ==(i#, IntegerLiteral(5)) ->  {
+                        ^@label Boolean(false)
+                    }
+                }
+
+                ^@label Boolean(true)
+            }
+            )
+        }
+
+    }
+    public? final? fun nestedForEachWithAnyLoop(): R|kotlin/Unit| {
+        outer@while(Boolean(true)) {
+             {
+                lvar <continue-outer>: R|kotlin/Boolean|
+                IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).forEachWhile#(<L> = fun <anonymous>(j: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
+                    R|<local>/<continue-outer>| = Boolean(true)
+                    ^ Boolean(false)
+                }
+                )
+                when (lval <when-subject>: <implicit> = R|<local>/<continue-outer>|) {
+                    ==($subj$, Boolean(true)) ->  {
+                        continue@@@[Boolean(true)]
+                    }
+                    else ->  {
+                        Unit
+                    }
+                }
+
+            }
+
+        }
+
+        outer@do {
+             {
+                lvar <break-outer>: R|kotlin/Boolean|
+                IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).forEachWhile#(<L> = fun <anonymous>(j: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
+                    R|<local>/<break-outer>| = Boolean(true)
+                    ^ Boolean(false)
+                }
+                )
+                when (lval <when-subject>: <implicit> = R|<local>/<break-outer>|) {
+                    ==($subj$, Boolean(true)) ->  {
+                        break@@@[Boolean(true)]
+                    }
+                    else ->  {
+                        Unit
+                    }
+                }
+
+            }
+
+        }
+        while(Boolean(true))
+         {
+            lval <iterator>: <implicit> = IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).iterator#()
+            outer@while(R|<local>/<iterator>|.hasNext#()) {
+                [IsForLoopParameterProperty=true] lval i: <implicit> = R|<local>/<iterator>|.next#()
+                 {
+                     {
+                        lval <iterator>: <implicit> = IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).iterator#()
+                        while(R|<local>/<iterator>|.hasNext#()) {
+                            [IsForLoopParameterProperty=true] lval j: <implicit> = R|<local>/<iterator>|.next#()
+                             {
+                                 {
+                                    lvar <continue-outer>: R|kotlin/Boolean|
+                                    IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).forEachWhile#(<L> = fun <anonymous>(k: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
+                                        R|<local>/<continue-outer>| = Boolean(true)
+                                        ^ Boolean(false)
+                                    }
+                                    )
+                                    when (lval <when-subject>: <implicit> = R|<local>/<continue-outer>|) {
+                                        ==($subj$, Boolean(true)) ->  {
+                                            continue@@@[R|<local>/<iterator>|.hasNext#()]
+                                        }
+                                        else ->  {
+                                            Unit
+                                        }
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+         {
+            IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).forEachWhile#(<L> = outer@fun <anonymous>(i: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
+                 {
+                    lval <iterator>: <implicit> = IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).iterator#()
+                    while(R|<local>/<iterator>|.hasNext#()) {
+                        [IsForLoopParameterProperty=true] lval j: <implicit> = R|<local>/<iterator>|.next#()
+                         {
+                            ^@outer Boolean(true)
+                        }
+
+                    }
+
+                }
+
+                ^@outer Boolean(true)
+            }
+            )
+        }
+
+    }
+    public? final? fun nestedForEachInForEach(): R|kotlin/Unit| {
+         {
+            lval <iterator>: <implicit> = IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).iterator#()
+            outer@while(R|<local>/<iterator>|.hasNext#()) {
+                [IsForLoopParameterProperty=true] lval i: <implicit> = R|<local>/<iterator>|.next#()
+                 {
+                     {
+                        lval <iterator>: <implicit> = IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).iterator#()
+                        while(R|<local>/<iterator>|.hasNext#()) {
+                            [IsForLoopParameterProperty=true] lval j: <implicit> = R|<local>/<iterator>|.next#()
+                             {
+                                 {
+                                    lvar <break-outer>: R|kotlin/Boolean|
+                                    IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).forEachWhile#(<L> = a@fun <anonymous>(k: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
+                                         {
+                                            lval <iterator>: <implicit> = IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).iterator#()
+                                            while(R|<local>/<iterator>|.hasNext#()) {
+                                                [IsForLoopParameterProperty=true] lval l: <implicit> = R|<local>/<iterator>|.next#()
+                                                 {
+                                                     {
+                                                        lvar <continue-a>: R|kotlin/Boolean|
+                                                        lvar <break-outer>: R|kotlin/Boolean|
+                                                        IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).forEachWhile#(<L> = fun <anonymous>(m: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
+                                                            when () {
+                                                                ==(l#, IntegerLiteral(4)) ->  {
+                                                                     {
+                                                                        R|<local>/<continue-a>| = Boolean(true)
+                                                                        ^ Boolean(false)
+                                                                    }
+
+                                                                }
+                                                            }
+
+                                                            R|<local>/<break-outer>| = Boolean(true)
+                                                            ^ Boolean(false)
+                                                        }
+                                                        )
+                                                        when (lval <when-subject>: <implicit> = R|<local>/<continue-a>|) {
+                                                            ==($subj$, Boolean(true)) ->  {
+                                                                ^@a Boolean(true)
+                                                            }
+                                                            else ->  {
+                                                                Unit
+                                                            }
+                                                        }
+
+                                                        when (lval <when-subject>: <implicit> = R|<local>/<break-outer>|) {
+                                                            ==($subj$, Boolean(true)) ->  {
+                                                                R|<local>/<break-outer>| = Boolean(true)
+                                                                ^@a Boolean(false)
+                                                            }
+                                                            else ->  {
+                                                                Unit
+                                                            }
+                                                        }
+
+                                                    }
+
+                                                }
+
+                                            }
+
+                                        }
+
+                                        ^@a Boolean(true)
+                                    }
+                                    )
+                                    when (lval <when-subject>: <implicit> = R|<local>/<break-outer>|) {
+                                        ==($subj$, Boolean(true)) ->  {
+                                            break@@@[R|<local>/<iterator>|.hasNext#()]
+                                        }
+                                        else ->  {
+                                            Unit
+                                        }
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+    public? final? fun simpleFunctionReturn(): R|kotlin/Unit| {
+        foo#(<L> = [ResultVariablesKey=[]] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+             {
+                lvar <return-simpleFunctionReturn>: R|kotlin/Boolean|
+                IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).forEachWhile#(<L> = fun <anonymous>(i: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
+                    R|<local>/<return-simpleFunctionReturn>| = Boolean(true)
+                    ^ Boolean(false)
+                }
+                )
+                when (lval <when-subject>: <implicit> = R|<local>/<return-simpleFunctionReturn>|) {
+                    ==($subj$, Boolean(true)) ->  {
+                        ^simpleFunctionReturn Unit
+                    }
+                    else ->  {
+                        Unit
+                    }
+                }
+
+            }
+
+        }
+        )
+        foo#(<L> = [ResultVariablesKey=[FirLocalPropertySymbol <local>/<result-foo>]] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+             {
+                lvar <result-foo>: <implicit>
+                lvar <return-foo>: R|kotlin/Boolean|
+                IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).forEachWhile#(<L> = fun <anonymous>(i: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
+                    R|<local>/<result-foo>| = Unit
+                    R|<local>/<return-foo>| = Boolean(true)
+                    ^ Boolean(false)
+                }
+                )
+                when (lval <when-subject>: <implicit> = R|<local>/<return-foo>|) {
+                    ==($subj$, Boolean(true)) ->  {
+                        ^@foo R|<local>/<result-foo>|
+                    }
+                    else ->  {
+                        Unit
+                    }
+                }
+
+            }
+
+        }
+        )
+         {
+            lvar <return-simpleFunctionReturn>: R|kotlin/Boolean|
+            IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).forEachWhile#(<L> = fun <anonymous>(i: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
+                foo#(<L> = [ResultVariablesKey=[]] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    R|<local>/<return-simpleFunctionReturn>| = Boolean(true)
+                    ^ Boolean(false)
+                }
+                )
+                ^ Boolean(true)
+            }
+            )
+            when (lval <when-subject>: <implicit> = R|<local>/<return-simpleFunctionReturn>|) {
+                ==($subj$, Boolean(true)) ->  {
+                    ^simpleFunctionReturn Unit
+                }
+                else ->  {
+                    Unit
+                }
+            }
+
+        }
+
+         {
+            IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).forEachWhile#(<L> = fun <anonymous>(i: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
+                foo#(<L> = [ResultVariablesKey=[]] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    ^@foo Unit
+                }
+                )
+                ^ Boolean(true)
+            }
+            )
+        }
+
+    }
+    public? final? fun nestedFunctionJump(): R|kotlin/Unit| {
+         {
+            lval <iterator>: <implicit> = IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).iterator#()
+            outer@while(R|<local>/<iterator>|.hasNext#()) {
+                [IsForLoopParameterProperty=true] lval i: <implicit> = R|<local>/<iterator>|.next#()
+                 {
+                    foo#(<L> = [ResultVariablesKey=[]] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                         {
+                            lvar <continue-outer>: R|kotlin/Boolean|
+                            IntegerLiteral(10).forEachWhile#(<L> = fun <anonymous>(j: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
+                                R|<local>/<continue-outer>| = Boolean(true)
+                                ^ Boolean(false)
+                            }
+                            )
+                            when (lval <when-subject>: <implicit> = R|<local>/<continue-outer>|) {
+                                ==($subj$, Boolean(true)) ->  {
+                                    continue@@@[R|<local>/<iterator>|.hasNext#()]
+                                }
+                                else ->  {
+                                    Unit
+                                }
+                            }
+
+                        }
+
+                    }
+                    )
+                }
+
+            }
+
+        }
+
+        foo#(<L> = [ResultVariablesKey=[]] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+             {
+                IntegerLiteral(10).forEachWhile#(<L> = fun <anonymous>(j: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
+                    bar#(<L> = [ResultVariablesKey=[]] bar@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                        ^ Boolean(false)
+                    }
+                    )
+                    ^ Boolean(true)
+                }
+                )
+            }
+
+        }
+        )
+        lvar result: String = String()
+        +=(result#, baz#(<L> = [ResultVariablesKey=[FirLocalPropertySymbol <local>/<result-baz>]] baz@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+             {
+                lvar <result-baz>: <implicit>
+                lvar <return-baz>: R|kotlin/Boolean|
+                IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).forEachWhile#(<L> = fun <anonymous>(i: <implicit>): R|kotlin/Boolean| <inline=Unknown>  {
+                    when () {
+                        ==(i#, IntegerLiteral(7)) ->  {
+                             {
+                                R|<local>/<result-baz>| = String(test)
+                                R|<local>/<return-baz>| = Boolean(true)
+                                ^ Boolean(false)
+                            }
+
+                        }
+                    }
+
+                    +=(result#, i#)
+                    ^ Boolean(true)
+                }
+                )
+                when (lval <when-subject>: <implicit> = R|<local>/<return-baz>|) {
+                    ==($subj$, Boolean(true)) ->  {
+                        ^@baz R|<local>/<result-baz>|
+                    }
+                    else ->  {
+                        Unit
+                    }
+                }
+
+            }
+
+            String(<unreachable>)
+        }
+        ))
+    }

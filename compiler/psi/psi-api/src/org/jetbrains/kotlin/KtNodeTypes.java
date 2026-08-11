@@ -116,6 +116,7 @@ public interface KtNodeTypes {
     @NotNull IElementType CATCH                     = new KtNodeType("CATCH", KtCatchClause::new);
     @NotNull IElementType FINALLY                   = new KtNodeType("FINALLY", KtFinallySection::new);
     @NotNull IElementType FOR                       = new KtNodeType("FOR", KtForExpression::new);
+    @NotNull IElementType FOR_EACH                  = new KtNodeType("MIAU", KtForEachExpression::new);
     @NotNull IElementType WHILE                     = new KtNodeType("WHILE", KtWhileExpression::new);
     @NotNull IElementType DO_WHILE                  = new KtNodeType("DO_WHILE", KtDoWhileExpression::new);
     @NotNull IElementType LOOP_RANGE                = new KtNodeType("LOOP_RANGE", KtContainerNode::new);

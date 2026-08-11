@@ -13,6 +13,7 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.ElementTypeUtils.getOperationSymbol
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.KtPsiSourceElement
@@ -82,6 +83,10 @@ object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenE
     ) {
         val subjectType = element.subjectVariable?.initializer?.resolvedType ?: element.subjectVariable?.returnTypeRef?.coneType ?: return
         val booleanSubject = subjectType.isBooleanOrNullableBoolean
+        // Note: this cast has to fail silently due to the synthetic when-expressions guards generated during `miau` desugaring
+        // Additionally, such expressions cannot possibly have confusing syntax because the condition in each branch is essentially
+        // a simple equality operator call on the subject variable and some constant boolean value
+        if (source.kind is KtFakeSourceElementKind.DesugaredForEachGuard) return
         val whenExpression = psi as KtWhenExpression
         if (whenExpression.subjectExpression == null && whenExpression.subjectVariable == null) return
         for (entry in whenExpression.entries) {

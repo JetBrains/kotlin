@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -626,8 +627,10 @@ open class PsiRawFirBuilder(
                             }
                         }
                         val outerContractDescription = this@toFirPropertyAccessor.obtainContractDescription()
-                        val [body, innerContractDescription] = withForcedLocalContext {
-                            this@toFirPropertyAccessor.buildFirBody()
+                        val [body, innerContractDescription] = desugarFunctionTarget(accessorTarget, returnTypeRef) {
+                            withForcedLocalContext {
+                                this@toFirPropertyAccessor.buildFirBody()
+                            }
                         }
                         this.body = body
                         val contractDescription = outerContractDescription ?: innerContractDescription
@@ -2332,6 +2335,7 @@ open class PsiRawFirBuilder(
 
                 val target = FirFunctionTarget(labelName, isLambda = false)
                 val functionSource = function.toFirSourceElement()
+                val resultVariables: MutableSet<FirPropertySymbol> = mutableSetOf()
                 val firFunction = functionBuilder.apply {
                     source = functionSource
                     moduleData = baseModuleData
@@ -2353,8 +2357,21 @@ open class PsiRawFirBuilder(
 
                     withCapturedTypeParameters(true, functionSource, typeParameters) {
                         val outerContractDescription = function.obtainContractDescription()
-                        val [body, innerContractDescription] = withForcedLocalContext {
-                            function.buildFirBody()
+                        val [body, innerContractDescription] = when {
+                            isAnonymousFunction -> {
+                                val [desugaredData, collectedVariables] = desugarAnonymousFunctionTarget(target, returnType) {
+                                    withForcedLocalContext {
+                                        function.buildFirBody()
+                                    }
+                                }
+                                resultVariables.addAll(collectedVariables)
+                                desugaredData
+                            }
+                            else -> desugarFunctionTarget(target, returnType) {
+                                withForcedLocalContext {
+                                    function.buildFirBody()
+                                }
+                            }
                         }
                         this.body = body
                         val contractDescription = outerContractDescription ?: innerContractDescription
@@ -2377,6 +2394,7 @@ open class PsiRawFirBuilder(
                 }
 
                 return if (firFunction is FirAnonymousFunction) {
+                    if (resultVariables.isNotEmpty()) firFunction.addResultVariables(resultVariables)
                     buildAnonymousFunctionExpression {
                         source = functionSource
                         anonymousFunction = firFunction
@@ -2410,6 +2428,7 @@ open class PsiRawFirBuilder(
             val literalSource = literal.toFirSourceElement()
 
             val target: FirFunctionTarget
+            val resultVariables: Set<FirPropertySymbol>
             val anonymousFunction = buildAnonymousFunction {
                 source = literalSource
                 moduleData = baseModuleData
@@ -2462,43 +2481,48 @@ open class PsiRawFirBuilder(
                     context.firFunctionTargets += it
                 }
                 val ktBody = literal.bodyExpression
-                body = withForcedLocalContext {
-                    if (ktBody == null) {
-                        val errorExpression = buildErrorExpression(literalSource, ConeSyntaxDiagnostic("Lambda has no body"))
-                        FirSingleExpressionBlock(errorExpression.toReturn())
-                    } else {
-                        val kind = runIf(destructuringVariables.isNotEmpty()) {
-                            KtFakeSourceElementKind.LambdaDestructuringBlock
-                        }
-                        val bodyBlock = configureBlockWithoutBuilding(ktBody, kind).apply {
-                            if (statements.isEmpty()) {
-                                statements.add(
-                                    buildReturnExpression {
-                                        source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)
-                                        this.target = target
-                                        result = buildUnitExpression {
-                                            source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit.ForEmptyLambda)
-                                        }
-                                    }
-                                )
-                            }
-                        }.build()
-
-                        if (destructuringVariables.isNotEmpty()) {
-                            // Destructured variables must be in a separate block so that they can be shadowed.
-                            buildBlock {
-                                source = bodyBlock.source?.realElement()
-                                statements.addAll(destructuringVariables)
-                                statements.add(bodyBlock)
-                            }
+                val [desugaredBody, collectedVariables] = desugarAnonymousFunctionTarget(target, returnTypeRef) {
+                    withForcedLocalContext {
+                        if (ktBody == null) {
+                            val errorExpression = buildErrorExpression(literalSource, ConeSyntaxDiagnostic("Lambda has no body"))
+                            FirSingleExpressionBlock(errorExpression.toReturn())
                         } else {
-                            bodyBlock
+                            val kind = runIf(destructuringVariables.isNotEmpty()) {
+                                KtFakeSourceElementKind.LambdaDestructuringBlock
+                            }
+                            val bodyBlock = configureBlockWithoutBuilding(ktBody, kind).apply {
+                                if (statements.isEmpty()) {
+                                    statements.add(
+                                        buildReturnExpression {
+                                            source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)
+                                            this.target = target
+                                            result = buildUnitExpression {
+                                                source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit.ForEmptyLambda)
+                                            }
+                                        }
+                                    )
+                                }
+                            }.build()
+
+                            if (destructuringVariables.isNotEmpty()) {
+                                // Destructured variables must be in a separate block so that they can be shadowed.
+                                buildBlock {
+                                    source = bodyBlock.source?.realElement()
+                                    statements.addAll(destructuringVariables)
+                                    statements.add(bodyBlock)
+                                }
+                            } else {
+                                bodyBlock
+                            }
                         }
                     }
                 }
+                body = desugaredBody
+                resultVariables = collectedVariables
                 context.firFunctionTargets.removeLast()
             }.also {
                 bindFunctionTarget(target, it)
+                if (resultVariables.isNotEmpty()) it.addResultVariables(resultVariables)
             }
             return buildAnonymousFunctionExpression {
                 source = expression.toKtPsiSourceElement()
@@ -2544,8 +2568,10 @@ open class PsiRawFirBuilder(
                     typeParameters += constructorTypeParametersFromConstructedClass(ownerTypeParameters)
                     extractValueParametersTo(this, symbol, ValueParameterDeclaration.FUNCTION)
 
-                    val [body, contractDescription] = withForcedLocalContext {
-                        buildFirBody()
+                    val [body, contractDescription] = desugarFunctionTarget(target, returnTypeRef) {
+                        withForcedLocalContext {
+                            buildFirBody()
+                        }
                     }
                     contractDescription?.let { this.contractDescription = it }
                     this.body = body
@@ -3055,8 +3081,9 @@ open class PsiRawFirBuilder(
                 source = expression.toFirSourceElement(kind)
                 for (statement in expression.statements) {
                     val firStatement = statement.toFirStatement { "Statement expected: ${statement.text}" }
-                    val isForLoopBlock =
-                        firStatement is FirBlock && firStatement.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
+                    val isForLoopBlock = firStatement is FirBlock && firStatement.source?.kind?.let {
+                        it == KtFakeSourceElementKind.DesugaredForLoop || it == KtFakeSourceElementKind.DesugaredForEachLoop
+                    } ?: false
                     val isIncrementOrDecrement = firStatement is FirBlock
                             && firStatement.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement
                     if (firStatement !is FirBlock || isForLoopBlock || firStatement.annotations.isNotEmpty() || isIncrementOrDecrement) {
@@ -3109,7 +3136,14 @@ open class PsiRawFirBuilder(
             val source = expression.toFirSourceElement(KtFakeSourceElementKind.ImplicitUnit.Return)
             val result = expression.returnedExpression?.toFirExpression("Incorrect return expression")
                 ?: buildUnitExpression { this.source = source }
-            return result.toReturn(source, expression.getTargetLabel()?.getReferencedName(), fromKtReturnExpression = true)
+            return desugarJumpExpression(
+                labelName = expression.getLabelName(),
+                sourceElement = source.fakeElement(KtFakeSourceElementKind.DesugaredForEachReturn),
+                markJump = { name, sourceElement -> markReturn(name, sourceElement, result) },
+                defaultExpression = {
+                    result.toReturn(source, expression.getTargetLabel()?.getReferencedName(), fromKtReturnExpression = true)
+                }
+            )
         }
 
         override fun visitTryExpression(expression: KtTryExpression, data: FirElement?): FirElement {
@@ -3332,7 +3366,7 @@ open class PsiRawFirBuilder(
                     is KtDotQualifiedExpression -> parent.firstChild == this
                     is KtFunction, is KtPropertyAccessor -> parent.hasBody() && !parent.hasBlockBody()
                     is KtContainerNodeForControlStructureBody -> when (parent.parent.elementType) {
-                        KtNodeTypes.FOR, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE -> false
+                        KtNodeTypes.FOR, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE, KtNodeTypes.FOR_EACH -> false
                         else -> true
                     }
                     else -> true
@@ -3349,7 +3383,7 @@ open class PsiRawFirBuilder(
                     "No condition in do-while loop",
                     sourceWhenInvalidExpression = expression.getChildNodeByType(KtNodeTypes.CONDITION) as? KtElement ?: expression
                 )
-            }.configure(target) { expression.body.toFirBlock() }
+            }.configure(target) { desugarLoopTarget(target) { expression.body.toFirBlock() } }
         }
 
         override fun visitWhileExpression(expression: KtWhileExpression, data: FirElement?): FirElement {
@@ -3363,7 +3397,7 @@ open class PsiRawFirBuilder(
                 // break/continue in the while loop condition will refer to an outer loop if any.
                 // So, prepare the loop target after building the condition.
                 target = prepareTarget(expression)
-            }.configure(target) { expression.body.toFirBlock() }
+            }.configure(target) { desugarLoopTarget(target) { expression.body.toFirBlock() } }
         }
 
         override fun visitForExpression(expression: KtForExpression, data: FirElement?): FirElement {
@@ -3447,23 +3481,160 @@ open class PsiRawFirBuilder(
                             blockBuilder.statements.add(firLoopParameter)
                         }
                     }
-                    blockBuilder.statements.add(expression.body.toFirBlock())
+                    blockBuilder.statements += desugarLoopTarget(target) { expression.body.toFirBlock() }
                     blockBuilder.build()
                 }
             }
         }
 
-        override fun visitBreakExpression(expression: KtBreakExpression, data: FirElement?): FirElement {
-            return FirBreakExpressionBuilder().apply {
-                source = expression.toFirSourceElement()
-            }.bindLabel(expression).build()
+        private fun KtForEachExpression.constructLambdaFromForEachBody(sourceElement: KtSourceElement): Pair<ForEachScope.Completed, FirAnonymousFunction> {
+            val forEachTarget: FirFunctionTarget
+            val scope: ForEachScope.Completed
+            val bodyLambda = buildAnonymousFunction {
+                source = sourceElement
+                moduleData = baseModuleData
+                origin = FirDeclarationOrigin.Source
+                returnTypeRef = baseModuleData.session.builtinTypes.booleanType
+                symbol = FirAnonymousFunctionSymbol()
+                isLambda = true
+                hasExplicitParameterList = true
+                val destructuringVariables = mutableListOf<FirVariable>()
+                // Note: forEach lambdas should not have any receivers, `this` should always refer to the receiver of its enclosing declaration
+                loopParameter?.let {
+                    val multiDeclaration = it.destructuringDeclaration
+                    valueParameters += if (multiDeclaration != null) {
+                        val name = SpecialNames.DESTRUCT
+                        val multiParameter = buildValueParameter {
+                            this.source = it.toFirSourceElement()
+                            containingDeclarationSymbol = this@buildAnonymousFunction.symbol
+                            moduleData = baseModuleData
+                            origin = FirDeclarationOrigin.Source
+                            returnTypeRef = it.typeReference.toFirOrImplicitType()
+                            this.name = name
+                            symbol = FirValueParameterSymbol()
+                            isCrossinline = false
+                            isNoinline = false
+                            isVararg = false
+                        }
+                        addDestructuringVariables(
+                            destructuringVariables,
+                            baseModuleData,
+                            multiDeclaration,
+                            multiParameter,
+                            tmpVariable = false,
+                            forceLocal = true,
+                        )
+                        multiParameter
+                    } else {
+                        val typeRef = it.typeReference.toFirOrImplicitType()
+                        it.toFirValueParameter(typeRef, symbol, ValueParameterDeclaration.LAMBDA)
+                    }
+                }
+                // Either the label was present at the forEach expression or not, we do not generate one as is the case for general lambdas,
+                // even though we know the desugared function call will reference `forEachWhile`.
+                // (It's simply awkward to be referencing it in the loop body)
+                label = this@PsiRawFirBuilder.context.getLastLabel(this@constructLambdaFromForEachBody)
+                forEachTarget = FirFunctionTarget(label?.name, isLambda = true)
+                // The context should not remember the target in the stack of function targets, as the unlabelled returns should instead
+                // point to a functions enclosing the `miau` loop
+                scope = this@PsiRawFirBuilder.context.pushCompletedForEachScope(forEachTarget, sourceElement, baseModuleData)
+                val ktBody = this@constructLambdaFromForEachBody.body
+                body = withForcedLocalContext {
+                    if (ktBody == null) {
+                        val errorExpression = buildErrorExpression(sourceElement, ConeSyntaxDiagnostic("Lambda has no body"))
+                        FirSingleExpressionBlock(errorExpression.toReturn())
+                    } else {
+                        val kind = runIf(destructuringVariables.isNotEmpty()) { KtFakeSourceElementKind.LambdaDestructuringBlock }
+                        val sourceElement = ktBody.toFirSourceElement(kind)
+                        val bodyBlock = buildBlock {
+                            source = sourceElement
+                            statements.addAll(ktBody.toFirBlock().statements)
+                            val lastStatement = statements.lastOrNull()
+                            if (lastStatement == null || lastStatement !is FirReturnExpression || lastStatement.target != forEachTarget) {
+                                statements += buildReturnExpression {
+                                    source = sourceElement.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)
+                                    target = forEachTarget
+                                    result = buildLiteralExpression(
+                                        source = sourceElement.fakeElement(KtFakeSourceElementKind.ImplicitForEachWhileTrue),
+                                        kind = ConstantValueKind.Boolean,
+                                        value = true,
+                                        setType = true
+                                    )
+                                }
+                            }
+                        }
+                        if (destructuringVariables.isNotEmpty()) {
+                            // Destructured variables must be in a separate block so that they can be shadowed.
+                            buildBlock {
+                                this.source = bodyBlock.source?.realElement()
+                                statements.addAll(destructuringVariables)
+                                statements.add(bodyBlock)
+                            }
+                        } else {
+                            bodyBlock
+                        }
+                    }
+                }
+            }.also {
+                bindFunctionTarget(forEachTarget, it)
+                this@PsiRawFirBuilder.context.popCompletedForEachScope()
+            }
+            return scope to bodyLambda
         }
 
-        override fun visitContinueExpression(expression: KtContinueExpression, data: FirElement?): FirElement {
-            return FirContinueExpressionBuilder().apply {
-                source = expression.toFirSourceElement()
-            }.bindLabel(expression).build()
+        override fun visitForEachExpression(expression: KtForEachExpression, data: FirElement?): FirElement? {
+            val rangeExpression = expression.loopRange.toFirExpression(
+                "No range in for loop",
+                sourceWhenInvalidExpression = expression.getChildNodeByType(KtNodeTypes.LOOP_RANGE) as? KtElement ?: expression
+            )
+            val fakeSource = expression.toKtPsiSourceElement(KtFakeSourceElementKind.DesugaredForEachLoop)
+            val rangeSource = expression.loopRange?.toFirSourceElement(KtFakeSourceElementKind.DesugaredForEachLoop) ?: fakeSource
+            val [scope, bodyLambda] = expression.constructLambdaFromForEachBody(fakeSource)
+            return buildBlock {
+                source = fakeSource
+                generateForEachPrologue(scope)
+                statements += buildFunctionCall {
+                    source = fakeSource
+                    calleeReference = buildSimpleNamedReference {
+                        source = rangeSource
+                        name = OperatorNameConventions.FOR_EACH
+                    }
+                    explicitReceiver = rangeExpression
+                    argumentList = buildUnaryArgumentList(
+                        argument = buildAnonymousFunctionExpression {
+                            anonymousFunction = bodyLambda
+                            isTrailingLambda = true
+                        }
+                    )
+                    origin = FirFunctionCallOrigin.Operator
+                }
+                generateForEachEpilogue(scope)
+            }
         }
+
+        override fun visitBreakExpression(expression: KtBreakExpression, data: FirElement?): FirElement =
+            desugarJumpExpression(
+                labelName = expression.getLabelName(),
+                sourceElement = expression.toFirSourceElement(KtFakeSourceElementKind.DesugaredForEachBreak),
+                markJump = ForEachScope::markBreak,
+                defaultExpression = {
+                    FirBreakExpressionBuilder().apply {
+                        source = expression.toFirSourceElement()
+                    }.bindLabel(expression).build()
+                }
+            )
+
+        override fun visitContinueExpression(expression: KtContinueExpression, data: FirElement?): FirElement =
+            desugarJumpExpression(
+                labelName = expression.getLabelName(),
+                sourceElement = expression.toFirSourceElement(KtFakeSourceElementKind.DesugaredForEachContinue),
+                markJump = ForEachScope::markContinue,
+                defaultExpression = {
+                    FirContinueExpressionBuilder().apply {
+                        source = expression.toFirSourceElement()
+                    }.bindLabel(expression).build()
+                }
+            )
 
         override fun visitBinaryExpression(expression: KtBinaryExpression, data: FirElement?): FirElement {
             @OptIn(KtImplementationDetail::class)

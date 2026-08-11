@@ -327,6 +327,10 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitLoopExpression(expression, data);
     }
 
+    public R visitForEachExpression(@NotNull KtForEachExpression expression, D data) {
+        return visitLoopExpression(expression, data);
+    }
+
     public R visitWhileExpression(@NotNull KtWhileExpression expression, D data) {
         return visitLoopExpression(expression, data);
     }

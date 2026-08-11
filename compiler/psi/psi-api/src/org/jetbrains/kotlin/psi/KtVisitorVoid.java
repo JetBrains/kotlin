@@ -268,6 +268,10 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitForExpression(expression, null);
     }
 
+    public void visitForEachExpression(@NotNull KtForEachExpression expression) {
+        super.visitForEachExpression(expression, null);
+    }
+
     public void visitWhileExpression(@NotNull KtWhileExpression expression) {
         super.visitWhileExpression(expression, null);
     }

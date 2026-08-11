@@ -220,6 +220,8 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
          * fake source refers to the assignment statement
          */
         object IndexedAssignmentCoercion : ImplicitUnit()
+
+        object DesugaredForEachGuard : ImplicitUnit()
     }
 
     /**
@@ -241,6 +243,40 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      *  other generated elements are marked as fake ones
      */
     object DesugaredForLoop : KtFakeSourceElementKind()
+
+    /**
+     *  `miau (i in list) { println(i) }` is converted to
+     *  ```
+     *  list.forEach { i ->
+     *      println(i)
+     *  }
+     *  ```
+     *  where the generated forEach call has source element of initial FOR loop
+     *
+     *  and `miau (i in list) { println(i); break }` is converted to
+     *  ```
+     *  list.forEachWhile { i ->
+     *      prinln(i)
+     *      false
+     *  }
+     * ```
+     * where the generated forEachWhile call has source element of initial FOR loop
+     */
+    object DesugaredForEachLoop : KtFakeSourceElementKind()
+
+    class DesugaredForEachTemporaryVariable(val name: Name) : KtFakeSourceElementKind()
+
+    object DesugaredForEachBreak : KtFakeSourceElementKind()
+
+    object DesugaredForEachContinue : KtFakeSourceElementKind()
+
+    object DesugaredForEachReturn : KtFakeSourceElementKind()
+
+    data class DesugaredForEachGuard(val jumpExpressionSources: Set<KtSourceElement>) : KtFakeSourceElementKind()
+
+    data class DesugaredForEachWhenGeneratedSubject(val name: Name) : KtFakeSourceElementKind()
+
+    object ImplicitForEachWhileTrue : KtFakeSourceElementKind()
 
     object ImplicitInvokeCall : KtFakeSourceElementKind()
 

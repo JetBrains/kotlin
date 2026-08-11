@@ -165,7 +165,9 @@ class LightTreeRawFirDeclarationBuilder(
         return FirBlockBuilder().apply {
             source = block.toFirSourceElement(kind)
             firStatements.forEach { firStatement ->
-                val isForLoopBlock = firStatement is FirBlock && firStatement.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
+                val isForLoopBlock = firStatement is FirBlock && firStatement.source?.kind?.let {
+                    it == KtFakeSourceElementKind.DesugaredForLoop || it == KtFakeSourceElementKind.DesugaredForEachLoop
+                } ?: false
                 val isIncrementOrDecrement = firStatement is FirBlock
                         && firStatement.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement
                 if (firStatement !is FirBlock || isForLoopBlock || firStatement.annotations.isNotEmpty() || isIncrementOrDecrement) {
@@ -1275,8 +1277,10 @@ class LightTreeRawFirDeclarationBuilder(
                 modifiers?.convertAnnotationsTo(annotations)
                 typeParameters += constructorTypeParametersFromConstructedClass(classWrapper.classBuilder.typeParameters)
                 valueParameters += firValueParameters.map { it.firValueParameter }
-                val [body, contractDescription] = withForcedLocalContext {
-                    convertFunctionBody(block, null, allowLegacyContractDescription = true)
+                val [body, contractDescription] = desugarFunctionTarget(target, returnTypeRef) {
+                    withForcedLocalContext {
+                        convertFunctionBody(block, null, allowLegacyContractDescription = true)
+                    }
                 }
                 this.body = body?.takeIf { it.statements.isNotEmpty() }
                 contractDescription?.let { this.contractDescription = it }
@@ -1824,8 +1828,10 @@ class LightTreeRawFirDeclarationBuilder(
                 valueParameters += firValueParameters
             }
             val allowLegacyContractDescription = outerContractDescription == null
-            val bodyWithContractDescription = withForcedLocalContext(forceKeepingTheBodyInHeaderMode = propertyTypeRef is FirImplicitTypeRef || status.isInline) {
-                convertFunctionBody(block, expression, allowLegacyContractDescription)
+            val bodyWithContractDescription = desugarFunctionTarget(target, returnTypeRef) {
+                withForcedLocalContext(forceKeepingTheBodyInHeaderMode = propertyTypeRef is FirImplicitTypeRef || status.isInline) {
+                    convertFunctionBody(block, expression, allowLegacyContractDescription)
+                }
             }
             this.body = bodyWithContractDescription.first
             val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
@@ -2109,6 +2115,7 @@ class LightTreeRawFirDeclarationBuilder(
             val firTypeParameters = mutableListOf<FirTypeParameter>()
             typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints, functionSymbol) }
 
+            val resultVariables: MutableSet<FirPropertySymbol> = mutableSetOf()
             val function = functionBuilder.apply {
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
@@ -2130,10 +2137,25 @@ class LightTreeRawFirDeclarationBuilder(
                     }
 
                     val allowLegacyContractDescription = outerContractDescription == null
-                    val bodyWithContractDescription = withForcedLocalContext(
-                        forceKeepingTheBodyInHeaderMode = functionBuilder.status.isInline || functionBuilder.returnTypeRef is FirImplicitTypeRef
-                    ) {
-                        convertFunctionBody(block, expression, allowLegacyContractDescription)
+                    val bodyWithContractDescription = when {
+                        isAnonymousFunction -> {
+                            val [desugaredData, collectedVariables] = desugarAnonymousFunctionTarget(target, returnType) {
+                                withForcedLocalContext(
+                                    forceKeepingTheBodyInHeaderMode = functionBuilder.status.isInline || functionBuilder.returnTypeRef is FirImplicitTypeRef
+                                ) {
+                                    convertFunctionBody(block, expression, allowLegacyContractDescription)
+                                }
+                            }
+                            resultVariables += collectedVariables
+                            desugaredData
+                        }
+                        else -> desugarFunctionTarget(target, returnTypeRef) {
+                            withForcedLocalContext(
+                                forceKeepingTheBodyInHeaderMode = functionBuilder.status.isInline || functionBuilder.returnTypeRef is FirImplicitTypeRef
+                            ) {
+                                convertFunctionBody(block, expression, allowLegacyContractDescription)
+                            }
+                        }
                     }
                     this.body = bodyWithContractDescription.first
                     val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
@@ -2156,6 +2178,7 @@ class LightTreeRawFirDeclarationBuilder(
             }
 
             return if (function is FirAnonymousFunction) {
+                if (resultVariables.isNotEmpty()) function.addResultVariables(resultVariables)
                 buildAnonymousFunctionExpression {
                     source = functionSource
                     anonymousFunction = function
