@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.builders.irSet
 import org.jetbrains.kotlin.ir.builders.irString
+import org.jetbrains.kotlin.ir.builders.irUnit
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -156,6 +157,9 @@ internal fun getGenericTypeFromExpression(sequence: IrExpression, context: JvmBa
     return elementType.substitute(irClass.typeParameters, typeArguments)
 }
 
+internal fun getBaseTypeFromSequenceScopeFunction(sequenceScope: IrExpression): IrType? =
+    ((sequenceScope.type as? IrSimpleType)?.arguments?.getOrNull(0) as? IrSimpleType)?.arguments?.getOrNull(0)?.typeOrNull
+
 internal fun IrBuilderWithScope.callPredicate(
     predicate: IrExpression,
     parent: IrDeclarationParent,
@@ -206,6 +210,8 @@ internal fun IrBuilderWithScope.increment(incrementVariable: IrVariable, context
 
 internal fun IrBuilderWithScope.irReturnTo(target: IrReturnTargetSymbol, value: IrExpression): IrExpression =
     IrReturnImpl(startOffset, endOffset, context.irBuiltIns.nothingType, target, value)
+
+internal fun IrBuilderWithScope.irReturnUnitTo(target: IrReturnTargetSymbol): IrExpression = irReturnTo(target, irUnit())
 
 internal fun isSequenceType(context: JvmBackendContext, element: IrElement): Boolean {
     val sequenceSymbol = context.symbols.sequence ?: return false

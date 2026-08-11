@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.expressions.IrSpreadElement
@@ -41,6 +42,8 @@ internal const val KOTLIN_COLLECTIONS_PREFIX = "kotlin.collections.CollectionsKt
 private const val SEQUENCE_OF = KOTLIN_SEQUENCES_PREFIX + "sequenceOf"
 private const val AS_SEQUENCE = KOTLIN_COLLECTIONS_PREFIX + "asSequence"
 private const val GENERATE_SEQUENCE = KOTLIN_SEQUENCES_PREFIX + "generateSequence"
+private const val SEQUENCE = KOTLIN_SEQUENCES_PREFIX + "sequence"
+private const val EMPTY_SEQUENCE = KOTLIN_SEQUENCES_PREFIX + "emptySequence"
 internal const val MAP = KOTLIN_SEQUENCES_PREFIX + "map"
 internal const val MAP_INDEXED = KOTLIN_SEQUENCES_PREFIX + "mapIndexed"
 internal const val MAP_NOT_NULL = KOTLIN_SEQUENCES_PREFIX + "mapNotNull"
@@ -357,6 +360,14 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         expression.sequenceDataOfExpression = SequenceData(sequenceSource, isMovable = receiver.isSafeToReevaluate())
     }
 
+    private fun matchWithSequence(expression: IrCall) {
+        val sequenceScope = expression.arguments.getOrNull(0) as? IrRichFunctionReference ?: return
+        expression.sequenceDataOfExpression = SequenceData(SequenceSource.Sequence(sequenceScope))
+    }
+
+    private fun matchWithEmptySequence(expression: IrCall) {
+        expression.sequenceDataOfExpression = SequenceData(SequenceSource.Empty)
+    }
 
     override fun visitCall(expression: IrCall) {
         super.visitCall(expression)
@@ -377,6 +388,8 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
             GENERATE_SEQUENCE -> matchWithGenerateSequence(expression)
             SEQUENCE_OF -> matchWithSequenceOf(expression)
             AS_SEQUENCE -> matchWithAsSequence(expression)
+            SEQUENCE -> matchWithSequence(expression)
+            EMPTY_SEQUENCE -> matchWithEmptySequence(expression)
         }
     }
 }

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.EmptySequenceStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.GenerateSequenceStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.ProducerStrategy
+import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.SequenceBuilderStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.SequenceOfStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.UnknownVariableStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.SequenceTransformer
@@ -16,7 +17,9 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -44,6 +47,7 @@ internal sealed class SequenceSource {
     class SequenceOf(val elements: List<IrExpression>, val type: IrType) : SequenceSource()
     class Variable(val variable: IrValueSymbol) : SequenceSource()
     class AsSequence(val iterable: IrExpression) : SequenceSource()
+    class Sequence(val sequenceScope: IrRichFunctionReference) : SequenceSource()
     class GenerateSequence(
         val initialValue: GenerateSequenceInitialValue,
         val generatingFunction: IrExpression,
@@ -55,6 +59,7 @@ internal sealed class SequenceSource {
     internal fun containsVariableCopies(): Boolean = when (this) {
         is SequenceOf -> elements.any { it.containsFusedVariableCopy() }
         is AsSequence -> iterable.containsFusedVariableCopy()
+        is Sequence -> sequenceScope.containsFusedVariableCopy()
         is GenerateSequence -> generatingFunction.containsFusedVariableCopy() || when (initialValue) {
             is GenerateSequenceInitialValue.Seed -> initialValue.expression.containsFusedVariableCopy()
             is GenerateSequenceInitialValue.SeedFunction -> initialValue.function.containsFusedVariableCopy()
@@ -72,20 +77,30 @@ internal sealed class SequenceSource {
         is SequenceOf -> SequenceOfStrategy(this, context)
         is Empty -> EmptySequenceStrategy
         is Variable -> UnknownVariableStrategy(builder.irGet(this.variable.owner), context)
+        is Sequence -> SequenceBuilderStrategy(
+            this.sequenceScope,
+            context,
+        )
     }
 }
 
 // marks the fused code of a sequence copied from a sequence variable; copied along with the code
 internal var IrElement.isFusedVariableCopy: Boolean by irFlag(copyByDefault = true)
 
-// the consumers are fused bottom-up, so the reads of sequence variables in an expression are already replaced with their fused copies
+// the consumers are fused bottom-up, so the reads of sequence variables in an expression are already replaced with their fused copies;
+// the exception is `yieldAll` in the body of a `sequence` builder, which is fused only with the builder itself,
+// so its argument is copied to every place of use of the builder
 internal fun IrElement.containsFusedVariableCopy(): Boolean {
     var result = false
     acceptVoid(object : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
-            if (element.isFusedVariableCopy) result = true
+            if (element.isFusedVariableCopy || element.isYieldAllOfVariableCopy()) result = true
             if (!result) element.acceptChildrenVoid(this)
         }
     })
     return result
 }
+
+private fun IrElement.isYieldAllOfVariableCopy(): Boolean =
+    this is IrCall && symbol.owner.name.asString() == "yieldAll" && symbol.owner.isSequenceScopeYield() &&
+            arguments.getOrNull(1)?.sequenceDataOfExpression?.isVariableCopy == true
