@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.builder.reportOnGuardOrItself
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -46,7 +47,7 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
             DiagnosticKind.UnresolvedLabel -> FirErrors.UNRESOLVED_LABEL
             else -> returnNotAllowedFactoryOrNull(targetSymbol)
         }?.let {
-            reporter.reportOn(source, it)
+            reporter.reportOnGuardOrItself(source, it)
         }
 
         checkBuiltInSuspend(targetSymbol, source)
@@ -55,7 +56,7 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
             targetSymbol.expressionBodyOrNull()?.statement.let { it is FirReturnExpression && it.result == expression } &&
             targetSymbol.hasExplicitReturnType
         ) {
-            reporter.reportOn(source, FirErrors.REDUNDANT_RETURN)
+            reporter.reportOnGuardOrItself(source, FirErrors.REDUNDANT_RETURN)
         }
     }
 
@@ -147,7 +148,7 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
                         it is FirAnonymousFunctionExpression && it.anonymousFunction.symbol == targetSymbol
                     }
                 ) {
-                    reporter.reportOn(source, FirErrors.RETURN_FOR_BUILT_IN_SUSPEND)
+                    reporter.reportOnGuardOrItself(source, FirErrors.RETURN_FOR_BUILT_IN_SUSPEND)
                 }
             }
         }

@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirLoopTarget
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import java.util.Deque
+import java.util.LinkedList
 
 class Context<T> {
     lateinit var packageFqName: FqName
@@ -136,6 +138,9 @@ class Context<T> {
          */
         val containerSymbol = forcedContainerSymbol?.takeIf { _containerSymbolStack.isEmpty() } ?: symbol
         _containerSymbolStack += containerSymbol
+        val scope = ForEachScope.Pending()
+        forEachScopeStack.push(scope)
+        currentForEachScope = scope
     }
 
     /**
@@ -147,6 +152,7 @@ class Context<T> {
         /**
          * The counterpart of [pushContainerSymbol] logic
          */
+        currentForEachScope = forEachScopeStack.pop()
         val removed = _containerSymbolStack.removeLast()
         val containerSymbol = forcedContainerSymbol?.takeIf { _containerSymbolStack.isEmpty() } ?: symbol
         checkWithAttachment(removed === containerSymbol, { "Inconsistent declaration stack" }) {
@@ -158,6 +164,30 @@ class Context<T> {
 
             withEntry("stack", _containerSymbolStack.asReversed().toString())
         }
+    }
+
+    private val forEachScopeStack: Deque<ForEachScope.Pending> = LinkedList()
+
+    var currentForEachScope: ForEachScope.Pending? = null
+        private set
+
+    fun pushCompletedForEachScope(
+        target: FirFunctionTarget,
+        sourceElement: KtSourceElement,
+        moduleData: FirModuleData
+    ): ForEachScope.Completed {
+        val scope = ForEachScope.Completed(
+            previousScope = currentForEachScope!!,
+            target = LoopTarget.ForEach(target),
+            sourceElement = sourceElement,
+            moduleData = moduleData
+        )
+        currentForEachScope = ForEachScope.Pending(scope)
+        return scope
+    }
+
+    fun popCompletedForEachScope() {
+        currentForEachScope = currentForEachScope?.previousCompletedScope?.previousScope
     }
 
     /**

@@ -1,0 +1,6 @@
+FILE: forEach.kt
+    public? final? fun simpleForEach(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun nestedForEachWithAnyLoop(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun nestedForEachInForEach(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun simpleFunctionReturn(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun nestedFunctionJump(): R|kotlin/Unit| { LAZY_BLOCK }

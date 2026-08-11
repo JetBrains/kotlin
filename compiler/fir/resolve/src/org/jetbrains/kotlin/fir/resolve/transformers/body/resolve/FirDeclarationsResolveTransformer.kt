@@ -1562,6 +1562,9 @@ open class FirDeclarationsResolveTransformer(
 
                 if (expectedReturnTypeRef is FirResolvedTypeRef) {
                     anonymousFunction.transformReturnTypeRef(transformer, ResolutionMode.UpdateImplicitTypeRef(expectedReturnTypeRef))
+                    anonymousFunction.resultVariables.forEach { variable ->
+                        variable.fir.replaceReturnTypeRef(expectedReturnTypeRef)
+                    }
                 }
 
                 whileAnalysing(session, anonymousFunction) {

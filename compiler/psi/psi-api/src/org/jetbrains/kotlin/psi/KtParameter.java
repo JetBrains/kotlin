@@ -44,6 +44,12 @@ import java.util.List;
  * //   ^__^
  * }</pre>
  *
+ * <h3>miau-loop parameter:</h3>
+ * <pre>{@code
+ * miau (item in list) {}
+ * //   ^__^
+ * }</pre>
+ *
  * <h3>Catch clause parameter:</h3>
  * <pre>{@code
  * try {} catch (e: Exception) {}
@@ -199,7 +205,7 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
     }
 
     public boolean isLoopParameter() {
-        return getParent() instanceof KtForExpression;
+        return getParent() instanceof KtForExpression || getParent() instanceof KtForEachExpression;
     }
 
     private <T extends PsiElement> boolean checkParentOfParentType(Class<T> klass) {

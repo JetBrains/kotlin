@@ -2577,6 +2577,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
             // loop
             FOR_KEYWORD,
+            FOREACH_KEYWORD,
             WHILE_KEYWORD,
             DO_KEYWORD,
 

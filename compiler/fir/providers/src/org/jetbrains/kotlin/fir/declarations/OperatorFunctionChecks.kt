@@ -115,6 +115,7 @@ object OperatorFunctionChecks {
         checkFor(OperatorNameConventions.ITERATOR, Checks.memberOrExtension, Checks.ValueParametersCount.none)
         checkFor(OperatorNameConventions.NEXT, Checks.memberOrExtension, Checks.ValueParametersCount.none)
         checkFor(OperatorNameConventions.HAS_NEXT, Checks.memberOrExtension, Checks.ValueParametersCount.none, Checks.Returns.boolean)
+        checkFor(OperatorNameConventions.FOR_EACH, Checks.memberOrExtension, Checks.ValueParametersCount.single, Checks.Returns.unit)
         checkFor(OperatorNameConventions.RANGE_TO, Checks.memberOrExtension, Checks.ValueParametersCount.single, Checks.noDefaultAndVarargs)
         checkFor(
             OperatorNameConventions.RANGE_UNTIL,

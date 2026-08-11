@@ -623,6 +623,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
   }
 
   @Test
+  @TestMetadata("ForEachWithMultiDecl.kt")
+  public void testForEachWithMultiDecl() {
+    run("ForEachWithMultiDecl.kt");
+  }
+
+  @Test
   @TestMetadata("ForWithMultiDecl.kt")
   public void testForWithMultiDecl() {
     run("ForWithMultiDecl.kt");

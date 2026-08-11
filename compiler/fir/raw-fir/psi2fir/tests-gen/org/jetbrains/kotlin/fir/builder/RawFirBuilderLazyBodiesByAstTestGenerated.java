@@ -1076,6 +1076,12 @@ public class RawFirBuilderLazyBodiesByAstTestGenerated extends AbstractRawFirBui
     }
 
     @Test
+    @TestMetadata("forEach.kt")
+    public void testForEach() {
+      run("forEach.kt");
+    }
+
+    @Test
     @TestMetadata("genericCalls.kt")
     public void testGenericCalls() {
       run("genericCalls.kt");

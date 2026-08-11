@@ -21,6 +21,7 @@ object OperatorNameConventions {
     @JvmField val CONTAINS = Name.identifier("contains")
     @JvmField val INVOKE = Name.identifier("invoke")
     @JvmField val ITERATOR = Name.identifier("iterator")
+    @JvmField val FOR_EACH = Name.identifier("forEachWhile")
     @JvmField val GET = Name.identifier("get")
     @JvmField val SET = Name.identifier("set")
     @JvmField val NEXT = Name.identifier("next")

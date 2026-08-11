@@ -1,0 +1,6 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] forEach.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun simpleForEach(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun nestedForEachWithAnyLoop(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun nestedForEachInForEach(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun simpleFunctionReturn(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun nestedFunctionJump(): R|kotlin/Unit| { LAZY_BLOCK }

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.*
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.FirScript
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -53,6 +55,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -134,6 +137,7 @@ class LightTreeRawFirExpressionBuilder(
             is KtConstantExpressionElementType -> convertConstantExpression(expression)
             REFERENCE_EXPRESSION -> convertSimpleNameExpression(expression)
             FOR -> convertFor(expression) // FirBlock
+            FOR_EACH -> convertForEach(expression)
             TRY -> convertTryExpression(expression)
             IF -> convertIfExpression(expression)
             BREAK, CONTINUE -> convertLoopJump(expression)
@@ -197,6 +201,7 @@ class LightTreeRawFirExpressionBuilder(
 
         val expressionSource = lambdaExpression.toFirSourceElement()
         val target: FirFunctionTarget
+        val resultVariables: Set<FirPropertySymbol>
         val anonymousFunction = buildAnonymousFunction {
             source = expressionSource
             moduleData = baseModuleData
@@ -246,42 +251,47 @@ class LightTreeRawFirExpressionBuilder(
                 }
             }
 
-            body = withForcedLocalContext {
-                if (block != null) {
-                    val kind = runIf(destructuringStatements.isNotEmpty()) {
-                        KtFakeSourceElementKind.LambdaDestructuringBlock
-                    }
-                    val bodyBlock = declarationBuilder.convertBlockExpressionWithoutBuilding(block, kind).apply {
-                        if (statements.isEmpty()) {
-                            statements.add(
-                                buildReturnExpression {
-                                    source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)
-                                    this.target = target
-                                    result = buildUnitExpression {
-                                        source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit.ForEmptyLambda)
-                                    }
-                                }
-                            )
+            val [desugaredBody, collectedVariables] = desugarAnonymousFunctionTarget(target, returnTypeRef) {
+                withForcedLocalContext {
+                    if (block != null) {
+                        val kind = runIf(destructuringStatements.isNotEmpty()) {
+                            KtFakeSourceElementKind.LambdaDestructuringBlock
                         }
-                    }.build()
+                        val bodyBlock = declarationBuilder.convertBlockExpressionWithoutBuilding(block, kind).apply {
+                            if (statements.isEmpty()) {
+                                statements.add(
+                                    buildReturnExpression {
+                                        source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)
+                                        this.target = target
+                                        result = buildUnitExpression {
+                                            source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit.ForEmptyLambda)
+                                        }
+                                    }
+                                )
+                            }
+                        }.build()
 
-                    if (destructuringStatements.isNotEmpty()) {
-                        // Destructured variables must be in a separate block so that they can be shadowed.
-                        buildBlock {
-                            source = bodyBlock.source?.realElement()
-                            statements.addAll(destructuringStatements)
-                            statements.add(bodyBlock)
+                        if (destructuringStatements.isNotEmpty()) {
+                            // Destructured variables must be in a separate block so that they can be shadowed.
+                            buildBlock {
+                                source = bodyBlock.source?.realElement()
+                                statements.addAll(destructuringStatements)
+                                statements.add(bodyBlock)
+                            }
+                        } else {
+                            bodyBlock
                         }
                     } else {
-                        bodyBlock
+                        buildSingleExpressionBlock(buildErrorExpression(expressionSource, ConeSyntaxDiagnostic("Lambda has no body")))
                     }
-                } else {
-                    buildSingleExpressionBlock(buildErrorExpression(expressionSource, ConeSyntaxDiagnostic("Lambda has no body")))
                 }
             }
+            body = desugaredBody
+            resultVariables = collectedVariables
             context.firFunctionTargets.removeLast()
         }.also {
             target.bind(it)
+            it.addResultVariables(resultVariables)
         }
         return buildAnonymousFunctionExpression {
             source = expressionSource
@@ -1258,7 +1268,7 @@ class LightTreeRawFirExpressionBuilder(
                 doWhileLoop.toFirSourceElement(),
                 ConeSyntaxDiagnostic("No condition in do-while loop")
             )
-        }.configure(target) { convertLoopBody(block) }
+        }.configure(target) { desugarLoopTarget(target) { convertLoopBody(block) } }
     }
 
     /**
@@ -1283,7 +1293,7 @@ class LightTreeRawFirExpressionBuilder(
             // break/continue in the while loop condition will refer to an outer loop if any.
             // So, prepare the loop target after building the condition.
             target = prepareTarget(whileLoop)
-        }.configure(target) { convertLoopBody(block) }
+        }.configure(target) { desugarLoopTarget(target) { convertLoopBody(block) } }
     }
 
     /**
@@ -1379,9 +1389,155 @@ class LightTreeRawFirExpressionBuilder(
                     } else {
                         statements.add(firLoopParameter)
                     }
-                    statements += convertLoopBody(blockNode)
+                    statements += desugarLoopTarget(target) { convertLoopBody(blockNode) }
                 }
             }
+        }
+    }
+
+    private fun LighterASTNode.constructLambdaFromForEachBody(
+        sourceElement: KtSourceElement,
+        functionSymbol: FirAnonymousFunctionSymbol,
+        valueParameter: ValueParameter?,
+        blockNode: LighterASTNode?
+    ): Pair<ForEachScope.Completed, FirAnonymousFunction> {
+        val target: FirFunctionTarget
+        val scope: ForEachScope.Completed
+        val bodyLambda = buildAnonymousFunction {
+            source = sourceElement
+            moduleData = baseModuleData
+            origin = FirDeclarationOrigin.Source
+            returnTypeRef = baseModuleData.session.builtinTypes.booleanType
+            // Note: forEach lambdas should not have any receivers, `this` should always refer to the receiver of its enclosing declaration
+            symbol = functionSymbol
+            isLambda = true
+            hasExplicitParameterList = true
+            // Either the label was present at the forEach expression or not, we do not generate one as is the case for general lambdas,
+            // even though we know the desugared function call will reference `forEach`.
+            // (It's simply awkward to be referencing it in the loop body)
+            label = context.getLastLabel(this@constructLambdaFromForEachBody)
+            target = FirFunctionTarget(labelName = label?.name, isLambda = true)
+            // The context should not remember the target in the stack of function targets, as the unlabelled returns should instead
+            // point to a functions enclosing the `forEach` loop
+            val destructuringStatements = mutableListOf<FirStatement>()
+            valueParameter?.let { valueParameter ->
+                val multiDeclaration = valueParameter.destructuringDeclaration
+                valueParameters += if (multiDeclaration != null) {
+                    val name = SpecialNames.DESTRUCT
+                    val multiParameter = buildValueParameter {
+                        source = valueParameter.firValueParameter.source
+                        containingDeclarationSymbol = functionSymbol
+                        moduleData = baseModuleData
+                        origin = FirDeclarationOrigin.Source
+                        returnTypeRef = valueParameter.firValueParameter.returnTypeRef
+                        this.name = name
+                        symbol = FirValueParameterSymbol()
+                        defaultValue = null
+                        isCrossinline = false
+                        isNoinline = false
+                        isVararg = false
+                    }
+                    addDestructuringStatements(
+                        destructuringStatements,
+                        baseModuleData,
+                        multiDeclaration,
+                        multiParameter,
+                        isTmpVariable = false,
+                        forceLocal = true,
+                    )
+                    multiParameter
+                } else {
+                    valueParameter.firValueParameter
+                }
+            }
+            scope = context.pushCompletedForEachScope(target, sourceElement, baseModuleData)
+            body = withForcedLocalContext {
+                if (blockNode != null) {
+                    val kind = runIf(destructuringStatements.isNotEmpty()) {
+                        KtFakeSourceElementKind.LambdaDestructuringBlock
+                    }
+                    val sourceElement = blockNode.toFirSourceElement(kind)
+                    val bodyBlock = buildBlock {
+                        source = sourceElement
+                        statements.addAll(convertLoopBody(blockNode).statements)
+                        val lastStatement = statements.lastOrNull()
+                        if (lastStatement == null || lastStatement !is FirReturnExpression || lastStatement.target != target) {
+                            statements += buildReturnExpression {
+                                source = sourceElement.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)
+                                this.target = target
+                                result = buildLiteralExpression(
+                                    source = sourceElement.fakeElement(KtFakeSourceElementKind.ImplicitForEachWhileTrue),
+                                    kind = ConstantValueKind.Boolean,
+                                    value = true,
+                                    setType = true
+                                )
+                            }
+                        }
+                    }
+
+                    if (destructuringStatements.isNotEmpty()) {
+                        // Destructured variables must be in a separate block so that they can be shadowed.
+                        buildBlock {
+                            source = bodyBlock.source?.realElement()
+                            statements.addAll(destructuringStatements)
+                            statements.add(bodyBlock)
+                        }
+                    } else {
+                        bodyBlock
+                    }
+                } else {
+                    buildSingleExpressionBlock(buildErrorExpression(sourceElement, ConeSyntaxDiagnostic("Lambda has no body")))
+                }
+            }
+        }.also {
+            target.bind(it)
+            context.popCompletedForEachScope()
+        }
+        return scope to bodyLambda
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseFor
+     * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.visitForEachExpression
+     */
+    private fun convertForEach(forEachLoop: LighterASTNode): FirBlock {
+        val functionSymbol = FirAnonymousFunctionSymbol()
+        var parameter: ValueParameter? = null
+        var rangeExpression: FirExpression? = null
+        var blockNode: LighterASTNode? = null
+        forEachLoop.forEachChildren {
+            when (it.tokenType) {
+                VALUE_PARAMETER -> parameter =
+                    declarationBuilder.convertValueParameter(it, functionSymbol, ValueParameterDeclaration.LAMBDA)
+                LOOP_RANGE -> rangeExpression = getAsFirExpression(it, "No range in for loop")
+                BODY -> blockNode = it
+            }
+        }
+
+        val calculatedRangeExpression =
+            rangeExpression ?: buildErrorExpression(forEachLoop.toFirSourceElement(), ConeSyntaxDiagnostic("No range in for loop"))
+        val fakeSource = forEachLoop.toFirSourceElement(KtFakeSourceElementKind.DesugaredForEachLoop)
+        val rangeSource = calculatedRangeExpression.source?.fakeElement(KtFakeSourceElementKind.DesugaredForEachLoop) ?: fakeSource
+        val [scope, bodyLambda] = forEachLoop.constructLambdaFromForEachBody(fakeSource, functionSymbol, parameter, blockNode)
+        return buildBlock {
+            source = fakeSource
+            generateForEachPrologue(scope)
+            statements += buildFunctionCall {
+                source = fakeSource
+                calleeReference = buildSimpleNamedReference {
+                    source = rangeSource
+                    name = OperatorNameConventions.FOR_EACH
+                }
+                explicitReceiver = rangeExpression
+                argumentList = buildUnaryArgumentList(
+                    argument = buildAnonymousFunctionExpression {
+                        anonymousFunction = bodyLambda
+                        isTrailingLambda = true
+                    }
+                )
+                origin = FirFunctionCallOrigin.Operator
+            }
+            generateForEachEpilogue(scope)
         }
     }
 
@@ -1558,7 +1714,7 @@ class LightTreeRawFirExpressionBuilder(
                 FUN, PROPERTY_ACCESSOR -> parent.getChildrenAsArray().any { it?.tokenType == EQ }
                 DOT_QUALIFIED_EXPRESSION -> parent.getFirstChild() == this
                 BODY -> when (parent.getParent()?.tokenType) {
-                    FOR, WHILE, DO_WHILE -> false
+                    FOR, WHILE, DO_WHILE, FOR_EACH -> false
                     else -> true
                 }
                 else -> true
@@ -1570,7 +1726,7 @@ class LightTreeRawFirExpressionBuilder(
      * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.visitBreakExpression
      * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.visitContinueExpression
      */
-    private fun convertLoopJump(jump: LighterASTNode): FirLoopJump {
+    private fun convertLoopJump(jump: LighterASTNode): FirExpression {
         var isBreak = true
         jump.forEachChildren {
             when (it.tokenType) {
@@ -1581,16 +1737,23 @@ class LightTreeRawFirExpressionBuilder(
 
         val jumpBuilder = if (isBreak) FirBreakExpressionBuilder() else FirContinueExpressionBuilder()
         val sourceElement = jump.toFirSourceElement()
-        return jumpBuilder.apply {
-            source = sourceElement
-        }.bindLabel(jump).build()
+        return desugarJumpExpression(
+            labelName = jump.getLabelName(),
+            sourceElement = sourceElement,
+            markJump = if (isBreak) ForEachScope::markBreak else ForEachScope::markContinue,
+            defaultExpression = {
+                jumpBuilder.apply {
+                    source = sourceElement
+                }.bindLabel(jump).build()
+            }
+        )
     }
 
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseReturn
      * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.visitReturnExpression
      */
-    private fun convertReturn(returnExpression: LighterASTNode): FirReturnExpression {
+    private fun convertReturn(returnExpression: LighterASTNode): FirExpression {
         var labelName: String? = null
         var firExpression: FirExpression? = null
         returnExpression.forEachChildren {
@@ -1603,10 +1766,17 @@ class LightTreeRawFirExpressionBuilder(
         val calculatedFirExpression = firExpression ?: buildUnitExpression {
             source = returnExpression.toFirSourceElement(KtFakeSourceElementKind.ImplicitUnit.Return)
         }
-        return calculatedFirExpression.toReturn(
-            baseSource = returnExpression.toFirSourceElement(),
+        return desugarJumpExpression(
             labelName = labelName,
-            fromKtReturnExpression = true
+            sourceElement = returnExpression.toFirSourceElement(KtFakeSourceElementKind.DesugaredForEachReturn),
+            markJump = { name, sourceElement -> markReturn(name, sourceElement, firExpression) },
+            defaultExpression = {
+                calculatedFirExpression.toReturn(
+                    baseSource = returnExpression.toFirSourceElement(),
+                    labelName = labelName,
+                    fromKtReturnExpression = true
+                )
+            }
         )
     }
 
