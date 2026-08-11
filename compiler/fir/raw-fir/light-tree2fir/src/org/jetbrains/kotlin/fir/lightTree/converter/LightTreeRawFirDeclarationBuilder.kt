@@ -168,7 +168,9 @@ class LightTreeRawFirDeclarationBuilder(
             source = block.toFirSourceElement(kind)
             firStatements.forEach { firStatement ->
                 val isForLoopBlock = firStatement is FirBlock && firStatement.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
-                if (firStatement !is FirBlock || isForLoopBlock || firStatement.annotations.isNotEmpty()) {
+                val isIncrementOrDecrement = firStatement is FirBlock
+                        && firStatement.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement
+                if (firStatement !is FirBlock || isForLoopBlock || firStatement.annotations.isNotEmpty() || isIncrementOrDecrement) {
                     statements += firStatement
                 } else {
                     statements += firStatement.statements
