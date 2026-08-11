@@ -4,7 +4,6 @@
     <option name="additionalArguments" value="-version -Xallow-kotlin-package -Xskip-metadata-version-check" />
   </component>
   <component name="KotlinJpsPluginSettings">
-    <option name="externalSystemId" value="Maven" />
-    <option name="version" value="2.4.255-SNAPSHOT" />
+    <option name="version" value="2.5.0-dev-3513" />
   </component>
 </project>
