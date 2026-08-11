@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExported
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -20,9 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
-import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.statements
-import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -79,7 +78,7 @@ internal class InvokeOnExportedFunctionExitLowering(val context: WasmBackendCont
                 +irSet(
                     isNotFirstWasmExportCallSetter.owner.returnType,
                     null, isNotFirstWasmExportCallSetter,
-                    true.toIrConst(irBooleanType)
+                    JsIrBuilder.buildBoolean(irBooleanType, true)
                 )
 
                 +body.statements
