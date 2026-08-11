@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.test.TargetBackend
  *
  * Neither key, nor value should contain spaces.
  */
-internal class ArgumentsHelper internal constructor(private val entry: String) {
+class ArgumentsHelper(private val entry: String) {
     companion object {
         private val argumentsPattern = Regex($$"""[\w$_;.]+(=((".*?")|[\w$_;.]+))?""")
     }
@@ -25,12 +25,12 @@ internal class ArgumentsHelper internal constructor(private val entry: String) {
     init {
         for (match in argumentsPattern.findAll(entry)) {
             val argument = match.value
-            val keyVal = argument.split("=").dropLastWhile { it.isEmpty() }
+            val keyVal = argument.split("=", limit = 2)
             when (keyVal.size) {
                 1 -> positionalArguments.add(keyVal[0])
                 2 -> {
                     var value = keyVal[1]
-                    if (value[0] == '"') {
+                    if (value.startsWith('"') && value.endsWith('"')) {
                         value = value.substring(1, value.length - 1)
                     }
                     namedArguments[keyVal[0]] = value
@@ -71,4 +71,6 @@ internal class ArgumentsHelper internal constructor(private val entry: String) {
         val value = findNamedArgument(name) ?: return emptyList()
         return value.split(";")
     }
+
+    override fun toString(): String = entry
 }
