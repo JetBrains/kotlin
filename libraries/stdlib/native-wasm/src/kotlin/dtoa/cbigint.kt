@@ -166,10 +166,10 @@ private fun simpleMultiplyHighPrecision(arg1: ULongArray, length: Int, arg2: ULo
 
     do {
         product =
-            highU32FromVar(product).toULong() + arg2 * lowU32FromPtr(arg1, index)
+            highInU64(product) + arg2 * lowU32FromPtr(arg1, index)
         setLowU32Ptr(arg1, index, lowU32FromVar(product))
         product =
-            highU32FromVar(product).toULong() + arg2 * highU32FromPtr(arg1, index)
+            highInU64(product) + arg2 * highU32FromPtr(arg1, index);
         setHighU32Ptr(arg1, index, lowU32FromVar(product))
     } while (++index < length)
 
@@ -252,12 +252,12 @@ internal fun simpleAppendDecimalDigitHighPrecision(arg1: ULongArray, length: Int
 
     digit = digit shl 32
     do {
-        arg = lowU32FromVar(arg1[index]).toULong()
-        digit = highU32FromVar(digit).toULong() + timesTen(arg)
+        arg = lowInU64(arg1[index]);
+        digit = highInU64(digit) + timesTen(arg);
         setLowU32Ptr(arg1, index, lowU32FromVar(digit))
 
-        arg = highU32FromVar(arg1[index]).toULong()
-        digit = highU32FromVar(digit).toULong() + timesTen(arg)
+        arg = highInU64(arg1[index]);
+        digit = highInU64(digit) + timesTen(arg);
         setHighU32Ptr(arg1, index, lowU32FromVar(digit))
     } while (++index < length)
 
