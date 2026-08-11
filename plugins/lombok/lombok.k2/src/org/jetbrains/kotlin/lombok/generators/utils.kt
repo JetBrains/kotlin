@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
@@ -20,9 +21,11 @@ import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
@@ -161,5 +164,20 @@ fun FirClassSymbol<*>.createJavaMethod(
 class ConeLombokValueParameter(val name: Name, val typeRef: FirTypeRef)
 
 val FirBasedSymbol<*>.hasJavaOrigin get() = origin is FirDeclarationOrigin.Java
+
+/**
+ * Whether [this] has an extension receiver or context parameters.
+ *
+ * Lombok models Java, which has neither, so such a declaration falls outside everything the plugin generates.
+ * Two consequences follow:
+ *  - it can never clash with a generated member, so the conflict checks skip it;
+ *  - it cannot carry `@Builder`, since there is no single obvious way to model either of them. `@Builder` turns
+ *    every value parameter into a builder field with a setter named after it: an extension receiver has no name
+ *    to derive one from at all, and while a context parameter usually does, it could just as reasonably become a
+ *    builder field, a context parameter of the generated `builder()`, or one of `build()`. Rather than pick, the
+ *    generator skips these declarations and `FirLombokBuilderChecker` reports them.
+ */
+val FirCallableSymbol<*>.hasReceiverOrContextParameters: Boolean
+    get() = isExtension || hasContextParameters
 
 abstract class LombokDeclarationKey : GeneratedDeclarationKey()

@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_WILL_IGNORE_INIT
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_AND_SINGULAR_MIXED
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.SINGULAR_REQUIRES_EXPLICIT_NAME
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.CANNOT_SINGULARIZE_NAME
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.UNSUPPORTED_SINGULAR_TYPE
@@ -76,6 +77,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION by warning0<KtAnnotationEntry>()
     val BUILDER_DEFAULT_AND_SINGULAR_MIXED by error0<KtAnnotationEntry>()
     val BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE by error0<KtAnnotationEntry>()
+    val BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS by error0<KtAnnotationEntry>()
     val SINGULAR_REQUIRES_EXPLICIT_NAME by error0<KtAnnotationEntry>()
     val CANNOT_SINGULARIZE_NAME by error0<KtAnnotationEntry>()
     val UNSUPPORTED_SINGULAR_TYPE by error1<KtAnnotationEntry, ConeKotlinType>()
@@ -153,6 +155,10 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
             BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE,
             "'@Builder' infers the builder class name from the function's return type. " +
                     "Specify the return type explicitly, or name the builder class with '@Builder(builderClassName = \"...\")'."
+        )
+        map.put(
+            BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS,
+            "'@Builder' is not supported on a declaration with an extension receiver or context parameters."
         )
         map.put(
             SINGULAR_REQUIRES_EXPLICIT_NAME,
