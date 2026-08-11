@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProv
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.modules.TargetId
 
@@ -28,7 +27,7 @@ data class FirJvmIncrementalCompilationSymbolProviders(
 fun IncrementalCompilationContext.createSymbolProviders(
     session: FirSession,
     moduleData: FirModuleData,
-    projectEnvironment: AbstractProjectEnvironment,
+    context: FirJvmSessionFactory.Context,
 ): FirJvmIncrementalCompilationSymbolProviders {
     var symbolProviderForBinariesFromIncrementalCompilation: JvmClassFileBasedSymbolProvider? = null
     var optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation: OptionalAnnotationClassesProvider? = null
@@ -41,8 +40,8 @@ fun IncrementalCompilationContext.createSymbolProviders(
                 moduleDataProvider,
                 kotlinScopeProvider,
                 precompiledBinariesPackagePartProvider,
-                projectEnvironment.getKotlinClassFinder(precompiledBinariesFileScope),
-                projectEnvironment.getFirJavaFacade(session, moduleData, precompiledBinariesFileScope),
+                context.projectEnvironment.getKotlinClassFinder(precompiledBinariesFileScope),
+                context.javaFacadeFactory.createJavaFacade(session, moduleData, precompiledBinariesFileScope),
                 defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled
             )
         optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation =

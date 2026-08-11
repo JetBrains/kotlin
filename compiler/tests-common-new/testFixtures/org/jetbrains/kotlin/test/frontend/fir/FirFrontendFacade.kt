@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
@@ -222,7 +221,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         extensionRegistrars,
                         languageVersionSettings,
                         jvmSessionFactoryContext,
-                        createJavaFacade = AbstractProjectEnvironment::getFirJavaFacade,
                     ).also(::registerExtraComponents)
                 }
             }
@@ -374,7 +372,6 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     jvmSessionFactoryContext!!,
                     needRegisterJavaElementFinder = true,
                     kmpModuleKind = KmpModuleKind.SingleModule,
-                    createJavaFacade = AbstractProjectEnvironment::getFirJavaFacade,
                     init = sessionConfigurator,
                 ).also(::registerExtraComponents)
             }

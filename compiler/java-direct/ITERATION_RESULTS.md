@@ -36,6 +36,24 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-11 — the Java implementation is chosen once per compilation (`FirJavaFacadeFactory`)
+- **Change**: the choice between the PSI Java view and java-direct was a `createJavaFacade` lambda passed
+  into each construction site, so sites which did not know about it silently kept the PSI default — most
+  notably the symbol provider for the *precompiled binaries* of incremental compilation. It is now a
+  `FirJavaFacadeFactory` held by `FirJvmSessionFactory.Context` (default `psiJavaFacadeFactory()`), read by
+  the library/source sessions, `IncrementalCompilationContext.createSymbolProviders` (takes the context
+  instead of the project environment), the HMPP-common JVM provider and the scripting/REPL library session.
+  `createJavaDirectJavaFacadeBuilder` → `createJavaDirectJavaFacadeFactory`. Remaining consumer:
+  `FirJKlibSessionFactory`, see `implDocs/PSI_FREE_ROADMAP.md` §7.
+- **Files**: `FirJavaFacadeFactory.kt` (new), `FirJvmSessionFactory.kt`,
+  `FirJvmIncrementalCompilationSymbolProviders.kt`, `JvmFrontendPipelinePhase.kt`,
+  `JavaDirectFacadeFactory.kt` (renamed), `sessionUtils.kt`, `K2ReplCompiler.kt`,
+  `FirFrontendFacade.kt`, `FirSessionFactoryHelper.kt`.
+- **Tests**: `:compiler:java-direct:test` full suite; `PhasedJvmDiagnosticLightTreeTestGenerated` and
+  `CompileKotlinAgainstKotlin` gates for the shared `JvmFrontendPipelinePhase.kt`.
+- **Result**: green; behaviour changes only under `-Xjava-direct`, where the IC precompiled-binaries
+  provider now reads Java through java-direct instead of PSI.
+
 ### 2026-08-11 — binary class cache keyed by class file, `BinaryClassFileHandle` identity contract
 - **Change**: `implDocs/CLASS_FILE_READ_LAYER.md` §6 first step. `BinaryClassFileHandle` now requires
   `equals`/`hashCode` over the file identity *and* its content version (the VFS implementation snapshots

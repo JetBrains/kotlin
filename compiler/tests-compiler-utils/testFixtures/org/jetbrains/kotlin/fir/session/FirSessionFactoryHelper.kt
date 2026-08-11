@@ -67,7 +67,7 @@ object FirSessionFactoryHelper {
         return FirJvmSessionFactory.createSourceSession(
             mainModuleData,
             javaSourcesScope,
-            { incrementalCompilationContext?.createSymbolProviders(it, mainModuleData, projectEnvironment) },
+            { incrementalCompilationContext?.createSymbolProviders(it, mainModuleData, context) },
             extensionRegistrars,
             configuration,
             context,

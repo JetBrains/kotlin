@@ -112,7 +112,10 @@ internal fun configureLibrarySessionIfNeeded(
             state.extensionRegistrars,
             compilerConfiguration,
             getKotlinClassFinder = { projectEnvironment.getKotlinClassFinder(searchScope) },
-            getJavaFacade = { projectEnvironment.getFirJavaFacade(it, libModuleData, state.sessionFactoryContext.librariesScope) }
+            getJavaFacade = {
+                state.sessionFactoryContext.javaFacadeFactory
+                    .createJavaFacade(it, libModuleData, state.sessionFactoryContext.librariesScope)
+            }
         )
     }
     return null

@@ -367,7 +367,10 @@ private fun compileImpl(
             extensionRegistrars,
             compilerConfiguration,
             getKotlinClassFinder = { projectEnvironment.getKotlinClassFinder(searchScope) },
-            getJavaFacade = { projectEnvironment.getFirJavaFacade(it, libModuleData, state.sessionFactoryContext.librariesScope) }
+            getJavaFacade = {
+                state.sessionFactoryContext.javaFacadeFactory
+                    .createJavaFacade(it, libModuleData, state.sessionFactoryContext.librariesScope)
+            }
         )
         KotlinJavaPsiFacade.getInstance(project).clearPackageCaches()
     }

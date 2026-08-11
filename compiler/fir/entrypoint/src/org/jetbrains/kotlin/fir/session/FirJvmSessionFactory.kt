@@ -83,8 +83,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings,
         context: Context,
-        createJavaFacade: (AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade =
-            AbstractProjectEnvironment::getFirJavaFacade,
     ): FirSession {
         return createLibrarySession(
             context,
@@ -100,7 +98,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
                     projectEnvironment.getSearchScopeByClassPath(paths)
                 }?.takeUnless { it.isEmpty } ?: context.librariesScope
                 val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(searchScope)
-                val javaFacade = createJavaFacade(projectEnvironment, session, moduleData, context.librariesScope)
+                val javaFacade = context.javaFacadeFactory.createJavaFacade(session, moduleData, context.librariesScope)
                 listOfNotNull(
                     JvmClassFileBasedSymbolProvider(
                         session,
@@ -150,8 +148,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
         context: Context,
         needRegisterJavaElementFinder: Boolean,
         kmpModuleKind: KmpModuleKind,
-        createJavaFacade: (AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade =
-            AbstractProjectEnvironment::getFirJavaFacade,
         init: FirSessionConfigurator.() -> Unit,
     ): FirSession {
         val projectEnvironment = context.projectEnvironment
@@ -163,7 +159,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
             kmpModuleKind,
             init,
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider ->
-                val javaFacade = createJavaFacade(projectEnvironment, session, moduleData, javaSourcesScope)
+                val javaFacade = context.javaFacadeFactory.createJavaFacade(session, moduleData, javaSourcesScope)
                 val javaSymbolProvider =
                     JavaSymbolProvider(session, javaFacade)
                 session.register(JavaSymbolProvider::class, javaSymbolProvider)
@@ -240,6 +236,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
          * context. `null` for the PSI-based Java facade, which caches binary classes in its own file manager.
          */
         val binaryJavaClassCache: BinaryJavaClassCache? = null,
+        javaFacadeFactory: FirJavaFacadeFactory? = null,
     ) {
         constructor(
             configuration: CompilerConfiguration,
@@ -247,6 +244,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
             librariesScope: AbstractProjectFileSearchScope,
             registerJvmDeserializationExtension: Boolean = true,
             binaryJavaClassCache: BinaryJavaClassCache? = null,
+            javaFacadeFactory: FirJavaFacadeFactory? = null,
         ) : this(
             jvmTarget = configuration.jvmTarget ?: JvmTarget.DEFAULT,
             projectEnvironment,
@@ -254,7 +252,16 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
             registerJvmDeserializationExtension = registerJvmDeserializationExtension,
             inlineConstTracker = configuration.inlineConstTracker,
             binaryJavaClassCache = binaryJavaClassCache,
+            javaFacadeFactory = javaFacadeFactory,
         )
+
+        /**
+         * The Java view of this compilation: every session created with this context, and every other
+         * consumer which needs Java declarations of some scope (the symbol provider for the precompiled
+         * binaries of incremental compilation, the JVM interpretation of an HMPP common fragment's
+         * classpath), builds its [FirJavaFacade] here instead of choosing an implementation on its own.
+         */
+        val javaFacadeFactory: FirJavaFacadeFactory = javaFacadeFactory ?: projectEnvironment.psiJavaFacadeFactory()
 
         val packagePartProviderForLibraries: PackagePartProvider = projectEnvironment.getPackagePartProvider(librariesScope)
 

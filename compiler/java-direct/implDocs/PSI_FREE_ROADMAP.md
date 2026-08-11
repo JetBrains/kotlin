@@ -36,8 +36,9 @@ compiled output, so anything else is a test failure rather than a silent regress
 | `BinaryClassFileIndex`, `BinaryClassFileScope`, `BinaryClassFileHandle` | `frontend.common.jvm/.../classFiles/BinaryClassFileIndex.kt` | the binary classpath of one compilation and the part of it one session sees, with no scope object and no `JvmDependenciesIndex` |
 | `CliBinaryClassFileIndex` + `CliVirtualFileFinderFactory.binaryClassFileIndex()` + `binaryClassFileScope()` | `compiler/cli/.../CliBinaryClassFileIndex.kt` | the only place that owns a `GlobalSearchScope`, the `asPsiSearchScope()` downcast and the `ct.sym` `.sig` extension choice |
 | `BinaryJavaClassCache` | `frontend.common.jvm/.../classFiles/BinaryJavaClassCache.kt`, held by `FirJvmSessionFactory.Context` | the class-file lookups and loaded binary classes of one compilation, shared by every session; the injection point for a longer-lived cache (`BINARY_CLASS_CACHE_LIFETIME.md`, `CLASS_FILE_READ_LAYER.md`) |
-| `javaModuleFinder: JavaModuleFinder` parameter | `JavaDirectFacadeBuilder.kt` | replaces a `CoreJavaFileManager` service lookup; `import module M;` no longer silently degrades |
-| `javaSourceRoots: List<JavaSourceRootEntry>` parameter | `JavaDirectFacadeBuilder.kt` | replaces reading `CLIConfigurationKeys.CONTENT_ROOTS` inside the module |
+| `FirJavaFacadeFactory` | `fir/entrypoint/.../session/FirJavaFacadeFactory.kt`, held by `FirJvmSessionFactory.Context` | which Java implementation serves a scope, as one per-compilation decision instead of a `createJavaFacade` lambda per construction site; `createJavaDirectJavaFacadeFactory` supplies the java-direct one, `psiJavaFacadeFactory()` is the default |
+| `javaModuleFinder: JavaModuleFinder` parameter | `JavaDirectFacadeFactory.kt` | replaces a `CoreJavaFileManager` service lookup; `import module M;` no longer silently degrades |
+| `javaSourceRoots: List<JavaSourceRootEntry>` parameter | `JavaDirectFacadeFactory.kt` | replaces reading `CLIConfigurationKeys.CONTENT_ROOTS` inside the module |
 | `readBinaryJavaClass(topLevelClassFile: BinaryClassFileHandle, …)` | `frontend.common.jvm/.../BinaryJavaClassReader.kt` | lets the reader be driven from a handle instead of a `VirtualFile` |
 | `JavaModuleInfo.read(file, classesByClassId)` | `frontend.common.jvm/.../JavaModuleInfo.kt` | takes a `ClassIdToJavaClass` resolver instead of a `KotlinCliJavaFileManager` + scope |
 
@@ -87,3 +88,21 @@ written design for it.
 - Deleting `KotlinCliJavaFileManagerImpl` — still required by K1, kapt, `CoreJavaDirectoryService`
   and the `usePsiClassFilesReading` mode. The goal reached here is that the FIR JVM java-direct path
   no longer needs it, which is the precondition for a later deletion.
+
+## 7. Who decides which Java implementation a session uses
+
+Since the choice lives in `FirJvmSessionFactory.Context.javaFacadeFactory`, everything constructed
+from that context — the library and source sessions, the symbol provider for the precompiled
+binaries of incremental compilation (`FirJvmIncrementalCompilationSymbolProviders`), the JVM
+interpretation of an HMPP common fragment's classpath, the scripting/REPL additional-libraries
+session — follows the compilation's decision, and a context which chooses nothing stays on PSI.
+
+What is left:
+
+- `FirJKlibSessionFactory` (`compiler/cli/cli-jklib/`) is a sibling of `FirJvmSessionFactory` with
+  its own `Context`, and calls `projectEnvironment.getFirJavaFacade` directly for both the JVM
+  classpath and the module's own `.java` files; it also registers `FirJavaElementFinder`
+  unconditionally. Bringing it to the same denominator means giving its `Context` a
+  `FirJavaFacadeFactory` and deriving it in `prepareJKlibSessions` as `prepareJvmSessions` does.
+  Untested for java-direct today, so it needs the JKlib suites as a gate.
+- The LL-API/IDE and K1 sides are out of scope entirely (see above).

@@ -43,18 +43,14 @@ import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.java.direct.JavaSourceRootEntry
-import org.jetbrains.kotlin.java.direct.createJavaDirectJavaFacadeBuilder
+import org.jetbrains.kotlin.java.direct.createJavaDirectJavaFacadeFactory
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileIndex
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClassCache
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
@@ -383,25 +379,25 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         var firJvmIncrementalCompilationSymbolProvidersIsInitialized = false
 
         // The lifetime of the binary Java classes is the lifetime of the context, i.e. this compilation.
+        val binaryJavaClassCache = runIf(configuration.useJavaDirect) {
+            BinaryJavaClassCache(projectEnvironment.binaryClassFileIndex())
+        }
         val context = FirJvmSessionFactory.Context(
             configuration,
             projectEnvironment,
             librariesScope,
-            binaryJavaClassCache = runIf(configuration.useJavaDirect) {
-                BinaryJavaClassCache(projectEnvironment.binaryClassFileIndex())
-            },
-        )
-
-        val javaDirectFacade: (AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade =
-            context.binaryJavaClassCache?.let { binaryClasses ->
-                createJavaDirectJavaFacadeBuilder(
+            binaryJavaClassCache = binaryJavaClassCache,
+            // `null` leaves the PSI-based Java view, see `FirJvmSessionFactory.Context.javaFacadeFactory`.
+            javaFacadeFactory = binaryJavaClassCache?.let { binaryClasses ->
+                createJavaDirectJavaFacadeFactory(
                     configuration.javaSourceRootEntries(),
                     binaryClasses,
                     ::binaryClassFileScope,
                     projectEnvironment.javaModuleFinder(),
                     javaSourcesScope,
                 )
-            } ?: AbstractProjectEnvironment::getFirJavaFacade
+            },
+        )
 
         return SessionConstructionUtils.prepareSessions(
             files, configuration, rootModuleName, JvmPlatforms.unspecifiedJvmPlatform,
@@ -431,7 +427,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     scopeProvider,
                     context.packagePartProviderForLibraries,
                     kotlinClassFinder,
-                    javaDirectFacade(projectEnvironment, session, moduleData, context.librariesScope)
+                    context.javaFacadeFactory.createJavaFacade(session, moduleData, context.librariesScope)
                 )
                 val builtinsProvider = FirJvmSessionFactory.initializeBuiltinsProvider(
                     session,
@@ -457,7 +453,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     extensionRegistrars,
                     configuration.languageVersionSettings,
                     context,
-                    createJavaFacade = javaDirectFacade,
                 )
             },
             createSourceSession = { moduleData, kmpModuleKind, sessionConfigurator ->
@@ -470,7 +465,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                             return@ic if (firJvmIncrementalCompilationSymbolProvidersIsInitialized) firJvmIncrementalCompilationSymbolProviders
                             else {
                                 firJvmIncrementalCompilationSymbolProvidersIsInitialized = true
-                                incrementalCompilationContext?.createSymbolProviders(session, moduleData, projectEnvironment)?.also {
+                                incrementalCompilationContext?.createSymbolProviders(session, moduleData, context)?.also {
                                     firJvmIncrementalCompilationSymbolProviders = it
                                 }
                             }
@@ -482,7 +477,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                             KmpModuleKind.LeafHmppModule -> incrementalCompilationContext?.createSymbolProviders(
                                 session,
                                 moduleData,
-                                projectEnvironment
+                                context
                             )
 
                             KmpModuleKind.NonLeafRegularModule,
@@ -500,7 +495,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     // stubs. java-direct serves the Kotlin-to-Java direction from FIR instead.
                     needRegisterJavaElementFinder = !configuration.useJavaDirect,
                     kmpModuleKind = kmpModuleKind,
-                    createJavaFacade = javaDirectFacade,
                     init = sessionConfigurator,
                 )
             }

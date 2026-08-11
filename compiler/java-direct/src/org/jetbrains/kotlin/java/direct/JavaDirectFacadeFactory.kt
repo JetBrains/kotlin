@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForModule
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
+import org.jetbrains.kotlin.fir.session.FirJavaFacadeFactory
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.java.direct.resolution.JavaModuleImportedPackagesOverModuleGraph
 import org.jetbrains.kotlin.load.java.JavaClassFinder
@@ -19,21 +16,21 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import java.util.IdentityHashMap
 
 /**
- * Injects java-direct into FIR JVM sessions via `createJavaFacade`.
+ * The java-direct Java view of a compilation, to be put into `FirJvmSessionFactory.Context`.
  */
-fun createJavaDirectJavaFacadeBuilder(
+fun createJavaDirectJavaFacadeFactory(
     javaSourceRoots: List<JavaSourceRootEntry>,
     binaryClasses: BinaryJavaClassCache,
     binaryClassFileScopeFor: (AbstractProjectFileSearchScope) -> BinaryClassFileScope,
     javaModuleFinder: JavaModuleFinder,
     javaSourcesScope: AbstractProjectFileSearchScope,
-): (AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade {
+): FirJavaFacadeFactory {
     val moduleImportedPackages = JavaModuleImportedPackagesOverModuleGraph(javaModuleFinder)
 
     // Indexed by search scope identity.
     val binaryFinders: MutableMap<AbstractProjectFileSearchScope, JavaClassFinder> = IdentityHashMap()
 
-    return { _, session, moduleData, scope ->
+    return FirJavaFacadeFactory { session, moduleData, scope ->
         val finder: JavaClassFinder = when {
             scope === javaSourcesScope -> JavaClassFinderOverAstImpl(session, javaSourceRoots, moduleImportedPackages)
             else -> binaryFinders.getOrPut(scope) {
