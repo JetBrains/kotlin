@@ -1,0 +1,187 @@
+--- a/IndexArrayElementGetterTest.ir.txt
++++ b/IndexArrayElementGetterTest.ir.js_ir.txt
+@@ -14,29 +14,29 @@
+               receiver: GET_VAR '<this>: <root>.IndexArrayElementGetterTest declared in <root>.IndexArrayElementGetterTest.<get-clazz>' type=<root>.IndexArrayElementGetterTest origin=null
+     CLASS CLASS name:AtomicArrayClass modality:FINAL visibility:private superTypes:[kotlin.Any]
+       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.IndexArrayElementGetterTest.AtomicArrayClass
+-      PROPERTY ATOMICFU_GENERATED_PROPERTY name:intArr visibility:public modality:FINAL [val]
+-        FIELD ATOMICFU_GENERATED_FIELD name:intArr type:kotlin.concurrent.AtomicIntArray visibility:private [final]
++      PROPERTY name:intArr visibility:public modality:FINAL [val]
++        FIELD PROPERTY_BACKING_FIELD name:intArr type:kotlinx.atomicfu.AtomicIntArray visibility:private [final]
+           EXPRESSION_BODY
+-            CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlin.concurrent.AtomicIntArray' type=kotlin.concurrent.AtomicIntArray origin=null
++            CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicIntArray origin=null
+               ARG size: CONST Int type=kotlin.Int value=10
+-        FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-intArr> visibility:public modality:FINAL returnType:kotlin.concurrent.AtomicIntArray
+-          VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.IndexArrayElementGetterTest.AtomicArrayClass
+-          correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:intArr visibility:public modality:FINAL [val]
++        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-intArr> visibility:public modality:FINAL returnType:kotlinx.atomicfu.AtomicIntArray
++          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.IndexArrayElementGetterTest.AtomicArrayClass
++          correspondingProperty: PROPERTY name:intArr visibility:public modality:FINAL [val]
+           BLOCK_BODY
+-            RETURN type=kotlin.Nothing from='public final fun <get-intArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass'
+-              GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:intArr type:kotlin.concurrent.AtomicIntArray visibility:private [final] declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass' type=kotlin.concurrent.AtomicIntArray origin=null
++            RETURN type=kotlin.Nothing from='public final fun <get-intArr> (): kotlinx.atomicfu.AtomicIntArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass'
++              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intArr type:kotlinx.atomicfu.AtomicIntArray visibility:private [final]' type=kotlinx.atomicfu.AtomicIntArray origin=null
+                 receiver: GET_VAR '<this>: <root>.IndexArrayElementGetterTest.AtomicArrayClass declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass.<get-intArr>' type=<root>.IndexArrayElementGetterTest.AtomicArrayClass origin=null
+-      PROPERTY ATOMICFU_GENERATED_PROPERTY name:longArr visibility:public modality:FINAL [val]
+-        FIELD ATOMICFU_GENERATED_FIELD name:longArr type:kotlin.concurrent.AtomicLongArray visibility:private [final]
++      PROPERTY name:longArr visibility:public modality:FINAL [val]
++        FIELD PROPERTY_BACKING_FIELD name:longArr type:kotlinx.atomicfu.AtomicLongArray visibility:private [final]
+           EXPRESSION_BODY
+-            CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlin.concurrent.AtomicLongArray' type=kotlin.concurrent.AtomicLongArray origin=null
++            CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlinx.atomicfu.AtomicLongArray' type=kotlinx.atomicfu.AtomicLongArray origin=null
+               ARG size: CONST Int type=kotlin.Int value=10
+-        FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-longArr> visibility:public modality:FINAL returnType:kotlin.concurrent.AtomicLongArray
+-          VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.IndexArrayElementGetterTest.AtomicArrayClass
+-          correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:longArr visibility:public modality:FINAL [val]
++        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-longArr> visibility:public modality:FINAL returnType:kotlinx.atomicfu.AtomicLongArray
++          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.IndexArrayElementGetterTest.AtomicArrayClass
++          correspondingProperty: PROPERTY name:longArr visibility:public modality:FINAL [val]
+           BLOCK_BODY
+-            RETURN type=kotlin.Nothing from='public final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass'
+-              GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:longArr type:kotlin.concurrent.AtomicLongArray visibility:private [final] declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass' type=kotlin.concurrent.AtomicLongArray origin=null
++            RETURN type=kotlin.Nothing from='public final fun <get-longArr> (): kotlinx.atomicfu.AtomicLongArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass'
++              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:longArr type:kotlinx.atomicfu.AtomicLongArray visibility:private [final]' type=kotlinx.atomicfu.AtomicLongArray origin=null
+                 receiver: GET_VAR '<this>: <root>.IndexArrayElementGetterTest.AtomicArrayClass declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass.<get-longArr>' type=<root>.IndexArrayElementGetterTest.AtomicArrayClass origin=null
+       CONSTRUCTOR visibility:public returnType:<root>.IndexArrayElementGetterTest.AtomicArrayClass [primary]
+         BLOCK_BODY
+@@ -107,12 +107,13 @@
+     FUN name:testIndexArrayElementGetting visibility:public modality:FINAL returnType:kotlin.Unit
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.IndexArrayElementGetterTest
+       BLOCK_BODY
+-        CALL 'public final fun set (index: kotlin.Int, newValue: kotlin.Int): kotlin.Unit declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Unit origin=null
+-          ARG <this>: CALL 'public final fun <get-intArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass' type=kotlin.concurrent.AtomicIntArray origin=null
+-            ARG <this>: CALL 'private final fun <get-clazz> (): <root>.IndexArrayElementGetterTest.AtomicArrayClass declared in <root>.IndexArrayElementGetterTest' type=<root>.IndexArrayElementGetterTest.AtomicArrayClass origin=GET_PROPERTY
+-              ARG <this>: GET_VAR '<this>: <root>.IndexArrayElementGetterTest declared in <root>.IndexArrayElementGetterTest.testIndexArrayElementGetting' type=<root>.IndexArrayElementGetterTest origin=IMPLICIT_ARGUMENT
+-          ARG index: CONST Int type=kotlin.Int value=8
+-          ARG newValue: CONST Int type=kotlin.Int value=3
++        CALL 'public final fun <set-value> (<set-?>: kotlin.Int): kotlin.Unit declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Unit origin=EQ
++          ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicInt origin=GET_ARRAY_ELEMENT
++            ARG <this>: CALL 'public final fun <get-intArr> (): kotlinx.atomicfu.AtomicIntArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass' type=kotlinx.atomicfu.AtomicIntArray origin=GET_PROPERTY
++              ARG <this>: CALL 'private final fun <get-clazz> (): <root>.IndexArrayElementGetterTest.AtomicArrayClass declared in <root>.IndexArrayElementGetterTest' type=<root>.IndexArrayElementGetterTest.AtomicArrayClass origin=GET_PROPERTY
++                ARG <this>: GET_VAR '<this>: <root>.IndexArrayElementGetterTest declared in <root>.IndexArrayElementGetterTest.testIndexArrayElementGetting' type=<root>.IndexArrayElementGetterTest origin=IMPLICIT_ARGUMENT
++            ARG index: CONST Int type=kotlin.Int value=8
++          ARG <set-?>: CONST Int type=kotlin.Int value=3
+         VAR name:i type:kotlin.Int [val]
+           CALL 'public final fun fib (a: kotlin.Int): kotlin.Int declared in <root>.IndexArrayElementGetterTest' type=kotlin.Int origin=null
+             ARG <this>: GET_VAR '<this>: <root>.IndexArrayElementGetterTest declared in <root>.IndexArrayElementGetterTest.testIndexArrayElementGetting' type=<root>.IndexArrayElementGetterTest origin=IMPLICIT_ARGUMENT
+@@ -121,23 +122,23 @@
+           CALL 'public final fun fib (a: kotlin.Int): kotlin.Int declared in <root>.IndexArrayElementGetterTest' type=kotlin.Int origin=null
+             ARG <this>: GET_VAR '<this>: <root>.IndexArrayElementGetterTest declared in <root>.IndexArrayElementGetterTest.testIndexArrayElementGetting' type=<root>.IndexArrayElementGetterTest origin=IMPLICIT_ARGUMENT
+             ARG a: CONST Int type=kotlin.Int value=5
+-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+-          ARG expected: CONST Int type=kotlin.Int value=3
+-          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-            CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
+-              ARG <this>: CALL 'public final fun <get-intArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass' type=kotlin.concurrent.AtomicIntArray origin=null
++          ARG a: CONST Int type=kotlin.Int value=3
++          ARG b: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
++            ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicInt origin=GET_ARRAY_ELEMENT
++              ARG <this>: CALL 'public final fun <get-intArr> (): kotlinx.atomicfu.AtomicIntArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass' type=kotlinx.atomicfu.AtomicIntArray origin=GET_PROPERTY
+                 ARG <this>: CALL 'private final fun <get-clazz> (): <root>.IndexArrayElementGetterTest.AtomicArrayClass declared in <root>.IndexArrayElementGetterTest' type=<root>.IndexArrayElementGetterTest.AtomicArrayClass origin=GET_PROPERTY
+                   ARG <this>: GET_VAR '<this>: <root>.IndexArrayElementGetterTest declared in <root>.IndexArrayElementGetterTest.testIndexArrayElementGetting' type=<root>.IndexArrayElementGetterTest origin=IMPLICIT_ARGUMENT
+               ARG index: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                 ARG <this>: GET_VAR 'val i: kotlin.Int declared in <root>.IndexArrayElementGetterTest.testIndexArrayElementGetting' type=kotlin.Int origin=null
+                 ARG other: GET_VAR 'val j: kotlin.Int declared in <root>.IndexArrayElementGetterTest.testIndexArrayElementGetting' type=kotlin.Int origin=null
+-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+-          ARG expected: CONST Int type=kotlin.Int value=3
+-          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-            CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
+-              ARG <this>: CALL 'public final fun <get-intArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass' type=kotlin.concurrent.AtomicIntArray origin=null
++          ARG a: CONST Int type=kotlin.Int value=3
++          ARG b: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
++            ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicInt origin=GET_ARRAY_ELEMENT
++              ARG <this>: CALL 'public final fun <get-intArr> (): kotlinx.atomicfu.AtomicIntArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass' type=kotlinx.atomicfu.AtomicIntArray origin=GET_PROPERTY
+                 ARG <this>: CALL 'private final fun <get-clazz> (): <root>.IndexArrayElementGetterTest.AtomicArrayClass declared in <root>.IndexArrayElementGetterTest' type=<root>.IndexArrayElementGetterTest.AtomicArrayClass origin=GET_PROPERTY
+                   ARG <this>: GET_VAR '<this>: <root>.IndexArrayElementGetterTest declared in <root>.IndexArrayElementGetterTest.testIndexArrayElementGetting' type=<root>.IndexArrayElementGetterTest origin=IMPLICIT_ARGUMENT
+               ARG index: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+@@ -147,18 +148,19 @@
+                 ARG other: CALL 'public final fun fib (a: kotlin.Int): kotlin.Int declared in <root>.IndexArrayElementGetterTest' type=kotlin.Int origin=null
+                   ARG <this>: GET_VAR '<this>: <root>.IndexArrayElementGetterTest declared in <root>.IndexArrayElementGetterTest.testIndexArrayElementGetting' type=<root>.IndexArrayElementGetterTest origin=IMPLICIT_ARGUMENT
+                   ARG a: CONST Int type=kotlin.Int value=5
+-        CALL 'public final fun set (index: kotlin.Int, newValue: kotlin.Long): kotlin.Unit declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Unit origin=null
+-          ARG <this>: CALL 'public final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass' type=kotlin.concurrent.AtomicLongArray origin=null
+-            ARG <this>: CALL 'private final fun <get-clazz> (): <root>.IndexArrayElementGetterTest.AtomicArrayClass declared in <root>.IndexArrayElementGetterTest' type=<root>.IndexArrayElementGetterTest.AtomicArrayClass origin=GET_PROPERTY
+-              ARG <this>: GET_VAR '<this>: <root>.IndexArrayElementGetterTest declared in <root>.IndexArrayElementGetterTest.testIndexArrayElementGetting' type=<root>.IndexArrayElementGetterTest origin=IMPLICIT_ARGUMENT
+-          ARG index: CONST Int type=kotlin.Int value=3
+-          ARG newValue: CONST Long type=kotlin.Long value=100
+-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun <set-value> (<set-?>: kotlin.Long): kotlin.Unit declared in kotlinx.atomicfu.AtomicLong' type=kotlin.Unit origin=EQ
++          ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicLong declared in kotlinx.atomicfu.AtomicLongArray' type=kotlinx.atomicfu.AtomicLong origin=GET_ARRAY_ELEMENT
++            ARG <this>: CALL 'public final fun <get-longArr> (): kotlinx.atomicfu.AtomicLongArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass' type=kotlinx.atomicfu.AtomicLongArray origin=GET_PROPERTY
++              ARG <this>: CALL 'private final fun <get-clazz> (): <root>.IndexArrayElementGetterTest.AtomicArrayClass declared in <root>.IndexArrayElementGetterTest' type=<root>.IndexArrayElementGetterTest.AtomicArrayClass origin=GET_PROPERTY
++                ARG <this>: GET_VAR '<this>: <root>.IndexArrayElementGetterTest declared in <root>.IndexArrayElementGetterTest.testIndexArrayElementGetting' type=<root>.IndexArrayElementGetterTest origin=IMPLICIT_ARGUMENT
++            ARG index: CONST Int type=kotlin.Int value=3
++          ARG <set-?>: CONST Long type=kotlin.Long value=100
++        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Long
+-          ARG expected: CONST Long type=kotlin.Long value=100
+-          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+-            CALL 'public final fun get (index: kotlin.Int): kotlin.Long declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Long origin=null
+-              ARG <this>: CALL 'public final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass' type=kotlin.concurrent.AtomicLongArray origin=null
++          ARG a: CONST Long type=kotlin.Long value=100
++          ARG b: CALL 'public final fun <get-value> (): kotlin.Long declared in kotlinx.atomicfu.AtomicLong' type=kotlin.Long origin=GET_PROPERTY
++            ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicLong declared in kotlinx.atomicfu.AtomicLongArray' type=kotlinx.atomicfu.AtomicLong origin=GET_ARRAY_ELEMENT
++              ARG <this>: CALL 'public final fun <get-longArr> (): kotlinx.atomicfu.AtomicLongArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass' type=kotlinx.atomicfu.AtomicLongArray origin=GET_PROPERTY
+                 ARG <this>: CALL 'private final fun <get-clazz> (): <root>.IndexArrayElementGetterTest.AtomicArrayClass declared in <root>.IndexArrayElementGetterTest' type=<root>.IndexArrayElementGetterTest.AtomicArrayClass origin=GET_PROPERTY
+                   ARG <this>: GET_VAR '<this>: <root>.IndexArrayElementGetterTest declared in <root>.IndexArrayElementGetterTest.testIndexArrayElementGetting' type=<root>.IndexArrayElementGetterTest origin=IMPLICIT_ARGUMENT
+               ARG index: CALL 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MINUS
+@@ -168,12 +170,12 @@
+                 ARG other: CALL 'public final fun fib (a: kotlin.Int): kotlin.Int declared in <root>.IndexArrayElementGetterTest' type=kotlin.Int origin=null
+                   ARG <this>: GET_VAR '<this>: <root>.IndexArrayElementGetterTest declared in <root>.IndexArrayElementGetterTest.testIndexArrayElementGetting' type=<root>.IndexArrayElementGetterTest origin=IMPLICIT_ARGUMENT
+                   ARG a: CONST Int type=kotlin.Int value=5
+-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Long
+-          ARG expected: CONST Long type=kotlin.Long value=100
+-          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+-            CALL 'public final fun get (index: kotlin.Int): kotlin.Long declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Long origin=null
+-              ARG <this>: CALL 'public final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass' type=kotlin.concurrent.AtomicLongArray origin=null
++          ARG a: CONST Long type=kotlin.Long value=100
++          ARG b: CALL 'public final fun <get-value> (): kotlin.Long declared in kotlinx.atomicfu.AtomicLong' type=kotlin.Long origin=GET_PROPERTY
++            ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicLong declared in kotlinx.atomicfu.AtomicLongArray' type=kotlinx.atomicfu.AtomicLong origin=GET_ARRAY_ELEMENT
++              ARG <this>: CALL 'public final fun <get-longArr> (): kotlinx.atomicfu.AtomicLongArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass' type=kotlinx.atomicfu.AtomicLongArray origin=GET_PROPERTY
+                 ARG <this>: CALL 'private final fun <get-clazz> (): <root>.IndexArrayElementGetterTest.AtomicArrayClass declared in <root>.IndexArrayElementGetterTest' type=<root>.IndexArrayElementGetterTest.AtomicArrayClass origin=GET_PROPERTY
+                   ARG <this>: GET_VAR '<this>: <root>.IndexArrayElementGetterTest declared in <root>.IndexArrayElementGetterTest.testIndexArrayElementGetting' type=<root>.IndexArrayElementGetterTest origin=IMPLICIT_ARGUMENT
+               ARG index: CALL 'public final fun rem (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PERC
+@@ -185,12 +187,12 @@
+                     ARG <this>: GET_VAR '<this>: <root>.IndexArrayElementGetterTest declared in <root>.IndexArrayElementGetterTest.testIndexArrayElementGetting' type=<root>.IndexArrayElementGetterTest origin=IMPLICIT_ARGUMENT
+                     ARG a: CONST Int type=kotlin.Int value=4
+                 ARG other: CONST Int type=kotlin.Int value=8
+-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Long
+-          ARG expected: CONST Long type=kotlin.Long value=100
+-          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+-            CALL 'public final fun get (index: kotlin.Int): kotlin.Long declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Long origin=null
+-              ARG <this>: CALL 'public final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass' type=kotlin.concurrent.AtomicLongArray origin=null
++          ARG a: CONST Long type=kotlin.Long value=100
++          ARG b: CALL 'public final fun <get-value> (): kotlin.Long declared in kotlinx.atomicfu.AtomicLong' type=kotlin.Long origin=GET_PROPERTY
++            ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicLong declared in kotlinx.atomicfu.AtomicLongArray' type=kotlinx.atomicfu.AtomicLong origin=GET_ARRAY_ELEMENT
++              ARG <this>: CALL 'public final fun <get-longArr> (): kotlinx.atomicfu.AtomicLongArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass' type=kotlinx.atomicfu.AtomicLongArray origin=GET_PROPERTY
+                 ARG <this>: CALL 'private final fun <get-clazz> (): <root>.IndexArrayElementGetterTest.AtomicArrayClass declared in <root>.IndexArrayElementGetterTest' type=<root>.IndexArrayElementGetterTest.AtomicArrayClass origin=GET_PROPERTY
+                   ARG <this>: GET_VAR '<this>: <root>.IndexArrayElementGetterTest declared in <root>.IndexArrayElementGetterTest.testIndexArrayElementGetting' type=<root>.IndexArrayElementGetterTest origin=IMPLICIT_ARGUMENT
+               ARG index: CALL 'public final fun rem (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PERC
+@@ -202,12 +204,12 @@
+                     ARG <this>: GET_VAR '<this>: <root>.IndexArrayElementGetterTest declared in <root>.IndexArrayElementGetterTest.testIndexArrayElementGetting' type=<root>.IndexArrayElementGetterTest origin=IMPLICIT_ARGUMENT
+                     ARG a: CONST Int type=kotlin.Int value=4
+                 ARG other: CONST Int type=kotlin.Int value=8
+-        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Long
+-          ARG expected: CONST Long type=kotlin.Long value=100
+-          ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+-            CALL 'public final fun get (index: kotlin.Int): kotlin.Long declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Long origin=null
+-              ARG <this>: CALL 'public final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass' type=kotlin.concurrent.AtomicLongArray origin=null
++          ARG a: CONST Long type=kotlin.Long value=100
++          ARG b: CALL 'public final fun <get-value> (): kotlin.Long declared in kotlinx.atomicfu.AtomicLong' type=kotlin.Long origin=GET_PROPERTY
++            ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicLong declared in kotlinx.atomicfu.AtomicLongArray' type=kotlinx.atomicfu.AtomicLong origin=GET_ARRAY_ELEMENT
++              ARG <this>: CALL 'public final fun <get-longArr> (): kotlinx.atomicfu.AtomicLongArray declared in <root>.IndexArrayElementGetterTest.AtomicArrayClass' type=kotlinx.atomicfu.AtomicLongArray origin=GET_PROPERTY
+                 ARG <this>: CALL 'private final fun <get-clazz> (): <root>.IndexArrayElementGetterTest.AtomicArrayClass declared in <root>.IndexArrayElementGetterTest' type=<root>.IndexArrayElementGetterTest.AtomicArrayClass origin=GET_PROPERTY
+                   ARG <this>: GET_VAR '<this>: <root>.IndexArrayElementGetterTest declared in <root>.IndexArrayElementGetterTest.testIndexArrayElementGetting' type=<root>.IndexArrayElementGetterTest origin=IMPLICIT_ARGUMENT
+               ARG index: CALL 'public final fun rem (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PERC

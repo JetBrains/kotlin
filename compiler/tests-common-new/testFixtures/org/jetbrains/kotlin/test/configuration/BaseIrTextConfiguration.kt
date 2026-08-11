@@ -33,13 +33,20 @@ import org.jetbrains.kotlin.test.services.TestPhase
 import org.jetbrains.kotlin.test.services.fir.FirSpecificParserSuppressor
 
 fun TestConfigurationBuilder.setupDefaultDirectivesForIrTextTest() {
+    setupDefaultDirectivesForIrDumps()
+
     defaultDirectives {
-        +DUMP_IR
         +DUMP_KT_IR
         +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
         DIAGNOSTICS with "-warnings"
         DUMP_KLIB_ABI with KlibAbiDumpMode.DEFAULT
         LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
+    }
+}
+
+fun TestConfigurationBuilder.setupDefaultDirectivesForIrDumps() {
+    defaultDirectives {
+        +DUMP_IR
     }
 }
 

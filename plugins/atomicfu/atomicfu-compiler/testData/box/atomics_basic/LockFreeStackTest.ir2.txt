@@ -1,0 +1,410 @@
+FILE fqName:<root> fileName:/LockFreeStackTest.kt
+  CLASS CLASS name:LockFreeStack modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.LockFreeStack<T of <root>.LockFreeStack>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:top$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:top$volatile type:kotlin.Any? visibility:private
+        annotations:
+          Volatile
+        EXPRESSION_BODY
+          CONST Null type=kotlin.Nothing? value=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-top$volatile> visibility:private modality:FINAL returnType:kotlin.Any?
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:top$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-top$volatile> (): kotlin.Any? declared in <root>.LockFreeStack'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:top$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeStack' type=kotlin.Any? origin=null
+              receiver: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.<get-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-top$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:top$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:top$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeStack' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.<set-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
+              value: GET_VAR 'value: kotlin.Any? declared in <root>.LockFreeStack.<set-top$volatile>' type=kotlin.Any? origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:top$volatile$FU visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:top$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun newUpdater (tclass: java.lang.Class, vclass: java.lang.Class, fieldName: kotlin.String): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+            ARG tclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG vclass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
+              ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            ARG fieldName: CONST String type=kotlin.String value="top$volatile"
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-top$volatile$FU> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReferenceFieldUpdater [companion]
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:top$volatile$FU visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-top$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LockFreeStack'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:top$volatile$FU type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater visibility:private [final,static] declared in <root>.LockFreeStack' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+    CLASS CLASS name:Node modality:FINAL visibility:private superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node>
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+      PROPERTY name:value visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.LockFreeStack.Node visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'value: T of <root>.LockFreeStack.Node declared in <root>.LockFreeStack.Node.<init>' type=T of <root>.LockFreeStack.Node origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL returnType:T of <root>.LockFreeStack.Node
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node>
+          correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [val]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-value> (): T of <root>.LockFreeStack.Node declared in <root>.LockFreeStack.Node'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.LockFreeStack.Node visibility:private [final]' type=T of <root>.LockFreeStack.Node origin=null
+                receiver: GET_VAR '<this>: <root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node> declared in <root>.LockFreeStack.Node.<get-value>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node> origin=null
+      PROPERTY name:next visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:next type:<root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node>? visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'next: <root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node>? declared in <root>.LockFreeStack.Node.<init>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node>? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-next> visibility:public modality:FINAL returnType:<root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node>?
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node>
+          correspondingProperty: PROPERTY name:next visibility:public modality:FINAL [val]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-next> (): <root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node>? declared in <root>.LockFreeStack.Node'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:next type:<root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node>? visibility:private [final]' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node>? origin=null
+                receiver: GET_VAR '<this>: <root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node> declared in <root>.LockFreeStack.Node.<get-next>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node> origin=null
+      CONSTRUCTOR visibility:public returnType:<root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node> [primary]
+        VALUE_PARAMETER kind:Regular name:value index:0 type:T of <root>.LockFreeStack.Node
+        VALUE_PARAMETER kind:Regular name:next index:1 type:<root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node>?
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Node modality:FINAL visibility:private superTypes:[kotlin.Any]' type=kotlin.Unit
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+    CONSTRUCTOR visibility:public returnType:<root>.LockFreeStack<T of <root>.LockFreeStack> [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LockFreeStack modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN ATOMICFU_GENERATED_FUNCTION name:getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any visibility:private modality:FINAL returnType:kotlin.Any? [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Any?, kotlin.Any?>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Any? [val]
+              CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LockFreeStack.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LockFreeStack.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Any? [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Any? origin=null
+                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?> declared in <root>.LockFreeStack.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Any?> origin=null
+                ARG p1: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.LockFreeStack.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+            WHEN type=kotlin.Unit origin=null
+              BRANCH
+                if: CALL 'public final fun compareAndSet <T> (obj: kotlin.Any, expect: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Boolean origin=null
+                  TYPE_ARG T: <none>
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LockFreeStack.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LockFreeStack.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                  ARG expect: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.LockFreeStack.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                  ARG update: GET_VAR 'val tmp_1: kotlin.Any? declared in <root>.LockFreeStack.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.LockFreeStack'
+                  GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.LockFreeStack.getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+    FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$ATOMIC_FIELD_UPDATER$Any visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Any?, kotlin.Unit>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Any? [val]
+              CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LockFreeStack.loop$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LockFreeStack.loop$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+              ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Unit> declared in <root>.LockFreeStack.loop$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=null
+              ARG p1: GET_VAR 'val tmp_2: kotlin.Any? declared in <root>.LockFreeStack.loop$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+    FUN ATOMICFU_GENERATED_FUNCTION name:update$atomicfu$ATOMIC_FIELD_UPDATER$Any visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+      VALUE_PARAMETER kind:Regular name:obj$atomicfu index:2 type:kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Any?, kotlin.Any?>
+      BLOCK_BODY
+        WHILE label=null origin=null
+          condition: CONST Boolean type=kotlin.Boolean value=true
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Any? [val]
+              CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LockFreeStack.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LockFreeStack.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Any? [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Any? origin=null
+                ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?> declared in <root>.LockFreeStack.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Any?> origin=null
+                ARG p1: GET_VAR 'val tmp_3: kotlin.Any? declared in <root>.LockFreeStack.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+            WHEN type=kotlin.Unit origin=null
+              BRANCH
+                if: CALL 'public final fun compareAndSet <T> (obj: kotlin.Any, expect: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Boolean origin=null
+                  TYPE_ARG T: <none>
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LockFreeStack.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                  ARG obj: GET_VAR 'obj$atomicfu: kotlin.Any? declared in <root>.LockFreeStack.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                  ARG expect: GET_VAR 'val tmp_3: kotlin.Any? declared in <root>.LockFreeStack.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                  ARG update: GET_VAR 'val tmp_4: kotlin.Any? declared in <root>.LockFreeStack.update$atomicfu$ATOMIC_FIELD_UPDATER$Any' type=kotlin.Any? origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Unit declared in <root>.LockFreeStack'
+                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:clear visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
+      BLOCK_BODY
+        CALL 'public final fun set <T> (obj: kotlin.Any, newValue: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-top$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LockFreeStack' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+          ARG obj: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.clear' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
+          ARG newValue: CONST Null type=kotlin.Nothing? value=null
+    FUN name:isEmpty visibility:public modality:FINAL returnType:kotlin.Boolean
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun isEmpty (): kotlin.Boolean declared in <root>.LockFreeStack'
+          CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+            ARG arg0: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+              CALL 'public final fun get <T> (obj: kotlin.Any): T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.get declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Any? origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: CALL 'private final fun <get-top$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LockFreeStack' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                ARG obj: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.isEmpty' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
+            ARG arg1: CONST Null type=kotlin.Nothing? value=null
+    FUN name:popLoop visibility:public modality:FINAL returnType:T of <root>.LockFreeStack?
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
+      BLOCK_BODY
+        CALL 'private final fun loop$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Unit>): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.popLoop' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-top$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LockFreeStack' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+          ARG obj$atomicfu: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.popLoop' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
+          ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER kind:Regular name:cur index:0 type:<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?
+              BLOCK_BODY
+                WHEN type=kotlin.Unit origin=IF
+                  BRANCH
+                    if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                      ARG arg0: GET_VAR 'cur: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popLoop.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+                      ARG arg1: CONST Null type=kotlin.Nothing? value=null
+                    then: RETURN type=kotlin.Nothing from='public final fun popLoop (): T of <root>.LockFreeStack? declared in <root>.LockFreeStack'
+                      CONST Null type=kotlin.Nothing? value=null
+                WHEN type=kotlin.Unit origin=IF
+                  BRANCH
+                    if: CALL 'public final fun compareAndSet <T> (obj: kotlin.Any, expect: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Boolean origin=null
+                      TYPE_ARG T: <none>
+                      ARG <this>: CALL 'private final fun <get-top$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LockFreeStack' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                      ARG obj: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.popLoop' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
+                      ARG expect: TYPE_OP type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack> origin=IMPLICIT_CAST typeOperand=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>
+                        GET_VAR 'cur: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popLoop.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+                      ARG update: CALL 'public final fun <get-next> (): <root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node>? declared in <root>.LockFreeStack.Node' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=GET_PROPERTY
+                        ARG <this>: TYPE_OP type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack> origin=IMPLICIT_CAST typeOperand=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>
+                          GET_VAR 'cur: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popLoop.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+                    then: RETURN type=kotlin.Nothing from='public final fun popLoop (): T of <root>.LockFreeStack? declared in <root>.LockFreeStack'
+                      CALL 'public final fun <get-value> (): T of <root>.LockFreeStack.Node declared in <root>.LockFreeStack.Node' type=T of <root>.LockFreeStack origin=GET_PROPERTY
+                        ARG <this>: TYPE_OP type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack> origin=IMPLICIT_CAST typeOperand=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>
+                          GET_VAR 'cur: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popLoop.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+    FUN name:popUpdate visibility:public modality:FINAL returnType:T of <root>.LockFreeStack?
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun popUpdate (): T of <root>.LockFreeStack? declared in <root>.LockFreeStack'
+          BLOCK type=T of <root>.LockFreeStack? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? [val]
+              CALL 'private final fun getAndUpdate$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.LockFreeStack' type=kotlin.Any? origin=null
+                ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.popUpdate' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
+                ARG handler$atomicfu: CALL 'private final fun <get-top$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LockFreeStack' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                ARG obj$atomicfu: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.popUpdate' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
+                ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?, <root>.LockFreeStack.Node<T of <root>.LockFreeStack>?> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?
+                    VALUE_PARAMETER kind:Regular name:cur index:0 type:<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?
+                    BLOCK_BODY
+                      RETURN type=kotlin.Nothing from='local final fun <anonymous> (cur: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>?): <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popUpdate'
+                        BLOCK type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=SAFE_CALL
+                          VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? [val]
+                            GET_VAR 'cur: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popUpdate.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+                          WHEN type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+                            BRANCH
+                              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                                ARG arg0: GET_VAR 'val tmp_6: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popUpdate.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+                                ARG arg1: CONST Null type=kotlin.Nothing? value=null
+                              then: CONST Null type=kotlin.Nothing? value=null
+                            BRANCH
+                              if: CONST Boolean type=kotlin.Boolean value=true
+                              then: CALL 'public final fun <get-next> (): <root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node>? declared in <root>.LockFreeStack.Node' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=GET_PROPERTY
+                                ARG <this>: TYPE_OP type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack> origin=IMPLICIT_CAST typeOperand=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>
+                                  GET_VAR 'val tmp_6: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popUpdate.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+            WHEN type=T of <root>.LockFreeStack? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  ARG arg0: GET_VAR 'val tmp_5: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popUpdate' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+                  ARG arg1: CONST Null type=kotlin.Nothing? value=null
+                then: CONST Null type=kotlin.Nothing? value=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CALL 'public final fun <get-value> (): T of <root>.LockFreeStack.Node declared in <root>.LockFreeStack.Node' type=T of <root>.LockFreeStack origin=GET_PROPERTY
+                  ARG <this>: TYPE_OP type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack> origin=IMPLICIT_CAST typeOperand=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>
+                    GET_VAR 'val tmp_5: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popUpdate' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+    FUN name:pushLoop visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
+      VALUE_PARAMETER kind:Regular name:value index:1 type:T of <root>.LockFreeStack
+      BLOCK_BODY
+        CALL 'private final fun loop$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Unit>): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushLoop' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-top$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LockFreeStack' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+          ARG obj$atomicfu: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushLoop' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
+          ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER kind:Regular name:cur index:0 type:<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?
+              BLOCK_BODY
+                VAR name:upd type:<root>.LockFreeStack.Node<T of <root>.LockFreeStack> [val]
+                  CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.LockFreeStack.Node, next: <root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node>?) declared in <root>.LockFreeStack.Node' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack> origin=null
+                    TYPE_ARG (of class) T: T of <root>.LockFreeStack
+                    ARG value: GET_VAR 'value: T of <root>.LockFreeStack declared in <root>.LockFreeStack.pushLoop' type=T of <root>.LockFreeStack origin=null
+                    ARG next: GET_VAR 'cur: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.pushLoop.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+                WHEN type=kotlin.Unit origin=IF
+                  BRANCH
+                    if: CALL 'public final fun compareAndSet <T> (obj: kotlin.Any, expect: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceFieldUpdater.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceFieldUpdater' type=kotlin.Boolean origin=null
+                      TYPE_ARG T: <none>
+                      ARG <this>: CALL 'private final fun <get-top$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LockFreeStack' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+                      ARG obj: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushLoop' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
+                      ARG expect: GET_VAR 'cur: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.pushLoop.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+                      ARG update: GET_VAR 'val upd: <root>.LockFreeStack.Node<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushLoop.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack> origin=null
+                    then: RETURN type=kotlin.Nothing from='public final fun pushLoop (value: T of <root>.LockFreeStack): kotlin.Unit declared in <root>.LockFreeStack'
+                      GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN name:pushUpdate visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
+      VALUE_PARAMETER kind:Regular name:value index:1 type:T of <root>.LockFreeStack
+      BLOCK_BODY
+        CALL 'private final fun update$atomicfu$ATOMIC_FIELD_UPDATER$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, obj$atomicfu: kotlin.Any?, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushUpdate' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-top$volatile$FU> (): java.util.concurrent.atomic.AtomicReferenceFieldUpdater declared in <root>.LockFreeStack' type=java.util.concurrent.atomic.AtomicReferenceFieldUpdater origin=null
+          ARG obj$atomicfu: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushUpdate' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
+          ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?, <root>.LockFreeStack.Node<T of <root>.LockFreeStack>?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?
+              VALUE_PARAMETER kind:Regular name:cur index:0 type:<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (cur: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>?): <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.pushUpdate'
+                  CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.LockFreeStack.Node, next: <root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node>?) declared in <root>.LockFreeStack.Node' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack> origin=null
+                    TYPE_ARG (of class) T: T of <root>.LockFreeStack
+                    ARG value: GET_VAR 'value: T of <root>.LockFreeStack declared in <root>.LockFreeStack.pushUpdate' type=T of <root>.LockFreeStack origin=null
+                    ARG next: GET_VAR 'cur: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.pushUpdate.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+  CLASS CLASS name:LockFreeStackTest modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.LockFreeStackTest
+    CONSTRUCTOR visibility:public returnType:<root>.LockFreeStackTest [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LockFreeStackTest modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:testClear visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStackTest
+      BLOCK_BODY
+        VAR name:s type:<root>.LockFreeStack<kotlin.String> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.LockFreeStack' type=<root>.LockFreeStack<kotlin.String> origin=null
+            TYPE_ARG (of class) T: kotlin.String
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun isEmpty (): kotlin.Boolean declared in <root>.LockFreeStack' type=kotlin.Boolean origin=null
+            ARG <this>: GET_VAR 'val s: <root>.LockFreeStack<kotlin.String> declared in <root>.LockFreeStackTest.testClear' type=<root>.LockFreeStack<kotlin.String> origin=null
+        CALL 'public final fun pushLoop (value: T of <root>.LockFreeStack): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR 'val s: <root>.LockFreeStack<kotlin.String> declared in <root>.LockFreeStackTest.testClear' type=<root>.LockFreeStack<kotlin.String> origin=null
+          ARG value: CONST String type=kotlin.String value="A"
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+            ARG <this>: CALL 'public final fun isEmpty (): kotlin.Boolean declared in <root>.LockFreeStack' type=kotlin.Boolean origin=null
+              ARG <this>: GET_VAR 'val s: <root>.LockFreeStack<kotlin.String> declared in <root>.LockFreeStackTest.testClear' type=<root>.LockFreeStack<kotlin.String> origin=null
+        CALL 'public final fun clear (): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR 'val s: <root>.LockFreeStack<kotlin.String> declared in <root>.LockFreeStackTest.testClear' type=<root>.LockFreeStack<kotlin.String> origin=null
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun isEmpty (): kotlin.Boolean declared in <root>.LockFreeStack' type=kotlin.Boolean origin=null
+            ARG <this>: GET_VAR 'val s: <root>.LockFreeStack<kotlin.String> declared in <root>.LockFreeStackTest.testClear' type=<root>.LockFreeStack<kotlin.String> origin=null
+    FUN name:testPushPopLoop visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStackTest
+      BLOCK_BODY
+        VAR name:s type:<root>.LockFreeStack<kotlin.String> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.LockFreeStack' type=<root>.LockFreeStack<kotlin.String> origin=null
+            TYPE_ARG (of class) T: kotlin.String
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun isEmpty (): kotlin.Boolean declared in <root>.LockFreeStack' type=kotlin.Boolean origin=null
+            ARG <this>: GET_VAR 'val s: <root>.LockFreeStack<kotlin.String> declared in <root>.LockFreeStackTest.testPushPopLoop' type=<root>.LockFreeStack<kotlin.String> origin=null
+        CALL 'public final fun pushLoop (value: T of <root>.LockFreeStack): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR 'val s: <root>.LockFreeStack<kotlin.String> declared in <root>.LockFreeStackTest.testPushPopLoop' type=<root>.LockFreeStack<kotlin.String> origin=null
+          ARG value: CONST String type=kotlin.String value="A"
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+            ARG <this>: CALL 'public final fun isEmpty (): kotlin.Boolean declared in <root>.LockFreeStack' type=kotlin.Boolean origin=null
+              ARG <this>: GET_VAR 'val s: <root>.LockFreeStack<kotlin.String> declared in <root>.LockFreeStackTest.testPushPopLoop' type=<root>.LockFreeStack<kotlin.String> origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.String?
+          ARG expected: CONST String type=kotlin.String value="A"
+          ARG actual: CALL 'public final fun popLoop (): T of <root>.LockFreeStack? declared in <root>.LockFreeStack' type=kotlin.String? origin=null
+            ARG <this>: GET_VAR 'val s: <root>.LockFreeStack<kotlin.String> declared in <root>.LockFreeStackTest.testPushPopLoop' type=<root>.LockFreeStack<kotlin.String> origin=null
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun isEmpty (): kotlin.Boolean declared in <root>.LockFreeStack' type=kotlin.Boolean origin=null
+            ARG <this>: GET_VAR 'val s: <root>.LockFreeStack<kotlin.String> declared in <root>.LockFreeStackTest.testPushPopLoop' type=<root>.LockFreeStack<kotlin.String> origin=null
+    FUN name:testPushPopUpdate visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStackTest
+      BLOCK_BODY
+        VAR name:s type:<root>.LockFreeStack<kotlin.String> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.LockFreeStack' type=<root>.LockFreeStack<kotlin.String> origin=null
+            TYPE_ARG (of class) T: kotlin.String
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun isEmpty (): kotlin.Boolean declared in <root>.LockFreeStack' type=kotlin.Boolean origin=null
+            ARG <this>: GET_VAR 'val s: <root>.LockFreeStack<kotlin.String> declared in <root>.LockFreeStackTest.testPushPopUpdate' type=<root>.LockFreeStack<kotlin.String> origin=null
+        CALL 'public final fun pushUpdate (value: T of <root>.LockFreeStack): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR 'val s: <root>.LockFreeStack<kotlin.String> declared in <root>.LockFreeStackTest.testPushPopUpdate' type=<root>.LockFreeStack<kotlin.String> origin=null
+          ARG value: CONST String type=kotlin.String value="A"
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+            ARG <this>: CALL 'public final fun isEmpty (): kotlin.Boolean declared in <root>.LockFreeStack' type=kotlin.Boolean origin=null
+              ARG <this>: GET_VAR 'val s: <root>.LockFreeStack<kotlin.String> declared in <root>.LockFreeStackTest.testPushPopUpdate' type=<root>.LockFreeStack<kotlin.String> origin=null
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.String?
+          ARG expected: CONST String type=kotlin.String value="A"
+          ARG actual: CALL 'public final fun popUpdate (): T of <root>.LockFreeStack? declared in <root>.LockFreeStack' type=kotlin.String? origin=null
+            ARG <this>: GET_VAR 'val s: <root>.LockFreeStack<kotlin.String> declared in <root>.LockFreeStackTest.testPushPopUpdate' type=<root>.LockFreeStack<kotlin.String> origin=null
+        CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+          ARG actual: CALL 'public final fun isEmpty (): kotlin.Boolean declared in <root>.LockFreeStack' type=kotlin.Boolean origin=null
+            ARG <this>: GET_VAR 'val s: <root>.LockFreeStack<kotlin.String> declared in <root>.LockFreeStackTest.testPushPopUpdate' type=<root>.LockFreeStack<kotlin.String> origin=null
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:testClass type:<root>.LockFreeStackTest [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.LockFreeStackTest' type=<root>.LockFreeStackTest origin=null
+      CALL 'public final fun testClear (): kotlin.Unit declared in <root>.LockFreeStackTest' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val testClass: <root>.LockFreeStackTest declared in <root>.box' type=<root>.LockFreeStackTest origin=null
+      CALL 'public final fun testPushPopLoop (): kotlin.Unit declared in <root>.LockFreeStackTest' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val testClass: <root>.LockFreeStackTest declared in <root>.box' type=<root>.LockFreeStackTest origin=null
+      CALL 'public final fun testPushPopUpdate (): kotlin.Unit declared in <root>.LockFreeStackTest' type=kotlin.Unit origin=null
+        ARG <this>: GET_VAR 'val testClass: <root>.LockFreeStackTest declared in <root>.box' type=<root>.LockFreeStackTest origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"

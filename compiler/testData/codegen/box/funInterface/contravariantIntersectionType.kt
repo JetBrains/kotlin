@@ -1,6 +1,7 @@
 // DUMP_IR
 // CHECK_BYTECODE_TEXT
 // 1 java/lang/invoke/LambdaMetafactory
+// DUMP_IR_DIFFERENCE: JS_IR, JS_IR_ES6
 
 abstract class BaseClass
 interface BaseInterface

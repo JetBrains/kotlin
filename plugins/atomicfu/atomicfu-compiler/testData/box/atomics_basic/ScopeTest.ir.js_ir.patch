@@ -1,0 +1,138 @@
+--- a/ScopeTest.ir.txt
++++ b/ScopeTest.ir.js_ir.txt
+@@ -67,13 +67,12 @@
+       VALUE_PARAMETER kind:Regular name:affected index:1 type:kotlin.Any
+       BLOCK_BODY
+         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+-          CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+-            TYPE_ARG T: kotlin.Any?
+-            ARG <this>: PROPERTY_REFERENCE 'public final state$volatile: kotlin.Any? declared in <root>.AtomicState' field='FIELD ATOMICFU_GENERATED_FIELD name:state$volatile type:kotlin.Any? visibility:private declared in <root>.AtomicState' getter='public final fun <get-state$volatile> (): kotlin.Any? declared in <root>.AtomicState' setter='public final fun <set-state$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.AtomicState' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-              ARG 1: TYPE_OP type=<root>.AtomicState origin=CAST typeOperand=<root>.AtomicState
++          CALL 'public final fun compareAndSet (expect: T of kotlinx.atomicfu.AtomicRef, update: T of kotlinx.atomicfu.AtomicRef): kotlin.Boolean declared in kotlinx.atomicfu.AtomicRef' type=kotlin.Boolean origin=null
++            ARG <this>: CALL 'public final fun <get-state> (): kotlinx.atomicfu.AtomicRef<kotlin.Any?> declared in <root>.AtomicState' type=kotlinx.atomicfu.AtomicRef<kotlin.Any?> origin=GET_PROPERTY
++              ARG <this>: TYPE_OP type=<root>.AtomicState origin=CAST typeOperand=<root>.AtomicState
+                 GET_VAR 'affected: kotlin.Any declared in <root>.AA.manyProperties' type=kotlin.Any origin=null
+-            ARG expectedValue: GET_VAR '<this>: <root>.AA declared in <root>.AA.manyProperties' type=<root>.AA origin=null
+-            ARG newValue: CALL 'public final fun <get-e> (): <root>.E declared in <root>.D' type=<root>.E origin=GET_PROPERTY
++            ARG expect: GET_VAR '<this>: <root>.AA declared in <root>.AA.manyProperties' type=<root>.AA origin=null
++            ARG update: CALL 'public final fun <get-e> (): <root>.E declared in <root>.D' type=<root>.E origin=GET_PROPERTY
+               ARG <this>: CALL 'public final fun <get-d> (): <root>.D declared in <root>.C' type=<root>.D origin=GET_PROPERTY
+                 ARG <this>: CALL 'public final fun <get-c> (): <root>.C declared in <root>.AA' type=<root>.C origin=GET_PROPERTY
+                   ARG <this>: GET_VAR '<this>: <root>.AA declared in <root>.AA.manyProperties' type=<root>.AA origin=IMPLICIT_ARGUMENT
+@@ -81,21 +80,17 @@
+           WHEN type=kotlin.Boolean origin=ANDAND
+             BRANCH
+               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.E
+-                TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-                  CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
+-                    TYPE_ARG T: kotlin.Any?
+-                    ARG <this>: PROPERTY_REFERENCE 'public final state$volatile: kotlin.Any? declared in <root>.AtomicState' field='FIELD ATOMICFU_GENERATED_FIELD name:state$volatile type:kotlin.Any? visibility:private declared in <root>.AtomicState' getter='public final fun <get-state$volatile> (): kotlin.Any? declared in <root>.AtomicState' setter='public final fun <set-state$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.AtomicState' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                      ARG 1: TYPE_OP type=<root>.AtomicState origin=IMPLICIT_CAST typeOperand=<root>.AtomicState
+-                        GET_VAR 'affected: kotlin.Any declared in <root>.AA.manyProperties' type=kotlin.Any origin=null
++                CALL 'public final fun <get-value> (): T of kotlinx.atomicfu.AtomicRef declared in kotlinx.atomicfu.AtomicRef' type=kotlin.Any? origin=GET_PROPERTY
++                  ARG <this>: CALL 'public final fun <get-state> (): kotlinx.atomicfu.AtomicRef<kotlin.Any?> declared in <root>.AtomicState' type=kotlinx.atomicfu.AtomicRef<kotlin.Any?> origin=GET_PROPERTY
++                    ARG <this>: TYPE_OP type=<root>.AtomicState origin=IMPLICIT_CAST typeOperand=<root>.AtomicState
++                      GET_VAR 'affected: kotlin.Any declared in <root>.AA.manyProperties' type=kotlin.Any origin=null
+               then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                 ARG arg0: CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.E' type=kotlin.Int origin=GET_PROPERTY
+                   ARG <this>: TYPE_OP type=<root>.E origin=CAST typeOperand=<root>.E
+-                    TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-                      CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
+-                        TYPE_ARG T: kotlin.Any?
+-                        ARG <this>: PROPERTY_REFERENCE 'public final state$volatile: kotlin.Any? declared in <root>.AtomicState' field='FIELD ATOMICFU_GENERATED_FIELD name:state$volatile type:kotlin.Any? visibility:private declared in <root>.AtomicState' getter='public final fun <get-state$volatile> (): kotlin.Any? declared in <root>.AtomicState' setter='public final fun <set-state$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.AtomicState' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                          ARG 1: TYPE_OP type=<root>.AtomicState origin=IMPLICIT_CAST typeOperand=<root>.AtomicState
+-                            GET_VAR 'affected: kotlin.Any declared in <root>.AA.manyProperties' type=kotlin.Any origin=null
++                    CALL 'public final fun <get-value> (): T of kotlinx.atomicfu.AtomicRef declared in kotlinx.atomicfu.AtomicRef' type=kotlin.Any? origin=GET_PROPERTY
++                      ARG <this>: CALL 'public final fun <get-state> (): kotlinx.atomicfu.AtomicRef<kotlin.Any?> declared in <root>.AtomicState' type=kotlinx.atomicfu.AtomicRef<kotlin.Any?> origin=GET_PROPERTY
++                        ARG <this>: TYPE_OP type=<root>.AtomicState origin=IMPLICIT_CAST typeOperand=<root>.AtomicState
++                          GET_VAR 'affected: kotlin.Any declared in <root>.AA.manyProperties' type=kotlin.Any origin=null
+                 ARG arg1: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                   ARG <this>: CALL 'public final fun <get-value> (): kotlin.Int declared in <root>.AA' type=kotlin.Int origin=GET_PROPERTY
+                     ARG <this>: GET_VAR '<this>: <root>.AA declared in <root>.AA.manyProperties' type=<root>.AA origin=IMPLICIT_ARGUMENT
+@@ -108,33 +103,28 @@
+       VALUE_PARAMETER kind:Regular name:affected index:1 type:kotlin.Any
+       BLOCK_BODY
+         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+-          CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+-            TYPE_ARG T: kotlin.Any?
+-            ARG <this>: PROPERTY_REFERENCE 'public final state$volatile: kotlin.Any? declared in <root>.AtomicState' field='FIELD ATOMICFU_GENERATED_FIELD name:state$volatile type:kotlin.Any? visibility:private declared in <root>.AtomicState' getter='public final fun <get-state$volatile> (): kotlin.Any? declared in <root>.AtomicState' setter='public final fun <set-state$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.AtomicState' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-              ARG 1: TYPE_OP type=<root>.AtomicState origin=CAST typeOperand=<root>.AtomicState
++          CALL 'public final fun compareAndSet (expect: T of kotlinx.atomicfu.AtomicRef, update: T of kotlinx.atomicfu.AtomicRef): kotlin.Boolean declared in kotlinx.atomicfu.AtomicRef' type=kotlin.Boolean origin=null
++            ARG <this>: CALL 'public final fun <get-state> (): kotlinx.atomicfu.AtomicRef<kotlin.Any?> declared in <root>.AtomicState' type=kotlinx.atomicfu.AtomicRef<kotlin.Any?> origin=GET_PROPERTY
++              ARG <this>: TYPE_OP type=<root>.AtomicState origin=CAST typeOperand=<root>.AtomicState
+                 GET_VAR 'affected: kotlin.Any declared in <root>.AA.updateToB' type=kotlin.Any origin=null
+-            ARG expectedValue: GET_VAR '<this>: <root>.AA declared in <root>.AA.updateToB' type=<root>.AA origin=null
+-            ARG newValue: CALL 'public final fun <get-b> (): <root>.B declared in <root>.AA' type=<root>.B origin=GET_PROPERTY
++            ARG expect: GET_VAR '<this>: <root>.AA declared in <root>.AA.updateToB' type=<root>.AA origin=null
++            ARG update: CALL 'public final fun <get-b> (): <root>.B declared in <root>.AA' type=<root>.B origin=GET_PROPERTY
+               ARG <this>: GET_VAR '<this>: <root>.AA declared in <root>.AA.updateToB' type=<root>.AA origin=IMPLICIT_ARGUMENT
+         RETURN type=kotlin.Nothing from='public final fun updateToB (affected: kotlin.Any): kotlin.Boolean declared in <root>.AA'
+           WHEN type=kotlin.Boolean origin=ANDAND
+             BRANCH
+               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.B
+-                TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-                  CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
+-                    TYPE_ARG T: kotlin.Any?
+-                    ARG <this>: PROPERTY_REFERENCE 'public final state$volatile: kotlin.Any? declared in <root>.AtomicState' field='FIELD ATOMICFU_GENERATED_FIELD name:state$volatile type:kotlin.Any? visibility:private declared in <root>.AtomicState' getter='public final fun <get-state$volatile> (): kotlin.Any? declared in <root>.AtomicState' setter='public final fun <set-state$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.AtomicState' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                      ARG 1: TYPE_OP type=<root>.AtomicState origin=IMPLICIT_CAST typeOperand=<root>.AtomicState
+-                        GET_VAR 'affected: kotlin.Any declared in <root>.AA.updateToB' type=kotlin.Any origin=null
++                CALL 'public final fun <get-value> (): T of kotlinx.atomicfu.AtomicRef declared in kotlinx.atomicfu.AtomicRef' type=kotlin.Any? origin=GET_PROPERTY
++                  ARG <this>: CALL 'public final fun <get-state> (): kotlinx.atomicfu.AtomicRef<kotlin.Any?> declared in <root>.AtomicState' type=kotlinx.atomicfu.AtomicRef<kotlin.Any?> origin=GET_PROPERTY
++                    ARG <this>: TYPE_OP type=<root>.AtomicState origin=IMPLICIT_CAST typeOperand=<root>.AtomicState
++                      GET_VAR 'affected: kotlin.Any declared in <root>.AA.updateToB' type=kotlin.Any origin=null
+               then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                 ARG arg0: CALL 'public final fun <get-value> (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=GET_PROPERTY
+                   ARG <this>: TYPE_OP type=<root>.B origin=CAST typeOperand=<root>.B
+-                    TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-                      CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
+-                        TYPE_ARG T: kotlin.Any?
+-                        ARG <this>: PROPERTY_REFERENCE 'public final state$volatile: kotlin.Any? declared in <root>.AtomicState' field='FIELD ATOMICFU_GENERATED_FIELD name:state$volatile type:kotlin.Any? visibility:private declared in <root>.AtomicState' getter='public final fun <get-state$volatile> (): kotlin.Any? declared in <root>.AtomicState' setter='public final fun <set-state$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.AtomicState' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                          ARG 1: TYPE_OP type=<root>.AtomicState origin=IMPLICIT_CAST typeOperand=<root>.AtomicState
+-                            GET_VAR 'affected: kotlin.Any declared in <root>.AA.updateToB' type=kotlin.Any origin=null
++                    CALL 'public final fun <get-value> (): T of kotlinx.atomicfu.AtomicRef declared in kotlinx.atomicfu.AtomicRef' type=kotlin.Any? origin=GET_PROPERTY
++                      ARG <this>: CALL 'public final fun <get-state> (): kotlinx.atomicfu.AtomicRef<kotlin.Any?> declared in <root>.AtomicState' type=kotlinx.atomicfu.AtomicRef<kotlin.Any?> origin=GET_PROPERTY
++                        ARG <this>: TYPE_OP type=<root>.AtomicState origin=IMPLICIT_CAST typeOperand=<root>.AtomicState
++                          GET_VAR 'affected: kotlin.Any declared in <root>.AA.updateToB' type=kotlin.Any origin=null
+                 ARG arg1: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                   ARG <this>: CALL 'public final fun <get-value> (): kotlin.Int declared in <root>.AA' type=kotlin.Int origin=GET_PROPERTY
+                     ARG <this>: GET_VAR '<this>: <root>.AA declared in <root>.AA.updateToB' type=<root>.AA origin=IMPLICIT_ARGUMENT
+@@ -144,28 +134,19 @@
+               then: CONST Boolean type=kotlin.Boolean value=false
+   CLASS CLASS name:AtomicState modality:FINAL visibility:private superTypes:[kotlin.Any]
+     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.AtomicState
+-    PROPERTY ATOMICFU_GENERATED_PROPERTY name:state$volatile visibility:public modality:FINAL [var]
+-      FIELD ATOMICFU_GENERATED_FIELD name:state$volatile type:kotlin.Any? visibility:private
+-        annotations:
+-          Volatile
++    PROPERTY name:state visibility:public modality:FINAL [val]
++      FIELD PROPERTY_BACKING_FIELD name:state type:kotlinx.atomicfu.AtomicRef<kotlin.Any?> visibility:private [final]
+         EXPRESSION_BODY
+-          GET_VAR 'value: kotlin.Any declared in <root>.AtomicState.<init>' type=kotlin.Any origin=null
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-state$volatile> visibility:public modality:FINAL returnType:kotlin.Any?
+-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.AtomicState
+-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:state$volatile visibility:public modality:FINAL [var]
++          CALL 'public final fun atomic <T> (initial: T of kotlinx.atomicfu.atomic): kotlinx.atomicfu.AtomicRef<T of kotlinx.atomicfu.atomic> declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicRef<kotlin.Any?> origin=null
++            TYPE_ARG T: kotlin.Any?
++            ARG initial: GET_VAR 'value: kotlin.Any declared in <root>.AtomicState.<init>' type=kotlin.Any origin=null
++      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-state> visibility:public modality:FINAL returnType:kotlinx.atomicfu.AtomicRef<kotlin.Any?>
++        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.AtomicState
++        correspondingProperty: PROPERTY name:state visibility:public modality:FINAL [val]
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='public final fun <get-state$volatile> (): kotlin.Any? declared in <root>.AtomicState'
+-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:state$volatile type:kotlin.Any? visibility:private declared in <root>.AtomicState' type=kotlin.Any? origin=null
+-              receiver: GET_VAR '<this>: <root>.AtomicState declared in <root>.AtomicState.<get-state$volatile>' type=<root>.AtomicState origin=null
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-state$volatile> visibility:public modality:FINAL returnType:kotlin.Unit
+-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.AtomicState
+-        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
+-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:state$volatile visibility:public modality:FINAL [var]
+-        BLOCK_BODY
+-          RETURN type=kotlin.Unit from='public final fun <set-state$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.AtomicState'
+-            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:state$volatile type:kotlin.Any? visibility:private declared in <root>.AtomicState' type=kotlin.Unit origin=null
+-              receiver: GET_VAR '<this>: <root>.AtomicState declared in <root>.AtomicState.<set-state$volatile>' type=<root>.AtomicState origin=null
+-              value: GET_VAR 'value: kotlin.Any? declared in <root>.AtomicState.<set-state$volatile>' type=kotlin.Any? origin=null
++          RETURN type=kotlin.Nothing from='public final fun <get-state> (): kotlinx.atomicfu.AtomicRef<kotlin.Any?> declared in <root>.AtomicState'
++            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:state type:kotlinx.atomicfu.AtomicRef<kotlin.Any?> visibility:private [final]' type=kotlinx.atomicfu.AtomicRef<kotlin.Any?> origin=null
++              receiver: GET_VAR '<this>: <root>.AtomicState declared in <root>.AtomicState.<get-state>' type=<root>.AtomicState origin=null
+     CONSTRUCTOR visibility:public returnType:<root>.AtomicState [primary]
+       VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Any
+       BLOCK_BODY

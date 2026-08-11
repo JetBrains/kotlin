@@ -1,3 +1,4 @@
+// DUMP_IR
 val p = 0
 fun foo() = 1
 

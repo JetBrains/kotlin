@@ -1,0 +1,99 @@
+FILE fqName:<root> fileName:/CompanionExtensionProperties.kt
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:cA visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:cA type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Int) declared in java.util.concurrent.atomic.AtomicInteger' type=java.util.concurrent.atomic.AtomicInteger origin=null
+          ARG value: CONST Int type=kotlin.Int value=1
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-cA> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicInteger
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:cA visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-cA> (): java.util.concurrent.atomic.AtomicInteger declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:cA type:java.util.concurrent.atomic.AtomicInteger visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:cB visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:cB type:java.util.concurrent.atomic.AtomicReference visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.Any) declared in java.util.concurrent.atomic.AtomicReference' type=java.util.concurrent.atomic.AtomicReference origin=null
+          ARG value: CONST Null type=kotlin.Nothing? value=null
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-cB> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReference
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:cB visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-cB> (): java.util.concurrent.atomic.AtomicReference declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:cB type:java.util.concurrent.atomic.AtomicReference visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicReference origin=null
+  PROPERTY ATOMICFU_GENERATED_PROPERTY name:cArr visibility:private modality:FINAL [val]
+    FIELD ATOMICFU_GENERATED_FIELD name:cArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int) declared in java.util.concurrent.atomic.AtomicIntegerArray' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+          ARG length: CONST Int type=kotlin.Int value=2
+    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-cArr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerArray
+      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:cArr visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-cArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>'
+          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:cArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final,static] declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+  CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Outer
+    CONSTRUCTOR visibility:public returnType:<root>.Outer [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      CALL 'public final fun testCompanionExt (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:testCompanionExt visibility:public modality:FINAL returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=1
+        ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+          CALL 'public final fun get (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+            ARG <this>: CALL 'private final fun <get-cA> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=2
+        ARG actual: CALL 'public final fun incrementAndGet (): kotlin.Int declared in java.util.concurrent.atomic.AtomicInteger' type=kotlin.Int origin=null
+          ARG <this>: CALL 'private final fun <get-cA> (): java.util.concurrent.atomic.AtomicInteger declared in <root>' type=java.util.concurrent.atomic.AtomicInteger origin=null
+      CALL 'public final fun assertNull (actual: kotlin.Any?, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        ARG actual: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+          CALL 'public final fun get <T> (): T of java.util.concurrent.atomic.AtomicReference.get declared in java.util.concurrent.atomic.AtomicReference' type=kotlin.Any? origin=null
+            TYPE_ARG T: <none>
+            ARG <this>: CALL 'private final fun <get-cB> (): java.util.concurrent.atomic.AtomicReference declared in <root>' type=java.util.concurrent.atomic.AtomicReference origin=null
+      CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        ARG actual: CALL 'public final fun compareAndSet <T> (expect: T of java.util.concurrent.atomic.AtomicReference.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReference.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReference' type=kotlin.Boolean origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-cB> (): java.util.concurrent.atomic.AtomicReference declared in <root>' type=java.util.concurrent.atomic.AtomicReference origin=null
+          ARG expect: CONST Null type=kotlin.Nothing? value=null
+          ARG update: CONST String type=kotlin.String value="value"
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Any?
+        ARG expected: CONST String type=kotlin.String value="value"
+        ARG actual: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+          CALL 'public final fun get <T> (): T of java.util.concurrent.atomic.AtomicReference.get declared in java.util.concurrent.atomic.AtomicReference' type=kotlin.Any? origin=null
+            TYPE_ARG T: <none>
+            ARG <this>: CALL 'private final fun <get-cB> (): java.util.concurrent.atomic.AtomicReference declared in <root>' type=java.util.concurrent.atomic.AtomicReference origin=null
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=0
+        ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+          CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+            ARG <this>: CALL 'private final fun <get-cArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+            ARG i: CONST Int type=kotlin.Int value=0
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=1
+        ARG actual: CALL 'public final fun incrementAndGet (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+          ARG <this>: CALL 'private final fun <get-cArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+          ARG i: CONST Int type=kotlin.Int value=0
