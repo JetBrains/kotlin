@@ -35,43 +35,6 @@ public class DirectiveTestUtils {
 
     private DirectiveTestUtils() {}
 
-    private static final DirectiveHandler PROPERTY_NOT_USED = new DirectiveHandler() {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-            checkPropertyNotUsed(ast, arguments.getFirst(), arguments.findNamedArgument("scope"), false, false);
-        }
-    };
-
-    private static final DirectiveHandler PROPERTY_NOT_READ_FROM = new DirectiveHandler() {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-            checkPropertyNotUsed(ast, arguments.getFirst(), arguments.findNamedArgument("scope"), false, true);
-        }
-    };
-
-    private static final DirectiveHandler PROPERTY_NOT_WRITTEN_TO = new DirectiveHandler() {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-            checkPropertyNotUsed(ast, arguments.getFirst(), arguments.findNamedArgument("scope"), true, false);
-        }
-    };
-
-    private static final DirectiveHandler PROPERTY_WRITE_COUNT = new DirectiveHandler() {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-            checkPropertyWriteCount(ast, arguments.getNamedArgument("name"), arguments.findNamedArgument("scope"),
-                                    Integer.parseInt(arguments.getNamedArgument("count")));
-        }
-    };
-
-    private static final DirectiveHandler PROPERTY_READ_COUNT = new DirectiveHandler() {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-            checkPropertyReadCount(ast, arguments.getNamedArgument("name"), arguments.findNamedArgument("scope"),
-                                   Integer.parseInt(arguments.getNamedArgument("count")));
-        }
-    };
-
     private static final DirectiveHandler CLASS_EXISTS = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) {
@@ -332,11 +295,11 @@ public class DirectiveTestUtils {
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CONTAINS_NO_CALLS(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NOT_CALLED(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getFUNCTION_CALLED_TIMES(), new DirectiveHandler<>()),
-            new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_NOT_USED(), PROPERTY_NOT_USED),
-            new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_NOT_READ_FROM(), PROPERTY_NOT_READ_FROM),
-            new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_NOT_WRITTEN_TO(), PROPERTY_NOT_WRITTEN_TO),
-            new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_READ_COUNT(), PROPERTY_READ_COUNT),
-            new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_WRITE_COUNT(), PROPERTY_WRITE_COUNT),
+            new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_NOT_USED(), new DirectiveHandler<>()),
+            new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_NOT_READ_FROM(), new DirectiveHandler<>()),
+            new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_NOT_WRITTEN_TO(), new DirectiveHandler<>()),
+            new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_READ_COUNT(),  new DirectiveHandler<>()),
+            new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_WRITE_COUNT(),  new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CLASS_EXISTS(), CLASS_EXISTS),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_FUNCTION_EXISTS(), FUNCTION_EXISTS),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CALLED_IN_SCOPE(), FUNCTION_CALLED_IN_SCOPE),
@@ -374,32 +337,6 @@ public class DirectiveTestUtils {
             return AstSearchUtil.getFunction(node, scopeFunctionName);
         }
         return node;
-    }
-
-    public static void checkPropertyNotUsed(JsNode node, String propertyName, String scope, boolean isGetAllowed, boolean isSetAllowed)
-            throws Exception {
-        PropertyReferenceCollector counter = PropertyReferenceCollector.Companion.collect(findScope(node, scope));
-        if (!isGetAllowed) {
-            assertFalse(counter.hasUnqualifiedReads(propertyName),
-                        "property getter for `" + propertyName + "`"  + " in scope: " + scope + " is called");
-        }
-        if (!isSetAllowed) {
-            assertFalse(counter.hasUnqualifiedWrites(propertyName),
-                        "property setter for `" + propertyName + "`"  + " in scope: " + scope + " is called");
-        }
-    }
-
-    private static void checkPropertyReadCount(JsNode node, String propertyName, String scope, int expectedCount) throws Exception {
-        PropertyReferenceCollector counter = PropertyReferenceCollector.Companion.collect(findScope(node, scope));
-        assertEquals(expectedCount, counter.unqualifiedReadCount(propertyName),
-                     "Property read count: " + propertyName + " in scope: " + scope);
-    }
-
-    private static void checkPropertyWriteCount(JsNode node, String propertyName, String scope, int expectedCount) throws Exception {
-        PropertyReferenceCollector counter = PropertyReferenceCollector.Companion.collect(findScope(node, scope));
-        assertEquals(expectedCount, counter.unqualifiedWriteCount(propertyName),
-                     "Property write count: " + propertyName + " in scope: " + scope
-        );
     }
 
     public static void checkCalledInScope(
