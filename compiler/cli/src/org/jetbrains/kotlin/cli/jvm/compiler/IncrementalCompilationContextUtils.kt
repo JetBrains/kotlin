@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
+import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.IncrementalCompilationComponentsWithCustomScope
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -17,7 +18,11 @@ private fun createIncrementalCompilationScope(
     incrementalExcludesScope: AbstractProjectFileSearchScope?
 ): AbstractProjectFileSearchScope? {
     if (configuration.modules.isEmpty()) return null
-    if (configuration.incrementalCompilationComponents == null) return null
+
+    val incrementalCompilationComponents = configuration.incrementalCompilationComponents ?: return null
+    if (incrementalCompilationComponents is IncrementalCompilationComponentsWithCustomScope) {
+        return incrementalCompilationComponents.createSearchScope(projectEnvironment)
+    }
 
     val dir = configuration.outputDirectory ?: return null
     return projectEnvironment.getSearchScopeByDirectories(setOf(dir)).let {

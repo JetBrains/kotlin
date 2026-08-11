@@ -7,7 +7,11 @@ package org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline
 
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 
-interface ProjectFileSearchScopeProvider {
+/*
+ * This interface is used by custom IC components implementation in IntelliJ.
+ */
+interface IncrementalCompilationComponentsWithCustomScope : IncrementalCompilationComponents {
     fun createSearchScope(projectEnvironment: VfsBasedProjectEnvironment): AbstractProjectFileSearchScope
 }
