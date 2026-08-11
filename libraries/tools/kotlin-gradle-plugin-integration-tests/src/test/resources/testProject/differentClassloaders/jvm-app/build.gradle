@@ -17,7 +17,7 @@ if (project.findProperty("mppProjectDependency") == "true") {
 } else {
 
     repositories {
-        maven { setUrl "${rootProject.buildDir}/repo" }
+        maven { setUrl "${rootProject.rootDir}/build/repo" }
     }
 
     dependencies {
@@ -34,6 +34,6 @@ publishing {
         }
     }
     repositories {
-        maven { setUrl("${rootProject.buildDir}/repo") }
+        maven { setUrl("${rootProject.rootDir}/build/repo") }
     }
 }
