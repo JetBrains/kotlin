@@ -5,44 +5,36 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassRoots
-import org.jetbrains.kotlin.load.java.structure.impl.classFiles.TopLevelClassFileCandidates
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileIndex
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileScope
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.asBinaryClassFileHandle
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.virtualFile
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 /**
- * [BinaryClassRoots] over the CLI [JvmDependenciesIndex]: the only place where the search scope of a
- * binary session is a PSI [GlobalSearchScope], so that consumers of the seam need neither PSI nor VFS.
+ * [BinaryClassFileIndex] over the CLI [JvmDependenciesIndex].
+ *
+ * The `ct.sym` `.sig` extension choice comes from [CliVirtualFileFinderFactory], so a `-Xjdk-release`
+ * build keeps resolving JDK API stubs.
  */
-class JvmDependenciesIndexBinaryRoots(
+class CliBinaryClassFileIndex(
     private val index: JvmDependenciesIndex,
-    private val scope: GlobalSearchScope,
     enableSearchInCtSym: Boolean,
-) : BinaryClassRoots {
+) : BinaryClassFileIndex {
 
     private val extensions: JavaFileExtensions =
         if (enableSearchInCtSym) BINARY_CLASS_AND_SIG_EXTENSIONS else BINARY_CLASS_EXTENSIONS
 
-    override fun findTopLevelClassFiles(topLevelClassId: ClassId): TopLevelClassFileCandidates {
-        var anywhere: VirtualFile? = null
-        var inScope: VirtualFile? = null
-        for (candidate in index.findClassVirtualFiles(topLevelClassId, extensions)) {
-            if (anywhere == null) anywhere = candidate
-            if (candidate in scope) {
-                inScope = candidate
-                break
-            }
-        }
-        return TopLevelClassFileCandidates(anywhere?.asBinaryClassFileHandle(), inScope?.asBinaryClassFileHandle())
-    }
+    override fun findTopLevelClassFiles(topLevelClassId: ClassId): Collection<BinaryClassFileHandle> =
+        index.findClassVirtualFiles(topLevelClassId, extensions).map { it.asBinaryClassFileHandle() }
 
     override fun classFileNamesInPackage(packageFqName: FqName): Set<String> {
         val result = LinkedHashSet<String>()
@@ -69,12 +61,11 @@ class JvmDependenciesIndexBinaryRoots(
     }
 }
 
-/**
- * Views this factory's classpath index through the scope of a single session.
- *
- * The `ct.sym` `.sig` extension choice comes from the factory, so a `-Xjdk-release` build keeps
- * resolving JDK API stubs.
- */
+fun CliVirtualFileFinderFactory.binaryClassFileIndex(): BinaryClassFileIndex =
+    CliBinaryClassFileIndex(index, enableSearchInCtSym)
+
 @Suppress("UnstableApiUsage")
-fun CliVirtualFileFinderFactory.binaryClassRootsForScope(): (AbstractProjectFileSearchScope) -> BinaryClassRoots =
-    { scope -> JvmDependenciesIndexBinaryRoots(index, scope.asPsiSearchScope(), enableSearchInCtSym) }
+fun binaryClassFileScope(scope: AbstractProjectFileSearchScope): BinaryClassFileScope {
+    val psiScope = scope.asPsiSearchScope()
+    return BinaryClassFileScope { classFile -> classFile.virtualFile in psiScope }
+}

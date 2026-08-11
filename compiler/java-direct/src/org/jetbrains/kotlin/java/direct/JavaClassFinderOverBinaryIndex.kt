@@ -9,30 +9,22 @@ import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
-import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassRoots
-import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
-import org.jetbrains.kotlin.load.java.structure.impl.classFiles.TopLevelClassFileCandidates
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileScope
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClassCache
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.readBinaryJavaClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Binary-side [JavaClassFinder] over the [BinaryClassRoots] of one session, used by the java-direct
- * library session. Kotlin `@Metadata` classes are filtered out by
- * [org.jetbrains.kotlin.fir.java.FirJavaFacade.findClass], which owns every read of this finder.
+ * Binary-side [JavaClassFinder] of a session: the classpath-wide [BinaryJavaClassCache] filtered by the
+ * [BinaryClassFileScope] of that session. Kotlin `@Metadata` classes are filtered out by
+ * [org.jetbrains.kotlin.fir.java.FirJavaFacade.findClass].
  */
 class JavaClassFinderOverBinaryIndex(
-    private val roots: BinaryClassRoots,
+    private val classes: BinaryJavaClassCache,
+    private val searchScope: BinaryClassFileScope,
 ) : JavaClassFinder {
-
-    private val signatureParser = BinaryClassSignatureParser()
-
-    private val binaryCache: MutableMap<ClassId, JavaClass?> = HashMap()
-
-    private val topLevelClassesCache: MutableMap<FqName, MutableMap<Name, TopLevelClassFileCandidates>> = HashMap()
-
-    private val knownClassNamesCache: MutableMap<FqName, Set<String>> = HashMap()
 
     override fun findClass(request: JavaClassFinder.Request): JavaClass? =
         findClassImpl(request, applyScopeFilter = true)
@@ -47,12 +39,12 @@ class JavaClassFinderOverBinaryIndex(
      */
     override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? {
         val packageInfoClass = if (mayHaveAnnotations) findPackageInfoClass(fqName) else null
-        if (packageInfoClass == null && !roots.containsPackageDirectory(fqName)) return null
+        if (packageInfoClass == null && !classes.containsPackageDirectory(fqName)) return null
         return BinaryIndexJavaPackage(fqName, packageInfoClass)
     }
 
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String> =
-        knownClassNamesCache.getOrPut(packageFqName) { roots.classFileNamesInPackage(packageFqName) }
+        classes.classFileNamesInPackage(packageFqName)
 
     override fun canComputeKnownClassNamesInPackage(): Boolean = true
 
@@ -67,26 +59,17 @@ class JavaClassFinderOverBinaryIndex(
     private fun findClassImpl(request: JavaClassFinder.Request, applyScopeFilter: Boolean): JavaClass? {
         val [classId, classFileContentFromRequest, outerClassFromRequest] = request
 
-        // Keyed by the two parts of the outermost class name as they already exist in `classId`.
-        // An `FqName` of that class would be a nicer single key, but building it costs a string
-        // concatenation, an `FqName`, an `FqNameUnsafe`, a `pathSegments()` list and a hash of a
-        // fresh string on *every* lookup, and lookups outnumber misses ~7:1 (see
-        // `implDocs/archive/BINARY_SOURCE_DIVIDE_REVIEW_2026_07_22.md` §12).
-        val packageFqName = classId.packageFqName
-        val topLevelName = classId.relativeClassName.topLevelName()
-        val topLevelClassFiles = topLevelClassesCache.getOrPut(packageFqName) { HashMap() }.getOrPut(topLevelName) {
-            roots.findTopLevelClassFiles(ClassId(packageFqName, topLevelName))
-        }
-        val classFile = (if (applyScopeFilter) topLevelClassFiles.inScope else topLevelClassFiles.anywhere) ?: return null
+        val candidates = classes.findTopLevelClassFiles(classId.packageFqName, classId.relativeClassName.topLevelName())
+        val classFile =
+            (if (applyScopeFilter) candidates.firstOrNull(searchScope::contains) else candidates.firstOrNull()) ?: return null
 
-        // binaryCache is shared across scope modes; cross-refs use the unscoped resolver.
         return readBinaryJavaClass(
             classId = classId,
             topLevelClassFile = classFile,
             classFileContent = classFileContentFromRequest,
             outerClassFromRequest = outerClassFromRequest,
-            binaryCache = binaryCache,
-            signatureParser = signatureParser,
+            binaryCache = classes.classes,
+            signatureParser = classes.signatureParser,
             findOuterClass = { outerClassId -> findClassImpl(JavaClassFinder.Request(outerClassId), applyScopeFilter) },
             resolveCrossReference = { ref -> findClassWithoutScopeFilter(JavaClassFinder.Request(ref)) },
         )

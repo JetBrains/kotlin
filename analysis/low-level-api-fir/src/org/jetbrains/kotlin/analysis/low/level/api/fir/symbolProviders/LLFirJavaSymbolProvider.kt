@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
-import org.jetbrains.kotlin.fir.java.FirJavaFacadeWithFixedModuleData
+import org.jetbrains.kotlin.fir.java.FirJavaFacadeForModule
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.javaAnnotationProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -31,7 +31,7 @@ internal class LLFirJavaSymbolProvider(
 ) : JavaSymbolProvider(session, javaFacade), LLPsiAwareSymbolProvider {
     constructor(session: LLFirSession, searchScope: GlobalSearchScope) : this(
         session,
-        FirJavaFacadeWithFixedModuleData(
+        FirJavaFacadeForModule(
             session,
             session.moduleData,
             session.project.createJavaClassFinder(searchScope, session.javaAnnotationProvider)

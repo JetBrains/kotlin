@@ -351,6 +351,8 @@ When profiling java-direct code paths:
 | `implDocs/RESOLUTION_SCHEMA.md` | Structural map of the `resolution/` package — entities and scenarios; companion to `RESOLUTION_PIPELINE.md`. |
 | `implDocs/PERFORMANCE_REVIEW_2026_07_20.md` | Performance review — landed low-risk fixes and the riskier follow-up candidates. |
 | `implDocs/PARSING_IMPROVEMENTS.md` | Parsing-pipeline improvement backlog (analysis only, unimplemented). |
+| `implDocs/BINARY_CLASS_CACHE_LIFETIME.md` | Open design question: binary Java class caches outliving one compilation (keys, memory, BTA plug-in point). |
+| `implDocs/CLASS_FILE_READ_LAYER.md` | Open design question: what replaces `KotlinBinaryClassCache` — one class-file read layer shared by the Kotlin and Java binary stacks. Trace of the current uses + four approaches. |
 | `implDocs/INVESTIGATION_TECHNIQUES.md` | Debugging, AST inspection, measurement recipes. |
 | `ITERATION_RESULTS.md` | Current iteration log — template + brevity rules; new entries on top. |
 | `implDocs/archive/` | Historical iterations and **landed** design docs: the interface-rollback inventory, the FIRSESSION-injection proposal, the JTC / TYPE_USE / `fir-jvm` cleanups, the resolution-pipeline collapse, the model-side outer-arg recovery, the `review.md` responses, and per-iteration logs. `ITERATION_RESULTS_2026_07_13.md` is the most recent log archive. |

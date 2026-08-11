@@ -45,11 +45,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
- * A [FirJavaFacade] whose classes all belong to [moduleData], used for both source and library
- * sessions: whether a session sees Java sources or Java class files is decided by its
- * [JavaClassFinder], not by the facade.
+ * A [FirJavaFacade] whose classes all belong to a module defined by the [moduleData].
+ * Whether a session sees Java sources or class files is decided by [classFinder].
  */
-class FirJavaFacadeWithFixedModuleData(
+class FirJavaFacadeForModule(
     session: FirSession,
     private val moduleData: FirModuleData,
     classFinder: JavaClassFinder,

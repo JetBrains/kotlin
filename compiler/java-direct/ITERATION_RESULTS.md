@@ -36,6 +36,64 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-11 — binary class cache keyed by class file, `BinaryClassFileHandle` identity contract
+- **Change**: `implDocs/CLASS_FILE_READ_LAYER.md` §6 first step. `BinaryClassFileHandle` now requires
+  `equals`/`hashCode` over the file identity *and* its content version (the VFS implementation snapshots
+  `modificationStamp`), and the classes read from class files moved into `BinaryJavaClasses`, keyed by the
+  handle plus the `ClassId` inside that file — the handle alone is not a key, since one class file also
+  declares every class nested in it. Removes the "which root won for whoever asked first" caveat, for the
+  PSI `KotlinCliJavaFileManagerImpl` cache as well (both share `readBinaryJavaClass`), and is the key both
+  approach B and any cross-build cache need. §7 of the same doc answers whether this retains more than
+  the PSI path: no new kind of data, no new order of magnitude.
+- **Files**: `BinaryClassFileIndex.kt`, `BinaryJavaClassReader.kt`, `BinaryJavaClassCache.kt`,
+  `KotlinCliJavaFileManagerImpl.kt`, `implDocs/CLASS_FILE_READ_LAYER.md`,
+  `implDocs/BINARY_CLASS_CACHE_LIFETIME.md`.
+- **Tests**: `:compiler:java-direct:test` full suite; PSI gate (`PhasedJvmDiagnosticLightTreeTestGenerated`)
+  and `CompileKotlinAgainstKotlin` — both required here because the PSI binary reader shares the cache
+  type — 0 failures.
+- **Result**: green; no behaviour change beyond finer cache keys.
+
+### 2026-08-11 — `BinaryJavaClassCache` moved to `FirJvmSessionFactory.Context`
+- **Change**: the cache was created inside `createJavaDirectJavaFacadeBuilder`, so "per compilation" was
+  an accident of a closure and the object was unreachable from anything but the Java facade. The type
+  moved down to `frontend.common.jvm/.../classFiles/` (it has no java-direct-specific content) and is
+  now a nullable `Context.binaryJavaClassCache`, constructed in `prepareJvmSessions` next to the index
+  and `null` for the PSI facade. Lifetime is now "as long as the context", stated in one place, and the
+  BTA-supplied instance of `implDocs/BINARY_CLASS_CACHE_LIFETIME.md` §4 becomes a parameter change only.
+  Where a *shared* Kotlin+Java class-file read layer should go: `implDocs/CLASS_FILE_READ_LAYER.md`.
+- **Files**: `BinaryJavaClassCache.kt` (moved), `JavaDirectFacadeBuilder.kt`,
+  `JavaClassFinderOverBinaryIndex.kt`, `FirJvmSessionFactory.kt`, `fir/entrypoint/build.gradle.kts`,
+  `JvmFrontendPipelinePhase.kt`.
+- **Tests**: `:compiler:java-direct:test` full suite; both gates for the shared phase file
+  (`PhasedJvmDiagnosticLightTreeTestGenerated`, `CompileKotlinAgainstKotlin`) — 0 failures.
+- **Result**: green; no behaviour change (same object, one owner earlier in the pipeline).
+
+### 2026-08-11 — binary seam split into `BinaryClassFileIndex` + `BinaryClassFileScope`, caches per compilation
+- **Change**: the seam carried both the classpath and the session's visibility, which made
+  `JavaClassFinderOverBinaryIndex` read as a finder over a finder. It is now a scope-free
+  `BinaryClassFileIndex` (CLI impl `CliBinaryClassFileIndex`) plus a one-method `BinaryClassFileScope`
+  supplied per session. That makes the index a pure function of the classpath, so the class-file
+  lookups and the loaded classes moved from the per-scope finder into `BinaryJavaClassCache`, created
+  once per compilation and shared by every session — the width the PSI `KotlinCliJavaFileManagerImpl`
+  already had. Lifetimes beyond one compilation: `implDocs/BINARY_CLASS_CACHE_LIFETIME.md`.
+- **Files**: `BinaryClassFileIndex.kt`, `CliBinaryClassFileIndex.kt`, `BinaryJavaClassCache.kt`,
+  `JavaClassFinderOverBinaryIndex.kt`, `JavaDirectFacadeBuilder.kt`, `JvmFrontendPipelinePhase.kt`.
+- **Tests**: `:compiler:java-direct:test` box + phased, no failures.
+- **Result**: green; behaviour-preserving apart from the wider cache.
+
+### 2026-08-11 — binary seam renamed to `BinaryClassFileFinder`, candidate pair moved to the use site
+- **Change**: the seam is a per-scope lookup over the classpath index, not a set of roots, so it now
+  follows the `KotlinClassFinder` / `VirtualFileFinder` naming: `BinaryClassRoots` →
+  `BinaryClassFileFinder`, `JvmDependenciesIndexBinaryRoots` → `JvmDependenciesIndexClassFileFinder`,
+  `binaryClassRootsForScope()` → `binaryClassFileFinderForScope()`. The interface now returns the
+  candidate class files in classpath order plus `isInSearchScope`; picking the scoped and the
+  cross-reference answer, and the cache record holding both, are private to
+  `JavaClassFinderOverBinaryIndex`.
+- **Files**: `BinaryClassFileFinder.kt`, `JvmDependenciesIndexClassFileFinder.kt`,
+  `JavaClassFinderOverBinaryIndex.kt`, `JavaDirectFacadeBuilder.kt`, `JvmFrontendPipelinePhase.kt`.
+- **Tests**: `:compiler:java-direct:test` box + phased, no failures.
+- **Result**: green; behaviour-preserving rename.
+
 ### 2026-08-07 — `compiler/java-direct/src` is PSI-free and off `:compiler:cli`
 - **Change**: java-direct now receives only abstract inputs. New `BinaryClassRoots` /
   `TopLevelClassFileCandidates` / `BinaryClassFileHandle` seam in `frontend.common.jvm`, implemented
@@ -44,7 +102,7 @@ This log is read into the agent's context every session, so **entries must stay 
   `JavaModuleFinder` and the Java source roots are passed in instead of fished out of
   `CoreJavaFileManager` / `CLIConfigurationKeys`, which also removes the `?: EMPTY` fallback that
   silently disabled `import module M;`. `readBinaryJavaClass` takes a handle; `JavaModuleInfo.read`
-  takes a `ClassIdToJavaClass`. `FirJavaFacadeForSource` → `FirJavaFacadeWithFixedModuleData`.
+  takes a `ClassIdToJavaClass`. `FirJavaFacadeForSource` → `FirJavaFacadeForModule`.
   `FirJavaElementFinder` proved unreachable under java-direct (all four entry points throwing, full
   suites still green), so registration is gated on `!useJavaDirect`. Details: `implDocs/PSI_FREE_ROADMAP.md`.
 - **Files**: `BinaryClassRoots.kt` (new), `JvmDependenciesIndexBinaryRoots.kt` (new),

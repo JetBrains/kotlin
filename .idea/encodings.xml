@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$USER_HOME$/${project.basedir}/src/test/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/examples/browser-example" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/examples/browser-example-with-library" charset="UTF-8" />
@@ -26,19 +27,28 @@
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-dist-for-jps-meta/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-allopen" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-allopen/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-allopen/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-dataframe/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-dataframe/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-lombok/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-lombok/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-noarg" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-noarg/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-noarg/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-plugin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-plugin-test" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-plugin-test/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-plugin-test/src/test/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-plugin/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-plugin/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-power-assert/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-power-assert/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-sam-with-receiver" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-sam-with-receiver/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-sam-with-receiver/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-serialization" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-serialization/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-serialization/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-osgi-bundle" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-osgi-bundle/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-osgi-bundle/src/main/resources" charset="UTF-8" />
@@ -57,6 +67,8 @@
     <file url="file://$PROJECT_DIR$/plugins/lombok/lombok.cli/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/plugins/noarg/noarg.cli/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/plugins/sam-with-receiver/sam-with-receiver.cli/resources" charset="UTF-8" />
+    <file url="file://$USER_HOME$/src/main/java" charset="UTF-8" />
+    <file url="file://$USER_HOME$/src/main/resources" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

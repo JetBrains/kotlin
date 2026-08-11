@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClasses
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.asBinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.readBinaryJavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
@@ -123,7 +124,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         }?.firstOrNull { it in searchScope }
     }
 
-    private val binaryCache: MutableMap<ClassId, JavaClass?> = Object2ObjectOpenHashMap()
+    private val binaryCache = BinaryJavaClasses()
     private val signatureParsingComponent = BinaryClassSignatureParser()
 
     fun findClass(classId: ClassId, searchScope: GlobalSearchScope) = findClass(JavaClassFinder.Request(classId), searchScope)

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClassCache
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
@@ -233,19 +234,26 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
         val projectEnvironment: AbstractProjectEnvironment,
         val librariesScope: AbstractProjectFileSearchScope,
         val registerJvmDeserializationExtension: Boolean,
-        val inlineConstTracker: InlineConstTracker?
+        val inlineConstTracker: InlineConstTracker?,
+        /**
+         * The binary Java classes of this compilation's classpath, shared by every session created with this
+         * context. `null` for the PSI-based Java facade, which caches binary classes in its own file manager.
+         */
+        val binaryJavaClassCache: BinaryJavaClassCache? = null,
     ) {
         constructor(
             configuration: CompilerConfiguration,
             projectEnvironment: AbstractProjectEnvironment,
             librariesScope: AbstractProjectFileSearchScope,
             registerJvmDeserializationExtension: Boolean = true,
+            binaryJavaClassCache: BinaryJavaClassCache? = null,
         ) : this(
             jvmTarget = configuration.jvmTarget ?: JvmTarget.DEFAULT,
             projectEnvironment,
             librariesScope,
             registerJvmDeserializationExtension = registerJvmDeserializationExtension,
-            inlineConstTracker = configuration.inlineConstTracker
+            inlineConstTracker = configuration.inlineConstTracker,
+            binaryJavaClassCache = binaryJavaClassCache,
         )
 
         val packagePartProviderForLibraries: PackagePartProvider = projectEnvironment.getPackagePartProvider(librariesScope)

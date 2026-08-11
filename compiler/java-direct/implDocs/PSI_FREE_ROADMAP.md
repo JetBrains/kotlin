@@ -33,8 +33,9 @@ compiled output, so anything else is a test failure rather than a silent regress
 
 | Seam | Where | Purpose |
 |------|-------|---------|
-| `BinaryClassRoots`, `TopLevelClassFileCandidates`, `BinaryClassFileHandle` | `frontend.common.jvm/.../classFiles/BinaryClassRoots.kt` | the binary classpath as seen by one session, with no scope object and no `JvmDependenciesIndex` |
-| `JvmDependenciesIndexBinaryRoots` + `CliVirtualFileFinderFactory.binaryClassRootsForScope()` | `compiler/cli/.../JvmDependenciesIndexBinaryRoots.kt` | the only place that owns a `GlobalSearchScope`, the `asPsiSearchScope()` downcast and the `ct.sym` `.sig` extension choice |
+| `BinaryClassFileIndex`, `BinaryClassFileScope`, `BinaryClassFileHandle` | `frontend.common.jvm/.../classFiles/BinaryClassFileIndex.kt` | the binary classpath of one compilation and the part of it one session sees, with no scope object and no `JvmDependenciesIndex` |
+| `CliBinaryClassFileIndex` + `CliVirtualFileFinderFactory.binaryClassFileIndex()` + `binaryClassFileScope()` | `compiler/cli/.../CliBinaryClassFileIndex.kt` | the only place that owns a `GlobalSearchScope`, the `asPsiSearchScope()` downcast and the `ct.sym` `.sig` extension choice |
+| `BinaryJavaClassCache` | `frontend.common.jvm/.../classFiles/BinaryJavaClassCache.kt`, held by `FirJvmSessionFactory.Context` | the class-file lookups and loaded binary classes of one compilation, shared by every session; the injection point for a longer-lived cache (`BINARY_CLASS_CACHE_LIFETIME.md`, `CLASS_FILE_READ_LAYER.md`) |
 | `javaModuleFinder: JavaModuleFinder` parameter | `JavaDirectFacadeBuilder.kt` | replaces a `CoreJavaFileManager` service lookup; `import module M;` no longer silently degrades |
 | `javaSourceRoots: List<JavaSourceRootEntry>` parameter | `JavaDirectFacadeBuilder.kt` | replaces reading `CLIConfigurationKeys.CONTENT_ROOTS` inside the module |
 | `readBinaryJavaClass(topLevelClassFile: BinaryClassFileHandle, …)` | `frontend.common.jvm/.../BinaryJavaClassReader.kt` | lets the reader be driven from a handle instead of a `VirtualFile` |
@@ -65,7 +66,7 @@ written design for it.
 
 ## 5. Kotlin-side notes
 
-- `FirJavaFacadeWithFixedModuleData` (was `FirJavaFacadeForSource`) is used by both source and
+- `FirJavaFacadeForModule` (was `FirJavaFacadeForSource`) is used by both source and
   library sessions. Whether a session sees Java sources or class files is decided by its
   `JavaClassFinder`, not by the facade.
 - `JvmClassFileBasedSymbolProvider.javaFacade` is the *binary* Java view of its session; on the
