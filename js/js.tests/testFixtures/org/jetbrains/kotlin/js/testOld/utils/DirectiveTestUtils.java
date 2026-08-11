@@ -406,6 +406,7 @@ public class DirectiveTestUtils {
             new Pair<>(JsAstDirectives.INSTANCE.getHAS_NO_CAPTURED_VARS(), HAS_NO_CAPTURED_VARS)
     );
 
+    @SuppressWarnings("unchecked")
     public static void processDirectives(
             @NotNull JsNode ast,
             @NotNull File sourceFile,
@@ -511,7 +512,7 @@ public class DirectiveTestUtils {
         }
     }
 
-    private abstract static class DirectiveHandler {
+    private abstract static class DirectiveHandler<A extends ArgumentsHelper> {
 
         /**
          * Processes directive entries.
@@ -523,16 +524,16 @@ public class DirectiveTestUtils {
          */
         void process(@NotNull JsNode ast,
                 @NotNull File sourceFile,
-                @NotNull List<ArgumentsHelper> directiveEntries,
+                @NotNull List<A> directiveEntries,
                 @NotNull TargetBackend targetBackend
         ) throws Exception {
-            for (ArgumentsHelper arguments : directiveEntries) {
+            for (A arguments : directiveEntries) {
                 if (arguments.shouldRunWithBackend(targetBackend)) {
                     processEntry(ast, arguments, sourceFile);
                 }
             }
         }
 
-        abstract void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception;
+        abstract void processEntry(@NotNull JsNode ast, @NotNull A arguments, File sourceFile) throws Exception;
     }
 }
