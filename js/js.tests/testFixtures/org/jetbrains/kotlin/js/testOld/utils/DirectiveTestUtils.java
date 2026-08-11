@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 import org.jetbrains.kotlin.js.test.ast.JsAstDirectives;
+import org.jetbrains.kotlin.js.test.ast.directives.JsAstDirective;
 import org.jetbrains.kotlin.test.TargetBackend;
-import org.jetbrains.kotlin.test.TestDataAssertions;
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives;
 import org.jetbrains.kotlin.test.directives.model.ValueDirective;
 import org.junit.jupiter.api.Assertions;
@@ -88,27 +88,6 @@ public class DirectiveTestUtils {
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             checkPropertyReadCount(ast, arguments.getNamedArgument("name"), arguments.findNamedArgument("scope"),
                                    Integer.parseInt(arguments.getNamedArgument("count")));
-        }
-    };
-
-    private static final DirectiveHandler EXPECT_GENERATED_JS = new DirectiveHandler() {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) {
-            List<String> functionNames = arguments.findNamedListArgument("function");
-            List<String> classesNames = arguments.findNamedListArgument("class");
-            String expected = arguments.getNamedArgument("expect");
-            File expectedFile = new File(sourceFile.getParentFile(), expected);
-            StringBuilder code = new StringBuilder();
-            for (String functionName : functionNames) {
-                code.append(AstSearchUtil.getFunction(ast, functionName));
-                code.append("\n");
-            }
-            for (String className : classesNames) {
-                code.append(AstSearchUtil.getClass(ast, className));
-                code.append("\n");
-            }
-            String msg = "Functions " + StringUtil.join(functionNames, ", ") + " or classes " + StringUtil.join(classesNames, ", ") + " got different generated JS code";
-            TestDataAssertions.assertEqualsToFile(msg, expectedFile, code.toString());
         }
     };
 
@@ -378,8 +357,8 @@ public class DirectiveTestUtils {
         }
     };
 
-    private static final List<Pair<ValueDirective<ArgumentsHelper>, DirectiveHandler>> DIRECTIVE_HANDLERS = Arrays.asList(
-            new Pair<>(JsAstDirectives.INSTANCE.getEXPECT_GENERATED_JS(), EXPECT_GENERATED_JS),
+    private static final List<Pair<ValueDirective<? extends ArgumentsHelper>, DirectiveHandler>> DIRECTIVE_HANDLERS = Arrays.asList(
+            new Pair<>(JsAstDirectives.INSTANCE.getEXPECT_GENERATED_JS(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CONTAINS_NO_CALLS(), FUNCTION_CONTAINS_NO_CALLS),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NOT_CALLED(), FUNCTION_NOT_CALLED),
             new Pair<>(JsAstDirectives.INSTANCE.getFUNCTION_CALLED_TIMES(), FUNCTION_CALLED_TIMES),
@@ -414,7 +393,7 @@ public class DirectiveTestUtils {
             @NotNull RegisteredDirectives allDirectives
     ) {
         Assertions.assertAll(DIRECTIVE_HANDLERS.stream().map((directiveAndHandler -> {
-            List<ArgumentsHelper> directiveEntries=allDirectives.get(directiveAndHandler.getFirst());
+            List<ArgumentsHelper> directiveEntries = (List<ArgumentsHelper>) allDirectives.get(directiveAndHandler.getFirst());
             return () -> directiveAndHandler.getSecond().process(ast, sourceFile, directiveEntries, targetBackend);
         })));
     }
@@ -512,7 +491,7 @@ public class DirectiveTestUtils {
         }
     }
 
-    private abstract static class DirectiveHandler<A extends ArgumentsHelper> {
+    private static class DirectiveHandler<A extends ArgumentsHelper> {
 
         /**
          * Processes directive entries.
@@ -534,6 +513,10 @@ public class DirectiveTestUtils {
             }
         }
 
-        abstract void processEntry(@NotNull JsNode ast, @NotNull A arguments, File sourceFile) throws Exception;
+        void processEntry(@NotNull JsNode ast, @NotNull A arguments, File sourceFile) throws Exception {
+            if (arguments instanceof JsAstDirective) {
+                ((JsAstDirective) arguments).evaluate(ast, sourceFile);
+            }
+        }
     }
 }

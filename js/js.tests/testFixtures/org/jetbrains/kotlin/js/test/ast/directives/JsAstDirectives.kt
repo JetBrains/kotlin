@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.ast
 
+import org.jetbrains.kotlin.js.test.ast.directives.ExpectGeneratedJsDirective
 import org.jetbrains.kotlin.js.testOld.utils.ArgumentsHelper
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -12,10 +13,16 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 internal object JsAstDirectives : SimpleDirectivesContainer() {
 
     @OptIn(SensitiveDirectiveAPI::class)
-    private fun directiveWithArguments(description: String) =
-        valueDirective(description, DirectiveApplicability.Any, splitValuesOnSpaces = false, parser = ::ArgumentsHelper)
+    private fun <T : ArgumentsHelper> directiveWithArguments(description: String, parser: (String) -> T) =
+        valueDirective(description, DirectiveApplicability.Any, splitValuesOnSpaces = false, parser = parser)
 
-    val EXPECT_GENERATED_JS by directiveWithArguments("Checks the generated JS of a specific function against the specified file")
+    private fun directiveWithArguments(description: String) =
+        directiveWithArguments(description, ::ArgumentsHelper)
+
+    val EXPECT_GENERATED_JS by directiveWithArguments(
+        "Checks the generated JS of a specific function against the specified file",
+        ::ExpectGeneratedJsDirective,
+    )
 
     val CHECK_CONTAINS_NO_CALLS by directiveWithArguments("Checks that the specified function contains no calls")
 
