@@ -496,12 +496,12 @@ extension main.SealedBazzable where Self : main.__SealedBazzable {
     public func sealedType() -> main.SealedBazzable_SealedType {
         fatalError("must implement sealedType in subclass")
     }
+}
+extension main.SealedBazzable {
     @_disfavoredOverload
     public func sealedType() -> main.SealedFoeble_SealedType {
         .sealedBazzable(sealedType())
     }
-}
-extension main.SealedBazzable {
 }
 @_documentation(visibility: internal)
 extension main.SealedFoeble where Self : main.__SealedFoeble {
@@ -630,12 +630,12 @@ extension main._SealedFoeble_SealedBarable where Self : main.___SealedFoeble_Sea
     public func sealedType() -> main.SealedBarable_SealedType {
         fatalError("must implement sealedType in subclass")
     }
+}
+extension main._SealedFoeble_SealedBarable {
     @_disfavoredOverload
     public func sealedType() -> main.SealedFoeble_SealedType {
         .sealedBarable(sealedType())
     }
-}
-extension main._SealedFoeble_SealedBarable {
 }
 extension ExportedKotlinPackages.packagewithprotocols {
     public enum ENUM_WITH_INTERFACE_INHERITANCE: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {

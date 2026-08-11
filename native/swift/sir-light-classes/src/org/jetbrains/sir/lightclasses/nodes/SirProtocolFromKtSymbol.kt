@@ -282,7 +282,10 @@ internal class SirBridgedProtocolImplementationFromKtSymbol(
                     else -> {}
                 }
             }
-            targetProtocol.sealedTypeFunctions.forEach { add(SirRelocatedFunction(it)) }
+            targetProtocol.sealedTypeFunctions.forEach {
+                if (it !is SirSealedTypeFunction.Sealed) return@forEach
+                add(SirRelocatedFunction(it))
+            }
         }.onEach { it.parent = this@SirBridgedProtocolImplementationFromKtSymbol }
     }
 }
@@ -596,7 +599,12 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
             }
         }
 
-        (typeAliases + defaultFunctions + defaultVariables).onEach { it.parent = this }.toMutableList()
+        val sealedTypeLeafFunctions = targetProtocol.sealedTypeFunctions.mapNotNull {
+            if (it !is SirSealedTypeFunction.Leaf) return@mapNotNull null
+            SirRelocatedFunction(it)
+        }
+
+        (typeAliases + defaultFunctions + defaultVariables + sealedTypeLeafFunctions).onEach { it.parent = this }.toMutableList()
     }
 }
 
