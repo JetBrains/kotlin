@@ -91,6 +91,9 @@ open class ArgumentsHelper(private val entry: String) {
             requireNotNull(arguments.findNamedArgument(name)) { "Required argument `$name` not found in entry '$entry'" }
         }
 
+    protected fun requiredInt(argumentName: String? = null): ReadOnlyProperty<ArgumentsHelper, Int> =
+        { arguments, prop -> arguments.getNamedArgument(argumentName ?: prop.name).toInt() }
+
     protected fun optional(argumentName: String? = null): ReadOnlyProperty<ArgumentsHelper, String?> =
         { arguments, prop -> arguments.findNamedArgument(argumentName ?: prop.name) }
 }

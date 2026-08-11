@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test.ast
 import org.jetbrains.kotlin.js.test.ast.directives.CheckContainsNoCallsDirective
 import org.jetbrains.kotlin.js.test.ast.directives.CheckNotCalledDirective
 import org.jetbrains.kotlin.js.test.ast.directives.ExpectGeneratedJsDirective
+import org.jetbrains.kotlin.js.test.ast.directives.FunctionCalledTimesDirective
 import org.jetbrains.kotlin.js.testOld.utils.ArgumentsHelper
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -33,7 +34,10 @@ internal object JsAstDirectives : SimpleDirectivesContainer() {
 
     val CHECK_NOT_CALLED by directiveWithArguments("Checks that the specified function is never called", ::CheckNotCalledDirective)
 
-    val FUNCTION_CALLED_TIMES by directiveWithArguments("Checks that the specified function is called the specified number of times")
+    val FUNCTION_CALLED_TIMES by directiveWithArguments(
+        "Checks that the specified function is called the specified number of times",
+        ::FunctionCalledTimesDirective,
+    )
 
     val PROPERTY_NOT_USED by directiveWithArguments("Checks that the specified property is not used in the given scope")
 
