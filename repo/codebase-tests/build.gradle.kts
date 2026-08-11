@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
-import org.jetbrains.kotlin.tooling.core.linearClosure
 
 plugins {
     id("common-configuration")
@@ -61,7 +60,7 @@ open class TestSystemPropertiesProvider @Inject constructor(
 }
 
 projectTests {
-    testTask(javaLauncher = JdkMajorVersion.JDK_21_0) {
+    testTask(javaLauncher = JdkMajorVersion.JDK_21_0, maxHeapSizeMb = 128) {
         dependsOn(":dist")
         dependsOn(":compileAll")
         workingDir = rootDir
