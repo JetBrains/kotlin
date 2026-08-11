@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,7 +22,8 @@ class TestModuleStructureImpl(
     override val modules: List<TestModule>,
     override val originalTestDataFiles: List<File>
 ) : TestModuleStructure() {
-    override val allDirectives: RegisteredDirectives = ComposedRegisteredDirectives(modules.map { it.directives })
+    override val allDirectives: RegisteredDirectives =
+        ComposedRegisteredDirectives(modules.map { it.directives } + modules.flatMap { it.files }.map { it.directives })
 
     override fun toString(): String {
         return buildString {
