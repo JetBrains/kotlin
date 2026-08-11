@@ -4,6 +4,8 @@
  */
 package org.jetbrains.kotlin.js.testOld.utils
 
+import org.jetbrains.kotlin.test.TargetBackend
+
 /**
  * Arguments format: `((namedArg|positionalArg)\s+)*`
  *
@@ -37,6 +39,19 @@ internal class ArgumentsHelper internal constructor(private val entry: String) {
                 else -> throw IllegalArgumentException("Wrong argument format: $argument")
             }
         }
+    }
+
+    private val targetBackends: Set<TargetBackend> =
+        findNamedListArgument("TARGET_BACKENDS").mapTo(hashSetOf(), TargetBackend::valueOf)
+
+    private val ignoredBackends: Set<TargetBackend> =
+        findNamedListArgument("IGNORED_BACKENDS").mapTo(hashSetOf(), TargetBackend::valueOf)
+
+    fun shouldRunWithBackend(backend: TargetBackend): Boolean {
+        if (targetBackends.isNotEmpty()) {
+            return backend in targetBackends
+        }
+        return backend !in ignoredBackends
     }
 
     val first: String
