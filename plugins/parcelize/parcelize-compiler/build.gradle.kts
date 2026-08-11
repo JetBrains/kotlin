@@ -123,7 +123,8 @@ val prepareRobolectricDependencies = tasks.register("prepareRobolectricDependenc
 
 projectTests {
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0)) {
-        inputs.files(prepareRobolectricDependencies.map { it.outputs })
+        val robolectricDependencies = prepareRobolectricDependencies.map { it.destinationDir }
+        inputs.files(robolectricDependencies)
             .withNormalizer(ClasspathNormalizer::class)
             .withPropertyName("prepareRobolectricDependenciesOutput")
 
