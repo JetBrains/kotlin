@@ -213,4 +213,8 @@ interface MyInterface {
 
     @MyOptInApi
     var optInProp: String
+
+    fun ExperimentalLibClass.bazFun(): Boolean
+
+    var ExperimentalLibClass.bazProp: Boolean
 }

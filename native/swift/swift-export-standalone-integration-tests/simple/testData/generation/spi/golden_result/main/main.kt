@@ -22,6 +22,17 @@ public fun MyInterface_bar__reverse(self: MyInterface): Unit {
     return run<Unit> { _result }
 }
 
+@ImportedBridge("MyInterface_bazFun__TypesOfArgumentsE__lib_ExperimentalLibClass____reverse_swift")
+internal external fun MyInterface_bazFun__TypesOfArgumentsE__lib_ExperimentalLibClass____reverse_swift(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(MyInterface::class, "bazFun")
+public fun MyInterface_bazFun__TypesOfArgumentsE__lib_ExperimentalLibClass____reverse(self: MyInterface, `receiver`: ExperimentalLibClass): Boolean {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __receiver = kotlin.native.internal.ref.createRetainedExternalRCRef(`receiver`)
+    val _result = MyInterface_bazFun__TypesOfArgumentsE__lib_ExperimentalLibClass____reverse_swift(__self, __receiver)
+    return _result
+}
+
 @ImportedBridge("MyInterface_foo_get__reverse_swift")
 internal external fun MyInterface_foo_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
@@ -163,6 +174,34 @@ public fun MyImplementation_internalProp_set__TypesOfArguments__Swift_String__(s
 public fun MyInterface_bar(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
     val _result = run { __self.bar() }
+    return run { _result; true }
+}
+
+@ExportedBridge("MyInterface_bazFun__TypesOfArgumentsE__lib_ExperimentalLibClass__")
+@OptIn(ExperimentalLibApi::class)
+public fun MyInterface_bazFun__TypesOfArgumentsE__lib_ExperimentalLibClass__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as ExperimentalLibClass
+    val _result = run { __self.run { __receiver.bazFun() } }
+    return _result
+}
+
+@ExportedBridge("MyInterface_bazProp_get__TypesOfArgumentsE__lib_ExperimentalLibClass__")
+@OptIn(ExperimentalLibApi::class)
+public fun MyInterface_bazProp_get__TypesOfArgumentsE__lib_ExperimentalLibClass__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as ExperimentalLibClass
+    val _result = run { __self.run { __receiver.bazProp } }
+    return _result
+}
+
+@ExportedBridge("MyInterface_bazProp_set__TypesOfArgumentsE__lib_ExperimentalLibClass_Swift_Bool__")
+@OptIn(ExperimentalLibApi::class)
+public fun MyInterface_bazProp_set__TypesOfArgumentsE__lib_ExperimentalLibClass_Swift_Bool__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, value: Boolean): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as ExperimentalLibClass
+    val __value = value
+    val _result = run { __self.run { __receiver.bazProp = __value } }
     return run { _result; true }
 }
 

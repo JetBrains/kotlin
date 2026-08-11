@@ -556,8 +556,12 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
         fun createSpiTrap(name: String) =
             SirFunctionBody(listOf("fatalError(\"'${name}' is an @_spi requirement that must be implemented by Swift conformers\")"))
 
-        val defaultFunctions = members.filterIsInstance<SirFunctionFromKtSymbol>().mapNotNull { function ->
-            function.directDispatchProtocolWitnessOrNull() ?: runIf(isSpiMember(function)) {
+        val defaultFunctions = members.filterIsInstance<SirFunction>().mapNotNull { function ->
+            when (function) {
+                is SirFunctionFromKtSymbol -> function.directDispatchProtocolWitnessOrNull()
+                // TODO: Support direct dispatch protocol witness on SirFunctionFromKtPropertySymbol (KT-87795)
+                else -> null
+            } ?: runIf(isSpiMember(function)) {
                 buildFunctionCopy(function) {
                     origin = SirOrigin.Trampoline(function)
                     isOverride = false
@@ -568,14 +572,17 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
             }
         }
 
-        val defaultVariables = members.filterIsInstance<SirAbstractVariableFromKtSymbol>().mapNotNull { variable ->
-            variable.directDispatchProtocolWitnessOrNull() ?: runIf(isSpiMember(variable)) {
+        val defaultVariables = members.filterIsInstance<SirVariable>().mapNotNull { variable ->
+            when (variable) {
+                is SirAbstractVariableFromKtSymbol -> variable.directDispatchProtocolWitnessOrNull()
+                else -> null
+            } ?: runIf(isSpiMember(variable)) {
                 buildVariableCopy(variable) {
                     origin = SirOrigin.Trampoline(variable)
                     isOverride = false
                     modality = SirModality.UNSPECIFIED
                     bridges.clear()
-                    getter = variable.getter.let { getter ->
+                    getter = variable.getter?.let { getter ->
                         buildGetterCopy(getter) {
                             origin = SirOrigin.Trampoline(getter)
                             bridges.clear()
