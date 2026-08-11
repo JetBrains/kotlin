@@ -1,2 +1,2 @@
 #!/bin/bash
-./gradlew :gradle-build-conventions:test-federation-convention:updateDomainsDump
+./gradlew :repo:codebase-tests:updateDomainsDump -Pkotlin.native.enabled=true

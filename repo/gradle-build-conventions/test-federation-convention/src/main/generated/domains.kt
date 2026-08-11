@@ -121,7 +121,7 @@ internal object UnknownDomainInfo : DomainInfo {
 }
 
 
-internal val allDomainInfos: List<DomainInfo> by lazy {
+val allDomainInfos: List<DomainInfo> by lazy {
     listOf(
         CompilerDomainInfo,
         WasmDomainInfo,
