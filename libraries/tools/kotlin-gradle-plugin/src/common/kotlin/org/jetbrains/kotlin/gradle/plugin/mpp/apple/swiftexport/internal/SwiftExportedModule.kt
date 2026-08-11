@@ -14,6 +14,7 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
+import org.jetbrains.kotlin.gradle.utils.getAllDependencies
 import java.io.File
 import java.io.Serializable
 
@@ -70,8 +71,14 @@ internal fun Project.collectModules(
 
 private class ResolvedArtifactWithVersionIdentifier(
     val moduleVersion: ModuleVersionIdentifier,
-    val artifact: ResolvedArtifactResult
+    val artifact: ResolvedArtifactResult,
+    val dependency: ResolvedDependencyResult,
 ) : Serializable {
+
+    // Gradle doesn't guarantee that ResolvedArtifactResult implementations have stable equals/hashCode,
+    // so we derive a stable equality key from plain values (Strings) instead of relying on it directly.
+    private val equalityKey: String =
+        "${moduleVersion.group}:${moduleVersion.name}:${moduleVersion.version}:${artifact.file.absolutePath}"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -79,11 +86,11 @@ private class ResolvedArtifactWithVersionIdentifier(
 
         other as ResolvedArtifactWithVersionIdentifier
 
-        return artifact == other.artifact
+        return equalityKey == other.equalityKey
     }
 
     override fun hashCode(): Int {
-        return 31 * artifact.hashCode()
+        return equalityKey.hashCode()
     }
 }
 
@@ -110,7 +117,7 @@ private fun LazyResolvedConfigurationWithArtifacts.filteredArtifacts(
         val moduleVersion = dependency.selected.moduleVersion
 
         if (artifacts.isNotEmpty() && moduleVersion != null) {
-            ResolvedArtifactWithVersionIdentifier(moduleVersion, artifacts.single())
+            ResolvedArtifactWithVersionIdentifier(moduleVersion, artifacts.single(), dependency)
         } else {
             null
         }
@@ -127,41 +134,48 @@ private fun Project.findAndCreateSwiftExportedModules(
     resolvedDirectApiArtifacts: Set<ResolvedArtifactWithVersionIdentifier>,
 ): List<SwiftExportedModule> {
     val result = mutableListOf<SwiftExportedModule>()
-    val processedComponents = mutableSetOf<ResolvedArtifactWithVersionIdentifier>()
-    val hiddenComponents = mutableSetOf<ResolvedArtifactWithVersionIdentifier>()
     val missingModules = mutableListOf<SwiftExportedDependency>()
 
-    // Process all explicitly exported modules
+    val artifactsByComponentId = allResolvedArtifacts.associateBy { it.dependency.selected.id }
+
+    // Process all explicitly exported modules. They are fully exported and take precedence over hiddenModules.
+    val fullyExportedComponents = mutableSetOf<ResolvedArtifactWithVersionIdentifier>()
     for (explicitModule in exportedModules) {
         val matchingArtifact = allResolvedArtifacts.findMatchingArtifactFor(explicitModule)
 
         if (matchingArtifact != null) {
             result.add(
                 createFullyExportedSwiftExportedModule(
-                    explicitModule.moduleName.orElse(
+                    moduleName = explicitModule.moduleName.orElse(
                         normalizedAndValidatedModuleName(explicitModule.inheritedName)
                     ).get(),
-                    explicitModule.flattenPackage.orNull,
-                    matchingArtifact.artifact.file
+                    flattenPackage = explicitModule.flattenPackage.orNull,
+                    artifact = matchingArtifact.artifact.file
                 )
             )
 
-            // Track which components we've processed
-            processedComponents.add(matchingArtifact)
+            fullyExportedComponents.add(matchingArtifact)
         } else {
             missingModules.add(explicitModule)
         }
     }
 
+    // Hidden modules, as well as all their transitive dependencies, need to be excluded from export.
+    // exportedModules take precedence over hiddenModules, so explicitly exported components are never hidden.
+    val hiddenComponents = mutableSetOf<ResolvedArtifactWithVersionIdentifier>()
     for (hiddenModule in hiddenModules) {
         val matchingArtifact = allResolvedArtifacts.findMatchingArtifactFor(hiddenModule)
 
         if (matchingArtifact != null) {
             hiddenComponents.add(matchingArtifact)
+            getAllDependencies(matchingArtifact.dependency).forEach { transitiveDependency ->
+                artifactsByComponentId[transitiveDependency.selected.id]?.let { hiddenComponents.add(it) }
+            }
         } else {
             missingModules.add(hiddenModule)
         }
     }
+    hiddenComponents.removeAll(fullyExportedComponents)
 
     if (missingModules.isNotEmpty()) {
         reportDiagnostic(
@@ -170,9 +184,23 @@ private fun Project.findAndCreateSwiftExportedModules(
         )
     }
 
-    // Then process remaining components as transitive
+    // resolvedDirectApiArtifacts are treated the same as exportedModules, but don't take precedence over hiddenModules.
+    for (apiArtifact in resolvedDirectApiArtifacts) {
+        if (apiArtifact in fullyExportedComponents || apiArtifact in hiddenComponents) continue
+
+        result.add(
+            createFullyExportedSwiftExportedModule(
+                moduleName = apiArtifact.moduleVersion.inheritedName.normalizedSwiftExportModuleName,
+                flattenPackage = null,
+                artifact = apiArtifact.artifact.file
+            )
+        )
+        fullyExportedComponents.add(apiArtifact)
+    }
+
+    // All the remaining components are transitively exported
     allResolvedArtifacts
-        .filterNot { artifact -> artifact in processedComponents }
+        .filterNot { artifact -> artifact in fullyExportedComponents }
         .filterNot { artifact -> artifact in hiddenComponents }
         .forEach { artifact ->
             result.add(
