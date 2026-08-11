@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectCreator
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.ScenarioCreator
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 
@@ -35,6 +38,37 @@ class ClassLoadersCachingTest : BaseCompilationTest() {
                 assertLogDoesNotContainPatterns(LogLevel.INFO, "Creating new classloader for classpath.*".toRegex())
             }
         }
+    }
+
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
+    @DisplayName("Test that plugins loader is used to cache compiler plugins with IC runner")
+    fun testPluginsLoaderCacheIc(scenario: ScenarioCreator) {
+        scenario {
+            assumeTrue(this.strategyConfig is ExecutionPolicy.InProcess)
+
+            val module = module("sandbox-plugin", compilationConfigAction = { operation: BaseCompilationOperation.Builder ->
+                operation.compilerArguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(PLUGIN_SANDBOX_PLUGIN)
+            })
+
+            // cache was already filled when module was being created for the scenario, so we need to clear it
+            kotlinToolchains.clearClassloadersCache()
+
+            module.replaceFileWithVersion("main.kt", "step1")
+            module.compile(forceOutput = LogLevel.INFO) {
+                assertLogContainsPatterns(LogLevel.INFO, "Creating new classloader for classpath.*".toRegex())
+            }
+
+            module.replaceFileWithVersion("main.kt", "step2")
+            module.compile {
+                assertLogDoesNotContainPatterns(LogLevel.INFO, "Creating new classloader for classpath.*".toRegex())
+            }
+        }
+    }
+
+    private fun KotlinToolchains.clearClassloadersCache() {
+        val cache = javaClass.declaredFields.single { it.name == "classloadersCache" }.apply { isAccessible = true }
+            .get(this)
+        cache?.javaClass?.methods?.find { it.name == "close" }?.invoke(cache)
     }
 
     @DefaultStrategyAndPlatformAgnosticCompilationTest
