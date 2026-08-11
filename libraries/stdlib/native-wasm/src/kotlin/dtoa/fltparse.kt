@@ -24,8 +24,6 @@ import kotlin.math.pow
 
 private const val MAX_ACCURACY_WIDTH_FLOAT = 8
 private const val LOG5_OF_TWO_TO_THE_N_FLOAT = 11
-private const val INFINITE_INTBITS = 0x7F800000u
-private const val MINIMUM_INTBITS = 1u
 private const val MANTISSA_MASK = 0x007FFFFFu
 private const val EXPONENT_MASK = 0x7F800000u
 private const val FLOAT_NORMAL_MASK = 0x00800000u
@@ -128,7 +126,7 @@ private fun createFloat(s: String, e: Int): Float {
             if (e <= 0) {
                 result = createFloat1(f, index, e)
             } else {
-                result = Float.fromBits(INFINITE_INTBITS.toInt())
+                result = Float.POSITIVE_INFINITY
             }
         } else {
             result = Float.fromBits(index)
@@ -164,9 +162,9 @@ private fun createFloat1(f: ULongArray, length: Int, e: Int): Float {
         result = toDoubleHighPrecision(f, length).toFloat()
 
         if (result == 0f)
-            result = Float.fromBits(MINIMUM_INTBITS.toInt())
+            result = Float.MIN_VALUE
         else
-            result = Float.fromBits(INFINITE_INTBITS.toInt())
+            result = Float.POSITIVE_INFINITY
     } else if (e > -309) {
         var dexp: Int
         var fmant: UInt
@@ -175,7 +173,7 @@ private fun createFloat1(f: ULongArray, length: Int, e: Int): Float {
         dresult = toDoubleHighPrecision(f, length) / 10.0.pow(-e)
 
         if (isDenormalDouble(dresult)) {
-            result = Float.fromBits(0)
+            result = 0f
             return result
         }
         dexp = doubleExponent(dresult) + 51
@@ -183,7 +181,7 @@ private fun createFloat1(f: ULongArray, length: Int, e: Int): Float {
         /* Is it too small to be represented by a single-precision
          * float? */
         if (dexp <= -155) {
-            result = Float.fromBits(0)
+            result = 0f
             return result
         }
         /* Is it a denormalized single-precision float? */
@@ -222,7 +220,7 @@ private fun createFloat1(f: ULongArray, length: Int, e: Int): Float {
      * be.
      */
     if (e <= -309 || result.toRawBits() == 0)
-        result = Float.fromBits(MINIMUM_INTBITS.toInt())
+        result = Float.MIN_VALUE
 
     return floatAlgorithm(f, length, e, result)
 }
