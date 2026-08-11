@@ -31,7 +31,7 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler FUNCTION_CONTAINS_NO_CALLS = new DirectiveHandler("CHECK_CONTAINS_NO_CALLS") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             Set<String> exceptNames = new HashSet<>();
             String exceptNamesArg = arguments.findNamedArgument("except");
             if (exceptNamesArg != null) {
@@ -46,35 +46,35 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler FUNCTION_NOT_CALLED = new DirectiveHandler("CHECK_NOT_CALLED") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             checkFunctionNotCalled(ast, arguments.getFirst(), arguments.findNamedArgument("except"));
         }
     };
 
     private static final DirectiveHandler PROPERTY_NOT_USED = new DirectiveHandler("PROPERTY_NOT_USED") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             checkPropertyNotUsed(ast, arguments.getFirst(), arguments.findNamedArgument("scope"), false, false);
         }
     };
 
     private static final DirectiveHandler PROPERTY_NOT_READ_FROM = new DirectiveHandler("PROPERTY_NOT_READ_FROM") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             checkPropertyNotUsed(ast, arguments.getFirst(), arguments.findNamedArgument("scope"), false, true);
         }
     };
 
     private static final DirectiveHandler PROPERTY_NOT_WRITTEN_TO = new DirectiveHandler("PROPERTY_NOT_WRITTEN_TO") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             checkPropertyNotUsed(ast, arguments.getFirst(), arguments.findNamedArgument("scope"), true, false);
         }
     };
 
     private static final DirectiveHandler PROPERTY_WRITE_COUNT = new DirectiveHandler("PROPERTY_WRITE_COUNT") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             checkPropertyWriteCount(ast, arguments.getNamedArgument("name"), arguments.findNamedArgument("scope"),
                                     Integer.parseInt(arguments.getNamedArgument("count")));
         }
@@ -82,7 +82,7 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler PROPERTY_READ_COUNT = new DirectiveHandler("PROPERTY_READ_COUNT") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             checkPropertyReadCount(ast, arguments.getNamedArgument("name"), arguments.findNamedArgument("scope"),
                                    Integer.parseInt(arguments.getNamedArgument("count")));
         }
@@ -90,11 +90,11 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler EXPECT_GENERATED_JS = new DirectiveHandler("EXPECT_GENERATED_JS") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) {
             List<String> functionNames = arguments.findNamedListArgument("function");
             List<String> classesNames = arguments.findNamedListArgument("class");
             String expected = arguments.getNamedArgument("expect");
-            File expectedFile = new File(arguments.sourceFile.getParentFile(), expected);
+            File expectedFile = new File(sourceFile.getParentFile(), expected);
             StringBuilder code = new StringBuilder();
             for (String functionName : functionNames) {
                 code.append(AstSearchUtil.getFunction(ast, functionName));
@@ -111,21 +111,21 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler CLASS_EXISTS = new DirectiveHandler("CHECK_CLASS_EXISTS") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) {
             AstSearchUtil.getClass(ast, arguments.getFirst());
         }
     };
 
     private static final DirectiveHandler FUNCTION_EXISTS = new DirectiveHandler("CHECK_FUNCTION_EXISTS") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             AstSearchUtil.getFunction(ast, arguments.getFirst());
         }
     };
 
     private static final DirectiveHandler FUNCTION_CALLED_IN_SCOPE = new DirectiveHandler("CHECK_CALLED_IN_SCOPE") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             // Be more restrictive, check qualified match by default
             checkCalledInScope(ast, arguments.getNamedArgument("function"), arguments.getNamedArgument("scope"),
                                parseBooleanArgument(arguments, "qualified", true));
@@ -134,7 +134,7 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler FUNCTION_NOT_CALLED_IN_SCOPE = new DirectiveHandler("CHECK_NOT_CALLED_IN_SCOPE") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             // Be more restrictive, check unqualified match by default
             checkNotCalledInScope(ast, arguments.getNamedArgument("function"), arguments.getNamedArgument("scope"),
                                   parseBooleanArgument(arguments, "qualified", false));
@@ -143,7 +143,7 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler FUNCTION_CALLED_TIMES = new DirectiveHandler("FUNCTION_CALLED_TIMES") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             int expectedCount = Integer.parseInt(arguments.getNamedArgument("count"));
             String functionName = arguments.getFirst();
             CallCounter counter = CallCounter.countCalls(ast);
@@ -159,7 +159,7 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler FUNCTIONS_HAVE_SAME_LINES = new DirectiveHandler("CHECK_FUNCTIONS_HAVE_SAME_LINES") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             String code1 = getFunctionCode(ast, arguments.getPositionalArgument(0));
             String code2 = getFunctionCode(ast, arguments.getPositionalArgument(1));
 
@@ -208,7 +208,7 @@ public class DirectiveTestUtils {
         }
 
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             loadArguments(arguments);
             getJsVisitorForElement().accept(ast);
             assertExistence();
@@ -236,7 +236,7 @@ public class DirectiveTestUtils {
         }
 
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             String functionName = arguments.getNamedArgument("function");
             String countStr = arguments.findNamedArgument("count");
             String maxCountStr = arguments.findNamedArgument("max");
@@ -321,7 +321,7 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler NOT_REFERENCED = new DirectiveHandler("CHECK_NOT_REFERENCED") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             String reference = arguments.getPositionalArgument(0);
 
             JsVisitor visitor = new RecursiveJsVisitor() {
@@ -401,7 +401,7 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler ONLY_THIS_QUALIFIED_REFERENCES = new DirectiveHandler("ONLY_THIS_QUALIFIED_REFERENCES") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             String fieldName = arguments.getPositionalArgument(0);
             QualifiedReferenceCollector collector = new QualifiedReferenceCollector(fieldName);
             ast.accept(collector);
@@ -437,7 +437,7 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler HAS_NO_CAPTURED_VARS = new DirectiveHandler("HAS_NO_CAPTURED_VARS") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             String functionName = arguments.getNamedArgument("function");
 
             Set<String> except = new HashSet<>();
@@ -459,7 +459,7 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler DECLARES_VARIABLE = new DirectiveHandler("DECLARES_VARIABLE") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
             String functionName = arguments.getNamedArgument("function");
             String varName = arguments.getNamedArgument("name");
             List<JsFunction> functions = AstSearchUtil.getFunctions(ast, functionName);
@@ -659,16 +659,16 @@ public class DirectiveTestUtils {
         ) throws Exception {
             List<String> directiveEntries = findLinesWithPrefixesRemoved(sourceCode, directive);
             for (String directiveEntry : directiveEntries) {
-                ArgumentsHelper arguments = new ArgumentsHelper(directiveEntry, sourceFile);
+                ArgumentsHelper arguments = new ArgumentsHelper(directiveEntry);
                 if (!containsBackend(targetBackend, TARGET_BACKENDS, arguments, true) ||
                     containsBackend(targetBackend, IGNORED_BACKENDS, arguments, false)) {
                     continue;
                 }
-                processEntry(ast, arguments);
+                processEntry(ast, arguments, sourceFile);
             }
         }
 
-        abstract void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception;
+        abstract void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception;
 
         @Override
         public String toString() {
