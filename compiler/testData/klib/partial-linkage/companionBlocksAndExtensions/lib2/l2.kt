@@ -40,3 +40,8 @@ fun regularExtensionToBlockCall() = A().regularExtensionToBlock()
 
 fun noBlockSameFunCall() = RemovedBlock.sameFun()
 fun newBlockSameFunCall() = NewBlock.sameFun()
+
+fun privateClassCall() = PrivateClass.privateClassFun()
+fun aliasCall() = A.aliasFun()
+fun aliasToClassFunCall() = A.aliasToClassFun()
+fun classToAliasFunCall() = B.classToAliasFun()

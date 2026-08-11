@@ -39,4 +39,9 @@ fun box() = abiTest {
 
     expectFailure(linkage("Function 'sameFun' can not be called: No function found for symbol '/RemovedBlock.sameFun'")) { noBlockSameFunCall() }
     expectSuccess("object") { newBlockSameFunCall() }
+
+    expectFailure(linkage("Function 'privateClassFun' can not be called: No function found for symbol '/privateClassFun'")) { privateClassCall() }
+    expectFailure(linkage("Function 'aliasFun' can not be called: No function found for symbol '/aliasFun'")) { aliasCall() }
+    expectSuccess("aliasToClassFun") { aliasToClassFunCall() }
+    expectSuccess("classToAliasFun") { classToAliasFunCall() }
 }
