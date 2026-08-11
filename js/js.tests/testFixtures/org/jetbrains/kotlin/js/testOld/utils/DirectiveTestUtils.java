@@ -157,35 +157,6 @@ public class DirectiveTestUtils {
         return value != null ? Boolean.parseBoolean(value) : defaultValue;
     }
 
-    private static final DirectiveHandler FUNCTIONS_HAVE_SAME_LINES = new DirectiveHandler("CHECK_FUNCTIONS_HAVE_SAME_LINES") {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-            String code1 = getFunctionCode(ast, arguments.getPositionalArgument(0));
-            String code2 = getFunctionCode(ast, arguments.getPositionalArgument(1));
-
-            String regexMatch = arguments.findNamedArgument("match");
-            String regexReplace = arguments.findNamedArgument("replace");
-
-            code1 = applyRegex(code1, regexMatch, regexReplace);
-            code2 = applyRegex(code2, regexMatch, regexReplace);
-
-            assertEquals(code1, code2);
-        }
-
-        @NotNull
-        String getFunctionCode(@NotNull JsNode ast, @NotNull String functionName) {
-            JsFunction function = AstSearchUtil.getFunction(ast, functionName);
-            return function.getBody().toString();
-        }
-
-        @NotNull
-        String applyRegex(@NotNull String code, @Nullable String match, @Nullable String replace) {
-            if (match == null || replace == null) return code;
-
-            return code.replaceAll(match, replace);
-        }
-    };
-
     private static abstract class NodeExistenceDirective extends DirectiveHandler {
         private boolean isElementExists = false;
         private boolean shouldCheckForExistence;
@@ -298,24 +269,7 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler COUNT_IF = new CountNodesDirective<>("CHECK_IF_COUNT", JsIf.class);
 
-    private static final DirectiveHandler COUNT_TERNARY_OPERATOR =
-            new CountNodesDirective<>("CHECK_TERNARY_OPERATOR_COUNT", JsConditional.class);
-
-    private static final DirectiveHandler COUNT_BINOPS = new CountNodesDirective<JsBinaryOperation>("CHECK_BINOP_COUNT",
-                                                                                                        JsBinaryOperation.class) {
-        @Override
-        protected int getActualCountFor(@NotNull JsBinaryOperation node, @NotNull ArgumentsHelper arguments) {
-            String symbol = arguments.findNamedArgument("symbol");
-            if (symbol == null) {
-                return 1;
-            }
-            return node.getOperator().getSymbol().equals(symbol) ? 1 : 0;
-        }
-    };
-
     private static final DirectiveHandler COUNT_SUPER = new CountNodesDirective<>("CHECK_SUPER_COUNT", JsSuperRef.class);
-
-    private static final DirectiveHandler COUNT_DEBUGGER = new CountNodesDirective<>("CHECK_DEBUGGER_COUNT", JsDebugger.class);
 
     private static final DirectiveHandler COUNT_STRING_LITERALS = new CountNodesDirective<>("CHECK_STRING_LITERAL_COUNT", JsStringLiteral.class);
 
@@ -399,42 +353,6 @@ public class DirectiveTestUtils {
 
     };
 
-    private static final DirectiveHandler ONLY_THIS_QUALIFIED_REFERENCES = new DirectiveHandler("ONLY_THIS_QUALIFIED_REFERENCES") {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-            String fieldName = arguments.getPositionalArgument(0);
-            QualifiedReferenceCollector collector = new QualifiedReferenceCollector(fieldName);
-            ast.accept(collector);
-            assertTrue(collector.hasReferences, "No reference to field '" + fieldName + "' found");
-            assertTrue(collector.allReferencesQualifiedByThis,
-                       "There are references to field '" + fieldName + "' not qualified by 'this' literal");
-        }
-    };
-
-    static class QualifiedReferenceCollector extends RecursiveJsVisitor {
-        private final String nameToSearch;
-        boolean hasReferences;
-        boolean allReferencesQualifiedByThis = true;
-
-        public QualifiedReferenceCollector(String nameToSearch) {
-            this.nameToSearch = nameToSearch;
-        }
-
-        @Override
-        public void visitNameRef(@NotNull JsNameRef nameRef) {
-            super.visitNameRef(nameRef);
-            JsName name = nameRef.getName();
-            if (name == null) return;
-
-            if (name.getIdent().equals(nameToSearch)) {
-                hasReferences = true;
-                if (!(nameRef.getQualifier() instanceof JsThisRef)) {
-                    allReferencesQualifiedByThis = false;
-                }
-            }
-        }
-    }
-
     private static final DirectiveHandler HAS_NO_CAPTURED_VARS = new DirectiveHandler("HAS_NO_CAPTURED_VARS") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
@@ -457,31 +375,6 @@ public class DirectiveTestUtils {
         }
     };
 
-    private static final DirectiveHandler DECLARES_VARIABLE = new DirectiveHandler("DECLARES_VARIABLE") {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-            String functionName = arguments.getNamedArgument("function");
-            String varName = arguments.getNamedArgument("name");
-            List<JsFunction> functions = AstSearchUtil.getFunctions(ast, functionName);
-            boolean[] varDeclared = new boolean[1];
-            for (JsFunction function : functions) {
-                function.accept(new RecursiveJsVisitor() {
-                    @Override
-                    public void visit(@NotNull JsVars.JsVar x) {
-                        super.visit(x);
-                        if (x.getName().getIdent().equals(varName)) {
-                            varDeclared[0] = true;
-                        }
-                    }
-                });
-                if (varDeclared[0])
-                    break;
-            }
-
-            assertTrue(varDeclared[0], "Function " + functionName + " does not declare variable " + varName);
-        }
-    };
-
     private static final List<DirectiveHandler> DIRECTIVE_HANDLERS = Arrays.asList(
             EXPECT_GENERATED_JS,
             FUNCTION_CONTAINS_NO_CALLS,
@@ -496,8 +389,6 @@ public class DirectiveTestUtils {
             FUNCTION_EXISTS,
             FUNCTION_CALLED_IN_SCOPE,
             FUNCTION_NOT_CALLED_IN_SCOPE,
-            FUNCTIONS_HAVE_SAME_LINES,
-            ONLY_THIS_QUALIFIED_REFERENCES,
             CHECK_COMMENT_EXISTS,
             COUNT_LABELS,
             COUNT_VARS,
@@ -506,14 +397,10 @@ public class DirectiveTestUtils {
             COUNT_NEW,
             COUNT_CASES,
             COUNT_IF,
-            COUNT_TERNARY_OPERATOR,
-            COUNT_BINOPS,
             COUNT_SUPER,
-            COUNT_DEBUGGER,
             COUNT_STRING_LITERALS,
             NOT_REFERENCED,
-            HAS_NO_CAPTURED_VARS,
-            DECLARES_VARIABLE
+            HAS_NO_CAPTURED_VARS
     );
 
     public static void processDirectives(
