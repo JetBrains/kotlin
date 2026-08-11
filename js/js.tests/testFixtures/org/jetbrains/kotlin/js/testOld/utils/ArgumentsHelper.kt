@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.js.testOld.utils
 
 import org.jetbrains.kotlin.test.TargetBackend
+import kotlin.properties.ReadOnlyProperty
 
 /**
  * Arguments format: `((namedArg|positionalArg)\s+)*`
@@ -74,4 +75,16 @@ open class ArgumentsHelper(private val entry: String) {
     }
 
     override fun toString(): String = entry
+
+    protected fun list(argumentName: String? = null): ReadOnlyProperty<ArgumentsHelper, List<String>> =
+        { arguments, prop -> arguments.findNamedListArgument(argumentName ?: prop.name) }
+
+    protected fun required(argumentName: String? = null): ReadOnlyProperty<ArgumentsHelper, String> =
+        { arguments, prop ->
+            val name = argumentName ?: prop.name
+            requireNotNull(arguments.findNamedArgument(name)) { "Required argument `$name` not found in entry '$entry'" }
+        }
+
+    protected fun optional(argumentName: String? = null): ReadOnlyProperty<ArgumentsHelper, String?> =
+        { arguments, prop -> arguments.findNamedArgument(argumentName ?: prop.name) }
 }
