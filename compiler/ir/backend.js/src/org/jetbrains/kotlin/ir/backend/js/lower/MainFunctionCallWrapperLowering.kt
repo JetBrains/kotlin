@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -100,7 +99,7 @@ class MainFunctionCallWrapperLowering(private val context: JsIrBackendContext) :
             runIf(hasStringArrayParameter()) {
                 context.platformArgumentsProviderJsExpression?.let {
                     JsIrBuilder.buildCall(context.symbols.jsCode).apply {
-                        arguments[0] = it.toIrConst(context.irBuiltIns.stringType)
+                        arguments[0] = JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = it)
                     }
                 } ?: JsIrBuilder.buildArray(
                     elements = emptyList(),

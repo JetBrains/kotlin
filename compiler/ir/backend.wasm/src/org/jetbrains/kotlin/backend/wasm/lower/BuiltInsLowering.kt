@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.EnumIntrinsicsUtils
 import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.builders.*
@@ -319,8 +320,8 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
 
             return builder.irCallConstructor(symbols.reflectionSymbols.wasmTypeInfoData.constructors.first(), emptyList()).also {
                 it.arguments[0] = typeId
-                it.arguments[1] = packageName.toIrConst(context.irBuiltIns.stringType)
-                it.arguments[2] = typeName.toIrConst(context.irBuiltIns.stringType)
+                it.arguments[1] = JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = packageName)
+                it.arguments[2] = JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = typeName)
             }
         }
     }

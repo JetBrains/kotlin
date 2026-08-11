@@ -5,60 +5,36 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageIssueSignificance
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageIssueSignificance
 import org.jetbrains.kotlin.backend.common.linkage.partial.reflectionTargetLinkageError
-import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
-import org.jetbrains.kotlin.backend.common.lower.addBoundValueAtOverride
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.declarationsAtFunctionReferenceLowering
+import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering.Companion.FUNCTION_REFERENCE_IMPL
-import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering.Companion.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering.Companion.FUNCTION_REFERENCE_IMPL
+import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering.Companion.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
 import org.jetbrains.kotlin.ir.backend.js.lower.getArity
 import org.jetbrains.kotlin.ir.backend.js.lower.getFlags
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
-import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irGetField
-import org.jetbrains.kotlin.ir.builders.irReturn
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrFail
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.ir.util.createDispatchReceiverParameterWithClassParent
-import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.util.toIrConst
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
-import kotlin.collections.plus
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.File as PLFile
 
 /**
@@ -259,27 +235,27 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         return when {
             linkerError != null -> {
                 when (parameter.name.asString()) {
-                    "message" -> linkerError.toIrConst(context.irBuiltIns.stringType)
-                    "name" -> name.toIrConst(context.irBuiltIns.stringType)
+                    "message" -> JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = linkerError)
+                    "name" -> JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = name)
                     else -> irNull()
                 }
             }
             reflectionTargetSymbol != null -> {
                 when (parameter.name.asString()) {
                     "flags" -> {
-                        reference.getFlags().toIrConst(context.irBuiltIns.intType)
+                        JsIrBuilder.buildInt(type = context.irBuiltIns.intType, v = reference.getFlags())
                     }
                     "arity" -> {
-                        reference.getArity().toIrConst(context.irBuiltIns.intType)
+                        JsIrBuilder.buildInt(type = context.irBuiltIns.intType, v = reference.getArity())
                     }
                     "id" -> {
-                        reference.getId(backendContext).toIrConst(context.irBuiltIns.stringType)
+                        JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = reference.getId(backendContext))
                     }
                     "boundValueCount" -> {
-                        reference.boundValues.size.toIrConst(context.irBuiltIns.intType)
+                        JsIrBuilder.buildInt(type = context.irBuiltIns.intType, v = reference.boundValues.size)
                     }
                     "name" -> {
-                        name.toIrConst(context.irBuiltIns.stringType)
+                        JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = name)
                     }
                     else -> irNull()
                 }

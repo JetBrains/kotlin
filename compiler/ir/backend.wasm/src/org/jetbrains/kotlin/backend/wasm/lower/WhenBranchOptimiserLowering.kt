@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrElseBranchImpl
 import org.jetbrains.kotlin.ir.util.isFalseConst
 import org.jetbrains.kotlin.ir.util.isTrueConst
-import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -100,7 +100,7 @@ private class WhenBranchOptimiserTransformer(
     private fun createElse(startOffset: Int, endOffset: Int, result: IrExpression): IrElseBranch = IrElseBranchImpl(
         startOffset = startOffset,
         endOffset = endOffset,
-        condition = true.toIrConst(context.irBuiltIns.booleanType),
+        condition = JsIrBuilder.buildBoolean(type = context.irBuiltIns.booleanType, v = true),
         result = result
     )
 

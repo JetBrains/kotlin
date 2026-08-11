@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.FunctionWithJsFuncAnnotationInliner
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.translateJsCodeIntoStatementList
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isInlineParameter
 import org.jetbrains.kotlin.ir.util.parentDeclarationsWithSelf
-import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -251,8 +251,8 @@ private class JsCodeOutlineTransformer(
         // Building JS Ast function
         val newFun = createJsFunction(jsStatements, kotlinLocalsUsedInJs)
         val [jsFunCode, sourceMap] = printJsCodeWithDebugInfo(newFun)
-        annotation.arguments[0] = jsFunCode.toIrConst(loweringContext.irBuiltIns.stringType)
-        annotation.arguments[1] = sourceMap.toIrConst(loweringContext.irBuiltIns.stringType)
+        annotation.arguments[0] = JsIrBuilder.buildString(type = loweringContext.irBuiltIns.stringType, s = jsFunCode)
+        annotation.arguments[1] = JsIrBuilder.buildString(type = loweringContext.irBuiltIns.stringType, s = sourceMap)
 
         return with(loweringContext.createIrBuilder(container.symbol)) {
             irCall(outlinedFunction).apply {

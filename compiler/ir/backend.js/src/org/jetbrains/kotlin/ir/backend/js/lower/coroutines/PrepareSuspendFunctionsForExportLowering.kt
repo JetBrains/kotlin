@@ -25,11 +25,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctio
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.PROMISIFIED_MEMBER_WRAPPER
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.bridgeFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.virtualBridgeFunction
-import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsName
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
-import org.jetbrains.kotlin.ir.backend.js.utils.isJsExportIgnore
-import org.jetbrains.kotlin.ir.backend.js.utils.isJsStaticDeclaration
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
@@ -50,7 +46,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.compactIfPossible
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
-import kotlin.getValue
 
 /**
  * The lowering generates a few functions from the original exported suspend functions
@@ -517,7 +512,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
 
     private fun IrMutableAnnotationContainer.addJsName(name: String) {
         annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsNameAnnotation.symbol).apply {
-            arguments[0] = name.toIrConst(context.irBuiltIns.stringType)
+            arguments[0] = JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = name)
         }
     }
 

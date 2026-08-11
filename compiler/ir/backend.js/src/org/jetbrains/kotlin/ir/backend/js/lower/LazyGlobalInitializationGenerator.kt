@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.jsConstructorReference
 import org.jetbrains.kotlin.ir.builders.*
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.irCastIfNeeded
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
-import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.name.Name
 
 abstract class LazyGlobalInitializationGenerator {
@@ -81,7 +81,7 @@ abstract class LazyGlobalInitializationGenerator {
         initializer = backendContext.irFactory.createExpressionBody(
             SYNTHETIC_OFFSET,
             SYNTHETIC_OFFSET,
-            InitializationState.UNINITIALIZED.toIrConst(backendContext.irBuiltIns.intType),
+            JsIrBuilder.buildInt(type = backendContext.irBuiltIns.intType, v = InitializationState.UNINITIALIZED),
         )
     }
 

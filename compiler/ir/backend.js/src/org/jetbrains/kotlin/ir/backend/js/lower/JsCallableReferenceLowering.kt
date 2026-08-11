@@ -10,17 +10,13 @@ import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
-import org.jetbrains.kotlin.ir.backend.js.originalCallableReference
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.originalCallableReference
 import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
@@ -30,7 +26,6 @@ import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.util.toIrConst
 
 @PhasePrerequisites(PropertyReferenceLowering::class, FunctionInlining::class)
 class JsCallableReferenceLowering(private val jsContext: JsIrBackendContext) : WebCallableReferenceLowering(jsContext) {
@@ -63,10 +58,10 @@ class JsCallableReferenceLowering(private val jsContext: JsIrBackendContext) : W
                     origin = JsStatementOrigins.CALLABLE_REFERENCE_INVOKE,
                 )
             } else if (functionReference.reflectionTargetSymbol != null) {
-                arguments[0] = functionReference.getFlags().toIrConst(context.irBuiltIns.intType)
-                arguments[1] = functionReference.getArity().toIrConst(context.irBuiltIns.intType)
+                arguments[0] = JsIrBuilder.buildInt(type = context.irBuiltIns.intType, v = functionReference.getFlags())
+                arguments[1] = JsIrBuilder.buildInt(type = context.irBuiltIns.intType, v = functionReference.getArity())
                 arguments[2] = JsIrBuilder.buildCall(jsContext.symbols.signatureIdSymbol).apply {
-                    arguments[0] = functionReference.getId(jsContext).toIrConst(context.irBuiltIns.stringType)
+                    arguments[0] = JsIrBuilder.buildString(type = context.irBuiltIns.stringType, s = functionReference.getId(jsContext))
                 }
             }
         }
