@@ -117,6 +117,10 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Dumps generated backend IR after inlining (enables ${IrTextDumpHandler::class} after inlining)"
     )
 
+    val DUMP_IR_AFTER_INLINE_DIFFERENCE by enumDirective<TargetBackend>(
+        description = "Specifies list of target backends which have different golden data for IR dumps after inlining"
+    )
+
     val DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS by directive(
         description = "Dumps generated backend IR of preprocessed inline functions (enables ${IrPreprocessedInlineFunctionDumpHandler::class})"
     )
