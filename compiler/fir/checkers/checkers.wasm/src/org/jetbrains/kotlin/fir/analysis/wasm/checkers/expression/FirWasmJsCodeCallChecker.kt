@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.wasm.checkers.expression
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.hasValidJsCodeBody
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
@@ -70,6 +72,18 @@ object FirWasmJsCodeCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) 
                             FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND,
                             "function with extension receiver"
                         )
+                    }
+                    for (annotation in containingDeclaration.resolvedAnnotationsWithClassIds) {
+                        // Disallow mixing js(...) with any annotation that isn't a standard Kotlin
+                        // annotation (e.g. @Suppress, @OptIn, etc.)
+                        val classId = annotation.toAnnotationClassId(context.session) ?: continue
+                        if (!classId.packageFqName.startsWith(StandardNames.BUILT_INS_PACKAGE_FQ_NAME)) {
+                            reporter.reportOn(
+                                source,
+                                FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND,
+                                "@${classId.shortClassName} annotated function"
+                            )
+                        }
                     }
                     for (parameter in containingDeclaration.valueParameterSymbols) {
                         if (parameter.name.identifierOrNullIfSpecial?.isValidES5Identifier() != true) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.backend.common.lower.SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
@@ -779,6 +780,18 @@ class BodyGenerator(
         if (call.symbol == unitGetInstance.symbol) {
             body.buildGetUnit()
             return
+        }
+
+        // Calls to js(...) are turned into @JsFun external functions by JsCodeCallsLowering.
+        // If one reaches codegen, it was in a position the lowering doesn't handle
+        // (e.g. the body was rewritten by a compiler plugin such as Compose), and there is
+        // nothing sensible we can emit for it.
+        if (backendContext.isWasmJsTarget && call.symbol == wasmSymbols.jsRelatedSymbols.jsCode) {
+            compilationException(
+                "Cannot compile a call to js(...): it must be the only expression of a function body or property initializer. " +
+                        "Note that compiler plugins rewriting the function body, such as Compose, Serialization, and others, may break this requirement.",
+                call
+            )
         }
 
         // Box intrinsic has an additional klass ID argument.
