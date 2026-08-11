@@ -1,0 +1,201 @@
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+ * public final annotation class Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Anno {
+}
+
+////////////////////
+
+
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+ * public final annotation class Anno2 : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Anno2 {
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface I : kotlin/Any {
+ *
+ *   // getter: getY()I
+ *   public abstract val y: kotlin/Int
+ *     public abstract get
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface I {
+
+    public abstract int getY();
+}
+
+////////////////////
+
+
+/**
+ * public open class P : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // getter: getX-pVg5ArA()I
+ *   public open val x: kotlin/UInt
+ *     public open (* non-default *) get
+ *
+ *   // getter: getX_annotated-pVg5ArA()I
+ *   public open val x_annotated: kotlin/UInt
+ *     @Anno2
+ *     public open (* non-default *) get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public class P {
+
+    public P() {
+        super();
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class Q : P {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // getter: getX-pVg5ArA()I
+ *   public open val x: kotlin/UInt
+ *     @kotlin/jvm/JvmExposeBoxed
+ *     public open (* non-default *) get
+ *
+ *   // getter: getX_annotated-pVg5ArA()I
+ *   // synthetic method for annotations: getX_annotated-pVg5ArA$annotations()V
+ *   @Anno
+ *   @field:Anno
+ *   public open val x_annotated: kotlin/UInt
+ *     @kotlin/jvm/JvmExposeBoxed
+ *     @Anno
+ *     public open (* non-default *) get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Q extends P {
+
+    public Q() {
+        super();
+    }
+
+    @kotlin.jvm.JvmExposeBoxed()
+    @org.jetbrains.annotations.NotNull()
+    public kotlin.UInt getX() {
+        return null;
+    }
+
+    @Anno()
+    @kotlin.jvm.JvmExposeBoxed()
+    @org.jetbrains.annotations.NotNull()
+    public kotlin.UInt getX_annotated() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+@kotlin.jvm.JvmInline()
+/**
+ * @kotlin/jvm/JvmInline
+ * public final value class VC : I {
+ *
+ *   // signature: constructor-impl(I)I
+ *   public constructor(z: kotlin/Int)
+ *
+ *   // signature: equals-impl(ILjava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode-impl(I)I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString-impl(I)Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // getter: getY-impl(I)I
+ *   public open val y: kotlin/Int
+ *     public open (* non-default *) get
+ *
+ *   // field: z:I
+ *   // getter: getZ()I
+ *   public final val z: kotlin/Int
+ *     public final get
+ *
+ *   // underlying property: z
+ *
+ *   // underlying type: kotlin/Int
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class VC implements I {
+    private final int z = 0;
+
+    public final int getZ() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public int getY() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public boolean equals(java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public java.lang.String toString() {
+        return null;
+    }
+}
