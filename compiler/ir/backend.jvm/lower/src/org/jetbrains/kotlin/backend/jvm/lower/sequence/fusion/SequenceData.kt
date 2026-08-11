@@ -6,15 +6,17 @@
 package org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.GenerateSequenceStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.EmptySequenceStrategy
+import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.GenerateSequenceStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.ProducerStrategy
+import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.SequenceConstructorStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.SequenceOfStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers.UnknownVariableStrategy
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.SequenceTransformer
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
@@ -28,13 +30,14 @@ internal sealed class SequenceSource {
     class SequenceOf(val elements: List<IrExpression>, val type: IrType) : SequenceSource()
     class Variable(val variable: IrValueSymbol) : SequenceSource()
     class AsSequence(val iterable: IrExpression) : SequenceSource()
+    class Sequence(val sequenceScope: IrRichFunctionReference) : SequenceSource()
     class GenerateSequence(
         val initialValue: GenerateSequenceInitialValue,
         val generatingFunction: IrExpression,
         val sequenceElementType: IrType
     ) : SequenceSource()
-    object Empty : SequenceSource()
 
+    object Empty : SequenceSource()
 
     internal fun createProducerStrategy(
         builder: IrBuilderWithScope,
@@ -45,5 +48,9 @@ internal sealed class SequenceSource {
         is SequenceOf -> SequenceOfStrategy(this)
         is Empty -> EmptySequenceStrategy
         is Variable -> UnknownVariableStrategy(builder.irGet(this.variable.owner))
+        is Sequence -> SequenceConstructorStrategy(
+            this.sequenceScope,
+            context,
+        )
     }
 }

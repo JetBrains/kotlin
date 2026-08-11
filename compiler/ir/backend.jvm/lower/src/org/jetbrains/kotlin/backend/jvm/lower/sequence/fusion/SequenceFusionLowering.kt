@@ -118,6 +118,9 @@ internal fun IrBuilderWithScope.callRichFunctionReference(
 internal fun getGenericTypeFromExpression(sequence: IrExpression): IrType? =
     (sequence.type as? IrSimpleType)?.arguments?.getOrNull(0)?.typeOrNull
 
+internal fun getBaseTypeFromSequenceScopeFunction(sequenceScope: IrExpression): IrType? =
+    ((sequenceScope.type as? IrSimpleType)?.arguments?.getOrNull(0) as? IrSimpleType)?.arguments?.getOrNull(0)?.typeOrNull
+
 internal fun IrBuilderWithScope.callPredicate(
     predicate: IrExpression,
     parent: IrDeclarationParent,
