@@ -96,8 +96,8 @@ class JsIrModuleHeader(
 }
 
 class JsIrProgram(private var modules: List<JsIrModule>) {
-    fun asCrossModuleDependencies(moduleKind: ModuleKind): List<Pair<JsIrModule, CrossModuleReferences>> {
-        val resolver = CrossModuleDependenciesResolver(moduleKind, modules.map { it.makeModuleHeader() })
+    fun asCrossModuleDependencies(moduleKind: ModuleKind, useEs6ConstLet: Boolean): List<Pair<JsIrModule, CrossModuleReferences>> {
+        val resolver = CrossModuleDependenciesResolver(moduleKind, modules.map { it.makeModuleHeader() }, useEs6ConstLet)
         modules = emptyList()
         val crossModuleReferences = resolver.resolveCrossModuleDependencies()
         return crossModuleReferences.entries.map {
@@ -114,7 +114,11 @@ class JsIrProgram(private var modules: List<JsIrModule>) {
     }
 }
 
-class CrossModuleDependenciesResolver(private val moduleKind: ModuleKind, private val headers: List<JsIrModuleHeader>) {
+class CrossModuleDependenciesResolver(
+    private val moduleKind: ModuleKind,
+    private val headers: List<JsIrModuleHeader>,
+    private val useEs6ConstLet: Boolean,
+) {
     fun resolveCrossModuleDependencies(): Map<JsIrModuleHeader, CrossModuleReferences> {
         val reexportModuleToHeader = headers.groupBy { it.reexportedInModuleWithName }
         val importedInModuleWithEffect = headers.groupBy { it.importedWithEffectInModuleWithName }
@@ -124,6 +128,7 @@ class CrossModuleDependenciesResolver(private val moduleKind: ModuleKind, privat
                 it,
                 reexportModuleToHeader[it.moduleName] ?: emptyList(),
                 importedInModuleWithEffect[it.moduleName] ?: emptyList(),
+                useEs6ConstLet,
             )
         }
         val definitionModule = mutableMapOf<String, JsIrModuleCrossModuleReferenceBuilder>()
@@ -167,6 +172,7 @@ private class JsIrModuleCrossModuleReferenceBuilder(
     val header: JsIrModuleHeader,
     val transitiveExportFrom: List<JsIrModuleHeader>,
     val importWithEffectFrom: List<JsIrModuleHeader>,
+    private val useEs6ConstLet: Boolean,
 ) {
     val imports = mutableListOf<CrossModuleRef>()
     val exports = mutableSetOf<String>()
@@ -219,7 +225,8 @@ private class JsIrModuleCrossModuleReferenceBuilder(
             transitiveExport,
             importsWithEffect,
             exportNames,
-            resultImports
+            resultImports,
+            useEs6ConstLet,
         )
     }
 
@@ -260,6 +267,7 @@ class CrossModuleReferences(
     val importsWithEffect: List<CrossModuleImportWithEffect>, // the list of modules which provide their effects for import
     val exports: Map<String, String>, // tag -> index
     val imports: Map<String, CrossModuleImport>, // tag -> import statement
+    private val useEs6ConstLet: Boolean,
 ) {
     // built from imports
     var jsImports = emptyMap<String, JsStatement>() // tag -> import statement
@@ -295,7 +303,7 @@ class CrossModuleReferences(
 
     private fun CrossModuleImport.generateImportVariableDeclaration(importedAs: JsName): JsStatement {
         val exportRef = JsNameRef(exportedAs, ReservedJsNames.makeCrossModuleNameRef(moduleExporter.internalName))
-        return JsVars(JsVars.Variant.Var, JsVars.JsVar(importedAs, exportRef))
+        return JsVars(if (useEs6ConstLet) JsVars.Variant.Const else JsVars.Variant.Var, JsVars.JsVar(importedAs, exportRef))
     }
 
     private fun CrossModuleImport.generateJsImportStatement(importedAs: JsName): JsStatement {
@@ -306,14 +314,18 @@ class CrossModuleReferences(
     }
 
     companion object {
-        fun Empty(moduleKind: ModuleKind) = CrossModuleReferences(moduleKind, listOf(), emptyList(), emptyList(), emptyMap(), emptyMap())
+        fun Empty(moduleKind: ModuleKind, useEs6ConstLet: Boolean) =
+            CrossModuleReferences(moduleKind, listOf(), emptyList(), emptyList(), emptyMap(), emptyMap(), useEs6ConstLet)
     }
 }
 
-fun JsStatement.renameImportedSymbolInternalName(newName: JsName): JsStatement {
+fun JsStatement.renameImportedSymbolInternalName(newName: JsName, useEs6ConstLet: Boolean): JsStatement {
     return when (this) {
         is JsImport -> JsImport(module, JsImport.Element((target as JsImport.Target.Elements).elements.single().name, newName.makeRef()))
-        is JsVars -> JsVars(JsVars.Variant.Var, JsVars.JsVar(newName, vars.single().initExpression))
+        is JsVars -> JsVars(
+            if (useEs6ConstLet) JsVars.Variant.Const else JsVars.Variant.Var,
+            JsVars.JsVar(newName, vars.single().initExpression),
+        )
         else -> error("Unexpected cross-module import statement ${this::class.qualifiedName}")
     }
 }

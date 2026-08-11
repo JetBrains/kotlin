@@ -219,6 +219,11 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val USE_CONST_AND_LET_FOR_VARIABLES by directive(
+        description = "Enables generating variables as `const'/'let' instead of 'var'",
+        applicability = DirectiveApplicability.Global,
+    )
+
     val ES_MODULES by directive(
         description = "Specify that the compiled js-sources will use ESM module system",
         applicability = DirectiveApplicability.Global
