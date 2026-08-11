@@ -15,14 +15,17 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugi
 import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.classId
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
@@ -108,10 +111,13 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
     private fun IrBlockBodyBuilder.buildBuildMethod(declaration: IrSimpleFunction, entitySymbol: FirBasedSymbol<*>) {
         val builderClass = declaration.parent as IrClass
         val thisParameter = declaration.dispatchReceiverParameter!!
-        val entityClass = declaration.returnType.classOrNull!!.owner
-        val constructor = entityClass.entityConstructorFor(entitySymbol)
+        // The builder class is always nested directly in the entity class, so the entity is taken from there
+        // rather than from `declaration.returnType`: `build()` may return a bare type parameter (e.g. for a
+        // companion factory `fun <M> method(m: M): M`), which has no class to read the entity off of.
+        val entityClass = builderClass.parent as IrClass
+        val callable = entityClass.entityCallableFor(entitySymbol)
         val singularFieldNames = builderClass.singularFieldNames()
-        val regularParameters = constructor.parameters.filter { it.kind == IrParameterKind.Regular }
+        val regularParameters = callable.parameters.filter { it.kind == IrParameterKind.Regular }
 
         val resolvedValues = mutableMapOf<IrValueSymbol, IrValueSymbol>()
         for (parameter in regularParameters) {
@@ -127,14 +133,14 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
             resolvedValues[parameter.symbol] = temp.symbol
         }
 
-        val constructorCall = irConstruct(declaration, constructor)
-        constructor.parameters.forEachIndexed { index, parameter ->
+        val call = irInvokeEntityCallable(declaration, builderClass, callable)
+        callable.parameters.forEachIndexed { index, parameter ->
             if (parameter.kind != IrParameterKind.Regular) return@forEachIndexed
             val tempSymbol = resolvedValues[parameter.symbol] ?: return@forEachIndexed
-            constructorCall.arguments[index] = irGet(tempSymbol.owner)
+            call.arguments[index] = irGet(tempSymbol.owner)
         }
 
-        +irReturn(constructorCall)
+        +irReturn(call)
     }
 
     /** `if ($set) field else <default expression, with earlier-parameter references resolved to their temps>`. */
@@ -652,17 +658,21 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         primaryConstructor ?: constructors.first()
 
     /**
-     * The entity constructor this builder's [build] should invoke. `@Builder` may annotate a secondary
-     * constructor instead of the class/primary constructor, so the primary-or-first fallback isn't always
-     * correct; [entitySymbol] (from [BuilderDeclarationType.Function.Build]) pins down exactly which one by
-     * matching against the symbol recorded on each constructor's metadata.
+     * The entity constructor or companion factory function this builder's [build] should invoke.
+     * `@Builder` may annotate a secondary constructor, the class/primary constructor, or (the Kotlin
+     * analogue of a Java static factory method) a function declared directly inside the entity's own
+     * companion object — so neither the primary-constructor nor first-constructor fallback is always
+     * correct. [entitySymbol] (from [BuilderDeclarationType.Function.Build]) pins down exactly
+     * which declaration by matching against the symbol recorded on each constructor's metadata.
      *
      * A class-level `@Builder` contributes the class's own symbol, which matches no constructor and thereby
      * leaves the fallback in charge - the right outcome, as such a builder builds via the primary one.
      */
     @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun IrClass.entityConstructorFor(entitySymbol: FirBasedSymbol<*>): IrConstructor {
-        return constructors.firstOrNull { it.firSymbol == entitySymbol } ?: builderConstructor()
+    private fun IrClass.entityCallableFor(entitySymbol: FirBasedSymbol<*>): IrFunction {
+        return constructors.firstOrNull { it.firSymbol == entitySymbol }
+            ?: companionObject()?.functions?.firstOrNull { it.firSymbol == entitySymbol }
+            ?: builderConstructor()
     }
 
     /**
@@ -692,4 +702,39 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
 
     private fun IrSimpleFunction.constructedTypeArguments(): List<IrType> =
         (returnType as? IrSimpleType)?.arguments?.map { it.typeOrFail } ?: emptyList()
+
+    /** Dispatches [buildBuildMethod]'s call between a constructor (regular `@Builder` entity) and a companion factory function. */
+    private fun IrBlockBodyBuilder.irInvokeEntityCallable(
+        declaration: IrSimpleFunction,
+        builderClass: IrClass,
+        callable: IrFunction,
+    ): IrMemberAccessExpression<*> =
+        when (callable) {
+            is IrConstructor -> irConstruct(declaration, callable)
+            else -> irCallCompanionFunction(declaration, builderClass, callable as IrSimpleFunction)
+        }
+
+    /**
+     * Builds a call to [function], a factory function declared inside the entity's companion object (the
+     * Kotlin analogue of a Java static factory method). Mirrors [irConstruct]'s handling of the result type
+     * for the same KT-83334 reason (see its doc) — it must reference the type parameter in scope at the call
+     * site ([declaration]'s own), not [function]'s own declared return type.
+     *
+     * The type arguments come from [builderClass], whose type parameters are fresh copies of [function]'s own —
+     * one per parameter, in the same order (see `AbstractBuilderGenerator.extractTypeParametersMapping`). Unlike
+     * [irConstruct], they can't be read off the return type: a factory function's return type is arbitrary, so
+     * its type arguments need not line up with the function's type parameters. It may list them in a different
+     * order (`fun <T, M> create(t: T, m: M): Klass<M, T>`), mention only some of them, or not be a class type at
+     * all (`fun <M> method(m: M): M`).
+     */
+    private fun IrBlockBodyBuilder.irCallCompanionFunction(
+        declaration: IrSimpleFunction,
+        builderClass: IrClass,
+        function: IrSimpleFunction,
+    ): IrMemberAccessExpression<*> {
+        val companion = (function.parent as IrClass).symbol
+        return irCall(function.symbol, declaration.returnType, builderClass.typeParameters.map { it.defaultType }).apply {
+            arguments[0] = irGetObject(companion)
+        }
+    }
 }
