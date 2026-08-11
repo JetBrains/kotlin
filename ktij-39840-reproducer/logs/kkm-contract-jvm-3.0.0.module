@@ -1,0 +1,102 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "url": "../../kkm-contract/3.0.0/kkm-contract-3.0.0.module",
+    "group": "ru.quickresto",
+    "module": "kkm-contract",
+    "version": "3.0.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.6.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "jvmApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.3.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kkm-contract-jvm-3.0.0.jar",
+          "url": "kkm-contract-jvm-3.0.0.jar",
+          "size": 3774,
+          "sha512": "957c7c1cf5f33619d2db084c27fdc4ce46e980f3e509aac2c5541263f569c9a103a3b5dfdf5033b61f29ab406a828f37df1a843fe7ad286acf47e28763c0e520",
+          "sha256": "9f067218c22e9eba0ce06f74faf1a0502ee456958e1e05a2f7eea62811549909",
+          "sha1": "2f5044cb59ec0f66cca88f23dbe99449be621bb8",
+          "md5": "581f891d6f8dc34cd1cd4f6aaf1d9dac"
+        }
+      ]
+    },
+    {
+      "name": "jvmRuntimeElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.3.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kkm-contract-jvm-3.0.0.jar",
+          "url": "kkm-contract-jvm-3.0.0.jar",
+          "size": 3774,
+          "sha512": "957c7c1cf5f33619d2db084c27fdc4ce46e980f3e509aac2c5541263f569c9a103a3b5dfdf5033b61f29ab406a828f37df1a843fe7ad286acf47e28763c0e520",
+          "sha256": "9f067218c22e9eba0ce06f74faf1a0502ee456958e1e05a2f7eea62811549909",
+          "sha1": "2f5044cb59ec0f66cca88f23dbe99449be621bb8",
+          "md5": "581f891d6f8dc34cd1cd4f6aaf1d9dac"
+        }
+      ]
+    },
+    {
+      "name": "jvmSourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "files": [
+        {
+          "name": "kkm-contract-jvm-3.0.0-sources.jar",
+          "url": "kkm-contract-jvm-3.0.0-sources.jar",
+          "size": 1875,
+          "sha512": "b0ecf12773e42e566648fd4bb6ba35b1beeaaec041b96cae225de2c94c3d6fff201895f6a652dc1bec505df951d2831c75bf41862339225b3139ea9494d481d8",
+          "sha256": "378ef6e349a55293ea270d3f31a879bcf643eeb20438c4d161c0e7756c721bff",
+          "sha1": "e48630eb9eaabf8f0472d18207f6bca521cf69f9",
+          "md5": "e76ca95619cbf7863ee0ba14deb83c7f"
+        }
+      ]
+    }
+  ]
+}

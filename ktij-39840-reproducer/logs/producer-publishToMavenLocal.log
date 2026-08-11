@@ -1,0 +1,58 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.6.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :kmpPartiallyResolvedDependenciesChecker
+> Task :checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :downloadKotlinNativeDistribution UP-TO-DATE
+> Task :compileKotlinIosArm64 UP-TO-DATE
+> Task :iosArm64Klib UP-TO-DATE
+> Task :commonizeNativeDistribution UP-TO-DATE
+> Task :transformCommonMainDependenciesMetadata UP-TO-DATE
+> Task :compileCommonMainKotlinMetadata UP-TO-DATE
+> Task :metadataCommonMainProcessResources NO-SOURCE
+> Task :metadataCommonMainClasses UP-TO-DATE
+> Task :transformNativeMainDependenciesMetadata UP-TO-DATE
+> Task :compileNativeMainKotlinMetadata NO-SOURCE
+> Task :metadataNativeMainProcessResources NO-SOURCE
+> Task :metadataNativeMainClasses UP-TO-DATE
+> Task :transformAppleMainDependenciesMetadata UP-TO-DATE
+> Task :compileAppleMainKotlinMetadata NO-SOURCE
+> Task :metadataAppleMainProcessResources NO-SOURCE
+> Task :metadataAppleMainClasses UP-TO-DATE
+> Task :transformIosMainDependenciesMetadata UP-TO-DATE
+> Task :compileIosMainKotlinMetadata UP-TO-DATE
+> Task :metadataIosMainProcessResources NO-SOURCE
+> Task :metadataIosMainClasses UP-TO-DATE
+> Task :iosArm64MetadataElements UP-TO-DATE
+> Task :iosArm64SourcesJar UP-TO-DATE
+> Task :generateMetadataFileForIosArm64Publication
+> Task :generatePomFileForIosArm64Publication
+> Task :publishIosArm64PublicationToMavenLocal
+> Task :compileKotlinIosSimulatorArm64 UP-TO-DATE
+> Task :iosSimulatorArm64Klib UP-TO-DATE
+> Task :iosSimulatorArm64MetadataElements UP-TO-DATE
+> Task :iosSimulatorArm64SourcesJar UP-TO-DATE
+> Task :generateMetadataFileForIosSimulatorArm64Publication
+> Task :generatePomFileForIosSimulatorArm64Publication
+> Task :publishIosSimulatorArm64PublicationToMavenLocal
+> Task :compileKotlinJvm UP-TO-DATE
+> Task :compileJvmMainJava NO-SOURCE
+> Task :jvmProcessResources NO-SOURCE
+> Task :processJvmMainResources SKIPPED
+> Task :jvmMainClasses UP-TO-DATE
+> Task :jvmJar UP-TO-DATE
+> Task :jvmSourcesJar UP-TO-DATE
+> Task :generateMetadataFileForJvmPublication
+> Task :generatePomFileForJvmPublication
+> Task :publishJvmPublicationToMavenLocal
+> Task :generateProjectStructureMetadata UP-TO-DATE
+> Task :allMetadataJar UP-TO-DATE
+> Task :buildKotlinToolingMetadata UP-TO-DATE
+> Task :sourcesJar UP-TO-DATE
+> Task :generateMetadataFileForKotlinMultiplatformPublication
+> Task :generatePomFileForKotlinMultiplatformPublication
+> Task :publishKotlinMultiplatformPublicationToMavenLocal
+> Task :publishToMavenLocal
+
+BUILD SUCCESSFUL in 9s
+36 actionable tasks: 13 executed, 23 up-to-date
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.6.1/userguide/configuration_cache_enabling.html

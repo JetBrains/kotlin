@@ -1,0 +1,77 @@
+Published tree:
+  ~/.m2/repository/ru/quickresto/kkm-contract-iosarm64/3.0.0/kkm-contract-iosarm64-3.0.0-metadata.jar
+  ~/.m2/repository/ru/quickresto/kkm-contract-iosarm64/3.0.0/kkm-contract-iosarm64-3.0.0-sources.jar
+  ~/.m2/repository/ru/quickresto/kkm-contract-iosarm64/3.0.0/kkm-contract-iosarm64-3.0.0.klib
+  ~/.m2/repository/ru/quickresto/kkm-contract-iosarm64/3.0.0/kkm-contract-iosarm64-3.0.0.module
+  ~/.m2/repository/ru/quickresto/kkm-contract-iosarm64/3.0.0/kkm-contract-iosarm64-3.0.0.pom
+  ~/.m2/repository/ru/quickresto/kkm-contract-iosarm64/maven-metadata-local.xml
+  ~/.m2/repository/ru/quickresto/kkm-contract-iossimulatorarm64/3.0.0/kkm-contract-iossimulatorarm64-3.0.0-metadata.jar
+  ~/.m2/repository/ru/quickresto/kkm-contract-iossimulatorarm64/3.0.0/kkm-contract-iossimulatorarm64-3.0.0-sources.jar
+  ~/.m2/repository/ru/quickresto/kkm-contract-iossimulatorarm64/3.0.0/kkm-contract-iossimulatorarm64-3.0.0.klib
+  ~/.m2/repository/ru/quickresto/kkm-contract-iossimulatorarm64/3.0.0/kkm-contract-iossimulatorarm64-3.0.0.module
+  ~/.m2/repository/ru/quickresto/kkm-contract-iossimulatorarm64/3.0.0/kkm-contract-iossimulatorarm64-3.0.0.pom
+  ~/.m2/repository/ru/quickresto/kkm-contract-iossimulatorarm64/maven-metadata-local.xml
+  ~/.m2/repository/ru/quickresto/kkm-contract-jvm/3.0.0/kkm-contract-jvm-3.0.0-sources.jar
+  ~/.m2/repository/ru/quickresto/kkm-contract-jvm/3.0.0/kkm-contract-jvm-3.0.0.jar
+  ~/.m2/repository/ru/quickresto/kkm-contract-jvm/3.0.0/kkm-contract-jvm-3.0.0.module
+  ~/.m2/repository/ru/quickresto/kkm-contract-jvm/3.0.0/kkm-contract-jvm-3.0.0.pom
+  ~/.m2/repository/ru/quickresto/kkm-contract-jvm/maven-metadata-local.xml
+  ~/.m2/repository/ru/quickresto/kkm-contract/3.0.0/kkm-contract-3.0.0-kotlin-tooling-metadata.json
+  ~/.m2/repository/ru/quickresto/kkm-contract/3.0.0/kkm-contract-3.0.0-sources.jar
+  ~/.m2/repository/ru/quickresto/kkm-contract/3.0.0/kkm-contract-3.0.0.jar
+  ~/.m2/repository/ru/quickresto/kkm-contract/3.0.0/kkm-contract-3.0.0.module
+  ~/.m2/repository/ru/quickresto/kkm-contract/3.0.0/kkm-contract-3.0.0.pom
+  ~/.m2/repository/ru/quickresto/kkm-contract/maven-metadata-local.xml
+
+## ~/.m2/repository/ru/quickresto/kkm-contract-iosarm64/3.0.0/kkm-contract-iosarm64-3.0.0.module
+component: ru.quickresto:kkm-contract:3.0.0
+  - iosArm64ApiElements-published  platform=native usage=kotlin-api native=ios_arm64
+      files: ['kkm-contract-iosArm64Main-3.0.0.klib']
+  - iosArm64SourcesElements-published  platform=native usage=kotlin-runtime native=ios_arm64
+      files: ['kkm-contract-iosarm64-3.0.0-sources.jar']
+  - iosArm64MetadataElements-published  platform=native usage=kotlin-metadata native=ios_arm64
+      files: ['kkm-contract-iosarm64-3.0.0-metadata.jar']
+
+## ~/.m2/repository/ru/quickresto/kkm-contract-iossimulatorarm64/3.0.0/kkm-contract-iossimulatorarm64-3.0.0.module
+component: ru.quickresto:kkm-contract:3.0.0
+  - iosSimulatorArm64ApiElements-published  platform=native usage=kotlin-api native=ios_simulator_arm64
+      files: ['kkm-contract-iosSimulatorArm64Main-3.0.0.klib']
+  - iosSimulatorArm64SourcesElements-published  platform=native usage=kotlin-runtime native=ios_simulator_arm64
+      files: ['kkm-contract-iossimulatorarm64-3.0.0-sources.jar']
+  - iosSimulatorArm64MetadataElements-published  platform=native usage=kotlin-metadata native=ios_simulator_arm64
+      files: ['kkm-contract-iossimulatorarm64-3.0.0-metadata.jar']
+
+## ~/.m2/repository/ru/quickresto/kkm-contract-jvm/3.0.0/kkm-contract-jvm-3.0.0.module
+component: ru.quickresto:kkm-contract:3.0.0
+  - jvmApiElements-published  platform=jvm usage=java-api native=
+      files: ['kkm-contract-jvm-3.0.0.jar']
+  - jvmRuntimeElements-published  platform=jvm usage=java-runtime native=
+      files: ['kkm-contract-jvm-3.0.0.jar']
+  - jvmSourcesElements-published  platform=jvm usage=java-runtime native=
+      files: ['kkm-contract-jvm-3.0.0-sources.jar']
+
+## ~/.m2/repository/ru/quickresto/kkm-contract/3.0.0/kkm-contract-3.0.0.module
+component: ru.quickresto:kkm-contract:3.0.0
+  - metadataApiElements  platform=common usage=kotlin-metadata native=
+      files: ['kkm-contract-metadata-3.0.0.jar']
+  - metadataSourcesElements  platform=common usage=kotlin-runtime native=
+      files: ['kkm-contract-kotlin-3.0.0-sources.jar']
+  - iosArm64ApiElements-published  platform=native usage=kotlin-api native=ios_arm64
+      available-at: {'url': '../../kkm-contract-iosarm64/3.0.0/kkm-contract-iosarm64-3.0.0.module', 'group': 'ru.quickresto', 'module': 'kkm-contract-iosarm64', 'version': '3.0.0'}
+  - iosArm64SourcesElements-published  platform=native usage=kotlin-runtime native=ios_arm64
+      available-at: {'url': '../../kkm-contract-iosarm64/3.0.0/kkm-contract-iosarm64-3.0.0.module', 'group': 'ru.quickresto', 'module': 'kkm-contract-iosarm64', 'version': '3.0.0'}
+  - iosArm64MetadataElements-published  platform=native usage=kotlin-metadata native=ios_arm64
+      available-at: {'url': '../../kkm-contract-iosarm64/3.0.0/kkm-contract-iosarm64-3.0.0.module', 'group': 'ru.quickresto', 'module': 'kkm-contract-iosarm64', 'version': '3.0.0'}
+  - iosSimulatorArm64ApiElements-published  platform=native usage=kotlin-api native=ios_simulator_arm64
+      available-at: {'url': '../../kkm-contract-iossimulatorarm64/3.0.0/kkm-contract-iossimulatorarm64-3.0.0.module', 'group': 'ru.quickresto', 'module': 'kkm-contract-iossimulatorarm64', 'version': '3.0.0'}
+  - iosSimulatorArm64SourcesElements-published  platform=native usage=kotlin-runtime native=ios_simulator_arm64
+      available-at: {'url': '../../kkm-contract-iossimulatorarm64/3.0.0/kkm-contract-iossimulatorarm64-3.0.0.module', 'group': 'ru.quickresto', 'module': 'kkm-contract-iossimulatorarm64', 'version': '3.0.0'}
+  - iosSimulatorArm64MetadataElements-published  platform=native usage=kotlin-metadata native=ios_simulator_arm64
+      available-at: {'url': '../../kkm-contract-iossimulatorarm64/3.0.0/kkm-contract-iossimulatorarm64-3.0.0.module', 'group': 'ru.quickresto', 'module': 'kkm-contract-iossimulatorarm64', 'version': '3.0.0'}
+  - jvmApiElements-published  platform=jvm usage=java-api native=
+      available-at: {'url': '../../kkm-contract-jvm/3.0.0/kkm-contract-jvm-3.0.0.module', 'group': 'ru.quickresto', 'module': 'kkm-contract-jvm', 'version': '3.0.0'}
+  - jvmRuntimeElements-published  platform=jvm usage=java-runtime native=
+      available-at: {'url': '../../kkm-contract-jvm/3.0.0/kkm-contract-jvm-3.0.0.module', 'group': 'ru.quickresto', 'module': 'kkm-contract-jvm', 'version': '3.0.0'}
+  - jvmSourcesElements-published  platform=jvm usage=java-runtime native=
+      available-at: {'url': '../../kkm-contract-jvm/3.0.0/kkm-contract-jvm-3.0.0.module', 'group': 'ru.quickresto', 'module': 'kkm-contract-jvm', 'version': '3.0.0'}
+

@@ -1,0 +1,46 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.6.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Task :kmp-control:dependencyInsight
+ru.quickresto:kkm-contract:3.0.0
+  Variant jvmApiElements-published:
+    | Attribute Name                     | Provided     | Requested    |
+    |------------------------------------|--------------|--------------|
+    | org.gradle.libraryelements         | jar          |              |
+    | org.gradle.status                  | release      |              |
+    | org.gradle.category                | library      | library      |
+    | org.gradle.jvm.environment         | standard-jvm | standard-jvm |
+    | org.gradle.usage                   | java-api     | java-api     |
+    | org.jetbrains.kotlin.platform.type | jvm          | jvm          |
+
+ru.quickresto:kkm-contract:3.0.0
+\--- jvmCompileClasspath
+
+ru.quickresto:kkm-contract-jvm:3.0.0
+  Variant jvmApiElements-published:
+    | Attribute Name                     | Provided     | Requested    |
+    |------------------------------------|--------------|--------------|
+    | org.gradle.libraryelements         | jar          |              |
+    | org.gradle.status                  | release      |              |
+    | org.gradle.category                | library      | library      |
+    | org.gradle.jvm.environment         | standard-jvm | standard-jvm |
+    | org.gradle.usage                   | java-api     | java-api     |
+    | org.jetbrains.kotlin.platform.type | jvm          | jvm          |
+
+ru.quickresto:kkm-contract-jvm:3.0.0
+\--- ru.quickresto:kkm-contract:3.0.0
+     \--- jvmCompileClasspath
+
+A web-based, searchable dependency report is available by adding the --scan option.
+
+[Incubating] Problems report is available at: file:///workspace/kotlin/ktij-39840-reproducer/consumer/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.6.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 7s
+1 actionable task: 1 executed
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.6.1/userguide/configuration_cache_enabling.html

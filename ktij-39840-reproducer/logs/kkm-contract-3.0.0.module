@@ -1,0 +1,219 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "ru.quickresto",
+    "module": "kkm-contract",
+    "version": "3.0.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.6.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "metadataApiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-metadata",
+        "org.jetbrains.kotlin.platform.type": "common"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.3.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kkm-contract-metadata-3.0.0.jar",
+          "url": "kkm-contract-3.0.0.jar",
+          "size": 2386,
+          "sha512": "c4a9d3082d071a9694985aeabd12e1b0e13c0ba6d542e6d08180ab68cbd504c89f15ba27864cd70355e4309f3c4542f6e9014c7814017005b733b44853ea0f17",
+          "sha256": "5ed0148ba33d0a31120cab98b408f4a87f0f6d84e12c88dd48e1574f8259f5be",
+          "sha1": "66d0d264aaf07e65ca370dfe24021b622c616aa8",
+          "md5": "856e43e61271b96d543533145d90ba92"
+        }
+      ]
+    },
+    {
+      "name": "metadataSourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.platform.type": "common"
+      },
+      "files": [
+        {
+          "name": "kkm-contract-kotlin-3.0.0-sources.jar",
+          "url": "kkm-contract-3.0.0-sources.jar",
+          "size": 1875,
+          "sha512": "d05fdae0c6b1a308151722fe5a038b535aebfaf913ea2a355eba66e6ca2a3904eca5554f80ab3517e7e783e685c624844e9a4ef63aa86af55297b0082956c17b",
+          "sha256": "4c83bd7034776ca041603e78bcce3e83b44bfdf8db2ec48403677984c8d3dc6c",
+          "sha1": "fd0dee91ebe049af56f9bdf202a55ebf4a0554a0",
+          "md5": "15780668e3e3852eee3d4c74395538ce"
+        }
+      ]
+    },
+    {
+      "name": "iosArm64ApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.native.target": "ios_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../kkm-contract-iosarm64/3.0.0/kkm-contract-iosarm64-3.0.0.module",
+        "group": "ru.quickresto",
+        "module": "kkm-contract-iosarm64",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "iosArm64SourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.native.target": "ios_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../kkm-contract-iosarm64/3.0.0/kkm-contract-iosarm64-3.0.0.module",
+        "group": "ru.quickresto",
+        "module": "kkm-contract-iosarm64",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "iosArm64MetadataElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-metadata",
+        "org.jetbrains.kotlin.native.target": "ios_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../kkm-contract-iosarm64/3.0.0/kkm-contract-iosarm64-3.0.0.module",
+        "group": "ru.quickresto",
+        "module": "kkm-contract-iosarm64",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "iosSimulatorArm64ApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.native.target": "ios_simulator_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../kkm-contract-iossimulatorarm64/3.0.0/kkm-contract-iossimulatorarm64-3.0.0.module",
+        "group": "ru.quickresto",
+        "module": "kkm-contract-iossimulatorarm64",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "iosSimulatorArm64SourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.native.target": "ios_simulator_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../kkm-contract-iossimulatorarm64/3.0.0/kkm-contract-iossimulatorarm64-3.0.0.module",
+        "group": "ru.quickresto",
+        "module": "kkm-contract-iossimulatorarm64",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "iosSimulatorArm64MetadataElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-metadata",
+        "org.jetbrains.kotlin.native.target": "ios_simulator_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../kkm-contract-iossimulatorarm64/3.0.0/kkm-contract-iossimulatorarm64-3.0.0.module",
+        "group": "ru.quickresto",
+        "module": "kkm-contract-iossimulatorarm64",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "jvmApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "available-at": {
+        "url": "../../kkm-contract-jvm/3.0.0/kkm-contract-jvm-3.0.0.module",
+        "group": "ru.quickresto",
+        "module": "kkm-contract-jvm",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "jvmRuntimeElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "available-at": {
+        "url": "../../kkm-contract-jvm/3.0.0/kkm-contract-jvm-3.0.0.module",
+        "group": "ru.quickresto",
+        "module": "kkm-contract-jvm",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "jvmSourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "available-at": {
+        "url": "../../kkm-contract-jvm/3.0.0/kkm-contract-jvm-3.0.0.module",
+        "group": "ru.quickresto",
+        "module": "kkm-contract-jvm",
+        "version": "3.0.0"
+      }
+    }
+  ]
+}
