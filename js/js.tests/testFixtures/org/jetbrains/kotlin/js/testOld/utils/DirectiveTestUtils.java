@@ -6,13 +6,17 @@
 package org.jetbrains.kotlin.js.testOld.utils;
 
 import com.intellij.openapi.util.text.StringUtil;
+import kotlin.Pair;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
+import org.jetbrains.kotlin.js.test.ast.JsAstDirectives;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestDataAssertions;
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives;
+import org.jetbrains.kotlin.test.directives.model.ValueDirective;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.File;
@@ -21,7 +25,6 @@ import java.util.*;
 import static kotlin.test.AssertionsKt.assertFalse;
 import static kotlin.test.AssertionsKt.assertTrue;
 import static org.jetbrains.kotlin.js.inline.util.CollectUtilsKt.collectInstances;
-import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findLinesWithPrefixesRemoved;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -375,41 +378,44 @@ public class DirectiveTestUtils {
         }
     };
 
-    private static final List<DirectiveHandler> DIRECTIVE_HANDLERS = Arrays.asList(
-            EXPECT_GENERATED_JS,
-            FUNCTION_CONTAINS_NO_CALLS,
-            FUNCTION_NOT_CALLED,
-            FUNCTION_CALLED_TIMES,
-            PROPERTY_NOT_USED,
-            PROPERTY_NOT_READ_FROM,
-            PROPERTY_NOT_WRITTEN_TO,
-            PROPERTY_READ_COUNT,
-            PROPERTY_WRITE_COUNT,
-            CLASS_EXISTS,
-            FUNCTION_EXISTS,
-            FUNCTION_CALLED_IN_SCOPE,
-            FUNCTION_NOT_CALLED_IN_SCOPE,
-            CHECK_COMMENT_EXISTS,
-            COUNT_LABELS,
-            COUNT_VARS,
-            COUNT_BREAKS,
-            COUNT_NULLS,
-            COUNT_NEW,
-            COUNT_CASES,
-            COUNT_IF,
-            COUNT_SUPER,
-            COUNT_STRING_LITERALS,
-            NOT_REFERENCED,
-            HAS_NO_CAPTURED_VARS
+    private static final List<Pair<ValueDirective<ArgumentsHelper>, DirectiveHandler>> DIRECTIVE_HANDLERS = Arrays.asList(
+            new Pair<>(JsAstDirectives.INSTANCE.getEXPECT_GENERATED_JS(), EXPECT_GENERATED_JS),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CONTAINS_NO_CALLS(), FUNCTION_CONTAINS_NO_CALLS),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NOT_CALLED(), FUNCTION_NOT_CALLED),
+            new Pair<>(JsAstDirectives.INSTANCE.getFUNCTION_CALLED_TIMES(), FUNCTION_CALLED_TIMES),
+            new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_NOT_USED(), PROPERTY_NOT_USED),
+            new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_NOT_READ_FROM(), PROPERTY_NOT_READ_FROM),
+            new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_NOT_WRITTEN_TO(), PROPERTY_NOT_WRITTEN_TO),
+            new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_READ_COUNT(), PROPERTY_READ_COUNT),
+            new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_WRITE_COUNT(), PROPERTY_WRITE_COUNT),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CLASS_EXISTS(), CLASS_EXISTS),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_FUNCTION_EXISTS(), FUNCTION_EXISTS),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CALLED_IN_SCOPE(), FUNCTION_CALLED_IN_SCOPE),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NOT_CALLED_IN_SCOPE(), FUNCTION_NOT_CALLED_IN_SCOPE),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_COMMENT_EXISTS(), CHECK_COMMENT_EXISTS),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_LABELS_COUNT(), COUNT_LABELS),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_VARS_COUNT(), COUNT_VARS),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_BREAKS_COUNT(), COUNT_BREAKS),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NULLS_COUNT(), COUNT_NULLS),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NEW_COUNT(), COUNT_NEW),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CASES_COUNT(), COUNT_CASES),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_IF_COUNT(), COUNT_IF),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_SUPER_COUNT(), COUNT_SUPER),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_STRING_LITERAL_COUNT(), COUNT_STRING_LITERALS),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NOT_REFERENCED(), NOT_REFERENCED),
+            new Pair<>(JsAstDirectives.INSTANCE.getHAS_NO_CAPTURED_VARS(), HAS_NO_CAPTURED_VARS)
     );
 
     public static void processDirectives(
             @NotNull JsNode ast,
             @NotNull File sourceFile,
-            @NotNull String sourceCode,
-            @NotNull TargetBackend targetBackend
+            @NotNull TargetBackend targetBackend,
+            @NotNull RegisteredDirectives allDirectives
     ) {
-        Assertions.assertAll(DIRECTIVE_HANDLERS.stream().map((handler -> () -> handler.process(ast, sourceFile, sourceCode, targetBackend))));
+        Assertions.assertAll(DIRECTIVE_HANDLERS.stream().map((directiveAndHandler -> {
+            List<ArgumentsHelper> directiveEntries=allDirectives.get(directiveAndHandler.getFirst());
+            return () -> directiveAndHandler.getSecond().process(ast, sourceFile, directiveEntries, targetBackend);
+        })));
     }
 
     public static void checkFunctionContainsNoCalls(JsNode node, String functionName, @NotNull Set<String> exceptFunctionNames)
@@ -523,12 +529,10 @@ public class DirectiveTestUtils {
          */
         void process(@NotNull JsNode ast,
                 @NotNull File sourceFile,
-                @NotNull String sourceCode,
+                @NotNull List<ArgumentsHelper> directiveEntries,
                 @NotNull TargetBackend targetBackend
         ) throws Exception {
-            List<String> directiveEntries = findLinesWithPrefixesRemoved(sourceCode, directive);
-            for (String directiveEntry : directiveEntries) {
-                ArgumentsHelper arguments = new ArgumentsHelper(directiveEntry);
+            for (ArgumentsHelper arguments : directiveEntries) {
                 if (arguments.shouldRunWithBackend(targetBackend)) {
                     processEntry(ast, arguments, sourceFile);
                 }
