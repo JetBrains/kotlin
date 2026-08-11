@@ -115,8 +115,8 @@ abstract class AbstractRecognizerTests<OldT, NewT, OldSyntaxElement : TestSyntax
         }
 
         comparisonFailures.add {
-            val approximateNumberOfTestDataFiles = 33400
-            assertTrue(filesCounter > approximateNumberOfTestDataFiles, "Number of tested files (kt, kts) should be more than $approximateNumberOfTestDataFiles")
+            val minimalNumberOfKotlinTestDataFiles = 35600
+            assertTrue(filesCounter > minimalNumberOfKotlinTestDataFiles, "Number of tested files (kt, kts) should be more than $minimalNumberOfKotlinTestDataFiles")
         }
 
         assertAll(comparisonFailures)
