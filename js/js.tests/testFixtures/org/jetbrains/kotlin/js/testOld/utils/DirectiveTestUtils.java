@@ -35,20 +35,6 @@ public class DirectiveTestUtils {
 
     private DirectiveTestUtils() {}
 
-    private static final DirectiveHandler CLASS_EXISTS = new DirectiveHandler() {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) {
-            AstSearchUtil.getClass(ast, arguments.getFirst());
-        }
-    };
-
-    private static final DirectiveHandler FUNCTION_EXISTS = new DirectiveHandler() {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-            AstSearchUtil.getFunction(ast, arguments.getFirst());
-        }
-    };
-
     private static final DirectiveHandler FUNCTION_CALLED_IN_SCOPE = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
@@ -300,8 +286,8 @@ public class DirectiveTestUtils {
             new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_NOT_WRITTEN_TO(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_READ_COUNT(),  new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_WRITE_COUNT(),  new DirectiveHandler<>()),
-            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CLASS_EXISTS(), CLASS_EXISTS),
-            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_FUNCTION_EXISTS(), FUNCTION_EXISTS),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CLASS_EXISTS(), new DirectiveHandler<>()),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_FUNCTION_EXISTS(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CALLED_IN_SCOPE(), FUNCTION_CALLED_IN_SCOPE),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NOT_CALLED_IN_SCOPE(), FUNCTION_NOT_CALLED_IN_SCOPE),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_COMMENT_EXISTS(), CHECK_COMMENT_EXISTS),
