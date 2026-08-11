@@ -173,7 +173,15 @@ private fun simpleMultiplyHighPrecision(arg1: ULongArray, length: Int, arg2: ULo
     return highU32FromVar(product)
 }
 
-private fun simpleMultiplyAddHighPrecision(arg1: ULongArray, length: Int, arg2: ULong, result: UIntArray, resultOffset: Int) {
+private value class ULongArrayView(val array: ULongArray)
+
+private operator fun ULongArrayView.get(idx32: Int): UInt =
+    if (idx32 % 2 == 0) lowU32FromPtr(array, idx32 / 2) else highU32FromPtr(array, idx32 / 2)
+
+private operator fun ULongArrayView.set(idx32: Int, value: UInt) =
+    if (idx32 % 2 == 0) setLowU32Ptr(array, idx32 / 2, value) else setHighU32Ptr(array, idx32 / 2, value)
+
+private fun simpleMultiplyAddHighPrecision(arg1: ULongArray, length: Int, arg2: ULong, result: ULongArrayView, resultOffset: Int) {
     /* Assumes result can hold the product and arg2 only holds 32 bits
        of information */
     var product: ULong
@@ -213,7 +221,6 @@ internal fun multiplyHighPrecision(arg1: ULongArray, length1: Int, arg2: ULongAr
     var length2 = length2
     /* assumes result is large enough to hold product */
     val temp: ULongArray
-    val resultIn32: UIntArray
     val count: Int
     var index: Int
 
@@ -228,16 +235,13 @@ internal fun multiplyHighPrecision(arg1: ULongArray, length1: Int, arg2: ULongAr
 
     result.fill(0u, 0, length)
 
+    val arrayView = ULongArrayView(result)
+
     /* length1 > length2 */
-    resultIn32 = UIntArray(result.size * 2)
     index = -1
     for (count in 0 until length2) {
-        simpleMultiplyAddHighPrecision(arg1, length1, lowInU64(arg2[count]), resultIn32, ++index)
-        simpleMultiplyAddHighPrecision(arg1, length1, highInU64(arg2[count]), resultIn32, ++index)
-    }
-
-    for (i in result.indices) {
-        result[i] = resultIn32[i * 2].toULong() or (resultIn32[i * 2 + 1].toULong() shl 32)
+        simpleMultiplyAddHighPrecision(arg1, length1, lowInU64(arg2[count]), arrayView, ++index)
+        simpleMultiplyAddHighPrecision(arg1, length1, highInU64(arg2[count]), arrayView, ++index)
     }
 }
 
