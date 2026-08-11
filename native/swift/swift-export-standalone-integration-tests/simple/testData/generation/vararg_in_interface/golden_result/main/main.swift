@@ -70,7 +70,7 @@ extension main.Driver where Self : main.__Driver {
     }
 }
 extension main.Driver {
-    typealias Listener = main._Driver_Listener
+    public typealias Listener = main._Driver_Listener
 }
 @_documentation(visibility: internal)
 extension main._Driver_Listener where Self : main.___Driver_Listener {

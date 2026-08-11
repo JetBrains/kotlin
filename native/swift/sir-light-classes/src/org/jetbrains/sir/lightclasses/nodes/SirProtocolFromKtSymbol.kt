@@ -538,7 +538,6 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
             .map { declaration ->
                 buildTypealias {
                     origin = SirOrigin.Trampoline(declaration)
-                    visibility = SirVisibility.INTERNAL // visibility modifiers are disallowed in protocols
                     // FIXME: we make here the best effort to restore the original name of a relocated declaration
                     name = declaration.kaSymbolOrNull<KaDeclarationSymbol>()?.sirDeclarationName() ?: declaration.name
                     type = SirNominalType(declaration) // Has to be nominal even for protocol declarations

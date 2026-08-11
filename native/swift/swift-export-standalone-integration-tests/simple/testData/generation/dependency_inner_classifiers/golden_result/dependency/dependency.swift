@@ -19,7 +19,7 @@ extension ExportedKotlinPackages.datetime.DateTimeFormat {
 extension ExportedKotlinPackages.datetime.DateTimeFormatBuilder where Self : ExportedKotlinPackages.datetime.__DateTimeFormatBuilder {
 }
 extension ExportedKotlinPackages.datetime.DateTimeFormatBuilder {
-    typealias WithDate = dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate
+    public typealias WithDate = dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate
 }
 @_documentation(visibility: internal)
 extension dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate where Self : dependency.___ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate {
