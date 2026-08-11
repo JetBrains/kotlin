@@ -3,9 +3,9 @@ Current executable set to <path to executable>.
 (lldb) settings set stop-disassembly-display never
 (lldb) command script import <path to lldb script>
 (lldb) b main.kt:11
-Breakpoint 1: where = lldb_inlineOnlyFunction.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + 88 [inlined] <inlined-lambda> + <breakpoint offset> at main.kt:11:9, address = <memory address>
+Breakpoint 1: where = lldb_inlineOnlyFunction.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + <breakpoint offset> [inlined] <inlined-lambda> + <breakpoint offset> at main.kt:11:9, address = <memory address>
 (lldb) b main.kt:12
-Breakpoint 2: where = lldb_inlineOnlyFunction.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + 120 [inlined] <inlined-lambda> at main.kt:12:13, address = <memory address>
+Breakpoint 2: where = lldb_inlineOnlyFunction.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + <breakpoint offset> [inlined] <inlined-lambda> at main.kt:12:13, address = <memory address>
 (lldb) r
 Process <process id> launched: <path to executable>
 Process <process id> stopped

@@ -2,21 +2,21 @@
 Current executable set to <path to executable>.
 (lldb) settings set stop-disassembly-display never
 (lldb) command script import <path to lldb script>
-(lldb) b main.kt:14
-Breakpoint 1: where = lldb_stdlibRelativePaths.kexe`kfun:#main(){} + <breakpoint offset> at main.kt:14:5, address = <memory address>
+(lldb) b main.kt:10
+Breakpoint 1: where = lldb_stdlibRelativePaths.kexe`kfun:#main(){} + <breakpoint offset> at main.kt:10:5, address = <memory address>
 (lldb) r
 Process <process id> launched: <path to executable>
 Process <process id> stopped
 * thread #<thread id>, stop reason = breakpoint 1.1
-    frame #0: <frame pc> lldb_stdlibRelativePaths.kexe`kfun:#main(){} at main.kt:14:5
-   11  	    // Also, this test doesn't check that lldb can display the actual stdlib sources,
-   12  	    // because it requires additional configuration to make lldb find those sources.
-   13  	    // All these improvements are tracked in KT-83757.
--> 14  	    Throwable()
+    frame #0: <frame pc> lldb_stdlibRelativePaths.kexe`kfun:#main(){} at main.kt:10:5
+   7   	    // Also, this test doesn't check that lldb can display the actual stdlib sources,
+   8   	    // because it requires additional configuration to make lldb find those sources.
+   9   	    // All these improvements are tracked in KT-83757.
+-> 10  	    Throwable()
     	    ^
-   15  	
-   16  	    // Here we test the synthetic file "[K][Suspend]Functions" -- it is the only file in stdlib that has relative path with one segment.
-   17  	    val lambda = {}
+   11  	
+   12  	    // Here we test the synthetic file "[K][Suspend]Functions" -- it is the only file in stdlib that has relative path with one segment.
+   13  	    val lambda = {}
 (lldb) s
 Process <process id> stopped
 * thread #<thread id>, stop reason = step in
@@ -24,8 +24,8 @@ Process <process id> stopped
 (lldb) source info
 Lines found in module `lldb_stdlibRelativePaths.kexe
 [<memory address>-<memory address>): kotlin-native/runtime/src/main/kotlin/kotlin/Throwable.kt:34:19
-(lldb) b [K][Suspend]Functions:1
-Breakpoint 2: 6 locations.
+(lldb) limited_output_break [K][Suspend]Functions:1
+breakpoint(s) set
 (lldb) c
 Process <process id> resuming
 Process <process id> stopped

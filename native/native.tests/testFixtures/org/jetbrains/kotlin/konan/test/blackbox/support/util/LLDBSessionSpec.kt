@@ -78,6 +78,8 @@ abstract class LLDBSessionSpec {
             val valueId = Regex("""([^\s@]+)@[A-Za-z0-9]+""")
             val nonKotlinFrames = Regex("""(.*frame #\d+: <frame pc>.*\.kexe`kfun:#main.*\n)(?:.*frame #\d+: <frame pc>.*\n)+""")
             val breakpointOffset = Regex("""(Breakpoint .* \+ )\d+( at)""")
+            val inlineBreakpointOffset = Regex("""(\+ )\d+( \[inlined])""")
+            val angledInlineBreakpointOffset = Regex("""<\+\d+>( \[inlined])""")
             val targetStoppedLine = Regex("""Target \d+: .* stopped\.\n""")
             val setFormatLine = Regex("""\(lldb\) settings set .*-format .*\n""")
 
@@ -89,6 +91,8 @@ abstract class LLDBSessionSpec {
                 .replace(memoryAddressRegex, "<memory address>")
                 .replace(valueId, "$1<value id>")
                 .replace(nonKotlinFrames, "$1")
+                .replace(inlineBreakpointOffset, "+ <breakpoint offset>$2")
+                .replace(angledInlineBreakpointOffset, "<breakpoint offset>$1")
                 .replace(breakpointOffset, "$1<breakpoint offset>$2")
                 .replace(targetStoppedLine, "")
                 .replace(setFormatLine, "")
