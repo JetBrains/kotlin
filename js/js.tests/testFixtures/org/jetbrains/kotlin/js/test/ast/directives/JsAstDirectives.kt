@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.test.ast
 
 import org.jetbrains.kotlin.js.test.ast.directives.CheckContainsNoCallsDirective
+import org.jetbrains.kotlin.js.test.ast.directives.CheckNotCalledDirective
 import org.jetbrains.kotlin.js.test.ast.directives.ExpectGeneratedJsDirective
 import org.jetbrains.kotlin.js.testOld.utils.ArgumentsHelper
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
@@ -30,7 +31,7 @@ internal object JsAstDirectives : SimpleDirectivesContainer() {
         ::CheckContainsNoCallsDirective,
     )
 
-    val CHECK_NOT_CALLED by directiveWithArguments("Checks that the specified function is never called")
+    val CHECK_NOT_CALLED by directiveWithArguments("Checks that the specified function is never called", ::CheckNotCalledDirective)
 
     val FUNCTION_CALLED_TIMES by directiveWithArguments("Checks that the specified function is called the specified number of times")
 
