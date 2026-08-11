@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.shrinkAndSaveClasspathSnapshot
@@ -33,6 +34,7 @@ open class IncrementalJvmCompilerRunner(
     generateCompilerRefIndex: Boolean = false,
     compilationCanceledStatus: CompilationCanceledStatus? = null,
     override val lookupTrackerDelegate: LookupTracker = LookupTracker.DO_NOTHING,
+    pluginsLoader: PluginsLoader? = null,
 ) : IncrementalJvmCompilerRunnerBase(
     workingDir = workingDir,
     reporter = reporter,
@@ -42,6 +44,7 @@ open class IncrementalJvmCompilerRunner(
     icFeatures = icFeatures,
     generateCompilerRefIndex = generateCompilerRefIndex,
     compilationCanceledStatus = compilationCanceledStatus,
+    pluginsLoader = pluginsLoader,
 ) {
     override val shouldTrackChangesInLookupCache
         get() = classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun
