@@ -40,19 +40,24 @@ private abstract class ClangFrontendJob : WorkAction<ClangFrontendJob.Parameters
     }
 
     @get:Inject
-    abstract val objects: ObjectFactory
-
-    @get:Inject
     abstract val execOperations: ExecOperations
 
     override fun execute() {
-        with(parameters) {
-            outputFile.get().asFile.parentFile.mkdirs()
-            execOperations.execLlvmUtility(platformManager.get(), compilerExecutable.get()) {
-                workingDir = workingDirectory.asFile.get()
-                args = arguments.get() + listOf(inputPathRelativeToWorkingDir.get(), "-o", outputFile.get().asFile.absolutePath)
-                environment["PATH"] = clangPaths.get() + File.pathSeparator + environment["PATH"]
-            }
+        val execWorkingDir = parameters.workingDirectory.asFile.get()
+        val output = parameters.outputFile.get().asFile
+        val commandLineArgs = parameters.arguments.get() +
+                listOf(
+                        parameters.inputPathRelativeToWorkingDir.get(),
+                        "-o",
+                        output.absolutePath
+                )
+        val extraPaths = parameters.clangPaths.get()
+
+        output.parentFile.mkdirs()
+        execOperations.execLlvmUtility(parameters.platformManager.get(), parameters.compilerExecutable.get()) {
+            workingDir = execWorkingDir
+            args = commandLineArgs
+            environment["PATH"] = extraPaths + File.pathSeparator + environment["PATH"]
         }
     }
 }
