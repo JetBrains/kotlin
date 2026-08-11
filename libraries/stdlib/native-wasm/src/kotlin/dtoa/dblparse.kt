@@ -27,8 +27,6 @@ private const val MAX_ACCURACY_WIDTH_DOUBLE = 17
 private const val LOG5_OF_TWO_TO_THE_N = 23
 private const val APPROX_MIN_MAGNITUDE = -309
 private const val APPROX_MAX_MAGNITUDE = 309
-private const val INFINITE_LONGBITS = 0x7FF0000000000000UL
-private const val MINIMUM_LONGBITS = 0x1UL
 private const val INV_LOG_OF_TEN_BASE_2 = 0.30102999566398114
 
 private const val RM_SIZE = 21
@@ -155,10 +153,9 @@ private fun createDouble1(f: ULongArray, length: Int, e: Int): Double {
            first and let it fall to zero if need be. */
 
         if (result == 0.0)
-
-            result = Double.fromBits(MINIMUM_LONGBITS.toLong())
+            result = Double.MIN_VALUE
         else
-            result = Double.fromBits(INFINITE_LONGBITS.toLong())
+            result = Double.POSITIVE_INFINITY
     } else if (e > APPROX_MIN_MAGNITUDE) {
         result = toDoubleHighPrecision(f, length) / 10.0.pow((-e).toDouble())
     }
@@ -175,7 +172,7 @@ private fun createDouble1(f: ULongArray, length: Int, e: Int): Double {
        first and let it fall to zero if need be. */
 
     if (result == 0.0)
-        result = Double.fromBits(MINIMUM_LONGBITS.toLong())
+        result = Double.MIN_VALUE
 
     return doubleAlgorithm(f, length, e, result)
 }
@@ -367,7 +364,7 @@ private fun doubleAlgorithm(f: ULongArray, length: Int, e: Int, z: Double): Doub
             }
             // End DECREMENT_DOUBLE macro expansion
         } else {
-            if (z.toRawBits() == INFINITE_LONGBITS.toLong())
+            if (z.isInfinite())
                 break
             // INCREMENT_DOUBLE (z, decApproxCount, incApproxCount) macro expansion
             z = longBitsToDouble((z.toRawBits().toULong() + 1UL))
