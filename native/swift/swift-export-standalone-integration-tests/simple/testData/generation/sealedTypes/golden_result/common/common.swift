@@ -124,8 +124,8 @@ extension ExportedKotlinPackages.org.kotlin.foo.InterfaceC {
 extension ExportedKotlinPackages.org.kotlin.foo.QueryResult where Self : ExportedKotlinPackages.org.kotlin.foo.__QueryResult {
 }
 extension ExportedKotlinPackages.org.kotlin.foo.QueryResult {
-    typealias AsyncValue = common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_AsyncValue
-    typealias Value = common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_Value
+    public typealias AsyncValue = common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_AsyncValue
+    public typealias Value = common._ExportedKotlinPackages_org_kotlin_foo_QueryResult_Value
 }
 @_documentation(visibility: internal)
 extension ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA where Self : ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA {

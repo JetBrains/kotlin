@@ -105,7 +105,7 @@ public final class _ExportedKotlinPackages_conflictingTypealiases_Foo_Conflict: 
 extension ExportedKotlinPackages.conflictingTypealiases.Bar where Self : ExportedKotlinPackages.conflictingTypealiases.__Bar {
 }
 extension ExportedKotlinPackages.conflictingTypealiases.Bar {
-    typealias Conflict = edge_cases._ExportedKotlinPackages_conflictingTypealiases_Bar_Conflict
+    public typealias Conflict = edge_cases._ExportedKotlinPackages_conflictingTypealiases_Bar_Conflict
 }
 @_documentation(visibility: internal)
 extension edge_cases.Baz where Self : edge_cases.__Baz {
@@ -121,7 +121,7 @@ extension edge_cases.Baz {
 extension ExportedKotlinPackages.conflictingTypealiases.Foo where Self : ExportedKotlinPackages.conflictingTypealiases.__Foo {
 }
 extension ExportedKotlinPackages.conflictingTypealiases.Foo {
-    typealias Conflict = edge_cases._ExportedKotlinPackages_conflictingTypealiases_Foo_Conflict
+    public typealias Conflict = edge_cases._ExportedKotlinPackages_conflictingTypealiases_Foo_Conflict
 }
 @_documentation(visibility: internal)
 extension edge_cases.InterfaceA where Self : edge_cases.__InterfaceA {
