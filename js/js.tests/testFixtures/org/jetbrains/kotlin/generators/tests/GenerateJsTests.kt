@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.js.test.runners.*
 import org.jetbrains.kotlin.js.test.runners.tsexport.*
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
+import org.jetbrains.kotlin.testFederation.NightlyTest
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
@@ -100,6 +101,10 @@ fun main(args: Array<String>) {
             testClass<AbstractJsES6BoxTest>(annotations = listOf(*es6())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
+
+            testClass<AbstractJsES6WithConstLetBoxTest>(annotations = listOf(*es6(), nightly())) {
+                model(pattern = "^([^_](.+))\\.kt$")
+            }
         }
 
         testGroup(testsRoot, "js/js.translator/testData/typescript-export/js", testRunnerMethodName = "runTest0") {
@@ -160,12 +165,20 @@ fun main(args: Array<String>) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, smokeTest = true)
             }
 
+            testClass<AbstractJsES6WithConstLetCodegenBoxTest>(annotations = listOf(*es6(), nightly())) {
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+            }
+
             testClass<AbstractJsCodegenSplittingTest> {
                 model("box")
                 model("boxInline")
             }
 
             testClass<AbstractJsES6CodegenInlineTest>(annotations = listOf(*es6())) {
+                model("boxInline")
+            }
+
+            testClass<AbstractJsES6WithConstLetCodegenInlineTest>(annotations = listOf(*es6(), nightly())) {
                 model("boxInline")
             }
 
@@ -262,3 +275,5 @@ fun main(args: Array<String>) {
 private fun es6() = arrayOf(
     annotation(Tag::class.java, "es6")
 )
+
+private fun nightly() = annotation(NightlyTest::class.java)
