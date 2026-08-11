@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.test.TargetBackend
  *
  * Neither key, nor value should contain spaces.
  */
-class ArgumentsHelper(private val entry: String) {
+open class ArgumentsHelper(private val entry: String) {
     companion object {
         private val argumentsPattern = Regex($$"""[\w$_;.]+(=((".*?")|[\w$_;.]+))?""")
     }
