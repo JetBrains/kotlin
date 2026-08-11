@@ -44,7 +44,7 @@ private fun longBitsToDouble(bits: ULong): Double = Double.fromBits(bits.toLong(
 
 private fun createDouble(s: String, e: Int): Double {
     var e = e
-    /* assumes s is a null terminated string with at least one
+    /* assumes s is a string with at least one
     * character in it */
     val def = ULongArray(MAX_ACCURACY_WIDTH_DOUBLE)
     val defBackup = ULongArray(MAX_ACCURACY_WIDTH_DOUBLE)

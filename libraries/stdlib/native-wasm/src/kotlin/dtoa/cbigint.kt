@@ -16,7 +16,7 @@
  */
 
 @file:OptIn(ExperimentalUnsignedTypes::class)
-@file:Suppress("RETURN_VALUE_NOT_USED")
+@file:Suppress("RETURN_VALUE_NOT_USED", "NOTHING_TO_INLINE")
 
 package kotlin.dtoa
 
@@ -39,25 +39,25 @@ private const val TEN_E9 = 0x3B9ACA00UL
 private const val TEN_E19 = 0x8AC7230489E80000UL
 
 // Macro replacements as functions
-private fun highInU64(value: ULong): ULong = value shr 32
-private fun lowInU64(value: ULong): ULong = value and 0x00000000FFFFFFFFUL
-internal fun lowU32FromVar(u64: ULong): UInt = (u64 and 0x00000000FFFFFFFFUL).toUInt()
-internal fun highU32FromVar(u64: ULong): UInt = (u64 shr 32).toUInt()
-internal fun lowU32FromPtr(arr: ULongArray, idx: Int): UInt = (arr[idx] and 0x00000000FFFFFFFFUL).toUInt()
-internal fun highU32FromPtr(arr: ULongArray, idx: Int): UInt = (arr[idx] shr 32).toUInt()
-internal fun setLowU32Ptr(arr: ULongArray, idx: Int, value: UInt) {
+private inline fun highInU64(value: ULong): ULong = value shr 32
+private inline fun lowInU64(value: ULong): ULong = value and 0x00000000FFFFFFFFUL
+internal inline fun lowU32FromVar(u64: ULong): UInt = (u64 and 0x00000000FFFFFFFFUL).toUInt()
+internal inline fun highU32FromVar(u64: ULong): UInt = (u64 shr 32).toUInt()
+internal inline fun lowU32FromPtr(arr: ULongArray, idx: Int): UInt = (arr[idx] and 0x00000000FFFFFFFFUL).toUInt()
+internal inline fun highU32FromPtr(arr: ULongArray, idx: Int): UInt = (arr[idx] shr 32).toUInt()
+internal inline fun setLowU32Ptr(arr: ULongArray, idx: Int, value: UInt) {
     arr[idx] = (arr[idx] and 0xFFFFFFFF00000000UL) or value.toULong()
 }
 
-internal fun setHighU32Ptr(arr: ULongArray, idx: Int, value: UInt) {
+internal inline fun setHighU32Ptr(arr: ULongArray, idx: Int, value: UInt) {
     arr[idx] = (arr[idx] and 0x00000000FFFFFFFFUL) or (value.toULong() shl 32)
 }
 
-private fun createDoubleBits(normalizedM: ULong, e: Int): ULong = (normalizedM and MANTISSA_MASK) or (((e + E_OFFSET).toULong()) shl 52)
-private fun timesTen(x: ULong): ULong = (x shl 3) + (x shl 1)
-private fun bitSection(x: UInt, mask: UInt, shift: Int): UInt = (x and mask) shr shift
+private inline fun createDoubleBits(normalizedM: ULong, e: Int): ULong = (normalizedM and MANTISSA_MASK) or (((e + E_OFFSET).toULong()) shl 52)
+private inline fun timesTen(x: ULong): ULong = (x shl 3) + (x shl 1)
+private inline fun bitSection(x: UInt, mask: UInt, shift: Int): UInt = (x and mask) shr shift
 
-internal fun doubleMantissa(z: Double): ULong {
+internal inline fun doubleMantissa(z: Double): ULong {
     var m = z.toRawBits().toULong()
 
     if ((m and EXPONENT_MASK) != 0UL) m = (m and MANTISSA_MASK) or NORMAL_MASK
@@ -66,7 +66,7 @@ internal fun doubleMantissa(z: Double): ULong {
     return m
 }
 
-internal fun doubleExponent(z: Double): Int {
+internal inline fun doubleExponent(z: Double): Int {
     /* assumes positive double */
     var k: Int = (highU32FromVar(z.toRawBits().toULong()) shr 20).toInt()
 
@@ -76,7 +76,7 @@ internal fun doubleExponent(z: Double): Int {
     return k
 }
 
-internal fun isDenormalDouble(double: Double): Boolean {
+internal inline fun isDenormalDouble(double: Double): Boolean {
     val doubleAsULong = double.toRawBits().toULong()
     val high = highU32FromVar(doubleAsULong)
     val low = lowU32FromVar(doubleAsULong)
@@ -85,14 +85,17 @@ internal fun isDenormalDouble(double: Double): Boolean {
 }
 
 private fun simpleAddHighPrecision(arg1: ULongArray, length: Int, arg2: ULong): Int {
-    arg1[0] += arg2
-    if (arg2 <= arg1[0]) return 0
-    if (length == 1) return 1
+    /* assumes length > 0 */
     var index = 1
-    while (index < length) {
-        arg1[index]++
-        if (arg1[index] != 0UL) break
-        index++
+
+    arg1[0] += arg2
+    if (arg2 <= arg1[0])
+        return 0
+    else if (length == 1)
+        return 1
+
+    while (++arg1[index] == 0UL && ++index < length) {
+        // no body
     }
     return if (index == length) 1 else 0
 }

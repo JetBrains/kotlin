@@ -3,4 +3,3 @@ Adapted from Apache Harmony.
 The code is rewritten from C++ to Kotlin.
 
 Original source code: https://github.com/apache/harmony/tree/trunk/classlib/modules/luni/src/main/native/luni/shared
-For `hycomp.h` it's https://github.com/apache/harmony/blob/trunk/classlib/modules/portlib/src/main/native/include/shared/hycomp.h

@@ -64,7 +64,7 @@ private fun floatExponent(z: Float): Int {
 
 private fun createFloat(s: String, e: Int): Float {
     var e = e
-    /* assumes s is a null terminated string with at least one
+    /* assumes s is a string with at least one
      * character in it */
     val def = ULongArray(MAX_ACCURACY_WIDTH_FLOAT)
     val defBackup = ULongArray(MAX_ACCURACY_WIDTH_FLOAT)
