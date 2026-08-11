@@ -390,6 +390,33 @@ internal fun parseDoubleImpl(s: String, e: Int): Double {
     throw RuntimeException()
 }
 
+/* The algorithm for this particular function can be found in:
+ *
+ *      Printing Floating-Point Numbers Quickly and Accurately, Robert
+ *      G. Burger, and R. Kent Dybvig, Programming Language Design and
+ *      Implementation (PLDI) 1996, pp.108-116.
+ *
+ * The previous implementation of this function combined m+ and m- into
+ * one single M which caused some inaccuracy of the last digit. The
+ * particular case below shows this inaccuracy:
+ *
+ *       System.out.println(new Double((1.234123412431233E107)).toString());
+ *       System.out.println(new Double((1.2341234124312331E107)).toString());
+ *       System.out.println(new Double((1.2341234124312332E107)).toString());
+ *
+ *       outputs the following:
+ *
+ *           1.234123412431233E107
+ *           1.234123412431233E107
+ *           1.234123412431233E107
+ *
+ *       instead of:
+ *
+ *           1.234123412431233E107
+ *           1.2341234124312331E107
+ *           1.2341234124312331E107
+ *
+ */
 internal fun bigIntDigitGeneratorInstImpl(
     results: IntArray,
     uArray: IntArray,
