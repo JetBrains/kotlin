@@ -68,12 +68,9 @@ class LogOnCompanionWhenCompanionHasLogField {
     }
 }
 
-// TODO KT-88248: 'LOG_PROPERTY_ALREADY_EXISTS' should be reported on both classes below, as Java Lombok does
-//  regardless of whether the existing field is static. With the default 'lombok.log.fieldIsStatic=true' the
-//  checker only inspects the companion object, so a member property named 'log' goes unnoticed: the logger is
-//  still generated into the companion and gets shadowed by the member, leaving a confusing 'UNRESOLVED_REFERENCE'
-//  at the use site. See 'logWithConfig.kt' for the same declaration being reported with 'fieldIsStatic=false'.
-@Log
+// The member property would shadow a logger generated into the companion object, so nothing is generated at all -
+// not even the companion object itself - and the use site keeps resolving to the member.
+<!LOG_PROPERTY_ALREADY_EXISTS!>@Log<!>
 class LogOnClassWithMemberLogPropertyAndNoCompanion {
     val log = ""
 
@@ -82,7 +79,7 @@ class LogOnClassWithMemberLogPropertyAndNoCompanion {
     }
 }
 
-@Log
+<!LOG_PROPERTY_ALREADY_EXISTS!>@Log<!>
 class LogOnClassWithMemberLogPropertyAndCompanion {
     val log = ""
 
@@ -90,6 +87,6 @@ class LogOnClassWithMemberLogPropertyAndCompanion {
 
     fun test() {
         log.<!UNRESOLVED_REFERENCE!>info<!>("Test LogOnClassWithMemberLogPropertyAndCompanion")
-        MyCompanion.log.info("The generated logger is still there, just shadowed by the member property")
+        MyCompanion.<!UNRESOLVED_REFERENCE!>log<!>.info("Not generated into the existing companion object either")
     }
 }
