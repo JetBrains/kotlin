@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.ast
 
-import org.jetbrains.kotlin.js.test.ast.directives.CheckContainsNoCallsDirective
-import org.jetbrains.kotlin.js.test.ast.directives.CheckNotCalledDirective
-import org.jetbrains.kotlin.js.test.ast.directives.ExpectGeneratedJsDirective
-import org.jetbrains.kotlin.js.test.ast.directives.FunctionCalledTimesDirective
+import org.jetbrains.kotlin.js.test.ast.directives.*
 import org.jetbrains.kotlin.js.testOld.utils.ArgumentsHelper
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -39,15 +36,42 @@ internal object JsAstDirectives : SimpleDirectivesContainer() {
         ::FunctionCalledTimesDirective,
     )
 
-    val PROPERTY_NOT_USED by directiveWithArguments("Checks that the specified property is not used in the given scope")
+    val PROPERTY_NOT_USED by directiveWithArguments(
+        "Checks that the specified property is not used in the given scope",
+        { PropertyCountingDirective(it, expectedReadCount = 0, expectedWriteCount = 0) },
+    )
 
-    val PROPERTY_NOT_READ_FROM by directiveWithArguments("Checks that the specified property is not read in the given scope")
+    val PROPERTY_NOT_READ_FROM by directiveWithArguments(
+        "Checks that the specified property is not read in the given scope",
+        { PropertyCountingDirective(it, expectedReadCount = 0, expectedWriteCount = PropertyCountingDirective.ANY_COUNT) },
+    )
 
-    val PROPERTY_NOT_WRITTEN_TO by directiveWithArguments("Checks that the specified property is not written to in the given scope")
+    val PROPERTY_NOT_WRITTEN_TO by directiveWithArguments(
+        "Checks that the specified property is not written to in the given scope",
+        { PropertyCountingDirective(it, expectedReadCount = PropertyCountingDirective.ANY_COUNT, expectedWriteCount = 0) },
+    )
 
-    val PROPERTY_READ_COUNT by directiveWithArguments("Checks that the specified property is read the specified number of times in the given scope")
+    val PROPERTY_READ_COUNT by directiveWithArguments(
+        "Checks that the specified property is read the specified number of times in the given scope",
+        {
+            PropertyCountingDirective(
+                it,
+                expectedReadCount = PropertyCountingDirective.FROM_ARGUMENT,
+                expectedWriteCount = PropertyCountingDirective.ANY_COUNT,
+            )
+        },
+    )
 
-    val PROPERTY_WRITE_COUNT by directiveWithArguments("Checks that the specified property is written the specified number of times in the given scope")
+    val PROPERTY_WRITE_COUNT by directiveWithArguments(
+        "Checks that the specified property is written the specified number of times in the given scope",
+        {
+            PropertyCountingDirective(
+                it,
+                expectedReadCount = PropertyCountingDirective.ANY_COUNT,
+                expectedWriteCount = PropertyCountingDirective.FROM_ARGUMENT,
+            )
+        }
+    )
 
     val CHECK_CLASS_EXISTS by directiveWithArguments("Checks that the specified class exists")
 
