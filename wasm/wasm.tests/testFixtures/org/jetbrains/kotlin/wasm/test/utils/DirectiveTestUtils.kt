@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.wasm.test.utils
 
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
+import org.jetbrains.kotlin.js.testOld.utils.ArgumentsHelper
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findLinesWithPrefixesRemoved
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilderBase
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.utils.WasmIgnoreForConfig
 import org.jetbrains.kotlin.wasm.ir.WasmModule
 import org.jetbrains.kotlin.wasm.ir.WasmOp
-import org.jetbrains.kotlin.wasm.test.AbstractFirWasmJsSteppingTest
 import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunnerBase
 import org.jetbrains.kotlin.wasm.test.handlers.WasmVMException
@@ -256,60 +256,15 @@ object DirectiveTestUtils {
             val directiveEntries = findLinesWithPrefixesRemoved(sourceCode, directive)
             for (directiveEntry in directiveEntries) {
                 val arguments = ArgumentsHelper(directiveEntry)
-
-                if (!containsBackend(targetBackend, TARGET_BACKENDS, arguments, true) ||
-                    containsBackend(targetBackend, IGNORED_BACKENDS, arguments, false)
-                ) {
-                    continue
+                if (arguments.shouldRunWithBackend(targetBackend)) {
+                    processEntry(module, arguments)
                 }
-                processEntry(module, arguments)
             }
         }
 
         abstract fun processEntry(module: WasmModule, arguments: ArgumentsHelper)
 
         override fun toString(): String = directive
-    }
-
-    // TODO would be nice to share/replace the old js DiretiveTestUtils.java, as this is also a bit out of place here
-    private class ArgumentsHelper(
-        val entry: String,
-    ) {
-        private val positionalArguments = mutableListOf<String>()
-        private val namedArguments = mutableMapOf<String, String>()
-        private val argumentsPattern = Regex("""[\w${'$'}_.;]+(=((".*?")|[\w${'$'}_.;]+))?""")
-
-        init {
-            for (match in argumentsPattern.findAll(entry)) {
-                val argument = match.value
-                val keyVal = argument.split("=", limit = 2)
-                when (keyVal.size) {
-                    1 -> positionalArguments.add(keyVal[0])
-                    2 -> {
-                        var value = keyVal[1]
-                        if (value.startsWith('"') && value.endsWith('"')) {
-                            value = value.substring(1, value.length - 1)
-                        }
-                        namedArguments[keyVal[0]] = value
-                    }
-                    else -> throw AssertionError("Wrong argument format: $argument")
-                }
-            }
-        }
-
-        fun getFirst(): String = getPositionalArgument(0)
-
-        fun getPositionalArgument(index: Int): String {
-            require(positionalArguments.size > index) { "Argument at index `$index` not found in entry: $entry" }
-            return positionalArguments[index]
-        }
-
-        fun getNamedArgument(name: String): String {
-            require(namedArguments.containsKey(name)) { "Argument `$name` not found in entry: $entry" }
-            return namedArguments[name]!!
-        }
-
-        fun findNamedArgument(name: String): String? = namedArguments[name]
     }
 }
 
