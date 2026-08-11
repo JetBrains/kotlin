@@ -1133,6 +1133,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
   }
 
   @Test
+  @TestMetadata("SoftKeywordRemapOnRollback.kt")
+  public void testSoftKeywordRemapOnRollback() {
+    run("SoftKeywordRemapOnRollback.kt");
+  }
+
+  @Test
   @TestMetadata("SoftKeywords.kt")
   public void testSoftKeywords() {
     run("SoftKeywords.kt");
