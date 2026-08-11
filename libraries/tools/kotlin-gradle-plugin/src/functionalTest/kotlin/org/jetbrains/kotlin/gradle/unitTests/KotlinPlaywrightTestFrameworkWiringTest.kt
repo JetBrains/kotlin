@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.WebpackBundleKotlinJsTests
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwDebugOptions
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PLAYWRIGHT_VERSION
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
@@ -372,9 +373,10 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         val spec = assertIs<PwExecutionSpec>(setup.jsBrowserTestTask.buildExecutionSpec(setup.project))
         val debugOptions = spec.runners.single().debugOptions
 
-        assertEquals(9222, debugOptions?.remoteDebuggingPort)
+        val defaults = PwDebugOptions()
+        assertEquals(defaults.remoteDebuggingPort, debugOptions?.remoteDebuggingPort)
         assertNull(debugOptions?.debuggerReadyPort, "Without a readiness port the run must not wait for a debugger")
-        assertEquals(30_000, debugOptions?.debuggerReadyTimeoutMillis)
+        assertEquals(defaults.debuggerReadyTimeoutMillis, debugOptions?.debuggerReadyTimeoutMillis)
     }
 
     @Test
@@ -396,9 +398,10 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         val spec = assertIs<PwExecutionSpec>(setup.jsBrowserTestTask.buildExecutionSpec(setup.project))
         val debugOptions = spec.runners.single().debugOptions
 
-        assertEquals(9222, debugOptions?.remoteDebuggingPort, "An unset debug port must fall back to the default")
+        val defaults = PwDebugOptions()
+        assertEquals(defaults.remoteDebuggingPort, debugOptions?.remoteDebuggingPort, "An unset debug port must fall back to the default")
         assertEquals(54321, debugOptions?.debuggerReadyPort)
-        assertEquals(30_000, debugOptions?.debuggerReadyTimeoutMillis)
+        assertEquals(defaults.debuggerReadyTimeoutMillis, debugOptions?.debuggerReadyTimeoutMillis)
     }
 
     @Test

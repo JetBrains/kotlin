@@ -123,7 +123,7 @@ private fun Project.registerBrowserInstall(
         browsers.add(browserKind.browserName)
     }
 
-private fun KotlinBrowserTestRunnerDsl.getBrowserKind(): PwBrowserKind =
+internal fun KotlinBrowserTestRunnerDsl.getBrowserKind(): PwBrowserKind =
     when (this) {
         is KotlinFirefoxTestRunner -> PwBrowserKind.FIREFOX
         is KotlinWebkitTestRunner -> PwBrowserKind.WEBKIT

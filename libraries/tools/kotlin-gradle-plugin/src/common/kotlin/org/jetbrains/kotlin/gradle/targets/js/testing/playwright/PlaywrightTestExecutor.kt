@@ -64,14 +64,18 @@ internal class PwRunnerSpec(
     val launchEnvironmentVariables: Map<String, String>,
     val customBrowserExecutable: Path?,
     val debugOptions: PwDebugOptions?,
+    val isDebugEnabled: Boolean = debugOptions != null,
 )
+
+private const val DEFAULT_DEBUG_PORT = 9222
+private const val DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS = 60_000
 
 internal class PwDebugOptions(
     // A CDP debugger can attach to Chromium on this port.
-    val remoteDebuggingPort: Int,
+    val remoteDebuggingPort: Int = DEFAULT_DEBUG_PORT,
     // Set when the run should wait until a debugger is attached.
-    val debuggerReadyPort: Int?,
-    val debuggerReadyTimeoutMillis: Int,
+    val debuggerReadyPort: Int? = null,
+    val debuggerReadyTimeoutMillis: Int = DEFAULT_DEBUGGER_READY_TIMEOUT_MILLIS,
 )
 
 /**
@@ -234,19 +238,19 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
             PwBrowserKind.WEBKIT -> playwright.webkit()
         }
 
-        val runnerDebugPort = runner.debugOptions?.remoteDebuggingPort
-        if (runnerDebugPort != null && runner.headless) {
+        if (runner.isDebugEnabled && runner.headless) {
             log.info("Running '${runner.name}' headed instead of headless, because it is being debugged")
         }
         val launchOptions = BrowserType.LaunchOptions()
-            .setHeadless(runnerDebugPort == null && runner.headless)
+            .setHeadless(!runner.isDebugEnabled && runner.headless)
             .apply {
-                val launchArgs = if (runnerDebugPort != null) {
+                val debugOptions = runner.debugOptions
+                val launchArgs = if (debugOptions != null) {
                     // The debugger needs CDP, so non-Chromium runners are swapped out before we get here.
                     check(runner.browserKind == PwBrowserKind.CHROMIUM) {
                         "Browser test debugging for Playwright is supported only with Chromium runners"
                     }
-                    runner.launchArgs.withRemoteDebuggingPort(runnerDebugPort)
+                    runner.launchArgs.withRemoteDebuggingPort(debugOptions.remoteDebuggingPort)
                 } else {
                     runner.launchArgs
                 }
