@@ -174,6 +174,18 @@ abstract class SwiftExportExtension @Inject constructor(
      * Configure Swift Export modules export.
      */
     @ExperimentalSwiftExportDsl
+    fun expose(dependency: Any, configure: SwiftExportedModuleMetadata.() -> Unit = {}) = export(dependency, configure)
+
+    /**
+     * Configure Swift Export modules export.
+     */
+    @ExperimentalSwiftExportDsl
+    fun expose(dependency: Any, configure: Action<SwiftExportedModuleMetadata>) = export(dependency, configure)
+
+    /**
+     * Configure Swift Export modules export.
+     */
+    @ExperimentalSwiftExportDsl
     fun hide(dependency: Any, configure: SwiftExportedModuleMetadata.() -> Unit = {}) {
         when (dependency) {
             is Provider<*> -> {
