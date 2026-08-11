@@ -263,12 +263,6 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
-  @TestMetadata("nestedValueClass.kt")
-  public void testNestedValueClass() {
-    run("nestedValueClass.kt");
-  }
-
-  @Test
   @TestMetadata("parameter.kt")
   public void testParameter() {
     run("parameter.kt");
@@ -410,30 +404,6 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   @TestMetadata("unsignedConst.kt")
   public void testUnsignedConst() {
     run("unsignedConst.kt");
-  }
-
-  @Test
-  @TestMetadata("valueClassWithAnotherValueClass.kt")
-  public void testValueClassWithAnotherValueClass() {
-    run("valueClassWithAnotherValueClass.kt");
-  }
-
-  @Test
-  @TestMetadata("valueClassWithNestedClass.kt")
-  public void testValueClassWithNestedClass() {
-    run("valueClassWithNestedClass.kt");
-  }
-
-  @Test
-  @TestMetadata("valueClassWithParameterizedAlias.kt")
-  public void testValueClassWithParameterizedAlias() {
-    run("valueClassWithParameterizedAlias.kt");
-  }
-
-  @Test
-  @TestMetadata("valueClassWithTypeAliasOnAnotherValueClass.kt")
-  public void testValueClassWithTypeAliasOnAnotherValueClass() {
-    run("valueClassWithTypeAliasOnAnotherValueClass.kt");
   }
 
   @Test
@@ -959,6 +929,50 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
           }
         }
       }
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/inlineClasses")
+  @TestDataPath("$PROJECT_ROOT")
+  public class InlineClasses {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/inlineClasses/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInInlineClasses() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirBinary/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("nestedValueClass.kt")
+    public void testNestedValueClass() {
+      run("nestedValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassWithAnotherValueClass.kt")
+    public void testValueClassWithAnotherValueClass() {
+      run("valueClassWithAnotherValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassWithNestedClass.kt")
+    public void testValueClassWithNestedClass() {
+      run("valueClassWithNestedClass.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassWithParameterizedAlias.kt")
+    public void testValueClassWithParameterizedAlias() {
+      run("valueClassWithParameterizedAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassWithTypeAliasOnAnotherValueClass.kt")
+    public void testValueClassWithTypeAliasOnAnotherValueClass() {
+      run("valueClassWithTypeAliasOnAnotherValueClass.kt");
     }
   }
 
