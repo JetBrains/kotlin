@@ -32,21 +32,6 @@ public class DirectiveTestUtils {
 
     private DirectiveTestUtils() {}
 
-    private static final DirectiveHandler FUNCTION_CONTAINS_NO_CALLS = new DirectiveHandler() {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
-            Set<String> exceptNames = new HashSet<>();
-            String exceptNamesArg = arguments.findNamedArgument("except");
-            if (exceptNamesArg != null) {
-                for (String exceptName : exceptNamesArg.split(";")) {
-                    exceptNames.add(exceptName.trim());
-                }
-            }
-
-            checkFunctionContainsNoCalls(ast, arguments.getFirst(), exceptNames);
-        }
-    };
-
     private static final DirectiveHandler FUNCTION_NOT_CALLED = new DirectiveHandler() {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments, File sourceFile) throws Exception {
@@ -359,7 +344,7 @@ public class DirectiveTestUtils {
 
     private static final List<Pair<ValueDirective<? extends ArgumentsHelper>, DirectiveHandler>> DIRECTIVE_HANDLERS = Arrays.asList(
             new Pair<>(JsAstDirectives.INSTANCE.getEXPECT_GENERATED_JS(), new DirectiveHandler<>()),
-            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CONTAINS_NO_CALLS(), FUNCTION_CONTAINS_NO_CALLS),
+            new Pair<>(JsAstDirectives.INSTANCE.getCHECK_CONTAINS_NO_CALLS(), new DirectiveHandler<>()),
             new Pair<>(JsAstDirectives.INSTANCE.getCHECK_NOT_CALLED(), FUNCTION_NOT_CALLED),
             new Pair<>(JsAstDirectives.INSTANCE.getFUNCTION_CALLED_TIMES(), FUNCTION_CALLED_TIMES),
             new Pair<>(JsAstDirectives.INSTANCE.getPROPERTY_NOT_USED(), PROPERTY_NOT_USED),
@@ -396,16 +381,6 @@ public class DirectiveTestUtils {
             List<ArgumentsHelper> directiveEntries = (List<ArgumentsHelper>) allDirectives.get(directiveAndHandler.getFirst());
             return () -> directiveAndHandler.getSecond().process(ast, sourceFile, directiveEntries, targetBackend);
         })));
-    }
-
-    public static void checkFunctionContainsNoCalls(JsNode node, String functionName, @NotNull Set<String> exceptFunctionNames)
-            throws Exception {
-        JsFunction function = AstSearchUtil.getFunction(node, functionName);
-        CallCounter counter = CallCounter.countCalls(function, exceptFunctionNames);
-        int callsCount = counter.getTotalCallsCount();
-
-        String errorMessage = functionName + " contains calls";
-        assertEquals(0, callsCount, errorMessage);
     }
 
     @NotNull

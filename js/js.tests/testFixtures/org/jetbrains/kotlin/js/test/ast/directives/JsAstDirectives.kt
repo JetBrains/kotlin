@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.ast
 
+import org.jetbrains.kotlin.js.test.ast.directives.CheckContainsNoCallsDirective
 import org.jetbrains.kotlin.js.test.ast.directives.ExpectGeneratedJsDirective
 import org.jetbrains.kotlin.js.testOld.utils.ArgumentsHelper
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
@@ -24,7 +25,10 @@ internal object JsAstDirectives : SimpleDirectivesContainer() {
         ::ExpectGeneratedJsDirective,
     )
 
-    val CHECK_CONTAINS_NO_CALLS by directiveWithArguments("Checks that the specified function contains no calls")
+    val CHECK_CONTAINS_NO_CALLS by directiveWithArguments(
+        "Checks that the specified function contains no calls",
+        ::CheckContainsNoCallsDirective,
+    )
 
     val CHECK_NOT_CALLED by directiveWithArguments("Checks that the specified function is never called")
 
