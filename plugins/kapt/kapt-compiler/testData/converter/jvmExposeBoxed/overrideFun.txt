@@ -1,0 +1,161 @@
+/**
+ * public open class A : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: openMethod-WZ4Q5Ns(I)Ljava/lang/String;
+ *   public open fun openMethod(a: kotlin/UInt): kotlin/String
+ *
+ *   // signature: openMethodAnnotated-WZ4Q5Ns(I)Ljava/lang/String;
+ *   @Anno2
+ *   public open fun openMethodAnnotated(a: kotlin/UInt): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public class A {
+
+    public A() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+ * public final annotation class Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Anno {
+}
+
+////////////////////
+
+
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+ * public final annotation class Anno2 : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Anno2 {
+}
+
+////////////////////
+
+
+/**
+ * public final class B : A {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: openMethod-WZ4Q5Ns(I)Ljava/lang/String;
+ *   @kotlin/jvm/JvmExposeBoxed
+ *   public open fun openMethod(a: kotlin/UInt): kotlin/String
+ *
+ *   // signature: openMethodAnnotated-WZ4Q5Ns(I)Ljava/lang/String;
+ *   @kotlin/jvm/JvmExposeBoxed
+ *   @Anno
+ *   public open fun openMethodAnnotated(a: kotlin/UInt): kotlin/String
+ *
+ *   // signature: ownMethod-WZ4Q5Ns(I)Ljava/lang/String;
+ *   @kotlin/jvm/JvmExposeBoxed
+ *   public final fun ownMethod(a: kotlin/UInt): kotlin/String
+ *
+ *   // signature: ownMethodAnnotated-WZ4Q5Ns(I)Ljava/lang/String;
+ *   @kotlin/jvm/JvmExposeBoxed
+ *   @Anno
+ *   public final fun ownMethodAnnotated(a: kotlin/UInt): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class B extends A {
+
+    public B() {
+        super();
+    }
+
+    @kotlin.jvm.JvmExposeBoxed()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String openMethod(@org.jetbrains.annotations.NotNull()
+    kotlin.UInt a) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmExposeBoxed()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String ownMethod(@org.jetbrains.annotations.NotNull()
+    kotlin.UInt a) {
+        return null;
+    }
+
+    @Anno()
+    @kotlin.jvm.JvmExposeBoxed()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String openMethodAnnotated(@org.jetbrains.annotations.NotNull()
+    kotlin.UInt a) {
+        return null;
+    }
+
+    @Anno()
+    @kotlin.jvm.JvmExposeBoxed()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String ownMethodAnnotated(@org.jetbrains.annotations.NotNull()
+    kotlin.UInt a) {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class C : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
+ *   @kotlin/jvm/JvmExposeBoxed
+ *   public open fun toString(): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class C {
+
+    public C() {
+        super();
+    }
+
+    @java.lang.Override()
+    @kotlin.jvm.JvmExposeBoxed()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
