@@ -72,6 +72,7 @@ projectTests {
         })
 
         smokeTestConfig = SmokeTestConfig.RunAllTests
+        forkEvery = 1
     }
 
     withJvmStdlibAndReflect()
