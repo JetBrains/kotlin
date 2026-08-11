@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,28 +7,28 @@ package org.jetbrains.kotlin.js.test.handlers
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.testOld.utils.DirectiveTestUtils
+import org.jetbrains.kotlin.js.test.ast.JsAstDirectives
+import org.jetbrains.kotlin.js.testOld.utils.DirectiveTestUtils.processDirectives
 import org.jetbrains.kotlin.js.translate.utils.name
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.CHECK_OPTIMIZED_JS
+import org.jetbrains.kotlin.test.directives.model.ComposedRegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.JsIrArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.defaultsProvider
-import org.jetbrains.kotlin.test.services.isKtFile
-import java.io.File
+import org.jetbrains.kotlin.test.services.moduleStructure
 
 class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
+    override val directiveContainers: List<DirectivesContainer>
+        get() = listOf(JsAstDirectives)
+
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {
-        val ktFiles = module.files
-            .filter { it.isKtFile }
-            .associate { it.originalFile.parentFile.resolve(it.relativePath) to it.originalContent }
-
         val mode = if (CHECK_OPTIMIZED_JS in module.directives)
             TranslationMode.FULL_PROD_MINIMIZED_NAMES
         else
@@ -39,12 +39,21 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
             ?.get(mode)
             ?.jsProgram
             ?: return
-        processJsProgram(jsProgram, ktFiles, testServices.defaultsProvider.targetBackend!!)
-    }
 
-    private fun processJsProgram(program: JsProgram, psiFiles: Map<File, String>, targetBackend: TargetBackend) {
-        psiFiles.forEach { DirectiveTestUtils.processDirectives(program, it.key, it.value, targetBackend) }
-        program.verifyAst()
+        // `testServices.moduleStructure.allDirectives` only provides global and module-level directives, but we also need file-level
+        // directives here, because an AST directive can be placed anywhere (we usually place them close to whatever they're checking).
+        val moduleStructure = testServices.moduleStructure
+        val fileDirectives = moduleStructure.modules.flatMap { it.files }.map { it.directives }
+        val moduleDirectives = moduleStructure.modules.map { it.directives }
+
+        processDirectives(
+            jsProgram,
+            module.files.first { !it.isAdditional }.originalFile,
+            testServices.defaultsProvider.targetBackend!!,
+            ComposedRegisteredDirectives(moduleDirectives + fileDirectives),
+        )
+
+        jsProgram.verifyAst()
     }
 
     private fun JsProgram.verifyAst() {
